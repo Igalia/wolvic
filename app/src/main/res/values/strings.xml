@@ -154,7 +154,7 @@
     <string name="settings_privacy_policy_login_exceptions_empty_description">Logins that are not saved will be shown here.</string>
 
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
-    <string name="settings_privacy_policy_login_exceptions_reset">Reset the Login exceptions.</string>
+    <string name="settings_privacy_policy_login_exceptions_reset">Reset the login exceptions.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Allow</string>
@@ -209,7 +209,8 @@
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
-         language for the application UI. -->
+         language for the application UI.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="settings_language_choose_display_language_title">%1$s Display Language</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
@@ -688,7 +689,8 @@
     <string name="fxa_account_last_sync_error">Sync error</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
-         when that the content was just synced some time ago. -->
+         when that the content was just synced some time ago.
+         '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">Last synced %1$d minutes ago</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -791,20 +793,24 @@
     <string name="security_options_webxr_settings">Advanced</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
-         relate to Firefox data collection and use. -->
+         relate to Firefox data collection and use.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">%1$s Data Collection and Use</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data. -->
+     and is used to enable or disable permission to collect speech data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collect">Allow %1$s to collect speech data</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect telemetry data. -->
+     and is used to enable or disable permission to collect telemetry data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_telemetry_send_data">Allow %1$s to send technical and interaction data to Mozilla
  </string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to send crash reports. -->
+     and is used to enable or disable permission to send crash reports.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_crash_reports_send_data">Allow %1$s to send backlogged crash reports on your behalf
 </string>
 
@@ -1113,13 +1119,13 @@
     <string name="addons_description">Add-ons Description</string>
 
     <!-- This string is displayed in the Addon Details description text when no description is available. -->
-    <string name="addons_no_description">No description.</string>
+    <string name="addons_no_description">No description</string>
 
     <!-- This string is displayed in the Addon Details authors property text. -->
     <string name="addons_authors_title">Authors</string>
 
     <!-- This string is displayed as the Addon Details authors property text value when no authors available. -->
-    <string name="addons_no_authors">No authors.</string>
+    <string name="addons_no_authors">No authors</string>
 
     <!-- This string is displayed in the Addon Details version property text. -->
     <string name="addons_version_title">Version</string>
@@ -1135,7 +1141,7 @@
 
     <!-- This string is for the tooltip that appears upon hovering the 'Close' button in the addons panel.
          'Close' refers to closing the Addons panel and showing the latest active tab. -->
-    <string name="addons_close_tooltip">Close Add-Ons</string>
+    <string name="addons_close_tooltip">Close Add-ons</string>
 
     <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is enabled. -->
     <string name="addons_details_enabled">Enabled</string>
@@ -1158,7 +1164,8 @@
     <!-- This string is displayed in the Addon Details "Remove" button text, if clicked it uninstalls the addon. -->
     <string name="addons_details_remove">Remove Add-on</string>
 
-    <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed. -->
+    <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the add-on name -->
     <string name="addons_install_dialog_title">Add %1$s?</string>
 
     <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
@@ -1182,7 +1189,9 @@
     <string name="addons_downloading_dialog_cancel">Cancel</string>
 
     <!-- This string is displayed in the Addon downloaded dialog title text.
-    This dialog is displayed after the addon downloading dialog if the addon has been successfully installed. -->
+    This dialog is displayed after the addon downloading dialog if the addon has been successfully installed.
+    '%1$s' will be replaced at runtime with the add-on name.
+    '%2$s' will be replaced at runtime with the app name. -->
     <string name="addons_download_success_dialog_title">%1$s was added to %2$s</string>
 
     <!-- This string is displayed in the Addon downloaded dialog body text.
@@ -1195,7 +1204,7 @@
 
     <!-- This string is displayed in the Addon downloaded dialog ok button text.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
-    <string name="addons_download_success_dialog_ok">Okay, Got it</string>
+    <string name="addons_download_success_dialog_ok">Okay, got it</string>
 
     <!-- This string is displayed in the Addon download error dialog title text.
     This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
@@ -1206,7 +1215,8 @@
     <string name="addons_download_error_dialog_ok">Ok</string>
 
     <!-- This string is displayed in the remove Addon error dialog title text.
-    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled. -->
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    '%1$' Will be replaced at runtime with the add-on name. -->
     <string name="addons_remove_success_dialog_title">Successfully uninstalled %1$s</string>
 
     <!-- This string is displayed in the remove Addon dialog button text.
@@ -1215,7 +1225,8 @@
     <string name="addons_remove_success_dialog_ok">Ok</string>
 
     <!-- This string is displayed in the remove Addon error dialog title text.
-    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails. -->
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    '%1$' Will be replaced at runtime with the add-on name. -->
     <string name="addons_remove_error_dialog_title">An error occurred while removing %1$s</string>
 
     <!-- This string is displayed in the remove Addon dialog button text.
@@ -1328,7 +1339,7 @@
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
          when there are saved logins. -->
-    <string name="privacy_options_saved_logins_list_empty_first">When a login can be saved, you will see a dialog that let you save it.</string>
+    <string name="privacy_options_saved_logins_list_empty_first">When a login can be saved, you will see a dialog that lets you save it.</string>
 
     <!-- This string is displayed in the second line of a text that's displayed in the middle of the saved logins instead of the logins list
          when there are no saved logins. -->
@@ -1711,7 +1722,8 @@
     <string name="performance_message">Try reducing the window size to improve performance. Unblocking this page may crash your app.</string>
 
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
+         a user tries to use the voice search.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="voice_samples_collect_data_dialog_title">Allow %1$s to Collect Voice Samples for Research?</string>
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
@@ -2106,10 +2118,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the "Open" button description of the edit login dialog. -->
     <string name="login_edit_dialog_site_description">Site</string>
 
-    <!-- This string is shown in the "Open" button description of the edit login dialog. -->
+    <!-- This string is shown as the description that is shown in front of the the username input field in the login edit dialog. -->
     <string name="login_edit_dialog_username_description">Username</string>
 
-    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <!-- This string is shown as the description that is shown in front of the the password input field in the login edit dialog. -->
     <string name="login_edit_dialog_password_description">Password</string>
 
     <!-- This string is shown under the password text edit in the Login edit dialog when the password is left empty. -->
@@ -2124,13 +2136,16 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
     <string name="tray_wifi_no_connection">No Connection</string>
 
-    <!-- This string is shown in the tooltip of the left controller status bar icon when hovered. -->
+    <!-- This string is shown in the tooltip of the left controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the left controller battery level. -->
     <string name="tray_status_left_controller">Left Controller: %1$s</string>
 
-    <!-- This string is shown in the tooltip of the right controller status bar icon when hovered. -->
+    <!-- This string is shown in the tooltip of the right controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the right controller battery level. -->
     <string name="tray_status_right_controller">Right Controller: %1$s</string>
 
-    <!-- This string is shown in the tooltip of the headset status bar icon when hovered. -->
+    <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
 
 </resources>
