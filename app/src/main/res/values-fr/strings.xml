@@ -102,6 +102,13 @@
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Sécurité et vie privée</string>
 
+    <!-- This string is used to label a button in the 'Saved Logins' dialog window that, when pressed,
+         opens a dialog box that contains a list of saved logins. -->
+    <string name="settings_privacy_saved_logins">Identifiants enregistrés</string>
+
+    <!-- This string is used inm the title of the settings panel for the Logins and Passwords management. -->
+    <string name="settings_privacy_logins">Identifiants et mots de passe</string>
+
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Politique de confidentialité</string>
@@ -139,6 +146,13 @@
 
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
     <string name="settings_privacy_policy_tracking_reset">Réinitialise les exceptions pour la protection renforcée contre le pistage.</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_description">Les identifiants qui ne sont pas enregistrés seront affichés ici</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_login_exceptions_empty_description">Les identifiants qui ne sont pas enregistrés seront affichés ici.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Autoriser</string>
@@ -193,7 +207,8 @@
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
-         language for the application UI. -->
+         language for the application UI.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="settings_language_choose_display_language_title">Langue d’affichage de %1$s</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
@@ -224,7 +239,9 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_description">Les pages web sont parfois proposées dans plusieurs langues. Choisissez les langues que vous souhaitez afficher par ordre de préférence sur le côté gauche.</string>
 
-    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (US)'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_english">Anglais (US)</string>
 
@@ -641,6 +658,9 @@
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Historique</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description for the Logins sync switch. -->
+    <string name="fxa_account_options_logins_sync">Identifiants</string>
+
     <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Réinitialiser</string>
 
@@ -667,7 +687,8 @@
     <string name="fxa_account_last_sync_error">Erreur de synchronisation</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
-         when that the content was just synced some time ago. -->
+         when that the content was just synced some time ago.
+         '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">Dernière synchronisation : il y a %1$d minutes</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -682,6 +703,33 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the address bar autocomplete. -->
     <string name="security_options_autocomplete">Auto-complétion de la barre d’adresse</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable logins and passwords saving. If disabled the user won't be prompted
+     when a new login/password pair is eligible to be saved by the browser -->
+    <string name="security_options_login_save">Enregistrer les identifiants et les mots de passe</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
+    <string name="security_options_login_autofill">Remplissage automatique</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login sync with Firefox Account. If disabled the logins
+     won't be synced with the Firefox Account. -->
+    <string name="security_options_login_sync">Synchroniser les identifiants avec les comptes Firefox</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the Firefox Accounts settings panel. -->
+    <string name="security_options_login_fxa">Compte…</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
+    <string name="security_options_login_saved">Identifiants enregistrés…</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the login exceptions panel which lists all the save login exceptions
+     that are added when clicking on the "Never Save" button in the login save dialog. -->
+    <string name="security_options_login_exceptions">Exceptions…</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -743,19 +791,23 @@
     <string name="security_options_webxr_settings">Avancé</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
-         relate to Firefox data collection and use. -->
+         relate to Firefox data collection and use.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">Collecte et utilisation de données par %1$s</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data. -->
+     and is used to enable or disable permission to collect speech data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collect">Autoriser %1$s à collecter des données vocales</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect telemetry data. -->
+     and is used to enable or disable permission to collect telemetry data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_telemetry_send_data">Autoriser %1$s à envoyer des données techniques et d’interaction à Mozilla</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to send crash reports. -->
+     and is used to enable or disable permission to send crash reports.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_crash_reports_send_data">Autoriser %1$s à envoyer pour vous les rapports de plantages en attente</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
@@ -1050,6 +1102,24 @@
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_size_desc">Le plus grand</string>
 
+    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <string name="addons_title">Modules complémentaires</string>
+
+    <!-- This string is displayed in the Addon Details authors property text. -->
+    <string name="addons_authors_title">Auteurs</string>
+
+    <!-- This string is displayed as the Addon Details authors property text value when no authors available. -->
+    <string name="addons_no_authors">Aucun auteur</string>
+
+    <!-- This string is displayed in the Addon Details version property text. -->
+    <string name="addons_version_title">Version</string>
+
+    <!-- This string is displayed in the Addon Details last updated property text. -->
+    <string name="addons_last_updated_title">Dernière mise à jour</string>
+
+    <!-- This string is displayed in the Addon Details homepage property text. -->
+    <string name="addons_homepage_title">Page d’accueil</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">Synchroniser</string>
@@ -1062,10 +1132,6 @@
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">SI vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
-
-    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
-         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
-    <string name="fxa_signout_confirmation_checkbox">Effacer l’historique et les marque-pages de cet appareil</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1500,7 +1566,8 @@
     <string name="performance_message">La page web en cours affecte les performances et a été suspendue. Réduire la taille de la fenêtre peut aider à améliorer une page web avec des performances médiocres.</string>
 
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
+         a user tries to use the voice search.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="voice_samples_collect_data_dialog_title">Autoriser %1$s à collecter des échantillons de voix pour la recherche ?</string>
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
@@ -1855,4 +1922,4 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Erreur d’environnement</string>
 
-</resources>
+    </resources>
