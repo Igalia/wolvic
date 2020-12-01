@@ -1105,6 +1105,18 @@
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_title">Modules complémentaires</string>
 
+    <!-- This string is displayed in the title bar when a web extension session is displayed. -->
+    <string name="web_extensions_title">Web Extension</string>
+
+    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <string name="addons_loading">Chargement des modules</string>
+
+    <!-- This string is displayed under the addons title in the addons list. -->
+    <string name="addons_description">Description des modules</string>
+
+    <!-- This string is displayed in the Addon Details description text when no description is available. -->
+    <string name="addons_no_description">Pas de description</string>
+
     <!-- This string is displayed in the Addon Details authors property text. -->
     <string name="addons_authors_title">Auteurs</string>
 
@@ -1120,6 +1132,91 @@
     <!-- This string is displayed in the Addon Details homepage property text. -->
     <string name="addons_homepage_title">Page d’accueil</string>
 
+    <!-- This string is displayed in the Addon Details rating property text. -->
+    <string name="addons_rating_title">Appréciation</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Close' button in the addons panel.
+         'Close' refers to closing the Addons panel and showing the latest active tab. -->
+    <string name="addons_close_tooltip">Fermer les modules</string>
+
+    <!-- This string is displayed in the Addon Details "Run in private browsing" switch text that determines if the Addon will run in private browsing mode. -->
+    <string name="addons_details_private_mode">Exécuter en navigation privée</string>
+
+    <!-- This string is displayed in the Addon Details "Settings" button text. When clicked the Adds Settings view is displayed. -->
+    <string name="addons_details_settings">Paramètres</string>
+
+    <!-- This string is displayed in the Addon Details "Details" button text. When clicked the Adds Details view is displayed. -->
+    <string name="addons_details_details">Détails</string>
+
+    <!-- This string is displayed in the Addon Details "Permissions" button text. When clicked the Adds Permissions view is displayed. -->
+    <string name="addons_details_permissions">Permissions</string>
+
+    <!-- This string is displayed in the Addon Details "Remove" button text, if clicked it uninstalls the addon. -->
+    <string name="addons_details_remove">Supprimer le module</string>
+
+    <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the add-on name -->
+    <string name="addons_install_dialog_title">Ajouter %1$s ?</string>
+
+    <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_cancel">Annuler</string>
+
+    <!-- This string is displayed in the Addon install dialog "Add" button, when pressed the dialog will be dismissed and the Addon install dialog will be displayed.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_add">Ajouter</string>
+
+    <!-- This string is displayed in the Addon downloading dialog title text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_title">Téléchargement et vérification du module…</string>
+
+    <!-- This string is displayed in the Addon downloading dialog cancel button.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_cancel">Annuler</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog body text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_body">Ouvrez-le depuis le menu</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog checkbox text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_checkbox">Autoriser en navigation privée</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog ok button text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_ok">J’ai compris</string>
+
+    <!-- This string is displayed in the Addon download error dialog title text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_title">Une erreur s’est produite lors du téléchargement. Veuillez réessayer.</string>
+
+    <!-- This string is displayed in the Addon download error dialog ok button text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_ok">OK</string>
+
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_success_dialog_title">Désinstallation réussie de %1$s</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_success_dialog_ok">OK</string>
+
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_error_dialog_title">Une erreur s’est produite lors de la suppression de %1$s</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_error_dialog_ok">OK</string>
+
+    <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
+    <string name="addons_permissions_learn_more">En savoir plus à propos des permissions</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">Synchroniser</string>
@@ -1132,6 +1229,10 @@
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">SI vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox_v1">Effacer l’historique, les marque-pages et les identifiants de cet appareil</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1213,6 +1314,15 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Une liste de sites avec leurs autorisations apparaîtra ici.</string>
 
+    <!-- This string labels the Reset button that restores the default saved logins settings values. -->
+    <string name="privacy_options_saved_logins_reset">Réinitialiser les paramètres des identifiants enregistrés</string>
+
+    <!-- This string labels the Clear All button that removes all the saved logins from the stored saved logins. -->
+    <string name="privacy_options_saved_logins_clear_all">Tout effacer</string>
+
+    <!-- This string labels the Delete button from the Login edit dialog deletes the current login. -->
+    <string name="privacy_options_saved_login_delete">Supprimer</string>
+
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
     <string name="privacy_options_tracking"><![CDATA[Protection renforcée contre le pistage. (<a href="%1$s">En savoir plus</a>)]]></string>
@@ -1220,6 +1330,12 @@
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avancé</string>
+
+    <!-- This string labels the description of the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins">Identifiants et mots de passe</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins_button">Avancé</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Réinitialiser les paramètres du contrôleur</string>
@@ -1598,6 +1714,12 @@
     <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
     <string name="url_downloads_title">Téléchargements</string>
 
+    <!-- This string is displayed in the URL bar when the user is in the addons panel -->
+    <string name="url_addons_title">Modules complémentaires</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the Library panel -->
+    <string name="url_library_title">Bibliothèque</string>
+
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Effacer</string>
@@ -1687,6 +1809,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">Redimensionnement de la fenêtre</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the addons panel -->
+    <string name="hamburger_menu_addons">Modules complémentaires</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it switches User Agent from desktop to mobile and vice versa -->
@@ -1921,5 +2047,55 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Erreur d’environnement</string>
+
+    <!-- This string is shown in the title of the auto-fill save dialog. This dialog is displayed when the user send a login form and the system
+    prompts the user to save that login to auto-fill the future. -->
+    <string name="autofill_dialog_save_title">Enregistrer cet identifiant ?</string>
+
+    <!-- This string is shown in the "Save" button of the auto-fill login save dialog. When pressed this will save the login information into the storage. -->
+    <string name="autofill_dialog_save_button_text">Enregistrer</string>
+
+    <!-- This string is shown in the "Never Save" button of the auto-fill llgin save dialog. When pressed this won't save the login information into the storage and also
+    add an exception rule so the user is not prompted in the future for that site. -->
+    <string name="autofill_dialog_never_save_button_text">Ne jamais enregistrer</string>
+
+    <!-- This string is shown in the "username" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_username_text">Nom d’utilisateur</string>
+
+    <!-- This string is shown in the "password" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_password_text">Mot de passe</string>
+
+    <!-- This string is shown in the title of the select login dialog. -->
+    <string name="autofill_dialog_use_login_title_text">Utiliser l’identifiant enregistré</string>
+
+    <!-- This string is shown in the "settings" button of the select login dialog. When pressed the saved logins settings panel would be displayed.-->
+    <string name="autofill_dialog_use_login_settings_button">Paramètres…</string>
+
+    <!-- This string is shown in the saved logins list items for autogenerated logins.-->
+    <string name="autofill_item_autogenerated">Autogénéré</string>
+
+    <!-- This string is shown inside the "Open" button of the edit login dialog. When pressed the site URL is opened.-->
+    <string name="login_edit_dialog_site_button">Ouvrir</string>
+
+    <!-- This string is shown in the "Open" button description of the edit login dialog. -->
+    <string name="login_edit_dialog_site_description">Site</string>
+
+    <!-- This string is shown as the description that is shown in front of the the username input field in the login edit dialog. -->
+    <string name="login_edit_dialog_username_description">Nom d’utilisateur</string>
+
+    <!-- This string is shown as the description that is shown in front of the the password input field in the login edit dialog. -->
+    <string name="login_edit_dialog_password_description">Mot de passe</string>
+
+    <!-- This string is shown under the password text edit in the Login edit dialog when the password is left empty. -->
+    <string name="login_edit_password_empty_error">Le champ mot de passe ne peut pas être vide</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a username. -->
+    <string name="username_hint">nom d’utilisateur</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a password. -->
+    <string name="password_hint">mot de passe</string>
+
+    <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
+    <string name="tray_wifi_no_connection">Aucune connexion</string>
 
     </resources>

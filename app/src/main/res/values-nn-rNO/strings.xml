@@ -102,6 +102,13 @@
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Personvern og sikkerheit</string>
 
+    <!-- This string is used to label a button in the 'Saved Logins' dialog window that, when pressed,
+         opens a dialog box that contains a list of saved logins. -->
+    <string name="settings_privacy_saved_logins">Lagra innloggingar</string>
+
+    <!-- This string is used inm the title of the settings panel for the Logins and Passwords management. -->
+    <string name="settings_privacy_logins">Innloggingar og passord</string>
+
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Personvernpraksis</string>
@@ -139,6 +146,9 @@
 
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
     <string name="settings_privacy_policy_tracking_reset">Tilbakestill unntaka for utvida sporingsvern.</string>
+
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_title">Innloggingsunntak</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Tillat</string>
@@ -194,7 +204,8 @@
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
-         language for the application UI. -->
+         language for the application UI.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="settings_language_choose_display_language_title">%1$s visingsspråk</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
@@ -225,7 +236,9 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_description">Nettstadar kan ofte visast på fleire ulike språk. Vel, på venstre side, dei språka du vil vise - i den rekkjefølgja du føretrekkjer.</string>
 
-    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (US)'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_english">Engelsk (amerikansk)</string>
 
@@ -642,6 +655,9 @@
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Historikk</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description for the Logins sync switch. -->
+    <string name="fxa_account_options_logins_sync">Innloggingar</string>
+
     <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Tilbakestill</string>
 
@@ -668,7 +684,8 @@
     <string name="fxa_account_last_sync_error">Synkroniseringsfeil</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
-         when that the content was just synced some time ago. -->
+         when that the content was just synced some time ago.
+         '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">Sist synkronisert for %1$d minutt sidan</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -683,6 +700,19 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the address bar autocomplete. -->
     <string name="security_options_autocomplete">Autofullføring av adresselinje</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the Firefox Accounts settings panel. -->
+    <string name="security_options_login_fxa">Konto…</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
+    <string name="security_options_login_saved">Lagra innloggingar</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the login exceptions panel which lists all the save login exceptions
+     that are added when clicking on the "Never Save" button in the login save dialog. -->
+    <string name="security_options_login_exceptions">Unntak…</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -744,20 +774,24 @@
     <string name="security_options_webxr_settings">Avansert</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
-         relate to Firefox data collection and use. -->
+         relate to Firefox data collection and use.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">%1$s datainnsamling og bruk</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data. -->
+     and is used to enable or disable permission to collect speech data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collect">Tillat %1$s å samle inn taledata</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect telemetry data. -->
+     and is used to enable or disable permission to collect telemetry data.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske data og data for bruk til Mozilla
  </string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to send crash reports. -->
+     and is used to enable or disable permission to send crash reports.
+     '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_crash_reports_send_data">Tillat %1$s å sende etterslepne krasjrapporter på dine vegner</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
@@ -1052,6 +1086,40 @@
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_size_desc">Største</string>
 
+    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <string name="addons_title">Tillegg</string>
+
+    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <string name="addons_loading">Lastar tillegg</string>
+
+    <!-- This string is displayed under the addons title in the addons list. -->
+    <string name="addons_description">Tilleggsskildring</string>
+
+    <!-- This string is displayed in the Addon Details description text when no description is available. -->
+    <string name="addons_no_description">Inga skildring</string>
+
+    <!-- This string is displayed in the Addon Details authors property text. -->
+    <string name="addons_authors_title">Utviklarar</string>
+
+    <!-- This string is displayed as the Addon Details authors property text value when no authors available. -->
+    <string name="addons_no_authors">Ingen utviklarar</string>
+
+    <!-- This string is displayed in the Addon Details version property text. -->
+    <string name="addons_version_title">Versjon</string>
+
+    <!-- This string is displayed in the Addon Details last updated property text. -->
+    <string name="addons_last_updated_title">Sist oppdatert</string>
+
+    <!-- This string is displayed in the Addon Details homepage property text. -->
+    <string name="addons_homepage_title">Heimeside</string>
+
+    <!-- This string is displayed in the Addon Details rating property text. -->
+    <string name="addons_rating_title">Vurdering</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Close' button in the addons panel.
+         'Close' refers to closing the Addons panel and showing the latest active tab. -->
+    <string name="addons_close_tooltip">Lat att tillegg</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">Synkroniser</string>
@@ -1064,10 +1132,6 @@
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">Når du loggar deg ut, vil du ikkje kunne sende eller motta faner frå andre einingar. Bokmerka og historikken din sluttar også å synkronisere.</string>
-
-    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
-         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
-    <string name="fxa_signout_confirmation_checkbox">Fjern historikk og bokmerke frå denne eininga</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1506,7 +1570,8 @@
     <string name="performance_message">Den gjeldande nettstaden påverkar ytinga og er sett i kvilemodus. Reduksjon av vindaugsstørrelsen kan bidra til å forbetre ei nettside med dårleg yting.</string>
 
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
+         a user tries to use the voice search.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="voice_samples_collect_data_dialog_title">TIllate %1$s å samle inn stemmeprøver for forsking?</string>
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
@@ -1859,4 +1924,4 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Miljøfeil</string>
 
-</resources>
+    </resources>
