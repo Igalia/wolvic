@@ -176,7 +176,8 @@
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
-         language for the application UI. -->
+         language for the application UI.
+         '%1$s' Will be replaced at runtime with the app name. -->
     <string name="settings_language_choose_display_language_title">%1$s-näyttökieli</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
@@ -202,9 +203,19 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_title">Ensisijainen kieli sivustoille</string>
 
-    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (US)'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_english">englanti (Yhdysvallat)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
+    <string name="settings_language_english_us">englanti (US)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (UK)'. -->
+    <string name="settings_language_english_uk">englanti (UK)</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'.
@@ -243,6 +254,10 @@
     <string name="settings_language_spanish">espanja</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Spanish (Spain)'. -->
+    <string name="settings_language_spanish_spain">espanja (Espanja)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Korean'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
@@ -277,6 +292,14 @@
     <string name="settings_language_norwegian">norja</string>
   
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Norwegian (Bokmaal)'. -->
+    <string name="settings_language_norwegian_bokmaal">norja (bokmål)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Norwegian (Nynorsk)'. -->
+    <string name="settings_language_norwegian_nynorsk">norja (nynorsk)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Swedish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
@@ -293,6 +316,10 @@
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_dutch">hollanti</string>
+
+    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
+    <string name="settings_language_thai">thai</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
@@ -449,6 +476,14 @@
          a snow-covered outdoor winter mountain scene. -->
     <string name="developer_options_env_winter">Talvi</string>
 
+    <!-- This string labels the radio button that selects the 'Meadow' environment,
+         a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
+    <string name="developer_options_env_meadow">Niitty</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
+    <string name="developer_options_env_cave">Luolasto</string>
+
     <!-- This string describes the radio buttons used to select the pointer color. -->
     <string name="developer_options_pointer_color">Osoittimen väri</string>
 
@@ -474,7 +509,7 @@
 
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
          The sync button will start syncing when pressed-->
-    <string name="fxa_account_options_syncing">Synkronoidaaan...</string>
+    <string name="fxa_account_options_syncing">Synkronoidaan...</string>
 
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Kirjanmerkit</string>
@@ -505,7 +540,8 @@
     <string name="fxa_account_last_sync_error">Synkronointivirhe</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
-         when that the content was just synced some time ago. -->
+         when that the content was just synced some time ago.
+         '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">Viimeksi synkronoitu %1$d minuuttia sitten</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -565,6 +601,10 @@
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Pois</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="sync">Synkronoi</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
          i.e. The history switch for Firefox account syncing-->
@@ -637,6 +677,9 @@
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360_stereo">360 Stereo</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
@@ -809,10 +852,6 @@
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_title">Haluatko kirjautua ulos Firefox-tililtäsi?</string>
-
-    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
-         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
-    <string name="fxa_signout_confirmation_checkbox">Tyhjennä historia ja kirjanmerkit tältä laitteelta</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1080,6 +1119,12 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the image uri to the clipboard -->
     <string name="context_menu_copy_image_location">Kopioi kuvan sijainti</string>
 
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the video uri to the clipboard -->
+    <string name="context_menu_copy_video_location">Kopioi videon sijainti</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the audio uri to the clipboard -->
+    <string name="context_menu_copy_audio_location">Kopioi äänitteen sijainti</string>
+
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
     <string name="context_menu_cut_text">Leikkaa</string>
 
@@ -1091,6 +1136,9 @@
 
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it selects all text from the longpressed page area. -->
     <string name="context_menu_select_all_text">Valitse kaikki</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
+    <string name="context_menu_unselect">Poista valinta</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
@@ -1165,6 +1213,9 @@
 
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">Internetyhteys menetettiin</string>
+
+    <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_message">Tarkista laitteen asetukset ongelman korjaamiseksi.</string>
 
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
@@ -1478,4 +1529,4 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Ympäristövirhe</string>
 
-</resources>
+    </resources>

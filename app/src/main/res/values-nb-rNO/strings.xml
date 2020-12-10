@@ -2131,7 +2131,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="login_edit_dialog_password_description">Passord</string>
 
     <!-- This string is shown under the password text edit in the Login edit dialog when the password is left empty. -->
-    <string name="login_edit_password_empty_error">Passordet kan ikke være tomt</string>
+    <string name="login_edit_password_empty_error">Passordfeltet kan ikke stå tomt</string>
 
     <!-- This string is displayed in any edit text field where the value should be a username. -->
     <string name="username_hint">brukernavn</string>

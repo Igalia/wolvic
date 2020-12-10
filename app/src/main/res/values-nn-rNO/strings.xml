@@ -150,6 +150,16 @@
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_login_exceptions_title">Innloggingsunntak</string>
 
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_description">Innlogginger som ikkje er lagra vil visast her</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_login_exceptions_empty_description">Innlogginger som ikkje er lagra vil visast her.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_login_exceptions_reset">Tilbakestill innloggingsunntaka.</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Tillat</string>
 
@@ -701,6 +711,16 @@
      and is used to enable or disable the address bar autocomplete. -->
     <string name="security_options_autocomplete">Autofullføring av adresselinje</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable logins and passwords saving. If disabled the user won't be prompted
+     when a new login/password pair is eligible to be saved by the browser -->
+    <string name="security_options_login_save">Lagre innloggingar og passord</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login sync with Firefox Account. If disabled the logins
+     won't be synced with the Firefox Account. -->
+    <string name="security_options_login_sync">Synkroniser innloggingar med Firefox-kontoar</string>
+
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the Firefox Accounts settings panel. -->
     <string name="security_options_login_fxa">Konto…</string>
@@ -1089,6 +1109,9 @@
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_title">Tillegg</string>
 
+    <!-- This string is displayed in the title bar when a web extension session is displayed. -->
+    <string name="web_extensions_title">Web Extension</string>
+
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_loading">Lastar tillegg</string>
 
@@ -1119,6 +1142,72 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Close' button in the addons panel.
          'Close' refers to closing the Addons panel and showing the latest active tab. -->
     <string name="addons_close_tooltip">Lat att tillegg</string>
+
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is enabled. -->
+    <string name="addons_details_enabled">Påslått</string>
+
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is disabled. -->
+    <string name="addons_details_disabled">Avslått</string>
+
+    <!-- This string is displayed in the Addon Details "Run in private browsing" switch text that determines if the Addon will run in private browsing mode. -->
+    <string name="addons_details_private_mode">Køyr i privat nettlesing</string>
+
+    <!-- This string is displayed in the Addon Details "Settings" button text. When clicked the Adds Settings view is displayed. -->
+    <string name="addons_details_settings">Innstillingar</string>
+
+    <!-- This string is displayed in the Addon Details "Details" button text. When clicked the Adds Details view is displayed. -->
+    <string name="addons_details_details">Detaljar</string>
+
+    <!-- This string is displayed in the Addon Details "Permissions" button text. When clicked the Adds Permissions view is displayed. -->
+    <string name="addons_details_permissions">Løyve</string>
+
+    <!-- This string is displayed in the Addon Details "Remove" button text, if clicked it uninstalls the addon. -->
+    <string name="addons_details_remove">Fjern tillegg</string>
+
+    <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the add-on name -->
+    <string name="addons_install_dialog_title">Leggje til %1$s?</string>
+
+    <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the permissions list-->
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Det krev løyve frå deg for å:<ul>%1$s</ul></p>]]></string>
+
+    <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_cancel">Avbryt</string>
+
+    <!-- This string is displayed in the Addon install dialog "Add" button, when pressed the dialog will be dismissed and the Addon install dialog will be displayed.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_add">Legg til</string>
+
+    <!-- This string is displayed in the Addon downloading dialog cancel button.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_cancel">Avbryt</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog body text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_body">Opne det i menyen</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog ok button text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_ok">OK, eg forstår det</string>
+
+    <!-- This string is displayed in the Addon download error dialog ok button text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_ok">Ok</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_success_dialog_ok">Ok</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_error_dialog_ok">Ok</string>
+
+    <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
+    <string name="addons_permissions_learn_more">Les meir om løyve</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
@@ -1213,6 +1302,18 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Ei liste over nettstadar med løyve vert viste her.</string>
 
+    <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
+    <string name="privacy_options_saved_logins_list_header">Lagra innloggingar:</string>
+
+    <!-- This string labels the Reset button that restores the default saved logins settings values. -->
+    <string name="privacy_options_saved_logins_reset">Tilbakestill innstillingar for lagra innloggingar</string>
+
+    <!-- This string labels the Clear All button that removes all the saved logins from the stored saved logins. -->
+    <string name="privacy_options_saved_logins_clear_all">Fjern alle</string>
+
+    <!-- This string labels the Delete button from the Login edit dialog deletes the current login. -->
+    <string name="privacy_options_saved_login_delete">Slett</string>
+
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
     <string name="privacy_options_tracking"><![CDATA[Utvida sporingsvern. (<a href="%1$s">Les meir</a>)]]></string>
@@ -1220,6 +1321,12 @@
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avansert</string>
+
+    <!-- This string labels the description of the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins">Innloggingar og passord</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins_button">Avansert</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Bruk standard kontrollinnstillingar</string>
@@ -1490,6 +1597,14 @@
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">Lat att nedlastingar</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, opens the library panel. -->
+    <string name="open_library_tooltip">Opne biblioteket</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, closes the Library panel. -->
+    <string name="close_library_tooltip">Lat att biblioteket</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
          Navigation Bar. The button it labels, when pressed, open the release notes page. -->
     <string name="whats_new_tooltip">Kva er nytt</string>
@@ -1602,6 +1717,12 @@
     <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
     <string name="url_downloads_title">Nedlastingar</string>
 
+    <!-- This string is displayed in the URL bar when the user is in the addons panel -->
+    <string name="url_addons_title">Tillegg</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the Library panel -->
+    <string name="url_library_title">Bibliotek</string>
+
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Tøm</string>
@@ -1690,6 +1811,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">Endre storleik på vindauge</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the addons panel -->
+    <string name="hamburger_menu_addons">Tillegg</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it switches User Agent from desktop to mobile and vice versa -->
@@ -1924,4 +2049,58 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Miljøfeil</string>
 
-    </resources>
+    <!-- This string is shown in the title of the auto-fill save dialog. This dialog is displayed when the user send a login form and the system
+    prompts the user to save that login to auto-fill the future. -->
+    <string name="autofill_dialog_save_title">Lagre denne innlogginga?</string>
+
+    <!-- This string is shown in the "Save" button of the auto-fill login save dialog. When pressed this will save the login information into the storage. -->
+    <string name="autofill_dialog_save_button_text">Lagre</string>
+
+    <!-- This string is shown in the "Never Save" button of the auto-fill llgin save dialog. When pressed this won't save the login information into the storage and also
+    add an exception rule so the user is not prompted in the future for that site. -->
+    <string name="autofill_dialog_never_save_button_text">Lagre aldri</string>
+
+    <!-- This string is shown in the "username" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_username_text">Brukarnamn</string>
+
+    <!-- This string is shown in the "password" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_password_text">Passord</string>
+
+    <!-- This string is shown in the title of the select login dialog. -->
+    <string name="autofill_dialog_use_login_title_text">Bruk lagra innlogging</string>
+
+    <!-- This string is shown in the "settings" button of the select login dialog. When pressed the saved logins settings panel would be displayed.-->
+    <string name="autofill_dialog_use_login_settings_button">Innstillingar…</string>
+
+    <!-- This string is shown in the saved logins list items for autogenerated logins.-->
+    <string name="autofill_item_autogenerated">Autogenerert</string>
+
+    <!-- This string is shown inside the "Open" button of the edit login dialog. When pressed the site URL is opened.-->
+    <string name="login_edit_dialog_site_button">Opne</string>
+
+    <!-- This string is shown in the "Open" button description of the edit login dialog. -->
+    <string name="login_edit_dialog_site_description">Nettstad</string>
+
+    <!-- This string is shown as the description that is shown in front of the the username input field in the login edit dialog. -->
+    <string name="login_edit_dialog_username_description">Brukarnamn</string>
+
+    <!-- This string is shown as the description that is shown in front of the the password input field in the login edit dialog. -->
+    <string name="login_edit_dialog_password_description">Passord</string>
+
+    <!-- This string is shown under the password text edit in the Login edit dialog when the password is left empty. -->
+    <string name="login_edit_password_empty_error">Passordfeltet kan ikkje stå tomt</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a username. -->
+    <string name="username_hint">brukarnamn</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a password. -->
+    <string name="password_hint">passord</string>
+
+    <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
+    <string name="tray_wifi_no_connection">Inga tilkopling</string>
+
+    <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with headset battery level. -->
+    <string name="tray_status_headset">Hovudsett: %1$s</string>
+
+</resources>

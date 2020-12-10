@@ -147,12 +147,18 @@
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
     <string name="settings_privacy_policy_tracking_reset">Réinitialise les exceptions pour la protection renforcée contre le pistage.</string>
 
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_title">Exceptions d’identifiants</string>
+
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_login_exceptions_description">Les identifiants qui ne sont pas enregistrés seront affichés ici</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
      when there are no exceptions. -->
     <string name="settings_privacy_policy_login_exceptions_empty_description">Les identifiants qui ne sont pas enregistrés seront affichés ici.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_login_exceptions_reset">Réinitialiser les exceptions d’identifiants.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Autoriser</string>
@@ -1139,6 +1145,12 @@
          'Close' refers to closing the Addons panel and showing the latest active tab. -->
     <string name="addons_close_tooltip">Fermer les modules</string>
 
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is enabled. -->
+    <string name="addons_details_enabled">Activé</string>
+
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is disabled. -->
+    <string name="addons_details_disabled">Désactivé</string>
+
     <!-- This string is displayed in the Addon Details "Run in private browsing" switch text that determines if the Addon will run in private browsing mode. -->
     <string name="addons_details_private_mode">Exécuter en navigation privée</string>
 
@@ -1158,6 +1170,10 @@
      %1$s will be replaced by the add-on name -->
     <string name="addons_install_dialog_title">Ajouter %1$s ?</string>
 
+    <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the permissions list-->
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Demande votre permission pour :<ul>%1$s</ul></p>]]></string>
+
     <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
     This dialog is displayed when an addon is installed. -->
     <string name="addons_install_dialog_cancel">Annuler</string>
@@ -1173,6 +1189,12 @@
     <!-- This string is displayed in the Addon downloading dialog cancel button.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
     <string name="addons_downloading_dialog_cancel">Annuler</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog title text.
+    This dialog is displayed after the addon downloading dialog if the addon has been successfully installed.
+    '%1$s' will be replaced at runtime with the add-on name.
+    '%2$s' will be replaced at runtime with the app name. -->
+    <string name="addons_download_success_dialog_title">%1$s a été ajouté à %2$s</string>
 
     <!-- This string is displayed in the Addon downloaded dialog body text.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
@@ -1313,6 +1335,17 @@
     <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Une liste de sites avec leurs autorisations apparaîtra ici.</string>
+
+    <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
+    <string name="privacy_options_saved_logins_list_header">Identifiants enregistrés :</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
+         when there are saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_first">Lorsqu’un identifiant peut être enregistré, vous verrez une boîte de dialogue qui vous permet de l’enregistrer.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of the saved logins instead of the logins list
+         when there are no saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_second">Une liste des identifiants enregistrés apparaîtra ici.</string>
 
     <!-- This string labels the Reset button that restores the default saved logins settings values. -->
     <string name="privacy_options_saved_logins_reset">Réinitialiser les paramètres des identifiants enregistrés</string>
@@ -1604,6 +1637,14 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">Fermer les téléchargements</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, opens the library panel. -->
+    <string name="open_library_tooltip">Ouvrir la bibliothèque</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, closes the Library panel. -->
+    <string name="close_library_tooltip">Fermer la bibliothèque</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
          Navigation Bar. The button it labels, when pressed, open the release notes page. -->
@@ -2098,4 +2139,16 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
     <string name="tray_wifi_no_connection">Aucune connexion</string>
 
-    </resources>
+    <!-- This string is shown in the tooltip of the left controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the left controller battery level. -->
+    <string name="tray_status_left_controller">Manette gauche : %1$s</string>
+
+    <!-- This string is shown in the tooltip of the right controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the right controller battery level. -->
+    <string name="tray_status_right_controller">Manette droite : %1$s</string>
+
+    <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with headset battery level. -->
+    <string name="tray_status_headset">Casque : %1$s</string>
+
+</resources>
