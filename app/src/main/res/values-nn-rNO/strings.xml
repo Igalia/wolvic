@@ -1180,26 +1180,54 @@
     This dialog is displayed when an addon is installed. -->
     <string name="addons_install_dialog_add">Legg til</string>
 
+    <!-- This string is displayed in the Addon downloading dialog title text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_title">Lastar ned og stadfestar tiillegget…</string>
+
     <!-- This string is displayed in the Addon downloading dialog cancel button.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
     <string name="addons_downloading_dialog_cancel">Avbryt</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog title text.
+    This dialog is displayed after the addon downloading dialog if the addon has been successfully installed.
+    '%1$s' will be replaced at runtime with the add-on name.
+    '%2$s' will be replaced at runtime with the app name. -->
+    <string name="addons_download_success_dialog_title">%1$s vart lagt til i %2$s</string>
 
     <!-- This string is displayed in the Addon downloaded dialog body text.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
     <string name="addons_download_success_dialog_body">Opne det i menyen</string>
 
+    <!-- This string is displayed in the Addon downloaded dialog checkbox text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_checkbox">Tillat i privat nettlesing</string>
+
     <!-- This string is displayed in the Addon downloaded dialog ok button text.
     This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
     <string name="addons_download_success_dialog_ok">OK, eg forstår det</string>
+
+    <!-- This string is displayed in the Addon download error dialog title text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_title">Det oppstod ein feil under nedlastinga. Prøv på nytt.</string>
 
     <!-- This string is displayed in the Addon download error dialog ok button text.
     This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
     <string name="addons_download_error_dialog_ok">Ok</string>
 
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_success_dialog_title">%1$s vart avinstallert</string>
+
     <!-- This string is displayed in the remove Addon dialog button text.
     This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
     If the button is clicked, the dialog is dismissed. -->
     <string name="addons_remove_success_dialog_ok">Ok</string>
+
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_error_dialog_title">Ein feil oppstod under fjerning av %1$s</string>
 
     <!-- This string is displayed in the remove Addon dialog button text.
     This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
@@ -1221,6 +1249,10 @@
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">Når du loggar deg ut, vil du ikkje kunne sende eller motta faner frå andre einingar. Bokmerka og historikken din sluttar også å synkronisere.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox_v1">Fjern historikk, bokmerke og innlogginar frå denne eininga</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1304,6 +1336,14 @@
 
     <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
     <string name="privacy_options_saved_logins_list_header">Lagra innloggingar:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
+         when there are saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_first">Når ei innlogging kan lagrast, vil du sjå eit dialogvindauge som lèt deg lagre henne.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of the saved logins instead of the logins list
+         when there are no saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_second">Ei liste over lagra innloggingar vert viste her.</string>
 
     <!-- This string labels the Reset button that restores the default saved logins settings values. -->
     <string name="privacy_options_saved_logins_reset">Tilbakestill innstillingar for lagra innloggingar</string>
@@ -2098,6 +2138,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
     <string name="tray_wifi_no_connection">Inga tilkopling</string>
+
+    <!-- This string is shown in the tooltip of the left controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the left controller battery level. -->
+    <string name="tray_status_left_controller">Venstre kontrollar: %1$s</string>
+
+    <!-- This string is shown in the tooltip of the right controller status bar icon when hovered.
+    '%1$s' Will be replaced at runtime with the right controller battery level. -->
+    <string name="tray_status_right_controller">Høgre kontrollar: %1$s</string>
 
     <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
     '%1$s' Will be replaced at runtime with headset battery level. -->

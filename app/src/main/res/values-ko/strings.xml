@@ -743,7 +743,7 @@
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable media autoplay. -->
-    <string name="security_options_autoplay">미디어 자동재생</string>
+    <string name="security_options_autoplay">미디어 자동 재생</string>
 
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
