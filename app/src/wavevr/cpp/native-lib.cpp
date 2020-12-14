@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
       {WVR_InputId_Alias1_Menu, WVR_InputType_Button, WVR_AnalogType_None},
       {WVR_InputId_Alias1_Touchpad, WVR_InputType_Button | WVR_InputType_Touch | WVR_InputType_Analog, WVR_AnalogType_2D},
       {WVR_InputId_Alias1_Trigger, WVR_InputType_Button , WVR_AnalogType_None},
-      {WVR_InputId_Alias1_Digital_Trigger, WVR_InputType_Button , WVR_AnalogType_None},
+      {WVR_InputId_Alias1_Bumper, WVR_InputType_Button , WVR_AnalogType_None},
       {WVR_InputId_Alias1_Grip, WVR_InputType_Button , WVR_AnalogType_None}
   };
   WVR_SetInputRequest(WVR_DeviceType_HMD, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));

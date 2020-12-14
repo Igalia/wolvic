@@ -162,7 +162,7 @@ set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
 
 add_library(wavevr-lib SHARED IMPORTED)
 set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client/jni/${ANDROID_ABI}/libwvr_api.so )
+                      ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client-${WAVE_SDK_VERSION}/jni/${ANDROID_ABI}/libwvr_api.so )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this

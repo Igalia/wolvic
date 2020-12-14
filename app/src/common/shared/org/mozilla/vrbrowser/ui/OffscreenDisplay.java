@@ -87,7 +87,7 @@ public class OffscreenDisplay {
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
             defaultDisplay.getMetrics(mDefaultMetrics);
 
-            mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews", mWidth, mHeight,
+            mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews Overlay", mWidth, mHeight,
                     mDefaultMetrics.densityDpi, mSurface, flags);
         }
 
