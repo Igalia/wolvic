@@ -94,6 +94,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REMOVE_WIDGET;
@@ -155,7 +156,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final long RESET_CRASH_COUNT_DELAY = 5000;
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
-    HashMap<Integer, Widget> mWidgets;
+    ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
     AudioEngine mAudioEngine;
     OffscreenDisplay mOffscreenDisplay;
@@ -267,7 +268,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
 
-        mWidgets = new HashMap<>();
+        mWidgets = new ConcurrentHashMap<>();
         mWidgetContainer = new FrameLayout(this);
 
         mPermissionDelegate = new PermissionDelegate(this, this);
