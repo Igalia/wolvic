@@ -315,7 +315,9 @@ public class GleanMetricsService {
 
     public static void openWindowEvent(int windowId) {
          GleanTimerId timerId = Windows.INSTANCE.duration().start();
-         windowLifeTimerId.put(windowId, timerId);
+         if (timerId != null) {
+            windowLifeTimerId.put(windowId, timerId);
+         }
     }
 
     public static void closeWindowEvent(int windowId) {
