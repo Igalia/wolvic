@@ -7,7 +7,9 @@ const YT_SELECTORS = {
   embedPlayer: '.html5-video-player',
   largePlayButton: '.ytp-large-play-button',
   thumbnail: '.ytp-cued-thumbnail-overlay-image',
-  queueHandle: 'player-controls-bottom',
+  embedTitle: 'title',
+  description: '.style-scope .ytd-expander',
+  queueHandle: 'ytd-playlist-panel-video-renderer',
   playbackControls: '.ytp-chrome-bottom',
   overlays: '.videowall-endscreen, .ytp-upnext, .ytp-ce-element'
 };
@@ -71,32 +73,42 @@ class YoutubeExtension {
         this.retry("overrideQuality", () => this.overrideQuality());
     }
 
-    getMeta(metaName) {
-      const metas = document.getElementsByTagName('meta');
-
-      for (let i = 0; i < metas.length; i++) {
-        if (metas[i].getAttribute('name') === metaName) {
-          return metas[i].getAttribute('content');
-        }
-      }
-
-      return '';
+    is360(text) {
+        return text.includes('360');
     }
 
     is360Video() {
-        return this.getMeta("description").indexOf("360") !== -1 || this.getMeta("keywords").indexOf("360") !== -1;
+        const targets = [
+            document.querySelector(YT_SELECTORS.embedTitle),
+            document.querySelector(YT_SELECTORS.description)
+        ];
+        return targets.some((node) => node && this.is360(node.textContent));
+    }
+
+    isStereo(text) {
+        const words = text.toLowerCase().split(/\s+|\./);
+        return words.includes('stereo') || words.includes('3d');
     }
 
     isStereoVideo() {
-        return this.getMeta("description").indexOf("stereo") !== -1 || this.getMeta("keywords").indexOf("stereo") !== -1 ||
-            this.getMeta("description").indexOf("3d") !== -1 || this.getMeta("keywords").indexOf("3d") !== -1 ||
-            this.getMeta("description").indexOf("vr") !== -1 || this.getMeta("keywords").indexOf("vr") !== -1;
+        const targets = [
+            document.querySelector(YT_SELECTORS.embedTitle),
+            document.querySelector(YT_SELECTORS.description)
+        ];
+        return targets.some((node) => node && this.isStereo(node.textContent));
     }
 
-    isSBS() {
-            return this.getMeta("description").indexOf("sbs") !== -1 || this.getMeta("keywords").indexOf("sbs") !== -1 ||
-                this.getMeta("description").indexOf("side by side") !== -1 || this.getMeta("keywords").indexOf("side by side") !== -1;
-        }
+    isSBS(text) {
+        return text.toLowerCase().includes('sbs') || text.toLowerCase().includes('side by side');
+    }
+
+    isSBSVideo() {
+        const targets = [
+            document.querySelector(YT_SELECTORS.embedTitle),
+            document.querySelector(YT_SELECTORS.description)
+        ];
+        return targets.some((node) => node && this.isSBS(node.textContent));
+    }
 
     // Automatically select a video projection if needed
     overrideVideoProjection() {
@@ -112,13 +124,15 @@ class YoutubeExtension {
         }
         // There is no standard API to detect video projection yet.
         // Try to infer it from the video disclaimer or title for now.
-        if (this.is360Video()) {
-            qs.set('mozVideoProjection', this.isStereoVideo() ? '360s_auto' : '360_auto');
-            this.updateURL(qs);
-            this.updateVideoStyle();
-            logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
-        } else if (this.isSBS()) {
-            qs.set('mozVideoProjection', '3d_auto');
+        let projection =  null;
+        if (this.isSBSVideo()) {
+            projection = '3d_auto';
+        } else if (this.is360Video()) {
+            projection = this.isStereoVideo() ? '360s_auto' : '360_auto';
+        }
+
+        if (projection !== null) {
+            qs.set('mozVideoProjection', projection);
             this.updateURL(qs);
             this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
@@ -155,8 +169,11 @@ class YoutubeExtension {
             player.requestFullscreen();
             // Force video play when entering immersive mode.
             setTimeout(() => this.retry("PlayVideo", () => {
-                player.playVideo();
-                return !this.getVideo().paused;
+                const paused = this.getVideo().paused;
+                if (paused) {
+                     player.playVideo();
+                }
+                return !paused;
             }), 200);
         }
     }
@@ -208,12 +225,27 @@ class YoutubeExtension {
         return false;
     }
 
+    playerControlsMarginFix() {
+        if (youtube.isInFullscreen()) {
+            if (window.innerHeight < CHROME_CONTROLS_MIN_WIDTH) {
+              var of = CHROME_CONTROLS_MIN_WIDTH - window.innerHeight;
+              document.querySelector(".ytp-chrome-bottom").style.setProperty("margin-bottom", `${of}px`)
+            } else {
+              document.querySelector(".ytp-chrome-bottom").style.removeProperty("margin-bottom")
+            }
+
+        } else {
+            document.querySelector(".ytp-chrome-bottom").style.removeProperty("margin-bottom")
+        }
+    }
+
     playerFixes() {
         this.overrideVideoProjection();
         this.overrideQualityRetry();
         this.hideOverlaysFix();
         this.queueContextMenuFix();
         this.videoControlsForwardFix();
+        this.playerControlsMarginFix();
     }
 
     // Runs the callback when the video is ready (has loaded the first frame).
@@ -345,8 +377,10 @@ window.addEventListener('load', () => {
         youtube.waitForVideoReady(() => youtube.playerFixes());
     }
 });
+window.addEventListener("resize", () => youtube.playerControlsMarginFix());
+document.addEventListener("fullscreenchange", () => youtube.playerControlsMarginFix());
 window.addEventListener('pushstate', () => youtube.overrideVideoProjection());
 window.addEventListener('popstate', () => youtube.overrideVideoProjection());
 window.addEventListener('click', event => youtube.overrideClick(event));
 window.addEventListener('mouseup', event => youtube.queueContextMenuFix());
-window.addEventListener("yt-navigate-finish", () => youtube.playerFixes());
+window.addEventListener("yt-navigate-finish", () => youtube.waitForVideoReady(() => youtube.playerFixes()));

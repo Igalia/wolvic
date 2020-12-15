@@ -1,4 +1,4 @@
-const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/11.1.0.1.64.238873877 SamsungBrowser/4.0 Chrome/84.0.4147.125 Mobile VR Safari/537.36';
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/13.0.0.7.16.261647641 SamsungBrowser/4.0 Chrome/87.0.4280.66 Mobile VR Safari/537.36';
 const targetUrls = [
     "https://*.youtube.com/*",
     "https://*.youtube-nocookie.com/*"
@@ -21,5 +21,29 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     overrideUA,
     { urls: targetUrls },
     ["blocking", "requestHeaders"]
-  );
-  
+);
+
+/**
+ * Always force a redirect  to the desktop site, otherwise we don't get 360 videos.
+ */
+function redirect(details) {
+    const uri = new URL(details.url);
+    const found = targetUrls.filter(function(pattern) {
+      return new RegExp(pattern).test(uri);
+    })
+
+    if (found) {
+        if (!uri.searchParams.has("app")) {
+            uri.searchParams.append('app', 'desktop');
+            return { redirectUrl: uri.href };
+        }
+    }
+
+    return { };
+}
+
+browser.webRequest.onBeforeRequest.addListener(
+    redirect,
+    { urls: targetUrls },
+    ["blocking"]
+);
