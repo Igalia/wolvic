@@ -102,6 +102,10 @@
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Privacidad &amp; Seguridad</string>
 
+    <!-- This string is used to label a button in the 'Saved Logins' dialog window that, when pressed,
+         opens a dialog box that contains a list of saved logins. -->
+    <string name="settings_privacy_saved_logins">Inicios de sesión guardados</string>
+
     <!-- This string is used inm the title of the settings panel for the Logins and Passwords management. -->
     <string name="settings_privacy_logins">Inicios de Sesión y Contraseñas</string>
 
@@ -122,6 +126,13 @@
 
     <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
     <string name="settings_privacy_policy_webxr_description">Los siguientes sitios no permiten que la API de WebXR acceda a tu dispositivo de realidad virtual.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">Cuando abres un sitio web que usa WebXR, puedes abrir un cuadro de diálogo que te permite bloquear WebXR en ese sitio.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">Restablecer los sitios no autorizados para acceder a dispositivos de realidad virtual.</string>
 
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_description">Has desactivado las protecciones en estos sitios web.</string>
@@ -483,6 +494,15 @@
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
 
+    <!-- This string is used to label the 'Internal Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_internal">Interno</string>
+
+    <!-- This string is used to label the 'External Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_external">Externo</string>
+
+    <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp">Estándar</string>
+
     <!-- This string is used to label the 'Strict' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_strict">Estricto</string>
 
@@ -580,11 +600,31 @@
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">Ajustes de sincronización</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
+    <string name="fxa_account_options_bookmarks_sync">Marcadores</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
+    <string name="fxa_account_options_history_sync">Historial</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Logins sync switch. -->
+    <string name="fxa_account_options_logins_sync">Inicios de sesión</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
+    <string name="fxa_account_options_reset">Restablecer</string>
+
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
     <string name="fxa_account_sing_to_sync">Iniciar sesión en la cuenta para sincronizar</string>
 
     <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
     <string name="fxa_account_sync_settings">Ajustes de sincronización</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced. -->
+    <string name="fxa_account_last_synced_now">Última sincronización ahora</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that the content has never been synced yet. -->
+    <string name="fxa_account_last_no_synced">Aún no sincronizado</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that the syncing is off. -->
@@ -593,6 +633,11 @@
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that there was an error while syncing. -->
     <string name="fxa_account_last_sync_error">Error de sincronización</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced some time ago.
+         '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
+    <string name="fxa_account_last_synced">Última sincronización hace %1$d minutos</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -633,6 +678,10 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Leer almacenamiento externo</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Cámara y micrófono</string>
+
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Bloquear ventanas emergentes</string>
@@ -640,6 +689,14 @@
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Avanzado</string>
+
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">Dispositivos de realidad virtual (WebXR)</string>
+
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         webxr blocked sites. -->
+    <string name="security_options_webxr_settings">Avanzado</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use.
@@ -669,6 +726,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Desactivado</string>
 
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="sync">Sincronizar</string>
+
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">¿Qué le gustaría buscar en Internet?</string>
@@ -692,6 +753,9 @@
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Permita el acceso al micrófono para usar la búsqueda por voz.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Cerrar</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
@@ -770,6 +834,9 @@
     <string name="video_controls_play">Reproducir</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_exit">Salir</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Pausar</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
@@ -836,6 +903,9 @@
          downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
     <string name="download_completed_notification">%1$s descargado</string>
 
+    <!-- This string is displayed in an error alert dialog when the user tries to download non http/https files. -->
+    <string name="download_error_protocol">Solo se admiten descargas http/https</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -883,6 +953,55 @@
          clearing history is displayed. -->
     <string name="history_clear">Limpiar historial</string>
 
+    <!-- This string is displayed as the title of the downloads list, which contains the user's downloaded files. -->
+    <string name="downloads_title">Descargas</string>
+
+    <!-- This string is displayed as the title of the downloads list when the downloads is empty. -->
+    <string name="downloads_empty">La lista de descargas está vacía</string>
+
+    <!-- This string is displayed in the "Delete All" button in the downloads list.
+         When pressed the all the downloads in the list are deleted both from the list and the disk. -->
+    <string name="downloads_delete">Eliminar todo</string>
+
+    <!-- This string is displayed in the "Sort By" button in the downloads list.
+         When pressed a dropdown menu is displayed with the sorting options. -->
+    <string name="downloads_sort">Ordenar por</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetically order from Z to A. -->
+    <string name="downloads_filename_sort_za">Por nombre (de Z a A)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_date_asc">Más antiguos</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_date_desc">Más recientes</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_size_asc">Menor tamaño</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_size_desc">Mayor tamaño</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">Sincronizar</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">Sincronizando…</string>
+
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">Cerrar sesión</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">Cancelar</string>
+
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
     <string name="history_clear_cancel">Cancelar</string>
@@ -916,12 +1035,21 @@
     <string name="history_context_menu_new_window">Abrir en una ventana nueva</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">Abrir en pestaña nueva</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
     <string name="history_context_add_bookmarks">Agregar a marcadores</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It removes the selected item from favorites. -->
     <string name="history_context_remove_bookmarks">Eliminar de marcadores</string>
+
+    <!-- This string is displayed is the downloads context menu that is displayed when
+         the more button is pressed in a downloads item. It deletes the selected item from the downloads list
+         and also from disk. -->
+    <string name="download_context_delete">Eliminar</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Restablecer los ajustes de visualización</string>
@@ -934,6 +1062,18 @@
 
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Restablecer configuración de ventanas emergentes</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">Una lista de sitios con permisos aparecerá aquí.</string>
+
+    <!-- This string is used to label radio buttons for setting ETP in.
+         '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
+    <string name="privacy_options_tracking"><![CDATA[Protección mejorada contra el rastreo. (<a href="%1$s">Saber más</a>)]]></string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Restablecer ajustes del controlador</string>

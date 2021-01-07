@@ -701,7 +701,7 @@
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
-    <string name="security_options_drm_content_v1"><![CDATA[Разрешать сайтам идентифицировать ваше устройство для воспроизведения DRM-управляемого содержимого автоматически. (<a href="%1$s">Узнать больше</a>)]]></string>
+    <string name="security_options_drm_content_v1"><![CDATA[Разрешать сайтам идентифицировать ваше устройство для воспроизведения защищённого DRM содержимого автоматически. (<a href="%1$s">Узнать больше</a>)]]></string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
@@ -1551,7 +1551,7 @@
     <string name="context_menu_view_audio">Открыть аудио</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
-    <string name="context_menu_download_link">Загрузить ссылку</string>
+    <string name="context_menu_download_link">Загрузить по ссылке</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the video element download. -->
     <string name="context_menu_download_video">Загрузить видео</string>

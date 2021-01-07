@@ -717,6 +717,10 @@
     <string name="security_options_login_save">Lagre innloggingar og passord</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
+    <string name="security_options_login_autofill">Autofyll</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
      and is used to enable or disable login sync with Firefox Account. If disabled the logins
      won't be synced with the Firefox Account. -->
     <string name="security_options_login_sync">Synkroniser innloggingar med Firefox-kontoar</string>
