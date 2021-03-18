@@ -11,15 +11,23 @@
 #include "vrb/CameraEye.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
+#include "vrb/CreationContext.h"
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
 #include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
+#include "vrb/VertexArray.h"
+#include "vrb/ProgramFactory.h"
+#include "vrb/RenderState.h"
+#include "vrb/Geometry.h"
+#include "vrb/Group.h"
+#include "vrb/TextureGL.h"
 #include "../../main/cpp/DeviceDelegate.h"
 
 #include <array>
 #include <vector>
+#include <mutex>
 
 #include <wvr/wvr.h>
 #include <wvr/wvr_render.h>
@@ -29,6 +37,7 @@
 #include <wvr/wvr_system.h>
 #include <wvr/wvr_events.h>
 #include <wvr/wvr_arena.h>
+#include <wvr/wvr_ctrller_render_model.h>
 
 namespace crow {
 
@@ -97,6 +106,9 @@ struct DeviceDelegateWaveVR::State {
   bool ignoreNextRecenter;
   int32_t sixDoFControllerCount;
   bool handsCalculated;
+  WVR_CtrlerModel_t * modelCachedData[2];
+  bool isModelDataReady[2];
+  std::mutex mCachedDataMutex[2];
   State()
       : isRunning(true)
       , near(0.1f)
@@ -117,8 +129,12 @@ struct DeviceDelegateWaveVR::State {
       , ignoreNextRecenter(false)
       , sixDoFControllerCount(0)
       , handsCalculated(false)
+      , modelCachedData {}
+      , isModelDataReady {}
   {
-    memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
+    memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * 2);
+    memset((void*)modelCachedData, 0, sizeof(WVR_CtrlerModel_t) * 2);
+    memset((void*)isModelDataReady, 0, sizeof(bool) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
     for (int32_t index = 0; index < kMaxControllerCount; index++) {
       controllers[index].index = index;
@@ -195,6 +211,21 @@ struct DeviceDelegateWaveVR::State {
     cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     InitializeCameras();
 
+    // Set the input keys that we are using.
+    WVR_InputAttribute inputIdAndTypes[] = {
+            {WVR_InputId_Alias1_Menu, WVR_InputType_Button, WVR_AnalogType_None},
+            {WVR_InputId_Alias1_Touchpad, WVR_InputType_Button | WVR_InputType_Touch | WVR_InputType_Analog, WVR_AnalogType_2D},
+            {WVR_InputId_Alias1_Trigger, WVR_InputType_Button , WVR_AnalogType_None},
+            {WVR_InputId_Alias1_Bumper, WVR_InputType_Button , WVR_AnalogType_None},
+            {WVR_InputId_Alias1_Grip, WVR_InputType_Button , WVR_AnalogType_None},
+            {WVR_InputId_Alias1_A, WVR_InputType_Button , WVR_AnalogType_None},
+            {WVR_InputId_Alias1_B, WVR_InputType_Button , WVR_AnalogType_None},
+            {WVR_InputId_Alias1_Thumbstick, WVR_InputType_Button | WVR_InputType_Touch | WVR_InputType_Analog, WVR_AnalogType_2D},
+    };
+    WVR_SetInputRequest(WVR_DeviceType_HMD, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+    WVR_SetInputRequest(WVR_DeviceType_Controller_Right, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+    WVR_SetInputRequest(WVR_DeviceType_Controller_Left, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+
     elbow = ElbowModel::Create();
   }
 
@@ -263,8 +294,8 @@ struct DeviceDelegateWaveVR::State {
     if (aController.is6DoF) {
       beamTransform.TranslateInPlace(vrb::Vector(0.0f, 0.01f, -0.05f));
     }
-    delegate->CreateController(aController.index, aController.is6DoF ? 1 : 0,
-            aController.is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller",
+    delegate->CreateController(aController.index, aController.is6DoF ? static_cast<int>(aController.hand) : 0,
+            aController.is6DoF ? "HTC Vive 6DoF Controller" : "HTC Vive 3DoF Controller",
             beamTransform);
     delegate->SetLeftHanded(aController.index, aController.hand == ElbowModel::HandEnum::Left);
     delegate->SetHapticCount(aController.index, 1);
@@ -332,8 +363,33 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetCapabilityFlags(controller.index, flags);
       }
 
+      uint32_t ctl_button = WVR_GetInputDeviceCapability(controller.type, WVR_InputType_Button);
+      uint32_t ctl_touch = WVR_GetInputDeviceCapability(controller.type, WVR_InputType_Touch);
+      uint32_t ctl_analog = WVR_GetInputDeviceCapability(controller.type, WVR_InputType_Analog);
+
       const bool bumperPressed = (controller.is6DoF) ? WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger)
                                   : WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper);
+
+      // ABXY buttons
+      if (ctl_button & WVR_InputId_Alias1_A) {
+        const bool aPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_A);
+        const bool aTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_A);
+        if (controller.hand == ElbowModel::HandEnum::Left) {
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_X, device::kImmersiveButtonA, aPressed, aTouched);
+        } else if (controller.hand == ElbowModel::HandEnum::Right) {
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_A, device::kImmersiveButtonA, aPressed, aTouched);
+        }
+      }
+      if (ctl_button & WVR_InputId_Alias1_B) {
+        const bool bPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_B);
+        const bool bTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_B);
+        if (controller.hand == ElbowModel::HandEnum::Left) {
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_Y, device::kImmersiveButtonB, bPressed, bTouched);
+        } else if (controller.hand == ElbowModel::HandEnum::Right) {
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_B, device::kImmersiveButtonB, bPressed, bTouched);
+        }
+      }
+
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
@@ -376,21 +432,41 @@ struct DeviceDelegateWaveVR::State {
       }
       delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
 
-      const int32_t kNumAxes = 2;
-      float immersiveAxes[kNumAxes] = { 0.0f, 0.0f };
-
+      float axisX, axisY = 0.0f;
       if (touchpadTouched) {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
-        // We are matching touch pad range from {-1, 1} to the Oculus {0, 1}.
-        delegate->SetTouchPosition(controller.index, (axis.x + 1) * 0.5, (-axis.y + 1) * 0.5);
-        immersiveAxes[device::kImmersiveAxisTouchpadX] = axis.x;
-        immersiveAxes[device::kImmersiveAxisTouchpadY] = -axis.y;
-        controller.touched = true;
+        axisX = axis.x;
+        axisY = -axis.y;
+        // In case we have thumbstick we don't send the touchpad touched event
+        if (!(ctl_touch & WVR_InputId_Alias1_Thumbstick)) {
+          // We are matching touch pad range from {-1, 1} to the Oculus {0, 1}.
+          delegate->SetTouchPosition(controller.index, (axis.x + 1) * 0.5, (-axis.y + 1) * 0.5);
+          controller.touched = true;
+        }
+        delegate->SetScrolledDelta(
+                controller.index,
+                -axis.x, axis.y);
       } else if (controller.touched) {
-        controller.touched = false;
-        delegate->EndTouch(controller.index);
+        if (!(ctl_touch & WVR_InputId_Alias1_Thumbstick)) {
+          controller.touched = false;
+          delegate->EndTouch(controller.index);
+        }
       }
-      delegate->SetAxes(controller.index, immersiveAxes, kNumAxes);
+
+      if (controller.is6DoF) {
+        const int32_t kNumAxes = 4;
+        float immersiveAxes[kNumAxes];
+        immersiveAxes[device::kImmersiveAxisTouchpadX] = immersiveAxes[device::kImmersiveAxisTouchpadY] = 0.0f;
+        immersiveAxes[device::kImmersiveAxisThumbstickX] = axisX;
+        immersiveAxes[device::kImmersiveAxisThumbstickY] = axisY;
+        delegate->SetAxes(controller.index, immersiveAxes, kNumAxes);
+      } else {
+        const int32_t kNumAxes = 2;
+        float immersiveAxes[kNumAxes] = { 0.0f, 0.0f };
+        immersiveAxes[device::kImmersiveAxisTouchpadX] = axisX;
+        immersiveAxes[device::kImmersiveAxisTouchpadY] = axisY;
+        delegate->SetAxes(controller.index, immersiveAxes, kNumAxes);
+      }
 
       UpdateHaptics(controller);
     }
@@ -612,16 +688,6 @@ DeviceDelegateWaveVR::ReleaseControllerDelegate() {
 int32_t
 DeviceDelegateWaveVR::GetControllerModelCount() const {
   return 2;
-}
-
-const std::string
-DeviceDelegateWaveVR::GetControllerModelName(const int32_t aModelIndex) const {
-  if (aModelIndex == 0) {
-    return "vr_controller_focus.obj";
-  } else if (aModelIndex == 1) {
-    return "vr_controller_focus_plus.obj";
-  }
-  return "";
 }
 
 // #define VRB_WAVE_EVENT_LOG_ENABLED 1
@@ -931,12 +997,183 @@ DeviceDelegateWaveVR::EndFrame(const FrameEndMode aMode) {
   }
 }
 
+vrb::LoadTask DeviceDelegateWaveVR::GetControllerModelTask(int32_t aModelIndex) {
+  vrb::RenderContextPtr localContext = m.context.lock();
+  if (!localContext) {
+    return nullptr;
+  }
+
+  return [this, aModelIndex](vrb::CreationContextPtr& aContext) -> vrb::GroupPtr {
+      vrb::GroupPtr root = vrb::Group::Create(aContext);
+      auto hand = static_cast<ElbowModel::HandEnum>(aModelIndex);
+
+      // Load controller model from SDK
+      VRB_LOG("[WaveVR] (%p) Loading internal controller model: %d", this, aModelIndex);
+      WVR_DeviceType mCtrlerType = hand == ElbowModel::HandEnum::Left ? WVR_DeviceType_Controller_Left : WVR_DeviceType_Controller_Right;
+      {//Critical Section: Clear flag and cached parsed data.
+        std::lock_guard<std::mutex> lockGuard(m.mCachedDataMutex[aModelIndex]);
+        if (m.modelCachedData[aModelIndex] != nullptr) {
+          WVR_ReleaseControllerModel(&m.modelCachedData[aModelIndex]); //we will clear cached data ptr to nullptr.
+        }
+        m.isModelDataReady[aModelIndex] = false;
+      }//Critical Section: Clear flag and cached parsed data.(End)
+      //2. Load ctrler model data.
+      WVR_Result result = WVR_GetCurrentControllerModel(mCtrlerType, &m.modelCachedData[aModelIndex]);
+      if (result == WVR_Success) {
+        {//Critical Section: Set data ready flag.
+          std::lock_guard<std::mutex> lockGuard(m.mCachedDataMutex[aModelIndex]);
+          VRB_LOG("[WaveVR] (%d[%p]) Controller model from the SDK successfully loaded: %d", mCtrlerType, this, hand)
+          m.isModelDataReady[aModelIndex] = true;
+        }//Critical Section: Set data ready flag.(End)
+      } else {
+        VRB_LOG("[WaveVR] (%d[%p]): Load fail. Reason(%d)", mCtrlerType, this, result);
+      }
+
+      if (m.isModelDataReady[aModelIndex]) {
+        timespec start;
+        clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start);
+
+        // Initialize textures
+        WVR_CtrlerTexBitmapTable_t& comp_Textures = (*m.modelCachedData[aModelIndex]).bitmapInfos;
+        uint32_t wvrBitmapSize = comp_Textures.size;
+        std::vector<vrb::TextureGLPtr> mTextureTable(wvrBitmapSize);
+        VRB_LOG("[WaveVR] (%d[%p]): Initialize WVRTextures(%d)", mCtrlerType, this, wvrBitmapSize);
+        for (uint32_t texID = 0; texID < wvrBitmapSize; ++texID) {
+          vrb::TextureGLPtr texture = vrb::TextureGL::Create(aContext);
+          size_t texture_size = comp_Textures.table[texID].stride * comp_Textures.table[texID].height;
+          std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(texture_size);
+          memcpy(data.get(), (void*)comp_Textures.table[texID].bitmap, texture_size);
+          texture->SetImageData(
+                  data,
+                  texture_size,
+                  comp_Textures.table[texID].width,
+                  comp_Textures.table[texID].height,
+                  GL_RGBA
+          );
+          mTextureTable[texID] = texture;
+        }
+
+        VRB_LOG("[WaveVR] (%d[%p]): Initialize meshes(%d)", mCtrlerType, this, (*m.modelCachedData[aModelIndex]).compInfos.size)
+        // Get only the body, we are not using other components right now.
+        for (uint32_t wvrCompID = 0; wvrCompID < 1 /*(*m.modelCachedData).compInfos.size*/; ++wvrCompID) {
+          char* name = (*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].name;
+          vrb::VertexArrayPtr array = vrb::VertexArray::Create(aContext);
+
+          // Vertices
+
+          WVR_VertexBuffer_t& comp_Vertices = (*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].vertices;
+          if (comp_Vertices.buffer == nullptr || comp_Vertices.size == 0 || comp_Vertices.dimension == 0) {
+              VRB_LOG("Parameter invalid!!! iData(%p), iSize(%u), iType(%u)", comp_Vertices.buffer, comp_Vertices.size, comp_Vertices.dimension);
+              return nullptr;
+          }
+
+          uint32_t vertices_dim = comp_Vertices.dimension;
+          if (vertices_dim == 3) {
+            for (auto i = 0; i < comp_Vertices.size; i+=vertices_dim) {
+              auto vertex = vrb::Vector(comp_Vertices.buffer[i],comp_Vertices.buffer[i+1],comp_Vertices.buffer[i+2]);
+              array->AppendVertex(vertex);
+            }
+          } else {
+            VRB_ERROR("[WaveVR] (%d[%p]): vertex with wrong dimension: %d", mCtrlerType, this, vertices_dim)
+          }
+
+          // Normals
+
+          WVR_VertexBuffer_t& comp_Normals = (*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].normals;
+          if (comp_Normals.buffer == nullptr || comp_Normals.size == 0 || comp_Normals.dimension == 0) {
+              VRB_LOG("Parameter invalid!!! iData(%p), iSize(%u), iType(%u)", comp_Normals.buffer, comp_Normals.size, comp_Normals.dimension);
+              return nullptr;
+          }
+
+          uint32_t normals_dim = comp_Normals.dimension;
+          if (normals_dim == 3) {
+            for (auto i = 0; i < comp_Normals.size; i+=normals_dim) {
+              auto normal = vrb::Vector(comp_Normals.buffer[i], comp_Normals.buffer[i+1],comp_Normals.buffer[i+2]).Normalize();
+              array->AppendNormal(normal);
+            }
+          } else {
+            VRB_ERROR("[WaveVR] (%d[%p]): normal with wrong dimension: %d", mCtrlerType, this, normals_dim)
+          }
+
+          WVR_VertexBuffer_t& comp_TextCoord = (*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].texCoords;
+          if (comp_TextCoord.buffer == nullptr || comp_TextCoord.size == 0 || comp_TextCoord.dimension == 0) {
+              VRB_LOG("Parameter invalid!!! iData(%p), iSize(%u), iType(%u)", comp_TextCoord.buffer, comp_TextCoord.size, comp_TextCoord.dimension);
+              return nullptr;
+          }
+
+          // UVs
+
+          uint32_t texCoords_dim = comp_TextCoord.dimension;
+          if (texCoords_dim == 2) {
+            for (auto i = 0; i < comp_TextCoord.size; i+=texCoords_dim) {
+              auto textCoord = vrb::Vector(comp_TextCoord.buffer[i],comp_TextCoord.buffer[i+1],0);
+              array->AppendUV(textCoord);
+            }
+          } else {
+            VRB_ERROR("[WaveVR] (%d[%p]): normal with wrong dimension: %d", mCtrlerType, this, texCoords_dim)
+          }
+
+          vrb::ProgramPtr program = aContext->GetProgramFactory()->CreateProgram(aContext, vrb::FeatureTexture);
+          vrb::RenderStatePtr state = vrb::RenderState::Create(aContext);
+          state->SetProgram(program);
+          state->SetMaterial(
+                  vrb::Color(1.0f, 1.0f, 1.0f),
+                  vrb::Color(1.0f, 1.0f, 1.0f),
+                  vrb::Color(0.0f, 0.0f, 0.0f),
+                  0.0f);
+          state->SetLightsEnabled(false);
+          state->SetTexture(mTextureTable[(*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].texIndex]);
+          vrb::GeometryPtr geometry = vrb::Geometry::Create(aContext);
+          geometry->SetName(name);
+          geometry->SetVertexArray(array);
+          geometry->SetRenderState(state);
+
+          // Indices
+
+          WVR_IndexBuffer_t& comp_Indices = (*m.modelCachedData[aModelIndex]).compInfos.table[wvrCompID].indices;
+          if (comp_Indices.buffer == nullptr || comp_Indices.size == 0 || comp_Indices.type == 0) {
+              VRB_ERROR("Parameter invalid!!! iData(%p), iSize(%u), iType(%u)", comp_Indices.buffer, comp_Indices.size, comp_Indices.type);
+              return nullptr;
+          }
+
+          uint32_t type = comp_Indices.type;
+          for (auto i = 0; i < comp_Indices.size; i += type) {
+            std::vector<int> indices;
+            for (auto j = 0; j < type; j++) {
+              indices.push_back(comp_Indices.buffer[i+j]+1);
+            }
+            geometry->AddFace(indices, indices, indices);
+          }
+
+          root->AddNode(geometry);
+        }
+
+        timespec end;
+        clock_gettime(CLOCK_THREAD_CPUTIME_ID, &end);
+        float time = (float) end.tv_sec + (((float) end.tv_nsec) / 1.0e9f) - ((float) start.tv_sec + (((float) start.tv_nsec) / 1.0e9f));
+
+        VRB_LOG("[WaveVR] (%d[%p]): Controller loaded in: %f", mCtrlerType, this, time)
+
+        return root;
+      } else {
+        return nullptr;
+      }
+  };
+}
+
 bool
 DeviceDelegateWaveVR::IsRunning() {
   return m.isRunning;
 }
 
 DeviceDelegateWaveVR::DeviceDelegateWaveVR(State& aState) : m(aState) {}
-DeviceDelegateWaveVR::~DeviceDelegateWaveVR() { m.Shutdown(); }
+DeviceDelegateWaveVR::~DeviceDelegateWaveVR() {
+  m.Shutdown();
+  for (auto index=0; index<2; index++) {
+    if (m.modelCachedData[index] != nullptr) {
+      WVR_ReleaseControllerModel(&m.modelCachedData[index]); //we will clear cached data ptr to nullptr.
+    }
+  }
+}
 
 } // namespace crow
