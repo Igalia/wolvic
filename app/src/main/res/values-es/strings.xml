@@ -719,6 +719,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">Autocompletado</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login sync with Firefox Account. If disabled the logins
+     won't be synced with the Firefox Account. -->
+    <string name="security_options_login_sync">Sincronizar inicios de sesión con cuentas de Firefox</string>
+
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the Firefox Accounts settings panel. -->
     <string name="security_options_login_fxa">Cuenta…</string>
@@ -1114,6 +1119,9 @@
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_loading">Cargando complementos</string>
 
+    <!-- This string is displayed under the addons title in the addons list. -->
+    <string name="addons_description">Descripción de los complementos</string>
+
     <!-- This string is displayed in the Addon Details description text when no description is available. -->
     <string name="addons_no_description">Sin descripción</string>
 
@@ -1154,12 +1162,101 @@
     <!-- This string is displayed in the Addon Details "Details" button text. When clicked the Adds Details view is displayed. -->
     <string name="addons_details_details">Detalles</string>
 
+    <!-- This string is displayed in the Addon Details "Permissions" button text. When clicked the Adds Permissions view is displayed. -->
+    <string name="addons_details_permissions">Permisos</string>
+
+    <!-- This string is displayed in the Addon Details "Remove" button text, if clicked it uninstalls the addon. -->
+    <string name="addons_details_remove">Eliminar complemento</string>
+
+    <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the add-on name -->
+    <string name="addons_install_dialog_title">¿Añadir %1$s?</string>
+
+    <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
+     %1$s will be replaced by the permissions list-->
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Necesita tu permiso para:<ul>%1$s</ul></p>]]></string>
+
+    <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_cancel">Cancelar</string>
+
+    <!-- This string is displayed in the Addon install dialog "Add" button, when pressed the dialog will be dismissed and the Addon install dialog will be displayed.
+    This dialog is displayed when an addon is installed. -->
+    <string name="addons_install_dialog_add">Añadir</string>
+
+    <!-- This string is displayed in the Addon downloading dialog title text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_title">Descargando y verificando el complemento…</string>
+
+    <!-- This string is displayed in the Addon downloading dialog cancel button.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_downloading_dialog_cancel">Cancelar</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog title text.
+    This dialog is displayed after the addon downloading dialog if the addon has been successfully installed.
+    '%1$s' will be replaced at runtime with the add-on name.
+    '%2$s' will be replaced at runtime with the app name. -->
+    <string name="addons_download_success_dialog_title">%1$s añadido a %2$s</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog body text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_body">Abrirlo en el menú</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog checkbox text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_checkbox">Permitir en navegación privada</string>
+
+    <!-- This string is displayed in the Addon downloaded dialog ok button text.
+    This dialog is displayed after the addon install dialog if the addon install is confirmed. -->
+    <string name="addons_download_success_dialog_ok">De acuerdo, entendido</string>
+
+    <!-- This string is displayed in the Addon download error dialog title text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_title">Ocurrió un error durante la descarga. Por favor, inténtalo de nuevo.</string>
+
+    <!-- This string is displayed in the Addon download error dialog ok button text.
+    This dialog is displayed after the addon downloading dialog if there was an error during the addon install. -->
+    <string name="addons_download_error_dialog_ok">Aceptar</string>
+
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_success_dialog_title">%1$s desinstalado correctamente</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon is successfully uninstalled.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_success_dialog_ok">Aceptar</string>
+
+    <!-- This string is displayed in the remove Addon error dialog title text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    '%1$' Will be replaced at runtime with the add-on name. -->
+    <string name="addons_remove_error_dialog_title">Se produjo un error al eliminar %1$s</string>
+
+    <!-- This string is displayed in the remove Addon dialog button text.
+    This dialog is displayed if the user clicks on the remove button from the Addon Details panel and the addon uninstall fails.
+    If the button is clicked, the dialog is dismissed. -->
+    <string name="addons_remove_error_dialog_ok">Aceptar</string>
+
+    <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
+    <string name="addons_permissions_learn_more">Saber más sobre permisos</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">Sincronizar</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Sincronizando…</string>
+
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">¿Salir de tu cuenta Firefox?</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">Cuando cierres la sesión, no podrás enviar ni recibir pestañas de otros dispositivos. Tus marcadores e historial también dejarán de sincronizarse.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox_v1">Borrar el historial, los marcadores y los inicios de sesión de este dispositivo</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1230,9 +1327,36 @@
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Restablecer configuración de ventanas emergentes</string>
 
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header_v1">Los siguientes sitios web tienen permiso para abrir ventanas emergentes:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">Cuando abres un sitio web con ventanas emergentes, verás un cuadro de diálogo que te permite bloquear ventanas emergentes.</string>
+
     <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Una lista de sitios con permisos aparecerá aquí.</string>
+
+    <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
+    <string name="privacy_options_saved_logins_list_header">Inicios de sesión guardados:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
+         when there are saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_first">Cuando se pueda guardar un inicio de sesión, verás un cuadro de diálogo que te permite guardarlo.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of the saved logins instead of the logins list
+         when there are no saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_second">Aquí aparecerá una lista de los inicios de sesión guardados.</string>
+
+    <!-- This string labels the Reset button that restores the default saved logins settings values. -->
+    <string name="privacy_options_saved_logins_reset">Restablecer los ajustes de inicios de sesión guardados</string>
+
+    <!-- This string labels the Clear All button that removes all the saved logins from the stored saved logins. -->
+    <string name="privacy_options_saved_logins_clear_all">Limpiar todo</string>
+
+    <!-- This string labels the Delete button from the Login edit dialog deletes the current login. -->
+    <string name="privacy_options_saved_login_delete">Eliminar</string>
 
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
@@ -1241,6 +1365,12 @@
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
+
+    <!-- This string labels the description of the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins">Inicios de sesión y contraseñas</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins_button">Avanzado</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Restablecer ajustes del controlador</string>
@@ -1334,6 +1464,26 @@
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Limpiar</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are not blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_tooltip_v1">Ventanas emergentes no bloqueadas</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_blocked_tooltip">Ventanas emergentes bloqueadas</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_enabled_tooltip">DRM permitido</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM not allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_disabled_tooltip">DRM no permitido</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Mostrar información del sitio</string>
@@ -1346,6 +1496,30 @@
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">Cambiar de tamaño</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_allowed_tooltip">WebXR permitido</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_blocked_tooltip">WebXR bloqueado</string>
+
+    <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
+     has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
+     \n is used to create a new line  -->
+    <string name="webxr_interstitial_exit_webxr">Salir de\nWebXR</string>
+
+    <!-- This string appears in the WebXR interstitial. -->
+    <string name="webxr_interstitial_how_to_continue_1">Pulsa cualquier botón para continuar</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
+    <string name="tracking_allowed_tooltip">La protección contra rastreo está activada</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
+    <string name="tracking_disabled_tooltip">La protección contra rastreo está desactivada</string>
+
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_enter_tooltip">Entrar a la navegación privada</string>
@@ -1354,8 +1528,50 @@
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_exit_tooltip">Salir de la navegación privada</string>
 
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window_1">Abrir en una nueva ventana</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_new_tab_1">Abrir en una nueva pestaña</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_link_new_window_1">Abrir enlace en una nueva ventana</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_link_new_tab_1">Abrir enlace en una nueva pestaña</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the image in the current window. -->
+    <string name="context_menu_view_image">Ver imagen</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the video in the current window. -->
+    <string name="context_menu_view_video">Ver video</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the audio in the current window. -->
+    <string name="context_menu_view_audio">Ver audio</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
+    <string name="context_menu_download_link">Descargar enlace</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the video element download. -->
+    <string name="context_menu_download_video">Descargar video</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the audio element download. -->
+    <string name="context_menu_download_audio">Descargar audio</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the image element download. -->
+    <string name="context_menu_download_image">Descargar imagen</string>
+
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copiar enlace</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the image uri to the clipboard -->
+    <string name="context_menu_copy_image_location">Copiar la ruta de la imagen</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the video uri to the clipboard -->
+    <string name="context_menu_copy_video_location">Copiar la ruta del video</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the audio uri to the clipboard -->
+    <string name="context_menu_copy_audio_location">Copiar la ruta del audio</string>
 
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
     <string name="context_menu_cut_text">Cortar</string>
@@ -1372,9 +1588,18 @@
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
     <string name="context_menu_unselect">Desmarcar</string>
 
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked search for the selected text in the active search engine.
+         '%1$s' will be replaced at runtime with the search engine name. -->
+    <string name="context_menu_web_search">Buscar con %1$s</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
     <string name="bookmark_tooltip">Agregar esta página a marcadores</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar if the site is already bookmarked. The button it labels, when pressed,
+         removes the currently open web site from bookmarks. -->
+    <string name="remove_bookmark_tooltip">Eliminar de marcadores</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          tray. The button it labels, when pressed, opens a list view of the user's saved
@@ -1406,6 +1631,26 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
     <string name="close_history_tooltip">Cerrar historial</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, opens a list view of the user's downloads. -->
+    <string name="open_downloads_tooltip">Abrir descargas</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
+    <string name="close_downloads_tooltip">Cerrar descargas</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, opens the library panel. -->
+    <string name="open_library_tooltip">Abrir biblioteca</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
+         tray and the Library view is closed. The button it labels, when pressed, closes the Library panel. -->
+    <string name="close_library_tooltip">Cerrar biblioteca</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="whats_new_tooltip">Novedades</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Eliminar todo</string>
@@ -1464,6 +1709,16 @@
     <string name="not_entitled_message">%1$s no tiene permiso para ejecutarse en este dispositivo y se cerrará.</string>
 
 
+    <!-- This string is displayed in the title of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_title">¿Abandonar la página?</string>
+
+    <!-- This string is displayed in the message of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_message">Esta página te está pidiendo confirmar que quieres abandonarla. Los datos que hayas introducido podrían no guardarse.</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it cancels the navigation and stays on the same page. -->
+    <string name="before_unload_prompt_stay">Permanecer en la página</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
+    <string name="before_unload_prompt_leave">Dejar la página</string>
+
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Desbloquear página</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1501,9 +1756,25 @@
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">Historial</string>
 
+    <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
+    <string name="url_downloads_title">Descargas</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the addons panel -->
+    <string name="url_addons_title">Complementos</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the Library panel -->
+    <string name="url_library_title">Biblioteca</string>
+
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Limpiar</string>
+
+    <!-- This string is displayed in the title of the pop-up blocking dialog.
+        '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title_v1">%1$s bloqueó una ventana emergente de este sitio</string>
+
+    <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
+    <string name="popup_block_description_v1">¿Quieres mostrarlos de todos modos?</string>
 
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
@@ -1512,6 +1783,10 @@
     <!-- This string is displayed on the left button of the pop-up blocking dialog.
          If the button is clicked the pop-up will be shown -->
     <string name="popup_block_button_show">Mostrar</string>
+
+    <!-- This string is displayed on the right button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be blocked -->
+    <string name="popup_block_button_cancel">Cancelar</string>
 
     <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
         it allows to select tabs from the tab -->
@@ -1566,5 +1841,130 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been added on the background. -->
     <string name="tab_added_notification">¡Nueva pestaña añadida!</string>
+  
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been sent. -->
+    <string name="tab_sent_notification">¡Pestaña enviada!</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the send tab dialog -->
+    <string name="hamburger_menu_send_tab">Enviar pestaña al dispositivo</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the window resize panel -->
+    <string name="hamburger_menu_resize">Cambiar tamaño de ventana</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the addons panel -->
+    <string name="hamburger_menu_addons">Complementos</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from desktop to mobile and vice versa -->
+    <string name="hamburger_menu_switch_to_desktop">Modo de escritorio</string>
+
+    <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
+    <string name="hamburger_menu_tooltip">Menú</string>
+
+    <!-- This string is displayed in the title of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_title">Enviar pestaña al dispositivo</string>
+
+    <!-- This string is displayed in the description of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_description">Elije un dispositivo para enviar la pestaña.</string>
+
+    <!-- This string is displayed on top of the available devices list. -->
+    <string name="send_tab_dialog_options_header">Dispositivos disponibles:</string>
+
+    <!-- This string is displayed instead of the devices list if there are no available devices. -->
+    <string name="send_tab_dialog_no_devices">No hay dispositivos conectados.</string>
+
+    <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
+    <string name="send_tab_dialog_syncing">Sincronizando...</string>
+
+    <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
+    <string name="send_tab_dialog_button">Enviar</string>
+
+
+    <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_title_1">Inicia sesión para enviar pestañas</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Firefox para enviar pestañas, desde Firefox en tu ordenador de escritorio o dispositivo móvil, a tus auriculares.</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub_1">La cuenta de Firefox también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+    <string name="whats_new_button_sign_in">Iniciar sesión</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
+    <string name="whats_new_button_start_browsing">Comenzar a navegar</string>
+
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">Script lento</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">Una página web está ralentizando tu navegador (%1$s). ¿Qué te gustaría hacer?</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">Detenerlo</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">Esperar</string>
+
+    <!-- This string is displayed in the title of the quick PopUp blocking dialog, accessed from the PopUp icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting. -->
+    <string name="popup_permission_dialog_message">El bloqueo de ventanas emergentes está %1$s para este sitio.</string>
+
+    <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_on">Activado</string>
+
+    <!-- This string is displayed in the off button of the quick Popup blocking dialog when it's in disabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_off">Desactivado</string>
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting.
+     '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR está %1$s para este sitio. <a href="%2$s">Saber más</a>]]></string>
+
+    <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_on">Activado</string>
+
+    <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_off">Desactivado</string>
+
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="tracking_dialog_message"><![CDATA[La protección mejorada contra el rastreo está %1$s para este sitio. <a href="%2$s">Saber más</a>]]></string>
+
+    <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_on">Activado</string>
+
+    <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_off">Desactivado</string>
+
+    <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_dialog_message"><![CDATA[Parte del audio o video en este sitio utiliza software DRM, que puede limitar lo que %1$s puede permitirte hacer con él. <a href="%2$s">Saber más</a>]]></string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_on">Activado</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_off">Desactivado</string>
+  
+    <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_title_v1">Este sitio contiene contenido DRM.</string>
   
     </resources>
