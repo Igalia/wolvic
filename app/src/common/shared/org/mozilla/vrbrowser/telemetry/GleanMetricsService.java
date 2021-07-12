@@ -87,7 +87,7 @@ public class GleanMetricsService {
 
     public static void startPageLoadTime(String aUrl) {
         GleanTimerId pageLoadingTimerId = Pages.INSTANCE.pageLoad().start();
-        loadingTimerId.put(aUrl, pageLoadingTimerId);
+        if (pageLoadingTimerId != null) loadingTimerId.put(aUrl, pageLoadingTimerId);
     }
 
     public static void stopPageLoadTimeWithURI(String uri) {
