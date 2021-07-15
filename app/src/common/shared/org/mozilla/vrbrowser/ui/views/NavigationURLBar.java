@@ -98,6 +98,7 @@ public class NavigationURLBar extends FrameLayout {
         void onWebXRButtonClicked();
         void onTrackingButtonClicked();
         void onDrmButtonClicked();
+        boolean onHandleExternalRequest(@NonNull String uri);
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -348,9 +349,10 @@ public class NavigationURLBar extends FrameLayout {
     public  void handleURLEdit(String text) {
         String url = UrlUtils.urlForText(getContext(), text.trim());
 
-        mViewModel.setUrl(url);
-
-        mSession.loadUri(url);
+        if (!mDelegate.onHandleExternalRequest(text)) {
+            mViewModel.setUrl(url);
+            mSession.loadUri(url);
+        }
 
         if (mDelegate != null) {
             mDelegate.onHideAwesomeBar();

@@ -86,7 +86,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate,
         Session.WebXRStateChangedListener, Session.PopUpStateChangedListener,
-        Session.DrmStateChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        Session.DrmStateChangedListener, Session.ExternalRequestDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
     public @interface OldSessionDisplayAction {}
@@ -255,6 +255,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addWebXRStateChangedListener(this);
         aSession.addPopUpStateChangedListener(this);
         aSession.addDrmStateChangedListener(this);
+        aSession.setExternalRequestDelegate(this);
     }
 
     void cleanListeners(Session aSession) {
@@ -268,6 +269,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removeWebXRStateChangedListener(this);
         aSession.removePopUpStateChangedListener(this);
         aSession.removeDrmStateChangedListener(this);
+        aSession.setExternalRequestDelegate(null);
     }
 
     @Override
@@ -2074,5 +2076,27 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onDrmStateChanged(Session aSession, @SessionState.DrmState int aDrmState) {
         mViewModel.setIsDrmUsed(aDrmState == SessionState.DRM_BLOCKED ||
                 aDrmState == SessionState.DRM_ALLOWED);
+    }
+
+    // ExternalRequestDelegate
+
+    @Override
+    public boolean onHandleExternalRequest(@NonNull String uri) {
+        if (UrlUtils.isEngineSupportedScheme(uri)) {
+            return false;
+
+        } else {
+            Intent newIntent = new Intent(Intent.ACTION_VIEW);
+            newIntent.setDataAndType(Uri.parse(uri), null);
+            try {
+                getContext().startActivity(newIntent);
+            } catch (Exception ignored) {
+                showAlert(
+                        getResources().getString(R.string.external_open_scheme_error_title),
+                        getResources().getString(R.string.external_open_scheme_error_body),
+                        null);
+            }
+            return true;
+        }
     }
 }

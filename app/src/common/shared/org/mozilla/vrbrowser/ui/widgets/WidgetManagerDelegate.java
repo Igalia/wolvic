@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
-import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 
 public interface WidgetManagerDelegate {
 

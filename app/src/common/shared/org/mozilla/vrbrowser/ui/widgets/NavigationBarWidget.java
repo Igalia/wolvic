@@ -1058,6 +1058,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 !SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
     }
 
+    @Override
+    public boolean onHandleExternalRequest(@NonNull String uri) {
+        return mWidgetManager.getFocusedWindow().onHandleExternalRequest(uri);
+    }
+
     // VoiceSearch Delegate
 
     @Override

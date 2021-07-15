@@ -87,6 +87,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient GeckoSession.PermissionDelegate mPermissionDelegate;
     private transient GeckoSession.PromptDelegate mPromptDelegate;
     private transient GeckoSession.HistoryDelegate mHistoryDelegate;
+    private transient ExternalRequestDelegate mExternalRequestDelegate;
     private transient Context mContext;
     private transient SharedPreferences mPrefs;
     private transient GeckoRuntime mRuntime;
@@ -110,6 +111,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public interface DrmStateChangedListener {
         void onDrmStateChanged(Session aSession, @SessionState.DrmState int aDrmState);
+    }
+
+    public interface ExternalRequestDelegate {
+        boolean onHandleExternalRequest(@NonNull String url);
     }
 
     @IntDef(value = { SESSION_OPEN, SESSION_DO_NOT_OPEN})
@@ -312,6 +317,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void setHistoryDelegate(GeckoSession.HistoryDelegate aDelegate) {
         mHistoryDelegate = aDelegate;
+    }
+
+    public void setExternalRequestDelegate(ExternalRequestDelegate aDelegate) {
+        mExternalRequestDelegate = aDelegate;
     }
 
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
@@ -878,7 +887,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         if (mState.mSession != null) {
             Log.d(LOGTAG, "Loading URI: " + aUri);
-            mState.mSession.loadUri(aUri, flags);
+            if (!mExternalRequestDelegate.onHandleExternalRequest(aUri)) {
+                mState.mSession.loadUri(aUri, flags);
+            }
         }
     }
 
@@ -1152,6 +1163,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         if (mNavigationListeners.size() == 0) {
             return GeckoResult.ALLOW;
+        }
+
+        // If this request is externally handled we just deny
+        if (mExternalRequestDelegate != null) {
+            if (mExternalRequestDelegate.onHandleExternalRequest(uri)) {
+                return GeckoResult.DENY;
+            }
         }
 
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();

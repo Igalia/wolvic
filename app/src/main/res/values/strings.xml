@@ -2148,4 +2148,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
 
+    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the external scheme open to
+         the system but the system can't handle it either. -->
+    <string name="external_open_scheme_error_title">Error opening external app</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external scheme open to
+         the system but the system can't handle it either. -->
+    <string name="external_open_scheme_error_body">No application found to handle this scheme.</string>
 </resources>

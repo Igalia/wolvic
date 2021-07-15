@@ -6,8 +6,8 @@
 package org.mozilla.vrbrowser.utils;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Base64;
-import android.util.Patterns;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -23,11 +23,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
-
 
 // This class refers from mozilla-mobile/focus-android
 public class UrlUtils {
+
+    private static List<String> ENGINE_SUPPORTED_SCHEMES = Arrays.asList(null, "about", "data", "file", "ftp", "http", "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob");
 
     public static String stripCommonSubdomains(@Nullable String host) {
         if (host == null) {
@@ -252,5 +255,10 @@ public class UrlUtils {
         }
 
         return url;
+    }
+
+    // TODO Ideally we should use something like org.mozilla.fenix.components.AppLinksInterceptor for this
+    public static boolean isEngineSupportedScheme(@NonNull String url) {
+        return ENGINE_SUPPORTED_SCHEMES.contains(Uri.parse(url).getScheme());
     }
 }
