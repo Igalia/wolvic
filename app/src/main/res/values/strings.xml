@@ -2148,11 +2148,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
 
-    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the external scheme open to
+    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the external uri to
          the system but the system can't handle it either. -->
-    <string name="external_open_scheme_error_title">Error opening external app</string>
+    <string name="external_open_uri_error_title">Error opening external app</string>
 
-    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external scheme open to
-         the system but the system can't handle it either. -->
-    <string name="external_open_scheme_error_body">No application found to handle this scheme.</string>
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri to
+         the system but the system can't handle it either because the uri is invalid.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_bad_uri_body">Invalid uri %1$s</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri open to
+         the system but the system can't handle it either because there is no activity that can handle that uri.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_no_activity_body">No application found to handle %1$s</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri open to
+         the system but the system can't handle it either because there is no activity that can handle that uri.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_security_exception_body">SecurityException when starting intent for %1$s</string>
 </resources>

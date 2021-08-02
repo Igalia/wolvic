@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -2078,24 +2079,50 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 aDrmState == SessionState.DRM_ALLOWED);
     }
 
+
     // ExternalRequestDelegate
 
     @Override
-    public boolean onHandleExternalRequest(@NonNull String uri) {
-        if (UrlUtils.isEngineSupportedScheme(uri)) {
+    public boolean onHandleExternalRequest(@NonNull String url) {
+        if (UrlUtils.isEngineSupportedScheme(url)) {
             return false;
 
         } else {
-            Intent newIntent = new Intent(Intent.ACTION_VIEW);
-            newIntent.setDataAndType(Uri.parse(uri), null);
+            Intent intent;
             try {
-                getContext().startActivity(newIntent);
-            } catch (Exception ignored) {
-                showAlert(
-                        getResources().getString(R.string.external_open_scheme_error_title),
-                        getResources().getString(R.string.external_open_scheme_error_body),
+                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (Exception ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_bad_uri_body, url),
                         null);
+                return false;
             }
+
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            Intent selector = intent.getSelector();
+            if (selector != null) {
+                selector.addCategory(Intent.CATEGORY_BROWSABLE);
+                selector.setComponent(null);
+            }
+
+            try {
+                getContext().startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_no_activity_body, url),
+                        null);
+                return false;
+            } catch (SecurityException ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_security_exception_body, url),
+                        null);
+                return false;
+            }
+
             return true;
         }
     }
