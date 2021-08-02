@@ -1965,11 +1965,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
     <string name="drm_first_use_body_v2"><![CDATA[Allowing DRM permits sites to identify this device every time you visit. <a href="%1$s">Learn More</a>]]></string>
-  
+
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_allow">Allow</string>
-  
+
     <!-- This string is displayed in the do not enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_do_not_allow">Don’t allow</string>
@@ -2148,11 +2148,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
 
-    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the external scheme open to
+    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the external uri to
          the system but the system can't handle it either. -->
-    <string name="external_open_scheme_error_title">Error opening external app</string>
+    <string name="external_open_uri_error_title">Error opening external app</string>
 
-    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external scheme open to
-         the system but the system can't handle it either. -->
-    <string name="external_open_scheme_error_body">No application found to handle this scheme.</string>
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri to
+         the system but the system can't handle it either because the uri is invalid.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_bad_uri_body">Invalid uri %1$s</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri open to
+         the system but the system can't handle it either because there is no activity that can handle that uri.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_no_activity_body">No application found to handle %1$s</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the external uri open to
+         the system but the system can't handle it either because there is no activity that can handle that uri.
+         '%1$s' Will be replaced at runtime with the uri. -->
+    <string name="external_open_uri_error_security_exception_body">SecurityException when starting intent for %1$s</string>
 </resources>

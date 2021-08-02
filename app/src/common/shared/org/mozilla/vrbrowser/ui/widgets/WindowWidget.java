@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -235,7 +236,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aPlacement.width = windowWidth + mBorderWidth * 2;
         aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight() + mBorderWidth * 2;
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) *
-                                (float)windowWidth / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
+                (float)windowWidth / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
         aPlacement.density = 1.0f;
         aPlacement.visible = true;
         aPlacement.cylinder = true;
@@ -907,9 +908,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void addWindowListener(WindowListener aListener) {
-       if (!mListeners.contains(aListener)) {
-           mListeners.add(aListener);
-       }
+        if (!mListeners.contains(aListener)) {
+            mListeners.add(aListener);
+        }
     }
 
     public void removeWindowListener(WindowListener aListener) {
@@ -1209,7 +1210,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession session = mSession.getGeckoSession();
         return (session != null) && session.getTextInput().onKeyMultiple(aKeyCode, repeatCount, aEvent);
     }
-    
+
     @Override
     protected void onFocusChanged(boolean aGainFocus, int aDirection, Rect aPreviouslyFocusedRect) {
         super.onFocusChanged(aGainFocus, aDirection, aPreviouslyFocusedRect);
@@ -1440,7 +1441,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
         float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) *
-                    (float)SettingsStore.getInstance(getContext()).getWindowWidth() / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
+                (float)SettingsStore.getInstance(getContext()).getWindowWidth() / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
         float worldHeight = worldWidth / aAspect;
         float area = worldWidth * worldHeight * aScale;
         float targetWidth = (float) Math.sqrt(area * aAspect);
@@ -1582,7 +1583,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private boolean isContextMenuVisible() {
         return (mContextMenu != null && mContextMenu.isVisible() ||
-            mSelectionMenu != null && mSelectionMenu.isVisible());
+                mSelectionMenu != null && mSelectionMenu.isVisible());
     }
 
     // GeckoSession.ContentDelegate
@@ -1827,7 +1828,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             } else {
                 hideLibraryPanel();
             }
-            
+
         } else {
             hideLibraryPanel();
         }
@@ -2078,24 +2079,50 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 aDrmState == SessionState.DRM_ALLOWED);
     }
 
+
     // ExternalRequestDelegate
 
     @Override
-    public boolean onHandleExternalRequest(@NonNull String uri) {
-        if (UrlUtils.isEngineSupportedScheme(uri)) {
+    public boolean onHandleExternalRequest(@NonNull String url) {
+        if (UrlUtils.isEngineSupportedScheme(url)) {
             return false;
 
         } else {
-            Intent newIntent = new Intent(Intent.ACTION_VIEW);
-            newIntent.setDataAndType(Uri.parse(uri), null);
+            Intent intent;
             try {
-                getContext().startActivity(newIntent);
-            } catch (Exception ignored) {
-                showAlert(
-                        getResources().getString(R.string.external_open_scheme_error_title),
-                        getResources().getString(R.string.external_open_scheme_error_body),
+                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (Exception ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_bad_uri_body, url),
                         null);
+                return false;
             }
+
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            Intent selector = intent.getSelector();
+            if (selector != null) {
+                selector.addCategory(Intent.CATEGORY_BROWSABLE);
+                selector.setComponent(null);
+            }
+
+            try {
+                getContext().startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_no_activity_body, url),
+                        null);
+                return false;
+            } catch (SecurityException ex) {
+                mWidgetManager.getFocusedWindow().showAlert(
+                        getResources().getString(R.string.external_open_uri_error_title),
+                        getResources().getString(R.string.external_open_uri_error_security_exception_body, url),
+                        null);
+                return false;
+            }
+
             return true;
         }
     }
