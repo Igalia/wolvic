@@ -84,6 +84,8 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         nativeOnCreate();
         super.onCreate(bundle);
 
+        Log.i(LOGTAG, "PicoVrSDK version: " + PicovrSDK.getSDKVersion());
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         registerReceiver(mKeysReceiver, filter);
@@ -179,6 +181,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         float ipd = hmdState.getIpd();
         float fov = hmdState.getFov();
         nativeStartFrame(ipd, fov, p[0], p[1], p[2], q[0], q[1], q[2], q[3]);
+        if (mControllerManager != null) {
+            mControllerManager.updateControllerData(new float[] {
+                q[0],q[1],q[2],q[3],p[0],p[1],p[2]
+            });
+        }
     }
 
     private void updateControllers() {
@@ -314,8 +321,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     public void onRendererShutdown() {
-        nativeShutdown();
         nativeDestroy();
+    }
+
+    public void deInitGL(){
+        nativeShutdown();
     }
 
     @Override
