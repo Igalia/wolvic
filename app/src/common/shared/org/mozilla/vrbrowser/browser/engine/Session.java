@@ -887,7 +887,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         if (mState.mSession != null) {
             Log.d(LOGTAG, "Loading URI: " + aUri);
-            if (!mExternalRequestDelegate.onHandleExternalRequest(aUri)) {
+            if (mExternalRequestDelegate == null || !mExternalRequestDelegate.onHandleExternalRequest(aUri)) {
                 mState.mSession.loadUri(aUri, flags);
             }
         }
