@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -46,6 +47,7 @@ import java.util.concurrent.CompletableFuture;
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
 import mozilla.components.concept.sync.AccountObserver;
+import mozilla.components.concept.sync.AuthFlowError;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
@@ -327,6 +329,11 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
 
         @Override
         public void onAuthenticationProblems() {
+            mBinding.setIsSignedIn(false);
+        }
+
+        @Override
+        public void onFlowError(@NotNull AuthFlowError authFlowError) {
             mBinding.setIsSignedIn(false);
         }
     };

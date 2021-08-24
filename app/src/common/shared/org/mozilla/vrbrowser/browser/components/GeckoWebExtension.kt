@@ -365,6 +365,10 @@ class GeckoWebExtension(
         return nativeExtension.metaData?.enabled ?: true
     }
 
+    override suspend fun loadIcon(size: Int): Bitmap? {
+        return this.nativeExtension.metaData?.icon?.get(size)?.await()
+    }
+
     override fun isAllowedInPrivateBrowsing(): Boolean {
         return isBuiltIn() || nativeExtension.metaData?.allowedInPrivateBrowsing ?: false
     }

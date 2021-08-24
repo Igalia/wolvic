@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
@@ -127,7 +128,7 @@ public class SessionStore implements
         // Web Extensions initialization
         BUILTIN_WEB_EXTENSIONS.forEach(extension -> BuiltinExtension.install(mWebExtensionRuntime, extension.first, extension.second));
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
-        WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime);
+        WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime, context.getString(R.string.app_name));
         mWebChannelsFeature = new FxaWebChannelFeature(
                 mContext,
                 null,

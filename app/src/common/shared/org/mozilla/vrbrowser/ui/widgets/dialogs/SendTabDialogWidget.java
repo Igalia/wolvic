@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
+import mozilla.components.concept.sync.AuthFlowError;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.ConstellationState;
 import mozilla.components.concept.sync.Device;
@@ -207,5 +209,12 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
             hide(KEEP_WIDGET);
         }
         showWhatsNewDialog();
+    }
+
+    @Override
+    public void onFlowError(@NotNull AuthFlowError authFlowError) {
+        if (isVisible()) {
+            hide(KEEP_WIDGET);
+        }
     }
 }

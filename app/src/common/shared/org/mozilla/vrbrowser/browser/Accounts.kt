@@ -131,7 +131,7 @@ class Accounts constructor(val context: Context) {
             accountStatus = AccountStatus.SIGNED_IN
 
             // Enable syncing after signing in
-            services.accountManager.syncNowAsync(SyncReason.EngineChange, true)
+            syncNowAsync(SyncReason.EngineChange, true)
 
             // Update device list
             account.deviceConstellation().registerDeviceObserver(
@@ -140,7 +140,7 @@ class Accounts constructor(val context: Context) {
                     true
             )
 
-            account.deviceConstellation().refreshDevicesAsync()
+            refreshDevicesAsync()
             Handler(Looper.getMainLooper()).post {
                 accountListeners.toMutableList().forEach {
                     it.onAuthenticated(account, authType)
@@ -293,32 +293,32 @@ class Accounts constructor(val context: Context) {
     fun authUrlAsync(): CompletableFuture<String?>? {
         GleanMetricsService.FxA.signIn()
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.beginAuthenticationAsync().await()
+            services.accountManager.beginAuthentication()
         }
     }
 
     fun refreshDevicesAsync(): CompletableFuture<Boolean?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.authenticatedAccount()?.deviceConstellation()?.refreshDevicesAsync()?.await()
+            services.accountManager.authenticatedAccount()?.deviceConstellation()?.refreshDevices()
         }
     }
 
     fun pollForEventsAsync(): CompletableFuture<Boolean?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.authenticatedAccount()?.deviceConstellation()?.pollForCommandsAsync()?.await()
+            services.accountManager.authenticatedAccount()?.deviceConstellation()?.pollForCommands()
         }
     }
 
-    fun updateProfileAsync(): CompletableFuture<Unit?>? {
+    fun updateProfileAsync(): CompletableFuture<Profile?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.updateProfileAsync().await()
+            services.accountManager.fetchProfile()
         }
     }
 
     fun syncNowAsync(reason: SyncReason = SyncReason.User,
                      debounce: Boolean = false): CompletableFuture<Unit?>?{
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.syncNowAsync(reason, debounce).await()
+            services.accountManager.syncNow(reason, debounce)
         }
     }
 
@@ -344,7 +344,7 @@ class Accounts constructor(val context: Context) {
 
         otherDevices = emptyList()
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.logoutAsync().await()
+            services.accountManager.logout()
         }
     }
 
@@ -377,9 +377,9 @@ class Accounts constructor(val context: Context) {
                 }
 
                 targets?.forEach { it ->
-                    constellation.sendCommandToDeviceAsync(
+                    constellation.sendCommandToDevice(
                             it.id, DeviceCommandOutgoing.SendTab(title, url)
-                    ).await().also { if (it) GleanMetricsService.FxA.sentTab() }
+                    ).also { if (it) GleanMetricsService.FxA.sentTab() }
                 }
             }
         }

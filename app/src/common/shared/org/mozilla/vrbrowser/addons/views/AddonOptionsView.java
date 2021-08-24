@@ -115,10 +115,9 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     }
 
     private void showRemoveAddonSuccessDialog(@NonNull Addon addon) {
-        String permissionsHtml = addon.translatePermissions().stream()
-                .map(integer -> {
-                    @StringRes int stringId = integer;
-                    return "<li>&nbsp;" + mContext.getString(stringId) + "</li>";
+        String permissionsHtml = addon.translatePermissions(mContext).stream()
+                .map(str -> {
+                    return "<li>&nbsp;" + str + "</li>";
                 })
                 .sorted()
                 .collect(Collectors.joining());

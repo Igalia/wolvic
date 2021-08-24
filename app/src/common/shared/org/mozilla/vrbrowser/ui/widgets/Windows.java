@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
+import mozilla.components.concept.sync.AuthFlowError;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
@@ -1051,6 +1053,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         public void onAuthenticationProblems() {
 
         }
+
+        @Override
+        public void onFlowError(@NotNull AuthFlowError authFlowError) {
+
+        }
+
     };
 
     // Tray Listener

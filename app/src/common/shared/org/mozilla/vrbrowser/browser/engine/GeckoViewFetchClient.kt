@@ -35,7 +35,8 @@ class GeckoViewFetchClient(
         if (executor == null) {
             throw IOException("GeckoWebExecutor not initialized")
         }
-        val webRequest = request.toWebRequest(defaultHeaders)
+
+        val webRequest = request.toWebRequest()
 
         val readTimeOut = request.readTimeout ?: maxReadTimeOut
         val readTimeOutMillis = readTimeOut.let { (timeout, unit) ->
@@ -64,7 +65,30 @@ class GeckoViewFetchClient(
     }
 }
 
-private fun Request.toWebRequest(defaultHeaders: Headers): WebRequest = WebRequest.Builder(url)
+/*
+* Default headers where removed from android-components.
+* We still need to pass these headers or FxR Account login doesn't work correctly.
+*/
+val defaultHeaders: Headers = MutableHeaders(
+    // Unfortunately some implementations will always send a not removable Accept header. Let's override it with
+    // a header that accepts everything.
+    "Accept" to "*/*",
+
+    // We expect all clients to implement gzip decoding transparently.
+    "Accept-Encoding" to "gzip",
+
+    // Unfortunately some implementations will always send a not removable Accept-Language header. Let's override
+    // it with a header that accepts everything.
+    "Accept-Language" to "*/*",
+
+    // Default User Agent. Clients are expected to append their own tokens if needed.
+    "User-Agent" to "MozacFetch/${BuildConfig.LIBRARY_VERSION}",
+
+    // We expect all clients to support and use keep-alive by default.
+    "Connection" to "keep-alive"
+)
+
+private fun Request.toWebRequest(): WebRequest = WebRequest.Builder(url)
     .method(method.name)
     .addHeadersFrom(this, defaultHeaders)
     .addBodyFrom(this)
