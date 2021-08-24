@@ -71,6 +71,15 @@ struct DeviceDelegatePicoVR::State {
     bool IsRightHand() const {
       return hand == ElbowModel::HandEnum::Right;
     }
+
+    void Reset() {
+        created = false;
+        enabled = false;
+        touched = false;
+        is6DoF = false;
+        transform = vrb::Matrix::Identity();
+        hand = ElbowModel::HandEnum::Right;
+    }
   };
   vrb::RenderContextWeak context;
   bool initialized = false;
@@ -487,6 +496,9 @@ DeviceDelegatePicoVR::IsControllerLightEnabled() const {
 void
 DeviceDelegatePicoVR::Pause() {
   m.paused = true;
+  for (State::Controller& controller: m.controllers) {
+    controller.Reset();
+  }
 }
 
 void

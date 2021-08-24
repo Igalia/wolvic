@@ -72,6 +72,8 @@ JNI_METHOD(void, nativePause)
     return;
   }
   BrowserWorld::Instance().Pause();
+  if (sDevice != nullptr)
+    sDevice->Pause();
 }
 
 JNI_METHOD(void, nativeResume)
@@ -80,6 +82,8 @@ JNI_METHOD(void, nativeResume)
     return;
   }
   BrowserWorld::Instance().Resume();
+  if (sDevice != nullptr)
+    sDevice->Resume();
 }
 
 JNI_METHOD(void, nativeStartFrame)
