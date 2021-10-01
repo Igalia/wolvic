@@ -110,9 +110,10 @@ inline vrb::Matrix XrPoseToMatrix(const XrPosef& aPose) {
 inline XrPosef MatrixToXrPose(const vrb::Matrix& aMatrix) {
     vrb::Quaternion q;
     q.SetFromRotationMatrix(aMatrix);
+    q = q.Normalize();
     vrb::Vector p = aMatrix.GetTranslation();
     XrPosef result;
-    result.orientation = XrQuaternionf{q.x(), q.y(), q.z(), q.w()};
+    result.orientation = XrQuaternionf{-q.x(), -q.y(), -q.z(), q.w()};
     result.position = XrVector3f{p.x(), p.y(), p.z()};
     return result;
 }
