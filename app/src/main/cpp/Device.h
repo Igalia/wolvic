@@ -38,6 +38,7 @@ const DeviceType ViveFocusPlus = 4;
 const DeviceType PicoGaze = 5;
 const DeviceType PicoNeo2 = 6;
 const DeviceType PicoG2 = 7;
+const DeviceType PicoNeo3 = 8;
 
 enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
 

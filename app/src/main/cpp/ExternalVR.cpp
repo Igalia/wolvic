@@ -233,6 +233,9 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::PicoG2:
       result = mozilla::gfx::VRControllerType::PicoG2;
       break;
+    case device::PicoNeo3:
+      result = mozilla::gfx::VRControllerType::PicoNeo2;
+      break;
     case device::UnknownType:
     default:
       result = mozilla::gfx::VRControllerType::_empty;
