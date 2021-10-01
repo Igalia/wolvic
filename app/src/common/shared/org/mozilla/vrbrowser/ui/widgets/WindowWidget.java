@@ -443,6 +443,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mWidgetManager.updateWidget(WindowWidget.this);
                 mWidgetManager.popWorldBrightness(WindowWidget.this);
                 mWidgetManager.popBackHandler(mBackHandler);
+                resumeCompositor();
             }
         }
     }
