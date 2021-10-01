@@ -143,6 +143,11 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sUpdateControllerBatteryLevels = FindJNIMethodID(sEnv, sBrowserClass, kUpdateControllerBatteryLevelsName, kUpdateControllerBatteryLevelsSignature);
 }
 
+JNIEnv * VRBrowser::Env()
+{
+  return sEnv;
+}
+
 void
 VRBrowser::ShutdownJava() {
   if (!sEnv) {
