@@ -226,6 +226,16 @@ android {
             }
         }
 
+        hvr {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         noapi {
             dimension "platform"
             externalNativeBuild {
@@ -271,7 +281,9 @@ android {
                 'noapiArm64Debug',
                 'noapiArm64Release',
                 'noapiX86_64Debug',
-                'noapiX86_64Release'
+                'noapiX86_64Release',
+                'hvrArm64Debug',
+                'hvrArm64Release'
         ]
         variant.setIgnore(!needed)
     }
@@ -394,6 +406,18 @@ android {
             manifest.srcFile "src/picovr/AndroidManifest.xml"
         }
 
+        hvr {
+            java.srcDirs = [
+                    'src/hvr/java'
+            ]
+            assets.srcDirs = [
+                    'src/hvr/assets'
+            ]
+            res.srcDirs = [
+                    'src/hvr/res'
+            ]
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -490,6 +514,9 @@ dependencies {
     // Pico
     picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
     picovrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
+
+    // HVR
+    hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
 }
 
 if (findProject(':servo')) {

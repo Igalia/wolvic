@@ -421,6 +421,8 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
 int32_t OpenXRInput::GetControllerModelCount() const {
 #ifdef OCULUSVR
   return systemProperties.trackingProperties.positionTracking ? 2 : 1;
+#elif defined(HVR)
+  return 1;
 #else
 #error Platform controller not implemented
 #endif
@@ -441,6 +443,8 @@ const std::string OpenXRInput::GetControllerModelName(const int32_t aModelIndex)
   } else {
     return "vr_controller_oculusgo.obj";
   }
+#elif defined(HVR)
+  return "";
 #else
 #error Platform controller not implemented
 #endif

@@ -45,7 +45,11 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
           EGL_GREEN_SIZE, 8,
           EGL_BLUE_SIZE, 8,
           EGL_ALPHA_SIZE, 8,
+#ifdef HVR
+          EGL_DEPTH_SIZE, 24,
+#else
           EGL_DEPTH_SIZE, 0,
+#endif
           EGL_STENCIL_SIZE, 0,
           EGL_SAMPLES, 0,
           EGL_NONE
@@ -109,7 +113,12 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   		EGL_NONE
   };
 
+#ifdef HVR
+  const EGLint attribs[] = { EGL_NONE };
+  mSurface = eglCreateWindowSurface(mDisplay, mConfig, mNativeWindow, attribs);
+#else
   mSurface = eglCreatePbufferSurface(mDisplay, mConfig, surfaceAttribs);
+#endif
 
   if (mSurface == EGL_NO_SURFACE) {
     VRB_ERROR("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
@@ -159,6 +168,11 @@ BrowserEGLContext::Destroy() {
 void
 BrowserEGLContext::UpdateNativeWindow(ANativeWindow *aWindow) {
   mNativeWindow = aWindow;
+
+#ifdef HVR
+  const EGLint attribs[] = { EGL_NONE };
+  mSurface = eglCreateWindowSurface(mDisplay, mConfig, mNativeWindow, attribs);
+#endif
 }
 
 bool

@@ -122,7 +122,29 @@ struct DeviceDelegateOpenXR::State {
 #endif
 
     // Initialize the XrInstance
-    std::vector<const char *> extensions = OpenXRExtensions::ExtensionNames();
+    OpenXRExtensions::Initialize();
+
+    std::vector<const char *> extensions {
+      XR_KHR_ANDROID_CREATE_INSTANCE_EXTENSION_NAME,
+      XR_KHR_OPENGL_ES_ENABLE_EXTENSION_NAME,
+    };
+
+    if (OpenXRExtensions::IsExtensionSupported(XR_KHR_ANDROID_SURFACE_SWAPCHAIN_EXTENSION_NAME)) {
+      extensions.push_back(XR_KHR_ANDROID_SURFACE_SWAPCHAIN_EXTENSION_NAME);
+    }
+    if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME)) {
+      extensions.push_back(XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME);
+    }
+    if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME)) {
+      extensions.push_back(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME);
+    }
+#ifdef OCULUSVR
+    if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
+      extensions.push_back(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME);
+    }
+#endif
+
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = app->activity->vm;
     java.applicationActivity = jniEnv->NewGlobalRef(app->activity->clazz);
@@ -142,8 +164,8 @@ struct DeviceDelegateOpenXR::State {
     VRB_LOG("OpenXR Instance Created: RuntimeName=%s RuntimeVersion=%s", instanceProperties.runtimeName,
             GetXrVersionString(instanceProperties.runtimeVersion).c_str());
 
-    // Initialize Extensions
-    OpenXRExtensions::Initialize(instance);
+    // Load Extensions
+    OpenXRExtensions::LoadExtensions(instance);
 
     // Initialize System
     XrSystemGetInfo systemInfo{XR_TYPE_SYSTEM_GET_INFO};
@@ -384,7 +406,9 @@ struct DeviceDelegateOpenXR::State {
         to_string(sessionState), to_string(event.state), event.session, event.time);
     sessionState = event.state;
 
-    CHECK(session == event.session);
+    if (event.session != XR_NULL_HANDLE) {
+      CHECK(session == event.session);
+    }
 
     switch (sessionState) {
       case XR_SESSION_STATE_READY: {
@@ -669,6 +693,22 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   uint32_t viewCapacityInput = (uint32_t) m.views.size();
   uint32_t viewCountOutput = 0;
 
+#ifdef HVR
+  {
+    XrViewLocateInfo offsetLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
+    offsetLocateInfo.viewConfigurationType = m.viewConfigType;
+    offsetLocateInfo.displayTime = m.predictedDisplayTime;
+    offsetLocateInfo.space = m.viewSpace;
+    CHECK_XRCMD(xrLocateViews(m.session, &offsetLocateInfo, &viewState, viewCapacityInput, &viewCountOutput, m.views.data()));
+    for (int i = 0; i < m.views.size(); ++i) {
+      const XrView &view = m.views[i];
+
+      vrb::Matrix eyeTransform = XrPoseToMatrix(view.pose);
+      m.cameras[i]->SetEyeTransform(eyeTransform);
+    }
+  };
+#endif
+
   XrViewLocateInfo viewLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
   viewLocateInfo.viewConfigurationType = m.viewConfigType;
   viewLocateInfo.displayTime = m.predictedDisplayTime;
@@ -697,6 +737,15 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
       m.immersiveDisplay->SetEyeOffset(eye, offset.x(), offset.y(), offset.z());
     }
   }
+
+#ifdef HVR
+  // HVR requires to use localSpace with projectionLayer
+  viewLocateInfo = { XR_TYPE_VIEW_LOCATE_INFO };
+  viewLocateInfo.viewConfigurationType = m.viewConfigType;
+  viewLocateInfo.displayTime = m.predictedDisplayTime;
+  viewLocateInfo.space = m.localSpace;
+  CHECK_XRCMD(xrLocateViews(m.session, &viewLocateInfo, &viewState, viewCapacityInput, &viewCountOutput, m.views.data()));
+#endif
 
   // Update controllers
   m.input->Update(m.session, m.predictedDisplayTime, m.localSpace, m.renderMode, m.controller);
@@ -792,10 +841,14 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
     projectionLayerViews[i].subImage.swapchain = viewSwapChain->SwapChain();
     projectionLayerViews[i].subImage.imageRect.offset = {0, 0};
     projectionLayerViews[i].subImage.imageRect.extent = {viewSwapChain->Width(), viewSwapChain->Height()};
-    projectionLayer.space = m.viewSpace;
-    projectionLayer.viewCount = (uint32_t)projectionLayerViews.size();
-    projectionLayer.views = projectionLayerViews.data();
   }
+#ifdef HVR
+  projectionLayer.space = m.localSpace;
+#else
+  projectionLayer.space = m.viewSpace;
+#endif
+  projectionLayer.viewCount = (uint32_t)projectionLayerViews.size();
+  projectionLayer.views = projectionLayerViews.data();
   layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&projectionLayer));
 
   // Add front UI layers
@@ -967,7 +1020,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.graphicsBinding.context = aEGLContext.Context();
   m.graphicsBinding.display = aEGLContext.Display();
-  m.graphicsBinding.config = (EGLConfig)0;
+  m.graphicsBinding.config = aEGLContext.Config();
 
   XrSessionCreateInfo createInfo{XR_TYPE_SESSION_CREATE_INFO};
   createInfo.next = reinterpret_cast<const XrBaseInStructure*>(&m.graphicsBinding);

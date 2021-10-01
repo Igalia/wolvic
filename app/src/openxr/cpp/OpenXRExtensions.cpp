@@ -3,29 +3,37 @@
 
 namespace crow {
 
+std::unordered_set<std::string> OpenXRExtensions::sSupportedExtensions { };
 PFN_xrGetOpenGLESGraphicsRequirementsKHR OpenXRExtensions::sXrGetOpenGLESGraphicsRequirementsKHR = nullptr;
 PFN_xrCreateSwapchainAndroidSurfaceKHR OpenXRExtensions::sXrCreateSwapchainAndroidSurfaceKHR = nullptr;
 
-std::vector<const char*> OpenXRExtensions::ExtensionNames() {
-  return {
-      XR_KHR_ANDROID_CREATE_INSTANCE_EXTENSION_NAME,
-      XR_KHR_OPENGL_ES_ENABLE_EXTENSION_NAME,
-      XR_KHR_ANDROID_SURFACE_SWAPCHAIN_EXTENSION_NAME,
-      XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME,
-      XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME,
-      XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME
-  };
+void OpenXRExtensions::Initialize() {
+    uint32_t extensionCount { 0 };
+    CHECK_XRCMD(xrEnumerateInstanceExtensionProperties(nullptr, 0, &extensionCount, nullptr))
+
+    std::vector<XrExtensionProperties> extensions(extensionCount, { XR_TYPE_EXTENSION_PROPERTIES } );
+
+    CHECK_XRCMD(xrEnumerateInstanceExtensionProperties(nullptr, extensionCount, &extensionCount, extensions.data()));
+
+    for (auto& extension: extensions) {
+        sSupportedExtensions.insert(extension.extensionName);
+    }
 }
 
-void OpenXRExtensions::Initialize(XrInstance instance) {
+void OpenXRExtensions::LoadExtensions(XrInstance instance) {
   CHECK(instance != XR_NULL_HANDLE);
   // Extension function must be loaded by name
   CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrGetOpenGLESGraphicsRequirementsKHR",
                                     reinterpret_cast<PFN_xrVoidFunction*>(&sXrGetOpenGLESGraphicsRequirementsKHR)));
 
-  CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateSwapchainAndroidSurfaceKHR",
-                                    reinterpret_cast<PFN_xrVoidFunction*>(&sXrCreateSwapchainAndroidSurfaceKHR)));
+  if (IsExtensionSupported(XR_KHR_ANDROID_SURFACE_SWAPCHAIN_EXTENSION_NAME)) {
+      CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateSwapchainAndroidSurfaceKHR",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreateSwapchainAndroidSurfaceKHR)));
+  }
+}
 
+bool OpenXRExtensions::IsExtensionSupported(const char* name) {
+    return sSupportedExtensions.count(name) > 0;
 }
 
 } // namespace crow
