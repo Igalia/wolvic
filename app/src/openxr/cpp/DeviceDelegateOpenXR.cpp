@@ -110,13 +110,15 @@ struct DeviceDelegateOpenXR::State {
 
 #ifdef OCULUSVR
     // Adhoc loader required for OpenXR on Oculus
-    XrLoaderInitializeInfoAndroidOCULUS loaderData;
+    PFN_xrInitializeLoaderKHR initializeLoaderKHR;
+    CHECK_XRCMD(xrGetInstanceProcAddr(nullptr, "xrInitializeLoaderKHR", reinterpret_cast<PFN_xrVoidFunction*>(&initializeLoaderKHR)));
+    XrLoaderInitInfoAndroidKHR loaderData;
     memset(&loaderData, 0, sizeof(loaderData));
-    loaderData.type = XR_TYPE_LOADER_INITIALIZE_INFO_ANDROID_OCULUS;
+    loaderData.type = XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR;
     loaderData.next = nullptr;
     loaderData.applicationVM = app->activity->vm;
-    loaderData.applicationActivity = jniEnv->NewGlobalRef(app->activity->clazz);
-    xrInitializeLoaderOCULUS(&loaderData);
+    loaderData.applicationContext = jniEnv->NewGlobalRef(app->activity->clazz);
+    initializeLoaderKHR(reinterpret_cast<XrLoaderInitInfoBaseHeaderKHR*>(&loaderData));
 #endif
 
     // Initialize the XrInstance
