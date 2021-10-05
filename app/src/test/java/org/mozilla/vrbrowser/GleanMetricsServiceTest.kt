@@ -6,6 +6,7 @@ import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.glean.testing.GleanTestRule
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,6 +16,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 
+@Ignore("Disabling until metrics are renewed")
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = TestApplication::class)
 class GleanMetricsServiceTest {

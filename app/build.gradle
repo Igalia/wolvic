@@ -435,6 +435,7 @@ android {
 }
 
 configurations {
+    jnaForTest
     armImplementation
     x86Implementation
 }
@@ -508,6 +509,8 @@ dependencies {
     testImplementation deps.app_services.rustlog
     testImplementation deps.android_components.support_test
     testImplementation deps.android_components.support_test_appservices
+    jnaForTest deps.jna
+    testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
 

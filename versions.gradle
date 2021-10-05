@@ -54,6 +54,7 @@ versions.snakeyaml = "1.24"
 versions.gson = "2.8.5"
 versions.robolectric = "4.2.1"
 versions.work = "2.2.0"
+versions.jna = "5.9.0"
 versions.wavevr = "3.99.41"
 ext.versions = versions
 
@@ -180,6 +181,8 @@ deps.snakeyaml = "org.yaml:snakeyaml:$versions.snakeyaml:android"
 deps.gson = "com.google.code.gson:gson:$versions.gson"
 
 deps.robolectric = "org.robolectric:robolectric:$versions.robolectric"
+
+deps.jna = "net.java.dev.jna:jna:$versions.jna"
 
 ext.deps = deps
 
