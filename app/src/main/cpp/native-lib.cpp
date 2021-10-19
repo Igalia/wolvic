@@ -94,9 +94,6 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     // after calling android_app_exec_cmd it will be set to NULL.
     case APP_CMD_TERM_WINDOW:
       VRB_LOG("APP_CMD_TERM_WINDOW");
-      if (ctx->mDevice->IsInVRMode()) {
-         ctx->mDevice->LeaveVR();
-      }
       if (ctx->mEgl) {
         ctx->mEgl->UpdateNativeWindow(nullptr);
       }
@@ -210,6 +207,9 @@ android_main(android_app *aAppState) {
       // OpenXR requires to wait for the XR_SESSION_STATE_READY to start presenting
       // We need to call ProcessEvents to make sure we receive the event.
       sAppContext->mDevice->ProcessEvents();
+      if (sAppContext->mDevice->ShouldExitRenderLoop()) {
+        return;
+      }
     }
 #endif
   }

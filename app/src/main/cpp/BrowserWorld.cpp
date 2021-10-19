@@ -861,28 +861,30 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   VRBrowser::SetDeviceType(m.device->GetDeviceType());
 
   if (!m.modelsLoaded) {
-    const int32_t modelCount = m.device->GetControllerModelCount();
-    for (int32_t index = 0; index < modelCount; index++) {
-      vrb::LoadTask task = m.device->GetControllerModelTask(index);
-      if (task) {
-        // If there is a task we set the task to lazy load the models when the controller is created
-        // (In some platforms if the controller is not available the SDK doesn't return the model so
-        // we need to do the model load right when the controller becomes available)
-        m.controllers->SetControllerModelTask(index, task);
-        m.controllers->LoadControllerModel(index);
-      } else {
-        const std::string fileName = m.device->GetControllerModelName(index);
-        if (!fileName.empty()) {
-          m.controllers->LoadControllerModel(index, m.loader, fileName);
+    m.device->OnControllersReady([this](){
+      const int32_t modelCount = m.device->GetControllerModelCount();
+      for (int32_t index = 0; index < modelCount; index++) {
+        vrb::LoadTask task = m.device->GetControllerModelTask(index);
+        if (task) {
+          // If there is a task we set the task to lazy load the models when the controller is created
+          // (In some platforms if the controller is not available the SDK doesn't return the model so
+          // we need to do the model load right when the controller becomes available)
+          m.controllers->SetControllerModelTask(index, task);
+          m.controllers->LoadControllerModel(index);
+        } else {
+          const std::string fileName = m.device->GetControllerModelName(index);
+          if (!fileName.empty()) {
+            m.controllers->LoadControllerModel(index, m.loader, fileName);
+          }
         }
       }
-    }
-    m.controllers->InitializeBeam();
-    m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
-    m.rootController->AddNode(m.controllers->GetRoot());
-    if (m.device->IsControllerLightEnabled()) {
-      m.rootController->AddLight(m.light);
-    }
+      m.controllers->InitializeBeam();
+      m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
+      m.rootController->AddNode(m.controllers->GetRoot());
+      if (m.device->IsControllerLightEnabled()) {
+        m.rootController->AddLight(m.light);
+      }
+    });
 
     UpdateEnvironment();
 

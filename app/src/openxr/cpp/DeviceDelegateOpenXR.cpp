@@ -96,6 +96,7 @@ struct DeviceDelegateOpenXR::State {
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
   std::vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
+  std::function<void()> controllersReadyCallback;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -168,7 +169,7 @@ struct DeviceDelegateOpenXR::State {
     OpenXRExtensions::LoadExtensions(instance);
 
     // Initialize System
-    XrSystemGetInfo systemInfo{XR_TYPE_SYSTEM_GET_INFO};
+    XrSystemGetInfo systemInfo{XR_TYPE_SYSTEM_GET_INFO };
     systemInfo.formFactor = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
     CHECK_XRCMD(xrGetSystem(instance, &systemInfo, &system));
     CHECK_MSG(system != XR_NULL_SYSTEM_ID, "Failed to initialize XRSystem");
@@ -176,8 +177,6 @@ struct DeviceDelegateOpenXR::State {
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
-
-    input = OpenXRInput::Create(instance, systemProperties);
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -402,11 +401,11 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
-    VRB_DEBUG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
+    VRB_ERROR("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
         to_string(sessionState), to_string(event.state), event.session, event.time);
     sessionState = event.state;
 
-    if (event.session != XR_NULL_HANDLE) {
+    if (event.session != XR_NULL_HANDLE && session != XR_NULL_HANDLE) {
       CHECK(session == event.session);
     }
 
@@ -425,6 +424,7 @@ struct DeviceDelegateOpenXR::State {
       }
       case XR_SESSION_STATE_EXITING: {
         vrReady = false;
+        //exit(0);
         break;
       }
       case XR_SESSION_STATE_LOSS_PENDING: {
@@ -469,7 +469,6 @@ struct DeviceDelegateOpenXR::State {
     }
 
     // Release input
-    input->Destroy();
     input = nullptr;
 
     // Shutdown OpenXR instance
@@ -580,13 +579,20 @@ DeviceDelegateOpenXR::GetControllerModelName(const int32_t aModelIndex) const {
   return m.input->GetControllerModelName(aModelIndex);
 }
 
+void
+DeviceDelegateOpenXR::OnControllersReady(const std::function<void()>& callback) {
+  if (m.input && m.input->AreControllersReady()) {
+    callback();
+    return;
+  }
+  m.controllersReadyCallback = callback;
+}
 
 void
 DeviceDelegateOpenXR::SetCPULevel(const device::CPULevel aLevel) {
   m.minCPULevel = aLevel;
   m.UpdateClockLevels();
 };
-
 
 void
 DeviceDelegateOpenXR::ProcessEvents() {
@@ -609,6 +615,16 @@ DeviceDelegateOpenXR::ProcessEvents() {
         VRB_WARN("OpenXR XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING by %ld", event.lossTime);
         m.vrReady = false;
         return;
+      }
+      case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED: {
+        if (m.input) {
+          m.input->UpdateInteractionProfile();
+          if (m.controllersReadyCallback && m.input->AreControllersReady()) {
+            m.controllersReadyCallback();
+            m.controllersReadyCallback = nullptr;
+          }
+        }
+        break;
       }
       case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING:
       default: {
@@ -693,22 +709,6 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   uint32_t viewCapacityInput = (uint32_t) m.views.size();
   uint32_t viewCountOutput = 0;
 
-#ifdef HVR
-  {
-    XrViewLocateInfo offsetLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
-    offsetLocateInfo.viewConfigurationType = m.viewConfigType;
-    offsetLocateInfo.displayTime = m.predictedDisplayTime;
-    offsetLocateInfo.space = m.viewSpace;
-    CHECK_XRCMD(xrLocateViews(m.session, &offsetLocateInfo, &viewState, viewCapacityInput, &viewCountOutput, m.views.data()));
-    for (int i = 0; i < m.views.size(); ++i) {
-      const XrView &view = m.views[i];
-
-      vrb::Matrix eyeTransform = XrPoseToMatrix(view.pose);
-      m.cameras[i]->SetEyeTransform(eyeTransform);
-    }
-  };
-#endif
-
   XrViewLocateInfo viewLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
   viewLocateInfo.viewConfigurationType = m.viewConfigType;
   viewLocateInfo.displayTime = m.predictedDisplayTime;
@@ -748,7 +748,9 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
 #endif
 
   // Update controllers
-  m.input->Update(m.session, m.predictedDisplayTime, m.localSpace, m.renderMode, m.controller);
+  if (m.input && m.controller) {
+    m.input->Update(frameState, m.localSpace, head, m.renderMode, *m.controller);
+  }
 }
 
 void
@@ -1015,6 +1017,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     return;
   }
 
+
   CHECK(m.instance != XR_NULL_HANDLE && m.system != XR_NULL_SYSTEM_ID);
   m.CheckGraphicsRequirements();
 
@@ -1029,11 +1032,15 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   CHECK(m.session != XR_NULL_HANDLE);
   VRB_LOG("OpenXR session created succesfully");
 
-  m.input->Initialize(m.session);
   m.UpdateSpaces();
   m.InitializeViews();
   m.InitializeImmersiveDisplay();
+  m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
   ProcessEvents();
+  if (m.controllersReadyCallback && m.input && m.input->AreControllersReady()) {
+    m.controllersReadyCallback();
+    m.controllersReadyCallback = nullptr;
+  }
 
   // Initialize layers if needed
   vrb::RenderContextPtr context = m.context.lock();
@@ -1048,10 +1055,13 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   }
 }
 
-
 void
 DeviceDelegateOpenXR::LeaveVR() {
   CHECK_MSG(!m.boundSwapChain, "Eye swapChain not released before LeaveVR");
+  if (m.session == XR_NULL_HANDLE) {
+    return;
+  }
+
   ProcessEvents();
 }
 
@@ -1068,6 +1078,12 @@ DeviceDelegateOpenXR::IsInVRMode() const {
 bool
 DeviceDelegateOpenXR::ExitApp() {
   return true;
+}
+
+bool
+DeviceDelegateOpenXR::ShouldExitRenderLoop() const
+{
+  return m.sessionState == XR_SESSION_STATE_EXITING || m.sessionState == XR_SESSION_STATE_LOSS_PENDING;
 }
 
 DeviceDelegateOpenXR::DeviceDelegateOpenXR(State &aState) : m(aState) {}

@@ -4,6 +4,7 @@
 # Sets the minimum version of CMake required to build the native library.
 
 cmake_minimum_required(VERSION 3.4.1)
+set(CMAKE_CXX_STANDARD 17)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -114,6 +115,7 @@ if(OPENXR)
             src/openxr/cpp/OpenXRSwapChain.cpp
             src/openxr/cpp/OpenXRLayers.cpp
             src/openxr/cpp/OpenXRInput.cpp
+            src/openxr/cpp/OpenXRInputSource.cpp
             src/openxr/cpp/OpenXRExtensions.cpp
     )
 
