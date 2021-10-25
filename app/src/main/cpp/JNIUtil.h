@@ -15,6 +15,12 @@ bool ValidateMethodID(JNIEnv* aEnv, jobject aObject, jmethodID aMethod, const ch
 bool ValidateStaticMethodID(JNIEnv* aEnv, jclass aClass, jmethodID aMethod, const char* aName);
 void CheckJNIException(JNIEnv* aEnv, const char* aName);
 
+struct JavaContext {
+  jobject activity { nullptr };
+  JavaVM* vm { nullptr };
+  JNIEnv* env { nullptr };
+};
+
 } // namespace crow
 
 #endif //VRBROWSER_JNIUTIL_H

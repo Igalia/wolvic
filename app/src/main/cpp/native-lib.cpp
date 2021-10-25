@@ -56,6 +56,7 @@ struct AppContext {
   vrb::RunnableQueuePtr mQueue;
   BrowserEGLContextPtr mEgl;
   PlatformDeviceDelegatePtr mDevice;
+  JavaContext mJavaContext;
 };
 typedef std::shared_ptr<AppContext> AppContextPtr;
 
@@ -150,8 +151,11 @@ android_main(android_app *aAppState) {
   crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);
 
   // Create device delegate
-  sAppContext->mDevice = PlatformDeviceDelegate::Create(BrowserWorld::Instance().GetRenderContext(),
-                                                        aAppState);
+  sAppContext->mJavaContext.env = jniEnv;
+  sAppContext->mJavaContext.vm = aAppState->activity->vm;
+  sAppContext->mJavaContext.activity = aAppState->activity->clazz;
+
+  sAppContext->mDevice = PlatformDeviceDelegate::Create(BrowserWorld::Instance().GetRenderContext(), &sAppContext->mJavaContext);
   BrowserWorld::Instance().RegisterDeviceDelegate(sAppContext->mDevice);
 
   // Initialize java

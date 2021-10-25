@@ -10,7 +10,6 @@
 #include "VRBrowser.h"
 #include "VRLayer.h"
 
-#include <android_native_app_glue.h>
 #include <EGL/egl.h>
 #include "vrb/CameraEye.h"
 #include "vrb/Color.h"
@@ -47,7 +46,7 @@ const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 
 struct DeviceDelegateOpenXR::State {
   vrb::RenderContextWeak context;
-  android_app* app = nullptr;
+  JavaContext* javaContext = nullptr;
   bool layersEnabled = true;
   XrInstanceCreateInfoAndroidKHR java;
   XrInstance instance = XR_NULL_HANDLE;
@@ -70,7 +69,6 @@ struct DeviceDelegateOpenXR::State {
   XrSpace stageSpace = XR_NULL_HANDLE;
   std::vector<int64_t> swapchainFormats;
   OpenXRInputPtr input;
-  JNIEnv * jniEnv = nullptr;
   OpenXRLayerCubePtr cubeLayer;
   OpenXRLayerEquirectPtr equirectLayer;
   std::vector<OpenXRLayerPtr> uiLayers;
@@ -106,9 +104,6 @@ struct DeviceDelegateOpenXR::State {
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
 
-    (*app->activity->vm).AttachCurrentThread(&jniEnv, NULL);
-    CHECK(jniEnv != nullptr);
-
 #ifdef OCULUSVR
     // Adhoc loader required for OpenXR on Oculus
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
@@ -117,8 +112,8 @@ struct DeviceDelegateOpenXR::State {
     memset(&loaderData, 0, sizeof(loaderData));
     loaderData.type = XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR;
     loaderData.next = nullptr;
-    loaderData.applicationVM = app->activity->vm;
-    loaderData.applicationContext = jniEnv->NewGlobalRef(app->activity->clazz);
+    loaderData.applicationVM = javaContext->vm;
+    loaderData.applicationContext = javaContext->env->NewGlobalRef(javaContext->activity);
     initializeLoaderKHR(reinterpret_cast<XrLoaderInitInfoBaseHeaderKHR*>(&loaderData));
 #endif
 
@@ -147,8 +142,8 @@ struct DeviceDelegateOpenXR::State {
 
 
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
-    java.applicationVM = app->activity->vm;
-    java.applicationActivity = jniEnv->NewGlobalRef(app->activity->clazz);
+    java.applicationVM = javaContext->vm;
+    java.applicationActivity = javaContext->activity;
 
     XrInstanceCreateInfo createInfo{XR_TYPE_INSTANCE_CREATE_INFO};
     createInfo.next = (XrBaseInStructure*)&java;
@@ -341,7 +336,7 @@ struct DeviceDelegateOpenXR::State {
   void AddUILayer(const OpenXRLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
     if (session != XR_NULL_HANDLE) {
       vrb::RenderContextPtr ctx = context.lock();
-      aLayer->Init(jniEnv, session, ctx);
+      aLayer->Init(javaContext->env, session, ctx);
     }
     uiLayers.push_back(aLayer);
     if (aSurfaceType == VRLayerSurface::SurfaceType::FBO) {
@@ -401,7 +396,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
-    VRB_ERROR("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
+    VRB_LOG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
         to_string(sessionState), to_string(event.state), event.session, event.time);
     sessionState = event.state;
 
@@ -482,10 +477,10 @@ struct DeviceDelegateOpenXR::State {
 };
 
 DeviceDelegateOpenXRPtr
-DeviceDelegateOpenXR::Create(vrb::RenderContextPtr& aContext, android_app *aApp) {
+DeviceDelegateOpenXR::Create(vrb::RenderContextPtr& aContext, JavaContext* aJavaContext) {
   DeviceDelegateOpenXRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateOpenXR, DeviceDelegateOpenXR::State> >();
   result->m.context = aContext;
-  result->m.app = aApp;
+  result->m.javaContext = aJavaContext;
   result->m.Initialize();
   return result;
 }
@@ -880,7 +875,7 @@ DeviceDelegateOpenXR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
   }
 
   VRLayerQuadPtr layer = VRLayerQuad::Create(aWidth, aHeight, aSurfaceType);
-  OpenXRLayerQuadPtr xrLayer = OpenXRLayerQuad::Create(m.jniEnv, layer);
+  OpenXRLayerQuadPtr xrLayer = OpenXRLayerQuad::Create(m.javaContext->env, layer);
   m.AddUILayer(xrLayer, aSurfaceType);
   return layer;
 }
@@ -896,7 +891,7 @@ DeviceDelegateOpenXR::CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) {
 
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
-      xrLayer = OpenXRLayerQuad::Create(m.jniEnv, layer, m.uiLayers[i]);
+      xrLayer = OpenXRLayerQuad::Create(m.javaContext->env, layer, m.uiLayers[i]);
       m.uiLayers.erase(m.uiLayers.begin() + i);
       break;
     }
@@ -915,7 +910,7 @@ DeviceDelegateOpenXR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
   }
 
   VRLayerCylinderPtr layer = VRLayerCylinder::Create(aWidth, aHeight, aSurfaceType);
-  OpenXRLayerCylinderPtr xrLayer = OpenXRLayerCylinder::Create(m.jniEnv, layer);
+  OpenXRLayerCylinderPtr xrLayer = OpenXRLayerCylinder::Create(m.javaContext->env, layer);
   m.AddUILayer(xrLayer, aSurfaceType);
   return layer;
 }
@@ -931,7 +926,7 @@ DeviceDelegateOpenXR::CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) {
 
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
-      xrLayer = OpenXRLayerCylinder::Create(m.jniEnv, layer, m.uiLayers[i]);
+      xrLayer = OpenXRLayerCylinder::Create(m.javaContext->env, layer, m.uiLayers[i]);
       m.uiLayers.erase(m.uiLayers.begin() + i);
       break;
     }
@@ -955,7 +950,7 @@ DeviceDelegateOpenXR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aIn
   m.cubeLayer = OpenXRLayerCube::Create(layer, aInternalFormat);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
-    m.cubeLayer->Init(m.jniEnv, m.session, context);
+    m.cubeLayer->Init(m.javaContext->env, m.session, context);
   }
   return layer;
 }
@@ -980,7 +975,7 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
   m.equirectLayer = OpenXRLayerEquirect::Create(result, source);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
-    m.equirectLayer->Init(m.jniEnv, m.session, context);
+    m.equirectLayer->Init(m.javaContext->env, m.session, context);
   }
   return result;
 }
@@ -1017,7 +1012,6 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     return;
   }
 
-
   CHECK(m.instance != XR_NULL_HANDLE && m.system != XR_NULL_SYSTEM_ID);
   m.CheckGraphicsRequirements();
 
@@ -1045,13 +1039,13 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Initialize layers if needed
   vrb::RenderContextPtr context = m.context.lock();
   for (OpenXRLayerPtr& layer: m.uiLayers) {
-    layer->Init(m.jniEnv, m.session, context);
+    layer->Init(m.javaContext->env, m.session, context);
   }
   if (m.cubeLayer) {
-    m.cubeLayer->Init(m.jniEnv, m.session, context);
+    m.cubeLayer->Init(m.javaContext->env, m.session, context);
   }
   if (m.equirectLayer) {
-    m.equirectLayer->Init(m.jniEnv, m.session, context);
+    m.equirectLayer->Init(m.javaContext->env, m.session, context);
   }
 }
 
@@ -1061,7 +1055,9 @@ DeviceDelegateOpenXR::LeaveVR() {
   if (m.session == XR_NULL_HANDLE) {
     return;
   }
-
+#ifdef HVR
+  xrRequestExitSession(m.session);
+#endif
   ProcessEvents();
 }
 

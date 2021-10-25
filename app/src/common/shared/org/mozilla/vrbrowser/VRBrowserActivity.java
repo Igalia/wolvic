@@ -722,7 +722,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         if (!mWindows.handleBack()) {
-            if (DeviceType.isPicoVR()) {
+            if (DeviceType.isPicoVR() || DeviceType.isHVRBuild()) {
                 mWindows.getFocusedWindow().showConfirmPrompt(
                         getString(R.string.app_name),
                         getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),

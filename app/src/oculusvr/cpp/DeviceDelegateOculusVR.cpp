@@ -72,7 +72,7 @@ struct DeviceDelegateOculusVR::State {
   };
 
   vrb::RenderContextWeak context;
-  android_app* app = nullptr;
+  JavaContext* javaContext = nullptr;
   bool initialized = false;
   bool applicationEntitled = false;
   bool layersEnabled = true;
@@ -135,9 +135,9 @@ struct DeviceDelegateOculusVR::State {
     elbow = ElbowModel::Create();
     vrb::RenderContextPtr localContext = context.lock();
 
-    java.Vm = app->activity->vm;
-    (*app->activity->vm).AttachCurrentThread(&java.Env, NULL);
-    java.ActivityObject = java.Env->NewGlobalRef(app->activity->clazz);
+    java.Vm = javaContext->vm;
+    java.Vm->AttachCurrentThread(&java.Env, nullptr);
+    java.ActivityObject = java.Env->NewGlobalRef(javaContext->activity);
 
     // Initialize the API.
     auto parms = vrapi_DefaultInitParms(&java);
@@ -702,10 +702,10 @@ struct DeviceDelegateOculusVR::State {
 };
 
 DeviceDelegateOculusVRPtr
-DeviceDelegateOculusVR::Create(vrb::RenderContextPtr& aContext, android_app *aApp) {
+DeviceDelegateOculusVR::Create(vrb::RenderContextPtr& aContext, JavaContext* aJavaContext) {
   DeviceDelegateOculusVRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateOculusVR, DeviceDelegateOculusVR::State> >();
   result->m.context = aContext;
-  result->m.app = aApp;
+  result->m.javaContext = aJavaContext;
   result->m.Initialize();
   return result;
 }
@@ -1366,7 +1366,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // No need to reset the FLAG_FULLSCREEN window flag when using a View
   modeParms.Flags &= ~VRAPI_MODE_FLAG_RESET_WINDOW_FULLSCREEN;
   modeParms.Display = reinterpret_cast<unsigned long long>(aEGLContext.Display());
-  modeParms.WindowSurface = reinterpret_cast<unsigned long long>(m.app->window);
+  modeParms.WindowSurface = reinterpret_cast<unsigned long long>(aEGLContext.NativeWindow());
   modeParms.ShareContext = reinterpret_cast<unsigned long long>(aEGLContext.Context());
 
   m.ovr = vrapi_EnterVrMode(&modeParms);

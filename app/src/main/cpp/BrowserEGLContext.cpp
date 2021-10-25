@@ -6,7 +6,10 @@
 #include "BrowserEGLContext.h"
 #include "vrb/Logger.h"
 #include <EGL/eglext.h>
+
+#ifndef HVR
 #include <android_native_app_glue.h>
+#endif
 
 namespace crow {
 
@@ -89,12 +92,14 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
     return false;
   }
 
-
-  //Reconfigure the ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID.
   mNativeWindow = aNativeWindow;
+
+#ifndef HVR
+  //Reconfigure the ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID.
   EGLint format;
   eglGetConfigAttrib(mDisplay, mConfig, EGL_NATIVE_VISUAL_ID, &format);
   ANativeWindow_setBuffersGeometry(aNativeWindow, 0, 0, format);
+#endif
 
   EGLint contextAttribs[] = {
           EGL_CONTEXT_CLIENT_VERSION, 3,

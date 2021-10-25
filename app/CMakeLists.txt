@@ -69,6 +69,13 @@ target_sources(
     src/noapi/cpp/native-lib.cpp
     src/noapi/cpp/DeviceDelegateNoAPI.cpp
     )
+elseif(HVR)
+    target_sources(
+            native-lib
+            PUBLIC
+            src/hvr/cpp/native-lib.cpp
+            src/main/cpp/BrowserEGLContext.cpp
+    )
 else()
 target_sources(
     native-lib
