@@ -1,0 +1,17 @@
+# https://firefox-source-docs.mozilla.org/mobile/android/geckoview/consumer/automation.html
+#env:
+#  MOZ_LOG: nsHttp:5
+#
+#args:
+#  - --marionette
+#  - --profile
+#  - "/path/to/gecko-profile"
+#
+prefs:
+  dom.vr.enabled: true
+  dom.vr.external.enable: true
+  dom.vr.webxr.enabled: true
+  webgl.enable-draft-extensions: true
+  dom.webcomponents.customelements.enabled: true
+  javascript.options.ion: true
+  media.webspeech.synth.enabled: false

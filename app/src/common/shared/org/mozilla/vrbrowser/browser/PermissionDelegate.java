@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.PlatformActivity;
 import org.mozilla.vrbrowser.R;
@@ -89,13 +90,12 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         mSitePermissions = sites;
     };
 
-    void handleWebXRPermission(GeckoSession aGeckoSession, final String aUri, final Callback aCallback) {
+    GeckoResult<Integer> handleWebXRPermission(GeckoSession aGeckoSession, ContentPermission perm) {
         Session session = SessionStore.get().getSession(aGeckoSession);
         if (session == null || !SettingsStore.getInstance(mContext).isWebXREnabled()) {
-            aCallback.reject();
-            return;
+            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
         }
-        final String domain = UrlUtils.getHost(aUri);
+        final String domain = UrlUtils.getHost(perm.uri);
 
         @Nullable SitePermission site = null;
         if (mSitePermissions != null) {
@@ -106,11 +106,11 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         }
 
         if (site == null) {
-            aCallback.grant();
             session.setWebXRState(SessionState.WEBXR_ALLOWED);
+            return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
         } else {
-            aCallback.reject();
             session.setWebXRState(SessionState.WEBXR_BLOCKED);
+            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
         }
     }
 
@@ -156,33 +156,30 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     }
 
     @Override
-    public void onContentPermissionRequest(GeckoSession aSession, String aUri, int aType, Callback callback) {
-        Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType);
-        if (aType == PERMISSION_XR) {
-            handleWebXRPermission(aSession, aUri, callback);
-            return;
+    public GeckoResult<Integer> onContentPermissionRequest(GeckoSession aSession, ContentPermission perm) {
+        Log.d(LOGTAG, "onContentPermissionRequest: " + perm.uri + " " + perm.permission);
+        if (perm.permission == PERMISSION_XR) {
+            return handleWebXRPermission(aSession, perm);
         }
 
-        if (aType == PERMISSION_AUTOPLAY_INAUDIBLE) {
+        if (perm.permission == PERMISSION_AUTOPLAY_INAUDIBLE) {
             // https://hacks.mozilla.org/2019/02/firefox-66-to-block-automatically-playing-audible-video-and-audio/
-            callback.grant();
-            return;
-
-        } else if(aType == PERMISSION_AUTOPLAY_AUDIBLE) {
+            return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
+        } else if(perm.permission == PERMISSION_AUTOPLAY_AUDIBLE) {
             if (SettingsStore.getInstance(mContext).isAutoplayEnabled()) {
-                callback.grant();
+                return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
             } else {
-                callback.reject();
+                return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
             }
-            return;
         }
 
         PermissionWidget.PermissionType type;
-        if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
+        if (perm.permission == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;
-        } else if (aType == PERMISSION_GEOLOCATION) {
+        } else if (perm.permission == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
-        } else if (aType == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
+        } else if (perm.permission == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
+            final GeckoResult<Integer> result = new GeckoResult<>();
             WindowWidget windowWidget = mWidgetManager.getFocusedWindow();
             Runnable enableDrm = () -> {
                 Session session = SessionStore.get().getSession(aSession);
@@ -190,12 +187,12 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
                     if (session != null) {
                         session.setDrmState(SessionState.DRM_ALLOWED);
                     }
-                    callback.grant();
+                    result.complete(ContentPermission.VALUE_ALLOW);
                 } else {
                     if (session != null) {
                         session.setDrmState(SessionState.DRM_BLOCKED);
                     }
-                    callback.reject();
+                    result.complete(ContentPermission.VALUE_DENY);
                 }
             };
             if (SettingsStore.getInstance(mContext).isDrmContentPlaybackSet()) {
@@ -205,14 +202,25 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
                 windowWidget.showFirstTimeDrmDialog(enableDrm);
             }
             windowWidget.setDrmUsed(true);
-            return;
+            return result;
         } else {
-            Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + aType);
-            callback.reject();
-            return;
+            Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + perm.permission);
+            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
         }
 
-        handlePermission(aUri, type, callback);
+        final GeckoResult<Integer> result = new GeckoResult<>();
+        handlePermission(perm.uri, type, new Callback() {
+            @Override
+            public void grant() {
+                result.complete(ContentPermission.VALUE_ALLOW);
+            }
+
+            @Override
+            public void reject() {
+                result.complete(ContentPermission.VALUE_DENY);
+            }
+        });
+        return result;
     }
 
     @Override

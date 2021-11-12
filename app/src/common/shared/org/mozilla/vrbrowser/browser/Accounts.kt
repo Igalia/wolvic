@@ -133,15 +133,16 @@ class Accounts constructor(val context: Context) {
             // Enable syncing after signing in
             syncNowAsync(SyncReason.EngineChange, true)
 
-            // Update device list
-            account.deviceConstellation().registerDeviceObserver(
+            Handler(Looper.getMainLooper()).post {
+                // Update device list
+                account.deviceConstellation().registerDeviceObserver(
                     deviceConstellationObserver,
                     ProcessLifecycleOwner.get(),
                     true
-            )
+                )
 
-            refreshDevicesAsync()
-            Handler(Looper.getMainLooper()).post {
+                refreshDevicesAsync()
+
                 accountListeners.toMutableList().forEach {
                     it.onAuthenticated(account, authType)
                 }

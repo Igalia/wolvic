@@ -146,9 +146,9 @@ class GeckoWebExtensionRuntime(
             override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny>? {
                 val extension = GeckoWebExtension(ext, runtime)
                 return if (webExtensionDelegate.onInstallPermissionRequest(extension)) {
-                    GeckoResult.ALLOW
+                    GeckoResult.allow()
                 } else {
-                    GeckoResult.DENY
+                    GeckoResult.deny()
                 }
             }
 

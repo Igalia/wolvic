@@ -37,12 +37,12 @@ object EngineProvider {
             builder.remoteDebuggingEnabled(settingsStore.isRemoteDebuggingEnabled)
             builder.displayDpiOverride(settingsStore.displayDpi)
             builder.screenSizeOverride(settingsStore.maxWindowWidth, settingsStore.maxWindowHeight)
-            builder.useMultiprocess(true)
             builder.inputAutoZoomEnabled(false)
             builder.doubleTapZoomingEnabled(false)
             builder.debugLogging(settingsStore.isDebugLoggingEnabled)
             builder.consoleOutput(settingsStore.isDebugLoggingEnabled)
             builder.loginAutofillEnabled(settingsStore.isAutoFillEnabled)
+            builder.configFilePath(SessionUtils.prepareConfigurationPath(context))
 
             if (settingsStore.transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)
@@ -51,6 +51,13 @@ object EngineProvider {
             if (BuildConfig.DEBUG) {
                 builder.arguments(arrayOf("-purgecaches"))
                 builder.aboutConfigEnabled(true)
+            }
+
+            val msaa = SettingsStore.getInstance(context).msaaLevel
+            if (msaa > 0) {
+                builder.glMsaaLevel(if (msaa == 2) 4 else 2)
+            } else {
+                builder.glMsaaLevel(0)
             }
 
             runtime = GeckoRuntime.create(context, builder.build())

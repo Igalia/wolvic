@@ -24,7 +24,7 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view_nightly = "81.0.20200804091327"
+versions.gecko_view_nightly = "95.0.20211006094130"
 versions.gecko_view_beta = "79.0.20200630191632"
 versions.gecko_view_release = "78.0.20200630195452"
 versions.android_components = "63.0.0"
@@ -37,7 +37,7 @@ versions.mozilla_appservices = "63.0.0"
 versions.mozilla_speech = "2.0.4"
 versions.openwnn = "1.3.7"
 versions.room = "2.2.0"
-versions.lifecycle = "2.0.0"
+versions.lifecycle = "2.3.1"
 versions.support = "1.1.0"
 versions.cardview = "1.0.0"
 versions.recyclerview = "1.1.0"
@@ -134,6 +134,7 @@ lifecycle.runtime = "androidx.lifecycle:lifecycle-runtime:$versions.lifecycle"
 lifecycle.viewmodel = "androidx.lifecycle:lifecycle-viewmodel:$versions.lifecycle"
 lifecycle.java8 = "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
 lifecycle.compiler = "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
+lifecycle.process = "androidx.lifecycle:lifecycle-process:$versions.lifecycle"
 deps.lifecycle = lifecycle
 
 def espresso = [:]

@@ -146,10 +146,10 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
 
                 return geckoResult
             }
-            return GeckoResult.DENY
+            return GeckoResult.deny()
         }
 
-        return GeckoResult.ALLOW
+        return GeckoResult.allow()
     }
 
 }

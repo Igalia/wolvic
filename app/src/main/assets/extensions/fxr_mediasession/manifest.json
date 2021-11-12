@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Reality MediaSession Enhancements",
+  "version": "1.0",
+  "description": "Fixes VR Video playback compatibility",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fxr-webcompat_mediasession@mozilla.org"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}

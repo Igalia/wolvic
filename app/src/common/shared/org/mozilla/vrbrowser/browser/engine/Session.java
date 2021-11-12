@@ -29,9 +29,9 @@ import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.geckoview.WebRequestError;
+import org.mozilla.geckoview.WebResponse;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
@@ -63,7 +63,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class Session implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate,
-        GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, GeckoSession.HistoryDelegate, GeckoSession.PermissionDelegate,
+        GeckoSession.PromptDelegate, GeckoSession.HistoryDelegate, GeckoSession.PermissionDelegate,
         GeckoSession.SelectionActionDelegate, SharedPreferences.OnSharedPreferenceChangeListener, SessionChangeListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
@@ -94,6 +94,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient byte[] mPrivatePage;
     private transient boolean mFirstContentfulPaint;
     private transient long mKeepAlive;
+    private transient Media mMedia;
 
     private static final List<String> FORCE_MOBILE_VIEWPORT = Collections.singletonList(".youtube.com");
 
@@ -183,6 +184,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mWebXRStateListeners = new CopyOnWriteArrayList<>();
         mPopUpStateStateListeners = new CopyOnWriteArrayList<>();
         mDrmStateStateListeners = new CopyOnWriteArrayList<>();
+        mMedia = new Media();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -323,6 +325,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mExternalRequestDelegate = aDelegate;
     }
 
+    public void setVideoAvailabilityDelegate(VideoAvailabilityListener aDelegate) {
+        mMedia.setAvailabilityDelegate(aDelegate);
+    }
+
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
         mNavigationListeners.addIfAbsent(aListener);
         dumpState(aListener);
@@ -426,7 +432,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aSession.setPermissionDelegate(this);
         aSession.setPromptDelegate(this);
         aSession.setContentBlockingDelegate(this);
-        aSession.setMediaDelegate(this);
+        aSession.setMediaSessionDelegate(mMedia);
         aSession.setHistoryDelegate(this);
         aSession.setSelectionActionDelegate(this);
         aSession.setContentBlockingDelegate(this);
@@ -440,7 +446,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aSession.setPromptDelegate(null);
         aSession.setPermissionDelegate(null);
         aSession.setContentBlockingDelegate(null);
-        aSession.setMediaDelegate(null);
+        aSession.setMediaSessionDelegate(null);
         aSession.setHistoryDelegate(null);
         aSession.setSelectionActionDelegate(null);
         aSession.setContentBlockingDelegate(null);
@@ -520,7 +526,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         } else if (mState.mSessionState != null) {
             mState.mSession.restoreState(mState.mSessionState);
             if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
-                mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+                mState.mSession.load(new GeckoSession.Loader()
+                    .uri(mState.mUri)
+                    .flags(GeckoSession.LOAD_FLAGS_REPLACE_HISTORY));
             }
         } else if (mState.mUri != null) {
             mState.mSession.loadUri(mState.mUri);
@@ -769,13 +777,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Nullable
     public Media getFullScreenVideo() {
-        for (Media media: mState.mMediaElements) {
-            if (media.isFullscreen()) {
-                return media;
-            }
-        }
-        if (mState.mMediaElements.size() > 0) {
-            return mState.mMediaElements.get(mState.mMediaElements.size() - 1);
+        if (mMedia.isActive() && mMedia.isFullscreen()) {
+            return mMedia;
         }
 
         return null;
@@ -783,15 +786,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Nullable
     public Media getActiveVideo() {
-        for (Media media: mState.mMediaElements) {
-            if (media.isFullscreen()) {
-                return media;
-            }
-        }
-        return mState.mMediaElements.stream()
-                .sorted((o1, o2) -> (int)o2.getLastStateUpdate() - (int)o1.getLastStateUpdate())
-                .filter(Media::isPlayed)
-                .findFirst().orElse(null);
+        return mMedia.isActive() ? mMedia : null;
     }
 
     public boolean isInputActive() {
@@ -888,7 +883,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mSession != null) {
             Log.d(LOGTAG, "Loading URI: " + aUri);
             if (mExternalRequestDelegate == null || !mExternalRequestDelegate.onHandleExternalRequest(aUri)) {
-                mState.mSession.loadUri(aUri, flags);
+                mState.mSession.load(new GeckoSession.Loader()
+                        .uri(aUri)
+                        .flags(flags));
             }
         }
     }
@@ -899,7 +896,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void loadPrivateBrowsingPage() {
         if (mState.mSession != null) {
-            mState.mSession.loadData(mPrivatePage, "text/html");
+            mState.mSession.load(new GeckoSession.Loader().data(mPrivatePage, "text/html"));
         }
     }
 
@@ -1060,7 +1057,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         mState.mSession.getSettings().setViewportMode(mState.mSettings.getViewportMode());
         if (overrideUri != null) {
-            mState.mSession.loadUri(overrideUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+            mState.mSession.load(new GeckoSession.Loader()
+                .uri(overrideUri)
+                .flags(GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY));
         } else {
             mState.mSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
         }
@@ -1158,17 +1157,17 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         if (mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
-            return GeckoResult.DENY;
+            return GeckoResult.deny();
         }
 
         if (mNavigationListeners.size() == 0) {
-            return GeckoResult.ALLOW;
+            return GeckoResult.allow();
         }
 
         // If this request is externally handled we just deny
         if (mExternalRequestDelegate != null) {
             if (mExternalRequestDelegate.onHandleExternalRequest(uri)) {
-                return GeckoResult.DENY;
+                return GeckoResult.deny();
             }
         }
 
@@ -1199,7 +1198,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         if (UrlUtils.isAboutPage(aRequest.uri)) {
-            return GeckoResult.DENY;
+            return GeckoResult.deny();
         }
 
         return result;
@@ -1379,7 +1378,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     @Override
-    public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull GeckoSession.WebResponseInfo webResponseInfo) {
+    public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull WebResponse webResponseInfo) {
         for (GeckoSession.ContentDelegate listener : mContentListeners) {
             listener.onExternalResponse(geckoSession, webResponseInfo);
         }
@@ -1593,7 +1592,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     // MediaDelegate
 
-    @Override
+    /*@Override
     public void onMediaAdd(@NonNull GeckoSession aSession, @NonNull MediaElement element) {
         if (mState.mSession != aSession) {
             return;
@@ -1622,7 +1621,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                 return;
             }
         }
-    }
+    }*/
 
     // HistoryDelegate
 
@@ -1718,10 +1717,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     @Override
-    public void onContentPermissionRequest(@NonNull GeckoSession aSession, @Nullable String s, int i, @NonNull Callback callback) {
+    public GeckoResult<Integer> onContentPermissionRequest(@NonNull GeckoSession aSession, ContentPermission perm) {
         if (mState.mSession == aSession && mPermissionDelegate != null) {
-            mPermissionDelegate.onContentPermissionRequest(aSession, s, i, callback);
+            return mPermissionDelegate.onContentPermissionRequest(aSession, perm);
         }
+        return GeckoResult.fromValue(0);
     }
 
     @Override

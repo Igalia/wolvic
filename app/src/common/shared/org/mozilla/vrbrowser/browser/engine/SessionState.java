@@ -93,7 +93,7 @@ public class SessionState {
                 String session = new JsonParser().parse(in).toString();
                 return GeckoSession.SessionState.fromString(session);
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 return null;
             }
         }

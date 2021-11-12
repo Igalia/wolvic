@@ -13,7 +13,8 @@ import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.components.GeckoLoginDelegateWrapper;
+//import org.mozilla.vrbrowser.browser.components.GeckoLoginDelegateWrapper;
+import org.mozilla.vrbrowser.browser.components.GeckoAutocompleteDelegateWrapper;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -317,14 +318,14 @@ public class PromptDelegate implements
 
                     @Override
                     public void confirm(@NonNull Login login) {
-                        result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
+                        result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoAutocompleteDelegateWrapper.toLoginEntry(login))));
                     }
                 });
                 mSaveLoginPrompt.setDelegate(() -> result.complete(autocompleteRequest.dismiss()));
                 mSaveLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
                 mSaveLoginPrompt.getPlacement().parentAnchorY = 0.0f;
                 mSaveLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-                mSaveLoginPrompt.setLogin(GeckoLoginDelegateWrapper.toLogin(saveOption.value));
+                mSaveLoginPrompt.setLogin(GeckoAutocompleteDelegateWrapper.toLogin(saveOption.value));
                 mSaveLoginPrompt.show(UIWidget.REQUEST_FOCUS, true);
             }
 
@@ -341,14 +342,14 @@ public class PromptDelegate implements
         final GeckoResult<PromptResponse> result = new GeckoResult<>();
 
         if (autocompleteRequest.options.length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
-            List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoLoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
+            List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoAutocompleteDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
             if (mSelectLoginPrompt == null) {
                 mSelectLoginPrompt = new SelectLoginPromptWidget(mContext);
             }
             mSelectLoginPrompt.setPromptDelegate(new SelectLoginPromptWidget.Delegate() {
                 @Override
                 public void onLoginSelected(@NonNull Login login) {
-                    result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
+                    result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoAutocompleteDelegateWrapper.toLoginEntry(login))));
                 }
 
                 @Override

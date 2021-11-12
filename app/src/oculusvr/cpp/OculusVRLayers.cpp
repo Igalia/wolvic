@@ -12,7 +12,7 @@ static ovrMatrix4f ovrMatrixFrom(const vrb::Matrix &aMatrix) {
   return m;
 }
 
-bool OculusLayer::sForceClip = false;
+bool OculusLayer::sForceClip = true;
 
 // OculusLayerQuad
 

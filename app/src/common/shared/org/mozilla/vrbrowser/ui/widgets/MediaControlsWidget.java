@@ -14,9 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.geckoview.MediaElement;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.MediaSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.databinding.MediaControlsBinding;
@@ -24,7 +27,7 @@ import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 
-public class MediaControlsWidget extends UIWidget implements MediaElement.Delegate {
+public class MediaControlsWidget extends UIWidget implements MediaSession.Delegate { //implements MediaElement.Delegate {
 
     private MediaControlsBinding mBinding;
     private Media mMedia;
@@ -304,12 +307,12 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         if (mMedia == null) {
             return;
         }
-        onMetadataChange(mMedia.getMediaElement(), mMedia.getMetaData());
-        onVolumeChange(mMedia.getMediaElement(), mMedia.getVolume(), mMedia.isMuted());
-        onTimeChange(mMedia.getMediaElement(), mMedia.getCurrentTime());
-        onVolumeChange(mMedia.getMediaElement(), mMedia.getVolume(), mMedia.isMuted());
-        onReadyStateChange(mMedia.getMediaElement(), mMedia.getReadyState());
-        onPlaybackStateChange(mMedia.getMediaElement(), mMedia.isPlaying() ? MediaElement.MEDIA_STATE_PLAY : MediaElement.MEDIA_STATE_PAUSE);
+
+        mBinding.mediaControlSeekBar.setCurrentTime(mMedia.getCurrentTime());
+        mBinding.setPlaying(mMedia.isPlaying());
+        mBinding.mediaControlSeekBar.setSeekable(mMedia.canSeek());
+        mBinding.mediaVolumeButton.setEnabled(false);
+
         mMedia.addMediaListener(this);
     }
 
@@ -317,43 +320,61 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         mBinding.mediaProjectionButton.setEnabled(aEnabled);
     }
 
-    // Media Element delegate
-    @Override
-    public void onPlaybackStateChange(MediaElement mediaElement, int playbackState) {
-        if (playbackState == MediaElement.MEDIA_STATE_PLAY) {
-            mBinding.setPlaying(true);
-        } else if (playbackState == MediaElement.MEDIA_STATE_PAUSE) {
-            mBinding.setPlaying(false);
-        }
+    private void startVolumeCtrlHandler() {
+        mVolumeCtrlHandler.postDelayed(mVolumeCtrlRunnable, VOLUME_SLIDER_CHECK_DELAY);
     }
 
+    public void stopVolumeCtrlHandler() {
+        mVolumeCtrlHandler.removeCallbacks(mVolumeCtrlRunnable);
+    }
 
     @Override
-    public void onReadyStateChange(MediaElement mediaElement, int readyState) {
+    public void onActivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
 
     }
 
     @Override
-    public void onMetadataChange(MediaElement mediaElement, MediaElement.Metadata metaData) {
-        if (metaData == null) {
-            return;
-        }
-        mBinding.mediaControlSeekBar.setDuration(metaData.duration);
-        if (metaData.audioTrackCount == 0) {
-            mBinding.setMuted(true);
-            mBinding.mediaVolumeButton.setEnabled(false);
-        } else {
-            mBinding.mediaVolumeButton.setEnabled(true);
-        }
-        mBinding.mediaControlSeekBar.setSeekable(metaData.isSeekable);
+    public void onDeactivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+
     }
 
     @Override
-    public void onLoadProgress(MediaElement mediaElement, MediaElement.LoadProgressInfo progressInfo) {
-        if (progressInfo.buffered != null) {
-            mBinding.mediaControlSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length - 1].end);
-        }
+    public void onMetadata(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.Metadata meta) {
+
     }
+
+    @Override
+    public void onFeatures(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, long features) {
+        mBinding.mediaControlSeekBar.setSeekable(mMedia.canSeek());
+    }
+
+    @Override
+    public void onPlay(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+        mBinding.setPlaying(true);
+    }
+
+    @Override
+    public void onPause(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+        mBinding.setPlaying(false);
+    }
+
+    @Override
+    public void onStop(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+
+    }
+
+    @Override
+    public void onPositionState(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.PositionState state) {
+        mBinding.mediaControlSeekBar.setDuration(mMedia.getDuration());
+        mBinding.mediaControlSeekBar.setCurrentTime(state.position);
+    }
+
+    @Override
+    public void onFullscreen(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, boolean enabled, @Nullable MediaSession.ElementMetadata meta) {
+
+    }
+
+    /*
 
     @Override
     public void onVolumeChange(MediaElement mediaElement, double volume, boolean muted) {
@@ -366,27 +387,11 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     }
 
     @Override
-    public void onTimeChange(MediaElement mediaElement, double time) {
-        mBinding.mediaControlSeekBar.setCurrentTime(time);
+    public void onLoadProgress(MediaElement mediaElement, MediaElement.LoadProgressInfo progressInfo) {
+        if (progressInfo.buffered != null) {
+            mBinding.mediaControlSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length - 1].end);
+        }
     }
 
-    @Override
-    public void onPlaybackRateChange(MediaElement mediaElement, double rate) {
-    }
-
-    @Override
-    public void onFullscreenChange(MediaElement mediaElement, boolean fullscreen) {
-    }
-
-    @Override
-    public void onError(MediaElement mediaElement, int code) {
-    }
-
-    private void startVolumeCtrlHandler() {
-        mVolumeCtrlHandler.postDelayed(mVolumeCtrlRunnable, VOLUME_SLIDER_CHECK_DELAY);
-    }
-
-    public void stopVolumeCtrlHandler() {
-        mVolumeCtrlHandler.removeCallbacks(mVolumeCtrlRunnable);
-    }
+     */
 }

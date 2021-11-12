@@ -61,12 +61,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         }
 
         // Fix potential Gecko static initialization order.
-        // GeckoResult.ALLOW and GeckoResult.DENY static initializer might get a null mDispatcher
+        // GeckoResult.allow() and GeckoResult.deny() static initializer might get a null mDispatcher
         // depending on how JVM classloader does the initialization job.
         // See https://github.com/MozillaReality/FirefoxReality/issues/3651
         Looper.getMainLooper().getThread();
-
-        SessionStore.prefOverrides(this);
         GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 

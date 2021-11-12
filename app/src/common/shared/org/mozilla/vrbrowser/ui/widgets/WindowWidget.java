@@ -37,11 +37,12 @@ import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.MediaElement;
-import org.mozilla.geckoview.PanZoomController;
+import org.mozilla.geckoview.MediaSession;
+import org.mozilla.geckoview.WebResponse;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -177,7 +178,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         mWidgetManager = (WidgetManagerDelegate) aContext;
-        mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
+        // TODO: Fix the compositor in Gecko to support correct border offset
+        mBorderWidth = 0; //SettingsStore.getInstance(aContext).getTransparentBorderWidth();
 
         mDownloadsManager = mWidgetManager.getServicesProvider().getDownloadsManager();
 
@@ -257,6 +259,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addPopUpStateChangedListener(this);
         aSession.addDrmStateChangedListener(this);
         aSession.setExternalRequestDelegate(this);
+        aSession.setVideoAvailabilityDelegate(this);
     }
 
     void cleanListeners(Session aSession) {
@@ -271,6 +274,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removePopUpStateChangedListener(this);
         aSession.removeDrmStateChangedListener(this);
         aSession.setExternalRequestDelegate(null);
+        aSession.setVideoAvailabilityDelegate(null);
     }
 
     @Override
@@ -443,7 +447,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mWidgetManager.updateWidget(WindowWidget.this);
                 mWidgetManager.popWorldBrightness(WindowWidget.this);
                 mWidgetManager.popBackHandler(mBackHandler);
-                resumeCompositor();
+                if (mTexture != null) {
+                    resumeCompositor();
+                }
             }
         }
     }
@@ -572,7 +578,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
         mIsInVRVideoMode = false;
-        int border = SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
+
+        // TODO: Fix the compositor in Gecko to support correct border offset
+        int border = 0; // SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
         if (mWidthBackup == mWidth && mHeightBackup == mHeight && border == mBorderWidth) {
             return;
         }
@@ -754,7 +762,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTexture.setDefaultBufferSize(aWidth, aHeight);
         }
 
-        if (mSurface != null && mView == null) {
+        if (mTexture != null && mSurface != null && mView == null) {
             callSurfaceChanged();
         }
     }
@@ -1110,7 +1118,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // Update the title bar media controls state
         boolean mediaAvailable = mSession.getActiveVideo() != null;
         if (mediaAvailable) {
-            if (mSession.getActiveVideo().isPlayed()) {
+            if (mSession.getActiveVideo().isPlaying()) {
                 mViewModel.setIsMediaPlaying(true);
             }
             mViewModel.setIsMediaAvailable(true);
@@ -1221,7 +1229,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public boolean onTouchEvent(MotionEvent aEvent) {
         GeckoSession session = mSession.getGeckoSession();
-        return (session != null) && session.getPanZoomController().onTouchEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+        if (session == null) {
+            return false;
+        }
+        session.getPanZoomController().onTouchEvent(aEvent);
+        return true;
     }
 
     @Override
@@ -1230,7 +1242,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return super.onGenericMotionEvent(aEvent);
         } else {
             GeckoSession session = mSession.getGeckoSession();
-            return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+            if (session == null) {
+                return false;
+            }
+            session.getPanZoomController().onMotionEvent(aEvent);
+            return true;
         }
     }
 
@@ -1655,11 +1671,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull GeckoSession.WebResponseInfo webResponseInfo) {
+    public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull WebResponse webResponseInfo) {
         // We don't want to trigger downloads of already downloaded files that we can't open
         // so we let the system handle it.
-        if (!UrlUtils.isFileUri(webResponseInfo.uri)) {
-            DownloadJob job = DownloadJob.from(webResponseInfo);
+       /* if (!UrlUtils.isFileUri(webResponseInfo.uri)) {
+            DownloadJob job = DownloadJob.from(webResponseInfo.uri);
             startDownload(job, true);
 
         } else {
@@ -1696,29 +1712,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         getResources().getString(R.string.download_open_file_open_unsupported_body),
                         null);
             }
-        }
+        }*/
     }
 
     // VideoAvailabilityListener
 
     @Override
     public void onVideoAvailabilityChanged(@NonNull Media aMedia, boolean aVideoAvailable) {
-        boolean mediaAvailable;
         if (mSession != null) {
             if (aVideoAvailable) {
                 aMedia.addMediaListener(mMediaDelegate);
-
             } else {
                 aMedia.removeMediaListener(mMediaDelegate);
             }
-            mediaAvailable = mSession.getActiveVideo() != null;
-
-        } else {
-            mediaAvailable = false;
         }
 
-        if (mediaAvailable) {
-            if (mSession.getActiveVideo().isPlayed()) {
+        if (aVideoAvailable) {
+            if (aMedia.isPlaying()) {
                 mViewModel.setIsMediaPlaying(true);
             }
             mViewModel.setIsMediaAvailable(true);
@@ -1729,29 +1739,28 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    MediaElement.Delegate mMediaDelegate = new MediaElement.Delegate() {
-        @Override
-        public void onPlaybackStateChange(@NonNull MediaElement mediaElement, int state) {
-            switch(state) {
-                case MediaElement.MEDIA_STATE_PLAY:
-                case MediaElement.MEDIA_STATE_PLAYING:
-                    mViewModel.setIsMediaAvailable(true);
-                    mViewModel.setIsMediaPlaying(true);
-                    break;
-                case MediaElement.MEDIA_STATE_PAUSE:
-                    mViewModel.setIsMediaAvailable(true);
-                    mViewModel.setIsMediaPlaying(false);
-                    break;
-                case MediaElement.MEDIA_STATE_ABORT:
-                case MediaElement.MEDIA_STATE_EMPTIED:
-                    mViewModel.setIsMediaAvailable(false);
-                    mViewModel.setIsMediaPlaying(false);
-            }
-        }
+   MediaSession.Delegate mMediaDelegate = new MediaSession.Delegate() {
+
+       @Override
+       public void onPlay(@NonNull @NotNull GeckoSession session, @NonNull @NotNull MediaSession mediaSession) {
+           mViewModel.setIsMediaAvailable(true);
+           mViewModel.setIsMediaPlaying(true);
+       }
+
+       @Override
+       public void onPause(@NonNull @NotNull GeckoSession session, @NonNull @NotNull MediaSession mediaSession) {
+           mViewModel.setIsMediaAvailable(true);
+           mViewModel.setIsMediaPlaying(false);
+       }
+
+       @Override
+       public void onStop(@NonNull @NotNull GeckoSession session, @NonNull @NotNull MediaSession mediaSession) {
+           mViewModel.setIsMediaAvailable(true);
+           mViewModel.setIsMediaPlaying(false);
+       }
     };
 
     // GeckoSession.NavigationDelegate
-
 
     @Override
     public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String aUri) {

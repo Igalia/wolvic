@@ -299,9 +299,9 @@ class GeckoWebExtension(
                                 tabDetails.active == true,
                                 tabDetails.url)
                 ) {
-                    GeckoResult.ALLOW
+                    GeckoResult.allow()
                 } else {
-                    GeckoResult.DENY
+                    GeckoResult.deny()
                 }
             }
 
@@ -312,12 +312,12 @@ class GeckoWebExtension(
 
                 return if (ext != null) {
                     if (tabHandler.onCloseTab(this@GeckoWebExtension, session)) {
-                        GeckoResult.ALLOW
+                        GeckoResult.allow()
                     } else {
-                        GeckoResult.DENY
+                        GeckoResult.deny()
                     }
                 } else {
-                    GeckoResult.DENY
+                    GeckoResult.deny()
                 }
             }
         }
@@ -337,8 +337,8 @@ class GeckoWebExtension(
     /**
      * See [WebExtension.getMetadata].
      */
-    override fun getMetadata(): Metadata? {
-        return nativeExtension.metaData?.let {
+    override fun getMetadata(): Metadata {
+        return nativeExtension.metaData.let {
             Metadata(
                     name = it.name,
                     description = it.description,
@@ -362,15 +362,15 @@ class GeckoWebExtension(
     }
 
     override fun isEnabled(): Boolean {
-        return nativeExtension.metaData?.enabled ?: true
+        return nativeExtension.metaData.enabled
     }
 
     override suspend fun loadIcon(size: Int): Bitmap? {
-        return this.nativeExtension.metaData?.icon?.get(size)?.await()
+        return this.nativeExtension.metaData.icon.getBitmap(size).await()
     }
 
     override fun isAllowedInPrivateBrowsing(): Boolean {
-        return isBuiltIn() || nativeExtension.metaData?.allowedInPrivateBrowsing ?: false
+        return isBuiltIn() || nativeExtension.metaData.allowedInPrivateBrowsing
     }
 }
 
@@ -401,7 +401,7 @@ class GeckoPort(
 
 private fun GeckoNativeWebExtensionAction.convert(): Action {
     val loadIcon: (suspend (Int) -> Bitmap?)? = icon?.let {
-        { size -> icon?.get(size)?.await() }
+        { size -> icon?.getBitmap(size)?.await() }
     }
 
     val onClick = { click() }
