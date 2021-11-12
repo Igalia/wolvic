@@ -43,7 +43,7 @@ static const std::list<std::string> sFileExt = std::list<std::string>({
 });
 
 static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, const std::string& aBasePath,
-                                         const std::string& aExtension, GLuint targetTexture = 0) {
+                                         const std::string& aExtension, bool srgb, GLuint targetTexture = 0) {
   TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(aContext, targetTexture);
   cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -51,7 +51,10 @@ static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, cons
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-  auto path = [&](const std::string &name) { return aBasePath + "/" + name + aExtension; };
+  auto path = [&](const std::string &name) {
+    return aBasePath + "/" + name + (srgb ? "_srgb" : "") + aExtension;
+  };
+
   vrb::TextureCubeMap::Load(aContext, cubemap, path(sPosx), path(sNegx), path(sPosy),
                             path(sNegy), path(sPosz), path(sNegz));
   return cubemap;
@@ -137,7 +140,8 @@ struct Skybox::State {
       state->SetProgram(program);
       geometry->SetRenderState(state);
 
-      texture = LoadTextureCube(aContext, basePath, extension);
+      bool srgb = false;
+      texture = LoadTextureCube(aContext, basePath, extension, srgb);
       state->SetTexture(texture);
       state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
                          0.0f);
@@ -165,7 +169,8 @@ struct Skybox::State {
       return;
     }
     vrb::CreationContextPtr create = context.lock();
-    texture = LoadTextureCube(create, basePath, extension, layerTextureHandle);
+    bool srgb = layer->GetFormat() == GL_SRGB8_ALPHA8 || layer->GetFormat() == GL_COMPRESSED_SRGB8_ETC2;
+    texture = LoadTextureCube(create, basePath, extension, srgb, layerTextureHandle);
     texture->Bind();
     layer->SetLoaded(true);
   }
