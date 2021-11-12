@@ -213,7 +213,7 @@ OculusLayerCube::IsLoaded() const {
 void
 OculusLayerCube::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
   OculusLayerBase<VRLayerCubePtr, ovrLayerCube2>::Update(aFrameIndex, aTracking, aClearSwapChain);
-  const ovrMatrix4f centerEyeViewMatrix = vrapi_GetViewMatrixFromPose(&aTracking.HeadPose.Pose);
+  const ovrMatrix4f centerEyeViewMatrix = vrapi_GetCenterViewMatrix(&aTracking.Eye[VRAPI_EYE_LEFT].ViewMatrix, &aTracking.Eye[VRAPI_EYE_RIGHT].ViewMatrix);
   const ovrMatrix4f cubeMatrix = ovrMatrix4f_TanAngleMatrixForCubeMap(&centerEyeViewMatrix);
   ovrLayer.HeadPose = aTracking.HeadPose;
   ovrLayer.TexCoordsFromTanAngles = cubeMatrix;
