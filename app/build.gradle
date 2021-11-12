@@ -7,6 +7,7 @@ apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
+apply plugin: 'com.huawei.agconnect'
 
 deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
 
@@ -57,6 +58,13 @@ def getOpenXRFlags = { ->
 def getOpenXRCMakeFlags = { ->
     if (gradle.hasProperty("userProperties.openxr")) {
         return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : ""
+    }
+    return ""
+}
+
+def getHVRMLApiKey = { ->
+    if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
+        return gradle."userProperties.HVR_ML_API_KEY"
     }
     return ""
 }
@@ -234,6 +242,7 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
         }
 
         noapi {
@@ -522,6 +531,9 @@ dependencies {
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
+    hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.0.0.300'
+    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
+    hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
 }
 
 if (findProject(':servo')) {

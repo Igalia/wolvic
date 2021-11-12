@@ -203,5 +203,6 @@ def addRepos(RepositoryHandler handler) {
     handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     handler.maven { url 'https://maven.mozilla.org/maven2' }
     handler.maven { url 'https://download.servo.org/nightly/maven' }
+    handler.maven { url 'https://developer.huawei.com/repo/' }
 }
 ext.addRepos = this.&addRepos

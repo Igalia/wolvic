@@ -12,8 +12,6 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
-import com.mozilla.speechlibrary.SpeechService;
-
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Addons;
 import org.mozilla.vrbrowser.browser.LoginStorage;
@@ -24,6 +22,8 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
+import org.mozilla.vrbrowser.speech.MozillaSpeechRecognizer;
+import org.mozilla.vrbrowser.speech.SpeechRecognizer;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
@@ -43,7 +43,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private Places mPlaces;
     private Accounts mAccounts;
     private DownloadsManager mDownloadsManager;
-    private SpeechService mSpeechService;
+    private SpeechRecognizer mSpeechRecognizer;
     private EnvironmentsManager mEnvironmentsManager;
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
@@ -83,7 +83,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
         mDownloadsManager = new DownloadsManager(activityContext);
         mDownloadsManager.init();
-        mSpeechService = new SpeechService(activityContext);
+        mSpeechRecognizer = new MozillaSpeechRecognizer(activityContext);
         mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
         mEnvironmentsManager.init();
@@ -142,8 +142,12 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     }
 
     @Override
-    public SpeechService getSpeechService() {
-        return mSpeechService;
+    public SpeechRecognizer getSpeechRecognizer() {
+        return mSpeechRecognizer;
+    }
+
+    public void setSpeechRecognizer(SpeechRecognizer customRecognizer) {
+        mSpeechRecognizer = customRecognizer;
     }
 
     @Override

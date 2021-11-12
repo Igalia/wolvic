@@ -12,6 +12,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
+import org.mozilla.vrbrowser.speech.SpeechRecognizer;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.EnvironmentsManager;
@@ -27,7 +28,7 @@ public interface AppServicesProvider {
     BitmapCache getBitmapCache();
     Accounts getAccounts();
     DownloadsManager getDownloadsManager();
-    SpeechService getSpeechService();
+    SpeechRecognizer getSpeechRecognizer();
     EnvironmentsManager getEnvironmentsManager();
     LoginStorage getLoginStorage();
     Addons getAddons();

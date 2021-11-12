@@ -5,6 +5,9 @@
 
 package org.mozilla.vrbrowser;
 
+import com.huawei.agconnect.AGConnectInstance;
+import com.huawei.agconnect.AGConnectOptionsBuilder;
+import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hvr.LibUpdateClient;
 
 import android.app.Activity;
@@ -18,7 +21,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
+
+import org.mozilla.vrbrowser.utils.StringUtils;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
@@ -56,6 +60,20 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         //getDir();
         new LibUpdateClient(this).runUpdate();
         nativeOnCreate();
+
+        initializeAGConnect();
+    }
+
+    private void initializeAGConnect() {
+        try {
+            if (StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+                return;
+            }
+            MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
+            ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
