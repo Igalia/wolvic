@@ -13,8 +13,10 @@ import com.huawei.hvr.LibUpdateClient;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -46,18 +48,41 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
-
         mContext = this;
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        if (manager.getDisplays().length < 2) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setContentView(R.layout.hvr_connect_glasses);
+            manager.registerDisplayListener(new DisplayManager.DisplayListener() {
+                @Override
+                public void onDisplayAdded(int displayId) {
+                    initializeVR();
+                }
+
+                @Override
+                public void onDisplayRemoved(int displayId) {
+                }
+
+                @Override
+                public void onDisplayChanged(int displayId) {
+                }
+            }, null);
+
+        } else {
+            initializeVR();
+        }
+    }
+
+    private void initializeVR() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mView = new SurfaceView(this);
         setContentView(mView);
 
         mView.getHolder().addCallback(this);
-        //getDir();
         new LibUpdateClient(this).runUpdate();
         nativeOnCreate();
 

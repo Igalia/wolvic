@@ -586,7 +586,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (extras != null) {
             // If there is no data uri and there is a url parameter we get that
             if (uri == null && extras.containsKey("url")) {
-                uri = Uri.parse(intent.getExtras().getString("url"));
+                uri = Uri.parse(extras.getString("url"));
+            }
+            // SEND Actions received WebBrowser share dialogs
+            if (uri == null && extras.containsKey(Intent.EXTRA_TEXT)) {
+                String text = extras.getString(Intent.EXTRA_TEXT, "");
+                int i = text.indexOf("https://");
+                if (i < 0) {
+                    i = text.indexOf("http://");
+                }
+                if (i >= 0) {
+                    uri = Uri.parse(text.substring(i));
+                }
             }
 
             // Overwrite the stored homepage

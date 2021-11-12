@@ -31,6 +31,8 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
+import org.mozilla.vrbrowser.utils.DeviceType;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
@@ -223,6 +225,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(state, writer);
+            writer.flush();
 
             Log.d(LOGTAG, "Windows state saved");
 
@@ -244,9 +247,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             Log.d(LOGTAG, "Windows state restored");
 
         } catch (Exception e) {
-            Log.w(LOGTAG, "Error restoring windows state: " + e.getLocalizedMessage());
-
-        } finally {
             file.delete();
         }
 
@@ -804,6 +804,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mAddedTabUri != null) {
             openNewTab(mAddedTabUri, mAddedTabLocation);
             mAddedTabUri = null;
+        } else if (DeviceType.isHVRBuild()) {
+            String uri = SettingsStore.getInstance(mContext).getTabAfterRestore();
+            if (!StringUtils.isEmpty(uri)) {
+                openNewTab(uri, Windows.OPEN_IN_FOREGROUND);
+                SettingsStore.getInstance(mContext).setTabAfterRestore(null);
+            }
         }
 
         mAfterRestore = true;
@@ -1324,9 +1330,18 @@ public void selectTab(@NonNull Session aTab) {
     public void openNewTabAfterRestore(@NonNull String aUri, @NewTabLocation int aLocation) {
         if (mAfterRestore) {
             openNewTab(aUri, aLocation);
+            saveState();
         } else {
             mAddedTabUri = aUri;
             mAddedTabLocation = aLocation;
+            if (DeviceType.isHVRBuild()) {
+                /*
+                 * HVR usually shows the room setup when receiving an intent.
+                 * This causes the app to be restarted and the tab to restore is not processed.
+                 * We save it onto settings to recover it from this situation.
+                 */
+                SettingsStore.getInstance(mContext).setTabAfterRestore(aUri);
+            }
         }
     }
 

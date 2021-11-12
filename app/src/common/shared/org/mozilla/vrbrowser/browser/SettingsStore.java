@@ -876,4 +876,18 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_login_sync_enabled), LOGIN_SYNC_DEFAULT);
     }
 
+    public void setTabAfterRestore(@Nullable String uri) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        if (!StringUtils.isEmpty(uri)) {
+            editor.putString(mContext.getString(R.string.settings_key_tab_after_restore), uri);
+        } else {
+            editor.remove(mContext.getString(R.string.settings_key_tab_after_restore));
+        }
+        editor.commit();
+    }
+
+    public String getTabAfterRestore() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_tab_after_restore), null);
+    }
+
 }

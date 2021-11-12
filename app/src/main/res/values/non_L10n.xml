@@ -64,6 +64,7 @@
     <string name="settings_key_autofill_enabled" translatable="false">settings_key_autofill_enabled</string>
     <string name="settings_key_login_autocomplete_enabled" translatable="false">settings_key_login_autocomplete_enabled</string>
     <string name="settings_key_login_sync_enabled" translatable="false">settings_key_login_sync_enabled</string>
+    <string name="settings_key_tab_after_restore" translatable="false">settings_key_tab_after_restore</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox-reality/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>

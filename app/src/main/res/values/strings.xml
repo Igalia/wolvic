@@ -2166,4 +2166,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          the system but the system can't handle it either because there is no activity that can handle that uri.
          '%1$s' Will be replaced at runtime with the uri. -->
     <string name="external_open_uri_error_security_exception_body">SecurityException when starting intent for %1$s</string>
+
+    <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
+         This message is shown until the user correctly setups the device. -->
+    <string name="hvr_connect_glass_message">Connect your HUAWEI VR Glass to use this app</string>
 </resources>
