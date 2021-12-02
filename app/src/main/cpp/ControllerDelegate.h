@@ -36,6 +36,7 @@ public:
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) = 0;
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) = 0;
   virtual void SetImmersiveBeamTransform(const int32_t aControllerIndex, const vrb::Matrix& aImmersiveBeamTransform) = 0;
+  virtual void SetBeamTransform(const int32_t aControllerIndex, const vrb::Matrix& aBeamTransform) = 0;
   virtual void SetFocused(const int32_t aControllerIndex) = 0;
   virtual void DestroyController(const int32_t aControllerIndex) = 0;
   virtual uint32_t GetControllerCount() = 0;

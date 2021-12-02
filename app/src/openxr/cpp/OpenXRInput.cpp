@@ -1,6 +1,7 @@
 #include "OpenXRInput.h"
 #include "OpenXRHelpers.h"
 #include "OpenXRInputSource.h"
+#include "OpenXRActionSet.h"
 #include <vector>
 
 namespace crow {
@@ -23,13 +24,15 @@ OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemPropert
 
 XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
 {
+  mActionSet = OpenXRActionSet::Create(mInstance, mSession);
+
   std::array<OpenXRHandFlags, 2> hands {
-      OpenXRHandFlags::Left, OpenXRHandFlags::Right
+      OpenXRHandFlags::Right, OpenXRHandFlags::Left
   };
 
   int index = 0;
   for (auto handeness : hands) {
-    if (auto inputSource = OpenXRInputSource::Create(mInstance, mSession, mSystemProperties, handeness, index)) {
+    if (auto inputSource = OpenXRInputSource::Create(mInstance, mSession, *mActionSet, mSystemProperties, handeness, index)) {
       mInputSources.push_back(std::move(inputSource));
       delegate.CreateController(index, index, "Oculus");
       index++;
@@ -37,10 +40,8 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
   }
 
   OpenXRInputSource::SuggestedBindings bindings;
-  std::vector<XrActionSet> actionSets;
   for (auto& input : mInputSources) {
     input->SuggestBindings(bindings);
-    actionSets.push_back(input->ActionSet());
   }
 
   for (auto& binding : bindings) {
@@ -55,8 +56,8 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
   }
 
   XrSessionActionSetsAttachInfo attachInfo { XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO };
-  attachInfo.countActionSets = actionSets.size();
-  attachInfo.actionSets = actionSets.data();
+  attachInfo.countActionSets = 1;
+  attachInfo.actionSets = &mActionSet->ActionSet();
   RETURN_IF_XR_FAILED(xrAttachSessionActionSets(mSession, &attachInfo));
 
   UpdateInteractionProfile();
@@ -64,20 +65,19 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
   return XR_SUCCESS;
 }
 
-XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, device::RenderMode renderMode, ControllerDelegate& delegate)
+XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, float offsetY, device::RenderMode renderMode, ControllerDelegate& delegate)
 {
-  std::vector<XrActiveActionSet> actionSets;
-  for (auto& input : mInputSources) {
-    actionSets.push_back(XrActiveActionSet{input->ActionSet(), XR_NULL_PATH});
-  }
+  XrActiveActionSet activeActionSet {
+    mActionSet->ActionSet(), XR_NULL_PATH
+  };
 
   XrActionsSyncInfo syncInfo = { XR_TYPE_ACTIONS_SYNC_INFO };
-  syncInfo.countActiveActionSets = actionSets.size();
-  syncInfo.activeActionSets = actionSets.data();
+  syncInfo.countActiveActionSets = 1;
+  syncInfo.activeActionSets = &activeActionSet;
   RETURN_IF_XR_FAILED(xrSyncActions(mSession, &syncInfo));
 
   for (auto& input : mInputSources) {
-    input->Update(frameState, baseSpace, head, renderMode, delegate);
+    input->Update(frameState, baseSpace, head, offsetY, renderMode, delegate);
   }
 
   return XR_SUCCESS;

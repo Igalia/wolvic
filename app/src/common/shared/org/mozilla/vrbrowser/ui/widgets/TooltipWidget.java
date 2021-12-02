@@ -11,6 +11,7 @@ import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
+import org.mozilla.vrbrowser.utils.DeviceType;
 
 public class TooltipWidget extends UIWidget {
 
@@ -71,6 +72,10 @@ public class TooltipWidget extends UIWidget {
         int paddingV = getPaddingTop() + getPaddingBottom();
         mWidgetPlacement.width = (int)((getMeasuredWidth() + paddingH)/mWidgetPlacement.density);
         mWidgetPlacement.height = (int)((getMeasuredHeight() + paddingV)/mWidgetPlacement.density);
+        if (DeviceType.isHVRBuild()) {
+            // Widgets are very small in HVR
+            mWidgetPlacement.worldWidth = 1.5f * WidgetPlacement.worldToDpRatio(getContext()) * mWidgetPlacement.width;
+        }
 
         super.show(aShowFlags);
         AnimationHelper.scaleIn(mLayout, 100, 0, null);

@@ -123,6 +123,7 @@ if(OPENXR)
             src/openxr/cpp/OpenXRLayers.cpp
             src/openxr/cpp/OpenXRInput.cpp
             src/openxr/cpp/OpenXRInputSource.cpp
+            src/openxr/cpp/OpenXRActionSet.cpp
             src/openxr/cpp/OpenXRExtensions.cpp
     )
 

@@ -161,8 +161,10 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)
 (JNIEnv *aEnv, jobject) {
-  sAppContext->mDevice->LeaveVR();
-  BrowserWorld::Instance().ShutdownGL();
+  if (sAppContext && sAppContext->mDevice) {
+    sAppContext->mDevice->LeaveVR();
+    BrowserWorld::Instance().ShutdownGL();
+  }
 }
 
 

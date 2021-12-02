@@ -80,7 +80,7 @@ android {
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
-        versionName "12.3"
+        versionName "13.0"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "Boolean", "TASKCLUSTER_BUILD", getTaskclusterBuild()
@@ -238,7 +238,7 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    cppFlags " -DHVR -DHVR_6DOF -DOPENXR -I" + file("src/openxr/cpp").absolutePath
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
