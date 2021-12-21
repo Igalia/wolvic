@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser;
+package com.igalia.wolvic;
 
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Keep;
 
-import org.mozilla.vrbrowser.utils.SystemUtils;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
 

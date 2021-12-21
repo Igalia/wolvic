@@ -42,7 +42,7 @@
                     android:maxLines="1"
                     tools:text="Value" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
+                <com.igalia.wolvic.ui.views.settings.SettingsEditText
                     android:id="@+id/editValue1"
                     style="@style/settingsEdit"
                     android:inputType="number"
@@ -63,7 +63,7 @@
                     android:maxLines="1"
                     tools:text="Value" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
+                <com.igalia.wolvic.ui.views.settings.SettingsEditText
                     android:id="@+id/editValue2"
                     style="@style/settingsEdit"
                     android:inputType="number"

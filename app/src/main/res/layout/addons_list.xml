@@ -7,10 +7,10 @@
 
         <variable
             name="viewModel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.LibraryViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.LibraryViewModel" />
     </data>
 
-    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+    <com.igalia.wolvic.ui.views.ScrollBlockingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,7 +26,7 @@
             android:visibility="gone"
             app:visibleGone="@{viewModel.isLoading}" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/addons_list"
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
@@ -35,8 +35,8 @@
             android:orientation="vertical"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!viewModel.isLoading}" />
 
-    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+    </com.igalia.wolvic.ui.views.ScrollBlockingLayout>
 </layout>

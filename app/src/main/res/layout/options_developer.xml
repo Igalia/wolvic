@@ -9,7 +9,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             app:title="@string/settings_developer_options" />
 
         <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -37,52 +37,52 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/remote_debugging_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_remote_debugging" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/performance_monitor_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_performance_monitor" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/debug_logging_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_debug_logging" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/hardware_acceleration_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/hardware_acceleration_switch" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/bypass_cache_on_reload_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/bypass_cache_on_reload_switch" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/webgl_out_of_process_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/enable_webgl_out_of_process_switch" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/servo_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_servo" />
 
             </LinearLayout>
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

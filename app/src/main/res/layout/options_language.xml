@@ -26,7 +26,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             app:title="@string/settings_language_settings" />
 
         <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/voiceSearchLanguageButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                     android:textSize="@dimen/text_medium_size"
                     tools:text="Description" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/contentLanguageButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:textSize="@dimen/text_medium_size"
                     tools:text="Description" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/displayLanguageButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -109,9 +109,9 @@
                     tools:text="Description" />
             </LinearLayout>
 
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

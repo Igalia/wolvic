@@ -33,7 +33,7 @@
             android:layout_marginBottom="1dp"
             android:background="@color/iron"
             android:visibility="gone"/>
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/extendButton"
             android:layout_width="@dimen/autocompletion_widget_extend_button_width"
             android:layout_height="match_parent"

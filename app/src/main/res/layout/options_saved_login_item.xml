@@ -9,7 +9,7 @@
             type="mozilla.components.concept.storage.Login" />
         <variable
             name="delegate"
-            type="org.mozilla.vrbrowser.ui.adapters.LoginsAdapter.Delegate" />
+            type="com.igalia.wolvic.ui.adapters.LoginsAdapter.Delegate" />
         <variable
             name="isHovered"
             type="boolean" />

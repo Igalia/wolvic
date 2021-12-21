@@ -7,11 +7,11 @@
 
         <variable
             name="downloadsViewModel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.DownloadsViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.DownloadsViewModel" />
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.DownloadsCallback" />
+            type="com.igalia.wolvic.ui.callbacks.DownloadsCallback" />
     </data>
 
     <RelativeLayout
@@ -72,7 +72,7 @@
             android:visibility="gone"
             app:visibleGone="@{downloadsViewModel.isLoading}" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/downloads_list"
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
@@ -82,7 +82,7 @@
             android:contentDescription="Downloads"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; !downloadsViewModel.isEmpty}" />
 
         <FrameLayout

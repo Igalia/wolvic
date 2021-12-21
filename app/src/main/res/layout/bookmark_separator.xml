@@ -5,7 +5,7 @@
     <data>
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.ui.adapters.Bookmark" />
+            type="com.igalia.wolvic.ui.adapters.Bookmark" />
 
         <variable
             name="level"

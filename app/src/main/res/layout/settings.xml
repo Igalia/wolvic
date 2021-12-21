@@ -5,8 +5,8 @@
     <data>
         <variable
             name="settingsmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
-        <import type="org.mozilla.vrbrowser.BuildConfig"/>
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
+        <import type="com.igalia.wolvic.BuildConfig"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -126,35 +126,35 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/languageButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_language"
                             app:honeycombButtonText="@string/settings_language"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/displayButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_display"
                             app:honeycombButtonText="@string/settings_display"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/privacyButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
                             app:honeycombButtonText="@string/settings_privacy_security"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/developerOptionsButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
                             app:honeycombButtonText="@string/settings_developer_options"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/fxaButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_icon_settings_account"
@@ -173,14 +173,14 @@
                         android:layout_marginTop="-28dp"
                         android:orientation="horizontal">
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/environmentButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_environment"
                             app:honeycombButtonText="@string/developer_options_environments"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/controllerOptionsButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_controlleroptions"
@@ -189,7 +189,7 @@
                             app:honeycombButtonText="@string/settings_controller_options"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                        <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/helpButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_help"
@@ -200,7 +200,7 @@
                             android:layout_width="136dp"
                             android:layout_height="136dp"
                             android:layout_marginEnd="-10dp">
-                            <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            <com.igalia.wolvic.ui.views.HoneycombButton
                                 android:id="@+id/whatsNewButton"
                                 style="?attr/honeycombButtonStyle"
                                 app:honeycombButtonIcon="@drawable/ic_whats_new"

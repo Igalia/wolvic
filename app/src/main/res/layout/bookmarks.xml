@@ -8,7 +8,7 @@
 
         <variable
             name="bookmarksViewModel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.BookmarksViewModel" />
 
         <variable
             name="isAccountsUIEnabled"
@@ -32,7 +32,7 @@
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback" />
+            type="com.igalia.wolvic.ui.callbacks.BookmarksCallback" />
     </data>
 
     <RelativeLayout
@@ -96,7 +96,7 @@
             android:visibility="gone"
             app:visibleGone="@{bookmarksViewModel.isLoading}" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/bookmarks_list"
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
@@ -106,7 +106,7 @@
             android:contentDescription="Bookmarks feed"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!bookmarksViewModel.isLoading &amp;&amp; !bookmarksViewModel.isEmpty}" />
 
         <FrameLayout

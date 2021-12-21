@@ -5,10 +5,10 @@
     <data>
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
         <variable
             name="traymodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.TrayViewModel" />
     </data>
 
     <RelativeLayout
@@ -150,7 +150,7 @@
             android:background="@drawable/tray_background_bottom"
             android:orientation="horizontal">
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/addwindowButton"
                 style="@style/trayButtonStartTheme"
                 android:tooltipText="@string/new_window_tooltip"
@@ -160,7 +160,7 @@
                 android:src="@drawable/ic_icon_tray_newwindow"
                 app:visibleGone="@{!traymodel.isMaxWindows}"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/tabsButton"
                 style="@style/trayButtonMiddleTheme"
                 android:tooltipText="@string/tabs_tray_tooltip"
@@ -172,7 +172,7 @@
                 app:privateModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_start_private : @drawable/tray_background_middle_private}"
                 app:activeModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_checked_start : @drawable/tray_background_checked_middle}"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/privateButton"
                 style="@style/trayButtonMiddleTheme"
                 android:tooltipText="@{viewmodel.isPrivateSession? @string/private_browsing_exit_tooltip : @string/private_browsing_enter_tooltip}"
@@ -185,7 +185,7 @@
             <RelativeLayout
                 android:layout_width="40dp"
                 android:layout_height="40dp">
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/libraryButton"
                     style="@style/trayButtonMiddleTheme"
                     android:tooltipText="@{viewmodel.isLibraryVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
@@ -214,7 +214,7 @@
                     visibleGone="@{traymodel.downloadsNumber > 0}"/>
             </RelativeLayout>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/settingsButton"
                 style="@style/trayButtonEndTheme"
                 android:tooltipText="@string/settings_tooltip"

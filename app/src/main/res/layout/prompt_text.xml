@@ -45,7 +45,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textTitle"
             tools:text="Message" />
 
-        <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
+        <com.igalia.wolvic.ui.views.settings.SettingsEditText
             android:id="@+id/promptText"
             style="@style/settingsEdit"
             android:layout_width="0dp"

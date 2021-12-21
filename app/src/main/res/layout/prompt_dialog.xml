@@ -46,7 +46,7 @@
                 android:textSize="@dimen/text_bigger_size" />
         </FrameLayout>
 
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/bodyContainer"
             style="@style/customScrollViewStyle"
             android:fastScrollAlwaysVisible="false"
@@ -65,7 +65,7 @@
                 tools:text="Body"
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_medium_size" />
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
         <FrameLayout
             android:id="@+id/descriptionContainer"

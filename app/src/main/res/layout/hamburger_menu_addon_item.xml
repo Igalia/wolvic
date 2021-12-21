@@ -3,7 +3,7 @@
         <import type="mozilla.components.concept.engine.webextension.Action"/>
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.ui.adapters.HamburgerMenuAdapter.MenuItem" />
+            type="com.igalia.wolvic.ui.adapters.HamburgerMenuAdapter.MenuItem" />
     </data>
 
     <RelativeLayout

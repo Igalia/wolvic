@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser;
+package com.igalia.wolvic;
 
 import android.app.NativeActivity;
 import android.Manifest;
@@ -13,8 +13,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.utils.SystemUtils;
+import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);

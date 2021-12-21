@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser;
+package com.igalia.wolvic;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -35,8 +35,8 @@ import com.picovr.vractivity.VRActivity;
 import com.psmart.vrlib.PicovrSDK;
 import com.psmart.vrlib.VrActivity;
 
-import org.mozilla.vrbrowser.utils.DeviceType;
-import org.mozilla.vrbrowser.utils.SystemUtils;
+import com.igalia.wolvic.utils.DeviceType;
+import com.igalia.wolvic.utils.SystemUtils;
 
 
 public class PlatformActivity extends VRActivity implements RenderInterface, CVControllerListener {

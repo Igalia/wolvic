@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser;
+package com.igalia.wolvic;
 
 import com.htc.vr.sdk.VRActivity;
 
@@ -12,8 +12,8 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
-import org.mozilla.vrbrowser.utils.DeviceType;
-import org.mozilla.vrbrowser.utils.SystemUtils;
+import com.igalia.wolvic.utils.DeviceType;
+import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends VRActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);

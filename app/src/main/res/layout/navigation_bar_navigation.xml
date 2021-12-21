@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="org.mozilla.vrbrowser.BuildConfig"/>
+        <import type="com.igalia.wolvic.BuildConfig"/>
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
         <variable
             name="settingsmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
     </data>
     <LinearLayout
         android:id="@+id/navigationBarContainer"
@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:padding="0dp">
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/backButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
@@ -28,7 +28,7 @@
             android:enabled="@{viewmodel.canGoBack}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/forwardButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
@@ -38,7 +38,7 @@
             android:enabled="@{viewmodel.canGoForward}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/reloadButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
@@ -47,7 +47,7 @@
             android:tooltipText="@{viewmodel.isLoading ? @string/stop_tooltip : @string/refresh_tooltip}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/homeButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
@@ -56,7 +56,7 @@
             android:tooltipText="@string/home_tooltip"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.NavigationURLBar
+        <com.igalia.wolvic.ui.views.NavigationURLBar
             android:id="@+id/urlBar"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -65,7 +65,7 @@
             android:layout_weight="100"
             android:orientation="horizontal"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/servoButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
@@ -83,7 +83,7 @@
             android:scaleType="fitCenter"
             android:layout_gravity="center_vertical"
             app:visibleGone="@{settingsmodel.isWhatsNewVisible &amp;&amp; viewmodel.width > 640}">
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/whatsNew"
                 style="?attr/navigationBarButtonStyle"
                 android:src="@drawable/ic_whats_new"
@@ -99,7 +99,7 @@
                 android:background="@drawable/downloads_badge"/>
         </RelativeLayout>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"

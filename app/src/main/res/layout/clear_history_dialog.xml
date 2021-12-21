@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+    <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
         android:id="@+id/clearHistoryRadio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

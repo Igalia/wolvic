@@ -7,7 +7,7 @@
 
         <variable
             name="historyViewModel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.HistoryViewModel" />
 
         <variable
             name="isAccountsUIEnabled"
@@ -31,7 +31,7 @@
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.HistoryCallback" />
+            type="com.igalia.wolvic.ui.callbacks.HistoryCallback" />
     </data>
 
     <RelativeLayout
@@ -92,7 +92,7 @@
             android:visibility="gone"
             app:visibleGone="@{historyViewModel.isLoading}" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/history_list"
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
             android:contentDescription="History feed"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; !historyViewModel.isEmpty}" />
 
         <FrameLayout

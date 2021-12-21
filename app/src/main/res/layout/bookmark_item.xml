@@ -7,11 +7,11 @@
         <import type="android.widget.LinearLayout"/>
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.ui.adapters.Bookmark" />
+            type="com.igalia.wolvic.ui.adapters.Bookmark" />
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback" />
+            type="com.igalia.wolvic.ui.callbacks.BookmarkItemCallback" />
 
         <variable
             name="isNarrow"

@@ -9,7 +9,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             android:layout_below="@id/header_layout"
             android:layout_above="@id/footer_layout"/>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

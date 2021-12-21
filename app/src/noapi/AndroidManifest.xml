@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.igalia.wolvic">
     <application>
         <activity android:name=".VRBrowserActivity"
             android:screenOrientation="landscape">

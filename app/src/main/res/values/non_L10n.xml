@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Firefox Reality</string>
+    <string name="app_name" translatable="false">Wolvic VR Browser</string>
     <string name="bug_report_url" translatable="false">mzl.la/fxr</string>
     <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
     <string name="homepage_url" translatable="false">https://webxr.today/</string>

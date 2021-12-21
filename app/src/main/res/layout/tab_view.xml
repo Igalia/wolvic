@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.mozilla.vrbrowser.ui.views.TabView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.igalia.wolvic.ui.views.TabView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/tab_view_height"
     xmlns:tools="http://schemas.android.com/tools">
@@ -61,7 +61,7 @@
             android:lines="1"
             tools:text="Title"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/tabViewCloseButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -72,7 +72,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true" />
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/tabViewSendButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -145,4 +145,4 @@
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"/>
 
-</org.mozilla.vrbrowser.ui.views.TabView>
+</com.igalia.wolvic.ui.views.TabView>

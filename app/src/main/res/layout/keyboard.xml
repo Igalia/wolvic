@@ -16,7 +16,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/keyboardCloseButton"
                     android:layout_width="@dimen/keyboard_key_width"
                     android:layout_height="@dimen/keyboard_key_width"
@@ -27,7 +27,7 @@
                     android:src="@drawable/ic_icon_exit"
                     android:scaleType="fitCenter"
                     android:background="@drawable/keyboard_button_background"/>
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/keyboardMoveButton"
                     android:layout_width="@dimen/keyboard_key_width"
                     android:layout_height="@dimen/keyboard_key_width"
@@ -46,7 +46,7 @@
                 android:layout_width="@dimen/keyboard_alphabetic_width"
                 android:layout_height="match_parent">
 
-                <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
+                <com.igalia.wolvic.ui.views.CustomKeyboardView
                     android:id="@+id/keyboard"
                     android:padding="15dp"
                     android:background="@drawable/keyboard_background"
@@ -68,7 +68,7 @@
                     android:alpha="0.5"
                     android:visibility="visible"/>
 
-                <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
+                <com.igalia.wolvic.ui.views.CustomKeyboardView
                     android:id="@+id/popupKeyboard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                     android:verticalCorrection="0dp"
                     android:visibility="visible"/>
 
-                <org.mozilla.vrbrowser.ui.views.KeyboardSelectorView
+                <com.igalia.wolvic.ui.views.KeyboardSelectorView
                     android:id="@+id/langSelectorView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                     android:layout_marginStart="20dp"
                     android:visibility="gone"/>
 
-                <org.mozilla.vrbrowser.ui.views.KeyboardSelectorView
+                <com.igalia.wolvic.ui.views.KeyboardSelectorView
                     android:id="@+id/domainSelectorView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
             <FrameLayout
                 android:layout_width="@dimen/keyboard_numeric_width"
                 android:layout_height="match_parent">
-                <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
+                <com.igalia.wolvic.ui.views.CustomKeyboardView
                     android:id="@+id/keyboardNumeric"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -131,7 +131,7 @@
 
         </LinearLayout>
 
-        <org.mozilla.vrbrowser.ui.views.AutoCompletionView
+        <com.igalia.wolvic.ui.views.AutoCompletionView
             android:id="@+id/autoCompletionView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/autocompletion_widget_line_height"

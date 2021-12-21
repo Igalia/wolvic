@@ -49,11 +49,11 @@
 # --------------------------------------------------------------------
 # Keep classes from FxR
 # --------------------------------------------------------------------
--keep class org.mozilla.vrbrowser.ui.widgets.WidgetPlacement {*;} # Keep class used in JNI.
--keep class org.mozilla.vrbrowser.ui.widgets.Windows$** {*;} # Keep state clases used by gson.
--keep class org.mozilla.vrbrowser.browser.engine.** {*;} # Keep state clases used by gson.
--keep class org.mozilla.vrbrowser.utils.RemoteProperties {*;} # Keep state clases used by gson.
--keep class org.mozilla.vrbrowser.utils.Environment {*;} # Keep state clases used by gson.
+-keep class com.igalia.wolvic.ui.widgets.WidgetPlacement {*;} # Keep class used in JNI.
+-keep class com.igalia.wolvic.ui.widgets.Windows$** {*;} # Keep state clases used by gson.
+-keep class com.igalia.wolvic.browser.engine.** {*;} # Keep state clases used by gson.
+-keep class com.igalia.wolvic.utils.RemoteProperties {*;} # Keep state clases used by gson.
+-keep class com.igalia.wolvic.utils.Environment {*;} # Keep state clases used by gson.
 
 # --------------------------------------------------------------------
 # Keep classes from HTC SDK

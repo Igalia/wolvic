@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
-        <import type="org.mozilla.vrbrowser.ui.widgets.WebXRInterstitialController"/>
+        <import type="com.igalia.wolvic.utils.DeviceType"/>
+        <import type="com.igalia.wolvic.ui.widgets.WebXRInterstitialController"/>
         <variable
             name="model"
             type="int" />

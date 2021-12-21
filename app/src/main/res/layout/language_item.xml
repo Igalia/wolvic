@@ -19,7 +19,7 @@
 
         <variable
             name="language"
-            type="org.mozilla.vrbrowser.ui.adapters.Language" />
+            type="com.igalia.wolvic.ui.adapters.Language" />
     </data>
 
     <RelativeLayout
@@ -99,7 +99,7 @@
              We use a custom FadingFrameLayout to overcome this limitation. You can change the
              FadingFrameLayout for a FrameLayout or remove it and move the fading attributes
              to the TextView to see the glitched result. -->
-        <org.mozilla.vrbrowser.ui.views.FadingFrameLayout
+        <com.igalia.wolvic.ui.views.FadingFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/addRemoveButtons"
@@ -117,7 +117,7 @@
                 android:singleLine="true"
                 android:text="@{language.displayName}"
                 tool:text="Language Item" />
-        </org.mozilla.vrbrowser.ui.views.FadingFrameLayout>
+        </com.igalia.wolvic.ui.views.FadingFrameLayout>
 
         <LinearLayout
             android:id="@+id/moveButtons"

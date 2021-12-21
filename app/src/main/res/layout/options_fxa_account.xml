@@ -19,7 +19,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="@string/settings_fxa_account_manage" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/sync_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                     app:description="@string/fxa_account_last_no_synced"
                     lastSync="@{lastSync}"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/sign_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                     android:text="@string/fxa_account_options_sync_description"
                     tools:text="@string/fxa_account_options_sync_description" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/bookmarks_sync_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                     app:on_text="@string/sync"
                     app:off_text="@string/do_not_sync"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/history_sync_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                     app:on_text="@string/sync"
                     app:off_text="@string/do_not_sync"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/logins_sync_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -112,9 +112,9 @@
                     app:off_text="@string/do_not_sync"/>
 
             </LinearLayout>
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

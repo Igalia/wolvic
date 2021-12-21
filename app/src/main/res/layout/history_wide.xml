@@ -33,7 +33,7 @@
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.HistoryCallback" />
+            type="com.igalia.wolvic.ui.callbacks.HistoryCallback" />
     </data>
 
     <LinearLayout

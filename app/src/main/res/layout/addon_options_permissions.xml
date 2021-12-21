@@ -6,13 +6,13 @@
             name="addon"
             type="mozilla.components.feature.addons.Addon" />
     </data>
-    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+    <com.igalia.wolvic.ui.views.ScrollBlockingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            <com.igalia.wolvic.ui.views.CustomScrollView
                 android:id="@+id/scrollview"
                 style="@style/customScrollViewStyle"
                 android:layout_width="0dp"
@@ -29,7 +29,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
-                    <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+                    <com.igalia.wolvic.ui.views.CustomRecyclerView
                         android:id="@+id/permissions_list"
                         style="@style/customRecyclerViewStyle"
                         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                         android:paddingEnd="20dp"
                         android:fadingEdgeLength="60dp"
                         android:requiresFadingEdge="vertical"
-                        app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"/>
+                        app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"/>
                     <TextView
                         android:id="@+id/learn_more_link"
                         android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                         android:autoLink="all"
                         android:textStyle="bold"/>
                 </LinearLayout>
-            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+            </com.igalia.wolvic.ui.views.CustomScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+    </com.igalia.wolvic.ui.views.ScrollBlockingLayout>
 </layout>

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.ui.adapters.HamburgerMenuAdapter.MenuItem" />
+            type="com.igalia.wolvic.ui.adapters.HamburgerMenuAdapter.MenuItem" />
     </data>
 
     <LinearLayout

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
+        <import type="com.igalia.wolvic.utils.DeviceType"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,7 +13,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             app:title="@string/settings_privacy_security" />
 
         <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -42,40 +42,40 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/showPrivacyButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/developer_options_show"
                     app:description="@string/settings_privacy_policy" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/loginsAndPasswords"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/privacy_options_logins_button"
                     app:description="@string/privacy_options_logins"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/autocompleteSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autocomplete" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/drmContentPlaybackSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_drm_content_v1"
                     visibleGone="@{!DeviceType.picoVR}"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/restoreTabsSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_restore_tabs" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/downloads_storage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,38 +83,38 @@
                     app:options="@array/privacy_options_downloads_storage"
                     app:values="@array/privacy_options_downloads_storage_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/popUpsBlockingSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_block_pup_up_windows" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/popUpsBlockingExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/security_options_block_pup_up_settings" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/webxrSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_permission_webxr" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/webxrExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/security_options_webxr_settings" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/trackingProtectionButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/privacy_options_tracking_exceptions_v1"
                     app:description="@string/privacy_options_tracking"/>
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/trackingProtectionRadio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -124,14 +124,14 @@
                     app:descriptions="@array/privacy_options_tracking_description"
                     app:values="@array/privacy_options_tracking_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/clearCookiesSite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/developer_options_clear_cache"
                     app:description="@string/developer_options_clear_cache_cookies_site_description" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/clearWebContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/security_options_permissions_title" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/cameraPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_camera" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/microphonePermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_microphone" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/locationPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_location" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/notificationsPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_notifications" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/storagePermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
                     android:gravity="center_vertical"
                     android:text="@{String.format(@string/security_options_speech_data_collection_title, @string/app_name)}" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/speechDataSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@{String.format(@string/security_options_speech_data_collect, @string/app_name)}" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/telemetryDataSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -216,7 +216,7 @@
                     app:off_text="@string/permission_reject"
                     app:description="@{String.format(@string/security_options_telemetry_send_data, @string/app_name)}" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/crashReportsDataSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -226,9 +226,9 @@
                     app:description="@{String.format(@string/security_options_crash_reports_send_data, @string/app_name)}" />
 
             </LinearLayout>
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

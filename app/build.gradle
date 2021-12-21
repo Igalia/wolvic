@@ -76,7 +76,7 @@ ext.gleanDocsDirectory = "$rootDir/docs"
 android {
     compileSdkVersion build_versions.target_sdk
     defaultConfig {
-        applicationId "org.mozilla.vrbrowser"
+        applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1

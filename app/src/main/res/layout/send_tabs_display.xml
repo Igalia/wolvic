@@ -58,7 +58,7 @@
                 app:visibleGone="@{isSyncing}"/>
 
             <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            <com.igalia.wolvic.ui.views.CustomScrollView
                 android:id="@+id/scrollbar"
                 style="@style/customScrollViewStyle"
                 android:layout_width="match_parent"
@@ -74,14 +74,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                    <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                         android:id="@+id/devices_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout="@layout/setting_radio_group_v"/>
 
                 </LinearLayout>
-            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+            </com.igalia.wolvic.ui.views.CustomScrollView>
 
         </FrameLayout>
 

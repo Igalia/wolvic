@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="org.mozilla.vrbrowser.downloads.Download"/>
+        <import type="com.igalia.wolvic.downloads.Download"/>
         <import type="android.widget.LinearLayout"/>
         <import type="android.view.Gravity"/>
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.downloads.Download" />
+            type="com.igalia.wolvic.downloads.Download" />
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.DownloadItemCallback" />
+            type="com.igalia.wolvic.ui.callbacks.DownloadItemCallback" />
 
         <variable
             name="isHovered"

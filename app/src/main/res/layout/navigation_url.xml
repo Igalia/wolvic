@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="org.mozilla.vrbrowser.utils.UrlUtils"/>
-        <import type="org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText" />
+        <import type="com.igalia.wolvic.utils.UrlUtils"/>
+        <import type="com.igalia.wolvic.ui.views.CustomInlineAutocompleteEditText" />
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
         <variable
             name="settingsViewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
     </data>
 
     <FrameLayout
@@ -43,7 +43,7 @@
                 android:orientation="horizontal"
                 app:visibleGone="@{!viewmodel.isFocused &amp;&amp; viewmodel.isUrlBarButtonsVisible}">
 
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/tracking"
                     style="@style/urlBarIconThemeStart"
                     android:paddingStart="6dp"
@@ -71,7 +71,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@color/rhino"
                         visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled}" />
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/drm"
                         style="@style/urlBarIconTheme"
                         android:layout_width="@{!settingsViewmodel.isTrackingProtectionEnabled ? @dimen/url_bar_first_item_width : @dimen/url_bar_item_width}"
@@ -100,7 +100,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@color/rhino"
                         visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled || (settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed)}" />
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/popup"
                         style="@style/urlBarIconTheme"
                         android:layout_width="@{(!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !(settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed)) ? @dimen/url_bar_first_item_width : @dimen/url_bar_item_width}"
@@ -129,7 +129,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@color/rhino"
                         visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled || (settingsViewmodel.isPopUpBlockingEnabled &amp;&amp; viewmodel.isPopUpBlocked) || (settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed)}"/>
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/webxr"
                         style="@style/urlBarIconTheme"
                         android:layout_width="@{(!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !(settingsViewmodel.isPopUpBlockingEnabled &amp;&amp; viewmodel.isPopUpBlocked) &amp;&amp; !(settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed)) ? @dimen/url_bar_first_item_width : @dimen/url_bar_item_width}"
@@ -182,7 +182,7 @@
                     app:visibleGone="@{viewmodel.isInsecureVisible}" />
             </LinearLayout>
 
-            <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
+            <com.igalia.wolvic.ui.views.CustomInlineAutocompleteEditText
                 android:id="@+id/urlEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -222,7 +222,7 @@
                 android:layout_marginEnd="2dp"
                 android:orientation="horizontal">
 
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/microphoneButton"
                     style="@style/urlBarIconTheme"
                     android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
@@ -233,7 +233,7 @@
                     app:privateMode="@{viewmodel.isPrivateSession}"
                     app:visibleGone="@{viewmodel.isMicrophoneEnabled &amp;&amp; !viewmodel.isFocused}"/>
 
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/bookmarkButton"
                     style="@style/urlBarIconThemeEnd"
                     android:src="@{viewmodel.isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
@@ -243,7 +243,7 @@
                     app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}"
                     tools:src="@drawable/ic_icon_bookmarked" />
 
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/clearButton"
                     style="@style/urlBarIconThemeEnd"
                     android:src="@drawable/ic_icon_clear"

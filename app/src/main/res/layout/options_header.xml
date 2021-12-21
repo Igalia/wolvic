@@ -37,7 +37,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp">
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/backButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_width="40dp"
@@ -74,7 +74,7 @@
                     tools:text="Setting description" />
             </LinearLayout>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/helpButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_width="40dp"

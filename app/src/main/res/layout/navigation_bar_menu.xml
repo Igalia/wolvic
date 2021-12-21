@@ -4,10 +4,10 @@
     <data>
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
         <variable
             name="settingsmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
     </data>
     <LinearLayout
         android:id="@+id/resizeModeContainer"
@@ -18,14 +18,14 @@
         android:background="@drawable/resize_bar_background"
         android:visibility="gone">
 
-        <org.mozilla.vrbrowser.ui.views.UITextButton
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/resizePreset3"
             style="@style/navigationBarTextButtonStartTheme"
             android:text="3x"
             android:textSize="14sp"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UITextButton
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/resizePreset2"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
@@ -33,7 +33,7 @@
             android:textSize="14sp"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UITextButton
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/resizePreset15"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
@@ -41,7 +41,7 @@
             android:textSize="14sp"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UITextButton
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/resizePreset1"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
@@ -49,7 +49,7 @@
             android:textSize="14sp"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UITextButton
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/resizePreset0"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
@@ -57,7 +57,7 @@
             android:textSize="14sp"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/resizeExitButton"
             style="@style/navigationBarTextButtonEndTheme"
             android:src="@drawable/ic_icon_resize_done"

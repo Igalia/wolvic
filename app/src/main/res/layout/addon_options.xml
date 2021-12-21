@@ -7,15 +7,15 @@
             type="mozilla.components.feature.addons.Addon" />
         <variable
             name="delegate"
-            type="org.mozilla.vrbrowser.addons.delegates.AddonOptionsViewDelegate" />
+            type="com.igalia.wolvic.addons.delegates.AddonOptionsViewDelegate" />
     </data>
-    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+    <com.igalia.wolvic.ui.views.ScrollBlockingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            <com.igalia.wolvic.ui.views.CustomScrollView
                 android:id="@+id/scrollview"
                 style="@style/customScrollViewStyle"
                 android:layout_width="0dp"
@@ -32,18 +32,18 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentTop="true"
                         android:orientation="vertical">
-                        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                        <com.igalia.wolvic.ui.views.settings.SwitchSetting
                             android:id="@+id/addon_enabled"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:description="@{addon.enabled ? @string/addons_details_enabled : @string/addons_details_disabled}" />
-                        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                        <com.igalia.wolvic.ui.views.settings.SwitchSetting
                             android:id="@+id/addon_private_mode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:description="@string/addons_details_private_mode"
                             visibleGone="@{addon.enabled}" />
-                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                        <com.igalia.wolvic.ui.views.settings.ButtonSetting
                             android:id="@+id/addon_settings"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -51,19 +51,19 @@
                             app:visibleGone="@{addon.enabled}"
                             android:enabled="@{addon.installedState != null &amp;&amp; addon.installedState.optionsPageUrl != null}"
                             android:onClick="@{(view) ->  delegate != null ? delegate.onAddonSettingsButtonClicked(view, addon) : void}"/>
-                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                        <com.igalia.wolvic.ui.views.settings.ButtonSetting
                             android:id="@+id/addon_detail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:buttonText="@string/addons_details_details"
                             android:onClick="@{(view) ->  delegate != null ? delegate.onAddonDetailsButtonClicked(view, addon) : void}"/>
-                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                        <com.igalia.wolvic.ui.views.settings.ButtonSetting
                             android:id="@+id/addon_permissions"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:buttonText="@string/addons_details_permissions"
                             android:onClick="@{(view) ->  delegate != null ? delegate.onAddonPermissionsButtonClicked(view, addon) : void}"/>
-                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                        <com.igalia.wolvic.ui.views.settings.ButtonSetting
                             android:id="@+id/addon_removeAddon"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                             app:buttonText="@string/addons_details_remove"
                             android:onClick="@{(view) ->  delegate != null ? delegate.onRemoveAddonButtonClicked(view, addon) : void}"/>
                     </LinearLayout>
-            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+            </com.igalia.wolvic.ui.views.CustomScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+    </com.igalia.wolvic.ui.views.ScrollBlockingLayout>
 </layout>

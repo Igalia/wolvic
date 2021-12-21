@@ -3,7 +3,7 @@
     <data>
         <variable
             name="delegate"
-            type="org.mozilla.vrbrowser.ui.delegates.LibraryNavigationDelegate" />
+            type="com.igalia.wolvic.ui.delegates.LibraryNavigationDelegate" />
         <variable
             name="canGoBack"
             type="boolean" />
@@ -24,22 +24,22 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical">
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonStartTheme"
                         android:src="@drawable/ic_icon_bookmark"
                         android:id="@+id/bookmarks"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_history"
                         android:id="@+id/history"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_downloads"
                         android:id="@+id/downloads"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_addons"
                         android:id="@+id/addons"
@@ -62,7 +62,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_alignParentTop="true">
 
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/backButton"
                         style="?attr/navigationBarButtonStyle"
                         android:layout_alignParentStart="true"
@@ -85,7 +85,7 @@
                         android:textSize="@dimen/text_biggest_size"
                         android:textStyle="bold" />
 
-                    <org.mozilla.vrbrowser.ui.views.UIButton
+                    <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/closeButton"
                         style="?attr/navigationBarButtonStyle"
                         android:layout_alignParentEnd="true"

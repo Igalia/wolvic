@@ -1738,7 +1738,7 @@ void BrowserWorld::CreateEnvironment() {
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-    Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
+    Java_com_igalia_wolvic_VRBrowserActivity_##method_name
 
 extern "C" {
 

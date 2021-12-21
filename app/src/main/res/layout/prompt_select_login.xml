@@ -29,7 +29,7 @@
                 android:textSize="@dimen/text_bigger_size" />
         </FrameLayout>
 
-        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/loginsList"
             style="@style/customRecyclerViewStyle"
             android:layout_width="340dp"
@@ -42,7 +42,7 @@
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             android:background="@color/asphalt"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
 
         <RelativeLayout
             android:id="@+id/buttonsLayout"

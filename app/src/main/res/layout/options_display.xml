@@ -9,7 +9,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             app:title="@string/settings_display" />
 
         <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -38,13 +38,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/curved_display_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_curved_display" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/ua_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     app:options="@array/developer_options_ua_modes"
                     app:values="@array/developer_options_ua_mode_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/msaa_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -60,13 +60,13 @@
                     app:options="@array/developer_options_msaa"
                     app:values="@array/developer_options_msaa_mode_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/autoplaySwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autoplay" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                     app:description="@string/developer_options_homepage"
                     app:highlightedTextColor="@color/fog" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/density_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                     app:description="@string/developer_options_display_density"
                     app:highlightedTextColor="@color/fog" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/dpi_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,9 +96,9 @@
                     app:highlightedTextColor="@color/fog" />
 
             </LinearLayout>
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

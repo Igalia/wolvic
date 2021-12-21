@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.mozilla.vrbrowser">
+    package="com.igalia.wolvic">
     <!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"

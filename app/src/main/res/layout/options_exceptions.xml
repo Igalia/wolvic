@@ -16,7 +16,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -84,18 +84,18 @@
                     android:text="@string/privacy_options_popups_list_header_v1"
                     tools:text="@string/privacy_options_popups_list_header_v1" />
 
-                <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+                <com.igalia.wolvic.ui.views.CustomRecyclerView
                     android:id="@+id/site_list"
                     style="@style/customRecyclerViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="privacy_options_popups_list_header_v1"
                     android:paddingEnd="15dp"
-                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
+                    app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
             </LinearLayout>
         </FrameLayout>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

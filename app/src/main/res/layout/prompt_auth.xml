@@ -75,7 +75,7 @@
                         android:textAlignment="viewEnd"
                         android:textSize="18sp" />
 
-                    <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
+                    <com.igalia.wolvic.ui.views.settings.SettingsEditText
                         android:id="@+id/authUsername"
                         style="@style/settingsEdit"
                         android:layout_width="match_parent"
@@ -103,7 +103,7 @@
                         android:textAlignment="viewEnd"
                         android:textSize="18sp" />
 
-                    <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
+                    <com.igalia.wolvic.ui.views.settings.SettingsEditText
                         android:id="@+id/authPassword"
                         style="@style/settingsEdit"
                         android:layout_width="match_parent"

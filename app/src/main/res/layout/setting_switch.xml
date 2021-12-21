@@ -29,7 +29,7 @@
                     style="@style/settingsText"
                     tools:text="Switch Setting Description" />
 
-                <org.mozilla.vrbrowser.ui.views.UIButton
+                <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/settings_help_button"
                     android:visibility="gone"
                     style="@style/settingsHelpButton" />

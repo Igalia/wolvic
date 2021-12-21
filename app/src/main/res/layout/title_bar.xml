@@ -5,18 +5,18 @@
 
     <data>
         <import type="android.view.View" />
-        <import type="org.mozilla.vrbrowser.utils.UrlUtils" />
+        <import type="com.igalia.wolvic.utils.UrlUtils" />
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
 
         <variable
             name="widget"
-            type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget" />
+            type="com.igalia.wolvic.ui.widgets.TitleBarWidget" />
 
         <variable
             name="delegate"
-            type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget.Delegate" />
+            type="com.igalia.wolvic.ui.widgets.TitleBarWidget.Delegate" />
 
         <variable
             name="isMediaPlaying"
@@ -76,7 +76,7 @@
                 tools:text="@{viewmodel.titleBarUrl}" />
         </LinearLayout>
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/mediaButton"
             style="?attr/navigationBarButtonStyle"
             android:src="@{viewmodel.isMediaPlaying ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"

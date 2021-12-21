@@ -4,10 +4,10 @@
     <data>
         <variable
             name="viewmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
         <variable
             name="settingsmodel"
-            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"

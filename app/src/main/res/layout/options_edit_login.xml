@@ -10,7 +10,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             app:title="@string/settings_display" />
 
         <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -68,14 +68,14 @@
                         android:textColor="@color/library_panel_description_color"
                         android:textSize="@dimen/settings_text_size"
                         tools:text="http://mozilla.org" />
-                    <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    <com.igalia.wolvic.ui.views.settings.ButtonSetting
                         android:id="@+id/siteButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:buttonText="@string/login_edit_dialog_site_button"/>
                 </LinearLayout>
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/username_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                     app:description="@string/login_edit_dialog_username_description"
                     app:highlightedTextColor="@color/fog" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/password_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -109,9 +109,9 @@
                     android:visibility="gone"/>
 
             </LinearLayout>
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

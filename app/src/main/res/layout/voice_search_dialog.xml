@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget.State"/>
+        <import type="com.igalia.wolvic.ui.widgets.dialogs.VoiceSearchWidget.State"/>
         <variable
             name="state"
             type="State" />

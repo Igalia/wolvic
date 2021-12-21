@@ -13,7 +13,7 @@
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.DownloadsCallback" />
+            type="com.igalia.wolvic.ui.callbacks.DownloadsCallback" />
     </data>
 
     <LinearLayout

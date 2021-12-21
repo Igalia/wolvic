@@ -10,7 +10,7 @@
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="@{String.format(@string/settings_language_choose_display_language_title, @string/app_name)}" />
 
-        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+        <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
             style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
@@ -33,15 +33,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_layout">
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/languageRadio"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layout="@layout/setting_radio_group_v" />
 
-        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
-        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

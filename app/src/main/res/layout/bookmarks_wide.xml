@@ -33,7 +33,7 @@
 
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback" />
+            type="com.igalia.wolvic.ui.callbacks.BookmarksCallback" />
     </data>
 
     <RelativeLayout
