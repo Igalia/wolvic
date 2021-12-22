@@ -8,7 +8,8 @@
 #  - "/path/to/gecko-profile"
 #
 prefs:
-  dom.vr.enabled: true
+  dom.vr.enabled: false
+  dom.gamepad.extensions.enabled: false
   dom.vr.external.enable: true
   dom.vr.webxr.enabled: true
   webgl.enable-draft-extensions: true
