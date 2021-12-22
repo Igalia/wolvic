@@ -28,7 +28,7 @@ import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import com.igalia.wolvic.R
 import com.igalia.wolvic.browser.engine.EngineProvider
-import com.igalia.wolvic.telemetry.GleanMetricsService
+import com.igalia.wolvic.telemetry.TelemetryService
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import com.igalia.wolvic.utils.ConnectivityReceiver
 import com.igalia.wolvic.utils.SystemUtils
@@ -78,7 +78,7 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
                         .map { it.command }
                         .filterIsInstance<DeviceCommandIncoming.TabReceived>()
                         .forEach { command ->
-                            command.from?.deviceType?.let { GleanMetricsService.FxA.receivedTab(it) }
+                            command.from?.deviceType?.let { TelemetryService.FxA.receivedTab(it) }
                             tabReceivedDelegate?.onTabsReceived(command.entries)
                         }
             }

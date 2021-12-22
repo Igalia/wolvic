@@ -17,7 +17,7 @@ import androidx.annotation.StringRes;
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.downloads.DownloadJob;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.StringUtils;
@@ -101,7 +101,7 @@ public class ContextMenuWidget extends MenuWidget {
             mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_link_new_tab_1), 0, () -> {
                 if (!StringUtils.isEmpty(aContextElement.linkUri)) {
                     widgetManager.openNewTab(aContextElement.linkUri);
-                    GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.CONTEXT_MENU);
+                    TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.CONTEXT_MENU);
                 }
                 onDismiss();
             }));

@@ -28,7 +28,7 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.HistoryBinding;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.HistoryAdapter;
 import com.igalia.wolvic.ui.callbacks.HistoryCallback;
 import com.igalia.wolvic.ui.callbacks.HistoryContextMenuCallback;
@@ -245,7 +245,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
 
                             mAccounts.setOrigin(Accounts.LoginOrigin.HISTORY, sessionId);
 
-                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();
                             window.hidePanel();
@@ -452,7 +452,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.BOOKMARKS);
             hideContextMenu();
         }
 

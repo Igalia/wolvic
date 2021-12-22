@@ -37,7 +37,7 @@ import com.igalia.wolvic.browser.BookmarksStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NavigationUrlBinding;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
@@ -376,7 +376,7 @@ public class NavigationURLBar extends FrameLayout {
             mDelegate.onVoiceSearchClicked();
         }
 
-        GleanMetricsService.voiceInputEvent();
+        TelemetryService.voiceInputEvent();
     };
 
     private OnClickListener mClearListener = view -> {

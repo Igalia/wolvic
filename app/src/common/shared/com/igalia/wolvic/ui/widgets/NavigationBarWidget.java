@@ -42,7 +42,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NavigationBarBinding;
 import com.igalia.wolvic.db.SitePermission;
 import com.igalia.wolvic.search.suggestions.SuggestionsProvider;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.TrayViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
@@ -779,7 +779,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         closeFloatingMenus();
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {
-            GleanMetricsService.windowsResizeEvent();
+            TelemetryService.windowsResizeEvent();
         }
 
         mAttachedWindow.mWidgetPlacement.tintColor = Windows.WHITE;

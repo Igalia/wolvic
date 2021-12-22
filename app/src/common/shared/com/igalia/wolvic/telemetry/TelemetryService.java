@@ -1,6 +1,7 @@
 package com.igalia.wolvic.telemetry;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
@@ -23,10 +24,10 @@ import mozilla.telemetry.glean.GleanTimerId;
 import static com.igalia.wolvic.ui.widgets.Windows.MAX_WINDOWS;
 
 
-public class GleanMetricsService {
+public class TelemetryService {
 
-    private final static String APP_NAME = "FirefoxReality";
-    private final static String LOGTAG = SystemUtils.createLogtag(GleanMetricsService.class);
+    private final static String APP_NAME = "Wolvic";
+    private final static String LOGTAG = SystemUtils.createLogtag(TelemetryService.class);
     private static boolean initialized = false;
     private static Context context = null;
     private static HashSet<String> domainMap = new HashSet<String>();
@@ -36,6 +37,8 @@ public class GleanMetricsService {
     private static GleanTimerId activeWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
     private static GleanTimerId openWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
     private static GleanTimerId openPrivateWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
+    private static ITelemetry service;
+    private static boolean started;
 
     // We should call this at the application initial stage.
     public static void init(@NonNull Context aContext, @NonNull Client client) {
@@ -52,46 +55,95 @@ public class GleanMetricsService {
                 BuildConfig.BUILD_TYPE);
 
         Glean.INSTANCE.initialize(aContext, telemetryEnabled, config);
+        if (telemetryEnabled) {
+            start();
+        }
+    }
+
+    public static void setService(ITelemetry impl) {
+        service = impl;
+        if (started && service != null) {
+            service.start();
+        }
     }
 
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void start() {
         Glean.INSTANCE.setUploadEnabled(true);
+        started = true;
+        if (service != null) {
+            service.start();
+        }
     }
 
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void stop() {
         Glean.INSTANCE.setUploadEnabled(false);
+        started = false;
+        if (service != null) {
+            service.stop();
+        }
     }
 
     public static void startPageLoadTime(String aUrl) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("startPageLoadTime");
     }
 
     public static void stopPageLoadTimeWithURI(String uri) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("stopPageLoadTimeWithURI");
     }
 
     public static void windowsResizeEvent() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("windowsResizeEvent");
     }
 
     public static void windowsMoveEvent() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("windowsMoveEvent");
     }
 
     public static void activePlacementEvent(int from, boolean active) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("from", from);
+        bundle.putBoolean("active", active);
+        service.customEvent("activePlacementEvent", bundle);
     }
 
     public static void openWindowsEvent(int from, int to, boolean isPrivate) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("from", from);
+        bundle.putInt("to", to);
+        bundle.putBoolean("isPrivate", isPrivate);
+        service.customEvent("openWindowsEvent", bundle);
     }
 
     public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("number", number);
+        bundle.putBoolean("isPrivate", isPrivate);
+        service.customEvent("resetOpenedWindowsCount", bundle);
     }
 
     public static void sessionStop() {
@@ -102,33 +154,57 @@ public class GleanMetricsService {
         openWindowTimerId = new GleanTimerId[MAX_WINDOWS];
         openPrivateWindowTimerId = new GleanTimerId[MAX_WINDOWS];
 
-        /* intentionally left empty */
+        service.customEvent("sessionStop");
     }
 
     @UiThread
     public static void urlBarEvent(boolean aIsUrl) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isUrl", aIsUrl);
+        service.customEvent("urlBarEvent", bundle);
     }
 
     @UiThread
     public static void voiceInputEvent() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("voiceInputEvent");
     }
 
     public static void startImmersive() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("startImmersive");
     }
 
     public static void stopImmersive() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("stopImmersive");
     }
 
     public static void openWindowEvent(int windowId) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("windowId", windowId);
+        service.customEvent("openWindowEvent", bundle);
     }
 
     public static void closeWindowEvent(int windowId) {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putInt("windowId", windowId);
+        service.customEvent("closeWindowEvent", bundle);
     }
 
     private static String getDefaultSearchEngineIdentifierForTelemetry() {
@@ -136,37 +212,69 @@ public class GleanMetricsService {
     }
 
     public static void newWindowOpenEvent() {
-        /* intentionally left empty */
+        if (service == null) {
+            return;
+        }
+        service.customEvent("newWindowOpenEvent");
     }
 
     public static class FxA {
 
         public static void signIn() {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            service.customEvent("FxA_signIn");
         }
 
         public static void signInResult(boolean status) {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("status", status);
+            service.customEvent("FxA_signInResult", bundle);
         }
 
         public static void signOut() {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            service.customEvent("FxA_signOut");
         }
 
         public static void bookmarksSyncStatus(boolean status) {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("status", status);
+            service.customEvent("FxA_bookmarksSyncStatus");
         }
 
         public static void historySyncStatus(boolean status) {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("status", status);
+            service.customEvent("FxA_historySyncStatus", bundle);
         }
 
         public static void sentTab() {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            service.customEvent("FxA_sentTab");
         }
 
         public static void receivedTab(@NonNull mozilla.components.concept.sync.DeviceType source) {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putInt("source", source.ordinal());
+            service.customEvent("FxA_receivedTab", bundle);
         }
     }
 
@@ -185,11 +293,19 @@ public class GleanMetricsService {
         }
 
         public static void openedCounter(@NonNull TabSource source) {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putInt("source", source.ordinal());
+            service.customEvent("tab_opened", bundle);
         }
 
         public static void activatedEvent() {
-            /* intentionally left empty */
+            if (service == null) {
+                return;
+            }
+            service.customEvent("tab_activated");
         }
     }
 }

@@ -4,6 +4,8 @@
     package="com.igalia.wolvic"
     android:installLocation="auto">
 
+    <uses-sdk tools:overrideLibrary="com.huawei.agconnect.credential,com.huawei.agconnect.core,com.huawei.agconnect.https,com.huawei.agconnect.datastore"/>
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-feature android:name="android.hardware.camera" />
@@ -23,6 +25,13 @@
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
+        <meta-data
+            android:name="com.huawei.hms.client.channel.androidMarket"
+            android:value="false" />
+        <meta-data
+            android:name="install_channel"
+            android:value="install_channel_value">
+        </meta-data>
         <activity
             android:name=".VRBrowserActivity"
             android:label="@string/app_name"

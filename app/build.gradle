@@ -531,8 +531,10 @@ dependencies {
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
-    hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.0.0.300'
+    hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
     hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
+    hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
+    // hvrImplementation 'com.huawei.hms:hianalytics-harmony:6.3.2.300'
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
 }
 

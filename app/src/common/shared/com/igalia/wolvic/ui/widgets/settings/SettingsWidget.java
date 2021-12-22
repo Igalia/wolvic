@@ -38,7 +38,7 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.databinding.SettingsBinding;
 import com.igalia.wolvic.db.SitePermission;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
@@ -306,7 +306,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
                                 mAccounts.setOrigin(Accounts.LoginOrigin.SETTINGS, sessionId);
 
-                                GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                                TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.FXA_LOGIN);
                             }
 
                         }, mUIThreadExecutor).exceptionally(throwable -> {

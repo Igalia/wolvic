@@ -25,7 +25,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.engine.EngineProvider;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
 import com.igalia.wolvic.utils.DeviceType;
@@ -213,9 +213,9 @@ public class SettingsStore {
 
         // We send after enabling in case of opting-in
         if (isEnabled) {
-            GleanMetricsService.start();
+            TelemetryService.start();
         } else {
-            GleanMetricsService.stop();
+            TelemetryService.stop();
         }
 
         // Update the status sent flag

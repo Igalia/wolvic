@@ -58,7 +58,7 @@ import com.igalia.wolvic.crashreporting.GlobalExceptionHandler;
 import com.igalia.wolvic.geolocation.GeolocationWrapper;
 import com.igalia.wolvic.input.MotionEventGenerator;
 import com.igalia.wolvic.search.SearchEngineWrapper;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.OffscreenDisplay;
 import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
@@ -413,7 +413,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStop() {
         SettingsStore.getInstance(getBaseContext()).setPid(0);
         super.onStop();
-        GleanMetricsService.sessionStop();
+        TelemetryService.sessionStop();
         if (mTray != null) {
             mTray.stop(this);
         }
@@ -1021,7 +1021,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 listener.onEnterWebXR();
             }
         });
-        GleanMetricsService.startImmersive();
+        TelemetryService.startImmersive();
 
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
@@ -1054,7 +1054,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the window in front of you when you exit immersive mode.
         recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
 
-        GleanMetricsService.stopImmersive();
+        TelemetryService.stopImmersive();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             if (!mWindows.isPaused()) {

@@ -41,7 +41,7 @@ import com.igalia.wolvic.browser.VideoAvailabilityListener;
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.geolocation.GeolocationData;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.InternalPages;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -1235,7 +1235,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         Log.d(LOGTAG, "Session onPageStart");
         mState.mIsLoading = true;
-        GleanMetricsService.startPageLoadTime(aUri);
+        TelemetryService.startPageLoadTime(aUri);
 
         setWebXRState(SessionState.WEBXR_UNUSED);
         for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
@@ -1251,7 +1251,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         Log.d(LOGTAG, "Session onPageStop");
         mState.mIsLoading = false;
         if (!SessionUtils.isLocalizedContent(mState.mUri)) {
-            GleanMetricsService.stopPageLoadTimeWithURI(mState.mUri);
+            TelemetryService.stopPageLoadTimeWithURI(mState.mUri);
         }
 
         for (GeckoSession.ProgressDelegate listener : mProgressListeners) {

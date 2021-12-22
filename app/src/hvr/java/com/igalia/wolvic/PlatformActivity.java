@@ -21,6 +21,7 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
@@ -92,6 +93,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
                 return;
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
+            TelemetryService.setService(new HVRTelemetry(this));
             ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
         } catch (Exception e) {
             e.printStackTrace();

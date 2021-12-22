@@ -39,7 +39,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.input.CustomKeyboard;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.keyboards.ChinesePinyinKeyboard;
 import com.igalia.wolvic.ui.keyboards.ChineseZhuyinKeyboard;
 import com.igalia.wolvic.ui.keyboards.DanishKeyboard;
@@ -1082,7 +1082,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
         }
         mIsInVoiceInput = true;
-        GleanMetricsService.voiceInputEvent();
+        TelemetryService.voiceInputEvent();
         mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);

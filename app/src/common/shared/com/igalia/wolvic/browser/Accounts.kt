@@ -25,7 +25,7 @@ import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import com.igalia.wolvic.R
 import com.igalia.wolvic.VRBrowserApplication
-import com.igalia.wolvic.telemetry.GleanMetricsService
+import com.igalia.wolvic.telemetry.TelemetryService
 import com.igalia.wolvic.utils.BitmapCache
 import com.igalia.wolvic.utils.SystemUtils
 import com.igalia.wolvic.utils.ViewUtils
@@ -125,7 +125,7 @@ class Accounts constructor(val context: Context) {
             Log.d(LOGTAG, "The user has been successfully logged in")
 
             if (authType !== AuthType.Existing) {
-                GleanMetricsService.FxA.signInResult(true)
+                TelemetryService.FxA.signInResult(true)
             }
 
             accountStatus = AccountStatus.SIGNED_IN
@@ -153,7 +153,7 @@ class Accounts constructor(val context: Context) {
         override fun onAuthenticationProblems() {
             Log.d(LOGTAG, "There was a problem authenticating the user")
 
-            GleanMetricsService.FxA.signInResult(false)
+            TelemetryService.FxA.signInResult(false)
 
             originSessionId = null
 
@@ -292,7 +292,7 @@ class Accounts constructor(val context: Context) {
     }
 
     fun authUrlAsync(): CompletableFuture<String?>? {
-        GleanMetricsService.FxA.signIn()
+        TelemetryService.FxA.signIn()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.beginAuthentication()
         }
@@ -326,10 +326,10 @@ class Accounts constructor(val context: Context) {
     fun setSyncStatus(engine: SyncEngine, value: Boolean) {
         when(engine) {
             SyncEngine.Bookmarks -> {
-                GleanMetricsService.FxA.bookmarksSyncStatus(value)
+                TelemetryService.FxA.bookmarksSyncStatus(value)
             }
             SyncEngine.History -> {
-                GleanMetricsService.FxA.historySyncStatus(value)
+                TelemetryService.FxA.historySyncStatus(value)
             }
         }
 
@@ -341,7 +341,7 @@ class Accounts constructor(val context: Context) {
     }
 
     fun logoutAsync(): CompletableFuture<Unit?>? {
-        GleanMetricsService.FxA.signOut()
+        TelemetryService.FxA.signOut()
 
         otherDevices = emptyList()
         return CoroutineScope(Dispatchers.Main).future {
@@ -380,7 +380,7 @@ class Accounts constructor(val context: Context) {
                 targets?.forEach { it ->
                     constellation.sendCommandToDevice(
                             it.id, DeviceCommandOutgoing.SendTab(title, url)
-                    ).also { if (it) GleanMetricsService.FxA.sentTab() }
+                    ).also { if (it) TelemetryService.FxA.sentTab() }
                 }
             }
         }

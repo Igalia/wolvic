@@ -26,7 +26,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.DownloadsBinding;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadsManager;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.DownloadsAdapter;
 import com.igalia.wolvic.ui.callbacks.DownloadItemCallback;
 import com.igalia.wolvic.ui.callbacks.DownloadsCallback;
@@ -271,7 +271,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.DOWNLOADS);
+            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.DOWNLOADS);
             hideContextMenu();
         }
 

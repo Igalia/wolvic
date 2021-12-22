@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.search.SearchEngineWrapper;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -244,14 +244,14 @@ public class UrlUtils {
         String url = text.trim();
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
-            GleanMetricsService.urlBarEvent(true);
+            TelemetryService.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
             url = SearchEngineWrapper.get(context).getSearchURL(text);
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
-            GleanMetricsService.urlBarEvent(false);
+            TelemetryService.urlBarEvent(false);
         }
 
         return url;

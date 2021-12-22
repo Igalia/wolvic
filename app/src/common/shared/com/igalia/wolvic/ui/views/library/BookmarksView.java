@@ -28,7 +28,7 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.BookmarksBinding;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Bookmark;
 import com.igalia.wolvic.ui.adapters.BookmarkAdapter;
 import com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager;
@@ -238,7 +238,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
 
                             mAccounts.setOrigin(Accounts.LoginOrigin.BOOKMARKS, sessionId);
 
-                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();
                             window.hidePanel();
@@ -399,7 +399,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.BOOKMARKS);
             hideContextMenu();
         }
     };

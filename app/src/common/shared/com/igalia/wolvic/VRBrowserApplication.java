@@ -24,7 +24,7 @@ import com.igalia.wolvic.db.DataRepository;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.speech.MozillaSpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechRecognizer;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
 import com.igalia.wolvic.utils.BitmapCache;
@@ -65,7 +65,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         // depending on how JVM classloader does the initialization job.
         // See https://github.com/MozillaReality/FirefoxReality/issues/3651
         Looper.getMainLooper().getThread();
-        GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
+        TelemetryService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 
     protected void onActivityCreate(@NonNull Context activityContext) {

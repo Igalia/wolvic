@@ -55,7 +55,7 @@ import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.downloads.DownloadJob;
 import com.igalia.wolvic.downloads.DownloadsManager;
-import com.igalia.wolvic.telemetry.GleanMetricsService;
+import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
@@ -219,7 +219,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mPromptDelegate.attachToWindow(this);
 
         setFocusable(true);
-        GleanMetricsService.openWindowEvent(mWindowId);
+        TelemetryService.openWindowEvent(mWindowId);
 
         if (mSession.getGeckoSession() != null) {
             onCurrentSessionChange(null, mSession.getGeckoSession());
@@ -349,7 +349,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void close() {
-        GleanMetricsService.closeWindowEvent(mWindowId);
+        TelemetryService.closeWindowEvent(mWindowId);
         hideContextMenus();
         releaseWidget();
         mLibrary.onDestroy();
@@ -592,14 +592,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void setWindowPlacement(@NonNull Windows.WindowPlacement aPlacement) {
         if (mActive) {
-            GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), false);
+            TelemetryService.activePlacementEvent(mWindowPlacement.getValue(), false);
         }
         mWindowPlacement = aPlacement;
         mViewModel.setWidth(mWidgetPlacement.width);
         mViewModel.setHeight(mWidgetPlacement.height);
         mViewModel.setPlacement(mWindowPlacement);
         if (mActive) {
-            GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), true);
+            TelemetryService.activePlacementEvent(mWindowPlacement.getValue(), true);
         }
     }
 
@@ -658,7 +658,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         hideContextMenus();
 
-        GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), mActive);
+        TelemetryService.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
 
         mViewModel.setIsActiveWindow(active);
@@ -1145,7 +1145,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // the notification is misplaced.
         postDelayed(() -> mWidgetManager.getWindows().showTabAddedNotification(), 500);
 
-        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
+        TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.BROWSER);
     }
 
     @Override

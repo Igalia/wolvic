@@ -82,6 +82,13 @@
     <init>(android.app.Application);
 }
 
+# ---------------------------------------------------------------------
+#HVR SDK
+#----------------------------------------------------------------------
+-keep class com.huawei.agconnect.**{*;}
+-keep class com.huawei.hms.analytics.**{*;}
+-keep class com.huawei.hms.push.**{*;}
+
 -dontwarn **
 -target 1.7
 -dontusemixedcaseclassnames
