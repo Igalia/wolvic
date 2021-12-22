@@ -21,13 +21,18 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.igalia.wolvic.browser.PermissionDelegate;
+import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
     private SurfaceView mView;
     private Context mContext = null;
+    private HVRLocationManager mLocationManager;
 
     static {
         Log.i(TAG, "LoadLibrary");
@@ -47,6 +52,13 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         Log.i(TAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
         mContext = this;
+        mLocationManager = new HVRLocationManager(this);
+        PermissionDelegate.sPlatformLocationOverride = new PermissionDelegate.PlatformLocationOverride() {
+            @Override
+            public void onLocationGranted(Session session) {
+                mLocationManager.start(session);
+            }
+        };
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

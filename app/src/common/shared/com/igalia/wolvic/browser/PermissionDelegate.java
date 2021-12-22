@@ -43,6 +43,11 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     private SitePermissionViewModel mSitePermissionModel;
     private List<SitePermission> mSitePermissions;
 
+    public interface PlatformLocationOverride {
+        void onLocationGranted(Session session);
+    }
+    public static PlatformLocationOverride sPlatformLocationOverride;
+
     public PermissionDelegate(Context aContext, WidgetManagerDelegate aWidgetManager) {
         mContext = aContext;
         mWidgetManager = aWidgetManager;
@@ -213,6 +218,9 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             @Override
             public void grant() {
                 result.complete(ContentPermission.VALUE_ALLOW);
+                if (type == PermissionWidget.PermissionType.Location && sPlatformLocationOverride != null) {
+                    sPlatformLocationOverride.onLocationGranted(SessionStore.get().getSession(aSession));
+                }
             }
 
             @Override
