@@ -7,6 +7,10 @@
     <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="${headtrackingRequired}" />
     <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
     <uses-permission android:name="${permissionToRemove}" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove"/>
     <application
         android:name=".VRBrowserApplication"
         android:allowBackup="true"

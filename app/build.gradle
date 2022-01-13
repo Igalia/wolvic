@@ -106,10 +106,10 @@ android {
     }
 
     if (gradle.hasProperty('userProperties.taskclusterBuild')) {
-        project.archivesBaseName = "FirefoxReality-$defaultConfig.versionName-$generatedVersionCode"
+        project.archivesBaseName = "Wolvic-$defaultConfig.versionName-$generatedVersionCode"
         defaultConfig.versionCode = generatedVersionCode
     } else {
-        project.archivesBaseName = "FirefoxReality"
+        project.archivesBaseName = "Wolvic"
     }
 
     compileOptions {
@@ -125,7 +125,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
+            //signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
+            signingConfig signingConfigs.release
             buildConfigField 'String', 'PROPS_ENDPOINT', '"http://mixedreality.mozilla.org/FirefoxReality/props.json"'
         }
         debug {

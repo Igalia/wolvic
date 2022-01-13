@@ -98,7 +98,7 @@ public class TelemetryService {
         if (service == null) {
             return;
         }
-        service.customEvent("stopPageLoadTimeWithURI");
+        service.customEvent("stopPageLoadTime");
     }
 
     public static void windowsResizeEvent() {
@@ -147,6 +147,9 @@ public class TelemetryService {
     }
 
     public static void sessionStop() {
+        if (service == null) {
+            return;
+        }
         domainMap.clear();
         loadingTimerId.clear();
         windowLifeTimerId.clear();
