@@ -2,12 +2,6 @@
   "1": {
         "whatsNewUrl": "https://wolvic.com",
         "environments": [
-            {
-                "value": "wolvic",
-                "title": "Wolvic",
-                "thumbnail": "https://igalia.github.io/wolvic/envs/wolvic/thumbnail.jpg",
-                "payload": "https://igalia.github.io/wolvic/envs/wolvic/wolvic.zip"
-            }
         ]
     }
 }
