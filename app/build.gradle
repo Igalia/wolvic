@@ -127,12 +127,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             //signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             signingConfig signingConfigs.release
-            buildConfigField 'String', 'PROPS_ENDPOINT', '"http://mixedreality.mozilla.org/FirefoxReality/props.json"'
+            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
-            buildConfigField 'String', 'PROPS_ENDPOINT', '"http://mixedreality.mozilla.org/FirefoxReality/props.json"'
+            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
         }
     }
 
