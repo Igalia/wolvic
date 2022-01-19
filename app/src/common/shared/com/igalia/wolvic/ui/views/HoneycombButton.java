@@ -60,6 +60,7 @@ public class HoneycombButton extends LinearLayout {
             }
             break;
           case DeviceType.OculusQuest:
+          case DeviceType.OculusQuest2:
             if (attributes.hasValue(R.styleable.HoneycombButton_honeycombButtonIconOculus6dof)) {
               Log.d(LOGTAG, "Using Oculus 6DoF icon for '" + iconIdStr + "' honeycomb icon");
               try {

@@ -157,6 +157,7 @@
                         <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/fxaButton"
                             style="?attr/honeycombButtonStyle"
+                            android:visibility="gone"
                             app:honeycombButtonIcon="@drawable/ic_icon_settings_account"
                             app:honeycombButtonText="@string/settings_fxa_account_sign_in"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width"
@@ -197,6 +198,7 @@
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                         <RelativeLayout
+                            android:visibility="gone"
                             android:layout_width="136dp"
                             android:layout_height="136dp"
                             android:layout_marginEnd="-10dp">

@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Wolvic VR Browser</string>
     <string name="bug_report_url" translatable="false">mzl.la/fxr</string>
     <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
-    <string name="homepage_url" translatable="false">https://webxr.today/</string>
+    <string name="homepage_url" translatable="false">https://wolvic.com/start</string>
     <string name="settings_key_homepage" translatable="false">settings_homepage</string>
     <string name="settings_key_crash" translatable="false">settings_crash</string>
     <string name="settings_key_locale" translatable="false">settings_locale</string>
@@ -65,10 +65,10 @@
     <string name="settings_key_login_autocomplete_enabled" translatable="false">settings_key_login_autocomplete_enabled</string>
     <string name="settings_key_login_sync_enabled" translatable="false">settings_key_login_sync_enabled</string>
     <string name="settings_key_tab_after_restore" translatable="false">settings_key_tab_after_restore</string>
-    <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>
-    <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox-reality/</string>
-    <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
-    <string name="help_url" translatable="false">https://support.mozilla.org/products/firefox-reality</string>
+    <string name="environment_override_help_url" translatable="false">https://github.com/igalia/wolvic/wiki/Environments</string>
+    <string name="private_policy_url" translatable="false">https://www.igalia.com/privacy/</string>
+    <string name="private_report_url" translatable="false">https://www.igalia.com/privacy/&amp;url=%1$s</string>
+    <string name="help_url" translatable="false">https://www.wolvic.com</string>
     <string name="sumo_language_voice_url" translatable="false">https://support.mozilla.org/kb/using-voice-search-firefox-reality</string>
     <string name="sumo_language_display_url" translatable="false">https://support.mozilla.org/kb/use-firefox-another-language?as=u&amp;utm_source=inproduct</string>
     <string name="sumo_language_content_url" translatable="false">https://support.mozilla.org/kb/choose-display-languages-multilingual-web-pages?as=u&amp;utm_source=inproduct</string>
@@ -205,5 +205,5 @@
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
     <!-- Settings Survey link -->
-    <string name="survey_link" translatable="false">https://qsurvey.mozilla.com/s3/FxR</string>
+    <string name="survey_link" translatable="false">https://www.wolvic.com</string>
 </resources>

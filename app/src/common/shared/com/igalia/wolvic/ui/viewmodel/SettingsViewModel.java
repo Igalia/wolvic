@@ -68,9 +68,10 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     private void isWhatsNewVisible() {
-        boolean value = props.getValue() != null &&
+        /*boolean value = props.getValue() != null &&
                 !BuildConfig.VERSION_NAME.equals(propsVersionName.getValue()) &&
-                props.getValue().containsKey(BuildConfig.VERSION_NAME);
+                props.getValue().containsKey(BuildConfig.VERSION_NAME);*/
+        boolean value = false;
         isWhatsNewVisible.postValue(new ObservableBoolean(value));
     }
 

@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
+import android.view.View;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import org.mozilla.geckoview.ContentBlocking;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.ui.widgets.Windows;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.ServoUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
@@ -121,7 +123,12 @@ public class WindowViewModel extends AndroidViewModel {
         isLibraryVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
-        isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
+        if (DeviceType.isOculusBuild()) {
+            // TODO: reenable after implementing OVR Speech Recognition
+            isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        } else {
+            isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
+        }
         isBookmarked = new MutableLiveData<>(new ObservableBoolean(false));
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
         isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
@@ -558,6 +565,10 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsMicrophoneEnabled(boolean isMicrophoneEnabled) {
+        if (DeviceType.isOculusBuild()) {
+            // TODO: reenable after implementing OVR Speech Recognition
+            return;
+        }
         this.isMicrophoneEnabled.postValue(new ObservableBoolean(isMicrophoneEnabled));
     }
 

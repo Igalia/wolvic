@@ -374,12 +374,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
 
         // Show the what's upp dialog if we haven't showed it yet and this is v6.
-        if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
+        /*if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
             mWhatsNewWidget = new WhatsNewWidget(this);
             mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
             mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
             mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
-        }
+        }*/
 
         mWindows.restoreSessions();
     }
