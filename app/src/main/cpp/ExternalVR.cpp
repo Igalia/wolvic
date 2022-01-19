@@ -218,6 +218,9 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::OculusQuest:
       result = mozilla::gfx::VRControllerType::OculusTouch2;
       break;
+    case device::OculusQuest2:
+      result = mozilla::gfx::VRControllerType::OculusTouch3;
+      break;
     case device::ViveFocus:
       result = mozilla::gfx::VRControllerType::HTCViveFocus;
       break;

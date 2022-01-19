@@ -38,7 +38,7 @@
 
 #include "VRBrowser.h"
 
-#define OCULUS_6DOF_APP_ID "2180252408763702"
+#define OCULUS_6DOF_APP_ID "4812663595466206"
 #define OCULUS_3DOF_APP_ID "2208418715853974"
 
 namespace crow {
@@ -178,7 +178,7 @@ struct DeviceDelegateOculusVR::State {
       deviceType = device::OculusQuest;
     } else if ((type >= VRAPI_DEVICE_TYPE_OCULUSQUEST2_START) && (type <= VRAPI_DEVICE_TYPE_OCULUSQUEST2_END)) {
         VRB_DEBUG("Detected Oculus Quest 2");
-        deviceType = device::OculusQuest;
+        deviceType = device::OculusQuest2;
     } else {
       VRB_DEBUG("Detected Unknown Oculus device");
     }
@@ -285,7 +285,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   bool IsOculusQuest() const {
-    return deviceType == device::OculusQuest;
+    return deviceType == device::OculusQuest || deviceType == device::OculusQuest2;
   }
 
   bool IsOculusGo() const {
@@ -394,10 +394,9 @@ struct DeviceDelegateOculusVR::State {
             controller->SetHapticCount(controllerState.index, 1);
             controller->SetControllerType(controllerState.index, device::OculusQuest);
 
-            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.02f, -0.03f));
-            vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -0.77f);
-            transform = transform.PostMultiply(trans);
-            controller->SetImmersiveBeamTransform(controllerState.index, beamTransform.PostMultiply(transform));
+            float offsetX = controllerState.hand == ElbowModel::HandEnum::Left ? 0.011f : -0.011f;
+            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(offsetX, 0.025f, 0.05f));
+            controller->SetImmersiveBeamTransform(controllerState.index, trans);
           } else {
             // Oculus Go only has one kind of controller model.
             controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
@@ -411,7 +410,7 @@ struct DeviceDelegateOculusVR::State {
             const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.028f, -0.072f));
             vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -0.55f);
             transform = transform.PostMultiply(trans);
-            controller->SetImmersiveBeamTransform(controllerState.index, beamTransform.PostMultiply(transform));
+            controller->SetImmersiveBeamTransform(controllerState.index, transform);
           }
           controller->SetTargetRayMode(controllerState.index, device::TargetRayMode::TrackedPointer);
           controllerState.created = true;
@@ -1370,6 +1369,8 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   modeParms.ShareContext = reinterpret_cast<unsigned long long>(aEGLContext.Context());
 
   m.ovr = vrapi_EnterVrMode(&modeParms);
+
+  const int type = vrapi_GetSystemPropertyInt(&m.java, VRAPI_SYS_PROP_DEVICE_TYPE);
 
   if (!m.ovr) {
     VRB_LOG("Entering VR mode failed");

@@ -18,6 +18,7 @@ public class DeviceType {
     public static final int PicoNeo2 = 6;
     public static final int PicoG2 = 7;
     public static final int PicoNeo3 = 8;
+    public static final int OculusQuest2 = 9;
 
     private static @Type int mType = Unknown;
 
@@ -29,6 +30,9 @@ public class DeviceType {
                 break;
             case OculusQuest:
                 name = "Oculus Quest";
+                break;
+            case OculusQuest2:
+                name = "Oculus Quest 2";
                 break;
             case ViveFocus:
                 name = "Vive Focus";
