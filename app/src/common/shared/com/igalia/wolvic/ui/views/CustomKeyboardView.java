@@ -705,7 +705,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         if (mDrawPending || mBuffer == null || mKeyboardChanged) {
             onBufferDraw();
         }
-        canvas.drawBitmap(mBuffer, 0, 0, null);
+        canvas.drawBitmap(mBuffer, 0, 0, mPaint);
     }
 
     private void onBufferDraw() {
