@@ -125,8 +125,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            //signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
-            signingConfig signingConfigs.release
+            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
         }
         debug {
