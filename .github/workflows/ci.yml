@@ -24,4 +24,6 @@ jobs:
           gradle-version: 7.3.2
 
       - name: Execute Gradle build
-        run: ./gradlew assembleOculusvrArm64
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assembleOculusvrArm64
