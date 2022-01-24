@@ -34,7 +34,12 @@ jobs:
         with:
           gradle-version: 7.3.2
 
-      - name: Execute Gradle build
+      - name: Build Oculus Flavour
         uses: gradle/gradle-build-action@v2
         with:
           arguments: assembleOculusvrArm64
+
+      - name: Build HVR Flavour
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assembleHvrArm64
