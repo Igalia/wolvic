@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        flavour: [assembleOculusvrArm64, assembleHvrArm64]
+
     steps:
       - name: Checkout Wolvic
         uses: actions/checkout@v2
@@ -34,12 +38,7 @@ jobs:
         with:
           gradle-version: 7.3.2
 
-      - name: Build Oculus Flavour
+      - name: Build ${{ matrix.flavour }} Flavour
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assembleOculusvrArm64
-
-      - name: Build HVR Flavour
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assembleHvrArm64
+          arguments: ${{ matrix.flavour }}
