@@ -20,13 +20,6 @@ def getGitHash = { ->
     return stdout.toString().trim()
 }
 
-def getTaskclusterBuild = { ->
-    if (gradle.hasProperty("userProperties.taskclusterBuild")) {
-        return gradle."userProperties.taskclusterBuild"
-    }
-    return "false"
-}
-
 def getCrashRestartDisabled = { ->
     if (gradle.hasProperty("userProperties.disableCrashRestart")) {
         return gradle."userProperties.disableCrashRestart"
@@ -83,7 +76,6 @@ android {
         versionName "0.9"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
-        buildConfigField "Boolean", "TASKCLUSTER_BUILD", getTaskclusterBuild()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -105,12 +97,7 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    if (gradle.hasProperty('userProperties.taskclusterBuild')) {
-        project.archivesBaseName = "Wolvic-$defaultConfig.versionName-$generatedVersionCode"
-        defaultConfig.versionCode = generatedVersionCode
-    } else {
-        project.archivesBaseName = "Wolvic"
-    }
+    project.archivesBaseName = "Wolvic"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -589,16 +576,4 @@ android.applicationVariants.all { variant ->
         println("X_X")
     }
 
-}
-
-// -------------------------------------------------------------------------------------------------
-//  Dynamically set versionCode (See tools/build/versionCode.gradle
-// -------------------------------------------------------------------------------------------------
-
-android.applicationVariants.all { variant ->
-    if (gradle.hasProperty('userProperties.taskclusterBuild')) {
-        variant.outputs.each { output ->
-            output.versionCodeOverride = generatedVersionCode
-        }
-    }
 }
