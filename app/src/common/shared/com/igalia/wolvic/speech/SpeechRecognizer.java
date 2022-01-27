@@ -18,6 +18,7 @@ public interface SpeechRecognizer {
         void onStartListening();
         void onMicActivity(int level);
         void onDecoding();
+        default void onPartialResult(String transcription) {};
         void onResult(String transcription, float confidence);
         void onNoVoice();
         void onError(@SpeechResultCallback.ErrorType int errorType, @Nullable String error);

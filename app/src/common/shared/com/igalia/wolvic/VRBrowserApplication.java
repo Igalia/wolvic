@@ -22,7 +22,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.db.AppDatabase;
 import com.igalia.wolvic.db.DataRepository;
 import com.igalia.wolvic.downloads.DownloadsManager;
-import com.igalia.wolvic.speech.MozillaSpeechRecognizer;
+import com.igalia.wolvic.speech.MKSpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Language;
@@ -83,7 +83,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
         mDownloadsManager = new DownloadsManager(activityContext);
         mDownloadsManager.init();
-        mSpeechRecognizer = new MozillaSpeechRecognizer(activityContext);
+        mSpeechRecognizer = new MKSpeechRecognizer(activityContext);
         mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
         mEnvironmentsManager.init();
