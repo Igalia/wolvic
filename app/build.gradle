@@ -99,6 +99,14 @@ android {
 
     project.archivesBaseName = "Wolvic"
 
+    // required due to mozillaspeech deps
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libwebrtc_jni.so'
+        pickFirst 'lib/arm64-v8a/libwebrtc_jni.so'
+        pickFirst 'lib/x86_64/libwebrtc_jni.so'
+        pickFirst 'lib/x86/libwebrtc_jni.so'
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -511,6 +519,10 @@ dependencies {
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
+
+    // MeetKai
+    implementation fileTree(dir: "${project.rootDir}/libs/meetkai/", include: ['*.aar'])
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 
     // Pico
     picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])

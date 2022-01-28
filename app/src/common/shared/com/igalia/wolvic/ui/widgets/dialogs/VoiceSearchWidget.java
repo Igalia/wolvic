@@ -53,6 +53,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     public interface VoiceSearchDelegate {
         default void OnVoiceSearchResult(String transcription, float confidence) {};
+        default void OnPartialVoiceSearchResult(String transcription) {};
         default void OnVoiceSearchError() {};
     }
 
@@ -165,6 +166,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         public void onStartListening() {
             // Handle when the api successfully opened the microphone and started listening
             Log.d(LOGTAG, "===> START_LISTEN");
+            mBinding.voiceSearchStart.setText( getContext().getString(R.string.voice_search_start));
         }
 
         @Override
@@ -179,6 +181,16 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             // Handle when the speech object changes to decoding state
             Log.d(LOGTAG, "===> DECODING");
             setDecodingState();
+        }
+
+        @Override
+        public void onPartialResult(String transcription) {
+            // When a partial result is available
+            Log.d(LOGTAG, "===> PARTIAL_STT_RESULT");
+            if (mDelegate != null) {
+                mBinding.voiceSearchStart.setText(transcription);
+                mDelegate.OnPartialVoiceSearchResult(transcription);
+            }
         }
 
         @Override
@@ -299,7 +311,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
-
+        mBinding.voiceSearchStart.setText( getContext().getString(R.string.voice_search_start));
         stopVoiceSearch();
         mBinding.setState(State.LISTENING);
     }
