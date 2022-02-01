@@ -1,42 +1,40 @@
-# Firefox Reality
+# Wolvic VR Browser
 
-The goal of the Firefox Reality project is to create a full-featured browser exclusively for *standalone* AR and VR headsets.
+The goal of the Wolvic project is to create a full-featured browser exclusively for *standalone* AR and VR headsets.
 
-You can find us in [#fxr:mozilla.org on the Matrix](https://chat.mozilla.org/#/room/#fxr:mozilla.org) ([Instructions for joining](https://wiki.mozilla.org/Matrix)), Twitter [@MozillaReality](https://twitter.com/mozillareality), and at [mixedreality@mozilla.com](mailto:mixedreality@mozilla.com).
-
-## Download developer APKs
-
-**[Download](https://community-tc.services.mozilla.com/tasks/index/project.firefoxreality/main)** developer APKs for Firefox Reality generated from latest [main](https://github.com/MozillaReality/FirefoxReality/commits/main).
+You can find us in [wolvic.com](https://www.wolvic.com), Twitter [@wolvicxr](https://twitter.com/wolvicxr), and at [info@wolvic.com](mailto:info@wolvic.com).
 
 ## Locale support
 
-Firefox Reality supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
+Wolvic supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
 
 For more info on localization, how it works in the Firefox Reality project, and how to correctly edit localizable text in the application, please see the [localization wiki page](https://github.com/MozillaReality/FirefoxReality/wiki/Localization).
 
 ## Setup instructions
 
-*Clone FirefoxReality.*
+*Clone Wolvic.*
 
 ```bash
-git clone git@github.com:MozillaReality/FirefoxReality.git
-cd FirefoxReality
+git clone git@github.com:wolvic/wolvic.git
+cd wolvic
 ```
 
 *Clone the third-party repo.*
 
-If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third-party SDK files.
+If you're developing for the Oculus, Huawei, Pico, or VIVE, you need to clone the repo with third-party SDK files.
 
 ```bash
-git clone git@github.com:MozillaReality/FirefoxReality-android-third-party.git third_party
+git clone https://github.com/Igalia/wolvic-third-parties.git third_party
 ```
 
-This repo is only available to Mozilla employees. If you have access to the relevant SDK but not this repo, you can manually place them here:
+This repo is only available to Igalia members. If you have access to the relevant SDK but not this repo, you can manually place them here:
 
  - `third_party/ovr_mobile/` for Oculus (should contain a `VrApi` folder)
+ - `third_party/OVRPlatformSDK/` for Oculus (should contain a `Android` and `include` folders)
+ - `third_party/hvr/` for Huawei (should contain  `arm64-v8a`, `armeabi-v7a` and `include` folders)
  - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
 
-The [repo in `third_party`](https://github.com/MozillaReality/FirefoxReality-android-third-party) can be updated like so:
+The [repo in `third_party`](https://github.com/Igalia/wolvic-third-parties) can be updated like so:
 
 ```bash
 pushd third_party && git fetch && git checkout main && git rebase origin/main && popd
@@ -52,20 +50,22 @@ git submodule update --init --recursive
 
 You can build for different devices:
 
-- **`oculusvr`**: Samsung Gear VR & Oculus Go
+- **`oculusvr`**: Oculus Quest
+- **`hvr`**: Huawei VR Glasses
 - **`wavevr`**: VIVE Focus
+- **`picovr`**: Pico Neo
 
 For testing on a non-VR device:
 
 - **`noapi`**: Runs on standard Android phones without a headset
 
-Building for Oculus Mobile, and WaveVR requires access to their respective SDKs which are not included in this repo.
+Building for Oculus Mobile, Huawei and WaveVR requires access to their respective SDKs which are not included in this repo.
 
 The command line version of `gradlew` requires [JDK 8 from Oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). If you see an error that Gradle doesn't understand your Java version, check which version of you're using by running `java -showversion` or `java -version`. You're probably using JDK 9 or 10, which won't work.
 
 *Open the project with [Android Studio](https://developer.android.com/studio/index.html)* then build and run it. Depending on what you already have installed in Android Studio, the build may fail and then may prompt you to install dependencies. Just keep doing as it suggests. To select the device to build for, go to `Tool Windows > Build Variants` and select a build variant corresponding to your device.
 
-*If you want to build FirefoxReality for WaveVR SDK:*
+*If you want to build Wolvic for WaveVR SDK:*
 
 Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://vivedeveloper.com/), and unzip it. Then, from the top-level project directory, run:
 
@@ -149,7 +149,3 @@ Restart FxR and close and re-open the WebIDE page.
 - You can use `adb shell setprop debug.oculus.enableVideoCapture 1` to record a video on the Oculus Go. Remember to run `adb shell setprop debug.oculus.enableVideoCapture 0` to stop recording the video.
     - You can also record videos on the Oculus Go by exiting to the system library, and from the Oculus tray menu (toggle with the Oculus button on the controller): **`Sharing > Record Video`**
 - You can set `disableCrashRestart=true` in the gradle `user.properties` to disable app relaunch on crash.
-
-## Experimental Servo support
-
-To compile with Servo support, create a file called `user.properties` in the top-level project directory and add `enableServo=1`. Then to enable Servo in Firefox Reality, go the Developer Options panel in the Settings, and toggle the Servo option. Then a new button will be added to the navigation bar. Clicking that button will reload the current page with Servo.
