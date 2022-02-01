@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 
-import com.mozilla.speechlibrary.SpeechResultCallback;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -332,7 +331,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         stopVoiceSearch();
 
         postDelayed(() -> {
-            if (errorType == SpeechResultCallback.SPEECH_ERROR) {
+            if (errorType == SpeechRecognizer.Callback.SPEECH_ERROR) {
                 mBinding.setState(State.SPEECH_ERROR);
                 startVoiceSearch();
             }

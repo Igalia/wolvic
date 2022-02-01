@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import com.meetkai.speechlibrary.ISpeechRecognitionListener;
 import com.meetkai.speechlibrary.MKSpeechService;
 import com.meetkai.speechlibrary.STTResult;
-import com.mozilla.speechlibrary.SpeechResultCallback;
 
 import org.mozilla.geckoview.GeckoWebExecutor;
 
@@ -130,7 +129,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
                     break;
                 case ERROR:
                     if (mCallback != null) {
-                        mCallback.onError(SpeechResultCallback.SPEECH_ERROR, "unk error");
+                        mCallback.onError(SpeechRecognizer.Callback.SPEECH_ERROR, "unk error");
                     }
                     removeListener();
                     break;
