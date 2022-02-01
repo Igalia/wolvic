@@ -123,12 +123,7 @@ public class WindowViewModel extends AndroidViewModel {
         isLibraryVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
-        if (DeviceType.isOculusBuild()) {
-            // TODO: reenable after implementing OVR Speech Recognition
-            isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(false));
-        } else {
-            isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
-        }
+        isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
         isBookmarked = new MutableLiveData<>(new ObservableBoolean(false));
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
         isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
@@ -565,10 +560,6 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsMicrophoneEnabled(boolean isMicrophoneEnabled) {
-        if (DeviceType.isOculusBuild()) {
-            // TODO: reenable after implementing OVR Speech Recognition
-            return;
-        }
         this.isMicrophoneEnabled.postValue(new ObservableBoolean(isMicrophoneEnabled));
     }
 

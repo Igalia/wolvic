@@ -95,6 +95,9 @@ class PrivacyOptionsView extends SettingsView {
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild() || DeviceType.isPicoVR()) {
             findViewById(R.id.cameraPermissionSwitch).setVisibility(View.GONE);
         }
+        if (DeviceType.isOculusBuild()) {
+            findViewById(R.id.locationPermissionSwitch).setVisibility(View.GONE);
+        }
 
         for (Pair<SwitchSetting, String> button: mPermissionButtons) {
             button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
