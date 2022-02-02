@@ -9,6 +9,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -33,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +68,10 @@ import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -1671,17 +1677,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull WebResponse webResponseInfo) {
         // We don't want to trigger downloads of already downloaded files that we can't open
         // so we let the system handle it.
-       /* if (!UrlUtils.isFileUri(webResponseInfo.uri)) {
-            DownloadJob job = DownloadJob.from(webResponseInfo.uri);
+        if (!UrlUtils.isFileUri(webResponseInfo.uri)) {
+            DownloadJob job = DownloadJob.fromUri(webResponseInfo.uri);
             startDownload(job, true);
 
         } else {
+            File file = new File(webResponseInfo.uri.substring("file://".length()));
             Uri contentUri = FileProvider.getUriForFile(
                     getContext(),
                     getContext().getApplicationContext().getPackageName() + ".provider",
-                    new File(webResponseInfo.uri.substring("file://".length())));
+                    file);
             Intent newIntent = new Intent(Intent.ACTION_VIEW);
-            newIntent.setDataAndType(contentUri, webResponseInfo.contentType);
+            String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+            newIntent.setDataAndType(contentUri, mimeType);
             newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             PackageManager packageManager = getContext().getPackageManager();
@@ -1709,7 +1717,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         getResources().getString(R.string.download_open_file_open_unsupported_body),
                         null);
             }
-        }*/
+        }
     }
 
     // VideoAvailabilityListener

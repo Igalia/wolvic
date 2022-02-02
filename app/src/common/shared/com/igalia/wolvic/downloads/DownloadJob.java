@@ -74,6 +74,22 @@ public class DownloadJob {
         return job;
     }
 
+    public static DownloadJob fromUri(@NonNull String uri) {
+        DownloadJob job = new DownloadJob();
+        job.mUri = uri;
+        job.mContentLength = 0;
+        try {
+            File f = new File(new URL(uri).getPath());
+            job.mFilename = f.getName();
+
+        } catch (Exception e) {
+            job.mFilename = "Download";
+        }
+        job.mTitle = job.mFilename;
+        job.mDescription = job.mFilename;
+        return job;
+    }
+
     public static DownloadJob fromSrc(@NonNull ContextElement contextElement) {
         DownloadJob job = new DownloadJob();
         job.mUri = contextElement.srcUri;
