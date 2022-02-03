@@ -62,6 +62,14 @@ def getHVRMLApiKey = { ->
     return ""
 }
 
+def getMKApiKey = { ->
+    if (gradle.hasProperty("userProperties.MK_API_KEY")) {
+        return gradle."userProperties.MK_API_KEY"
+    }
+    return ""
+}
+
+
 // Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
@@ -115,11 +123,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
+            buildConfigField "String", "MK_API_KEY", "\"${getMKApiKey()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
+            buildConfigField "String", "MK_API_KEY", ""
         }
     }
 
@@ -231,6 +241,7 @@ android {
                 }
             }
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
+            buildConfigField "String", "MK_API_KEY", ""
         }
 
         noapi {

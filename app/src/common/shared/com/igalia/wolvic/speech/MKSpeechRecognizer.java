@@ -7,6 +7,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.BuildConfig;
+import com.igalia.wolvic.utils.StringUtils;
 import com.meetkai.speechlibrary.ISpeechRecognitionListener;
 import com.meetkai.speechlibrary.MKSpeechService;
 import com.meetkai.speechlibrary.STTResult;
@@ -32,7 +34,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
     private static float FINAL_CONF = 1.0f;
 
 
-    private static final String API_KEY = "WOLVIC_DEBUG";
+    private static final String DEBUG_API_KEY = "WOLVIC_DEBUG";
 
     public MKSpeechRecognizer(Context context) {
         mContext = context;
@@ -43,7 +45,11 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
         mkSpeechService = MKSpeechService.getInstance();
         mCallback = callback;
         mkSpeechService.addListener(this);
-        mkSpeechService.start(mContext, settings.locale, API_KEY);
+        String key = BuildConfig.MK_API_KEY;
+        if (StringUtils.isEmpty(key)) {
+            key = DEBUG_API_KEY;
+        }
+        mkSpeechService.start(mContext, settings.locale, key);
     }
 
     @Override
