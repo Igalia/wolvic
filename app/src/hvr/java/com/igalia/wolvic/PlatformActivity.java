@@ -9,20 +9,28 @@ import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hvr.LibUpdateClient;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.igalia.wolvic.browser.PermissionDelegate;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
+import com.igalia.wolvic.generated.callback.OnClickListener;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
@@ -33,6 +41,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     private SurfaceView mView;
     private Context mContext = null;
     private HVRLocationManager mLocationManager;
+    private Dialog mActiveDialog;
 
     static {
         Log.i(TAG, "LoadLibrary");
@@ -82,12 +91,53 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
                 }
             }, null);
 
+            if (!SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
+                showPrivacyDialog();
+            }
+
         } else {
             initializeVR();
         }
     }
 
+    private void showPrivacyDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.hvr_privacy_dialog);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setCancelable(false);
+
+        dialog.findViewById(R.id.privacyOpenButton).setOnClickListener(v -> {
+            String url = getString(R.string.private_policy_url);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+
+        dialog.findViewById(R.id.termsOpenButton).setOnClickListener(v -> {
+            String url = getString(R.string.terms_service_url);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+
+        dialog.findViewById(R.id.privacyCancelButton).setOnClickListener(v -> {
+            finish();
+        });
+
+        dialog.findViewById(R.id.privacyAcceptButton).setOnClickListener(v -> {
+            SettingsStore.getInstance(PlatformActivity.this).setPrivacyPolicyAccepted(true);
+            dialog.dismiss();
+            mActiveDialog = null;
+        });
+
+        dialog.show();
+        mActiveDialog = dialog;
+    }
+
     private void initializeVR() {
+        if (mActiveDialog != null) {
+            mActiveDialog.dismiss();
+        }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mView = new SurfaceView(this);
         setContentView(mView);

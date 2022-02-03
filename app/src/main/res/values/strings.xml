@@ -106,8 +106,12 @@
     <string name="settings_privacy_logins">Logins And Passwords</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website that
-         describes Mozilla's Privacy Policy. -->
+         describes  Privacy Policy. -->
     <string name="settings_privacy_policy">Privacy Policy</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website that
+       describes Terms of Service. -->
+    <string name="settings_terms_service">Terms of Service</string>
 
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
@@ -2170,4 +2174,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
          This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">Connect your HUAWEI VR Glass to use this app</string>
+
+    <!-- This strings are displayed in the privacy dialog on first launch. -->
+    <string name="privacy_dialog_title">Privacy</string>
+    <string name="privacy_dialog_message">Your privacy is important to us. In order to run the browser, please accept our terms of service and privacy policy. Thanks for using Wolvic! </string>
+    <string name="privacy_dialog_agree">Agree</string>
+    <string name="privacy_dialog_disagree">Disagree</string>
+
 </resources>

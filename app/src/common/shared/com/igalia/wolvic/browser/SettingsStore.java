@@ -890,4 +890,14 @@ public class SettingsStore {
         return mPrefs.getString(mContext.getString(R.string.settings_key_tab_after_restore), null);
     }
 
+    public void setPrivacyPolicyAccepted(boolean isAccepted) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), isAccepted);
+        editor.commit();
+    }
+
+    public boolean isPrivacyPolicyAccepted() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), false);
+    }
+
 }

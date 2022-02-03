@@ -65,9 +65,11 @@
     <string name="settings_key_login_autocomplete_enabled" translatable="false">settings_key_login_autocomplete_enabled</string>
     <string name="settings_key_login_sync_enabled" translatable="false">settings_key_login_sync_enabled</string>
     <string name="settings_key_tab_after_restore" translatable="false">settings_key_tab_after_restore</string>
+    <string name="settings_key_privacy_policy_accepted" translatable="false">settings_key_privacy_policy_accepted</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/igalia/wolvic/wiki/Environments</string>
-    <string name="private_policy_url" translatable="false">https://www.igalia.com/privacy/</string>
+    <string name="private_policy_url" translatable="false">https://wolvic.com/legal/privacy/</string>
     <string name="private_report_url" translatable="false">https://www.igalia.com/privacy/&amp;url=%1$s</string>
+    <string name="terms_service_url" translatable="false">https://wolvic.com/legal/terms/</string>
     <string name="help_url" translatable="false">https://www.wolvic.com</string>
     <string name="sumo_language_voice_url" translatable="false">https://support.mozilla.org/kb/using-voice-search-firefox-reality</string>
     <string name="sumo_language_display_url" translatable="false">https://support.mozilla.org/kb/use-firefox-another-language?as=u&amp;utm_source=inproduct</string>
