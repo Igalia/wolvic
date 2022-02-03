@@ -129,7 +129,7 @@ android {
             applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
-            buildConfigField "String", "MK_API_KEY", ""
+            buildConfigField "String", "MK_API_KEY", "\"\""
         }
     }
 
