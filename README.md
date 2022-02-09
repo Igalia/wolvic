@@ -8,7 +8,7 @@ You can find us in [wolvic.com](https://www.wolvic.com), Twitter [@wolvicxr](htt
 
 Wolvic supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
 
-For more info on localization, how it works in the Firefox Reality project, and how to correctly edit localizable text in the application, please see the [localization wiki page](https://github.com/MozillaReality/FirefoxReality/wiki/Localization).
+For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see the [localization wiki page](https://github.com/MozillaReality/FirefoxReality/wiki/Localization).
 
 ## Setup instructions
 
@@ -133,7 +133,7 @@ Enable [USB Remote Debugging](https://github.com/MozillaReality/FirefoxReality/w
 
 ### **`Firefox > Web Developer > WebIDE > Performance`** gets stuck with greyed out "stop and show profile"
 
-Restart FxR and close and re-open the WebIDE page.
+Restart Wolvic XR and close and re-open the WebIDE page.
 
 ### **`Tool Windows > Build Variants`** list is empty
 
