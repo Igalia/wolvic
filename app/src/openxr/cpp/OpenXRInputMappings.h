@@ -127,7 +127,7 @@ namespace crow {
      * Mappings
      */
 
-    // Oculus Touch:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v2.json
+    // Oculus Touch v2:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v2.json
     const OpenXRInputMapping OculusTouch {
         "/interaction_profiles/oculus/touch_controller",
         "Oculus Quest",
@@ -151,13 +151,13 @@ namespace crow {
         }
     };
 
-    // Oculus Touch2:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v3.json
+    // Oculus Touch v3:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v3.json
     const OpenXRInputMapping OculusTouch2 {
             "/interaction_profiles/oculus/touch_controller",
             "Oculus Quest2",
-            "vr_controller_oculusquest_left.obj",
-            "vr_controller_oculusquest_right.obj",
-            device::OculusQuest,
+            "vr_controller_oculusquest2_left.obj",
+            "vr_controller_oculusquest2_right.obj",
+            device::OculusQuest2,
             std::vector<OpenXRInputProfile> { "oculus-touch-v3", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
