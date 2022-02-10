@@ -398,7 +398,7 @@ struct DeviceDelegateOculusVR::State {
                                          controllerName, beamTransform);
             controller->SetButtonCount(controllerState.index, 7);
             controller->SetHapticCount(controllerState.index, 1);
-            controller->SetControllerType(controllerState.index, device::OculusQuest);
+            controller->SetControllerType(controllerState.index, deviceType);
 
             float offsetX = controllerState.hand == ElbowModel::HandEnum::Left ? 0.011f : -0.011f;
             const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(offsetX, 0.025f, 0.05f));
