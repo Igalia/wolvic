@@ -244,6 +244,19 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
         }
 
+        hvr3dof {
+            applicationId "com.igalia.wolvic.tdof"
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
+                }
+            }
+            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
+            buildConfigField "String", "MK_API_KEY", "\"\""
+        }
+
         noapi {
             dimension "platform"
             externalNativeBuild {
@@ -291,7 +304,9 @@ android {
                 'noapiX86_64Debug',
                 'noapiX86_64Release',
                 'hvrArm64Debug',
-                'hvrArm64Release'
+                'hvrArm64Release',
+                'hvr3dofArm64Debug',
+                'hvr3dofArm64Release'
         ]
         variant.setIgnore(!needed)
     }
@@ -426,6 +441,18 @@ android {
             ]
         }
 
+        hvr3dof {
+            java.srcDirs = [
+                    'src/hvr/java'
+            ]
+            assets.srcDirs = [
+                    'src/hvr/assets'
+            ]
+            res.srcDirs = [
+                    'src/hvr/res'
+            ]
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -534,12 +561,17 @@ dependencies {
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
+    hvr3dofImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
+    hvr3dofImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
     hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
+    hvr3dofImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
     hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
-    // hvrImplementation 'com.huawei.hms:hianalytics-harmony:6.3.2.300'
+    hvr3dofImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
+    hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
+    hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
 }
 
 if (findProject(':servo')) {
