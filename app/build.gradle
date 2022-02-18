@@ -29,7 +29,7 @@ def getCrashRestartDisabled = { ->
 
 def getDevApplicationIdSuffix = { ->
     if (gradle.hasProperty("userProperties.simultaneousDevProduction")) {
-        return gradle."userProperties.simultaneousDevProduction" == "true" ? "" : ""
+        return gradle."userProperties.simultaneousDevProduction" == "true" ? "dev" : ""
     }
     return ""
 }
