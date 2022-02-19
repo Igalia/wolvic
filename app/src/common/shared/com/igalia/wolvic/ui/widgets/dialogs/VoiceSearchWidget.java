@@ -44,7 +44,10 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         LISTENING,
         SEARCHING,
         SPEECH_ERROR,
-        MODEL_NOT_FOUND,
+        ERROR_NETWORK,
+        ERROR_SERVER,
+        ERROR_TOO_MANY_REQUESTS,
+        ERROR_LANGUAGE_NOT_SUPPORTED,
         PERMISSIONS
     }
 
@@ -53,7 +56,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     public interface VoiceSearchDelegate {
         default void OnVoiceSearchResult(String transcription, float confidence) {};
         default void OnPartialVoiceSearchResult(String transcription) {};
-        default void OnVoiceSearchError() {};
+        default void OnVoiceSearchError(@SpeechRecognizer.Callback.ErrorType int errorType) {};
     }
 
     private VoiceSearchDialogBinding mBinding;
@@ -209,11 +212,11 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         }
 
         @Override
-        public void onError(int errorType, @Nullable String error) {
+        public void onError(@ErrorType int errorType, @Nullable String error) {
             Log.d(LOGTAG, "===> ERROR: " + error);
             setResultState(errorType);
             if (mDelegate != null) {
-                mDelegate.OnVoiceSearchError();
+                mDelegate.OnVoiceSearchError(errorType);
             }
         }
 
@@ -327,13 +330,17 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mBinding.executePendingBindings();
     }
 
-    private void setResultState(int errorType) {
+    private void setResultState(@SpeechRecognizer.Callback.ErrorType int errorType) {
         stopVoiceSearch();
 
         postDelayed(() -> {
-            if (errorType == SpeechRecognizer.Callback.SPEECH_ERROR) {
-                mBinding.setState(State.SPEECH_ERROR);
-                startVoiceSearch();
+            switch (errorType) {
+                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR);
+                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK);
+                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER);
+                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS);
+                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED);
+                default: break;
             }
             mSearchingAnimation.stop();
             mBinding.executePendingBindings();

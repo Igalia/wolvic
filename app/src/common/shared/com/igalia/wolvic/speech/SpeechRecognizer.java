@@ -19,10 +19,13 @@ public interface SpeechRecognizer {
 
     interface Callback {
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef(value = { SPEECH_ERROR, MODEL_NOT_FOUND})
+        @IntDef(value = {SPEECH_ERROR, ERROR_NETWORK, ERROR_SERVER, ERROR_TOO_MANY_REQUESTS, ERROR_LANGUAGE_NOT_SUPPORTED})
         @interface ErrorType {}
         int SPEECH_ERROR = 0;
-        int MODEL_NOT_FOUND = 1;
+        int ERROR_NETWORK = 1;
+        int ERROR_SERVER = 2;
+        int ERROR_TOO_MANY_REQUESTS = 3;
+        int ERROR_LANGUAGE_NOT_SUPPORTED = 4;
 
 
 
@@ -38,5 +41,6 @@ public interface SpeechRecognizer {
     void start(@NonNull Settings settings, @Nullable GeckoWebExecutor executor, @NonNull Callback callback);
     void stop();
     boolean shouldDisplayStoreDataPrompt();
+    default boolean supportsASR(@NonNull Settings settings) {return true;}
     boolean isSpeechError(int code);
 }

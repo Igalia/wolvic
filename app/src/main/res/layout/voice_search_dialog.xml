@@ -91,6 +91,32 @@
                 tools:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}' />
 
             <TextView
+                android:id="@+id/voiceSearchUnsupportedLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/voice_search_unsupported"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.ERROR_LANGUAGE_NOT_SUPPORTED}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="@string/voice_search_unsupported" />
+
+            <TextView
+                android:id="@+id/voiceSearchServerError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/voice_search_server_error"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.ERROR_SERVER}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="@string/voice_search_server_error" />
+
+            <TextView
                 android:id="@+id/voiceSearchPermissions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

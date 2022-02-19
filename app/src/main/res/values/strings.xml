@@ -848,6 +848,12 @@
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_error">Sorry! I could not understand.</string>
 
+    <!-- This string is displayed in a dialog box after a failed Voice Search due to an unsupported language -->
+    <string name="voice_search_unsupported">Voice Search unsupported for your language.</string>
+
+    <!-- This string is displayed in a dialog box after a failed Voice Search due to a server error -->
+    <string name="voice_search_server_error">Voice Search is currently unavailable.</string>
+
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
     <string name="voice_search_try_again">Please try again.</string>

@@ -39,6 +39,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.input.CustomKeyboard;
+import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.keyboards.ChinesePinyinKeyboard;
 import com.igalia.wolvic.ui.keyboards.ChineseZhuyinKeyboard;
@@ -1339,7 +1340,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    public void OnVoiceSearchError() {
+    public void OnVoiceSearchError(@SpeechRecognizer.Callback.ErrorType int errorType) {
         exitVoiceInputMode();
     }
 
