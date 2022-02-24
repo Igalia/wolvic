@@ -49,7 +49,12 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
         if (StringUtils.isEmpty(key)) {
             key = DEBUG_API_KEY;
         }
-        mkSpeechService.start(mContext, settings.locale, key);
+        if (!supportsASR(settings)) {
+            callback.onError(Callback.ERROR_LANGUAGE_NOT_SUPPORTED, "language not supported");
+            stop();
+        } else {
+            mkSpeechService.start(mContext, settings.locale, key);
+        }
     }
 
     @Override
@@ -94,6 +99,11 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
 
     public void removeListener() {
         mkSpeechService.removeListener(this);
+    }
+
+    @Override
+    public boolean supportsASR(@NonNull Settings settings) {
+        return mkSpeechService.supportsLocale(settings.locale);
     }
 
     @Override

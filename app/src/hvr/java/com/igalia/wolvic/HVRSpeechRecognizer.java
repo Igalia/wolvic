@@ -96,7 +96,7 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     public void onError(int code, String msg) {
         dispatch(() -> {
             if (mCallback != null) {
-                mCallback.onError(code, msg);
+                mCallback.onError(Callback.SPEECH_ERROR, msg);
             }
         });
     }
