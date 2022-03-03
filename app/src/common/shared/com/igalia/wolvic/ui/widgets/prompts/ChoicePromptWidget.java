@@ -19,10 +19,9 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
+import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WSession.PromptDelegate.ChoicePrompt.Choice;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-
-import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Choice;
-import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Type;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +76,7 @@ public class ChoicePromptWidget extends PromptWidget {
                 ChoiceWrapper selectedItem = mListItems[position];
                 if (mList.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
                     if (mPromptDelegate != null && mPromptDelegate instanceof ChoicePromptDelegate) {
-                        ((ChoicePromptDelegate)mPromptDelegate).confirm(new String[]{selectedItem.getChoice().id});
+                        ((ChoicePromptDelegate)mPromptDelegate).confirm(new String[]{selectedItem.getChoice().id()});
                         hide(REMOVE_WIDGET);
                     }
                 }
@@ -119,7 +118,7 @@ public class ChoicePromptWidget extends PromptWidget {
                         ArrayList<String> selectedChoices = new ArrayList<>();
                         for (int i = 0; i < len; i++) {
                             if (selected.get(i)) {
-                                selectedChoices.add(mListItems[i].getChoice().id);
+                                selectedChoices.add(mListItems[i].getChoice().id());
                             }
                         }
                         ((ChoicePromptDelegate)mPromptDelegate).confirm(selectedChoices.toArray(new String[selectedChoices.size()]));
@@ -138,7 +137,7 @@ public class ChoicePromptWidget extends PromptWidget {
     public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
         for (int i = 0; i < mListItems.length; i++) {
-            mList.setItemChecked(i, mListItems[i].mChoice.selected);
+            mList.setItemChecked(i, mListItems[i].mChoice.selected());
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -148,7 +147,7 @@ public class ChoicePromptWidget extends PromptWidget {
         return  WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_min_height);
     }
 
-    public void setChoices(Choice[] choices) {
+    public void setChoices(WSession.PromptDelegate.ChoicePrompt.Choice[] choices) {
         mListItems = getWrappedChoices(choices);
         mAdapter = new ChoiceAdapter(getContext(), R.layout.prompt_choice_item, mListItems);
         mList.setAdapter(mAdapter);
@@ -160,14 +159,14 @@ public class ChoicePromptWidget extends PromptWidget {
 
     public void setMenuType(int type) {
         switch (type) {
-            case Type.SINGLE:
-            case Type.MENU: {
+            case WSession.PromptDelegate.ChoicePrompt.Type.SINGLE:
+            case WSession.PromptDelegate.ChoicePrompt.Type.MENU: {
                 mList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
                 mCloseButton.setVisibility(View.VISIBLE);
                 mOkButton.setVisibility(View.GONE);
             }
             break;
-            case Type.MULTIPLE: {
+            case WSession.PromptDelegate.ChoicePrompt.Type.MULTIPLE: {
                 mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                 mCloseButton.setVisibility(View.VISIBLE);
                 mOkButton.setVisibility(View.VISIBLE);
@@ -186,8 +185,8 @@ public class ChoicePromptWidget extends PromptWidget {
         ArrayList<ChoiceWrapper> flattenedChoicesList = new ArrayList<>();
         for (int i = 0; i < aChoices.length; i++) {
             flattenedChoicesList.add(new ChoiceWrapper(aChoices[i], aLevel));
-            if (aChoices[i].items != null && aChoices[i].items.length > 0) {
-                ChoiceWrapper[] childChoices = getWrappedChoices(aChoices[i].items, aLevel+1);
+            if (aChoices[i].items() != null && aChoices[i].items().length > 0) {
+                ChoiceWrapper[] childChoices = getWrappedChoices(aChoices[i].items(), aLevel+1);
                 flattenedChoicesList.addAll(Arrays.asList(childChoices));
             }
         }
@@ -204,7 +203,7 @@ public class ChoicePromptWidget extends PromptWidget {
         public ChoiceWrapper(Choice choice, int level) {
             mChoice = choice;
             mLevel = level;
-            isParent = mChoice.items != null && mChoice.items.length > 0;
+            isParent = mChoice.items() != null && mChoice.items().length > 0;
         }
 
         public boolean isParent() {
@@ -243,7 +242,7 @@ public class ChoicePromptWidget extends PromptWidget {
 
         @Override
         public boolean isEnabled(int position) {
-            return !getItem(position).getChoice().disabled && !getItem(position).isParent();
+            return !getItem(position).getChoice().disabled() && !getItem(position).isParent();
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -281,13 +280,13 @@ public class ChoicePromptWidget extends PromptWidget {
                 choiceViewHolder.check.setVisibility(View.GONE);
                 choiceViewHolder.label.setEnabled(false);
             }
-            choiceViewHolder.label.setText(currentChoice.getChoice().label);
+            choiceViewHolder.label.setText(currentChoice.getChoice().label());
 
-            listItem.setEnabled(!currentChoice.getChoice().disabled);
+            listItem.setEnabled(!currentChoice.getChoice().disabled());
 
             choiceViewHolder.check.setChecked(mList.isItemChecked(position));
 
-            if (currentChoice.getChoice().disabled) {
+            if (currentChoice.getChoice().disabled()) {
                 choiceViewHolder.check.setEnabled(false);
                 choiceViewHolder.label.setEnabled(false);
             }

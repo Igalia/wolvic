@@ -3,27 +3,27 @@ package com.igalia.wolvic.browser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.api.WMediaSession;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.utils.SystemUtils;
-
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.MediaSession;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Media implements MediaSession.Delegate {
+public class Media implements WMediaSession.Delegate {
     private static final String LOGTAG = SystemUtils.createLogtag(Media.class);
     private boolean mIsFullscreen = false;
-    private @Nullable MediaSession mMediaSession;
+    private @Nullable
+    WMediaSession mMediaSession;
     private double mCurrentTime  = 0.0f;
-    private @Nullable MediaSession.Metadata mMetaData;
-    private @Nullable MediaSession.ElementMetadata mElement;
+    private @Nullable WMediaSession.Metadata mMetaData;
+    private @Nullable WMediaSession.ElementMetadata mElement;
     private double mPlaybackRate = 1.0f;
     private double mDuration = -1.0f;
     private boolean mPlaying = false;
     private boolean mEnded = false;
     private double mVolume = 1.0f;
     private boolean mIsMuted = false;
-    private CopyOnWriteArrayList<MediaSession.Delegate> mMediaListeners;
+    private CopyOnWriteArrayList<WMediaSession.Delegate> mMediaListeners;
     private ResizeDelegate mResizeDelegate;
     private VideoAvailabilityListener mAvailabilityDelegate;
     private long mFeatures = 0;
@@ -32,11 +32,11 @@ public class Media implements MediaSession.Delegate {
         mMediaListeners = new CopyOnWriteArrayList<>();
     }
 
-    public void addMediaListener(MediaSession.Delegate aListener) {
+    public void addMediaListener(WMediaSession.Delegate aListener) {
         mMediaListeners.add(aListener);
     }
 
-    public void removeMediaListener(MediaSession.Delegate aListener) {
+    public void removeMediaListener(WMediaSession.Delegate aListener) {
         mMediaListeners.remove(aListener);
     }
 
@@ -53,24 +53,24 @@ public class Media implements MediaSession.Delegate {
     }
 
     public boolean canPlay() {
-        return (mFeatures & MediaSession.Feature.PLAY) != 0;
+        return (mFeatures & WMediaSession.Feature.PLAY) != 0;
     }
 
     public boolean canPause() {
-        return (mFeatures & MediaSession.Feature.PAUSE) != 0;
+        return (mFeatures & WMediaSession.Feature.PAUSE) != 0;
     }
 
     public boolean canSeek() {
-        return (mFeatures & MediaSession.Feature.SEEK_TO) != 0;
+        return (mFeatures & WMediaSession.Feature.SEEK_TO) != 0;
     }
 
-    public boolean canSkipAd() {  return (mFeatures & MediaSession.Feature.SKIP_AD) != 0; };
+    public boolean canSkipAd() {  return (mFeatures & WMediaSession.Feature.SKIP_AD) != 0; };
 
     public double getCurrentTime() {
         return mCurrentTime;
     }
 
-    public MediaSession.Metadata getMetaData() {
+    public WMediaSession.Metadata getMetaData() {
         return mMetaData;
     }
 
@@ -139,7 +139,7 @@ public class Media implements MediaSession.Delegate {
     // MediaSession
 
     @Override
-    public void onActivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onActivated(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mMediaSession = mediaSession;
         mMediaListeners.forEach(listener -> listener.onActivated(session, mediaSession));
         if (mAvailabilityDelegate != null) {
@@ -148,7 +148,7 @@ public class Media implements MediaSession.Delegate {
     }
 
     @Override
-    public void onDeactivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onDeactivated(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         if (mMediaSession == mediaSession) {
             mMediaSession = null;
         }
@@ -159,7 +159,7 @@ public class Media implements MediaSession.Delegate {
     }
 
     @Override
-    public void onMetadata(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.Metadata meta) {
+    public void onMetadata(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.Metadata meta) {
         if (mMediaSession == mediaSession) {
             mMetaData = meta;
         }
@@ -167,7 +167,7 @@ public class Media implements MediaSession.Delegate {
     }
 
     @Override
-    public void onFeatures(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, long features) {
+    public void onFeatures(@NonNull WSession session, @NonNull WMediaSession mediaSession, long features) {
         mFeatures = features;
         mMediaListeners.forEach(listener -> listener.onFeatures(session, mediaSession, features));
         if (canSkipAd()) {
@@ -176,25 +176,25 @@ public class Media implements MediaSession.Delegate {
     }
 
     @Override
-    public void onPlay(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onPlay(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mPlaying = true;
         mMediaListeners.forEach(listener -> listener.onPlay(session, mediaSession));
     }
 
     @Override
-    public void onPause(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onPause(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mPlaying = false;
         mMediaListeners.forEach(listener -> listener.onPause(session, mediaSession));
     }
 
     @Override
-    public void onStop(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onStop(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mPlaying = false;
         mMediaListeners.forEach(listener -> listener.onStop(session, mediaSession));
     }
 
     @Override
-    public void onPositionState(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.PositionState state) {
+    public void onPositionState(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.PositionState state) {
         mCurrentTime = state.position;
         mPlaybackRate = state.playbackRate;
         mDuration = state.duration;
@@ -203,7 +203,7 @@ public class Media implements MediaSession.Delegate {
     }
 
     @Override
-    public void onFullscreen(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, boolean enabled, @Nullable MediaSession.ElementMetadata meta) {
+    public void onFullscreen(@NonNull WSession session, @NonNull WMediaSession mediaSession, boolean enabled, @Nullable WMediaSession.ElementMetadata meta) {
         long oldWidth = getWidth();
         long oldHeight = getHeight();
         mIsFullscreen = enabled;

@@ -17,7 +17,6 @@ import com.igalia.wolvic.browser.Addons;
 import com.igalia.wolvic.browser.LoginStorage;
 import com.igalia.wolvic.browser.Places;
 import com.igalia.wolvic.browser.Services;
-import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.db.AppDatabase;
 import com.igalia.wolvic.db.DataRepository;
@@ -70,7 +69,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
 
     protected void onActivityCreate(@NonNull Context activityContext) {
         onConfigurationChanged(activityContext.getResources().getConfiguration());
-        EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(activityContext);
         mAppExecutors = new AppExecutors();
         mConnectivityManager = new ConnectivityReceiver(activityContext);
         mConnectivityManager.init();

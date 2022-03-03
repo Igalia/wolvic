@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.ui.views.UITextButton;
 import com.igalia.wolvic.ui.widgets.UIWidget;
@@ -21,8 +22,6 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
-
-import org.mozilla.geckoview.GeckoSession;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,25 +131,25 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         mContainer.removeAllViews();
         ArrayList<UITextButton> buttons = new ArrayList<>();
 
-        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_CUT)) {
+        if (aActions.contains(WSession.SelectionActionDelegate.ACTION_CUT)) {
             buttons.add(createButton(
                     getContext().getString(R.string.context_menu_cut_text),
-                    GeckoSession.SelectionActionDelegate.ACTION_CUT, this::handleAction));
+                    WSession.SelectionActionDelegate.ACTION_CUT, this::handleAction));
         }
-        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_COPY)) {
+        if (aActions.contains(WSession.SelectionActionDelegate.ACTION_COPY)) {
             buttons.add(createButton(
                     getContext().getString(R.string.context_menu_copy_text),
-                    GeckoSession.SelectionActionDelegate.ACTION_COPY, this::handleAction));
+                    WSession.SelectionActionDelegate.ACTION_COPY, this::handleAction));
         }
-        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_PASTE)) {
+        if (aActions.contains(WSession.SelectionActionDelegate.ACTION_PASTE)) {
             buttons.add(createButton(
                     getContext().getString(R.string.context_menu_paste_text),
-                    GeckoSession.SelectionActionDelegate.ACTION_PASTE, this::handleAction));
+                    WSession.SelectionActionDelegate.ACTION_PASTE, this::handleAction));
         }
-        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
+        if (aActions.contains(WSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
             buttons.add(createButton(
                     getContext().getString(R.string.context_menu_select_all_text),
-                    GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
+                    WSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
         }
 
         if (mSelectionText != null && !mSelectionText.trim().isEmpty()) {

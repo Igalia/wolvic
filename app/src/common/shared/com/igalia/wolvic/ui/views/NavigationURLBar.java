@@ -33,6 +33,7 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NavigationUrlBinding;
@@ -46,8 +47,6 @@ import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
-
-import org.mozilla.geckoview.GeckoSession;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -206,7 +205,7 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.urlEditText.setOnSelectionChangedCallback((start, end) -> {
             if (mSelectionMenu != null) {
-                boolean hasCopy = mSelectionMenu.hasAction(GeckoSession.SelectionActionDelegate.ACTION_COPY);
+                boolean hasCopy = mSelectionMenu.hasAction(WSession.SelectionActionDelegate.ACTION_COPY);
                 boolean showCopy = end != start;
                 if (hasCopy != showCopy) {
                     showSelectionMenu();
@@ -478,16 +477,16 @@ public class NavigationURLBar extends FrameLayout {
     private void showSelectionMenu() {
         Collection<String> actions = new HashSet<>();
         if (mBinding.urlEditText.getSelectionEnd() != mBinding.urlEditText.getSelectionStart()) {
-            actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
-            actions.add(GeckoSession.SelectionActionDelegate.ACTION_COPY);
+            actions.add(WSession.SelectionActionDelegate.ACTION_CUT);
+            actions.add(WSession.SelectionActionDelegate.ACTION_COPY);
         }
         ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard.hasPrimaryClip()) {
-            actions.add(GeckoSession.SelectionActionDelegate.ACTION_PASTE);
+            actions.add(WSession.SelectionActionDelegate.ACTION_PASTE);
         }
         if (!StringUtils.isEmpty(mBinding.urlEditText.getText().toString()) &&
                 (mBinding.urlEditText.getSelectionStart() != 0 || mBinding.urlEditText.getSelectionEnd() != mBinding.urlEditText.getText().toString().length())) {
-            actions.add(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL);
+            actions.add(WSession.SelectionActionDelegate.ACTION_SELECT_ALL);
         }
 
         if (actions.size() == 0) {
@@ -515,17 +514,17 @@ public class NavigationURLBar extends FrameLayout {
                         startSelection = tmp;
                     }
 
-                    if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
+                    if (action.equals(WSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
                         mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
                         mBinding.urlEditText.setSelection(startSelection);
 
-                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
+                    } else if (action.equals(WSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
                         mBinding.urlEditText.setSelection(endSelection);
-                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
+                    } else if (action.equals(WSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
                             mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
@@ -536,7 +535,7 @@ public class NavigationURLBar extends FrameLayout {
                         } else if (item != null && item.getUri() != null) {
                             mBinding.urlEditText.getText().insert(mBinding.urlEditText.getSelectionStart(), item.getUri().toString());
                         }
-                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
+                    } else if (action.equals(WSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
                         mBinding.urlEditText.selectAll();
                         showSelectionMenu();
                         return;

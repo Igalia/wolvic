@@ -20,15 +20,14 @@ import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
+import com.igalia.wolvic.browser.api.WMediaSession;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.databinding.MediaControlsBinding;
 import com.igalia.wolvic.ui.views.MediaSeekBar;
 import com.igalia.wolvic.ui.views.VolumeControl;
 import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
 
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.MediaSession;
-
-public class MediaControlsWidget extends UIWidget implements MediaSession.Delegate { //implements MediaElement.Delegate {
+public class MediaControlsWidget extends UIWidget implements WMediaSession.Delegate {
 
     private MediaControlsBinding mBinding;
     private Media mMedia;
@@ -330,48 +329,48 @@ public class MediaControlsWidget extends UIWidget implements MediaSession.Delega
     }
 
     @Override
-    public void onActivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onActivated(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
 
     }
 
     @Override
-    public void onDeactivated(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onDeactivated(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
 
     }
 
     @Override
-    public void onMetadata(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.Metadata meta) {
+    public void onMetadata(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.Metadata meta) {
 
     }
 
     @Override
-    public void onFeatures(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, long features) {
+    public void onFeatures(@NonNull WSession session, @NonNull WMediaSession mediaSession, long features) {
         mBinding.mediaControlSeekBar.setSeekable(mMedia.canSeek());
     }
 
     @Override
-    public void onPlay(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onPlay(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mBinding.setPlaying(true);
     }
 
     @Override
-    public void onPause(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onPause(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
         mBinding.setPlaying(false);
     }
 
     @Override
-    public void onStop(@NonNull GeckoSession session, @NonNull MediaSession mediaSession) {
+    public void onStop(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
 
     }
 
     @Override
-    public void onPositionState(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, @NonNull MediaSession.PositionState state) {
+    public void onPositionState(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.PositionState state) {
         mBinding.mediaControlSeekBar.setDuration(mMedia.getDuration());
         mBinding.mediaControlSeekBar.setCurrentTime(state.position);
     }
 
     @Override
-    public void onFullscreen(@NonNull GeckoSession session, @NonNull MediaSession mediaSession, boolean enabled, @Nullable MediaSession.ElementMetadata meta) {
+    public void onFullscreen(@NonNull WSession session, @NonNull WMediaSession mediaSession, boolean enabled, @Nullable WMediaSession.ElementMetadata meta) {
 
     }
 

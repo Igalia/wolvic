@@ -47,6 +47,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WRuntime;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -80,14 +82,10 @@ import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.LocaleUtils;
-import com.igalia.wolvic.utils.ServoUtils;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import org.json.JSONObject;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoVRManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -397,6 +395,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    WRuntime.CrashReportIntent getCrashReportIntent() {
+        return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
+    }
+
     @Override
     protected void onStart() {
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
@@ -529,7 +531,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onNewIntent(intent);
         setIntent(intent);
 
-        if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
+        if (getCrashReportIntent().action_crashed.equals(intent.getAction())) {
             Log.e(LOGTAG, "Restarted after a crash");
         } else {
             loadFromIntent(intent);
@@ -552,7 +554,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     void loadFromIntent(final Intent intent) {
-        if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
+        if (getCrashReportIntent().action_crashed.equals(intent.getAction())) {
             Log.e(LOGTAG,"Loading from crash Intent");
         }
 
@@ -677,11 +679,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     private void handleContentCrashIntent(@NonNull final Intent intent) {
         Log.e(LOGTAG, "Got content crashed intent");
-        final String dumpFile = intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH);
-        final String extraFile = intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH);
+        final String dumpFile = intent.getStringExtra(getCrashReportIntent().extra_minidump_path);
+        final String extraFile = intent.getStringExtra(getCrashReportIntent().extra_extras_path);
         Log.d(LOGTAG, "Dump File: " + dumpFile);
         Log.d(LOGTAG, "Extras File: " + extraFile);
-        Log.d(LOGTAG, "Fatal: " + intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
+        Log.d(LOGTAG, "Fatal: " + intent.getBooleanExtra(getCrashReportIntent().extra_crash_fatal, false));
 
         boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
         if (isCrashReportingEnabled) {
@@ -988,8 +990,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void registerExternalContext(long aContext) {
-        ServoUtils.setExternalContext(aContext);
-        GeckoVRManager.setExternalContext(aContext);
+        EngineProvider.INSTANCE.getOrCreateRuntime(this).setExternalVRContext(aContext);
     }
 
     final Object mCompositorLock = new Object();
@@ -1509,11 +1510,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void setIsServoSession(boolean aIsServo) {
-      queueRunnable(() -> setIsServo(aIsServo));
-    }
-
-    @Override
     public void pushWorldBrightness(Object aKey, float aBrightness) {
         if (mCurrentBrightness.second != aBrightness) {
             queueRunnable(() -> setWorldBrightnessNative(aBrightness));
@@ -1592,12 +1588,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback) {
+    public void requestPermission(String uri, @NonNull String permission, WSession.PermissionDelegate.Callback aCallback) {
         Session session = SessionStore.get().getActiveSession();
         if (uri != null && !uri.isEmpty()) {
-            mPermissionDelegate.onAppPermissionRequest(session.getGeckoSession(), uri, permission, aCallback);
+            mPermissionDelegate.onAppPermissionRequest(session.getWSession(), uri, permission, aCallback);
         } else {
-            mPermissionDelegate.onAndroidPermissionsRequest(session.getGeckoSession(), new String[]{permission}, aCallback);
+            mPermissionDelegate.onAndroidPermissionsRequest(session.getWSession(), new String[]{permission}, aCallback);
         }
     }
 
