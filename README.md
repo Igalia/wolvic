@@ -15,7 +15,7 @@ For more info on localization, how it works in the Wolvic XR project, and how to
 *Clone Wolvic.*
 
 ```bash
-git clone git@github.com:wolvic/wolvic.git
+git clone git@github.com:Igalia/wolvic.git
 cd wolvic
 ```
 
