@@ -4,6 +4,8 @@ The goal of the Wolvic project is to create a full-featured browser exclusively 
 
 You can find us in [wolvic.com](https://www.wolvic.com), Twitter [@wolvicxr](https://twitter.com/wolvicxr), and at [info@wolvic.com](mailto:info@wolvic.com).
 
+Want to learn more about Wolvic? Read our [FAQ](https://wolvic.com/en/faq)!
+
 ## Locale support
 
 Wolvic supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
