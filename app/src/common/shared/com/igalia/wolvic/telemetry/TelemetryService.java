@@ -211,7 +211,7 @@ public class TelemetryService {
     }
 
     private static String getDefaultSearchEngineIdentifierForTelemetry() {
-        return SearchEngineWrapper.get(context).getIdentifier();
+        return SearchEngineWrapper.get(context).getCurrentSearchEngine().getIdentifier();
     }
 
     public static void newWindowOpenEvent() {

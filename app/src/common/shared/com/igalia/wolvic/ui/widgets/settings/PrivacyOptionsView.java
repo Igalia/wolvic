@@ -24,6 +24,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsPrivacyBinding;
+import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -135,6 +136,10 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.autocompleteSwitch.setOnCheckedChangeListener(mAutocompleteListener);
         setAutocomplete(SettingsStore.getInstance(getContext()).isAutocompleteEnabled(), false);
+
+        mBinding.searchEngineButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.SEARCH_ENGINE));
+        String searchEngineName = SearchEngineWrapper.get(getContext()).getCurrentSearchEngine().getName();
+        mBinding.searchEngineDescription.setText(searchEngineName);
 
         mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);
         setWebXR(SettingsStore.getInstance(getContext()).isWebXREnabled(), false);

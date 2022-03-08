@@ -19,10 +19,12 @@ import com.igalia.wolvic.search.suggestions.SearchSuggestionsClientKt;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import kotlinx.coroutines.Dispatchers;
@@ -37,18 +39,6 @@ import mozilla.components.browser.search.suggestions.SearchSuggestionClient;
 public class SearchEngineWrapper implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(SearchEngineWrapper.class);
-
-    // Specific FxR engine overrides. US is already overridden by browser-search component
-    // https://github.com/MozillaReality/FirefoxReality/issues/248#issuecomment-412278211
-    private static final Map<String , String> REGION_ENGINE_OVERRIDE = new HashMap<String, String>() {{
-        put("CN", "baidu");
-        put("RU", "yandex-ru");
-        put("BY", "yandex.by");
-        put("TR", "yandex-tr");
-        put("KZ", "yandex-kz");
-    }};
-
-    private static String EMPTY = "";
 
     private static SearchEngineWrapper mSearchEngineWrapperInstance;
 
@@ -66,13 +56,17 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     private SearchSuggestionClient mSuggestionsClient;
     private SharedPreferences mPrefs;
     private boolean mAutocompleteEnabled;
+    private SearchEngineManager mSearchEngineManager;
+    private HashMap<String, SearchEngine> mSearchEnginesMap;
 
     private SearchEngineWrapper(@NonNull Context aContext) {
-        mContext = aContext;
+        mContext = aContext.getApplicationContext();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mAutocompleteEnabled = SettingsStore.getInstance(mContext).isAutocompleteEnabled();
 
-        setupSearchEngine(aContext, EMPTY);
+        String preferredSearchEngineId = SettingsStore.getInstance(mContext).getSearchEngineId();
+
+        setupSearchEngine(aContext, preferredSearchEngineId);
     }
 
     public void registerForUpdates() {
@@ -107,16 +101,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     }
 
     public String getResourceURL() {
-        Uri uri = Uri.parse(mSearchEngine.buildSearchUrl("")) ;
+        Uri uri = Uri.parse(mSearchEngine.buildSearchUrl(""));
         return uri.getScheme() + "://" + uri.getHost();
     }
 
-    public String getIdentifier() {
-        return mSearchEngine.getIdentifier();
-    }
-
-    public String getEngineName() {
-        return mSearchEngine.getName();
+    public SearchEngine getCurrentSearchEngine() {
+        return mSearchEngine;
     }
 
     // Receiver for locale updates
@@ -124,14 +114,28 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
-                setupSearchEngine(context, EMPTY);
+                String userSearchEngineId = SettingsStore.getInstance(mContext).getSearchEngineId();
+                setupSearchEngine(context, userSearchEngineId);
             }
         }
     };
 
+    public Collection<SearchEngine> getAvailableSearchEngines() {
+        return mSearchEnginesMap.values();
+    }
+
+    public SearchEngine getDefaultSearchEngine() {
+        return mSearchEngineManager.getDefaultSearchEngine();
+    }
+
+    public void setCurrentSearchEngineId(Context context, String searchEngineId) {
+        SettingsStore.getInstance(mContext).setSearchEngineId(searchEngineId);
+    }
+
     /**
      * We cannot send system ACTION_LOCALE_CHANGED so the component refreshes the engines
      * with the updated SearchLocalizationProvider information so we have to update the whole manager.
+     *
      * @param aContext Activity context
      * @param userPref User preferred engine (among the available ones)
      */
@@ -139,52 +143,57 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         List<SearchEngineFilter> engineFilterList = new ArrayList<>();
 
         GeolocationData data = GeolocationData.parse(SettingsStore.getInstance(aContext).getGeolocationData());
-        SearchLocalizationProvider mLocalizationProvider;
+        SearchLocalizationProvider localizationProvider;
         if (data == null) {
             Log.d(LOGTAG, "Using Locale based search localization provider");
             // If we don't have geolocation data we default to the Locale search localization provider
-            mLocalizationProvider = new LocaleSearchLocalizationProvider();
-
+            localizationProvider = new LocaleSearchLocalizationProvider();
         } else {
             Log.d(LOGTAG, "Using Geolocation based search localization provider: " + data.toString());
-            // If we have geolocation data we initialize the provider with the received data
-            // and setup a filter to filter the engines that we need to override for FxR.
-            mLocalizationProvider = new GeolocationLocalizationProvider(data);
-            if (getEngine(data.getCountryCode()) != null) {
-                SearchEngineFilter engineFilter = (ctx, searchEngine) ->
-                        searchEngine.getIdentifier().equalsIgnoreCase(getEngine(data.getCountryCode()));
-                engineFilterList.add(engineFilter);
-            }
+            // If we have geolocation data we initialize the provider with the received data.
+            localizationProvider = new GeolocationLocalizationProvider(data);
         }
 
         // Configure the assets search with the localization provider and the engines that we want
         // to filter.
         AssetsSearchEngineProvider engineProvider = new AssetsSearchEngineProvider(
-                mLocalizationProvider,
-                engineFilterList,
+                localizationProvider,
+                Collections.emptyList(), //engineFilterList,
                 Collections.emptyList());
 
-        SearchEngineManager mSearchEngineManager = new SearchEngineManager(Collections.singletonList(engineProvider), Dispatchers.getDefault());
+        mSearchEngineManager = new SearchEngineManager(Collections.singletonList(engineProvider), Dispatchers.getDefault());
 
         // If we don't get any result we use the default configuration.
-        if (mSearchEngineManager.getSearchEngines(aContext).size() == 0) {
+        List<SearchEngine> searchEngines = mSearchEngineManager.getSearchEngines(aContext);
+        if (searchEngines.size() == 0) {
+            Log.d(LOGTAG, "  Could not find any available search engines, using default.");
             mSearchEngineManager = new SearchEngineManager();
+            searchEngines = mSearchEngineManager.getSearchEngines(aContext);
         }
 
-        // A name can be used if the user get's to choose among the available engines
-        mSearchEngine = mSearchEngineManager.getDefaultSearchEngine(aContext, userPref);
-        mSuggestionsClient = new SearchSuggestionClient(
-                mSearchEngine,
+        mSearchEnginesMap = new LinkedHashMap<>(searchEngines.size());
+        for (int i = 0; i < searchEngines.size(); i++) {
+            SearchEngine searchEngine = searchEngines.get(i);
+            mSearchEnginesMap.put(searchEngine.getIdentifier(), searchEngine);
+        }
+
+        String userPrefName = null;
+        if (mSearchEnginesMap.containsKey(userPref)) {
+            // The search component API uses the engine's name, not its identifier.
+            userPrefName = mSearchEnginesMap.get(userPref).getName();
+        }
+
+        // A name can be used if the user gets to choose among the available engines
+        mSearchEngine = mSearchEngineManager.getDefaultSearchEngine(aContext, userPrefName);
+
+        mSuggestionsClient = new SearchSuggestionClient(mSearchEngine,
                 (searchUrl, continuation) -> {
-                    return (mAutocompleteEnabled && !((VRBrowserActivity)mContext).getWindows().isInPrivateMode()) ?
+                    return (mAutocompleteEnabled && !((VRBrowserActivity) mContext).getWindows().isInPrivateMode()) ?
                             SearchSuggestionsClientKt.fetchSearchSuggestions(mContext, searchUrl) :
                             null;
                 }
         );
-    }
-
-    private String getEngine(String aCountryCode) {
-        return REGION_ENGINE_OVERRIDE.get(aCountryCode);
+        SettingsStore.getInstance(mContext).setSearchEngineId(mSearchEngine.getIdentifier());
     }
 
     // SharedPreferences.OnSharedPreferenceChangeListener
@@ -192,9 +201,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (mContext != null) {
-            if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
-                setupSearchEngine(mContext, EMPTY);
-
+            if (key.equals(mContext.getString(R.string.settings_key_geolocation_data)) ||
+                    key.equals(mContext.getString(R.string.settings_key_search_engine_id))) {
+                String searchEngineId = SettingsStore.getInstance(mContext).getSearchEngineId();
+                if (mSearchEngine == null || !Objects.equals(mSearchEngine.getIdentifier(), searchEngineId)) {
+                    setupSearchEngine(mContext, searchEngineId);
+                }
             } else if (key.equals(mContext.getString(R.string.settings_key_autocomplete))) {
                 mAutocompleteEnabled = SettingsStore.getInstance(mContext).isAutocompleteEnabled();
             }

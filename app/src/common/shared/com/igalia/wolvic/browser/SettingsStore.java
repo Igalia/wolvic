@@ -118,6 +118,7 @@ public class SettingsStore {
     public final static boolean PASSWORDS_ENCRYPTION_KEY_GENERATED = false;
     public final static boolean AUTOFILL_ENABLED = true;
     public final static boolean LOGIN_AUTOCOMPLETE_ENABLED = true;
+    public final static String SEARCH_ENGINE_DEFAULT = "ddg";
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -794,6 +795,20 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autocomplete), AUTOCOMPLETE_ENABLED);
     }
 
+    public String getSearchEngineId() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_search_engine_id), SEARCH_ENGINE_DEFAULT);
+    }
+
+    public void setSearchEngineId(@Nullable String searchEngineId) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        if (!StringUtils.isEmpty(searchEngineId)) {
+            editor.putString(mContext.getString(R.string.settings_key_search_engine_id), searchEngineId);
+        } else {
+            editor.remove(mContext.getString(R.string.settings_key_search_engine_id));
+        }
+        editor.commit();
+    }
+
     public void setWebGLOutOfProcess(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), isEnabled);
@@ -829,7 +844,7 @@ public class SettingsStore {
 
         return propertiesMap;
     }
-    
+
     public void setRemoteProperties(@Nullable String json) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
