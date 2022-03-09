@@ -1,5 +1,7 @@
 package com.igalia.wolvic.ui.widgets;
 
+import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -10,9 +12,6 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
@@ -36,6 +35,9 @@ import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.mozilla.geckoview.GeckoSession;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -54,8 +56,6 @@ import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
-
-import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
         WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {

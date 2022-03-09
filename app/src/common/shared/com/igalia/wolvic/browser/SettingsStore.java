@@ -1,5 +1,7 @@
 package com.igalia.wolvic.browser;
 
+import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -15,11 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -33,6 +30,11 @@ import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.geckoview.GeckoSessionSettings;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -44,8 +46,6 @@ import java.util.Map;
 
 import mozilla.components.concept.fetch.Request;
 import mozilla.components.concept.fetch.Response;
-
-import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
 
 public class SettingsStore {
 

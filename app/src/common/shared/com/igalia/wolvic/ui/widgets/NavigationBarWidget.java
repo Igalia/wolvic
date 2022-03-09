@@ -5,6 +5,11 @@
 
 package com.igalia.wolvic.ui.widgets;
 
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_DRM;
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
+import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -26,8 +31,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -62,14 +65,12 @@ import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.UrlUtils;
 
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_DRM;
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
-import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,

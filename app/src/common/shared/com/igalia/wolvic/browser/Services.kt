@@ -9,6 +9,12 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.igalia.wolvic.R
+import com.igalia.wolvic.browser.engine.EngineProvider
+import com.igalia.wolvic.telemetry.TelemetryService
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
+import com.igalia.wolvic.utils.ConnectivityReceiver
+import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,12 +32,6 @@ import mozilla.components.support.rustlog.RustLog
 import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
-import com.igalia.wolvic.R
-import com.igalia.wolvic.browser.engine.EngineProvider
-import com.igalia.wolvic.telemetry.TelemetryService
-import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
-import com.igalia.wolvic.utils.ConnectivityReceiver
-import com.igalia.wolvic.utils.SystemUtils
 
 
 class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {

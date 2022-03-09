@@ -6,9 +6,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
+
+import org.mozilla.geckoview.GeckoSession;
 
 public class ConfirmPromptWidget extends PromptWidget {
 

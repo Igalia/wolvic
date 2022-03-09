@@ -1,7 +1,8 @@
 package com.igalia.wolvic.browser;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.browser.engine.Session;
+
+import org.mozilla.geckoview.GeckoSession;
 
 public interface SessionChangeListener {
     default void onSessionAdded(Session aSession) {}

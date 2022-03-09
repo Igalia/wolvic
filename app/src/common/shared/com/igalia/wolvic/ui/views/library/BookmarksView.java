@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.ui.views.library;
 
+import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
@@ -18,7 +20,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -41,6 +42,8 @@ import com.igalia.wolvic.ui.widgets.menus.library.BookmarksContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.LibraryContextMenuWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -54,8 +57,6 @@ import mozilla.components.concept.sync.Profile;
 import mozilla.components.service.fxa.SyncEngine;
 import mozilla.components.service.fxa.sync.SyncReason;
 import mozilla.components.service.fxa.sync.SyncStatusObserver;
-
-import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class BookmarksView extends LibraryView implements BookmarksStore.BookmarkListener {
 

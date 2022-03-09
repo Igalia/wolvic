@@ -11,10 +11,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.ui.views.settings.SettingsEditText;
+
+import org.mozilla.geckoview.GeckoSession;
 
 public class AuthPromptWidget extends PromptWidget {
 

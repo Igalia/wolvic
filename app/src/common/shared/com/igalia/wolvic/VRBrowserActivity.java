@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic;
 
+import static com.igalia.wolvic.ui.widgets.UIWidget.REMOVE_WIDGET;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
@@ -42,12 +44,7 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import org.json.JSONObject;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoVRManager;
 import com.igalia.wolvic.audio.AudioEngine;
-import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.EngineProvider;
@@ -87,6 +84,11 @@ import com.igalia.wolvic.utils.ServoUtils;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import org.json.JSONObject;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoVRManager;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,8 +97,6 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
-import static com.igalia.wolvic.ui.widgets.UIWidget.REMOVE_WIDGET;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner {
 

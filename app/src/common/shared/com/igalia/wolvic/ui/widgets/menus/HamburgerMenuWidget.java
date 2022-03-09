@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
@@ -26,6 +25,8 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.ViewUtils;
+
+import org.mozilla.geckoview.GeckoSessionSettings;
 
 import java.util.ArrayList;
 import java.util.List;

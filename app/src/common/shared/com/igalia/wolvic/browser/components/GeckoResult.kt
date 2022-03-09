@@ -5,18 +5,10 @@
 
 package com.igalia.wolvic.browser.components
 
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import mozilla.components.concept.engine.CancellableOperation
 import org.mozilla.geckoview.GeckoResult
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.*
 
 /**
  * Wait for a GeckoResult to be complete in a co-routine.

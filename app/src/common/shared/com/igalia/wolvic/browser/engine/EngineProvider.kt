@@ -5,15 +5,15 @@
 package com.igalia.wolvic.browser.engine
 
 import android.content.Context
-import org.mozilla.geckoview.ContentBlocking
-import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoRuntimeSettings
-import org.mozilla.geckoview.GeckoWebExecutor
 import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.browser.SettingsStore
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy
 import com.igalia.wolvic.browser.content.TrackingProtectionStore
 import com.igalia.wolvic.crashreporting.CrashReporterService
+import org.mozilla.geckoview.ContentBlocking
+import org.mozilla.geckoview.GeckoRuntime
+import org.mozilla.geckoview.GeckoRuntimeSettings
+import org.mozilla.geckoview.GeckoWebExecutor
 
 object EngineProvider {
 

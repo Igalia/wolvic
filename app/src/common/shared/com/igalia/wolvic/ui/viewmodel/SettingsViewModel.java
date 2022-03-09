@@ -11,12 +11,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.mozilla.geckoview.ContentBlocking;
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
+
+import org.mozilla.geckoview.ContentBlocking;
 
 import java.lang.reflect.Type;
 import java.util.Collections;

@@ -6,17 +6,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.ContentBlockingController;
-import org.mozilla.geckoview.GeckoRuntime;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
@@ -24,12 +18,13 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.db.SitePermission;
 import com.igalia.wolvic.ui.viewmodel.SitePermissionViewModel;
 
+import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.geckoview.ContentBlockingController;
+import org.mozilla.geckoview.GeckoRuntime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
 
 public class TrackingProtectionStore implements DefaultLifecycleObserver,
         SharedPreferences.OnSharedPreferenceChangeListener {

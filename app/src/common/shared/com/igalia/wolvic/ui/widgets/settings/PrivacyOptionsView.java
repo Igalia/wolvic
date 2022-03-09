@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.StorageController;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -30,6 +28,9 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.DeviceType;
+
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.StorageController;
 
 import java.util.ArrayList;
 

@@ -18,14 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.MediaSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.databinding.MediaControlsBinding;
 import com.igalia.wolvic.ui.views.MediaSeekBar;
 import com.igalia.wolvic.ui.views.VolumeControl;
 import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
+
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.MediaSession;
 
 public class MediaControlsWidget extends UIWidget implements MediaSession.Delegate { //implements MediaElement.Delegate {
 

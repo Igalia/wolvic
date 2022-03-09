@@ -3,8 +3,9 @@ package com.igalia.wolvic.utils;
 import android.content.Context;
 import android.util.Log;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.browser.SettingsStore;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

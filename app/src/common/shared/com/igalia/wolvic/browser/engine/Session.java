@@ -5,6 +5,11 @@
 
 package com.igalia.wolvic.browser.engine;
 
+import static com.igalia.wolvic.utils.ServoUtils.createServoSession;
+import static com.igalia.wolvic.utils.ServoUtils.isInstanceOfServoSession;
+import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
+import static java.util.Objects.requireNonNull;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,17 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
-import org.mozilla.geckoview.AllowOrDeny;
-import org.mozilla.geckoview.Autocomplete;
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.GeckoDisplay;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.geckoview.SlowScriptResponse;
-import org.mozilla.geckoview.WebRequestError;
-import org.mozilla.geckoview.WebResponse;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
@@ -47,6 +41,18 @@ import com.igalia.wolvic.utils.InternalPages;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.Autocomplete;
+import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.geckoview.GeckoDisplay;
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.SlowScriptResponse;
+import org.mozilla.geckoview.WebRequestError;
+import org.mozilla.geckoview.WebResponse;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -55,11 +61,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.Objects.requireNonNull;
-import static com.igalia.wolvic.utils.ServoUtils.createServoSession;
-import static com.igalia.wolvic.utils.ServoUtils.isInstanceOfServoSession;
-import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
 
 public class Session implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate,

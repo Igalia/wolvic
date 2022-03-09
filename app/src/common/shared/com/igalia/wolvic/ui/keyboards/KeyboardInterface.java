@@ -1,11 +1,12 @@
 package com.igalia.wolvic.ui.keyboards;
 
-import com.igalia.wolvic.input.CustomKeyboard;
-import java.util.List;
-import java.util.Locale;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.igalia.wolvic.input.CustomKeyboard;
+
+import java.util.List;
+import java.util.Locale;
 
 public interface KeyboardInterface {
     class Words {

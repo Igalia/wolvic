@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.ui.widgets.settings;
 
+import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +20,6 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsDeveloperBinding;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
-
-import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
 
 class DeveloperOptionsView extends SettingsView {
 

@@ -7,6 +7,8 @@ package com.igalia.wolvic.browser
 
 import android.content.Context
 import android.util.Log
+import com.igalia.wolvic.browser.engine.SessionStore
+import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,8 +18,6 @@ import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.lib.dataprotect.generateEncryptionKey
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.log.logger.Logger
-import com.igalia.wolvic.browser.engine.SessionStore
-import com.igalia.wolvic.utils.SystemUtils
 
 /**
  * Entry point for interacting with places-backed storage layers.

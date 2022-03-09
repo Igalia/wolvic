@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.ui.widgets;
 
+import static com.igalia.wolvic.utils.ServoUtils.isInstanceOfServoSession;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -37,12 +39,6 @@ import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.AllowOrDeny;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.MediaSession;
-import org.mozilla.geckoview.WebResponse;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -68,10 +64,15 @@ import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.MediaSession;
+import org.mozilla.geckoview.WebResponse;
+
 import java.io.File;
-import java.io.IOException;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -84,8 +85,6 @@ import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
 import mozilla.components.concept.storage.RedirectSource;
 import mozilla.components.concept.storage.VisitType;
-
-import static com.igalia.wolvic.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,

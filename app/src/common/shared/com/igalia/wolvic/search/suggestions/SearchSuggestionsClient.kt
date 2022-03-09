@@ -1,11 +1,11 @@
 package com.igalia.wolvic.search.suggestions
 
 import android.content.Context
+import com.igalia.wolvic.browser.engine.EngineProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import mozilla.components.browser.search.suggestions.SearchSuggestionClient
 import mozilla.components.concept.fetch.Request
-import com.igalia.wolvic.browser.engine.EngineProvider
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
 

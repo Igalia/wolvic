@@ -6,7 +6,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
-import android.view.View;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -18,13 +17,13 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.ContentBlocking;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.ui.widgets.Windows;
-import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.ServoUtils;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.mozilla.geckoview.ContentBlocking;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

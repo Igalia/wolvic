@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.Login
 import mozilla.components.concept.storage.LoginStorageDelegate
 import mozilla.components.service.sync.logins.GeckoLoginStorageDelegate
-import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.Autocomplete
+import org.mozilla.geckoview.GeckoResult
 
 /**
  * This class exists only to convert incoming [LoginEntry] arguments into [Login]s, then forward

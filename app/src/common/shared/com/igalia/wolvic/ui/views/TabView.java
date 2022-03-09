@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
@@ -21,6 +20,8 @@ import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.concurrent.CompletableFuture;
 

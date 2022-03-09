@@ -5,13 +5,13 @@
 
 package com.igalia.wolvic.ui.widgets.settings;
 
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
+
 import android.content.Context;
 
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
-
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
 
 class TrackingPermissionsOptionsView extends SitePermissionsOptionsView {
 

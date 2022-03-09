@@ -2,12 +2,12 @@ package com.igalia.wolvic.ui.keyboards;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.utils.StringUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Locale;
 

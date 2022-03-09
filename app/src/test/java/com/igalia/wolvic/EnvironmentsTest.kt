@@ -2,15 +2,15 @@ package com.igalia.wolvic
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.igalia.wolvic.browser.SettingsStore
+import com.igalia.wolvic.utils.EnvironmentUtils
+import com.igalia.wolvic.utils.TestFileUtils
 import mozilla.components.service.glean.testing.GleanTestRule
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.igalia.wolvic.browser.SettingsStore
-import com.igalia.wolvic.utils.EnvironmentUtils
-import com.igalia.wolvic.utils.TestFileUtils
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File

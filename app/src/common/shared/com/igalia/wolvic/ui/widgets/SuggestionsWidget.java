@@ -25,12 +25,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.ui.views.CustomListView;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.utils.ViewUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.ArrayList;
 import java.util.Collections;

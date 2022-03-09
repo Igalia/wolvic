@@ -1,5 +1,7 @@
 package com.igalia.wolvic.ui.widgets.dialogs;
 
+import static android.view.Gravity.CENTER_VERTICAL;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -11,7 +13,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.ui.views.UITextButton;
@@ -21,10 +22,10 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
 
+import org.mozilla.geckoview.GeckoSession;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static android.view.Gravity.CENTER_VERTICAL;
 
 public class SelectionActionWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
     public interface Delegate {

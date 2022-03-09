@@ -1,5 +1,7 @@
 package com.igalia.wolvic.telemetry;
 
+import static com.igalia.wolvic.ui.widgets.Windows.MAX_WINDOWS;
+
 import android.content.Context;
 import android.os.Bundle;
 
@@ -20,8 +22,6 @@ import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader;
 import mozilla.telemetry.glean.GleanTimerId;
-
-import static com.igalia.wolvic.ui.widgets.Windows.MAX_WINDOWS;
 
 
 public class TelemetryService {

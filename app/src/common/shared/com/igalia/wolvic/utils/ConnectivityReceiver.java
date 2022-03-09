@@ -1,5 +1,7 @@
 package com.igalia.wolvic.utils;
 
+import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +13,6 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 
 public class ConnectivityReceiver extends BroadcastReceiver {
 

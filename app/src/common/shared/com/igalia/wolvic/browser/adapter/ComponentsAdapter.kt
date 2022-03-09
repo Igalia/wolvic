@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.browser.adapter
 
+import com.igalia.wolvic.browser.components.GeckoEngineSession
+import com.igalia.wolvic.browser.engine.Session
 import kotlinx.coroutines.flow.collect
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
@@ -14,8 +16,6 @@ import mozilla.components.browser.state.state.*
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
-import com.igalia.wolvic.browser.components.GeckoEngineSession
-import com.igalia.wolvic.browser.engine.Session
 
 class ComponentsAdapter private constructor(
         val store: BrowserStore = BrowserStore()
