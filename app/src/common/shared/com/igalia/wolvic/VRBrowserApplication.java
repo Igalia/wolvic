@@ -65,7 +65,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         // depending on how JVM classloader does the initialization job.
         // See https://github.com/MozillaReality/FirefoxReality/issues/3651
         Looper.getMainLooper().getThread();
-        TelemetryService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
+        TelemetryService.init(this);
     }
 
     protected void onActivityCreate(@NonNull Context activityContext) {
