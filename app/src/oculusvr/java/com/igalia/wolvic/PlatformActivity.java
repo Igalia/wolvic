@@ -5,15 +5,14 @@
 
 package com.igalia.wolvic;
 
-import android.app.NativeActivity;
 import android.Manifest;
+import android.app.NativeActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {

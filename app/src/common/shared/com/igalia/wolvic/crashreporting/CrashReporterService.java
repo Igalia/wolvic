@@ -9,12 +9,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
-import org.mozilla.geckoview.GeckoRuntime;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.SystemUtils;
+
+import org.mozilla.geckoview.GeckoRuntime;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -4,10 +4,11 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy;
+import com.igalia.wolvic.browser.content.TrackingProtectionStore;
+
+import org.mozilla.geckoview.GeckoSessionSettings;
 
 class SessionSettings {
 

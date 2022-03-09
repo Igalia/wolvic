@@ -6,6 +6,9 @@
 package com.igalia.wolvic.browser.components
 
 import android.content.Context
+import com.igalia.wolvic.browser.engine.Session
+import com.igalia.wolvic.browser.engine.SessionStore
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
@@ -13,9 +16,6 @@ import mozilla.components.concept.engine.webextension.*
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.support.ktx.kotlin.isResourceUrl
 import org.mozilla.geckoview.*
-import com.igalia.wolvic.browser.engine.Session
-import com.igalia.wolvic.browser.engine.SessionStore
-import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 
 class GeckoWebExtensionRuntime(
         private val context: Context,

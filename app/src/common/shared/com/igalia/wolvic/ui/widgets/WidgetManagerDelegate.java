@@ -6,8 +6,9 @@ import android.view.View;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
+
+import org.mozilla.geckoview.GeckoSession;
 
 public interface WidgetManagerDelegate {
 

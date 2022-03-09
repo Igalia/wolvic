@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.ui.widgets.dialogs;
 
+import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 
@@ -16,8 +18,6 @@ import com.igalia.wolvic.ui.widgets.UIWidget;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
-
-import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class SignOutDialogWidget extends PromptDialogWidget {
 

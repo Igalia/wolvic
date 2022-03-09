@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.PlatformActivity;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.engine.Session;
@@ -25,6 +23,9 @@ import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PermissionWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.ArrayList;
 import java.util.Arrays;

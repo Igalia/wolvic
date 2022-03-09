@@ -27,7 +27,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.jetbrains.annotations.NotNull;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -47,6 +46,8 @@ import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.StringUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

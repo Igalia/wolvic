@@ -3,9 +3,10 @@ package com.igalia.wolvic.browser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.utils.SystemUtils;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.MediaSession;
-import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 

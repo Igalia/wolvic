@@ -2,12 +2,13 @@ package com.igalia.wolvic.geolocation;
 
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import com.igalia.wolvic.utils.SystemUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.igalia.wolvic.utils.SystemUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Class representing a Geolocation success response (HTTP 200)

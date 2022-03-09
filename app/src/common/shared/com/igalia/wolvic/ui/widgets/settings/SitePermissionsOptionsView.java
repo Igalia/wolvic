@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.databinding.OptionsExceptionsBinding;
@@ -26,6 +25,8 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.List;
 

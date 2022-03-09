@@ -10,8 +10,9 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.net.URI;
 

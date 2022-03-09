@@ -6,13 +6,13 @@
 package com.igalia.wolvic.browser.components
 
 import android.graphics.Bitmap
+import com.igalia.wolvic.browser.engine.Session
+import com.igalia.wolvic.browser.engine.SessionStore
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.webextension.*
 import mozilla.components.support.base.log.logger.Logger
 import org.json.JSONObject
 import org.mozilla.geckoview.*
-import com.igalia.wolvic.browser.engine.Session
-import com.igalia.wolvic.browser.engine.SessionStore
 import org.mozilla.geckoview.WebExtension as GeckoNativeWebExtension
 import org.mozilla.geckoview.WebExtension.Action as GeckoNativeWebExtensionAction
 

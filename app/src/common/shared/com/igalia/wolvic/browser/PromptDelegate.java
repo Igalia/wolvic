@@ -7,13 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.AllowOrDeny;
-import org.mozilla.geckoview.Autocomplete;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.SlowScriptResponse;
 import com.igalia.wolvic.R;
-//import org.mozilla.vrbrowser.browser.components.GeckoLoginDelegateWrapper;
 import com.igalia.wolvic.browser.components.GeckoAutocompleteDelegateWrapper;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
@@ -35,6 +29,12 @@ import com.igalia.wolvic.ui.widgets.prompts.TextPromptWidget;
 import com.igalia.wolvic.ui.widgets.settings.SettingsView;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.Autocomplete;
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.SlowScriptResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -10,12 +10,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.CrashReporter;
-import org.mozilla.geckoview.GeckoResult;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
+
+import org.mozilla.geckoview.CrashReporter;
+import org.mozilla.geckoview.GeckoResult;
 
 import java.io.BufferedReader;
 import java.io.File;

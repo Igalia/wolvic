@@ -8,8 +8,6 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.downloads.Download;
@@ -18,6 +16,8 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.zip.UnzipCallback;
 import com.igalia.wolvic.utils.zip.UnzipTask;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.io.File;
 import java.util.ArrayList;

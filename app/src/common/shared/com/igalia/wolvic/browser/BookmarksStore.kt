@@ -9,6 +9,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.igalia.wolvic.R
+import com.igalia.wolvic.VRBrowserApplication
+import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import mozilla.appservices.places.BookmarkRoot
@@ -16,9 +19,6 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.support.base.log.logger.Logger
-import com.igalia.wolvic.R
-import com.igalia.wolvic.VRBrowserApplication
-import com.igalia.wolvic.utils.SystemUtils
 import java.util.concurrent.CompletableFuture
 
 const val DESKTOP_ROOT = "fake_desktop_root"

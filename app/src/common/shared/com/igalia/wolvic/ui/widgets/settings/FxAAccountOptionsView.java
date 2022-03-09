@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
@@ -25,6 +24,8 @@ import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.dialogs.SignOutDialogWidget;
 import com.igalia.wolvic.utils.SystemUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;

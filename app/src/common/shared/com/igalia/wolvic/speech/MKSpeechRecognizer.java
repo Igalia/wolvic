@@ -8,15 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.BuildConfig;
+import com.igalia.wolvic.ui.widgets.dialogs.VoiceSearchWidget;
 import com.igalia.wolvic.utils.StringUtils;
+import com.igalia.wolvic.utils.SystemUtils;
 import com.meetkai.speechlibrary.ISpeechRecognitionListener;
 import com.meetkai.speechlibrary.MKSpeechService;
 import com.meetkai.speechlibrary.STTResult;
 
 import org.mozilla.geckoview.GeckoWebExecutor;
-
-import com.igalia.wolvic.ui.widgets.dialogs.VoiceSearchWidget;
-import com.igalia.wolvic.utils.SystemUtils;
 
 public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionListener {
 

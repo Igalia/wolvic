@@ -17,11 +17,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Choice;
-import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Type;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+
+import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Choice;
+import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Type;
 
 import java.util.ArrayList;
 import java.util.Arrays;

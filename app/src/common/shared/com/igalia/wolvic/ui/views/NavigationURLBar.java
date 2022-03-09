@@ -28,7 +28,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -47,6 +46,8 @@ import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.Collection;
 import java.util.HashSet;

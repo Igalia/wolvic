@@ -1,6 +1,8 @@
 package com.igalia.wolvic.geolocation
 
 import android.content.Context
+import com.igalia.wolvic.browser.SettingsStore
+import com.igalia.wolvic.browser.engine.EngineProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -8,8 +10,6 @@ import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
-import com.igalia.wolvic.browser.engine.EngineProvider
-import com.igalia.wolvic.browser.SettingsStore
 import java.util.concurrent.CompletableFuture
 
 object GeolocationWrapper {

@@ -8,12 +8,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
-
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,6 @@
 package com.igalia.wolvic.browser.engine;
 
 import android.content.Context;
-
 import android.util.Log;
 
 import androidx.annotation.Nullable;

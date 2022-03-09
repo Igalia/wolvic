@@ -5,9 +5,10 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import com.igalia.wolvic.utils.SystemUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.igalia.wolvic.utils.SystemUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

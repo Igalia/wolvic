@@ -34,7 +34,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
@@ -65,6 +64,8 @@ import com.igalia.wolvic.ui.views.KeyboardSelectorView;
 import com.igalia.wolvic.ui.widgets.dialogs.VoiceSearchWidget;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.ViewUtils;
+
+import org.mozilla.geckoview.GeckoSession;
 
 import java.util.ArrayList;
 import java.util.Locale;

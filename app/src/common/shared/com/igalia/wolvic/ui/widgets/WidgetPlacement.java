@@ -14,7 +14,6 @@ import android.view.View;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.DeviceType;

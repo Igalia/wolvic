@@ -6,8 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.gecko.CrashHandler;
 import com.igalia.wolvic.utils.SystemUtils;
+
+import org.mozilla.gecko.CrashHandler;
 
 public class GlobalExceptionHandler {
 

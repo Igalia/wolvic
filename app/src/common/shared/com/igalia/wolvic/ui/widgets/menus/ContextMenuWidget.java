@@ -14,13 +14,14 @@ import android.webkit.URLUtil;
 
 import androidx.annotation.StringRes;
 
-import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.downloads.DownloadJob;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.StringUtils;
+
+import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
 
 import java.util.ArrayList;
 

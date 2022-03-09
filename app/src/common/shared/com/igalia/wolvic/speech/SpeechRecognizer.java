@@ -1,14 +1,13 @@
 package com.igalia.wolvic.speech;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.IntDef;
 
+import org.mozilla.geckoview.GeckoWebExecutor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import org.mozilla.geckoview.GeckoWebExecutor;
 
 public interface SpeechRecognizer {
     class Settings {
