@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
-import org.mozilla.geckoview.GeckoSession.WebResponseInfo;
 
 import java.io.File;
 import java.net.URL;
@@ -49,28 +48,6 @@ public class DownloadJob {
         job.mTitle = filename;
         job.mDescription = filename;
         job.mOutputPath = outputPath;
-        return job;
-    }
-
-    public static DownloadJob from(@NonNull WebResponseInfo response) {
-        DownloadJob job = new DownloadJob();
-        job.mUri = response.uri;
-        job.mContentType = response.contentType;
-        job.mContentLength = response.contentLength;
-        if (response.filename != null && !response.filename.isEmpty()) {
-            job.mFilename = response.filename;
-
-        } else {
-            try {
-                File f = new File(new URL(response.uri).getPath());
-                job.mFilename = f.getName();
-
-            } catch (Exception e) {
-                job.mFilename = "Unknown";
-            }
-        }
-        job.mTitle = response.filename;
-        job.mDescription = response.filename;
         return job;
     }
 

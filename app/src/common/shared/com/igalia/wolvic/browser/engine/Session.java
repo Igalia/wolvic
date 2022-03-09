@@ -1590,40 +1590,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         return GeckoResult.fromValue(autocompleteRequest.dismiss());
     }
-
-    // MediaDelegate
-
-    /*@Override
-    public void onMediaAdd(@NonNull GeckoSession aSession, @NonNull MediaElement element) {
-        if (mState.mSession != aSession) {
-            return;
-        }
-        Media media = new Media(element);
-        mState.mMediaElements.add(media);
-
-        for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
-            listener.onVideoAvailabilityChanged(media, true);
-        }
-    }
-
-    @Override
-    public void onMediaRemove(@NonNull GeckoSession aSession, @NonNull MediaElement element) {
-        if (mState.mSession != aSession) {
-            return;
-        }
-        for (int i = 0; i < mState.mMediaElements.size(); ++i) {
-            Media media = mState.mMediaElements.get(i);
-            if (media.getMediaElement() == element) {
-                media.unload();
-                mState.mMediaElements.remove(i);
-                for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
-                    listener.onVideoAvailabilityChanged(media, false);
-                }
-                return;
-            }
-        }
-    }*/
-
+    
     // HistoryDelegate
 
     @Override
