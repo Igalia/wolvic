@@ -4,8 +4,6 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoWebExecutor;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -37,7 +35,7 @@ public interface SpeechRecognizer {
         void onError(@ErrorType int errorType, @Nullable String error);
     }
 
-    void start(@NonNull Settings settings, @Nullable GeckoWebExecutor executor, @NonNull Callback callback);
+    void start(@NonNull Settings settings, @NonNull Callback callback);
     void stop();
     boolean shouldDisplayStoreDataPrompt();
     default boolean supportsASR(@NonNull Settings settings) {return true;}
