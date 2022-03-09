@@ -26,7 +26,6 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.VoiceSearchDialogBinding;
 import com.igalia.wolvic.speech.SpeechRecognizer;
@@ -240,9 +239,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             settings.storeData = storeData;
             settings.productTag = getContext().getString(R.string.voice_app_id);
 
-            mSpeechRecognizer.start(settings,
-                    EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(getContext()),
-                    mResultCallback);
+            mSpeechRecognizer.start(settings, mResultCallback);
         }
     }
 

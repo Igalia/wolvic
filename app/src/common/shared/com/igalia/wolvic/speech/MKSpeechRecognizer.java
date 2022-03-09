@@ -15,8 +15,6 @@ import com.meetkai.speechlibrary.ISpeechRecognitionListener;
 import com.meetkai.speechlibrary.MKSpeechService;
 import com.meetkai.speechlibrary.STTResult;
 
-import org.mozilla.geckoview.GeckoWebExecutor;
-
 public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionListener {
 
     private Context mContext;
@@ -40,7 +38,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
     }
 
     @Override
-    public void start(@NonNull Settings settings, @Nullable GeckoWebExecutor executor, @NonNull Callback callback) {
+    public void start(@NonNull Settings settings, @NonNull Callback callback) {
         mkSpeechService = MKSpeechService.getInstance();
         mCallback = callback;
         mkSpeechService.addListener(this);
