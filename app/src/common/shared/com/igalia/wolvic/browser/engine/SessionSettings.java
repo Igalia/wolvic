@@ -5,10 +5,9 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
-
-import org.mozilla.geckoview.GeckoSessionSettings;
 
 class SessionSettings {
 
@@ -17,7 +16,6 @@ class SessionSettings {
     private boolean isSuspendMediaWhenInactiveEnabled;
     private int userAgentMode;
     private int viewportMode;
-    private boolean isServoEnabled;
     private String userAgentOverride;
 
     /* package */ SessionSettings(@NonNull Builder builder) {
@@ -26,7 +24,6 @@ class SessionSettings {
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
         this.viewportMode = builder.viewportMode;
-        this.isServoEnabled = builder.isServoEnabled;
         this.userAgentOverride = builder.userAgentOverride;
     }
 
@@ -67,14 +64,6 @@ class SessionSettings {
 
     public void setViewportMode(final int mode) { viewportMode = mode; }
 
-    public boolean isServoEnabled() {
-        return isServoEnabled;
-    }
-
-    public void setServoEnabled(boolean enabled) {
-        isServoEnabled = enabled;
-    }
-
     public static class Builder {
 
         private boolean isPrivateBrowsingEnabled;
@@ -82,7 +71,6 @@ class SessionSettings {
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
         private int viewportMode;
-        private boolean isServoEnabled;
         private String userAgentOverride;
 
         public Builder() {
@@ -115,11 +103,6 @@ class SessionSettings {
             return this;
         }
 
-        public Builder withServo(boolean isServoEnabled){
-            this.isServoEnabled= isServoEnabled;
-            return this;
-        }
-
         public Builder withUserAgentOverride(String userAgentOverride) {
             this.userAgentOverride = userAgentOverride;
             return this;
@@ -127,8 +110,8 @@ class SessionSettings {
 
         public Builder withDefaultSettings(Context context) {
             int ua = SettingsStore.getInstance(context).getUaMode();
-            int viewport = ua == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP ?
-                    GeckoSessionSettings.VIEWPORT_MODE_DESKTOP : GeckoSessionSettings.VIEWPORT_MODE_MOBILE;
+            int viewport = ua == WSessionSettings.USER_AGENT_MODE_DESKTOP ?
+                    WSessionSettings.VIEWPORT_MODE_DESKTOP : WSessionSettings.VIEWPORT_MODE_MOBILE;
 
             TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
             return new SessionSettings.Builder()
@@ -136,8 +119,7 @@ class SessionSettings {
                     .withTrackingProtection(policy.shouldBlockContent())
                     .withSuspendMediaWhenInactive(true)
                     .withUserAgent(ua)
-                    .withViewport(viewport)
-                    .withServo(false);
+                    .withViewport(viewport);
         }
 
         public SessionSettings build(){

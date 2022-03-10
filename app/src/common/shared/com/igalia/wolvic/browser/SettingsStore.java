@@ -1,7 +1,5 @@
 package com.igalia.wolvic.browser;
 
-import static com.igalia.wolvic.utils.ServoUtils.isServoAvailable;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,6 +19,8 @@ import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
+import com.igalia.wolvic.browser.api.WContentBlocking;
+import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
@@ -32,8 +32,6 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.GeckoSessionSettings;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -78,12 +76,11 @@ public class SettingsStore {
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
-    public final static int TRACKING_DEFAULT = ContentBlocking.EtpLevel.DEFAULT;
+    public final static int TRACKING_DEFAULT = WContentBlocking.EtpLevel.DEFAULT;
     public final static boolean NOTIFICATIONS_DEFAULT = true;
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
-    public final static boolean SERVO_DEFAULT = false;
-    public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
+    public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
     public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
     public final static int WINDOW_WIDTH_DEFAULT = 800;
@@ -285,7 +282,7 @@ public class SettingsStore {
         editor.putInt(mContext.getString(R.string.settings_key_tracking_protection_level), level);
         editor.commit();
 
-        mSettingsViewModel.setIsTrackingProtectionEnabled(level != ContentBlocking.EtpLevel.NONE);
+        mSettingsViewModel.setIsTrackingProtectionEnabled(level != WContentBlocking.EtpLevel.NONE);
     }
 
     public boolean isEnvironmentOverrideEnabled() {
@@ -325,16 +322,6 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public boolean isServoEnabled() {
-        return isServoAvailable() && mPrefs.getBoolean(mContext.getString(R.string.settings_key_servo), SERVO_DEFAULT);
-    }
-
-    public void setServoEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_servo), isEnabled);
-        editor.commit();
-    }
-
     public int getUaMode() {
         return mPrefs.getInt(
                 mContext.getString(R.string.settings_key_user_agent_version), UA_MODE_DEFAULT);
@@ -342,7 +329,7 @@ public class SettingsStore {
 
     public void setUaMode(int mode) {
         int checkedMode = mode;
-        if ((mode != GeckoSessionSettings.USER_AGENT_MODE_VR) && (mode != GeckoSessionSettings.USER_AGENT_MODE_MOBILE)) {
+        if ((mode != WSessionSettings.USER_AGENT_MODE_VR) && (mode != WSessionSettings.USER_AGENT_MODE_MOBILE)) {
             Log.e(LOGTAG, "User agent mode: " + mode + " is not supported.");
             checkedMode = UA_MODE_DEFAULT;
         }

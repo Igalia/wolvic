@@ -8,8 +8,7 @@ import android.widget.Button;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
-
-import org.mozilla.geckoview.GeckoSession;
+import com.igalia.wolvic.browser.api.WSession;
 
 public class ConfirmPromptWidget extends PromptWidget {
 
@@ -78,12 +77,12 @@ public class ConfirmPromptWidget extends PromptWidget {
     public void setButtons(String[] btnMsg) {
         if (btnMsg[POSITIVE] != null) {
             mButtons[POSITIVE].setText(btnMsg[POSITIVE]);
-            mButtons[POSITIVE].setTag(GeckoSession.PromptDelegate.ButtonPrompt.Type.POSITIVE);
+            mButtons[POSITIVE].setTag(WSession.PromptDelegate.ButtonPrompt.Type.POSITIVE);
             mButtons[POSITIVE].setVisibility(VISIBLE);
         }
         if (btnMsg[NEGATIVE] != null) {
             mButtons[NEGATIVE].setText(btnMsg[NEGATIVE]);
-            mButtons[NEGATIVE].setTag(GeckoSession.PromptDelegate.ButtonPrompt.Type.NEGATIVE);
+            mButtons[NEGATIVE].setTag(WSession.PromptDelegate.ButtonPrompt.Type.NEGATIVE);
             mButtons[NEGATIVE].setVisibility(VISIBLE);
         }
     }

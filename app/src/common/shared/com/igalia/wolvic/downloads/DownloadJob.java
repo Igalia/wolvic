@@ -3,7 +3,7 @@ package com.igalia.wolvic.downloads;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
+import com.igalia.wolvic.browser.api.WSession;
 
 import java.io.File;
 import java.net.URL;
@@ -67,20 +67,20 @@ public class DownloadJob {
         return job;
     }
 
-    public static DownloadJob fromSrc(@NonNull ContextElement contextElement) {
+    public static DownloadJob fromSrc(@NonNull WSession.ContentDelegate.ContextElement contextElement) {
         DownloadJob job = new DownloadJob();
         job.mUri = contextElement.srcUri;
         switch (contextElement.type) {
-            case ContextElement.TYPE_NONE:
+            case WSession.ContentDelegate.ContextElement.TYPE_NONE:
                 job.mContentType = "";
                 break;
-            case ContextElement.TYPE_AUDIO:
+            case WSession.ContentDelegate.ContextElement.TYPE_AUDIO:
                 job.mContentType = "audio";
                 break;
-            case ContextElement.TYPE_IMAGE:
+            case WSession.ContentDelegate.ContextElement.TYPE_IMAGE:
                 job.mContentType = "image";
                 break;
-            case ContextElement.TYPE_VIDEO:
+            case WSession.ContentDelegate.ContextElement.TYPE_VIDEO:
                 job.mContentType = "video";
                 break;
         }
@@ -97,20 +97,20 @@ public class DownloadJob {
         return job;
     }
 
-    public static DownloadJob fromLink(@NonNull ContextElement contextElement) {
+    public static DownloadJob fromLink(@NonNull WSession.ContentDelegate.ContextElement contextElement) {
         DownloadJob job = new DownloadJob();
         job.mUri = contextElement.linkUri;
         switch (contextElement.type) {
-            case ContextElement.TYPE_NONE:
+            case WSession.ContentDelegate.ContextElement.TYPE_NONE:
                 job.mContentType = "";
                 break;
-            case ContextElement.TYPE_AUDIO:
+            case WSession.ContentDelegate.ContextElement.TYPE_AUDIO:
                 job.mContentType = "audio";
                 break;
-            case ContextElement.TYPE_IMAGE:
+            case WSession.ContentDelegate.ContextElement.TYPE_IMAGE:
                 job.mContentType = "image";
                 break;
-            case ContextElement.TYPE_VIDEO:
+            case WSession.ContentDelegate.ContextElement.TYPE_VIDEO:
                 job.mContentType = "video";
                 break;
         }

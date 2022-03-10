@@ -11,13 +11,10 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.Settings
 import org.json.JSONObject
-import org.mozilla.geckoview.GeckoSession
 
-class GeckoEngineSession(
+class WolvicEngineSession(
         val session: Session
 ): EngineSession() {
-
-    val geckoSession: GeckoSession = session.geckoSession
 
     override fun loadUrl(url: String, parent: EngineSession?, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
         session.loadUri(url, flags.value)

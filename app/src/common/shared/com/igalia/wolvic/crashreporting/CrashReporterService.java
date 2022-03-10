@@ -13,9 +13,9 @@ import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WRuntime;
+import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.utils.SystemUtils;
-
-import org.mozilla.geckoview.GeckoRuntime;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -62,9 +62,10 @@ public class CrashReporterService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         String action = intent.getAction();
-        if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
+        WRuntime.CrashReportIntent crash = EngineProvider.INSTANCE.getOrCreateRuntime(getBaseContext()).getCrashReportIntent();
+        if (crash.action_crashed.equals(action)) {
             final int activityPid = SettingsStore.getInstance(getBaseContext()).getPid();
-            boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
+            boolean fatal = intent.getBooleanExtra(crash.extra_crash_fatal, false);
             long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
             boolean cancelRestart = count > MAX_RESTART_COUNT;
             if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
@@ -74,8 +75,8 @@ public class CrashReporterService extends JobIntentService {
 
             if (fatal) {
                 Log.d(LOGTAG, "Main process crash " + intent);
-                final String dumpFile = intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH) + "\n";
-                final String extraFile = intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH);
+                final String dumpFile = intent.getStringExtra(crash.extra_minidump_path) + "\n";
+                final String extraFile = intent.getStringExtra(crash.extra_extras_path);
                 final String crashFile = CRASH_FILE_PREFIX + UUID.randomUUID().toString().replaceAll("-", "") + ".txt";
                 try (FileOutputStream file = getBaseContext().openFileOutput(crashFile, 0)) {
                     file.write(dumpFile.getBytes());

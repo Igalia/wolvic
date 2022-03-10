@@ -1,7 +1,6 @@
 package com.igalia.wolvic.browser
 
 import android.content.Context
-import com.igalia.wolvic.browser.components.GeckoAutocompleteDelegateWrapper
 import com.igalia.wolvic.browser.engine.EngineProvider
 import com.igalia.wolvic.ui.widgets.AppServicesProvider
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +10,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.Login
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
-import mozilla.components.service.sync.logins.GeckoLoginStorageDelegate
 import java.util.concurrent.CompletableFuture
 
 class LoginStorage(
@@ -22,8 +20,7 @@ class LoginStorage(
     private var storage = places.logins
 
     init {
-        EngineProvider.getOrCreateRuntime(context).autocompleteStorageDelegate = GeckoAutocompleteDelegateWrapper(
-                GeckoLoginStorageDelegate(places.logins))
+        EngineProvider.getOrCreateRuntime(context).setUpLoginPersistence(places.logins)
         GlobalScope.launch(Dispatchers.IO) {
             places.logins.value.warmUp()
         }

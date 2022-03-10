@@ -14,17 +14,16 @@ import androidx.lifecycle.Observer;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WContentBlocking;
+import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.db.SitePermission;
 import com.igalia.wolvic.ui.viewmodel.SitePermissionViewModel;
 
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.ContentBlockingController;
-import org.mozilla.geckoview.GeckoRuntime;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
 
 public class TrackingProtectionStore implements DefaultLifecycleObserver,
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -42,8 +41,7 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
     }
 
     private Context mContext;
-    private GeckoRuntime mRuntime;
-    private ContentBlockingController mContentBlockingController;
+    private WRuntime mRuntime;
     private Lifecycle mLifeCycle;
     private SitePermissionViewModel mViewModel;
     private List<TrackingProtectionListener> mListeners;
@@ -52,10 +50,9 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
     private boolean mIsFirstUpdate;
 
     public TrackingProtectionStore(@NonNull Context context,
-                                   @NonNull GeckoRuntime runtime) {
+                                   @NonNull WRuntime runtime) {
         mContext = context;
         mRuntime = runtime;
-        mContentBlockingController = mRuntime.getContentBlockingController();
         mListeners = new ArrayList<>();
         mSitePermissions = new ArrayList<>();
         mIsFirstUpdate = true;
@@ -145,17 +142,17 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
     }
 
     private void setTrackingProtectionLevel(int level) {
-        ContentBlocking.Settings settings = mRuntime.getSettings().getContentBlocking();
+        WContentBlocking.Settings settings = mRuntime.getSettings().getContentBlocking();
         TrackingProtectionPolicy policy = TrackingProtectionPolicy.recommended();
         if (mRuntime != null) {
             switch (level) {
-                case ContentBlocking.EtpLevel.NONE:
+                case WContentBlocking.EtpLevel.NONE:
                     policy = TrackingProtectionPolicy.none();
                     break;
-                case ContentBlocking.EtpLevel.DEFAULT:
+                case WContentBlocking.EtpLevel.DEFAULT:
                     policy = TrackingProtectionPolicy.recommended();
                     break;
-                case ContentBlocking.EtpLevel.STRICT:
+                case WContentBlocking.EtpLevel.STRICT:
                     policy = TrackingProtectionPolicy.strict();
                     break;
             }
@@ -172,11 +169,11 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
     public static TrackingProtectionPolicy getTrackingProtectionPolicy(Context mContext) {
         int level = SettingsStore.getInstance(mContext).getTrackingProtectionLevel();
         switch (level) {
-            case ContentBlocking.EtpLevel.NONE:
+            case WContentBlocking.EtpLevel.NONE:
                 return TrackingProtectionPolicy.none();
-            case ContentBlocking.EtpLevel.DEFAULT:
+            case WContentBlocking.EtpLevel.DEFAULT:
                 return TrackingProtectionPolicy.recommended();
-            case ContentBlocking.EtpLevel.STRICT:
+            case WContentBlocking.EtpLevel.STRICT:
                 return TrackingProtectionPolicy.strict();
         }
 

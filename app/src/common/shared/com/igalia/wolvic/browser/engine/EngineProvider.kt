@@ -7,30 +7,34 @@ package com.igalia.wolvic.browser.engine
 import android.content.Context
 import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.browser.SettingsStore
+import com.igalia.wolvic.browser.api.WContentBlocking
+import com.igalia.wolvic.browser.api.WFactory
+import com.igalia.wolvic.browser.api.WRuntime
+import com.igalia.wolvic.browser.api.WRuntimeSettings
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy
 import com.igalia.wolvic.browser.content.TrackingProtectionStore
 import com.igalia.wolvic.crashreporting.CrashReporterService
-import org.mozilla.geckoview.ContentBlocking
-import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoRuntimeSettings
-import org.mozilla.geckoview.GeckoWebExecutor
+import mozilla.components.concept.fetch.Client
 
 object EngineProvider {
 
-    private var runtime: GeckoRuntime? = null
-    private var executor: GeckoWebExecutor? = null
-    private var client: GeckoViewFetchClient? = null
+    private var runtime: WRuntime? = null
+    private var client: Client? = null
 
     @Synchronized
-    fun getOrCreateRuntime(context: Context): GeckoRuntime {
+    fun getOrCreateRuntime(context: Context): WRuntime {
         if (runtime == null) {
-            val builder = GeckoRuntimeSettings.Builder()
+            val builder = WRuntimeSettings.Builder()
             val settingsStore = SettingsStore.getInstance(context)
 
             val policy : TrackingProtectionPolicy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
             builder.crashHandler(CrashReporterService::class.java)
-            builder.contentBlocking(ContentBlocking.Settings.Builder()
+            builder.contentBlocking(
+                WContentBlocking.Settings.Builder()
                     .antiTracking(policy.antiTrackingPolicy)
+                    .strictSocialTrackingProtection(policy.shouldBlockContent())
+                    .cookieBehavior(policy.cookiePolicy)
+                    .cookieBehaviorPrivateMode(policy.cookiePolicy)
                     .enhancedTrackingProtectionLevel(settingsStore.trackingProtectionLevel)
                     .build())
             builder.displayDensityOverride(settingsStore.displayDensity)
@@ -60,7 +64,7 @@ object EngineProvider {
                 builder.glMsaaLevel(0)
             }
 
-            runtime = GeckoRuntime.create(context, builder.build())
+            runtime = WFactory.createRuntime(context, builder.build())
         }
 
         return runtime!!
@@ -71,27 +75,11 @@ object EngineProvider {
         return runtime != null
     }
 
-    private fun createGeckoWebExecutor(context: Context): GeckoWebExecutor {
-        return GeckoWebExecutor(getOrCreateRuntime(context))
+    fun createClient(context: Context): Client {
+        return runtime!!.createFetchClient(context)
     }
 
-     fun getDefaultGeckoWebExecutor(context: Context): GeckoWebExecutor {
-        if (executor == null) {
-            executor = createGeckoWebExecutor(context)
-            client?.let { it.executor = executor }
-
-        }
-
-        return executor!!
-    }
-
-    fun createClient(context: Context): GeckoViewFetchClient {
-        val client = GeckoViewFetchClient(context)
-        client.executor = executor
-        return client
-    }
-
-    fun getDefaultClient(context: Context): GeckoViewFetchClient {
+    fun getDefaultClient(context: Context): Client {
         if (client == null) {
             client = createClient(context)
         }

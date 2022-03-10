@@ -10,7 +10,8 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.R
 import com.igalia.wolvic.browser.adapter.ComponentsAdapter
-import com.igalia.wolvic.browser.components.GeckoEngineSession
+import com.igalia.wolvic.browser.api.WSession
+import com.igalia.wolvic.browser.components.WolvicEngineSession
 import com.igalia.wolvic.browser.engine.EngineProvider
 import com.igalia.wolvic.browser.engine.Session
 import com.igalia.wolvic.browser.engine.SessionStore
@@ -31,7 +32,6 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.webextensions.WebExtensionSupport
-import org.mozilla.geckoview.GeckoSession
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -94,9 +94,9 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
                     false,
                     onNewTabOverride = {
                         _, engineSession, url ->
-                        val session = sessionStore.getSession((engineSession as GeckoEngineSession).geckoSession)
-                        session?.loadUri(url, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY)
-                        session!!.id
+                        val session = (engineSession as WolvicEngineSession).session
+                        session.loadUri(url, WSession.LOAD_FLAGS_REPLACE_HISTORY)
+                        session.id
                     },
                     onCloseTabOverride = {
                         _, sessionId ->

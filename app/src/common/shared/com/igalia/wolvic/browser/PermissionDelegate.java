@@ -13,6 +13,8 @@ import androidx.lifecycle.Observer;
 
 import com.igalia.wolvic.PlatformActivity;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.api.WResult;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -24,14 +26,11 @@ import com.igalia.wolvic.ui.widgets.dialogs.PermissionWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PermissionDelegate implements GeckoSession.PermissionDelegate, WidgetManagerDelegate.PermissionListener {
+public class PermissionDelegate implements WSession.PermissionDelegate, WidgetManagerDelegate.PermissionListener {
 
     static final int PERMISSION_REQUEST_CODE = 1143;
 
@@ -39,7 +38,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     private Context mContext;
     private int mParentWidgetHandle;
     private WidgetManagerDelegate mWidgetManager;
-    private GeckoSession.PermissionDelegate.Callback mCallback;
+    private WSession.PermissionDelegate.Callback mCallback;
     private PermissionWidget mPermissionWidget;
     private SitePermissionViewModel mSitePermissionModel;
     private List<SitePermission> mSitePermissions;
@@ -96,10 +95,10 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         mSitePermissions = sites;
     };
 
-    GeckoResult<Integer> handleWebXRPermission(GeckoSession aGeckoSession, ContentPermission perm) {
-        Session session = SessionStore.get().getSession(aGeckoSession);
+    WResult<Integer> handleWebXRPermission(WSession aSession, ContentPermission perm) {
+        Session session = SessionStore.get().getSession(aSession);
         if (session == null || !SettingsStore.getInstance(mContext).isWebXREnabled()) {
-            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
+            return WResult.fromValue(ContentPermission.VALUE_DENY);
         }
         final String domain = UrlUtils.getHost(perm.uri);
 
@@ -113,10 +112,10 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
 
         if (site == null) {
             session.setWebXRState(SessionState.WEBXR_ALLOWED);
-            return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
+            return WResult.fromValue(ContentPermission.VALUE_ALLOW);
         } else {
             session.setWebXRState(SessionState.WEBXR_BLOCKED);
-            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
+            return WResult.fromValue(ContentPermission.VALUE_DENY);
         }
     }
 
@@ -130,7 +129,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     }
 
     @Override
-    public void onAndroidPermissionsRequest(GeckoSession aSession, String[] permissions, Callback aCallback) {
+    public void onAndroidPermissionsRequest(WSession aSession, String[] permissions, Callback aCallback) {
         Log.d(LOGTAG, "onAndroidPermissionsRequest: " + Arrays.toString(permissions));
         ArrayList<String> missingPermissions = new ArrayList<>();
         ArrayList<String> filteredPermissions = new ArrayList<>();
@@ -162,7 +161,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     }
 
     @Override
-    public GeckoResult<Integer> onContentPermissionRequest(GeckoSession aSession, ContentPermission perm) {
+    public WResult<Integer> onContentPermissionRequest(WSession aSession, ContentPermission perm) {
         Log.d(LOGTAG, "onContentPermissionRequest: " + perm.uri + " " + perm.permission);
         if (perm.permission == PERMISSION_XR) {
             return handleWebXRPermission(aSession, perm);
@@ -170,12 +169,12 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
 
         if (perm.permission == PERMISSION_AUTOPLAY_INAUDIBLE) {
             // https://hacks.mozilla.org/2019/02/firefox-66-to-block-automatically-playing-audible-video-and-audio/
-            return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
+            return WResult.fromValue(ContentPermission.VALUE_ALLOW);
         } else if(perm.permission == PERMISSION_AUTOPLAY_AUDIBLE) {
             if (SettingsStore.getInstance(mContext).isAutoplayEnabled()) {
-                return GeckoResult.fromValue(ContentPermission.VALUE_ALLOW);
+                return WResult.fromValue(ContentPermission.VALUE_ALLOW);
             } else {
-                return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
+                return WResult.fromValue(ContentPermission.VALUE_DENY);
             }
         }
 
@@ -185,7 +184,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         } else if (perm.permission == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
         } else if (perm.permission == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
-            final GeckoResult<Integer> result = new GeckoResult<>();
+            final WResult<Integer> result = WResult.create();
             WindowWidget windowWidget = mWidgetManager.getFocusedWindow();
             Runnable enableDrm = () -> {
                 Session session = SessionStore.get().getSession(aSession);
@@ -211,10 +210,10 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             return result;
         } else {
             Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + perm.permission);
-            return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
+            return WResult.fromValue(ContentPermission.VALUE_DENY);
         }
 
-        final GeckoResult<Integer> result = new GeckoResult<>();
+        final WResult<Integer> result = WResult.create();
         handlePermission(perm.uri, type, new Callback() {
             @Override
             public void grant() {
@@ -233,7 +232,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     }
 
     @Override
-    public void onMediaPermissionRequest(GeckoSession aSession, String aUri, MediaSource[] aVideo, MediaSource[] aAudio, final MediaCallback aMediaCallback) {
+    public void onMediaPermissionRequest(WSession aSession, String aUri, MediaSource[] aVideo, MediaSource[] aAudio, final MediaCallback aMediaCallback) {
         Log.d(LOGTAG, "onMediaPermissionRequest: " + aUri);
 
         final MediaSource video = aVideo != null ? aVideo[0] : null;
@@ -250,7 +249,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             return;
         }
 
-        GeckoSession.PermissionDelegate.Callback callback = new GeckoSession.PermissionDelegate.Callback() {
+        WSession.PermissionDelegate.Callback callback = new WSession.PermissionDelegate.Callback() {
             @Override
             public void grant() {
                 aMediaCallback.grant(video, audio);
@@ -276,8 +275,8 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         return mContext.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    // Handle app permissions that Gecko doesn't handle itself yet
-    public void onAppPermissionRequest(final GeckoSession aSession, String aUri, final String permission, final Callback callback) {
+    // Handle app permissions that the browser doesn't handle itself yet
+    public void onAppPermissionRequest(final WSession aSession, String aUri, final String permission, final Callback callback) {
         Log.d(LOGTAG, "onAppPermissionRequest: " + aUri);
 
         // If the permission is already granted we just grant
@@ -331,7 +330,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
             Session session = window.getSession();
             if (uri.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
-                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                session.reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
         }
 
@@ -351,7 +350,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
             Session session = window.getSession();
             if (uri.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
-                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                session.reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
         }
 

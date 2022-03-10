@@ -5,38 +5,38 @@
 
 package com.igalia.wolvic.browser.components
 
+import com.igalia.wolvic.browser.api.WResult
 import kotlinx.coroutines.*
 import mozilla.components.concept.engine.CancellableOperation
-import org.mozilla.geckoview.GeckoResult
 import kotlin.coroutines.*
 
 /**
- * Wait for a GeckoResult to be complete in a co-routine.
+ * Wait for a WResult to be complete in a co-routine.
  */
-suspend fun <T> GeckoResult<T>.await() = suspendCoroutine<T?> { continuation ->
+suspend fun <T> WResult<T>.await() = suspendCoroutine<T?> { continuation ->
     then({
         continuation.resume(it)
-        GeckoResult<Void>()
+        WResult.create<Void>()
     }, {
         continuation.resumeWithException(it)
-        GeckoResult<Void>()
+        WResult.create<Void>()
     })
 }
 
 /**
- * Converts a [GeckoResult] to a [CancellableOperation].
+ * Converts a [WResult] to a [CancellableOperation].
  */
-fun <T> GeckoResult<T>.asCancellableOperation(): CancellableOperation {
-    val geckoResult = this
+fun <T> WResult<T>.asCancellableOperation(): CancellableOperation {
+    val res = this
     return object : CancellableOperation {
         override fun cancel(): Deferred<Boolean> {
             val result = CompletableDeferred<Boolean>()
-            geckoResult.cancel().then({
+            res.cancel().then({
                 result.complete(it ?: false)
-                GeckoResult<Void>()
+                WResult.create<Void>()
             }, { throwable ->
                 result.completeExceptionally(throwable)
-                GeckoResult<Void>()
+                WResult.create<Void>()
             })
             return result
         }
@@ -44,14 +44,14 @@ fun <T> GeckoResult<T>.asCancellableOperation(): CancellableOperation {
 }
 
 /**
- * Create a GeckoResult from a co-routine.
+ * Create a WResult from a co-routine.
  */
 @Suppress("TooGenericExceptionCaught")
-fun <T> CoroutineScope.launchGeckoResult(
+fun <T> CoroutineScope.launchWResult(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> T
-) = GeckoResult<T>().apply {
+) = WResult.create<T>().apply {
     launch(context, start) {
         try {
             val value = block()

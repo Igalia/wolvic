@@ -20,6 +20,8 @@ import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WRuntime;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsPrivacyBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
@@ -28,9 +30,6 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.DeviceType;
-
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.StorageController;
 
 import java.util.ArrayList;
 
@@ -75,13 +74,13 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.clearCookiesSite.setOnClickListener(v -> {
             SessionStore.get().clearCache(
-                    StorageController.ClearFlags.SITE_DATA |
-                            StorageController.ClearFlags.COOKIES |
-                            StorageController.ClearFlags.SITE_SETTINGS);
+                    WRuntime.ClearFlags.SITE_DATA |
+                            WRuntime.ClearFlags.COOKIES |
+                            WRuntime.ClearFlags.SITE_SETTINGS);
         });
 
         mBinding.clearWebContent.setOnClickListener(v -> {
-            SessionStore.get().clearCache(StorageController.ClearFlags.ALL_CACHES);
+            SessionStore.get().clearCache(WRuntime.ClearFlags.ALL_CACHES);
         });
 
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
@@ -164,7 +163,7 @@ class PrivacyOptionsView extends SettingsView {
             aButton.setChecked(true);
 
         } else {
-            mWidgetManager.requestPermission("", aPermission, new GeckoSession.PermissionDelegate.Callback() {
+            mWidgetManager.requestPermission("", aPermission, new WSession.PermissionDelegate.Callback() {
                 @Override
                 public void grant() {
                     aButton.setChecked(true);
@@ -366,7 +365,7 @@ class PrivacyOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebXREnabled(value);
             for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
-                window.getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                window.getSession().reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
         }
     }

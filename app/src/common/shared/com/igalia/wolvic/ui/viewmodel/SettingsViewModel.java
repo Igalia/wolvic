@@ -12,10 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
-
-import org.mozilla.geckoview.ContentBlocking;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -50,7 +49,7 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public void refresh() {
         int level = SettingsStore.getInstance(getApplication().getBaseContext()).getTrackingProtectionLevel();
-        boolean isEnabled = level != ContentBlocking.EtpLevel.NONE;
+        boolean isEnabled = level != WContentBlocking.EtpLevel.NONE;
         isTrackingProtectionEnabled.postValue(new ObservableBoolean(isEnabled));
 
         boolean drmEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isDrmContentPlaybackEnabled();
