@@ -20,7 +20,7 @@ class LoginStorage(
     private var storage = places.logins
 
     init {
-        EngineProvider.getOrCreateRuntime(context).seUptLoginPersistence(places.logins)
+        EngineProvider.getOrCreateRuntime(context).setUpLoginPersistence(places.logins)
         GlobalScope.launch(Dispatchers.IO) {
             places.logins.value.warmUp()
         }

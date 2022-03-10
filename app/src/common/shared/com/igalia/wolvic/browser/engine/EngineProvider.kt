@@ -8,6 +8,7 @@ import android.content.Context
 import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.browser.SettingsStore
 import com.igalia.wolvic.browser.api.WContentBlocking
+import com.igalia.wolvic.browser.api.WFactory
 import com.igalia.wolvic.browser.api.WRuntime
 import com.igalia.wolvic.browser.api.WRuntimeSettings
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy
@@ -63,7 +64,7 @@ object EngineProvider {
                 builder.glMsaaLevel(0)
             }
 
-            runtime = WRuntime.create(context, builder.build())
+            runtime = WFactory.createRuntime(context, builder.build())
         }
 
         return runtime!!

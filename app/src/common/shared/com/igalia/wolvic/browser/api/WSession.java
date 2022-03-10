@@ -19,8 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.annotation.UiThread;
 
-import com.igalia.wolvic.browser.api.impl.SessionImpl;
-
 import org.json.JSONObject;
 
 import java.lang.annotation.Retention;
@@ -2850,14 +2848,4 @@ public interface WSession {
     @AnyThread
     @Nullable
     WSession.SelectionActionDelegate getSelectionActionDelegate();
-
-
-
-    static WSession create() {
-        return create(null);
-    }
-
-    static WSession create(@Nullable WSessionSettings settings) {
-        return new SessionImpl(settings);
-    }
 }

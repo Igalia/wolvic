@@ -33,7 +33,7 @@ public class SessionImpl implements WSession {
     private WContentBlocking.Delegate mContentBlockingDelegate;
     private WMediaSession.Delegate mMediaSessionDelegate;
     private TextInputImpl mTextInput;
-    private WPanZoomControllerImpl mPanZoomController;
+    private PanZoomControllerImpl mPanZoomController;
     private Method mGeckoLocationMethod;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
@@ -44,7 +44,7 @@ public class SessionImpl implements WSession {
         }
         mSettings = new SettingsImpl(mSession.getSettings());
         mTextInput = new TextInputImpl(this);
-        mPanZoomController = new WPanZoomControllerImpl(mSession);
+        mPanZoomController = new PanZoomControllerImpl(mSession);
     }
 
     public @NonNull GeckoSession getGeckoSession() {
@@ -207,11 +207,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mContentDelegate = delegate;
-        if (mContentDelegate == null) {
-            mSession.setContentDelegate(null);
-        } else {
-            mSession.setContentDelegate(new ContentDelegateImpl(mContentDelegate, this));
-        }
+        mSession.setContentDelegate(delegate != null ? new ContentDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -226,11 +222,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mPermissionDelegate = delegate;
-        if (mPermissionDelegate == null) {
-            mSession.setPermissionDelegate(null);
-        } else {
-            mSession.setPermissionDelegate(new PermissionDelegateImpl(mPermissionDelegate, this));
-        }
+        mSession.setPermissionDelegate(delegate != null ? new PermissionDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -245,11 +237,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mProgressDelegate = delegate;
-        if (mProgressDelegate == null) {
-            mSession.setProgressDelegate(null);
-        } else {
-            mSession.setProgressDelegate(new ProgressDelegateImpl(mProgressDelegate, this));
-        }
+        mSession.setProgressDelegate(delegate != null ? new ProgressDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -264,11 +252,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mNavigationDelegate = delegate;
-        if (mNavigationDelegate == null) {
-            mSession.setNavigationDelegate(null);
-        } else {
-            mSession.setNavigationDelegate(new NavigationDelegateImpl(mNavigationDelegate, this));
-        }
+        mSession.setNavigationDelegate(delegate != null ? new NavigationDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -283,11 +267,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mScrollDelegate = delegate;
-        if (mScrollDelegate == null) {
-            mSession.setScrollDelegate(null);
-        } else {
-            mSession.setScrollDelegate(new ScrollDelegateImpl(mScrollDelegate, this));
-        }
+        mSession.setScrollDelegate(delegate != null ? new ScrollDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -302,11 +282,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mHistoryDelegate = delegate;
-        if (mHistoryDelegate == null) {
-            mSession.setHistoryDelegate(null);
-        } else {
-            mSession.setHistoryDelegate(new HistoryDelegateImpl(mHistoryDelegate, this));
-        }
+        mSession.setHistoryDelegate(delegate != null ? new HistoryDelegateImpl(delegate, this ) : null);
     }
 
     @Nullable
@@ -321,11 +297,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mContentBlockingDelegate = delegate;
-        if (mContentBlockingDelegate == null) {
-            mSession.setContentBlockingDelegate(null);
-        } else {
-            mSession.setContentBlockingDelegate(new ContentBlockingDelegateImpl(mContentBlockingDelegate, this));
-        }
+        mSession.setContentBlockingDelegate(delegate != null ? new ContentBlockingDelegateImpl(delegate, this) : null);
     }
 
     @Nullable
@@ -340,11 +312,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mPromptDelegate = delegate;
-        if (mPromptDelegate == null) {
-            mSession.setPromptDelegate(null);
-        } else {
-            mSession.setPromptDelegate(new PromptDelegateImpl(mPromptDelegate, this));
-        }
+        mSession.setPromptDelegate(delegate != null ? new PromptDelegateImpl(delegate, this) : null);
     }
 
     @Nullable
@@ -359,11 +327,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mSelectionActionDelegate = delegate;
-        if (mContentDelegate == null) {
-            mSession.setSelectionActionDelegate(null);
-        } else {
-            mSession.setSelectionActionDelegate(new SelectionActionDelegateImpl(mSelectionActionDelegate, this));
-        }
+        mSession.setSelectionActionDelegate(delegate != null ? new SelectionActionDelegateImpl(delegate, this) : null);
     }
 
     @Override
@@ -372,11 +336,7 @@ public class SessionImpl implements WSession {
             return;
         }
         mMediaSessionDelegate = delegate;
-        if (delegate == null) {
-            mSession.setMediaSessionDelegate(null);
-        } else {
-            mSession.setMediaSessionDelegate(new MediaSessionDelegateImpl(this, delegate));
-        }
+        mSession.setMediaSessionDelegate(delegate != null ? new MediaSessionDelegateImpl(this, delegate) : null);
     }
 
     @Nullable

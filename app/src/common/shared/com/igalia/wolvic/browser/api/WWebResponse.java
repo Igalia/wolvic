@@ -33,7 +33,7 @@ public interface WWebResponse {
     /**
      * An {@link InputStream} containing the response body, if available. Attention: the stream must
      * be closed whenever the app is done with it, even when the body is ignored. Otherwise the
-     * connection will not be closed until the stream is garbage collected
+     * connection will not be closed until the stream is garbage collected.
      */
      @Nullable InputStream body();
 }

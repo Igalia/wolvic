@@ -7,8 +7,6 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.igalia.wolvic.browser.api.impl.ResultImpl;
-
 import java.util.concurrent.CancellationException;
 
 public interface WResult<T> {
@@ -16,7 +14,7 @@ public interface WResult<T> {
      * Construct a empty result with pending state.
      */
     static @NonNull <U> WResult<U> create() {
-        return new ResultImpl<>();
+        return WFactory.creteResult();
     }
 
     /**
@@ -27,7 +25,7 @@ public interface WResult<T> {
      * @return The completed {@link WResult}
      */
     static @NonNull <U> WResult<U> fromValue(@Nullable final U value) {
-        final WResult<U> result = new ResultImpl<>();
+        final WResult<U> result = create();
         result.complete(value);
         return result;
     }
@@ -40,7 +38,7 @@ public interface WResult<T> {
      * @return The completed {@link WResult}
      */
     static @NonNull <T> WResult<T> fromException(@NonNull final Throwable error) {
-        final WResult<T> result = new ResultImpl<>();
+        final WResult<T> result = create();
         result.completeExceptionally(error);
         return result;
     }
@@ -48,14 +46,14 @@ public interface WResult<T> {
     /** @return a {@link WResult} that resolves to {@link WAllowOrDeny#DENY} */
     @AnyThread
     @NonNull
-    public static WResult<WAllowOrDeny> deny() {
+    static WResult<WAllowOrDeny> deny() {
         return WResult.fromValue(WAllowOrDeny.DENY);
     }
 
     /** @return a {@link WResult} that resolves to {@link WAllowOrDeny#ALLOW} */
     @AnyThread
     @NonNull
-    public static WResult<WAllowOrDeny> allow() {
+    static WResult<WAllowOrDeny> allow() {
         return WResult.fromValue(WAllowOrDeny.ALLOW);
     }
 

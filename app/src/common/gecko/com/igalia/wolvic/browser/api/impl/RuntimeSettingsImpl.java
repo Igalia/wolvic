@@ -9,16 +9,16 @@ import androidx.annotation.Nullable;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 
+import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoRuntime;
 
-class WRuntimeSettingsImpl extends WRuntimeSettings {
+class RuntimeSettingsImpl extends WRuntimeSettings {
     GeckoRuntime mRuntime;
 
-    public WRuntimeSettingsImpl(GeckoRuntime runtime, WRuntimeSettings settings) {
+    public RuntimeSettingsImpl(GeckoRuntime runtime, WRuntimeSettings settings) {
         mRuntime = runtime;
-        mContentBlocking = settings.getContentBlocking();
+        mContentBlocking = new RuntimeSettingsImpl.ContentBlockingSettingsImpl();
     }
-
 
     @Override
     public String[] getArgs() {
@@ -133,37 +133,37 @@ class WRuntimeSettingsImpl extends WRuntimeSettings {
     @Override
     public float getDisplayDensityOverride() {
         Float val = mRuntime.getSettings().getDisplayDensityOverride();
-        if (val != null) {
-            return val;
+        if (val == null) {
+            return 0;
         }
-        return 0;
+        return val;
     }
 
     @Override
     public int getDisplayDpiOverride() {
         Integer val = mRuntime.getSettings().getDisplayDpiOverride();
-        if (val != null) {
-            return val;
+        if (val == null) {
+            return 0;
         }
-        return 0;
+        return val;
     }
 
     @Override
     public int getScreenWidthOverride() {
         Rect rect = mRuntime.getSettings().getScreenSizeOverride();
-        if (rect != null) {
-            return rect.width();
+        if (rect == null) {
+            return 0;
         }
-        return  0;
+        return rect.width();
     }
 
     @Override
     public int getScreenHeightOverride() {
         Rect rect = mRuntime.getSettings().getScreenSizeOverride();
         if (rect != null) {
-            return rect.height();
+            return 0;
         }
-        return  0;
+        return rect.height();
     }
 
     @Override
@@ -178,7 +178,7 @@ class WRuntimeSettingsImpl extends WRuntimeSettings {
 
     @Override
     public WContentBlocking.Settings getContentBlocking() {
-        return super.getContentBlocking();
+        return mContentBlocking;
     }
 
     @Override
@@ -199,5 +199,87 @@ class WRuntimeSettingsImpl extends WRuntimeSettings {
     @Override
     public void setLoginAutofillEnabled(boolean enabled) {
         mRuntime.getSettings().setLoginAutofillEnabled(enabled);
+    }
+
+    class ContentBlockingSettingsImpl extends WContentBlocking.Settings {
+        @Override
+        public int getAntiTracking() {
+            return ContentBlockingDelegateImpl.fromGeckoAntiTracking(mRuntime.getSettings().getContentBlocking().getAntiTrackingCategories());
+        }
+
+        @Override
+        public void setAntiTracking(int antiTracking) {
+            mRuntime.getSettings().getContentBlocking().setAntiTracking(ContentBlockingDelegateImpl.toGeckoAntitracking(antiTracking));
+        }
+
+        @Override
+        public int getSafeBrowsing() {
+            return ContentBlockingDelegateImpl.fromGeckoSafeBrowsing(mRuntime.getSettings().getContentBlocking().getSafeBrowsingCategories());
+        }
+
+        @Override
+        public void setSafeBrowsing(int safeBrowsing) {
+            mRuntime.getSettings().getContentBlocking().setSafeBrowsing(ContentBlockingDelegateImpl.toGeckoSafeBrowsing(safeBrowsing));
+        }
+
+        @Override
+        public int getCookieBehavior() {
+            return ContentBlockingDelegateImpl.fromGeckoCookieBehavior(mRuntime.getSettings().getContentBlocking().getCookieBehavior());
+        }
+
+        @Override
+        public void setCookieBehavior(int cookieBehavior) {
+            mRuntime.getSettings().getContentBlocking().setCookieBehavior(ContentBlockingDelegateImpl.toGeckoCookieBehavior(cookieBehavior));
+        }
+
+        @Override
+        public int getCookieBehaviorPrivate() {
+            return ContentBlockingDelegateImpl.fromGeckoCookieBehavior(mRuntime.getSettings().getContentBlocking().getCookieBehaviorPrivateMode());
+        }
+
+        @Override
+        public void setCookieBehaviorPrivate(int cookieBehaviorPrivate) {
+            mRuntime.getSettings().getContentBlocking().setCookieBehaviorPrivateMode(ContentBlockingDelegateImpl.toGeckoCookieBehavior(cookieBehaviorPrivate));
+        }
+
+        @Override
+        public int getCookieLifetime() {
+            return ContentBlockingDelegateImpl.fromGeckoCookieLifetime(mRuntime.getSettings().getContentBlocking().getCookieLifetime());
+        }
+
+        @Override
+        public void setCookieLifetime(int cookieLifetime) {
+            mRuntime.getSettings().getContentBlocking().setCookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(cookieLifetime));
+        }
+
+        @Override
+        public int getEnhancedTrackingProtectionLevel() {
+            return ContentBlockingDelegateImpl.fromGeckoEtpLevel(mRuntime.getSettings().getContentBlocking().getEnhancedTrackingProtectionLevel());
+        }
+
+        @Override
+        public void setEnhancedTrackingProtectionLevel(int etpLevel) {
+            mRuntime.getSettings().getContentBlocking().setEnhancedTrackingProtectionLevel(ContentBlockingDelegateImpl.toGeckoEtpLevel(etpLevel));
+        }
+
+        @Override
+        public boolean isStrictSocialTrackingProtection() {
+            return mRuntime.getSettings().getContentBlocking().getStrictSocialTrackingProtection();
+        }
+
+        @Override
+        public void setStrictSocialTrackingProtection(boolean strictSocialTrackingProtection) {
+            mRuntime.getSettings().getContentBlocking().setStrictSocialTrackingProtection(strictSocialTrackingProtection);
+        }
+
+        @Override
+        public boolean isCookiePurging() {
+            return mRuntime.getSettings().getContentBlocking().getCookiePurging();
+        }
+
+        @Override
+        public void setCookiePurging(boolean cookiePurging) {
+            mRuntime.getSettings().getContentBlocking().setCookiePurging(cookiePurging);
+        }
     }
 }

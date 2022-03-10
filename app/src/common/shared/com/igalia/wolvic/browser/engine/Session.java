@@ -33,6 +33,7 @@ import com.igalia.wolvic.browser.api.WAllowOrDeny;
 import com.igalia.wolvic.browser.api.WAutocomplete;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
+import com.igalia.wolvic.browser.api.WFactory;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WSession;
@@ -513,7 +514,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             updateTrackingProtection();
         }
 
-        mState.mSession = createISession(settings);
+        mState.mSession = createWSession(settings);
 
         mSessionChangeListeners.forEach(listener -> listener.onSessionAdded(this));
 
@@ -545,12 +546,12 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private SessionState createSessionState(@NonNull SessionSettings aSettings) {
         SessionState state = new SessionState();
         state.mSettings = aSettings;
-        state.mSession = createISession(aSettings);
+        state.mSession = createWSession(aSettings);
 
         return state;
     }
 
-    private WSession createISession(@NonNull SessionSettings aSettings) {
+    private WSession createWSession(@NonNull SessionSettings aSettings) {
         WSessionSettings settings = WSessionSettings.create(aSettings.isPrivateBrowsingEnabled());
         settings.setUseTrackingProtection(aSettings.isTrackingProtectionEnabled());
         settings.setUserAgentMode(aSettings.getUserAgentMode());
@@ -558,7 +559,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         settings.setSuspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled());
         settings.setUserAgentOverride(aSettings.getUserAgentOverride());
 
-        WSession session = WSession.create(settings);
+        WSession session = WFactory.createSession(settings);
         setupSessionListeners(session);
 
         return session;

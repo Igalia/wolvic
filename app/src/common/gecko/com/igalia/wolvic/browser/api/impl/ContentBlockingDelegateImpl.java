@@ -206,6 +206,19 @@ class ContentBlockingDelegateImpl implements ContentBlocking.Delegate {
         throw new RuntimeException("Unreachable code");
     }
 
+    static int fromGeckoEtpLevel(int flags) {
+        switch (flags) {
+            case ContentBlocking.EtpLevel.DEFAULT:
+                return WContentBlocking.EtpLevel.DEFAULT;
+            case ContentBlocking.EtpLevel.NONE:
+                return WContentBlocking.EtpLevel.NONE;
+            case ContentBlocking.EtpLevel.STRICT:
+                return WContentBlocking.EtpLevel.STRICT;
+        }
+
+        throw new RuntimeException("Unreachable code");
+    }
+
     static int toGeckoCookieLifetime(@WContentBlocking.CBCookieLifetime int flags) {
         switch (flags) {
             case WContentBlocking.CookieLifetime.DAYS:
@@ -214,6 +227,19 @@ class ContentBlockingDelegateImpl implements ContentBlocking.Delegate {
                 return ContentBlocking.CookieLifetime.NORMAL;
             case WContentBlocking.CookieLifetime.RUNTIME:
                 return ContentBlocking.CookieLifetime.RUNTIME;
+        }
+
+        throw new RuntimeException("Unreachable code");
+    }
+
+    static int fromGeckoCookieLifetime( int flags) {
+        switch (flags) {
+            case ContentBlocking.CookieLifetime.DAYS:
+                return WContentBlocking.CookieLifetime.DAYS;
+            case ContentBlocking.CookieLifetime.NORMAL:
+                return WContentBlocking.CookieLifetime.NORMAL;
+            case ContentBlocking.CookieLifetime.RUNTIME:
+                return WContentBlocking.CookieLifetime.RUNTIME;
         }
 
         throw new RuntimeException("Unreachable code");

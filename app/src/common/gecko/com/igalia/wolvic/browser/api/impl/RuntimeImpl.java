@@ -33,7 +33,7 @@ import mozilla.components.concept.storage.LoginsStorage;
 public class RuntimeImpl implements WRuntime {
     private Context mContext;
     private GeckoRuntime mRuntime;
-    private WRuntimeSettingsImpl mSettings;
+    private RuntimeSettingsImpl mSettings;
     private WebExtensionControllerImpl mWebExtensionController;
     private GeckoWebExecutor mExecutor;
 
@@ -68,7 +68,7 @@ public class RuntimeImpl implements WRuntime {
                 .preferredColorScheme(toGeckoColorScheme(settings.getPreferredColorScheme()));
 
         mRuntime = GeckoRuntime.create(ctx, builder.build());
-        mSettings = new WRuntimeSettingsImpl(mRuntime, settings);
+        mSettings = new RuntimeSettingsImpl(mRuntime, settings);
         mWebExtensionController = new WebExtensionControllerImpl(mRuntime);
         mExecutor = new GeckoWebExecutor(mRuntime);
     }
@@ -81,17 +81,6 @@ public class RuntimeImpl implements WRuntime {
     @Override
     public WRuntimeSettings getSettings() {
         return mSettings;
-    }
-
-    @Override
-    public void updateTrackingProtection(@NonNull WContentBlocking.Settings settings) {
-        ContentBlocking.Settings cb =  mRuntime.getSettings().getContentBlocking();
-        cb.setAntiTracking(ContentBlockingDelegateImpl.toGeckoAntitracking(settings.getAntiTracking()));
-        cb.setCookieBehavior(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getCookieBehavior()));
-        cb.setCookieBehaviorPrivateMode(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getCookieBehavior()));
-        cb.setCookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(settings.getCookieLifetime()));
-        cb.setSafeBrowsing(ContentBlockingDelegateImpl.toGeckoSafeBrowsing(settings.getSafeBrowsing()));
-        cb.setEnhancedTrackingProtectionLevel(ContentBlockingDelegateImpl.toGeckoEtpLevel(settings.getEnhancedTrackingProtectionLevel()));
     }
 
     @NonNull
@@ -108,7 +97,7 @@ public class RuntimeImpl implements WRuntime {
 
     @NonNull
     @Override
-    public void seUptLoginPersistence(Lazy<LoginsStorage> storage) {
+    public void setUpLoginPersistence(Lazy<LoginsStorage> storage) {
         mRuntime.setAutocompleteStorageDelegate(GeckoAutocompleteDelegateWrapper.create(storage));
     }
 

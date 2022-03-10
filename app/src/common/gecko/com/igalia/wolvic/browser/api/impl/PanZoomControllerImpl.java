@@ -8,10 +8,10 @@ import com.igalia.wolvic.browser.api.WPanZoomController;
 
 import org.mozilla.geckoview.GeckoSession;
 
-class WPanZoomControllerImpl implements WPanZoomController {
+class PanZoomControllerImpl implements WPanZoomController {
     GeckoSession mSession;
 
-    public WPanZoomControllerImpl(GeckoSession session) {
+    public PanZoomControllerImpl(GeckoSession session) {
         mSession = session;
     }
 

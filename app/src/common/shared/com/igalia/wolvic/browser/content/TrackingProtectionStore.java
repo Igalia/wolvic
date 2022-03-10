@@ -162,8 +162,6 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
             settings.setAntiTracking(policy.getAntiTrackingPolicy());
             settings.setCookieBehavior(policy.getCookiePolicy());
 
-            mRuntime.updateTrackingProtection(settings);
-
             mListeners.forEach(listener -> listener.onTrackingProtectionLevelUpdated(level));
         }
     }

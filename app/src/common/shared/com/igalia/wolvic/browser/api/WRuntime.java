@@ -9,8 +9,6 @@ import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
-import com.igalia.wolvic.browser.api.impl.RuntimeImpl;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -93,13 +91,8 @@ public interface WRuntime {
             })
             /* package */ @interface StorageControllerClearFlags {}
 
-    static WRuntime create(@NonNull Context context, @NonNull WRuntimeSettings settings) {
-        return new RuntimeImpl(context, settings);
-    }
 
     WRuntimeSettings getSettings();
-    void updateTrackingProtection(@NonNull WContentBlocking.Settings settings);
-
 
     /**
      * Clear data for all hosts.
@@ -130,7 +123,7 @@ public interface WRuntime {
      */
     @UiThread
     @NonNull
-    void seUptLoginPersistence(Lazy<LoginsStorage> storage);
+    void setUpLoginPersistence(Lazy<LoginsStorage> storage);
 
     /**
      * Creates a Client for fetching resources via HTTP/s.
