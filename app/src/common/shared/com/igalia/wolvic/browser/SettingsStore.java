@@ -118,7 +118,7 @@ public class SettingsStore {
     public final static boolean PASSWORDS_ENCRYPTION_KEY_GENERATED = false;
     public final static boolean AUTOFILL_ENABLED = true;
     public final static boolean LOGIN_AUTOCOMPLETE_ENABLED = true;
-    public final static String SEARCH_ENGINE_DEFAULT = "ddg";
+    public final static String SEARCH_ENGINE_DEFAULT = "";
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
