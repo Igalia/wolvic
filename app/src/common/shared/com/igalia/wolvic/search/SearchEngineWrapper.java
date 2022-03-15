@@ -60,7 +60,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     private HashMap<String, SearchEngine> mSearchEnginesMap;
 
     private SearchEngineWrapper(@NonNull Context aContext) {
-        mContext = aContext.getApplicationContext();
+        mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mAutocompleteEnabled = SettingsStore.getInstance(mContext).isAutocompleteEnabled();
 
