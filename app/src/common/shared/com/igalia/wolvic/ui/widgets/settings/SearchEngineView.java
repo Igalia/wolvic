@@ -67,8 +67,7 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
 
     @Override
     protected boolean reset() {
-        int checkedIndex = mSearchEngines.indexOf(SearchEngineWrapper.get(getContext()).getDefaultSearchEngine());
-        setSearchEngine(checkedIndex, true);
+        SearchEngineWrapper.get(getContext()).setDefaultSearchEngine();
         return false;
     }
 

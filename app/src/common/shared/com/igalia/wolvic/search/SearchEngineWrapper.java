@@ -124,8 +124,8 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         return mSearchEnginesMap.values();
     }
 
-    public SearchEngine getDefaultSearchEngine() {
-        return mSearchEngineManager.getDefaultSearchEngine();
+    public void setDefaultSearchEngine() {
+        setupSearchEngine(mContext, null);
     }
 
     public void setCurrentSearchEngineId(Context context, String searchEngineId) {
@@ -177,7 +177,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
             mSearchEnginesMap.put(searchEngine.getIdentifier(), searchEngine);
         }
 
-        String userPrefName = null;
+        String userPrefName = "";
         if (mSearchEnginesMap.containsKey(userPref)) {
             // The search component API uses the engine's name, not its identifier.
             userPrefName = mSearchEnginesMap.get(userPref).getName();
