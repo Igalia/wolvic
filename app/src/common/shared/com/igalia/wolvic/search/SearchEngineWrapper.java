@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.Dispatchers;
 import mozilla.components.browser.search.SearchEngine;
 import mozilla.components.browser.search.SearchEngineManager;
@@ -149,7 +150,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
             // If we don't have geolocation data we default to the Locale search localization provider
             localizationProvider = new LocaleSearchLocalizationProvider();
         } else {
-            Log.d(LOGTAG, "Using Geolocation based search localization provider: " + data.toString());
+            Log.d(LOGTAG, "Using Geolocation based search localization provider: " + data);
             // If we have geolocation data we initialize the provider with the received data.
             localizationProvider = new GeolocationLocalizationProvider(data);
         }
@@ -161,7 +162,8 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
                 Collections.emptyList(), //engineFilterList,
                 Collections.emptyList());
 
-        mSearchEngineManager = new SearchEngineManager(Collections.singletonList(engineProvider), Dispatchers.getDefault());
+        mSearchEngineManager = new SearchEngineManager(Collections.singletonList(engineProvider),
+                (CoroutineContext) Dispatchers.getDefault());
 
         // If we don't get any result we use the default configuration.
         List<SearchEngine> searchEngines = mSearchEngineManager.getSearchEngines(aContext);
@@ -188,9 +190,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
 
         mSuggestionsClient = new SearchSuggestionClient(mSearchEngine,
                 (searchUrl, continuation) -> {
-                    return (mAutocompleteEnabled && !((VRBrowserActivity) mContext).getWindows().isInPrivateMode()) ?
-                            SearchSuggestionsClientKt.fetchSearchSuggestions(mContext, searchUrl) :
-                            null;
+                    if (mAutocompleteEnabled && mContext instanceof VRBrowserActivity) {
+                        if (!((VRBrowserActivity) mContext).getWindows().isInPrivateMode()) {
+                            return SearchSuggestionsClientKt.fetchSearchSuggestions(mContext, searchUrl);
+                        }
+                    }
+                    return null;
                 }
         );
         SettingsStore.getInstance(mContext).setSearchEngineId(mSearchEngine.getIdentifier());
