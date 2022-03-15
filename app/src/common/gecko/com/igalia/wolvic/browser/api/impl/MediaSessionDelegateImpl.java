@@ -17,6 +17,7 @@ import org.mozilla.geckoview.GeckoSession;
     public MediaSessionDelegateImpl(WSession mSession, WMediaSession.Delegate delegate) {
         this.mSession = mSession;
         this.mDelegate = delegate;
+        mMediaSession = new WMediaSessionImpl();
     }
 
     @Override
