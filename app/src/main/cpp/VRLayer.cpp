@@ -301,8 +301,8 @@ VRLayerSurface::SetWorldSize(const float aWidth, const float aHeight) {
 }
 
 void
-VRLayerSurface::Resize(const int32_t aWidth, const int32_t aHeight) {
-  if (m.width == aWidth && m.height == aHeight) {
+VRLayerSurface::Resize(const int32_t aWidth, const int32_t aHeight, bool force) {
+  if (m.width == aWidth && m.height == aHeight && !force) {
     return;
   }
   m.width = aWidth;

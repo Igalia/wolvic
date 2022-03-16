@@ -1280,7 +1280,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-public void selectTab(@NonNull Session aTab) {
+    public void selectTab(@NonNull Session aTab) {
         onTabSelect(aTab);
     }
 

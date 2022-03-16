@@ -1,5 +1,6 @@
 package com.igalia.wolvic.browser.engine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
@@ -138,33 +139,6 @@ public class SessionStore implements
         mWebChannelsFeature.start();
 
         ComponentsAdapter.get().addStoreUpdatesListener(this);
-
-        if (BuildConfig.DEBUG) {
-            mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
-                if (mSessions == null || browserState == null) {
-                    return null;
-                }
-                Log.d(LOGTAG, "Session status BEGIN");
-                Log.d(LOGTAG, "[Total] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + mSessions.size());
-                for (int i=0; i<browserState.getTabs().size(); i++) {
-                    boolean isPrivate = browserState.getTabs().get(i).getContent().getPrivate();
-                    Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId() + (isPrivate ? " (PB)" : ""));
-                }
-                int suspendedCount = 0;
-                for (int i=0; i<mSessions.size(); i++) {
-                    boolean suspended = mSessions.get(i).getSessionState().mSession == null && !mSessions.get(i).isActive();
-                    boolean isPrivate = mSessions.get(i).isPrivateMode();
-                    Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId() + (isPrivate ? " (PB)" : "") + (suspended ? " (suspended)" : ""));
-                    if (suspended) {
-                        suspendedCount++;
-                    }
-                }
-                Log.d(LOGTAG, "[Alive] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + (mSessions.size() - suspendedCount));
-                Log.d(LOGTAG, "Session status END");
-                return null;
-            });
-            mStoreSubscription.resume();
-        }
     }
 
     @NonNull
@@ -174,9 +148,6 @@ public class SessionStore implements
         mSessions.add(aSession);
         sessionActiveStateChanged();
 
-        if (BuildConfig.DEBUG) {
-            mStoreSubscription.resume();
-        }
 
         return aSession;
     }
@@ -240,9 +211,6 @@ public class SessionStore implements
     private void shutdownSession(@NonNull Session aSession) {
         aSession.setPermissionDelegate(null);
         aSession.shutdown();
-        if (BuildConfig.DEBUG) {
-            mStoreSubscription.resume();
-        }
     }
 
     public void destroySession(Session aSession) {
@@ -271,9 +239,6 @@ public class SessionStore implements
             if (!session.isActive()) {
                 session.suspend();
             }
-        }
-        if (BuildConfig.DEBUG) {
-            mStoreSubscription.resume();
         }
     }
 
@@ -396,10 +361,6 @@ public class SessionStore implements
 
         if (mWebChannelsFeature != null) {
             mWebChannelsFeature.stop();
-        }
-
-        if (BuildConfig.DEBUG && mStoreSubscription != null) {
-            mStoreSubscription.unsubscribe();
         }
 
         ComponentsAdapter.get().removeStoreUpdatesListener(this);

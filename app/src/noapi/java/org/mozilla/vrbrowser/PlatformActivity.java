@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
@@ -42,6 +43,7 @@ public class PlatformActivity extends Activity {
     private boolean mSurfaceCreated = false;
     private int mFrameCount;
     private long mLastFrameTime = System.currentTimeMillis();
+    protected FrameLayout mTestContentView;
 
     final Object mRenderLock = new Object();
 

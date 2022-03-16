@@ -7,7 +7,7 @@ apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: 'com.huawei.agconnect'
+//apply plugin: 'com.huawei.agconnect'
 
 deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
 
@@ -29,7 +29,7 @@ def getCrashRestartDisabled = { ->
 
 def getDevApplicationIdSuffix = { ->
     if (gradle.hasProperty("userProperties.simultaneousDevProduction")) {
-        return gradle."userProperties.simultaneousDevProduction" == "true" ? "dev" : ""
+        return gradle."userProperties.simultaneousDevProduction" == "true" ? "" : ""
     }
     return ""
 }
@@ -69,6 +69,15 @@ def getMKApiKey = { ->
     return ""
 }
 
+def getBackend = { ->
+    if (gradle.hasProperty("userProperties.backend")) {
+        def engine = gradle."userProperties.backend"
+        assert engine == "gecko" || engine == "chromium"
+        return engine
+    }
+    return "gecko"
+}
+
 
 // Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
@@ -77,7 +86,7 @@ ext.gleanDocsDirectory = "$rootDir/docs"
 android {
     compileSdkVersion build_versions.target_sdk
     defaultConfig {
-        applicationId "com.igalia.wolvic"
+        applicationId "org.chromium.weblayer.shell"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 16
@@ -152,6 +161,7 @@ android {
     productFlavors {
         // Supported platforms
         oculusvr {
+            applicationId "org.chromium.weblayer.shell"
             dimension "platform"
             externalNativeBuild {
                 cmake {
@@ -163,6 +173,7 @@ android {
         }
 
         oculusvrStore {
+            applicationId "org.chromium.weblayer.shell"
             dimension "platform"
             externalNativeBuild {
                 cmake {
@@ -174,6 +185,7 @@ android {
         }
 
         oculusvr3dofStore {
+            applicationId "org.chromium.weblayer.shell"
             dimension "platform"
             externalNativeBuild {
                 cmake {
@@ -317,7 +329,7 @@ android {
             java.srcDirs = [
                     'app',
                     'src/common/shared',
-                    'src/common/gecko',
+                    'src/common/' + getBackend(),
                     'src/main/cpp/vrb/android/java'
             ]
         }
@@ -573,6 +585,18 @@ dependencies {
     hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
+
+    // "nightly" or "beta" or "release"
+    def branch = "nightly"
+    arm64Implementation deps.gecko_view."${branch}_arm64"
+    x86_64Implementation deps.gecko_view."${branch}_x86_64"
+}
+
+if (getBackend() == 'chromium') {
+    dependencies {
+        implementation fileTree(dir: "/home/mortimer/Projects/weblayer_shell_library/build/outputs/aar", include: ['*.aar'])
+        implementation 'androidx.fragment:fragment:1.4.1'
+    }
 }
 
 if (findProject(':servo')) {
@@ -591,10 +615,6 @@ if (findProject(':wavesdk')) {
 dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    // "nightly" or "beta" or "release"
-    def branch = "nightly"
-    arm64Implementation deps.gecko_view."${branch}_arm64"
-    x86_64Implementation deps.gecko_view."${branch}_x86_64"
 }
 
 if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {

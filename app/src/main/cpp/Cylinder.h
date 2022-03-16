@@ -34,6 +34,7 @@ public:
   void UpdateProgram(const std::string& aCustomFragmentShader);
   void GetTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetTextureSize(int32_t aWidth, int32_t aHeight);
+  void RecreateSurface();
   void SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight);
   void SetTextureScale(const float aScaleX, const float aScaleY);
   void SetMaterial(const vrb::Color& aAmbient, const vrb::Color& aDiffuse, const vrb::Color& aSpecular, const float aSpecularExponent);

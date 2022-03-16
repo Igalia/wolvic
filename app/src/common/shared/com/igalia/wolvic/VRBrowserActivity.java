@@ -38,6 +38,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentController;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
@@ -189,6 +191,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Set<String> mPoorPerformanceAllowList;
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
+    private FragmentController mFragmentController;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -223,6 +226,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(), 0));
+        mFragmentController.attachHost(null);
+        mFragmentController.dispatchActivityCreated();
+
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         // Fix for infinite restart on startup crashes.
@@ -246,7 +253,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         BitmapCache.getInstance(this).onCreate();
 
-        EngineProvider.INSTANCE.getOrCreateRuntime(this).appendAppNotesToCrashReport("Wolvic " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");
+        WRuntime runtime = EngineProvider.INSTANCE.getOrCreateRuntime(this);
+        runtime.appendAppNotesToCrashReport("Wolvic " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
@@ -267,6 +275,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mWidgets = new ConcurrentHashMap<>();
         mWidgetContainer = new FrameLayout(this);
+
+        runtime.setFragmentManager(mFragmentController.getSupportFragmentManager(), mWidgetContainer);
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 
@@ -403,6 +413,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStart() {
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
+        mFragmentController.dispatchStart();
         mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
         if (mTray == null) {
             Log.e(LOGTAG, "Failed to start Tray clock");
@@ -415,6 +426,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStop() {
         SettingsStore.getInstance(getBaseContext()).setPid(0);
         super.onStop();
+        mFragmentController.dispatchStop();
         TelemetryService.sessionStop();
         if (mTray != null) {
             mTray.stop(this);
@@ -443,6 +455,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         mAudioEngine.pauseEngine();
+        mFragmentController.dispatchPause();
 
         mWindows.onPause();
 
@@ -468,6 +481,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mOffscreenDisplay.onResume();
         }
 
+        mFragmentController.dispatchResume();
         mWindows.onResume();
 
         mAudioEngine.resumeEngine();
@@ -491,6 +505,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Unregister the crash service broadcast receiver
         unregisterReceiver(mCrashReceiver);
         mSearchEngineWrapper.unregisterForUpdates();
+
+        mFragmentController.dispatchDestroy();
 
         for (Widget widget: mWidgets.values()) {
             widget.releaseWidget();
@@ -545,6 +561,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
 
         LocaleUtils.update(this, language);
+
+        mFragmentController.dispatchConfigurationChanged(newConfig);
 
         SessionStore.get().onConfigurationChanged(newConfig);
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
@@ -695,6 +713,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             mCrashDialog.show(UIWidget.REQUEST_FOCUS);
         }
+    }
+
+    FrameLayout getWidgetContainer() {
+        return mWidgetContainer;
+    }
+
+    public FragmentManager getSupportFragmentManager() {
+        return mFragmentController.getSupportFragmentManager();
+    }
+
+    public FragmentController getFragmentController() {
+        return mFragmentController;
     }
 
     @Override
@@ -1395,6 +1425,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void recreateWidgetSurface(Widget aWidget) {
+        queueRunnable(() -> recreateWidgetSurfaceNative(aWidget.getHandle()));
+    }
+
+    @Override
     public void startWidgetResize(final Widget aWidget, float aMaxWidth, float aMaxHeight, float minWidth, float minHeight) {
         if (aWidget == null) {
             return;
@@ -1704,6 +1739,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();
     private native void removeWidgetNative(int aHandle);
+    private native void recreateWidgetSurfaceNative(int aHandle);
     private native void startWidgetResizeNative(int aHandle, float maxWidth, float maxHeight, float minWidth, float minHeight);
     private native void finishWidgetResizeNative(int aHandle);
     private native void startWidgetMoveNative(int aHandle, int aMoveBehaviour);
