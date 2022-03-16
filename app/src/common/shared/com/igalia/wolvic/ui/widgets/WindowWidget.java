@@ -1058,7 +1058,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction, @SetSessionActiveState int previousSessionState) {
-        setSession(aSession, SESSION_RELEASE_DISPLAY, previousSessionState, true);
+        setSession(aSession, aDisplayAction, previousSessionState, true);
     }
 
     public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction, @SetSessionActiveState int previousSessionState, boolean hidePanel) {
