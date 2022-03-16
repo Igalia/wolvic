@@ -729,7 +729,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     }
   }
 
-  // Query eyeTransform ans perspective for each view
+  // Query eyeTransform and perspective for each view
   XrViewState viewState{XR_TYPE_VIEW_STATE};
   uint32_t viewCapacityInput = (uint32_t) m.views.size();
   uint32_t viewCountOutput = 0;
@@ -744,9 +744,10 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     for (int i = 0; i < m.views.size(); ++i) {
       const XrView &view = m.views[i];
       const device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-      m.cameras[i]->SetEyeTransform(XrPoseToMatrix(view.pose));
+      vrb::Matrix eyeTransform = XrPoseToMatrix(view.pose);
+      m.cameras[i]->SetEyeTransform(eyeTransform);
       if (m.immersiveDisplay) {
-        m.immersiveDisplay->SetEyeOffset(eye, view.pose.position.x, view.pose.position.y, view.pose.position.z);
+        m.immersiveDisplay->SetEyeTransform(eye, eyeTransform);
       }
     }
   }
