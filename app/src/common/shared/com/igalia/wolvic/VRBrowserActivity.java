@@ -45,6 +45,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.igalia.wolvic.audio.AudioEngine;
+import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.EngineProvider;
@@ -374,12 +375,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
 
         // Show the what's upp dialog if we haven't showed it yet and this is v6.
-        /*if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
+        if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
             mWhatsNewWidget = new WhatsNewWidget(this);
             mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
             mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
             mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
-        }*/
+        }
 
         mWindows.restoreSessions();
     }
