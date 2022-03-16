@@ -50,7 +50,7 @@ public class TabView extends RelativeLayout implements WSession.ContentDelegate,
     protected boolean mPressed;
     protected CompletableFuture<Bitmap> mBitmapFuture;
     protected boolean mUsingPlaceholder;
-    private boolean mSendTabEnabled = false;
+    private boolean mSendTabEnabled;
     private static final int ICON_ANIMATION_DURATION = 100;
 
     public interface Delegate {
