@@ -3,11 +3,15 @@ package com.igalia.wolvic.browser.api;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,6 +144,17 @@ public interface WRuntime {
      */
     void setExternalVRContext(long externalContext);
 
+    /*
+     * Sets the fragment manager. Some engines need it to add sessions/tabs into a view to display them.
+     */
+    void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container);
+
+
+    /*
+     * Returns the view density (devicePixelRatio) that should be used to display browser engine session.
+     */
+    @UiThread
+    float getDensity();
 
     /**
      * Notify that the device configuration has changed.

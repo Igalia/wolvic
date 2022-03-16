@@ -51,7 +51,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     public void onCreate() {
         super.onCreate();
 
-        if (!SystemUtils.isMainProcess(this)) {
+        /*if (!SystemUtils.isMainProcess(this)) {
             // If this is not the main process then do not continue with the initialization here. Everything that
             // follows only needs to be done in our app's main process and should not be done in other processes like
             // a GeckoView child process or the crash handling process. Most importantly we never want to end up in a
@@ -63,11 +63,12 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         // GeckoResult.allow() and GeckoResult.deny() static initializer might get a null mDispatcher
         // depending on how JVM classloader does the initialization job.
         // See https://github.com/MozillaReality/FirefoxReality/issues/3651
-        Looper.getMainLooper().getThread();
-        TelemetryService.init(this);
+        Looper.getMainLooper().getThread();*/
+
     }
 
     protected void onActivityCreate(@NonNull Context activityContext) {
+        TelemetryService.init(this);
         onConfigurationChanged(activityContext.getResources().getConfiguration());
         mAppExecutors = new AppExecutors();
         mConnectivityManager = new ConnectivityReceiver(activityContext);

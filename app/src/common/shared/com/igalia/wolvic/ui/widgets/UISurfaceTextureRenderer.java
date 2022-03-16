@@ -32,7 +32,7 @@ public class UISurfaceTextureRenderer {
         sRenderActive = aActive;
     }
 
-    UISurfaceTextureRenderer(SurfaceTexture aTexture, int aWidth, int aHeight) {
+    public UISurfaceTextureRenderer(SurfaceTexture aTexture, int aWidth, int aHeight) {
         mTextureWidth = aWidth;
         mTextureHeight = aHeight;
         mSurfaceTexture = aTexture;
@@ -41,7 +41,7 @@ public class UISurfaceTextureRenderer {
         mIsHardwareAccelerationEnabled = sUseHardwareAcceleration;
     }
 
-    UISurfaceTextureRenderer(Surface aSurface, int aWidth, int aHeight) {
+    public UISurfaceTextureRenderer(Surface aSurface, int aWidth, int aHeight) {
         mTextureWidth = aWidth;
         mTextureHeight = aHeight;
         mSurface = aSurface;
@@ -62,7 +62,7 @@ public class UISurfaceTextureRenderer {
         return mSurface != null && mSurfaceTexture == null;
     }
 
-    void release() {
+    public void release() {
         if(mSurface != null){
             mSurface.release();
         }
@@ -74,7 +74,7 @@ public class UISurfaceTextureRenderer {
     }
 
     @Nullable
-    Canvas drawBegin() {
+    public Canvas drawBegin() {
         mSurfaceCanvas = null;
         if (!sRenderActive) {
             return null;
@@ -95,7 +95,7 @@ public class UISurfaceTextureRenderer {
         return mSurfaceCanvas;
     }
 
-    void drawEnd() {
+    public void drawEnd() {
         if(mSurfaceCanvas != null) {
             mSurface.unlockCanvasAndPost(mSurfaceCanvas);
         }

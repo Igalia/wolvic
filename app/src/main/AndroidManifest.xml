@@ -29,6 +29,7 @@
         <activity
             android:name="com.igalia.wolvic.VRBrowserActivity"
             android:launchMode="singleInstance"
+            android:exported="true"
             android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
