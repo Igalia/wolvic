@@ -72,7 +72,7 @@ def getMKApiKey = { ->
 def getBackend = { ->
     if (gradle.hasProperty("userProperties.backend")) {
         def engine = gradle."userProperties.backend"
-        assert engine == "gecko" || engine == "chromium"
+        assert engine == "gecko" || engine == "chromium" || engine == "webkit"
         return engine
     }
     return "gecko"
@@ -100,7 +100,7 @@ android {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
                          " -I" + file("src/main/cpp").absolutePath +
                          " -I" + file("src/main/cpp/vrb/include").absolutePath
-                arguments "-DANDROID_STL=c++_shared"
+                arguments "-DANDROID_STL=c++_static"
             }
         }
         javaCompileOptions {
@@ -585,11 +585,6 @@ dependencies {
     hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
-
-    // "nightly" or "beta" or "release"
-    def branch = "nightly"
-    arm64Implementation deps.gecko_view."${branch}_arm64"
-    x86_64Implementation deps.gecko_view."${branch}_x86_64"
 }
 
 if (getBackend() == 'chromium') {
@@ -597,6 +592,15 @@ if (getBackend() == 'chromium') {
         implementation fileTree(dir: "/home/mortimer/Projects/weblayer_shell_library/build/outputs/aar", include: ['*.aar'])
         implementation 'androidx.fragment:fragment:1.4.1'
     }
+} else if (getBackend() == 'webkit') {
+    dependencies {
+        implementation fileTree(dir: "/home/mortimer/Projects/wpe-android/wpe/build/outputs/aar/wpe-minApi26-debug.aar", include: ['*.aar'])
+    }
+} else {
+    // "nightly" or "beta" or "release"
+    def branch = "nightly"
+    arm64Implementation deps.gecko_view."${branch}_arm64"
+    x86_64Implementation deps.gecko_view."${branch}_x86_64"
 }
 
 if (findProject(':servo')) {

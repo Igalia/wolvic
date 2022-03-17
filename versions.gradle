@@ -183,7 +183,7 @@ deps.jna = "net.java.dev.jna:jna:$versions.jna"
 ext.deps = deps
 
 def build_versions = [:]
-build_versions.min_sdk = 24
+build_versions.min_sdk = 26
 build_versions.min_sdk_wave = 25
 build_versions.target_sdk = 31
 build_versions.target_sdk_wave = 31
