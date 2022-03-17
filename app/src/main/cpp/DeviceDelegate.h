@@ -39,6 +39,7 @@ public:
                               const double aTopDegrees,
                               const double aBottomDegrees) = 0;
   virtual void SetEyeOffset(const device::Eye aEye, const float aX, const float aY, const float aZ) = 0;
+  virtual void SetEyeTransform(const device::Eye aEye, const vrb::Matrix& aTransform) = 0;
   virtual void SetEyeResolution(const int32_t aWidth, const int32_t aHeight) = 0;
   virtual void SetNativeFramebufferScaleFactor(const float aScale) = 0;
   virtual void SetStageSize(const float aWidth, const float aDepth) = 0;
