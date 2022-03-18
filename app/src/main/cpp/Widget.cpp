@@ -277,6 +277,15 @@ Widget::SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight) {
 }
 
 void
+Widget::RecreateSurface() {
+  if (m.quad) {
+    m.quad->RecreateSurface();
+  } else {
+    m.cylinder->RecreateSurface();
+  }
+}
+
+void
 Widget::GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
   aMin = m.min;
   aMax = m.max;
