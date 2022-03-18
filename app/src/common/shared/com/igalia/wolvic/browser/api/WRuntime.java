@@ -150,6 +150,12 @@ public interface WRuntime {
     void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container);
 
 
+    /*
+     * Returns the view density (devicePixelRatio) that should be used to display browser engine session.
+     */
+    @UiThread
+    float getDensity();
+
     /**
      * Notify that the device configuration has changed.
      *

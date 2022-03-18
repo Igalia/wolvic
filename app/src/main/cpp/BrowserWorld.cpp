@@ -1211,6 +1211,15 @@ BrowserWorld::RemoveWidget(int32_t aHandle) {
 }
 
 void
+BrowserWorld::RecreateWidgetSurface(int32_t aHandle) {
+  ASSERT_ON_RENDER_THREAD();
+  WidgetPtr widget = m.GetWidget(aHandle);
+  if (widget) {
+    widget->RecreateSurface();
+  }
+}
+
+void
 BrowserWorld::StartWidgetResize(int32_t aHandle, const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
@@ -1767,6 +1776,12 @@ JNI_METHOD(void, updateVisibleWidgetsNative)
 JNI_METHOD(void, removeWidgetNative)
 (JNIEnv*, jobject, jint aHandle) {
   crow::BrowserWorld::Instance().RemoveWidget(aHandle);
+}
+
+
+JNI_METHOD(void, recreateWidgetSurfaceNative)
+(JNIEnv*, jobject, jint aHandle) {
+  crow::BrowserWorld::Instance().RecreateWidgetSurface(aHandle);
 }
 
 JNI_METHOD(void, startWidgetResizeNative)

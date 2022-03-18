@@ -103,7 +103,7 @@ public:
   void Unbind();
 
   void SetWorldSize(const float aWidth, const float aHeight);
-  void Resize(const int32_t aWidth, const int32_t aHeight);
+  void Resize(const int32_t aWidth, const int32_t aHeight, bool force = false);
   void SetResizeDelegate(const ResizeDelegate& aDelegate);
   void SetBindDelegate(const BindDelegate& aDelegate);
   void SetSurface(jobject aSurface);
