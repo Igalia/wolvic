@@ -47,28 +47,9 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        if (!SystemUtils.isMainProcess(this)) {
-            // If this is not the main process then do not continue with the initialization here. Everything that
-            // follows only needs to be done in our app's main process and should not be done in other processes like
-            // a GeckoView child process or the crash handling process. Most importantly we never want to end up in a
-            // situation where we create a GeckoRuntime from the Gecko child process.
-            return;
-        }
-
-        // Fix potential Gecko static initialization order.
-        // GeckoResult.allow() and GeckoResult.deny() static initializer might get a null mDispatcher
-        // depending on how JVM classloader does the initialization job.
-        // See https://github.com/MozillaReality/FirefoxReality/issues/3651
-        Looper.getMainLooper().getThread();
-        TelemetryService.init(this);
-    }
-
     protected void onActivityCreate(@NonNull Context activityContext) {
         onConfigurationChanged(activityContext.getResources().getConfiguration());
+        TelemetryService.init(activityContext);
         mAppExecutors = new AppExecutors();
         mConnectivityManager = new ConnectivityReceiver(activityContext);
         mConnectivityManager.init();
