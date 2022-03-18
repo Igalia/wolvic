@@ -4,8 +4,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WResult;
@@ -110,6 +112,11 @@ public class RuntimeImpl implements WRuntime {
     @Override
     public void setExternalVRContext(long aContext) {
         GeckoVRManager.setExternalContext(aContext);
+    }
+
+    @Override
+    public void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container) {
+        // No op. Gecko doesn't require views to render GeckoSessions. See GeckoDisplay.
     }
 
     @Override
