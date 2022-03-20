@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="30dp">
+
+        <com.igalia.wolvic.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/declineButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/privacy_policy_content" />
+
+        </com.igalia.wolvic.ui.views.CustomScrollView>
+
+        <Button
+            android:id="@+id/declineButton"
+            android:layout_width="156dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/dialog_regular_button_background"
+            android:fontFamily="sans-serif"
+            android:scaleType="fitCenter"
+            android:text="@string/privacy_dialog_disagree"
+            android:textColor="@color/fog"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/acceptButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollbar"
+            app:text="Cancel" />
+
+        <Button
+            android:id="@+id/acceptButton"
+            android:layout_width="156dp"
+            android:layout_height="36dp"
+            android:background="@drawable/dialog_highlighted_button_background"
+            android:fontFamily="sans-serif"
+            android:scaleType="fitCenter"
+            android:text="@string/privacy_dialog_agree"
+            android:textColor="@color/fog"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/declineButton"
+            app:layout_constraintTop_toTopOf="@id/declineButton"
+            app:text="Accept" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

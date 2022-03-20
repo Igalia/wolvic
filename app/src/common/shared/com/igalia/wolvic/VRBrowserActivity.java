@@ -77,6 +77,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.PrivacyPolicyDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.WhatsNewWidget;
@@ -410,6 +411,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
     }
 
+    private void showPrivacyDialogIfNeeded() {
+        if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
+            return;
+        }
+
+        PrivacyPolicyDialogWidget privacyPolicyDialog = new PrivacyPolicyDialogWidget(this);
+        privacyPolicyDialog.setDelegate(response -> {
+            if (response) {
+                Log.w(LOGTAG, "The user accepted the privacy policy.");
+                SettingsStore.getInstance(this).setPrivacyPolicyAccepted(true);
+            } else {
+                // TODO ask for confirmation ("are you really sure that you want to close Wolvic?")
+                Log.w(LOGTAG, "The user rejected the privacy policy, closing the app.");
+                finish();
+            }
+        });
+        privacyPolicyDialog.attachToWindow(mWindows.getFocusedWindow());
+        privacyPolicyDialog.show(UIWidget.REQUEST_FOCUS);
+    }
+
     @Override
     protected void onStart() {
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
@@ -421,6 +442,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else {
             mTray.start(this);
         }
+
+        showPrivacyDialogIfNeeded();
     }
 
     @Override
