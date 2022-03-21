@@ -385,8 +385,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the launch dialogs, if needed.
         if (!showPrivacyDialogIfNeeded()) {
             showWhatsNewDialogIfNeeded();
-            mWindows.restoreSessions();
         }
+
+        mWindows.restoreSessions();
     }
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {
@@ -418,7 +419,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 Log.w(LOGTAG, "The user accepted the privacy policy.");
                 SettingsStore.getInstance(this).setPrivacyPolicyAccepted(true);
                 showWhatsNewDialogIfNeeded();
-                mWindows.restoreSessions();
             } else {
                 // TODO ask for confirmation ("are you really sure that you want to close Wolvic?")
                 Log.w(LOGTAG, "The user rejected the privacy policy, closing the app.");
