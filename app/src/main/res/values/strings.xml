@@ -2201,8 +2201,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_policy_subtitle_1">General information</string>
     <string name="privacy_policy_section_1">
         This application has been developed by Igalia, SL (hereinafter IGALIA), with registered office at Bugallal Marchesi, 22 – 1º, 15008, A Coruña, Galicia (Spain), whose contact details are:
-        \n\t\u2022 Phone number +34 981 913991;
-        \n\n\t\u2022 Email: info@igalia.com
+        \n\n\t\u2022 Phone number +34 981 913991;
+        \n\t\u2022 Email: info@igalia.com
         \n\nThe content and elements that make up the application have been implemented and/or developed by IGALIA under open source licenses, being protected, without limitations, by the intellectual and industrial property laws of the Kingdom of Spain and by the international Treaties and Agreements that may result of application.</string>
     <string name="privacy_policy_subtitle_2">Data protection</string>
     <string name="privacy_policy_section_2">
