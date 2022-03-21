@@ -39,7 +39,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentController;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
@@ -383,15 +382,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
 
-        // Show the what's upp dialog if we haven't showed it yet and this is v6.
-        if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
-            mWhatsNewWidget = new WhatsNewWidget(this);
-            mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
-            mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
-            mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
+        // Show the launch dialogs, if needed.
+        if (!showPrivacyDialogIfNeeded()) {
+            showWhatsNewDialogIfNeeded();
+            mWindows.restoreSessions();
         }
-
-        mWindows.restoreSessions();
     }
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {
@@ -411,9 +406,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
     }
 
-    private void showPrivacyDialogIfNeeded() {
+    // Returns true if the dialog was shown, false otherwise.
+    private boolean showPrivacyDialogIfNeeded() {
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-            return;
+            return false;
         }
 
         PrivacyPolicyDialogWidget privacyPolicyDialog = new PrivacyPolicyDialogWidget(this);
@@ -421,6 +417,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (response) {
                 Log.w(LOGTAG, "The user accepted the privacy policy.");
                 SettingsStore.getInstance(this).setPrivacyPolicyAccepted(true);
+                showWhatsNewDialogIfNeeded();
+                mWindows.restoreSessions();
             } else {
                 // TODO ask for confirmation ("are you really sure that you want to close Wolvic?")
                 Log.w(LOGTAG, "The user rejected the privacy policy, closing the app.");
@@ -429,6 +427,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
         privacyPolicyDialog.attachToWindow(mWindows.getFocusedWindow());
         privacyPolicyDialog.show(UIWidget.REQUEST_FOCUS);
+        return true;
+    }
+
+    private void showWhatsNewDialogIfNeeded() {
+        if (SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
+            return;
+        }
+        mWhatsNewWidget = new WhatsNewWidget(this);
+        mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
+        mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
+        mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
     }
 
     @Override
@@ -442,8 +451,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else {
             mTray.start(this);
         }
-
-        showPrivacyDialogIfNeeded();
     }
 
     @Override

@@ -444,6 +444,8 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:lineSpacingMultiplier">1.25</item>
         <item name="android:layout_marginTop">@dimen/policy_body_text_size</item>
+        <item name="android:hyphenationFrequency">full</item>
+        <item name="android:breakStrategy">high_quality</item>
     </style>
 
     <style name="FxR.Dark" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
