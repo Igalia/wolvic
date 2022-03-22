@@ -111,8 +111,8 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
             int checkedId = mBinding.searchEngineRadio.getCheckedRadioButtonId();
             if (checkedId >= 0 && checkedId < mSearchEngines.size()) {
                 SearchEngine selected = mSearchEngines.get(checkedId);
-                String preferenceValue = sharedPreferences.getString(key, "");
-                if (selected != null && preferenceValue.equals(selected.getIdentifier())) {
+                String storedSearchEngineId = sharedPreferences.getString(key, "");
+                if (storedSearchEngineId.equals(selected.getIdentifier())) {
                     // The selected radio button is already the correct one, so we are done.
                     return;
                 }
