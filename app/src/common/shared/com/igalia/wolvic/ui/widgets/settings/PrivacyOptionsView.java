@@ -68,10 +68,7 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
 
         // Options
-        mBinding.showPrivacyButton.setOnClickListener(v -> {
-            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.private_policy_url));
-            exitWholeSettings();
-        });
+        mBinding.showPrivacyButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.PRIVACY_POLICY));
 
         mBinding.clearCookiesSite.setOnClickListener(v -> {
             SessionStore.get().clearCache(

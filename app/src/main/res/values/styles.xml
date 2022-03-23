@@ -413,6 +413,42 @@
         <item name="android:linksClickable">true</item>
     </style>
 
+    <style name="policyTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/policy_title_text_size</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="policySubtitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textSize">@dimen/policy_subtitle_text_size</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_marginTop">@dimen/policy_subtitle_text_size</item>
+    </style>
+
+    <style name="policyBody">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textSize">@dimen/policy_body_text_size</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:lineSpacingMultiplier">1.25</item>
+        <item name="android:layout_marginTop">@dimen/policy_body_text_size</item>
+        <item name="android:hyphenationFrequency">full</item>
+        <item name="android:breakStrategy">high_quality</item>
+    </style>
+
     <style name="FxR.Dark" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
