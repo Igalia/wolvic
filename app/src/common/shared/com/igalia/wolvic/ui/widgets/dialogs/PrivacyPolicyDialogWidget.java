@@ -18,8 +18,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 
 /**
- * A dialog that displays the Privacy Policy along with two buttons
- * to accept or reject it.
+ * A dialog that displays the Privacy Policy along with two buttons to accept or reject it.
  */
 public class PrivacyPolicyDialogWidget extends UIDialog {
 

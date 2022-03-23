@@ -416,7 +416,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         PrivacyPolicyDialogWidget privacyPolicyDialog = new PrivacyPolicyDialogWidget(this);
         privacyPolicyDialog.setDelegate(response -> {
             if (response) {
-                Log.w(LOGTAG, "The user accepted the privacy policy.");
                 SettingsStore.getInstance(this).setPrivacyPolicyAccepted(true);
                 showWhatsNewDialogIfNeeded();
             } else {

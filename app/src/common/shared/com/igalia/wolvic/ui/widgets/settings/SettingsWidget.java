@@ -454,7 +454,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 break;
             case LOGIN_EDIT:
                 if (extras != null) {
-                    showView(new LoginEditOptionsView(getContext(), mWidgetManager, (Login) extras));
+                    showView(new LoginEditOptionsView(getContext(), mWidgetManager, (Login)extras));
                 }
                 break;
             case SEARCH_ENGINE:
