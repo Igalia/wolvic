@@ -8,9 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.igalia.wolvic.R;
-
 import androidx.annotation.Nullable;
+
+import com.igalia.wolvic.R;
 
 public class HoneycombSwitch extends LinearLayout {
 

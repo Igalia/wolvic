@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:description="@string/settings_privacy_choose_search_engine_description"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_privacy_search_engine_title" />
+
+        <com.igalia.wolvic.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_layout">
+
+            <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
+                android:id="@+id/searchEngineRadio"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout="@layout/setting_radio_group_v" />
+        </com.igalia.wolvic.ui.views.CustomScrollView>
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/developer_options_reset_button"
+            app:description="@string/settings_privacy_choose_search_engine_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollbar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

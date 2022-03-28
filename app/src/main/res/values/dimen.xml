@@ -170,6 +170,10 @@
     <dimen name="settings_text_size">14sp</dimen>
     <dimen name="settings_description_text_size">10sp</dimen>
 
+    <dimen name="policy_title_text_size">22sp</dimen>
+    <dimen name="policy_subtitle_text_size">18sp</dimen>
+    <dimen name="policy_body_text_size">16sp</dimen>
+
     <!-- Popup Window -->
     <item name="url_bar_popup_world_width" format="float" type="dimen">4</item>
     <dimen name="url_bar_popup_height">250dp</dimen>

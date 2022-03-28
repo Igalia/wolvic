@@ -25,9 +25,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.views.CustomListView;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.utils.ViewUtils;
@@ -367,7 +367,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         if (mSelectionMenu == null) {
             mSelectionMenu = new SelectionActionWidget(getContext());
             mSelectionMenu.mWidgetPlacement.parentHandle = getHandle();
-            mSelectionMenu.setActions(Collections.singleton(GeckoSession.SelectionActionDelegate.ACTION_COPY));
+            mSelectionMenu.setActions(Collections.singleton(WSession.SelectionActionDelegate.ACTION_COPY));
         }
 
         Rect offsetViewBounds = new Rect();

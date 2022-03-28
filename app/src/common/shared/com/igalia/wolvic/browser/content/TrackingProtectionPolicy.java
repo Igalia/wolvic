@@ -1,7 +1,7 @@
 package com.igalia.wolvic.browser.content;
 
-import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.ContentBlocking.AntiTracking;
+import com.igalia.wolvic.browser.api.WContentBlocking;
+import com.igalia.wolvic.browser.api.WContentBlocking.AntiTracking;
 
 public class TrackingProtectionPolicy {
 
@@ -15,8 +15,8 @@ public class TrackingProtectionPolicy {
     private static final int STRICT =
             RECOMMENDED | AntiTracking.FINGERPRINTING;
 
-    private int trackingPolicy;
-    private int cookiePolicy;
+    private @WContentBlocking.CBAntiTracking int trackingPolicy;
+    private @WContentBlocking.CBCookieBehavior int cookiePolicy;
 
     private TrackingProtectionPolicy() {
         trackingPolicy = AntiTracking.NONE;
@@ -30,7 +30,7 @@ public class TrackingProtectionPolicy {
     static TrackingProtectionPolicy strict() {
         TrackingProtectionPolicy policy = new TrackingProtectionPolicy();
         policy.trackingPolicy = STRICT;
-        policy.cookiePolicy = ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
+        policy.cookiePolicy = WContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
         return policy;
     }
 
@@ -42,14 +42,14 @@ public class TrackingProtectionPolicy {
     static TrackingProtectionPolicy recommended() {
         TrackingProtectionPolicy policy = new TrackingProtectionPolicy();
         policy.trackingPolicy = RECOMMENDED;
-        policy.cookiePolicy = ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
+        policy.cookiePolicy = WContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS;
         return policy;
     }
 
     static TrackingProtectionPolicy none() {
         TrackingProtectionPolicy policy = new TrackingProtectionPolicy();
         policy.trackingPolicy = AntiTracking.NONE;
-        policy.cookiePolicy = ContentBlocking.CookieBehavior.ACCEPT_ALL;
+        policy.cookiePolicy = WContentBlocking.CookieBehavior.ACCEPT_ALL;
         return policy;
     }
 
@@ -57,11 +57,11 @@ public class TrackingProtectionPolicy {
         return trackingPolicy == STRICT;
     }
 
-    public int getCookiePolicy() {
+    public @WContentBlocking.CBCookieBehavior int getCookiePolicy() {
         return cookiePolicy;
     }
 
-    public int getAntiTrackingPolicy() {
+    public @WContentBlocking.CBAntiTracking int getAntiTrackingPolicy() {
         return trackingPolicy;
     }
 

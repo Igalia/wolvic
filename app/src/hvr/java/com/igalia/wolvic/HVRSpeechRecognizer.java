@@ -12,7 +12,6 @@ import com.huawei.hms.mlsdk.asr.MLAsrConstants;
 import com.huawei.hms.mlsdk.asr.MLAsrListener;
 import com.huawei.hms.mlsdk.asr.MLAsrRecognizer;
 
-import org.mozilla.geckoview.GeckoWebExecutor;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 
 public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
@@ -25,7 +24,7 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     }
 
     @Override
-    public void start(@NonNull Settings settings, @Nullable GeckoWebExecutor executor, @NonNull Callback callback) {
+    public void start(@NonNull Settings settings, @NonNull Callback callback) {
         if (mRecognizer != null) {
             stop();
         }

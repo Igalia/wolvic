@@ -7,14 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.AllowOrDeny;
-import org.mozilla.geckoview.Autocomplete;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.SlowScriptResponse;
 import com.igalia.wolvic.R;
-//import org.mozilla.vrbrowser.browser.components.GeckoLoginDelegateWrapper;
-import com.igalia.wolvic.browser.components.GeckoAutocompleteDelegateWrapper;
+import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WAutocomplete;
+import com.igalia.wolvic.browser.api.WResult;
+import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WSlowScriptResponse;
+import com.igalia.wolvic.browser.components.LoginDelegateWrapper;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -44,10 +43,10 @@ import java.util.stream.Collectors;
 import mozilla.components.concept.storage.Login;
 
 public class PromptDelegate implements
-        GeckoSession.PromptDelegate,
+        WSession.PromptDelegate,
         WindowWidget.WindowListener,
-        GeckoSession.NavigationDelegate,
-        GeckoSession.ContentDelegate {
+        WSession.NavigationDelegate,
+        WSession.ContentDelegate {
 
     private PromptWidget mPrompt;
     private ConfirmPromptWidget mSlowScriptPrompt;
@@ -120,15 +119,15 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onAlertPrompt(@NonNull GeckoSession geckoSession, @NonNull AlertPrompt alertPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onAlertPrompt(@NonNull WSession session, @NonNull AlertPrompt alertPrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new AlertPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(alertPrompt.title);
-        mPrompt.setMessage(alertPrompt.message);
+        mPrompt.setTitle(alertPrompt.title());
+        mPrompt.setMessage(alertPrompt.message());
         mPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
         mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
@@ -137,15 +136,15 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onButtonPrompt(@NonNull GeckoSession geckoSession, @NonNull ButtonPrompt buttonPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onButtonPrompt(@NonNull WSession session, @NonNull ButtonPrompt buttonPrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new ConfirmPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(buttonPrompt.title);
-        mPrompt.setMessage(buttonPrompt.message);
+        mPrompt.setTitle(buttonPrompt.title());
+        mPrompt.setMessage(buttonPrompt.message());
         ((ConfirmPromptWidget)mPrompt).setButtons(new String[] {
                 mContext.getResources().getText(R.string.ok_button).toString(),
                 mContext.getResources().getText(R.string.cancel_button).toString()
@@ -168,16 +167,16 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onTextPrompt(@NonNull GeckoSession geckoSession, @NonNull TextPrompt textPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onTextPrompt(@NonNull WSession session, @NonNull TextPrompt textPrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new TextPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(textPrompt.title);
-        mPrompt.setMessage(textPrompt.message);
-        ((TextPromptWidget)mPrompt).setDefaultText(textPrompt.defaultValue);
+        mPrompt.setTitle(textPrompt.title());
+        mPrompt.setMessage(textPrompt.message());
+        ((TextPromptWidget)mPrompt).setDefaultText(textPrompt.defaultValue());
         mPrompt.setPromptDelegate(new TextPromptWidget.TextPromptDelegate() {
             @Override
             public void confirm(String message) {
@@ -196,16 +195,16 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onAuthPrompt(@NonNull GeckoSession geckoSession, @NonNull AuthPrompt authPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onAuthPrompt(@NonNull WSession session, @NonNull AuthPrompt authPrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new AuthPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(authPrompt.title);
-        mPrompt.setMessage(authPrompt.message);
-        ((AuthPromptWidget)mPrompt).setAuthOptions(authPrompt.authOptions);
+        mPrompt.setTitle(authPrompt.title());
+        mPrompt.setMessage(authPrompt.message());
+        ((AuthPromptWidget)mPrompt).setAuthOptions(authPrompt.authOptions());
         mPrompt.setPromptDelegate(new AuthPromptWidget.AuthPromptDelegate() {
             @Override
             public void dismiss() {
@@ -229,17 +228,17 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onChoicePrompt(@NonNull GeckoSession geckoSession, @NonNull ChoicePrompt choicePrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onChoicePrompt(@NonNull WSession session, @NonNull ChoicePrompt choicePrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new ChoicePromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(choicePrompt.title);
-        mPrompt.setMessage(choicePrompt.message);
-        ((ChoicePromptWidget)mPrompt).setChoices(choicePrompt.choices);
-        ((ChoicePromptWidget)mPrompt).setMenuType(choicePrompt.type);
+        mPrompt.setTitle(choicePrompt.title());
+        mPrompt.setMessage(choicePrompt.message());
+        ((ChoicePromptWidget)mPrompt).setChoices(choicePrompt.choices());
+        ((ChoicePromptWidget)mPrompt).setMenuType(choicePrompt.type());
         mPrompt.setPromptDelegate(new ChoicePromptWidget.ChoicePromptDelegate() {
             @Override
             public void confirm(String[] choices) {
@@ -266,11 +265,11 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onPopupPrompt(@NonNull GeckoSession geckoSession, @NonNull PopupPrompt popupPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onPopupPrompt(@NonNull WSession aSession, @NonNull PopupPrompt popupPrompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         if (!SettingsStore.getInstance(mContext).isPopUpsBlockingEnabled()) {
-            result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
+            result.complete(popupPrompt.confirm(WAllowOrDeny.ALLOW));
 
         } else {
             Session session = mAttachedWindow.getSession();
@@ -278,15 +277,15 @@ public class PromptDelegate implements
                 final String uri = UrlUtils.getHost(session.getCurrentUri());
                 SitePermission site = mAllowedPopUpSites.stream().filter((item) -> UrlUtils.getHost(item.url).equals(uri)).findFirst().orElse(null);
                 if (site != null) {
-                    result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
+                    result.complete(popupPrompt.confirm(WAllowOrDeny.ALLOW));
                     session.setPopUpState(SessionState.POPUP_ALLOWED);
                 } else {
-                    result.complete(popupPrompt.confirm(AllowOrDeny.DENY));
+                    result.complete(popupPrompt.confirm(WAllowOrDeny.DENY));
                     session.setPopUpState(SessionState.POPUP_BLOCKED);
                 }
 
             } else {
-                result.complete(popupPrompt.confirm(AllowOrDeny.DENY));
+                result.complete(popupPrompt.confirm(WAllowOrDeny.DENY));
             }
         }
 
@@ -295,12 +294,12 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onLoginSave(@NonNull GeckoSession geckoSession, final @NonNull AutocompleteRequest<Autocomplete.LoginSaveOption> autocompleteRequest) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onLoginSave(@NonNull WSession session, final @NonNull AutocompleteRequest<WAutocomplete.LoginSaveOption> autocompleteRequest) {
+        final WResult<PromptResponse> result = WResult.create();
 
         // We always get at least one item, at the moment only one item is support.
-        if (autocompleteRequest.options.length > 0 && SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
-            Autocomplete.LoginSaveOption saveOption = autocompleteRequest.options[0];
+        if (autocompleteRequest.options().length > 0 && SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
+            WAutocomplete.LoginSaveOption saveOption = autocompleteRequest.options()[0];
             boolean originHasException = mSavedLoginBlockedSites.stream().anyMatch(site -> site.url.equals(saveOption.value.origin));
             if (originHasException || !SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
                 result.complete(autocompleteRequest.dismiss());
@@ -318,14 +317,14 @@ public class PromptDelegate implements
 
                     @Override
                     public void confirm(@NonNull Login login) {
-                        result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoAutocompleteDelegateWrapper.toLoginEntry(login))));
+                        result.complete(autocompleteRequest.confirm(new WAutocomplete.LoginSaveOption(LoginDelegateWrapper.toLoginEntry(login))));
                     }
                 });
                 mSaveLoginPrompt.setDelegate(() -> result.complete(autocompleteRequest.dismiss()));
                 mSaveLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
                 mSaveLoginPrompt.getPlacement().parentAnchorY = 0.0f;
                 mSaveLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-                mSaveLoginPrompt.setLogin(GeckoAutocompleteDelegateWrapper.toLogin(saveOption.value));
+                mSaveLoginPrompt.setLogin(LoginDelegateWrapper.toLogin(saveOption.value));
                 mSaveLoginPrompt.show(UIWidget.REQUEST_FOCUS, true);
             }
 
@@ -338,18 +337,18 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onLoginSelect(@NonNull GeckoSession geckoSession, final @NonNull AutocompleteRequest<Autocomplete.LoginSelectOption> autocompleteRequest) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onLoginSelect(@NonNull WSession session, final @NonNull AutocompleteRequest<WAutocomplete.LoginSelectOption> autocompleteRequest) {
+        final WResult<PromptResponse> result = WResult.create();
 
-        if (autocompleteRequest.options.length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
-            List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoAutocompleteDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
+        if (autocompleteRequest.options().length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
+            List<Login> logins = Arrays.stream(autocompleteRequest.options()).map(item -> LoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
             if (mSelectLoginPrompt == null) {
                 mSelectLoginPrompt = new SelectLoginPromptWidget(mContext);
             }
             mSelectLoginPrompt.setPromptDelegate(new SelectLoginPromptWidget.Delegate() {
                 @Override
                 public void onLoginSelected(@NonNull Login login) {
-                    result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoAutocompleteDelegateWrapper.toLoginEntry(login))));
+                    result.complete(autocompleteRequest.confirm(new WAutocomplete.LoginSelectOption(LoginDelegateWrapper.toLoginEntry(login))));
                 }
 
                 @Override
@@ -374,8 +373,8 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public GeckoResult<SlowScriptResponse> onSlowScript(@NonNull GeckoSession aSession, @NonNull String aScriptFileName) {
-        final GeckoResult<SlowScriptResponse> result = new GeckoResult<>();
+    public WResult<WSlowScriptResponse> onSlowScript(@NonNull WSession aSession, @NonNull String aScriptFileName) {
+        final WResult<WSlowScriptResponse> result = WResult.create();
         if (mSlowScriptPrompt == null) {
             mSlowScriptPrompt = new ConfirmPromptWidget(mContext);
             mSlowScriptPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
@@ -390,11 +389,11 @@ public class PromptDelegate implements
             mSlowScriptPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
                 @Override
                 public void confirm(int index) {
-                    result.complete(index == 0 ? SlowScriptResponse.CONTINUE : SlowScriptResponse.STOP);
+                    result.complete(index == 0 ? WSlowScriptResponse.CONTINUE : WSlowScriptResponse.STOP);
                 }
                 @Override
                 public void dismiss() {
-                    result.complete(SlowScriptResponse.CONTINUE);
+                    result.complete(WSlowScriptResponse.CONTINUE);
                 }
             });
             mSlowScriptPrompt.show(UIWidget.REQUEST_FOCUS, true);
@@ -405,22 +404,22 @@ public class PromptDelegate implements
                 mSlowScriptPrompt.releaseWidget();
             }
             mSlowScriptPrompt = null;
-            return GeckoResult.fromValue(value);
+            return WResult.fromValue(value);
         });
     }
 
     @Nullable
     @Override
-    public GeckoResult<PromptResponse> onBeforeUnloadPrompt(@NonNull GeckoSession session, @NonNull BeforeUnloadPrompt prompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+    public WResult<PromptResponse> onBeforeUnloadPrompt(@NonNull WSession session, @NonNull BeforeUnloadPrompt prompt) {
+        final WResult<PromptResponse> result = WResult.create();
 
         mPrompt = new ConfirmPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         String message = mContext.getString(R.string.before_unload_prompt_message);
-        if (!StringUtils.isEmpty(prompt.title)) {
-            message = prompt.title;
+        if (!StringUtils.isEmpty(prompt.title())) {
+            message = prompt.title();
         }
         mPrompt.setTitle(mContext.getString(R.string.before_unload_prompt_title));
         mPrompt.setMessage(message);
@@ -431,7 +430,7 @@ public class PromptDelegate implements
         mPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
             @Override
             public void confirm(int index) {
-                result.complete(prompt.confirm(index == 0 ? AllowOrDeny.ALLOW : AllowOrDeny.DENY));
+                result.complete(prompt.confirm(index == 0 ? WAllowOrDeny.ALLOW : WAllowOrDeny.DENY));
             }
 
             @Override

@@ -34,9 +34,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.speech.SpeechRecognizer;
@@ -71,7 +71,7 @@ import java.util.Locale;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
-        GeckoSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener, VoiceSearchWidget.VoiceSearchDelegate, TextWatcher, WindowWidget.WindowListener {
+        WSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener, VoiceSearchWidget.VoiceSearchDelegate, TextWatcher, WindowWidget.WindowListener {
 
     private static int MAX_CHARS_PER_POPUP_LINE = 10;
 
@@ -1281,16 +1281,16 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         return true;
     }
 
-    // GeckoSession.TextInputDelegate
+    // WSession.TextInputDelegate
 
     @Override
-    public void restartInput(@NonNull GeckoSession session, int reason) {
+    public void restartInput(@NonNull WSession session, int reason) {
         resetKeyboardLayout();
         mInputRestarted = true;
     }
 
     @Override
-    public void showSoftInput(@NonNull GeckoSession session) {
+    public void showSoftInput(@NonNull WSession session) {
         if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE || mInputRestarted) {
             post(() -> updateFocusedView(mAttachedWindow));
         }
@@ -1298,14 +1298,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    public void hideSoftInput(@NonNull GeckoSession session) {
+    public void hideSoftInput(@NonNull WSession session) {
         if (mFocusedView == mAttachedWindow && getVisibility() == View.VISIBLE) {
             dismiss();
         }
     }
 
     @Override
-    public void updateSelection(@NonNull GeckoSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
+    public void updateSelection(@NonNull WSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
         if (mFocusedView != mAttachedWindow || mInputConnection == null) {
             return;
         }

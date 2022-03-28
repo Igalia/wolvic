@@ -5,6 +5,11 @@
 
 package com.igalia.wolvic.ui.widgets;
 
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_DRM;
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
+import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
+import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -26,8 +31,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -36,6 +39,8 @@ import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -66,13 +71,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_DRM;
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
-import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
-import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
-
-public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
-        GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
+public class NavigationBarWidget extends UIWidget implements WSession.NavigationDelegate,
+        WSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
         WidgetManagerDelegate.UpdateListener, SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
@@ -223,7 +223,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
+                int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? WSession.LOAD_FLAGS_BYPASS_CACHE : WSession.LOAD_FLAGS_NONE;
                 getSession().reload(flags);
             }
             if (mAudio != null) {
@@ -237,7 +237,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                getSession().reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -253,14 +253,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
             mNavigationListeners.forEach(NavigationListener::onHome);
-        });
-
-        mBinding.navigationBarNavigation.servoButton.setOnClickListener(v -> {
-            v.requestFocusFromTouch();
-            getSession().toggleServo();
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
         });
 
         mBinding.navigationBarNavigation.whatsNew.setOnClickListener(v -> {
@@ -879,8 +871,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // NavigationDelegate
 
     @Override
-    public void onLocationChange(@NonNull GeckoSession geckoSession, @Nullable String url) {
-        if (getSession() != null && getSession().getGeckoSession() == geckoSession) {
+    public void onLocationChange(@NonNull WSession session, @Nullable String url) {
+        if (getSession() != null && getSession().getWSession() == session) {
             updateTrackingProtection();
         }
 
@@ -947,7 +939,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // Session.SessionChangeListener
 
     @Override
-    public void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {
+    public void onCurrentSessionChange(WSession aOldSession, WSession aSession) {
         boolean isFullScreen = getSession().isInFullScreen();
         if (isFullScreen && !mAttachedWindow.isFullScreen()) {
             enterFullScreenMode();
@@ -1181,14 +1173,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             @Override
             public void onSwitchMode() {
                 int uaMode = mAttachedWindow.getSession().getUaMode();
-                if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                if (uaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
                     final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
                     mHamburgerMenu.setUAMode(defaultUaMode);
                     mAttachedWindow.getSession().setUaMode(defaultUaMode);
 
                 } else {
-                    mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
-                    mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                    mHamburgerMenu.setUAMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
+                    mAttachedWindow.getSession().setUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
                 }
 
                 hideMenu();

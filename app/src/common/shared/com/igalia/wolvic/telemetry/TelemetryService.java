@@ -6,23 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.utils.SystemUtils;
-
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Map;
-
-import mozilla.components.concept.fetch.Client;
-import mozilla.components.service.glean.Glean;
-import mozilla.components.service.glean.config.Configuration;
-import mozilla.components.service.glean.net.ConceptFetchHttpUploader;
-import mozilla.telemetry.glean.GleanTimerId;
-
-import static com.igalia.wolvic.ui.widgets.Windows.MAX_WINDOWS;
-
 
 public class TelemetryService {
 
@@ -30,18 +16,11 @@ public class TelemetryService {
     private final static String LOGTAG = SystemUtils.createLogtag(TelemetryService.class);
     private static boolean initialized = false;
     private static Context context = null;
-    private static HashSet<String> domainMap = new HashSet<String>();
-    private static Map<String, GleanTimerId> loadingTimerId = new Hashtable<>();
-    private static GleanTimerId immersiveTimerId;
-    private static Map<Integer, GleanTimerId> windowLifeTimerId = new Hashtable<>();
-    private static GleanTimerId activeWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
-    private static GleanTimerId openWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
-    private static GleanTimerId openPrivateWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
     private static ITelemetry service;
     private static boolean started;
 
     // We should call this at the application initial stage.
-    public static void init(@NonNull Context aContext, @NonNull Client client) {
+    public static void init(@NonNull Context aContext) {
         if (initialized)
             return;
 
@@ -49,12 +28,6 @@ public class TelemetryService {
         initialized = true;
 
         final boolean telemetryEnabled = SettingsStore.getInstance(aContext).isTelemetryEnabled();
-        Configuration config = new Configuration(
-                ConceptFetchHttpUploader.fromClient(client),
-                Configuration.DEFAULT_TELEMETRY_ENDPOINT,
-                BuildConfig.BUILD_TYPE);
-
-        Glean.INSTANCE.initialize(aContext, telemetryEnabled, config);
         if (telemetryEnabled) {
             start();
         }
@@ -70,7 +43,6 @@ public class TelemetryService {
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void start() {
-        Glean.INSTANCE.setUploadEnabled(true);
         started = true;
         if (service != null) {
             service.start();
@@ -80,7 +52,6 @@ public class TelemetryService {
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void stop() {
-        Glean.INSTANCE.setUploadEnabled(false);
         started = false;
         if (service != null) {
             service.stop();
@@ -150,13 +121,6 @@ public class TelemetryService {
         if (service == null) {
             return;
         }
-        domainMap.clear();
-        loadingTimerId.clear();
-        windowLifeTimerId.clear();
-        activeWindowTimerId = new GleanTimerId[MAX_WINDOWS];
-        openWindowTimerId = new GleanTimerId[MAX_WINDOWS];
-        openPrivateWindowTimerId = new GleanTimerId[MAX_WINDOWS];
-
         service.customEvent("sessionStop");
     }
 
@@ -211,7 +175,7 @@ public class TelemetryService {
     }
 
     private static String getDefaultSearchEngineIdentifierForTelemetry() {
-        return SearchEngineWrapper.get(context).getIdentifier();
+        return SearchEngineWrapper.get(context).getCurrentSearchEngine().getIdentifier();
     }
 
     public static void newWindowOpenEvent() {

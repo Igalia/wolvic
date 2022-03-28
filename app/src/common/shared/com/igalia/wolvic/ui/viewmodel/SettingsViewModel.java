@@ -11,10 +11,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.mozilla.geckoview.ContentBlocking;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -51,7 +50,7 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public void refresh() {
         int level = SettingsStore.getInstance(getApplication().getBaseContext()).getTrackingProtectionLevel();
-        boolean isEnabled = level != ContentBlocking.EtpLevel.NONE;
+        boolean isEnabled = level != WContentBlocking.EtpLevel.NONE;
         isTrackingProtectionEnabled.postValue(new ObservableBoolean(isEnabled));
 
         boolean drmEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isDrmContentPlaybackEnabled();
@@ -68,10 +67,9 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     private void isWhatsNewVisible() {
-        /*boolean value = props.getValue() != null &&
+        boolean value = props.getValue() != null &&
                 !BuildConfig.VERSION_NAME.equals(propsVersionName.getValue()) &&
-                props.getValue().containsKey(BuildConfig.VERSION_NAME);*/
-        boolean value = false;
+                props.getValue().containsKey(BuildConfig.VERSION_NAME);
         isWhatsNewVisible.postValue(new ObservableBoolean(value));
     }
 

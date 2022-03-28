@@ -13,8 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.AnimationHelper;
@@ -24,7 +24,7 @@ import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.concurrent.CompletableFuture;
 
-public class TabView extends RelativeLayout implements GeckoSession.ContentDelegate, Session.BitmapChangedListener {
+public class TabView extends RelativeLayout implements WSession.ContentDelegate, Session.BitmapChangedListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(TabView.class);
 
@@ -50,7 +50,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     protected boolean mPressed;
     protected CompletableFuture<Bitmap> mBitmapFuture;
     protected boolean mUsingPlaceholder;
-    private boolean mSendTabEnabled = false;
+    private boolean mSendTabEnabled;
     private static final int ICON_ANIMATION_DURATION = 100;
 
     public interface Delegate {
@@ -288,15 +288,15 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     }
 
     @Override
-    public void onTitleChange(@NonNull GeckoSession session, @Nullable String title) {
+    public void onTitleChange(@NonNull WSession session, @Nullable String title) {
         if (!mShowAddTab) {
             mTitle.setText(title);
         }
     }
 
     @Override
-    public void onCloseRequest(@NonNull GeckoSession geckoSession) {
-        if (mSession.getGeckoSession() == geckoSession) {
+    public void onCloseRequest(@NonNull WSession aSession) {
+        if (mSession.getWSession() == aSession) {
             mDelegate.onClose(this);
         }
     }

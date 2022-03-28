@@ -6,20 +6,19 @@
 package com.igalia.wolvic.browser.components
 
 import android.content.Context
+import com.igalia.wolvic.browser.api.*
+import com.igalia.wolvic.browser.engine.Session
+import com.igalia.wolvic.browser.engine.SessionStore
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.webextension.*
-import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.support.ktx.kotlin.isResourceUrl
-import org.mozilla.geckoview.*
-import com.igalia.wolvic.browser.engine.Session
-import com.igalia.wolvic.browser.engine.SessionStore
-import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 
-class GeckoWebExtensionRuntime(
+class WolvicWebExtensionRuntime(
         private val context: Context,
-        private val runtime: GeckoRuntime
+        private val runtime: WRuntime
 ): WebExtensionRuntime {
 
     private var webExtensionDelegate: WebExtensionDelegate? = null
@@ -36,10 +35,10 @@ class GeckoWebExtensionRuntime(
             val activeSession = SessionStore.get().activeSession
             val session: Session = SessionStore.get().createWebExtensionSession(activeSession.isPrivateMode);
             session.setParentSession(activeSession)
-            session.uaMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
-            val geckoEngineSession = GeckoEngineSession(session)
+            session.uaMode = WSessionSettings.USER_AGENT_MODE_DESKTOP
+            val engineSession = WolvicEngineSession(session)
             (context as WidgetManagerDelegate).windows.onTabSelect(session)
-            return webExtensionDelegate?.onToggleActionPopup(extension, geckoEngineSession, action)
+            return webExtensionDelegate?.onToggleActionPopup(extension, engineSession, action)
         }
     }
     private val webExtensionTabHandler = object : TabHandler {
@@ -58,36 +57,35 @@ class GeckoWebExtensionRuntime(
             onError: ((String, Throwable) -> Unit)
     ): CancellableOperation {
 
-        val onInstallSuccess: ((org.mozilla.geckoview.WebExtension) -> Unit) = {
-            val installedExtension = GeckoWebExtension(it, runtime)
-            webExtensionDelegate?.onInstalled(installedExtension)
-            installedExtension.registerActionHandler(webExtensionActionHandler)
-            installedExtension.registerTabHandler(webExtensionTabHandler)
-            onSuccess(installedExtension)
+        val onInstallSuccess: ((WebExtension) -> Unit) = {
+            webExtensionDelegate?.onInstalled(it)
+            it.registerActionHandler(webExtensionActionHandler)
+            it.registerTabHandler(webExtensionTabHandler)
+            onSuccess(it)
         }
 
-        val geckoResult = if (url.isResourceUrl()) {
+        val result = if (url.isResourceUrl()) {
             runtime.webExtensionController.ensureBuiltIn(url, id).apply {
                 then({
                     onInstallSuccess(it!!)
-                    GeckoResult<Void>()
+                    WResult.create<Void>()
                 }, { throwable ->
                     onError(id, throwable)
-                    GeckoResult<Void>()
+                    WResult.create<Void>()
                 })
             }
         } else {
             runtime.webExtensionController.install(url).apply {
                 then({
                     onInstallSuccess(it!!)
-                    GeckoResult<Void>()
+                    WResult.create<Void>()
                 }, { throwable ->
                     onError(id, throwable)
-                    GeckoResult<Void>()
+                    WResult.create<Void>()
                 })
             }
         }
-        return geckoResult.asCancellableOperation()
+        return result.asCancellableOperation()
     }
 
     /**
@@ -98,13 +96,13 @@ class GeckoWebExtensionRuntime(
             onSuccess: () -> Unit,
             onError: (String, Throwable) -> Unit
     ) {
-        runtime.webExtensionController.uninstall((ext as GeckoWebExtension).nativeExtension).then({
+        runtime.webExtensionController.uninstall(ext).then({
             webExtensionDelegate?.onUninstalled(ext)
             onSuccess()
-            GeckoResult<Void>()
+            WResult.create<Void>()
         }, { throwable ->
             onError(ext.id, throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 
@@ -116,20 +114,16 @@ class GeckoWebExtensionRuntime(
             onSuccess: (WebExtension?) -> Unit,
             onError: (String, Throwable) -> Unit
     ) {
-        runtime.webExtensionController.update((extension as GeckoWebExtension).nativeExtension).then({ geckoExtension ->
-            val updatedExtension = if (geckoExtension != null) {
-                GeckoWebExtension(geckoExtension, runtime).also {
-                    it.registerActionHandler(webExtensionActionHandler)
-                    it.registerTabHandler(webExtensionTabHandler)
-                }
-            } else {
-                null
+        runtime.webExtensionController.update(extension).then({ updatedExtension ->
+            if (updatedExtension != null) {
+                updatedExtension.registerActionHandler(webExtensionActionHandler)
+                updatedExtension.registerTabHandler(webExtensionTabHandler)
             }
             onSuccess(updatedExtension)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         }, { throwable ->
             onError(extension.id, throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 
@@ -142,36 +136,36 @@ class GeckoWebExtensionRuntime(
     ) {
         this.webExtensionDelegate = webExtensionDelegate
 
-        val promptDelegate = object : WebExtensionController.PromptDelegate {
-            override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny>? {
-                val extension = GeckoWebExtension(ext, runtime)
+        val promptDelegate = object : WWebExtensionController.PromptDelegate {
+            override fun onInstallPrompt(extension: WebExtension): WResult<WAllowOrDeny>? {
                 return if (webExtensionDelegate.onInstallPermissionRequest(extension)) {
-                    GeckoResult.allow()
+                    WResult.allow()
                 } else {
-                    GeckoResult.deny()
+                    WResult.deny()
                 }
             }
 
             override fun onUpdatePrompt(
-                    current: org.mozilla.geckoview.WebExtension,
-                    updated: org.mozilla.geckoview.WebExtension,
+                    current: WebExtension,
+                    updated: WebExtension,
                     newPermissions: Array<out String>,
                     newOrigins: Array<out String>
-            ): GeckoResult<AllowOrDeny>? {
+            ): WResult<WAllowOrDeny>? {
                 // NB: We don't have a user flow for handling updated origins so we ignore them for now.
-                val result = GeckoResult<AllowOrDeny>()
+                val result = WResult.create<WAllowOrDeny>()
                 webExtensionDelegate.onUpdatePermissionRequest(
-                        GeckoWebExtension(current, runtime),
-                        GeckoWebExtension(updated, runtime),
+                        current,
+                        updated,
                         newPermissions.toList()
                 ) {
-                    allow -> if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
+                    allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
+                    WAllowOrDeny.DENY)
                 }
                 return result
             }
         }
 
-        val debuggerDelegate = object : WebExtensionController.DebuggerDelegate {
+        val debuggerDelegate = object : WWebExtensionController.DebuggerDelegate {
             override fun onExtensionListUpdated() {
                 webExtensionDelegate.onExtensionListUpdated()
             }
@@ -186,10 +180,7 @@ class GeckoWebExtensionRuntime(
      */
     override fun listInstalledWebExtensions(onSuccess: (List<WebExtension>) -> Unit, onError: (Throwable) -> Unit) {
         runtime.webExtensionController.list().then({
-            val extensions = it?.map {
-                extension ->
-                GeckoWebExtension(extension, runtime)
-            } ?: emptyList()
+            val extensions: List<WebExtension> = it ?: emptyList()
 
             extensions.forEach { extension ->
                 extension.registerActionHandler(webExtensionActionHandler)
@@ -197,10 +188,10 @@ class GeckoWebExtensionRuntime(
             }
 
             onSuccess(extensions)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 
@@ -213,14 +204,13 @@ class GeckoWebExtensionRuntime(
             onSuccess: (WebExtension) -> Unit,
             onError: (Throwable) -> Unit
     ) {
-        runtime.webExtensionController.enable((extension as GeckoWebExtension).nativeExtension, source.id).then({
-            val enabledExtension = GeckoWebExtension(it!!, runtime)
-            webExtensionDelegate?.onEnabled(enabledExtension)
-            onSuccess(enabledExtension)
-            GeckoResult<Void>()
+        runtime.webExtensionController.enable(extension, source.id).then({
+            webExtensionDelegate?.onEnabled(extension)
+            onSuccess(extension)
+            WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 
@@ -233,14 +223,13 @@ class GeckoWebExtensionRuntime(
             onSuccess: (WebExtension) -> Unit,
             onError: (Throwable) -> Unit
     ) {
-        runtime.webExtensionController.disable((extension as GeckoWebExtension).nativeExtension, source.id).then({
-            val disabledExtension = GeckoWebExtension(it!!, runtime)
-            webExtensionDelegate?.onDisabled(disabledExtension)
-            onSuccess(disabledExtension)
-            GeckoResult<Void>()
+        runtime.webExtensionController.disable(extension, source.id).then({
+            webExtensionDelegate?.onDisabled(extension)
+            onSuccess(extension)
+            WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 
@@ -254,16 +243,16 @@ class GeckoWebExtensionRuntime(
             onError: (Throwable) -> Unit
     ) {
         runtime.webExtensionController.setAllowedInPrivateBrowsing(
-                (extension as GeckoWebExtension).nativeExtension,
+                extension,
                 allowed
         ).then({
-            val ext = GeckoWebExtension(it!!, runtime)
+            val ext = it!!
             webExtensionDelegate?.onAllowedInPrivateBrowsingChanged(ext)
             onSuccess(ext)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
-            GeckoResult<Void>()
+            WResult.create<Void>()
         })
     }
 

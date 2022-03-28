@@ -11,9 +11,8 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.jakewharton.disklrucache.DiskLruCache;
-
 import com.igalia.wolvic.VRBrowserApplication;
+import com.jakewharton.disklrucache.DiskLruCache;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package com.igalia.wolvic.browser.engine
+package com.igalia.wolvic.browser.api.impl
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
@@ -62,6 +62,13 @@ class GeckoViewFetchClient(
 
     companion object {
         const val MAX_READ_TIMEOUT_MINUTES = 5L
+
+        @JvmStatic
+        fun create(context: Context, executor: GeckoWebExecutor): GeckoViewFetchClient {
+            val client = GeckoViewFetchClient(context)
+            client.executor = executor
+            return client
+        }
     }
 }
 

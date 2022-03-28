@@ -6,7 +6,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
-import android.view.View;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -18,12 +17,10 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.ContentBlocking;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.ui.widgets.Windows;
-import com.igalia.wolvic.utils.DeviceType;
-import com.igalia.wolvic.utils.ServoUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -59,7 +56,6 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> canGoBack;
     private MutableLiveData<ObservableBoolean> isInVRVideo;
     private MutableLiveData<ObservableBoolean> autoEnteredVRVideo;
-    private MediatorLiveData<ObservableBoolean> isServoAvailable;
     private MediatorLiveData<String> titleBarUrl;
     private MediatorLiveData<ObservableBoolean> isInsecureVisible;
     private MutableLiveData<ObservableBoolean> isMediaAvailable;
@@ -133,10 +129,6 @@ public class WindowViewModel extends AndroidViewModel {
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
         isInVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
         autoEnteredVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
-
-        isServoAvailable = new MediatorLiveData<>();
-        isServoAvailable.addSource(url, mIsServoAvailableObserver);
-        isServoAvailable.setValue(new ObservableBoolean(false));
 
         titleBarUrl = new MediatorLiveData<>();
         titleBarUrl.addSource(url, mTitleBarUrlObserver);
@@ -214,15 +206,6 @@ public class WindowViewModel extends AndroidViewModel {
             } else {
                 isTitleBarVisible.postValue(new ObservableBoolean(isWindowVisible.getValue().get() && !isOnlyWindow.getValue().get()));
             }
-        }
-    };
-
-    private Observer<Spannable> mIsServoAvailableObserver = new Observer<Spannable>() {
-        @Override
-        public void onChanged(Spannable url) {
-            boolean isPrefEnabled = SettingsStore.getInstance(getApplication()).isServoEnabled();
-            boolean isUrlAllowListed = ServoUtils.isUrlInServoAllowList(getApplication(), url.toString());
-            isServoAvailable.postValue(new ObservableBoolean(isPrefEnabled && isUrlAllowListed));
         }
     };
 
@@ -304,7 +287,7 @@ public class WindowViewModel extends AndroidViewModel {
                             !UrlUtils.isPrivateAboutPage(getApplication(), aUrl) &&
                             (URLUtil.isHttpUrl(aUrl) || URLUtil.isHttpsUrl(aUrl)) &&
                             (
-                                    (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != ContentBlocking.EtpLevel.NONE) ||
+                                    (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != WContentBlocking.EtpLevel.NONE) ||
                                     isPopUpAvailable.getValue().get() ||
                                     isDrmUsed.getValue().get() ||
                                     isWebXRUsed.getValue().get()
@@ -642,11 +625,6 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setAutoEnteredVRVideo(boolean autoEnteredVRVideo) {
         this.autoEnteredVRVideo.postValue(new ObservableBoolean(autoEnteredVRVideo));
-    }
-
-    @NonNull
-    public MutableLiveData<ObservableBoolean> getIsServoAvailable() {
-        return isServoAvailable;
     }
 
     @NonNull

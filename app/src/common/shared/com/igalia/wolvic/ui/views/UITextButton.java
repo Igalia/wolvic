@@ -11,10 +11,10 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import com.igalia.wolvic.R;
-
 import androidx.annotation.IdRes;
 import androidx.appcompat.widget.AppCompatButton;
+
+import com.igalia.wolvic.R;
 
 public class UITextButton extends AppCompatButton implements CustomUIButton {
 

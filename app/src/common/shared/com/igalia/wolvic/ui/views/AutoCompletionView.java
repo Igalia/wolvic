@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.ui.views;
 
+import static android.view.Gravity.CENTER_VERTICAL;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,14 +15,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.ui.keyboards.KeyboardInterface.Words;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.view.Gravity.CENTER_VERTICAL;
 
 public class AutoCompletionView extends FrameLayout {
     private LinearLayout mFirstLine;

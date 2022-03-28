@@ -6,13 +6,15 @@
 package com.igalia.wolvic.browser.components
 
 import android.graphics.Bitmap
+import com.igalia.wolvic.browser.api.await
+import com.igalia.wolvic.browser.api.impl.SessionImpl
+import com.igalia.wolvic.browser.engine.Session
+import com.igalia.wolvic.browser.engine.SessionStore
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.webextension.*
 import mozilla.components.support.base.log.logger.Logger
 import org.json.JSONObject
 import org.mozilla.geckoview.*
-import com.igalia.wolvic.browser.engine.Session
-import com.igalia.wolvic.browser.engine.SessionStore
 import org.mozilla.geckoview.WebExtension as GeckoNativeWebExtension
 import org.mozilla.geckoview.WebExtension.Action as GeckoNativeWebExtensionAction
 
@@ -112,7 +114,7 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         geckoSession.webExtensionController.setMessageDelegate(nativeExtension, messageDelegate, name)
     }
 
@@ -120,7 +122,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasContentMessageHandler].
      */
     override fun hasContentMessageHandler(session: EngineSession, name: String): Boolean {
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         return geckoSession.webExtensionController.getMessageDelegate(nativeExtension, name) != null
     }
 
@@ -183,7 +185,7 @@ class GeckoWebExtension(
                     action: GeckoNativeWebExtensionAction
             ): GeckoResult<GeckoSession>? {
                 val session = actionHandler.onToggleActionPopup(this@GeckoWebExtension, action.convert())
-                return session?.let { GeckoResult.fromValue((session as GeckoEngineSession).geckoSession) }
+                return session?.let { GeckoResult.fromValue(getGeckoSession(session)) }
             }
         }
 
@@ -224,7 +226,7 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         geckoSession.webExtensionController.setActionDelegate(nativeExtension, actionDelegate)
     }
 
@@ -232,7 +234,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasActionHandler].
      */
     override fun hasActionHandler(session: EngineSession): Boolean {
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         return geckoSession.webExtensionController.getActionDelegate(nativeExtension) != null
     }
 
@@ -250,14 +252,14 @@ class GeckoWebExtension(
                 val activeSession: Session = SessionStore.get().activeSession
                 val session: Session = SessionStore.get().createSession(false, activeSession.isPrivateMode)
                 session.setParentSession(activeSession)
-                val geckoEngineSession = GeckoEngineSession(session)
+                val geckoEngineSession = WolvicEngineSession(session)
                 tabHandler.onNewTab(
                         this@GeckoWebExtension,
                         geckoEngineSession,
                         tabDetails.active == true,
                         tabDetails.url ?: ""
                 )
-                return GeckoResult.fromValue(geckoEngineSession.geckoSession)
+                return GeckoResult.fromValue(getGeckoSession(geckoEngineSession))
             }
 
             override fun onOpenOptionsPage(ext: GeckoNativeWebExtension) {
@@ -265,7 +267,7 @@ class GeckoWebExtension(
                 val session: Session = SessionStore.get().createWebExtensionSession(false, activeSession.isPrivateMode);
                 session.setParentSession(activeSession)
                 session.uaMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
-                val geckoEngineSession = GeckoEngineSession(session)
+                val geckoEngineSession = WolvicEngineSession(session)
                 ext.metaData?.optionsPageUrl?.let { optionsPageUrl ->
                     tabHandler.onNewTab(
                             this@GeckoWebExtension,
@@ -322,7 +324,7 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         geckoSession.webExtensionController.setTabDelegate(nativeExtension, tabDelegate)
     }
 
@@ -330,7 +332,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasTabHandler].
      */
     override fun hasTabHandler(session: EngineSession): Boolean {
-        val geckoSession = (session as GeckoEngineSession).geckoSession
+        val geckoSession = getGeckoSession(session)
         return geckoSession.webExtensionController.getTabDelegate(nativeExtension) != null
     }
 
@@ -371,6 +373,10 @@ class GeckoWebExtension(
 
     override fun isAllowedInPrivateBrowsing(): Boolean {
         return isBuiltIn() || nativeExtension.metaData.allowedInPrivateBrowsing
+    }
+
+    private fun getGeckoSession(engineSession: EngineSession): GeckoSession {
+        return ((engineSession as WolvicEngineSession).session.wSession as SessionImpl).geckoSession
     }
 }
 

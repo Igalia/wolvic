@@ -1,5 +1,7 @@
 package com.igalia.wolvic.ui.widgets;
 
+import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -10,9 +12,6 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
@@ -21,7 +20,8 @@ import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.adapter.ComponentsAdapter;
-import com.igalia.wolvic.browser.components.GeckoEngineSession;
+import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.components.WolvicEngineSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -35,6 +35,8 @@ import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -54,8 +56,6 @@ import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
-
-import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
         WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
@@ -833,7 +833,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void setWindowVisible(@NonNull WindowWidget aWindow, boolean aVisible) {
-        if (aVisible && (aWindow.getSession() != null) && (aWindow.getSession().getGeckoSession() == null)) {
+        if (aVisible && (aWindow.getSession() != null) && (aWindow.getSession().getWSession() == null)) {
             setFirstPaint(aWindow, aWindow.getSession());
         }
         aWindow.setVisible(aVisible);
@@ -1120,13 +1120,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void setFirstPaint(@NonNull final WindowWidget aWindow, @NonNull final Session aSession) {
-        if (aSession.getGeckoSession() == null) {
+        if (aSession.getWSession() == null) {
             aWindow.waitForFirstPaint();
         } else {
-            // If the new session has a GeckoSession there won't be a first paint event.
+            // If the new session has a WSession there won't be a first paint event.
             // So trigger the first paint callback in case the window is grayed out
             // waiting for the first paint event.
-            aWindow.onFirstContentfulPaint(aSession.getGeckoSession());
+            aWindow.onFirstContentfulPaint(aSession.getWSession());
         }
     }
 
@@ -1209,9 +1209,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Nullable
-    private WindowWidget getWindowWithSession(GeckoSession aSession) {
+    private WindowWidget getWindowWithSession(WSession aSession) {
         for (WindowWidget window: getCurrentWindows()) {
-            if (window.getSession().getGeckoSession() == aSession) {
+            if (window.getSession().getWSession() == aSession) {
                 return window;
             }
         }
@@ -1310,7 +1310,7 @@ public void selectTab(@NonNull Session aTab) {
             Session currentWindowSession = targetWindow.getSession();
             Session popUpSession = ComponentsAdapter.get().getStore().getState().getExtensions().values().stream()
                     .filter(extensionState -> extensionState.getPopupSession() != null)
-                    .map(extensionState -> ((GeckoEngineSession) extensionState.getPopupSession()).getSession())
+                    .map(extensionState -> ((WolvicEngineSession) extensionState.getPopupSession()).getSession())
                     .findFirst().orElse(null);
             Session parentPopupSession = null;
             if (popUpSession != null) {

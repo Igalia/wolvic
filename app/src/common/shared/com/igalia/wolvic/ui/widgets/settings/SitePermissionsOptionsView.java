@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.databinding.OptionsExceptionsBinding;
 import com.igalia.wolvic.db.SitePermission;
@@ -177,7 +177,7 @@ class SitePermissionsOptionsView extends SettingsView {
         for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
             Session session = window.getSession();
             if (aHost.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
-                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                session.reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
         }
     }

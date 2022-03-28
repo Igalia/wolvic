@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.adapter.ComponentsAdapter;
+import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.HamburgerMenuBinding;
@@ -151,13 +151,13 @@ public class HamburgerMenuWidget extends UIWidget implements
         HamburgerMenuAdapter.MenuItem item = getSwitchModeIndex();
         if (item != null) {
             switch (uaMode) {
-                case GeckoSessionSettings.USER_AGENT_MODE_DESKTOP: {
+                case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
                     item.setIcon(R.drawable.ic_icon_ua_desktop);
                 }
                 break;
 
-                case GeckoSessionSettings.USER_AGENT_MODE_MOBILE:
-                case GeckoSessionSettings.USER_AGENT_MODE_VR: {
+                case WSessionSettings.USER_AGENT_MODE_MOBILE:
+                case WSessionSettings.USER_AGENT_MODE_VR: {
                     item.setIcon(R.drawable.ic_icon_ua_default);
                 }
                 break;
@@ -249,13 +249,13 @@ public class HamburgerMenuWidget extends UIWidget implements
                 .withTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop))
                 .build();
         switch (mCurrentUAMode) {
-            case GeckoSessionSettings.USER_AGENT_MODE_DESKTOP: {
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
                 item.setIcon(R.drawable.ic_icon_ua_desktop);
             }
             break;
 
-            case GeckoSessionSettings.USER_AGENT_MODE_MOBILE:
-            case GeckoSessionSettings.USER_AGENT_MODE_VR: {
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+            case WSessionSettings.USER_AGENT_MODE_VR: {
                 item.setIcon(R.drawable.ic_icon_ua_default);
             }
             break;
@@ -302,9 +302,8 @@ public class HamburgerMenuWidget extends UIWidget implements
     }
 
     public void setSendTabEnabled(boolean value) {
-        // TODO: Reenable when send tabs is supported
-        //mSendTabEnabled = value;
-        //updateItems();
+        mSendTabEnabled = value;
+        updateItems();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.igalia.wolvic.utils;
 
+import static android.os.Build.VERSION_CODES.N;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -23,8 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static android.os.Build.VERSION_CODES.N;
 
 public class LocaleUtils {
 

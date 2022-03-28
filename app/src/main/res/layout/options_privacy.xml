@@ -62,6 +62,23 @@
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autocomplete" />
 
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/searchEngineButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/settings_button_edit"
+                    app:description="@string/settings_privacy_search_engine_title" />
+
+                <TextView
+                    android:id="@+id/searchEngineDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/rhino"
+                    android:textSize="@dimen/text_medium_size"
+                    app:text="Description" />
+
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/drmContentPlaybackSwitch"
                     android:layout_width="match_parent"

@@ -12,6 +12,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.igalia.wolvic.R
+import com.igalia.wolvic.VRBrowserApplication
+import com.igalia.wolvic.telemetry.TelemetryService
+import com.igalia.wolvic.utils.BitmapCache
+import com.igalia.wolvic.utils.SystemUtils
+import com.igalia.wolvic.utils.ViewUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
@@ -23,12 +29,6 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
-import com.igalia.wolvic.R
-import com.igalia.wolvic.VRBrowserApplication
-import com.igalia.wolvic.telemetry.TelemetryService
-import com.igalia.wolvic.utils.BitmapCache
-import com.igalia.wolvic.utils.SystemUtils
-import com.igalia.wolvic.utils.ViewUtils
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread

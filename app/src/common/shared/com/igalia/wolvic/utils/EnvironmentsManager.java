@@ -8,10 +8,9 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadJob;
 import com.igalia.wolvic.downloads.DownloadsManager;
@@ -135,7 +134,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
                     mApplicationDelegate.requestPermission(
                                 job.getUri(),
                                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                new GeckoSession.PermissionDelegate.Callback() {
+                                new WSession.PermissionDelegate.Callback() {
                                     @Override
                                     public void grant() {
                                         mDownloadManager.startDownload(job);

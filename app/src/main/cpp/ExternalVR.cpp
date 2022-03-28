@@ -124,7 +124,7 @@ struct ExternalVR::State {
   mozilla::gfx::VRSystemState system = {};
   mozilla::gfx::VRBrowserState browser = {};
   // device::CapabilityFlags deviceCapabilities = 0;
-  vrb::Vector eyeOffsets[device::EyeCount];
+  vrb::Matrix eyeTransforms[device::EyeCount];
   uint64_t lastFrameId = 0;
   bool firstPresentingFrame = false;
   bool compositorEnabled = true;
@@ -325,13 +325,16 @@ ExternalVR::SetFieldOfView(const device::Eye aEye, const double aLeftDegrees,
 
 void
 ExternalVR::SetEyeOffset(const device::Eye aEye, const float aX, const float aY, const float aZ) {
+  SetEyeTransform(aEye, vrb::Matrix::Translation(vrb::Vector(aX, aY, aZ)));
+}
+
+void
+ExternalVR::SetEyeTransform(const device::Eye aEye, const vrb::Matrix& aTransform) {
   mozilla::gfx::VRDisplayState::Eye which = (aEye == device::Eye::Right
                                              ? mozilla::gfx::VRDisplayState::Eye_Right
                                              : mozilla::gfx::VRDisplayState::Eye_Left);
-  m.system.displayState.eyeTranslation[which].x = aX;
-  m.system.displayState.eyeTranslation[which].y = aY;
-  m.system.displayState.eyeTranslation[which].z = aZ;
-  m.eyeOffsets[device::EyeIndex(aEye)].Set(aX, aY, aZ);
+  memcpy(&(m.system.displayState.eyeTransform[which]), aTransform.Data(), sizeof(m.system.displayState.eyeTransform[which]));
+  m.eyeTransforms[device::EyeIndex(aEye)] = aTransform;
 }
 
 void
@@ -466,8 +469,8 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
   m.system.sensorState.inputFrameID++;
   m.system.displayState.lastSubmittedFrameId = m.lastFrameId;
 
-  vrb::Matrix leftView = vrb::Matrix::Position(-m.eyeOffsets[device::EyeIndex(device::Eye::Left)]).PostMultiply(inverseHeadTransform);
-  vrb::Matrix rightView = vrb::Matrix::Position(-m.eyeOffsets[device::EyeIndex(device::Eye::Right)]).PostMultiply(inverseHeadTransform);
+  vrb::Matrix leftView = m.eyeTransforms[device::EyeIndex(device::Eye::Left)].Inverse().PostMultiply(inverseHeadTransform);
+  vrb::Matrix rightView = m.eyeTransforms[device::EyeIndex(device::Eye::Right)].Inverse().PostMultiply(inverseHeadTransform);
   memcpy(&(m.system.sensorState.leftViewMatrix), leftView.Data(),
          sizeof(m.system.sensorState.leftViewMatrix));
   memcpy(&(m.system.sensorState.rightViewMatrix), rightView.Data(),

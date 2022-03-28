@@ -2,8 +2,8 @@ package com.igalia.wolvic.ui.widgets;
 
 import com.igalia.wolvic.AppExecutors;
 import com.igalia.wolvic.browser.Accounts;
-import com.igalia.wolvic.browser.LoginStorage;
 import com.igalia.wolvic.browser.Addons;
+import com.igalia.wolvic.browser.LoginStorage;
 import com.igalia.wolvic.browser.Places;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.engine.SessionStore;

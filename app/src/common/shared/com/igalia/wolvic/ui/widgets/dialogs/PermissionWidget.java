@@ -10,14 +10,14 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 
-import org.mozilla.geckoview.GeckoSession;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.api.WSession;
 
 import java.net.URI;
 
 public class PermissionWidget extends PromptDialogWidget {
 
-    private GeckoSession.PermissionDelegate.Callback mPermissionCallback;
+    private WSession.PermissionDelegate.Callback mPermissionCallback;
     private String mUri;
     private PermissionType mPermissionType;
 
@@ -61,7 +61,7 @@ public class PermissionWidget extends PromptDialogWidget {
         }
     }
 
-    public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {
+    public void showPrompt(String aUri, PermissionType aType, WSession.PermissionDelegate.Callback aCallback) {
         int titleId;
         int messageId;
         int iconId;

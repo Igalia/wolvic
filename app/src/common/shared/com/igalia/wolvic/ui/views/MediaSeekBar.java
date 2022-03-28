@@ -10,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.igalia.wolvic.R;
-
 import androidx.annotation.Nullable;
+
+import com.igalia.wolvic.R;
 
 public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;

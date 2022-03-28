@@ -14,28 +14,13 @@ import com.huawei.hms.location.LocationCallback;
 import com.huawei.hms.location.LocationRequest;
 import com.huawei.hms.location.LocationResult;
 import com.huawei.hms.location.LocationServices;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 
-import org.mozilla.gecko.GeckoAppShell;
-import org.mozilla.geckoview.GeckoSession;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-public class HVRLocationManager implements GeckoSession.NavigationDelegate {
+public class HVRLocationManager implements WSession.NavigationDelegate {
 
     public HVRLocationManager(Context ctx) {
         mContext = ctx;
-        initReflection();
-    }
-
-    private void initReflection() {
-        try {
-            mMethod = GeckoAppShell.class.getDeclaredMethod("onLocationChanged", double.class, double.class, double.class, float.class, float.class, float.class, float.class, long.class);
-            mMethod.setAccessible(true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public void start(Session session) {
@@ -51,21 +36,10 @@ public class HVRLocationManager implements GeckoSession.NavigationDelegate {
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult location) {
-                if (location != null && mMethod != null) {
+                if (location != null && mSession.getWSession() != null) {
                     Location loc = location.getLastLocation();
-                    double latitude = loc.getLatitude();
-                    double longitude = loc.getLongitude();
-                    double altitude = loc.getAltitude();
-                    float accuracy = loc.getAccuracy();
-                    float altitudeAccuracy = loc.getAccuracy();
-                    float heading = loc.getBearing();
-                    float speed = loc.getSpeed();
-                    long time = loc.getTime();
-                    try {
-                        mMethod.invoke(null, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed, time);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    mSession.getWSession().dispatchLocation(loc.getLatitude(), loc.getLongitude(), loc.getAltitude(),
+                            loc.getAccuracy(), loc.getAccuracy(), loc.getBearing(), loc.getSpeed(), loc.getTime());
                 }
             }
         };
@@ -123,10 +97,9 @@ public class HVRLocationManager implements GeckoSession.NavigationDelegate {
     LocationCallback mLocationCallback;
     LocationRequest mLocationRequest;
     private Context mContext;
-    private Method mMethod;
 
     @Override
-    public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
+    public void onLocationChange(@NonNull WSession session, @Nullable String url) {
         stop();
     }
 }

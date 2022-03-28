@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.igalia.wolvic.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -37,7 +38,6 @@ import mozilla.components.feature.addons.ui.translatedName
 import mozilla.components.feature.addons.ui.translatedSummary
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
-import com.igalia.wolvic.R
 import java.io.IOException
 import java.text.NumberFormat
 import java.util.*

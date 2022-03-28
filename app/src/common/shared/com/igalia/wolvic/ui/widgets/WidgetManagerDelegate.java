@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
 
 public interface WidgetManagerDelegate {
@@ -78,7 +78,6 @@ public interface WidgetManagerDelegate {
     void popWorldBrightness(Object aKey);
     void setControllersVisible(boolean visible);
     void setWindowSize(float targetWidth, float targetHeight);
-    void setIsServoSession(boolean aIsServo);
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();
@@ -99,7 +98,7 @@ public interface WidgetManagerDelegate {
     boolean isWebXRIntersitialHidden();
     boolean isWebXRPresenting();
     boolean isPermissionGranted(@NonNull String permission);
-    void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
+    void requestPermission(String uri, @NonNull String permission, WSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();
     void openNewWindow(String uri);
     void openNewTab(@NonNull String uri);

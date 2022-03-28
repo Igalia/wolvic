@@ -5,6 +5,8 @@
 
 package com.igalia.wolvic.browser.adapter
 
+import com.igalia.wolvic.browser.components.WolvicEngineSession
+import com.igalia.wolvic.browser.engine.Session
 import kotlinx.coroutines.flow.collect
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
@@ -14,8 +16,6 @@ import mozilla.components.browser.state.state.*
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
-import com.igalia.wolvic.browser.components.GeckoEngineSession
-import com.igalia.wolvic.browser.engine.Session
 
 class ComponentsAdapter private constructor(
         val store: BrowserStore = BrowserStore()
@@ -62,7 +62,7 @@ class ComponentsAdapter private constructor(
     fun link(session: Session) {
         store.dispatch(EngineAction.LinkEngineSessionAction(
                 session.id,
-                GeckoEngineSession(session)
+                WolvicEngineSession(session)
         ))
     }
 
@@ -71,7 +71,7 @@ class ComponentsAdapter private constructor(
         store.state.extensions.map { it.value }.forEach {
             it.popupSession?.let {
                 engineSession ->
-                if ((engineSession as GeckoEngineSession).session == session) {
+                if ((engineSession as WolvicEngineSession).session == session) {
                     store.dispatch(
                             WebExtensionAction.UpdatePopupSessionAction(it.id, popupSession = null)
                     )
@@ -118,7 +118,7 @@ private fun Session.toTabSessionState(): TabSessionState {
             extensionState = emptyMap(),
             readerState = ReaderState(),
             engineState = EngineState(
-                    GeckoEngineSession(this),
+                    WolvicEngineSession(this),
                     null
             )
     )

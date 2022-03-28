@@ -10,12 +10,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.CrashReporter;
-import org.mozilla.geckoview.GeckoResult;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
+import com.igalia.wolvic.browser.api.WResult;
+import com.igalia.wolvic.browser.api.WRuntime;
+import com.igalia.wolvic.browser.engine.EngineProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,13 +65,16 @@ public class SystemUtils {
     private static void sendCrashFiles(@NonNull Context context, @NonNull final String aDumpFile, @NonNull final String aExtraFile) {
         ((VRBrowserApplication)context.getApplicationContext()).getExecutors().backgroundThread().post(() -> {
             try {
-                GeckoResult<String> result = CrashReporter.sendCrashReport(context, new File(aDumpFile), new File(aExtraFile), context.getString(R.string.crash_app_name));
+                WRuntime runtime = EngineProvider.INSTANCE.getOrCreateRuntime(context);
+                WResult<String> result = runtime.sendCrashReport(context, new File(aDumpFile), new File(aExtraFile), context.getString(R.string.crash_app_name));
 
-                result.accept(crashID -> {
+                result.then(crashID -> {
                     Log.e(LOGTAG, "Submitted crash report id: " + crashID);
                     Log.e(LOGTAG, "Report available at: " + CRASH_STATS_URL + crashID);
-                }, ex -> {
+                    return null;
+                }).exceptionally(ex -> {
                     Log.e(LOGTAG, "Failed to submit crash report: " + (ex != null ? ex.getMessage() : "Exception is NULL"));
+                    return null;
                 });
             } catch (IOException | URISyntaxException e) {
                 Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
