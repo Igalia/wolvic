@@ -1,7 +1,12 @@
 {
   "1": {
-        "whatsNewUrl": "https://wolvic.com",
-        "environments": [
-        ]
-    }
+    "whatsNewUrl": "https://wolvic.com",
+    "environments": [
+    ]
+  },
+  "0.9.5": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_0.9.5",
+    "environments": [
+    ]
+  }
 }
