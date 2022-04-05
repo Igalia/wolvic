@@ -188,10 +188,6 @@ std::optional<XrVector2f> OpenXRInputSource::GetAxis(OpenXRAxisType axisType) co
         return std::nullopt;
 
 #if HVR
-    // axes must be between -1 and 1
-    axis.x = axis.x * 2 - 1;
-    axis.y = -(axis.y * 2 - 1);
-
     // Workaround for HVR controller precision issues
     const float kPrecision = 0.16;
     if (abs(axis.x) < kPrecision && abs(axis.y) < kPrecision) {
@@ -530,7 +526,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         }
       } else if (axis.type == OpenXRAxisType::Thumbstick) {
         axesContainer[device::kImmersiveAxisThumbstickX] = state->x;
+#ifdef HVR_6DOF
+        axesContainer[device::kImmersiveAxisThumbstickY] = state->y;
+#else
         axesContainer[device::kImmersiveAxisThumbstickY] = -state->y;
+#endif
         delegate.SetScrolledDelta(mIndex, state->x, state->y);
       } else {
         axesContainer.push_back(state->x);
