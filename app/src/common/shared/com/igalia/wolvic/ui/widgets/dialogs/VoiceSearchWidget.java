@@ -331,11 +331,11 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         postDelayed(() -> {
             switch (errorType) {
-                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR);
-                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK);
-                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER);
-                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS);
-                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED);
+                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR); break;
+                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK); break;
+                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER); break;
+                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS); break;
+                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED); break;
                 default: break;
             }
             mSearchingAnimation.stop();
