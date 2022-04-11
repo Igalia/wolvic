@@ -5,14 +5,9 @@
 
 package com.igalia.wolvic;
 
-import com.huawei.hms.mlsdk.common.MLApplication;
-import com.huawei.hvr.LibUpdateClient;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
@@ -23,18 +18,16 @@ import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.huawei.hms.mlsdk.common.MLApplication;
+import com.huawei.hvr.LibUpdateClient;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
-import com.igalia.wolvic.generated.callback.OnClickListener;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
-
-import org.mozilla.geckoview.GeckoSession;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
@@ -74,30 +67,33 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            setContentView(R.layout.hvr_connect_glasses);
-            manager.registerDisplayListener(new DisplayManager.DisplayListener() {
-                @Override
-                public void onDisplayAdded(int displayId) {
-                    initializeVR();
-                }
-
-                @Override
-                public void onDisplayRemoved(int displayId) {
-                }
-
-                @Override
-                public void onDisplayChanged(int displayId) {
-                }
-            }, null);
-
-            if (!SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
-                showPrivacyDialog();
-            }
-
+            showPhoneUI();
         } else {
             initializeVR();
         }
+    }
+
+    private void showPhoneUI() {
+        DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        manager.registerDisplayListener(new DisplayManager.DisplayListener() {
+            @Override
+            public void onDisplayAdded(int displayId) {
+                // create the activity again, so the theme is set up properly
+                recreate();
+            }
+
+            @Override
+            public void onDisplayRemoved(int displayId) {
+            }
+
+            @Override
+            public void onDisplayChanged(int displayId) {
+            }
+        }, null);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setTheme(R.style.Theme_WolvicPhone);
+        setContentView(R.layout.activity_main);
     }
 
     private void showPrivacyDialog() {
@@ -139,6 +135,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             mActiveDialog.dismiss();
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setTheme(R.style.FxR_Dark);
         mView = new SurfaceView(this);
         setContentView(mView);
 
