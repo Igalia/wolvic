@@ -2151,6 +2151,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_headset">头戴设备：%1$s</string>
 
     <!-- This strings are displayed in the privacy dialog on first launch. -->
+    <string name="privacy_policy">隐私</string>
     <string name="privacy_dialog_title">隐私</string>
     <string name="privacy_dialog_message">我们尊重您的隐私。在运行浏览器前，请先同意我们的服务条款与隐私政策。感谢使用Wolvic！</string>
     <string name="privacy_dialog_agree">同意</string>
