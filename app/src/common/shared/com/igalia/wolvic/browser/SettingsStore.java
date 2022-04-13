@@ -892,6 +892,16 @@ public class SettingsStore {
         return mPrefs.getString(mContext.getString(R.string.settings_key_tab_after_restore), null);
     }
 
+    public void setTermsServiceAccepted(boolean isAccepted) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_terms_service_accepted), isAccepted);
+        editor.commit();
+    }
+
+    public boolean isTermsServiceAccepted() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_terms_service_accepted), false);
+    }
+
     public void setPrivacyPolicyAccepted(boolean isAccepted) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), isAccepted);
