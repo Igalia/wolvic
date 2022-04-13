@@ -39,10 +39,18 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
         if (getContext() == null || getView() == null)
             return;
 
-        if (!SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted()) {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, new PrivacyPolicyFragment()).commit();
+        if (!SettingsStore.getInstance(getContext()).isTermsServiceAccepted()) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_placeholder, new TermsServiceFragment())
+                    .commit();
+        } else if (!SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted()) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_placeholder, new PrivacyPolicyFragment())
+                    .commit();
         } else {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, new LandingPageFragment()).commit();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_placeholder, new LandingPageFragment())
+                    .commit();
         }
     }
 
@@ -56,6 +64,8 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getContext().getString(R.string.settings_key_privacy_policy_accepted))) {
+            updateUI();
+        } else if (key.equals(getContext().getString(R.string.settings_key_terms_service_accepted))) {
             updateUI();
         }
     }
