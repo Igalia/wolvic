@@ -882,6 +882,9 @@
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="cancel_button">Cancel</string>
 
+    <!-- This string labels a button that is used to dismiss a message or notification. -->
+    <string name="dismiss_button">Dismiss</string>
+
     <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="ok_button">OK</string>
@@ -2239,7 +2242,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         This Privacy Policy is subject to Spanish law. The Privacy Policy language of this application is Spanish. For this reason, any possible divergence between the original version in Spanish and its translation into another language will be considered as predominant in the Spanish version that can be found here: https://wolvic.com/es/legal/privacy/ .
     </string>
 
+    <!-- These strings are used in the phone UI. -->
+    <string name="landing_page_message">Connect your HUAWEI VR Glass to use this app.</string>
+    <string name="hvr_learn_more_url">https://consumer.huawei.com/cn/wearables/vr-glass/</string>
     <string name="landing_page_url" translatable="false">https://wolvic.com</string>
-
 
 </resources>
