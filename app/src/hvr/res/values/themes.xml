@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.WolvicPhone" parent="Theme.MaterialComponents">
+    <style name="Theme.WolvicPhone" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/midnight</item>
         <item name="colorPrimaryDark">@color/midnight</item>
