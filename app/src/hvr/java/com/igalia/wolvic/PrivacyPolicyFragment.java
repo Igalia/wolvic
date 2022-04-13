@@ -22,7 +22,7 @@ public class PrivacyPolicyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.button_dismiss).setOnClickListener(
+        view.findViewById(R.id.button_decline).setOnClickListener(
                 button -> getActivity().finish());
 
         view.findViewById(R.id.button_accept).setOnClickListener(
