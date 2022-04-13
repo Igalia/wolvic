@@ -44,8 +44,11 @@ public class LandingPageFragment extends Fragment {
             toolbar.showOverflowMenu();
             toolbar.inflateMenu(R.menu.app_menu);
             toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.privacy_policy) {
-                    // TODO show privacy policy
+                if (item.getItemId() == R.id.terms_service) {
+                    // TODO
+                    return true;
+                } else if (item.getItemId() == R.id.privacy_policy) {
+                    // TODO
                     return true;
                 }
                 return false;
