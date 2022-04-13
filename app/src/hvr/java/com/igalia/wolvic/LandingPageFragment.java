@@ -2,6 +2,8 @@ package com.igalia.wolvic;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,14 @@ public class LandingPageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ((WebView) view.findViewById(R.id.web_view)).loadUrl(getString(R.string.landing_page_url));
+
+        view.findViewById(R.id.button_learn_more).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.hvr_learn_more_url)));
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.button_dismiss).setOnClickListener(v ->
+                getView().findViewById(R.id.glass_banner).setVisibility(View.GONE));
     }
 
     @Override
