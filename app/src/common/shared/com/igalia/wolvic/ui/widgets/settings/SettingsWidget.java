@@ -191,7 +191,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             e.printStackTrace();
         }
 
-        mBinding.buildText.setText(StringUtils.versionCodeToDate(getContext(), BuildConfig.VERSION_CODE));
+        mBinding.buildText.setText("versionCode " + BuildConfig.VERSION_CODE);
 
         final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
         mBinding.settingsMasthead.setOnTouchListener((view, motionEvent) -> {
