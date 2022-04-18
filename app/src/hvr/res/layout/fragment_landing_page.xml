@@ -35,7 +35,7 @@
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/icon"
             android:paddingBottom="20dp"
-            android:text="@string/landing_page_message"
+            android:text="@string/hvr_connect_glass_message"
             android:textColor="@color/black" />
 
         <com.google.android.material.button.MaterialButton
