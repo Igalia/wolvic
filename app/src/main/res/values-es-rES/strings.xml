@@ -2210,7 +2210,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_policy_title">Política de privacidad general</string>
     <string name="privacy_policy_subtitle_1">Información general</string>
     <string name="privacy_policy_section_1">
-        La presente aplicación ha sido desarrolla por Igalia, S. L. (en adelante IGALIA), con domicilio social sito en Bugallal Marchesi, 22 - 1º, 15008 de A Coruña, Galicia (Spain), cuyos datos de contacto son los siguiente:
+        La presente aplicación ha sido desarrollada por Igalia, S. L. (en adelante IGALIA), con domicilio social sito en Bugallal Marchesi, 22 - 1º, 15008 de A Coruña, Galicia (Spain), cuyos datos de contacto son los siguiente:
         \n\n\t\u2022 Teléfono: +34 981 913991;
         \n\t\u2022 Email: info@igalia.com
         \n\n El contenido y elementos que integran la aplicación han sido implementados y/o desarrollados por IGALIA bajo licencias de código abierto, estando protegidos, sin limitaciones, por las leyes de propiedad intelectual e industrial del Reino de España y por los Tratados y Convenios internacionales que resultasen de aplicación.
