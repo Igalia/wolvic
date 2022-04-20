@@ -512,6 +512,7 @@ dependencies {
     // Android Components
     implementation deps.android_components.browser_errorpages
     implementation deps.android_components.browser_search
+    // implementation deps.android_components.feature_search
     implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains

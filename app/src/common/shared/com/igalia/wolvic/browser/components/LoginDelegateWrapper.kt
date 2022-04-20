@@ -14,7 +14,7 @@ class LoginDelegateWrapper {
          */
         @JvmStatic
         fun WAutocomplete.LoginEntry.toLogin() = Login(
-                guid = guid,
+                guid = guid.orEmpty(),
                 origin = origin.orEmpty(),
                 formActionOrigin = formActionOrigin,
                 httpRealm = httpRealm,

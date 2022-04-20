@@ -1,7 +1,6 @@
 package com.igalia.wolvic.utils;
 
 import android.content.Context;
-import android.util.Base64;
 
 import androidx.annotation.Nullable;
 
@@ -12,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import mozilla.components.browser.errorpages.ErrorPages;
 import mozilla.components.browser.errorpages.ErrorType;
 
 public class InternalPages {
@@ -118,6 +116,7 @@ public class InternalPages {
     public static String createErrorPageDataURI(Context context,
                                                 @Nullable String uri,
                                                 int errorType) {
+        /* TODO adapt to the new API
         String html = ErrorPages.INSTANCE.createErrorPage(
                 context,
                 fromSessionErrorToErrorType(errorType),
@@ -141,6 +140,8 @@ public class InternalPages {
         html = html.replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none");
 
         return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
+        */
+        return "Error uri=" + uri + " errorType=" + errorType;
     }
 
     public static byte[] createAboutPage(Context context,

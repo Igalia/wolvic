@@ -346,6 +346,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private AccountObserver mAccountObserver = new AccountObserver() {
 
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
 
         }

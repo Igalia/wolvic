@@ -81,8 +81,7 @@ public class NavigationURLBar extends FrameLayout {
             mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
                     result.getText(),
                     result.getSource(),
-                    result.getTotalItems(),
-                    null));
+                    result.getTotalItems()));
         } else {
             mBinding.urlEditText.noAutocompleteResult();
         }

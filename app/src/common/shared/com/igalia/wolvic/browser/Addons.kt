@@ -27,10 +27,10 @@ import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
-import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.webextensions.WebExtensionSupport
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -64,7 +64,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
 
     @Suppress("MagicNumber")
     private val addonUpdater by lazy {
-        DefaultAddonUpdater(context, AddonUpdater.Frequency(12, TimeUnit.HOURS))
+        DefaultAddonUpdater(context, Frequency(12, TimeUnit.HOURS))
     }
 
     private val addonManager by lazy {

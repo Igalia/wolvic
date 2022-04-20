@@ -312,7 +312,7 @@ class Accounts constructor(val context: Context) {
 
     fun updateProfileAsync(): CompletableFuture<Profile?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.fetchProfile()
+            services.accountManager.accountProfile()
         }
     }
 

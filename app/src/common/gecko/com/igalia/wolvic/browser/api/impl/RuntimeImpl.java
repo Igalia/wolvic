@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
-import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
@@ -156,7 +155,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public CrashReportIntent getCrashReportIntent() {
-        return new CrashReportIntent(GeckoRuntime.ACTION_CRASHED, GeckoRuntime.EXTRA_MINIDUMP_PATH, GeckoRuntime.EXTRA_EXTRAS_PATH, GeckoRuntime.EXTRA_CRASH_FATAL);
+        return new CrashReportIntent(GeckoRuntime.ACTION_CRASHED, GeckoRuntime.EXTRA_MINIDUMP_PATH, GeckoRuntime.EXTRA_EXTRAS_PATH, "crashFatal");
     }
 
     static int toGeckoColorScheme(@WRuntimeSettings.ColorScheme int flags) {

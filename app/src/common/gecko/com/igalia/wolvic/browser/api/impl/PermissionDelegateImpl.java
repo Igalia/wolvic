@@ -153,7 +153,7 @@ class PermissionDelegateImpl implements GeckoSession.PermissionDelegate {
         }
 
 
-        return new MediaSourceImpl(geckoSource.id, geckoSource.rawId, geckoSource.name, source, type, geckoSource);
+        return new MediaSourceImpl(geckoSource.id, geckoSource.id, geckoSource.name, source, type, geckoSource);
     }
 
     private static @Nullable MediaSource toGeckoMediaSource(@Nullable WSession.PermissionDelegate.MediaSource source) {

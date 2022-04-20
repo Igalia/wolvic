@@ -32,7 +32,9 @@ public class Bookmark {
         mTitle = node.getTitle();
         mURL = node.getUrl();
         mGuid = node.getGuid();
-        mPosition = node.getPosition() != null ? node.getPosition() : 0;
+        // TODO the position field should be reachable, but for some reason it is not
+        // mPosition = node.getPosition() != null ? node.getPosition() : 0;
+        mPosition = 0;
         mHasChildren = node.getChildren() != null;
 
         switch (node.getType()) {

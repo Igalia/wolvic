@@ -127,7 +127,6 @@ public class SessionStore implements
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
         WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime, context.getString(R.string.app_name));
         mWebChannelsFeature = new FxaWebChannelFeature(
-                mContext,
                 null,
                 mWebExtensionRuntime,
                 ComponentsAdapter.get().getStore(),

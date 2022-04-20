@@ -58,7 +58,7 @@ class Places(var context: Context) {
 
     var bookmarks = PlacesBookmarksStorage(context)
     var history = PlacesHistoryStorage(context)
-    var logins = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
+    var logins = lazy { SyncableLoginsStorage(context, lazy { getSecureAbove22Preferences() }) }
 
     fun clear() {
         val files = context.filesDir.listFiles { _, name ->

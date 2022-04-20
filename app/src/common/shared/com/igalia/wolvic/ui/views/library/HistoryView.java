@@ -330,6 +330,11 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }
@@ -402,7 +407,9 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                         section,
                         section,
                         rangeStart,
-                        VisitType.NOT_A_VISIT
+                        VisitType.NOT_A_VISIT,
+                        null,
+                        true // TODO isRemote
                 ));
                 break;
             }

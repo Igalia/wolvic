@@ -13,7 +13,7 @@ class GeckoAutocompleteDelegateWrapper(private val storageDelegate: GeckoLoginSt
     Autocomplete.StorageDelegate {
 
     override fun onLoginSave(login: Autocomplete.LoginEntry) {
-        storageDelegate.onLoginSave(login.toLogin())
+        storageDelegate.onLoginSave(login.toLogin().toEntry())
     }
 
     override fun onLoginFetch(domain: String): GeckoResult<Array<Autocomplete.LoginEntry>>? {
@@ -33,7 +33,7 @@ class GeckoAutocompleteDelegateWrapper(private val storageDelegate: GeckoLoginSt
     }
 
     override fun onLoginUsed(login: Autocomplete.LoginEntry, useFields: Int) {
-        storageDelegate.onLoginSave(login.toLogin())
+        storageDelegate.onLoginSave(login.toLogin().toEntry())
     }
 
     companion object {
@@ -42,7 +42,7 @@ class GeckoAutocompleteDelegateWrapper(private val storageDelegate: GeckoLoginSt
          */
         @JvmStatic
         fun Autocomplete.LoginEntry.toLogin() = Login(
-            guid = guid,
+            guid = guid.orEmpty(),
             origin = origin.orEmpty(),
             formActionOrigin = formActionOrigin,
             httpRealm = httpRealm,

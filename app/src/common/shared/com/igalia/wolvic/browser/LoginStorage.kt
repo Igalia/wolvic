@@ -41,7 +41,7 @@ class LoginStorage(
     }
 
     fun update(login: Login) = GlobalScope.future {
-        storage.value.update(login);
+        storage.value.update(login.guid, login.toEntry());
     }
 
 }

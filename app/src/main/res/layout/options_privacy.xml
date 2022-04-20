@@ -76,8 +76,7 @@
                     android:layout_marginStart="10dp"
                     android:gravity="center_vertical"
                     android:textColor="@color/rhino"
-                    android:textSize="@dimen/text_medium_size"
-                    app:text="Description" />
+                    android:textSize="@dimen/text_medium_size" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/drmContentPlaybackSwitch"

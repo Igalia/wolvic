@@ -122,7 +122,8 @@ class BookmarksStore constructor(val context: Context) {
                         title = titles[DESKTOP_ROOT],
                         children = emptyList(),
                         position = null,
-                        url = null
+                        url = null,
+                        dateAdded = System.currentTimeMillis()
                     )
                 )
                 // Append all of the bookmarks in the mobile root.

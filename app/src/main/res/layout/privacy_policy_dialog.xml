@@ -43,8 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/acceptButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollbar"
-            app:text="Cancel" />
+            app:layout_constraintTop_toBottomOf="@+id/scrollbar" />
 
         <Button
             android:id="@+id/acceptButton"
@@ -59,8 +58,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/declineButton"
-            app:layout_constraintTop_toTopOf="@id/declineButton"
-            app:text="Accept" />
+            app:layout_constraintTop_toTopOf="@id/declineButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

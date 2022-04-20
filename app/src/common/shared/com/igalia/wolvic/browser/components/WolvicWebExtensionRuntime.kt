@@ -60,7 +60,7 @@ class WolvicWebExtensionRuntime(
         val onInstallSuccess: ((WebExtension) -> Unit) = {
             webExtensionDelegate?.onInstalled(it)
             it.registerActionHandler(webExtensionActionHandler)
-            it.registerTabHandler(webExtensionTabHandler)
+            it.registerTabHandler(webExtensionTabHandler, null)
             onSuccess(it)
         }
 
@@ -117,7 +117,7 @@ class WolvicWebExtensionRuntime(
         runtime.webExtensionController.update(extension).then({ updatedExtension ->
             if (updatedExtension != null) {
                 updatedExtension.registerActionHandler(webExtensionActionHandler)
-                updatedExtension.registerTabHandler(webExtensionTabHandler)
+                updatedExtension.registerTabHandler(webExtensionTabHandler, null)
             }
             onSuccess(updatedExtension)
             WResult.create<Void>()
@@ -184,7 +184,7 @@ class WolvicWebExtensionRuntime(
 
             extensions.forEach { extension ->
                 extension.registerActionHandler(webExtensionActionHandler)
-                extension.registerTabHandler(webExtensionTabHandler)
+                extension.registerTabHandler(webExtensionTabHandler, null)
             }
 
             onSuccess(extensions)

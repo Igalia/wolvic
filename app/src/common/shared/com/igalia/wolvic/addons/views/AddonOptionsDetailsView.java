@@ -98,7 +98,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
     private void bindTranslatedDescription(@NonNull TextView view, Addon addon) {
         String detailsText = view.getContext().getString(R.string.addons_no_description);
         if (addon != null) {
-            detailsText = ExtensionsKt.getTranslatedDescription(addon);
+            detailsText = ExtensionsKt.translateDescription(addon, view.getContext());
         }
         String parsedText = detailsText.replace("\n", "<br/>");
         Spanned text = HtmlCompat.fromHtml(parsedText, HtmlCompat.FROM_HTML_MODE_COMPACT);
