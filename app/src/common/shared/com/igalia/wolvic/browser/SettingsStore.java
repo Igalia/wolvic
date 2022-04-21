@@ -107,7 +107,7 @@ public class SettingsStore {
     public final static long FXA_LAST_SYNC_NEVER = 0;
     public final static boolean RESTORE_TABS_ENABLED = true;
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
-    public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
+    public final static int DOWNLOADS_STORAGE_DEFAULT = EXTERNAL;
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
     public final static boolean AUTOCOMPLETE_ENABLED = true;
     public final static boolean WEBGL_OUT_OF_PROCESS = false;

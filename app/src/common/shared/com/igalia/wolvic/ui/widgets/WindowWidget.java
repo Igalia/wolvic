@@ -1572,30 +1572,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mDownloadsManager.startDownload(downloadJob);
             }
         };
-        @SettingsStore.Storage int storage = SettingsStore.getInstance(getContext()).getDownloadsStorage();
-        if (storage == SettingsStore.EXTERNAL) {
-            mWidgetManager.requestPermission(
-                    downloadJob.getUri(),
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    new WSession.PermissionDelegate.Callback() {
-                        @Override
-                        public void grant() {
-                            download.run();
-                        }
 
-                        @Override
-                        public void reject() {
-                            mWidgetManager.getFocusedWindow().showAlert(
-                                    getContext().getString(R.string.download_error_title_v1),
-                                    getContext().getString(R.string.download_error_external_storage),
-                                    null
-                            );
-                        }
-                    });
-
-        } else {
-            download.run();
-        }
+        download.run();
     }
 
     private boolean isContextMenuVisible() {
@@ -1844,25 +1822,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         } else {
             hideLibraryPanel();
-        }
-
-        if ("file".equalsIgnoreCase(uri.getScheme()) &&
-                !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            mWidgetManager.requestPermission(
-                    aRequest.uri,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    new WSession.PermissionDelegate.Callback() {
-                        @Override
-                        public void grant() {
-                            result.complete(WAllowOrDeny.ALLOW);
-                        }
-
-                        @Override
-                        public void reject() {
-                            result.complete(WAllowOrDeny.DENY);
-                        }
-                    });
-            return result;
         }
 
         result.complete(WAllowOrDeny.ALLOW);
