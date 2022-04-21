@@ -38,8 +38,6 @@ class ControllerOptionsView extends SettingsView {
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_controller, this, true);
 
-        mScrollbar = mBinding.scrollbar;
-
         // Header
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
