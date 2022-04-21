@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:layout_weight="1"
-            android:text="@string/decline_button" />
+            android:text="@string/privacy_dialog_disagree" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_accept"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:layout_weight="1"
-            android:text="@string/accept_button" />
+            android:text="@string/privacy_dialog_agree" />
 
     </LinearLayout>
 
