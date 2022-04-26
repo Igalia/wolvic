@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/message"
             android:layout_alignEnd="@+id/message"
-            android:text="@string/dismiss_button" />
+            android:text="@string/close_button" />
 
     </RelativeLayout>
 

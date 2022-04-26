@@ -889,8 +889,8 @@
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Back</string>
 
-    <!-- This string labels a button that is used to dismiss a message or notification. -->
-    <string name="dismiss_button">Dismiss</string>
+    <!-- This string labels a button that is used to close a message or notification. -->
+    <string name="close_button">Close</string>
 
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">We had an issue and crashed</string>

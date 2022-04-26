@@ -874,6 +874,9 @@
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Atrás</string>
 
+    <!-- This string labels a button that is used to close a message or notification. -->
+    <string name="close_button">Cerrar</string>
+
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">Tuvimos un problema y se bloqueó el sistema</string>
 

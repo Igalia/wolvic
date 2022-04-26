@@ -872,6 +872,9 @@
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">后退</string>
 
+    <!-- This string labels a button that is used to close a message or notification. -->
+    <string name="close_button">关闭</string>
+
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">我们遇到了问题并且崩溃了</string>
 
