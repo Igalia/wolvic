@@ -13,24 +13,32 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.databinding.PrivacyPolicyDialogBinding;
+import com.igalia.wolvic.databinding.LegalDocumentDialogBinding;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 
 /**
- * A dialog that displays the Privacy Policy along with two buttons to accept or reject it.
+ * A dialog that displays a legal document like the Terms of Service or the Privacy Policy,
+ * along with two buttons to accept or reject it.
  */
-public class PrivacyPolicyDialogWidget extends UIDialog {
+public class LegalDocumentDialogWidget extends UIDialog {
+
+    public enum LegalDocument {
+        TERMS_OF_SERVICE,
+        PRIVACY_POLICY
+    }
 
     public interface Delegate {
         void onUserResponse(boolean response);
     }
 
-    private PrivacyPolicyDialogBinding mBinding;
-    private Delegate mPrivacyDialogDelegate;
+    private LegalDocument mLegalDocument;
+    private LegalDocumentDialogBinding mBinding;
+    private Delegate mDialogDelegate;
 
-    public PrivacyPolicyDialogWidget(Context aContext) {
+    public LegalDocumentDialogWidget(Context aContext, LegalDocument legalDocument) {
         super(aContext);
+        this.mLegalDocument = legalDocument;
         initialize(aContext);
     }
 
@@ -50,24 +58,31 @@ public class PrivacyPolicyDialogWidget extends UIDialog {
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.privacy_policy_dialog, this, true);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.legal_document_dialog, this, true);
+
+        // Add the content of the specific legal document
+        if (mLegalDocument == LegalDocument.TERMS_OF_SERVICE) {
+            inflater.inflate(R.layout.terms_service_content, mBinding.scrollbar, true);
+        } else {
+            inflater.inflate(R.layout.privacy_policy_content, mBinding.scrollbar, true);
+        }
 
         mBinding.acceptButton.setOnClickListener(v -> {
-            if (mPrivacyDialogDelegate != null) {
-                mPrivacyDialogDelegate.onUserResponse(true);
+            if (mDialogDelegate != null) {
+                mDialogDelegate.onUserResponse(true);
             }
             onDismiss();
         });
         mBinding.declineButton.setOnClickListener(v -> {
-            if (mPrivacyDialogDelegate != null) {
-                mPrivacyDialogDelegate.onUserResponse(false);
+            if (mDialogDelegate != null) {
+                mDialogDelegate.onUserResponse(false);
             }
             onDismiss();
         });
     }
 
     public void setDelegate(Delegate delegate) {
-        mPrivacyDialogDelegate = delegate;
+        mDialogDelegate = delegate;
     }
 
     @Override

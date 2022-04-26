@@ -460,8 +460,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             case SEARCH_ENGINE:
                 showView(new SearchEngineView(getContext(), mWidgetManager));
                 break;
+            case TERMS_OF_SERVICE:
+                showView(new LegalDocumentView(getContext(), mWidgetManager, LegalDocumentView.LegalDocument.TERMS_OF_SERVICE));
+                break;
             case PRIVACY_POLICY:
-                showView(new PrivacyPolicyView(getContext(), mWidgetManager));
+                showView(new LegalDocumentView(getContext(), mWidgetManager, LegalDocumentView.LegalDocument.PRIVACY_POLICY));
                 break;
         }
     }
