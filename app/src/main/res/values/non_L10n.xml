@@ -213,7 +213,6 @@
 
     <!-- Phone UI links -->
     <string name="hvr_learn_more_url">https://consumer.huawei.com/cn/wearables/vr-glass/</string>
-    <string name="landing_page_url" translatable="false">https://wolvic.com</string>
+    <string name="landing_page_url" translatable="false">https://beta.wolvic.com/en/welcome/</string>
 
-    >>>>>>> Terms of Service
 </resources>
