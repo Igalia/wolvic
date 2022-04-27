@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:elevation="4dp"
+        android:elevation="8dp"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/web_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,22 +19,25 @@
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="20dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/hvr_glass_light" />
 
         <TextView
             android:id="@+id/message"
-            style="@style/TextAppearance.MaterialComponents.Body2"
+            style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
+            android:minHeight="48dp"
             android:layout_toEndOf="@id/icon"
-            android:paddingBottom="20dp"
             android:text="@string/hvr_connect_glass_message"
             android:textColor="@color/black" />
 
@@ -45,14 +48,17 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/message"
             android:layout_toStartOf="@id/button_dismiss"
+            android:layout_alignEnd="@+id/message"
             android:text="@string/learn_more_button" />
 
+        <!-- TODO remove this element if it is not needed -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_dismiss"
             style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/message"
+            android:visibility="gone"
             android:layout_alignEnd="@+id/message"
             android:text="@string/close_button" />
 
