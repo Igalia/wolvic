@@ -59,13 +59,12 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             }
         };
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
             showPhoneUI();
         } else {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             initializeVR();
         }
     }
