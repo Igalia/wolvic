@@ -5,15 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.stream.Stream;
+
 public class LandingPageFragment extends Fragment {
+
+    private static String[] WOLVIC_HOSTS = {"wolvic.com", "beta.wolvic.com"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -23,7 +30,36 @@ public class LandingPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((WebView) view.findViewById(R.id.web_view)).loadUrl(getString(R.string.landing_page_url));
+        WebView webView = view.findViewById(R.id.web_view);
+
+        // wolvic.com links will be opened in this WebView and outside links will be opened in the default browser
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String host = request.getUrl().getHost();
+                if (Stream.of(WOLVIC_HOSTS).anyMatch(host::equalsIgnoreCase)) {
+                    return false;
+                } else {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                    startActivity(browserIntent);
+                    return true;
+                }
+            }
+        });
+
+        // Handle Back presses by navigating back in the Web view
+        webView.setFocusableInTouchMode(true);
+        webView.requestFocus();
+        webView.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && webView.canGoBack()) {
+                webView.goBack();
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        webView.loadUrl(getString(R.string.landing_page_url));
 
         view.findViewById(R.id.button_learn_more).setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.hvr_learn_more_url)));
