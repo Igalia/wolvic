@@ -776,7 +776,7 @@
     <!-- This string labels the button that displays or enables application access to the device's
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
-    <string name="security_options_permission_storage">Odczyt pamięci zewnętrznej</string>
+    <string name="security_options_permission_storage">Pamięć</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          camera and microphone, if present. -->
