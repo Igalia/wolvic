@@ -1,6 +1,7 @@
 package com.igalia.wolvic;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -41,16 +42,20 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
 
         if (!SettingsStore.getInstance(getContext()).isTermsServiceAccepted()) {
             getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new TermsServiceFragment())
                     .commit();
         } else if (!SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted()) {
             getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new PrivacyPolicyFragment())
                     .commit();
         } else {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_placeholder, new LandingPageFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(R.id.fragment_placeholder, new SimpleMainPageFragment())
                     .commit();
+            // TODO use LandingPageFragment when it is finished
         }
     }
 
