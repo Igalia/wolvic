@@ -1,6 +1,7 @@
 package com.igalia.wolvic;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,18 +27,26 @@ public class SimpleMainPageFragment extends Fragment {
             toolbar.setTitle(R.string.app_name);
             toolbar.setElevation(0f);
 
-            /* TODO Show the Terms of Service and Privacy Policy
             toolbar.inflateMenu(R.menu.app_menu);
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.terms_service) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
                     return true;
                 } else if (item.getItemId() == R.id.privacy_policy) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
                     return true;
                 }
                 return false;
             });
-            toolbar.showOverflowMenu();
-            */
         }
+    }
+
+    private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {
+        LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
+        getFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(android.R.id.content, documentFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
