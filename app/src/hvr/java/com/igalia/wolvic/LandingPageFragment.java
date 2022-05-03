@@ -1,6 +1,7 @@
 package com.igalia.wolvic;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -81,14 +82,23 @@ public class LandingPageFragment extends Fragment {
             toolbar.inflateMenu(R.menu.app_menu);
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.terms_service) {
-                    // TODO
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
                     return true;
                 } else if (item.getItemId() == R.id.privacy_policy) {
-                    // TODO
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
                     return true;
                 }
                 return false;
             });
         }
+    }
+
+    private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {
+        LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
+        getFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(android.R.id.content, documentFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
