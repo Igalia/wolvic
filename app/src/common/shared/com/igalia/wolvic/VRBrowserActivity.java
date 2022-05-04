@@ -960,7 +960,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
             if (widget != null) {
-                float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
+                float scrollDirection = (mSettings.getScrollDirection() == SettingsStore.SCROLL_DIRECTION_DEFAULT) ? 1.0f : -1.0f;
+
+                // Joystick scrolling is inverted on HVR
+                if (DeviceType.isHVRBuild()) {
+                    scrollDirection *= -1.0;
+                }
+
                 MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
             } else {
                 Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
