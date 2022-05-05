@@ -41,7 +41,7 @@ public class LegalDocumentFragment extends Fragment {
             throw new IllegalArgumentException("Missing argument: " + LEGAL_DOCUMENT);
         }
 
-        View view = inflater.inflate(R.layout.fragment_dialog_holder, container, false);
+        View view = inflater.inflate(R.layout.fragment_legal_document, container, false);
 
         // Handle Back presses by going back to the previous page
         view.setFocusableInTouchMode(true);

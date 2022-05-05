@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -60,15 +60,19 @@ public class LandingPageFragment extends Fragment {
             }
         });
 
+        // Open Wolvic's landing page.
         webView.loadUrl(getString(R.string.landing_page_url));
 
-        view.findViewById(R.id.button_learn_more).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.hvr_learn_more_url)));
-            startActivity(intent);
+        // "Enter VR" button displays a message to put on the VR glasses
+        Button enterVrButton = view.findViewById(R.id.button_enter_vr);
+        enterVrButton.setOnClickListener(v -> {
+            EnterVrFragment fragment = new EnterVrFragment();
+            getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .add(android.R.id.content, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
-
-        view.findViewById(R.id.button_dismiss).setOnClickListener(v ->
-                getView().findViewById(R.id.glass_banner).setVisibility(View.GONE));
     }
 
     @Override

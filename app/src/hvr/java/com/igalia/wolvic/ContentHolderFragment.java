@@ -53,9 +53,8 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
         } else {
             getFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.fragment_placeholder, new SimpleMainPageFragment())
+                    .replace(R.id.fragment_placeholder, new LandingPageFragment())
                     .commit();
-            // TODO use LandingPageFragment when it is finished
         }
     }
 

@@ -2153,6 +2153,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">头戴设备：%1$s</string>
 
+    <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
+     This message is shown until the user correctly setups the device. -->
+    <string name="hvr_connect_glass_message">若要使用该应用,请连接华为 VR 眼镜 </string>
+    <string name="hvr_enter_vr">进入VR</string>
+
     <!-- This strings are displayed in the privacy dialog on first launch. -->
     <string name="privacy_policy">隐私</string>
     <string name="privacy_dialog_title">隐私</string>

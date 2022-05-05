@@ -5,73 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/glass_banner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="8dp"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/web_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="96dp"
-            android:layout_height="48dp"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/hvr_glass_light" />
-
-        <TextView
-            android:id="@+id/message"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="16dp"
-            android:minHeight="48dp"
-            android:layout_toEndOf="@id/icon"
-            android:text="@string/hvr_connect_glass_message"
-            android:textColor="@color/black" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_learn_more"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/message"
-            android:layout_toStartOf="@id/button_dismiss"
-            android:layout_alignEnd="@+id/message"
-            android:text="@string/learn_more_button" />
-
-        <!-- TODO remove this element if it is not needed -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_dismiss"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/message"
-            android:visibility="gone"
-            android:layout_alignEnd="@+id/message"
-            android:text="@string/close_button" />
-
-    </RelativeLayout>
-
     <WebView
         android:id="@+id/web_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?colorPrimary"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glass_banner" />
+        app:layout_constraintTop_toBottomOf="@id/web_view"
+        app:popupTheme="@style/Theme.WolvicPhone.PopupOverlay">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_enter_vr"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/hvr_enter_vr"
+            android:textColor="?colorOnPrimary" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
