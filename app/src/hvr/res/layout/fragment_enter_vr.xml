@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="300dp"
         android:adjustViewBounds="true"
-        android:src="@drawable/hvr_glass"
+        android:src="@drawable/hvr_glass_transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintLeft_toLeftOf="parent"
