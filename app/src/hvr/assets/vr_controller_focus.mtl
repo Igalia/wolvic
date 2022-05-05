@@ -1,14 +1,13 @@
 # Blender MTL File: 'None'
 # Material Count: 1
 
-newmtl defaultMat
-Ns 29.411765
-Ka 0.550000 0.550000 0.550000
-Kd 0.550000 0.550000 0.550000
+newmtl Material
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
-Ni 1.500000
+Ni 1.450000
 d 1.000000
-illum 2
-map_Kd vr_controller_focus_tex.ktx
-map_Ka vr_controller_focus_tex.ktx
+illum 1
+map_Kd controller.png
