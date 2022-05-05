@@ -194,6 +194,9 @@ std::optional<XrVector2f> OpenXRInputSource::GetAxis(OpenXRAxisType axisType) co
       axis.x = 0;
       axis.y = 0;
     }
+#ifdef HVR_6DOF
+    axis.y = -axis.y;
+#endif
 #endif
 
     return axis;
@@ -526,11 +529,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         }
       } else if (axis.type == OpenXRAxisType::Thumbstick) {
         axesContainer[device::kImmersiveAxisThumbstickX] = state->x;
-#ifdef HVR_6DOF
-        axesContainer[device::kImmersiveAxisThumbstickY] = state->y;
-#else
         axesContainer[device::kImmersiveAxisThumbstickY] = -state->y;
-#endif
         delegate.SetScrolledDelta(mIndex, state->x, state->y);
       } else {
         axesContainer.push_back(state->x);
