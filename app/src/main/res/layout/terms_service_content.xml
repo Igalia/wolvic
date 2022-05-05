@@ -25,22 +25,22 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/privacyPolicyTitle"
+            android:id="@+id/termsServiceTitle"
             style="@style/policyTitle"
             android:text="@string/terms_service_title" />
 
         <TextView
-            android:id="@+id/privacyPolicySection1"
+            android:id="@+id/termsServiceSection1"
             style="@style/policyBody"
             android:text="@string/terms_service_section_1" />
 
         <TextView
-            android:id="@+id/privacyPolicySubtitle2"
+            android:id="@+id/termsServiceSubtitle2"
             style="@style/policySubtitle"
             android:text="@string/terms_service_subtitle_2" />
 
         <TextView
-            android:id="@+id/privacyPolicySection2"
+            android:id="@+id/termsServiceSection2"
             style="@style/policyBody"
             android:text="@string/terms_service_section_2" />
     </LinearLayout>

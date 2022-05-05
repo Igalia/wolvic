@@ -2160,7 +2160,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_enter_vr">Iniciar VR</string>
 
     <!-- These strings are displayed in the privacy dialog on first launch. -->
-    <string name="privacy_policy">Política de privacidad</string>
     <string name="privacy_dialog_title">Privacidad</string>
     <string name="privacy_dialog_message">Nos importa su privacidad. Para usar el navigador Web, por favor acepte nuestros términos de servicio y política de privacidad. ¡Gracias por usar Wolvic! </string>
     <string name="privacy_dialog_agree">Aceptar</string>

@@ -7,7 +7,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/privacy_policy"
-        android:title="@string/privacy_policy"
+        android:title="@string/privacy_policy_title"
         app:showAsAction="never" />
 </menu>
 

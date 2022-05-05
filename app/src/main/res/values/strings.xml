@@ -889,9 +889,6 @@
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Back</string>
 
-    <!-- This string labels a button that is used to close a message or notification. -->
-    <string name="close_button">Close</string>
-
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">We had an issue and crashed</string>
 
@@ -2195,7 +2192,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_enter_vr">Enter VR</string>
 
     <!-- These strings are displayed in the privacy dialog on first launch. -->
-    <string name="privacy_policy">Privacy policy</string>
     <string name="privacy_dialog_title">Privacy</string>
     <string name="privacy_dialog_message">Your privacy is important to us. In order to run the browser, please accept our terms of service and privacy policy. Thanks for using Wolvic! </string>
     <string name="privacy_dialog_agree">Agree</string>

@@ -35,7 +35,7 @@ public class PrivacyPolicyFragment extends Fragment {
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.setTitle(R.string.privacy_policy);
+            toolbar.setTitle(R.string.privacy_policy_title);
             toolbar.hideOverflowMenu();
         }
     }
