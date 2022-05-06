@@ -1,5 +1,6 @@
 package com.igalia.wolvic.browser.engine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
@@ -141,26 +142,29 @@ public class SessionStore implements
 
         if (BuildConfig.DEBUG) {
             mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
-                if (mSessions == null || browserState == null) {
-                    return null;
-                }
-                Log.d(LOGTAG, "Session status BEGIN");
-                Log.d(LOGTAG, "[Total] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + mSessions.size());
-                for (int i=0; i<browserState.getTabs().size(); i++) {
-                    boolean isPrivate = browserState.getTabs().get(i).getContent().getPrivate();
-                    Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId() + (isPrivate ? " (PB)" : ""));
-                }
-                int suspendedCount = 0;
-                for (int i=0; i<mSessions.size(); i++) {
-                    boolean suspended = mSessions.get(i).getSessionState().mSession == null && !mSessions.get(i).isActive();
-                    boolean isPrivate = mSessions.get(i).isPrivateMode();
-                    Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId() + (isPrivate ? " (PB)" : "") + (suspended ? " (suspended)" : ""));
-                    if (suspended) {
-                        suspendedCount++;
+                ((Activity)mContext).runOnUiThread(() -> {
+                    if (mSessions == null || browserState == null) {
+                        return;
                     }
-                }
-                Log.d(LOGTAG, "[Alive] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + (mSessions.size() - suspendedCount));
-                Log.d(LOGTAG, "Session status END");
+                    Log.d(LOGTAG, "Session status BEGIN");
+                    Log.d(LOGTAG, "[Total] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + mSessions.size());
+                    for (int i=0; i<browserState.getTabs().size(); i++) {
+                        boolean isPrivate = browserState.getTabs().get(i).getContent().getPrivate();
+                        Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId() + (isPrivate ? " (PB)" : ""));
+                    }
+                    int suspendedCount = 0;
+                    for (int i=0; i<mSessions.size(); i++) {
+                        boolean suspended = mSessions.get(i).getSessionState().mSession == null && !mSessions.get(i).isActive();
+                        boolean isPrivate = mSessions.get(i).isPrivateMode();
+                        Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId() + (isPrivate ? " (PB)" : "") + (suspended ? " (suspended)" : ""));
+                        if (suspended) {
+                            suspendedCount++;
+                        }
+                    }
+                    Log.d(LOGTAG, "[Alive] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + (mSessions.size() - suspendedCount));
+                    Log.d(LOGTAG, "Session status END");
+                    return;
+                });
                 return null;
             });
             mStoreSubscription.resume();
