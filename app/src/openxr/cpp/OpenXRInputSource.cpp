@@ -437,6 +437,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         flags |= device::GripSpacePosition;
 #if HVR_6DOF
         delegate.SetBeamTransform(mIndex, vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 4));
+#elif HVR
+        // These values come from experimentation.
+        delegate.SetBeamTransform(mIndex, vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 8).TranslateInPlace(vrb::Vector(0, 0.005, -0.05)));
 #else
         delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
 #endif
