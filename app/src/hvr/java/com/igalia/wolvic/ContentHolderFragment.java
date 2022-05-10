@@ -10,20 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.SettingsStore;
 
 public class ContentHolderFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private SharedPreferences mPrefs;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +23,9 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         updateUI();
     }
@@ -50,10 +44,15 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new PrivacyPolicyFragment())
                     .commit();
-        } else {
+        } else if (BuildConfig.WEBVIEW_IN_PHONE_UI) {
             getFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new LandingPageFragment())
+                    .commit();
+        } else {
+            getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(android.R.id.content, new EnterVrFragment())
                     .commit();
         }
     }

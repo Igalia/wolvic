@@ -251,6 +251,7 @@ android {
             }
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         }
 
         hvr3dof {
@@ -264,6 +265,7 @@ android {
             }
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         }
 
         noapi {
