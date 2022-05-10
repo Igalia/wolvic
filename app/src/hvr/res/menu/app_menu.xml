@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/enter_vr"
+        android:title="@string/hvr_enter_vr"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/terms_service"
         android:title="@string/terms_service_title"
         app:showAsAction="never" />

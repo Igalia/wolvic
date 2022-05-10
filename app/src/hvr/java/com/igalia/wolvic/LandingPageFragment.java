@@ -66,12 +66,7 @@ public class LandingPageFragment extends Fragment {
         // "Enter VR" button displays a message to put on the VR glasses
         Button enterVrButton = view.findViewById(R.id.button_enter_vr);
         enterVrButton.setOnClickListener(v -> {
-            EnterVrFragment fragment = new EnterVrFragment();
-            getFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .add(android.R.id.content, fragment)
-                    .addToBackStack(null)
-                    .commit();
+            showEnterVr();
         });
     }
 
@@ -85,7 +80,10 @@ public class LandingPageFragment extends Fragment {
             toolbar.showOverflowMenu();
             toolbar.inflateMenu(R.menu.app_menu);
             toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.terms_service) {
+                if (item.getItemId() == R.id.enter_vr) {
+                    showEnterVr();
+                    return true;
+                } else if (item.getItemId() == R.id.terms_service) {
                     showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
                     return true;
                 } else if (item.getItemId() == R.id.privacy_policy) {
@@ -95,6 +93,15 @@ public class LandingPageFragment extends Fragment {
                 return false;
             });
         }
+    }
+
+    private void showEnterVr() {
+        EnterVrFragment fragment = new EnterVrFragment();
+        getFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(android.R.id.content, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {

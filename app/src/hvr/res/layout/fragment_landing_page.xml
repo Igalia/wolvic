@@ -18,7 +18,7 @@
     <FrameLayout
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?colorPrimary"
         android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,6 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/hvr_enter_vr"
+            android:layout_margin="16dp"
             android:textColor="?colorOnPrimary" />
 
     </FrameLayout>

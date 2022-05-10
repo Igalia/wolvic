@@ -61,10 +61,13 @@ public class LegalDocumentDialogWidget extends UIDialog {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.legal_document_dialog, this, true);
 
         // Add the content of the specific legal document
-        if (mLegalDocument == LegalDocument.TERMS_OF_SERVICE) {
-            inflater.inflate(R.layout.terms_service_content, mBinding.scrollbar, true);
-        } else {
-            inflater.inflate(R.layout.privacy_policy_content, mBinding.scrollbar, true);
+        switch (mLegalDocument) {
+            case TERMS_OF_SERVICE:
+                inflater.inflate(R.layout.terms_service_content, mBinding.scrollbar, true);
+                break;
+            case PRIVACY_POLICY:
+                inflater.inflate(R.layout.privacy_policy_content, mBinding.scrollbar, true);
+                break;
         }
 
         mBinding.acceptButton.setOnClickListener(v -> {
