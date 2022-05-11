@@ -2154,4 +2154,104 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Auriculares: %1$s</string>
 
+    <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
+     This message is shown until the user correctly setups the device. -->
+    <string name="hvr_connect_glass_message">Conecte sus HUAWEI VR Glass para usar esta aplicación</string>
+    <string name="hvr_enter_vr">Iniciar VR</string>
+
+    <!-- These strings are displayed in the privacy dialog on first launch. -->
+    <string name="privacy_dialog_title">Privacidad</string>
+    <string name="privacy_dialog_message">Nos importa su privacidad. Para usar el navigador Web, por favor acepte nuestros términos de servicio y política de privacidad. ¡Gracias por usar Wolvic! </string>
+    <string name="privacy_dialog_agree">Aceptar</string>
+    <string name="privacy_dialog_disagree">Cerrar Wolvic</string>
+
+    <!-- These strings are the content of the Terms of Service. -->
+    <string name="terms_service_title">Términos de servicio</string>
+    <string name="terms_service_section_1">
+    Wolvic es un proyecto de software libre y gratuito, creado por una comunidad de miles de personas de todo el mundo. Hay algunas cosas que usted debe saber:
+    \n\n\t\u2022 Wolvic está disponible bajo los términos de la Licencia pública de Mozilla. Esto significa que usted puede ejecutar, copiar y distribuir Wolvic a otros. Usted también puede modificar el código fuente de Wolvic a su gusto para satisfacer sus necesidades. La Licencia pública de Mozilla también permite la distribución de versiones modificadas.
+    \n\n\t\u2022 No se le otorga ningún derecho o licencia de uso de cualesquiera de las marcas comerciales de Igalia o de cualquier parte, incluidos, entre otros, el nombre o el logotipo de Wolvic.
+    \n\n\t\u2022 Algunas funciones de Wolvic, como Crash Reporter, le ofrecen la opción de enviar comentarios a Igalia. Al seleccionar la opción de enviar comentarios, usted le da permiso a Igalia para usar los comentarios con el objetivo de mejorar sus productos, publicar los comentarios anonimizados en sus sitios web y distribuir los comentarios anonimizados.
+    \n\n\t\u2022 Si usted tiene interés en conocer la forma en que utilizamos su información personal y los comentarios enviados a Igalia a través de Wolvic, puede acceder a través de la Política de Privacidad de Wolvic.
+    \n\n\t\u2022 Algunas de las características de Wolvic hacen uso de servicios web de información; sin embargo, no podemos garantizar que sean 100 % precisos o que estén libres de errores. A continuación puede encontrar más detalles sobre los términos de los servicios web, incluida información sobre cómo deshabilitar las funciones que utilizan estos servicios.
+    </string>
+    <string name="terms_service_subtitle_2">Servicios web de información de Wolvic</string>
+    <string name="terms_service_section_2">
+    Wolvic utiliza servicios de información basados en la web (“Servicios”) para proporcionar algunas de las funciones disponibles con esta versión binaria de Wolvic según los términos que se describen a continuación.
+    \n\n\t\u2022 Igalia y sus colaboradores, licenciadores y socios trabajan para proporcionar Servicios lo más precisos y actualizados posible. Sin embargo, no es posible garantizar que esta información sea completa y esté libre de errores. Por ejemplo, es posible que el Servicio de navegación segura no identifique algunos sitios de riesgo y, asimismo, pueda identificar algunos sitios seguros por error; y en el Servicio de localización, todas las ubicaciones devueltas por nuestros proveedores de servicio son solo estimaciones y, ni nosotros ni nuestros proveedores de servicios, podemos garantizar la precisión de las ubicaciones proporcionadas.
+    \n\n\t\u2022 Igalia podrá cesar o modificar los Servicios a su propia discreción.
+    \n\n\t\u2022 Igalia pone a su disposición estos Servicios con la versión adjunta de Wolvic y le otorga derechos de uso. Igalia y sus licenciadores se reservan cualesquiera otro derecho sobre los Servicios. Con estos términos no se pretende limitar los derechos otorgados en virtud de las licencias de software libre aplicables a Wolvic y a las versiones de código fuente correspondientes de Wolvic.
+    \n\n\t\u2022 Los Servicios se proporcionan “tal cual está”. Igalia, sus colaboradores, licenciadores y distribuidores deniegan cualesquiera garantías, ya sean expresas o implícitas, incluyendo, sin limitación, la garantía de que los Servicios son comercializables y aptos para sus propósitos particulares. Usted asume todo el riesgo en cuanto a la selección de los Servicios y su adecuación para sus fines, y en cuanto a la calidad y el rendimiento de los mismos.
+    \n\n\t\u2022 Salvo que lo exija la ley, Igalia, sus colaboradores, licenciadores y distribuidores no serán responsables de ningún daño indirecto, especial, incidental, consecuente, punitivo o ejemplar que surja o esté relacionado de alguna manera con el uso de Wolvic y los Servicios. En cualquier caso, la responsabilidad colectiva bajo estos términos no excederá los $500 (quinientos dólares). Algunas jurisdicciones no permiten la exclusión o limitación de ciertos daños, por lo que es posible que esta exclusión y limitación no le afecte.
+    \n\n\t\u2022 Igalia podrá actualizar estos términos a su discreción en cualquier momento. En cualquier caso, estos términos no podrán ser modificados o cancelados sin el consentimiento por escrito de Igalia.
+    \n\n\t\u2022 Estos términos se rigen por las leyes de España, excluyendo disposiciones en materia de conflictos de leyes. Si alguna parte de estos términos es considerada inválida o inaplicable por un juez, las partes restantes permanecerán en pleno vigor y efecto. En caso de conflicto entre una versión traducida de estos términos y la versión en español, prevalecerá la versión en español.
+    \n\n\t\u2022 En caso de que usted no desee utilizar uno o más de los Servicios disponibles o los términos anteriores sean inaceptables para usted, le recordamos que es posible desactivar ciertas funciones o alguno de los Servicios. A continuación, le explicamos cómo deshabilitar una función o servicio en particular. Es posible desactivar otras funciones y servicios a través de las preferencias de la aplicación.
+    \n\n\t\t\u25e6 La Navegación segura está activada por defecto. No se recomienda deshabilitar la función Navegación segura, ya que es posible que acceda a sitios no seguros. Si desea desactivar la función por completo, siga estos pasos:
+    \n\n\t\t\t\u2043 En la barra de direcciones, escriba about:config .
+    \n\n\t\t\t\u2043 Escriba browser.safebrowsing.malware.enabled .
+    \n\n\t\t\t\u2043 Haga doble click en browser.safebrowsing.malware.enabled .
+    \n\n\t\t\t\u2043 Escriba browser.safebrowsing.phishing.enabled .
+    \n\n\t\t\t\u2043 Haga doble click en browser.safebrowsing.phishing.enabled .
+    \n\n\t\t\t\u2043 La Navegación segura estaría ahora deshabilitada.
+    \n\n\t\t\u25e6 Navegación con ubicación activada: requiere siempre confirmación. Nunca se envía información de ubicación sin su permiso. Si desea desactivar la función por completo, siga estos pasos:
+    \n\n\t\t\t\u2043 En la barra de URL, escriba about:config .
+    \n\n\t\t\t\u2043 Escriba geo.enabled .
+    \n\n\t\t\t\u2043 Haga doble clic en la preferencia geo.enabled .
+    \n\n\t\t\t\u2043 La navegación basada en la ubicación estaría ahora deshabilitada.
+    \n\n\t\t\u25e6 La “Protección contra rastreo mejorada” de Wolvic protege su privacidad automáticamente durante la navegación, bloqueando a rastreadores que puedan hacer seguimiento online para recolectar información sobre sus hábitos e intereses de navegación, sin romper la funcionalidad de las páginas web. También incluye protección contra programas malignos, tal como aplicaciones dañinas que agoten la batería de su móvil. Hay tres modos de protección de rastreo mejorada: estándar, estricto y deshabilitado. Si desea deshabilitarlo, siga los siguientes pasos:
+    \n\n\t\t\t\u2043 Abra los ajustes de Wolvic.
+    \n\n\t\t\t\u2043 Vaya al área de ajustes de “Privacidad y Seguridad”.
+    \n\n\t\t\t\u2043 Acceda a la opción de “Protección contra rastreo mejorada”.
+    \n\n\t\t\t\u2043 Seleccione el botón de “Apagar”.
+    \n\n\t\t\t\u2043 La “Protección contra rastreo mejorada” estaría ahora deshabilitada.
+    </string>
+
+    <!-- These strings are the content of the Privacy Policy. -->
+    <string name="privacy_policy_title">Política de privacidad general</string>
+    <string name="privacy_policy_subtitle_1">Información general</string>
+    <string name="privacy_policy_section_1">
+        La presente aplicación ha sido desarrollada por Igalia, S. L. (en adelante IGALIA), con domicilio social sito en Bugallal Marchesi, 22 - 1º, 15008 de A Coruña, Galicia (Spain), cuyos datos de contacto son los siguiente:
+        \n\n\t\u2022 Teléfono: +34 981 913991;
+        \n\t\u2022 Email: info@igalia.com
+        \n\n El contenido y elementos que integran la aplicación han sido implementados y/o desarrollados por IGALIA bajo licencias de código abierto, estando protegidos, sin limitaciones, por las leyes de propiedad intelectual e industrial del Reino de España y por los Tratados y Convenios internacionales que resultasen de aplicación.
+    </string>
+    <string name="privacy_policy_subtitle_2">Protección de datos</string>
+    <string name="privacy_policy_section_2">
+        IGALIA esta comprometida con el cumplimiento de las previsiones legales en materia de protección de datos personales: Reglamento (UE)2016/679, del Parlamento Europeo y del Consejo, de 27/4/2016 relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos (RGPD) y en la Ley Orgánica 3/2018, de 5 de diciembre, de protección de datos y garantía de los derechos digitales (LOPDGDD).
+        \n Los datos personales se definen legalmente como aquella información vinculada a una persona física identificada o identificable, siempre que su identidad pueda determinarse, directa o indirectamente, en particular mediante un identificador, como por ejemplo un nombre, un número de identificación, datos de localización, un identificador en línea o uno o varios elementos propios de la identidad física, fisiológica, genética, psíquica, económica, cultural o social de dicha persona.
+        \n IGALIA no recaba datos personales de forma que el usuario pueda ser identificado. Por ello, usted puede utilizar la aplicación, consultar y navegar por el entorno de realidad virtual sin revelar su identidad ni proporcionar datos de carácter personal a IGALIA, ya sea directa o indirectamente, por ello IGALIA no puede asumir ninguna responsabilidad por lo datos que se depositen en la misma.
+        \n Los únicos datos e información que obtendrá IGALIA por el uso de esta App, que en ningún momento se vincularán individualmente con el usuario, son los siguientes:
+        \n\n\t\u2022 Datos analíticos, puramente estadísticos y no identificativos.
+        \n\t\u2022 Para capturar y traducir la voz a texto, los datos sonoros del usuario son enviados a los servidores titularidad de la empresa responsable de cada plataforma, a través de una API al efecto: como por ejemplo, en Oculus, de Facebook, un servicio que se envía a Oculus Voice SDK. En ningún momento dichos datos son tratados, accedidos ni incorporados a los servidores titularidad de IGALIA. Los datos que se recopilen serán responsabilidad exclusiva de las empresas titulares de cada plataforma (en adelante, los Terceros) las cuales pueden estar ubicadas fuera de la Unión Europea y sometidas a un régimen jurídico menos protector de la privacidad del usuario. Le recomendamos leer atentamente la política de privacidad y condiciones de uso de cada una de dichas plataformas externas antes de aceptar y utilizar sus servicios. IGALIA no será directa ni indirectamente responsable del tratamiento de datos personales por parte de dichos Terceros.
+        \n\t\u2022 Se podrá obtener información de localización geográfica del navegador, en lugar del utilizado por el sistema. Sin embargo, para ello usted debe aceptar los permisos de localización de su dispositivo a través de un aviso específico al respecto e IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados en el punto anterior sí podrían hacerlo, en su caso. Preste atención a sus términos legales.
+        \n\t\u2022 IGALIA no accederá ni almacenará, en modo alguno, las direcciones ni las URLs visitadas por usted.
+        \n\t\u2022 En caso de integración de los servicios Cloud para cuentas de Terceros, como Firefox Accounts o Google Accounts, para sincronizar datos como su historia de navegación o sus bookmarks de usuario, IGALIA no accederá ni tratará en modo alguno dicha información ni pasará por sus servidores.
+        \n\n Asimismo, usted observará que la aplicación le solicitará una serie de permisos especiales respecto a su dispositivo que, a continuación, aclaramos en cuanto a su función y finalidad:
+        \n\n\t\u2022 Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Meetkai cuya política de provacidad se puede consultar aquí: https://meetkai.com/privacy
+        \n\n\t\u2022 Permiso para la captación de fotos y vídeos: Es posible que se solicite debido a que el dispositivo del usuario utilice cámaras para ver el entorno y situar al usuario en el espacio físico mediante sistemas de trazado o “tracking”. IGALIA no accede ni trata dicha información.
+        \n\n\t\u2022 Permiso para obtener información de localización basada en fuentes como el GPS, estaciones de telefonía o WIFI: Si usted autoriza esto, se utilizará para mostrar en todo momento un icono del tipo de conexión en su aplicación así como, en su caso, la citada función de localización geográfica mencionada anteriormente. IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados anteriormente sí podrían hacerlo, en su caso. Preste atención a sus términos legales. En concreto, en los dispositivos de Huawei también se accede a la información del GPS para informar a un servicio propio de dicha compañía denominado “LocationService”.
+        \n\n\t\u2022 Permiso para leer, modificar o borrar fotos, contenido multimedia y ficheros en la tarjeta de memoria: esto es necesario para que el navegador pueda guardar información local en el dispositivo como los archivos de caché, ajustes, páginas visitadas y favoritas, etc. IGALIA no accede ni trata dicha información.
+        \n\n Recordamos nuevamente que las plataformas de Terceros a los que acceda o con los que utilice la presente aplicación, sí podrían recabar estos u otros datos identificativos sobre usted, en el caso de que los cumplimente o no de forma voluntaria y/o consciente, incluso fuera del ámbito de la legislación europea de protección de datos. Por ello, le recomendamos que se informe y preste especial atención a los términos legales de dichos Terceros como, por ejemplo, los siguientes:
+        \n\n\t\u2022 Google: https://policies.google.com/privacy
+        \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
+        \n\t\u2022 MeetKai: https://meetkai.com/privacy
+        \n\n Asimismo, IGALIA le informa de que si usted utiliza la opción de reconocimiento de voz del navegador, las transmisiones sonoras de su voz no serán conservadas ni vinculadas de modo alguno con usted, aunque sí se conservará el texto generado de manera totalmente anonimizada a efectos de mejora del servicio por parte de la empresa Meetkai (más información en el siguiente link: https://meetkai.com/es/privacy). Como es interés de IGALIA la no vinculación a ningún usuario y la no afectación de su privacidad, se ruega al usuario que no incluya ninguna información personal ni confidencial, de ningún tipo, en sus alocuciones sonoras de voz.
+        \n En cualquier caso, IGALIA garantiza el adecuado ejercicio por los interesados de los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, respecto de sus datos personales. A tal efecto, IGALIA ha establecido un protocolo/procedimiento interno para llevarlos a efecto.
+        \n La forma en que los interesados pueden ejercer sus derechos son: mediante solicitud a IGALIA en la dirección física: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referencia: “Protección de Datos” o en la dirección de correo electrónico: info@igalia.com
+        \n En ambos casos, el interesado deberá adjuntar copia de su DNI o documento identificativo para acreditar su identidad.
+        \n El Responsable de protección de datos o departamento al que se haya encomendado la gestión de los derechos, registrará los ejercicios de derechos en el formulario disponible al efecto, en el que se consignarán los siguientes datos:
+        \n\n\t\u2022 Nº de solicitud: se asignará un número a cada una de las solicitudes recibidas
+        \n\t\u2022 Sede: Si el responsable dispone de varias sedes, se hará constar la sede en la cual se recibió la solicitud
+        \n\t\u2022 Canal de reclamación: se indicará el canal por el cual se recibió la solicitud: dirección de correo física, mail, etc.
+        \n\t\u2022 Día de entrada: se indicará la fecha de entrada de la solicitud.
+        \n\t\u2022 Derechos ejercidos: En este apartado se consignará el tipo de derecho ejercido
+        \n\t\u2022 Día de respuesta: se indicará el día en el cual se remitió respuesta al interesado.
+        \n\n La documentación acreditativa (recepción de solicitud/contestación, comunicaciones, etc.) se archivará a efectos de acreditar su correcta gestión.
+        \n Asimismo, se le recuerda que usted tiene derecho a presentar una reclamación ante La Agencia Española de Protección de Datos.
+    </string>
+    <string name="privacy_policy_subtitle_3">Derecho aplicable e idioma original</string>
+    <string name="privacy_policy_section_3">
+        La presente Política de Privacidad está sometida al derecho español. El idioma de Política de Privacidad de esta aplicación es el español. Por ello, cualquier posible divergencia entre la versión original en español y su traducción a otro idioma será considerada como preponderante la versión española.
+    </string>
+
 </resources>
