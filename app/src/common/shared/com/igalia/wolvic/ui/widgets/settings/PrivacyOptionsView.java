@@ -68,6 +68,8 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
 
         // Options
+        mBinding.showTermsButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.TERMS_OF_SERVICE));
+
         mBinding.showPrivacyButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.PRIVACY_POLICY));
 
         mBinding.clearCookiesSite.setOnClickListener(v -> {

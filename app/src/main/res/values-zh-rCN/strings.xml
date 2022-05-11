@@ -2150,10 +2150,102 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">头戴设备：%1$s</string>
 
+    <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
+     This message is shown until the user correctly setups the device. -->
+    <string name="hvr_connect_glass_message">若要使用该应用,请连接华为 VR 眼镜 </string>
+    <string name="hvr_enter_vr">进入VR</string>
+
     <!-- This strings are displayed in the privacy dialog on first launch. -->
     <string name="privacy_dialog_title">隐私</string>
     <string name="privacy_dialog_message">我们尊重您的隐私。在运行浏览器前，请先同意我们的服务条款与隐私政策。感谢使用Wolvic！</string>
     <string name="privacy_dialog_agree">同意</string>
     <string name="privacy_dialog_disagree">不同意</string>
 
+    <!-- These strings are the content of the Terms of Service. -->
+    <string name="terms_service_title">服务条款</string>
+    <string name="terms_service_section_1">
+    Wolvic是免费的开源软件，由来自世界各地的数千社区成员建立。请知悉以下事项：
+    \n\n\t\u2022 Wolvic根据Mozilla公共许可证条款服务用户。这意味着您可以使用、复制和发送Wolvic给其他人。您也可以根据个人需求修改Wolvic的源代码。Mozilla公共许可证还赋予您传播个人修改版本的权力。
+    \n\n\t\u2022 您不具备Igalia或任何一方商标的商标使用权或使用许可，包括但不限于Wolvic名称或标志。
+    \n\n\t\u2022 Wolvic的某些功能，如碰撞报告器（Crash Reporter），允许您向Igalia提供反馈。如果选择提交反馈意见，代表您允许Igalia使用反馈意见来改进产品，允许在其网站上匿名公布并传播反馈意见。
+    \n\n\t\u2022 如对我们如何使用您的个人信息和通过Wolvic提交发聩感兴趣，可以访问Wolvic隐私政策。
+    \n\n\t\u2022 Wolvic某些功能利用了基于网络的信息服务；然而，我们不能保证使用信息100%准确性或无误的。更多细节，包括如何禁用使用这些服务功能的信息，请见以下服务条款。
+    </string>
+    <string name="terms_service_subtitle_2">Wolvic基于网络信息的服务</string>
+    <string name="terms_service_section_2">
+    Wolvic按照下述条款使用基于网络信息的服务（ “服务”）为您提供Wolvic二进制版本的某些功能：
+    \n\n\t\u2022 Igalia及其贡献者、许可人和合作伙伴努力提供最准确和最新的服务。但是，我们不能保证这些信息是全面无误的。例如，安全浏览服务（Safe Browsing Service）可能无法识别一些有风险的网站，并可能错误地识别一些安全的网站；位置感知服务（Location Aware Service）中，服务提供商反馈的所有位置都只是估计位置，我们和服务提供商都不保证所提供的位置的准确性。
+    \n\n\t\u2022 Igalia可自行决定停止或改变服务。
+    \n\n\t\u2022 Igalia允许您将这些服务与Wolvic配套版本一起使用。Igalia及其许可人保留服务的所有其他权利。这些条款无意限制Wolvic及其相应源代码版本的开源许可证所赋予的任何权利。
+    \n\n\t\u2022 根据“现状流程”提供服务。Igalia、其贡献者、许可人和分销商不提供任何明示或暗示的保证，包括但不限于保证服务适销以及符合您的特定目的。您将全部承担所选择的服务以及服务的质量和性能可能带来的风险。
+    \n\n\t\u2022 除非法律要求，Igalia、其贡献者、许可人和分销商不对因使用 Wolvic和服务而引起的或以任何方式与之相关的任何间接、特殊、附带、后果性、惩罚性或惩戒性的损害负责。这些条款下的集体责任将不超过500美元（五百美元）。某些司法管辖区不允许排除或限制某些损害，因此本排除和限制条款可能不适用于您。
+    \n\n\t\u2022 Igalia可根据需要不时地更新这些条款。未经Igalia的书面同意，不得修改或取消这些条款。
+    \n\n\t\u2022 这些条款受西班牙法律管辖，法律冲突条款除外。如果这些条款的某些部分被认定为无效或不可执行，其余部分仍具备完全的效力和作用。如果这些条款的翻译版本与西班牙语版本之间发生冲突，则应以西班牙语版本为准。
+    \n\n\t\u2022 如果您不想使用一项或多项服务，或不接受上述条款，您可以禁用该功能或服务。关于如何禁用某项功能或服务的说明如下。其他功能和服务可在应用程序偏好中禁用。
+    \n\n\t\t\u25e6 安全浏览默认启用。不建议禁用安全浏览功能，因为可能会导致您进入不安全的网站。如果您想完全禁用该功能，请遵循以下步骤：
+    \n\n\t\t\t\u2043 在网络地址（URL）栏中，输入about:config
+    \n\n\t\t\t\u2043 输入browser.safebrowsing.malware.enabled
+    \n\n\t\t\t\u2043 双击browser.safebrowsing.malware.enabled preference
+    \n\n\t\t\t\u2043 输入browser.safebrowsing.phishing.enabled
+    \n\n\t\t\t\u2043 双击browser.safebrowsing.phishing.enabled preference
+    \n\n\t\t\t\u2043 安全浏览已被禁用
+    \n\n\t\t\u25e6 位置感知浏览（Location Aware Browsing）：始终需要确认。未经您的许可，绝不会发送任何位置信息。如果您想完全禁用该功能，请按以下步骤操作：
+    \n\n\t\t\t\u2043 在网络地址（URL）栏中，输入 about:config
+    \n\n\t\t\t\u2043 输入 geo.enabled
+    \n\n\t\t\t\u2043 双击geo.enabled preference
+    \n\n\t\t\t\u2043 位置感知浏览功能现已被禁用
+    \n\n\t\t\u25e6 Wolvic的增强跟踪保护功能（Enhanced Tracking Protection）在您浏览时自动保护隐私。它会阻止跟踪器在线跟踪您以收集您的浏览习惯和兴趣信息，而不会破坏网站功能。 它还包括针对有害脚本的保护，例如耗尽电池电量的恶意软件。 跟踪保护有三种模式：标准（Standard）、严格（Strict）和关闭（off）。 如果您想关闭它，请按照下列步骤操作：
+    \n\n\t\t\t\u2043 进入“隐私和安全”（“Privacy &amp; Security”）设置
+    \n\n\t\t\t\u2043 选择“关闭”（“Off”）单选按钮
+    \n\n\t\t\t\u2043 增强跟踪保护功能（Enhanced Tracking Protection）现已被禁用
+    </string>
+
+    <!-- These strings are the content of the Privacy Policy. -->
+    <string name="privacy_policy_title">WOLVIC基本隐私政策</string>
+    <string name="privacy_policy_subtitle_1">基本信息</string>
+    <string name="privacy_policy_section_1">
+        本应用程序由Igalia, SL公司（以下简称IGALIA）开发，注册地址为西班牙加利西亚拉科鲁尼亚Bugallal Marchesi街22号1层，邮编：15008，（Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia, Spain），联系方式如下：
+        \n\n\t\u2022 电话：+34 981 913991
+        \n\t\u2022 电子邮件: info@igalia.com
+        \n\n 构成应用程序的内容和元素由IGALIA在开放源码许可下实施和/或开发，并无限制地受西班牙王国的知识产权和工业产权法律以及可能涉及的国际条约和协议的保护。
+    </string>
+    <string name="privacy_policy_subtitle_2">数据保护</string>
+    <string name="privacy_policy_section_2">
+IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧洲议会和理事会关于保护自然人处理个人数据和此类数据自由流动的第2016/679号欧盟条例，废除95/46/EC欧盟指令（《通用数据保护条例》）；12 月 5 日第 3/2018 号《个人数据保护和保障数字权利组织法》（LOPDGDD）。
+        \n “个人数据”指任何与个人身份识别，提供直接或间接地追踪个人身份的相关信息，特别是身份信息，例如姓名、识别号码、位置数据等，或者结合其它与特定个人相关的可识别信息，例如上述人的身体、生理、遗传、精神、经济、文化或社会身份标识。
+        \n IGALIA不会以可识别用户的方式收集个人数据。因此，您可以在不透露身份的情况下，或直接或间接向IGALIA提供个人数据的情况下使用该应用程序，咨询和浏览虚拟现实环境；因此，IGALIA将不对任何输入WOLVIC的数据负责。
+        \n IGALIA从本应用程序的使用中获得的唯一数据和信息，在任何时候都不会与用户关联，这些数据和信息如下：
+        \n\n\t\u2022 分析性的、纯统计性的、非身份识别性的数据。
+        \n\t\u2022 为了获取声音并将其译成文本，用户的声音数据将通过相关应用程序接口（API）发送到负责每个平台的第三方公司的服务器上：例如，Facebook旗下的Oculus，声音数据将被发送到Oculus Voice SDK。上述数据在任何时候都不会被处理、访问或纳入IGALIA服务器中。传送的数据将由拥有各平台的第三方公司（以下简称“第三方”）全权负责，这些公司可能位于欧盟以外，并受用户隐私保护程度较弱的法律制度约束。我们建议您在接受和使用这些外部平台的服务之前，仔细阅读其隐私政策和使用条款。IGALIA不会直接或间接对上述第三方的个人数据处理负责。
+        \n\t\u2022 地理位置信息可能从浏览器中获得，而非系统所在的地理位置信息。然而，要获取地理位置信息，必须通过相关具体通知设置设备位置权限，IGALIA不会以任何方式将上述信息用以确定和识别您的身份，但上一点中所提及的第三方可能会进行相关操作。我们建议您关注第三方的法律条款。
+        \n\t\u2022 IGALIA不会以任何方式访问或储存您访问过的地址或网络地址（URL）。
+        \n\t\u2022 如果使用云服务（如火狐账户或谷歌账户）集成同步您的浏览历史或用户书签等数据。在这种情况下，IGALIA不会以任何方式访问或处理任何信息，且该信息不会经过IGALIA服务器。
+        \n\n同样，您会注意到本应用程序将针对您的设备请求一系列特殊权限，下面我们就其功能和用途进行说明：
+        \n\n\t\u2022 录音权限：如果您授权，除了Meetkai提供的语音搜索功能（“语音搜索”）之外，它还将用于翻译功能（上述语音到文本），可以在这里阅读其隐私政策： https://meetkai.com/privacy
+        \n\n\t\u2022 拍摄照片和视频的权限：通过跟踪系统，如果用户的设备使用相机记录用户所处物理空间的环境和地点，则可能会请求此权限。 IGLIA 不访问或处理任何信息。
+        \n\n\t\u2022 读取、修改或删除存储卡上的照片、多媒体内容和文件的权限：这是必要的，以便浏览器可以在设备上保存本地信息，例如缓存文件、设置、访问的页面和收藏夹等。IGALIA 不访问或处理所述信息。
+        \n\n\t\u2022 根据 GPS、电话站或 WIFI 等来源获取位置信息的权限：如果您授权，您的应用程序将始终显示一个图标，以示连接类型，以及在适当情况下，上面提到的地理位置。 IGLIA 绝不会将上述信息与您作为已识别或可识别的人联系起来，但是上述第三方可能会这样做（如果适用的话）。请注意他们的法律条款。具体来说，在华为设备中，GPS 信息会被访问并提供给公司名为“LocationService”的服务。
+        \n\n 我们再次提醒您，您访问或使用本应用程序的第三方平台可能会收集上述数据或其他身份识别数据(自愿或非自愿地、有意或无意填写的数据)，相关数据收集可能超出欧洲数据保护立法的范围。因此，我们建议您了解并特别关注相关第三方法律条款，例如：
+        \n\n\t\u2022 谷歌: https://policies.google.com/privacy
+        \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
+        \n\t\u2022 华为: https://www.huawei.com/es/privacy-policy
+        \n\n 同样, 望您知悉, 在使用浏览器的语音识别选项时, Meetkai将以完全匿名的方式保存您的语音转录, 用于改善其服务。Meetkai不会直接保存您的语音, 也不会以任何方式关联您的语音转录与您的身份。更多关于MeetKai的隐私策略请看: https://meetkai.com/es/privacy Igalia也无意于关联任何语音转录和身份或影响其隐私, 因此, Igalia 要求其声音地址中不得包含任何个人或机密信息。
+        \n 在任何情况下，IGALIA保证当事人对其个人数据行使访问、纠正、删除、反对、限制处理和转移的权利。
+        \n 为此，IGALIA已建立内部协议/程序来行使以上权利。
+        \n 当事人可通过以下方式行使该权利：致信IGALIA的公司所在地：拉科鲁尼亚Bugallal Marchesi街22号1层，邮编15008，（Calle Bugallal Marchesi, 22, 1º, 15008, A Coruña），注明“数据保护”（“Data Protection”）；或者，发送电子邮件至info@igalia.com。
+        \n 使用以上两种方式联系时，当事人必须附上国民身份证、护照或身份证明文件的副本，以证明其身份。
+        \n\n\t\u2022 数据保护官员或相关权利管理部门将在专用表格中记录权利行使事宜，其中包含以下数据：
+        \n\t\u2022 申请号：将为每份收到的申请分配一个编号。
+        \n\t\u2022 管理部门：如果负责人管理多个部门，将写明收到申请的部门。
+        \n\t\u2022 投诉提交渠道：将写明收到请求的渠道，包括邮寄地址、邮件等。
+        \n\t\u2022 申请日期：将注明申请被提交的日期。
+        \n\t\u2022 行使的权利：当事人行使的权利类型。
+        \n\t\u2022 反馈日期：向当事人发送答复的日期。
+        \n\n 支持性文件（请求/回复受理凭证、通信等）将被存档，以便妥善保管。
+        \n 同样，提醒您，您有权向西班牙数据保护局投诉。
+    </string>
+    <string name="privacy_policy_subtitle_3">适用法律和原文语言</string>
+    <string name="privacy_policy_section_3">
+        本隐私政策受西班牙法律管辖。本应用程序的隐私政策语言为西班牙语。因此，西班牙语原文版本和其他语言的译文之间可能出现的任何分歧，均以西班牙语版本为准。
+    </string>
 </resources>

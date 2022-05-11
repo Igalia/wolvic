@@ -43,6 +43,13 @@
                 android:orientation="vertical">
 
                 <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/showTermsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/developer_options_show"
+                    app:description="@string/settings_terms_service" />
+
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/showPrivacyButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
