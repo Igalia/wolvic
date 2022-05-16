@@ -607,6 +607,15 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
 }
 
+androidComponents {
+    onVariants(selector().all(), { variant ->
+        // HVR packages for China must use different applicationIds.
+        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn(Release|Debug)/
+        if (hvrChinaBuildPattern.matcher(variant.name).matches())
+            variant.applicationId = variant.applicationId.get().replace('com.igalia','cn.igalia')
+    })
+}
+
 // -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
