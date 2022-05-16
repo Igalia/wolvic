@@ -289,31 +289,12 @@ android {
     }
 
     variantFilter { variant ->
-        def needed = variant.name in [
-                'oculusvrArm64Debug',
-                'oculusvrArm64Release',
-                'oculusvrStoreArm64Debug',
-                'oculusvrStoreArm64Release',
-                'oculusvr3dofStoreArm64Debug',
-                'oculusvr3dofStoreArm64Release',
-                'picovrArm64Debug',
-                'picovrArm64Release',
-                'picovrStoreArm64Debug',
-                'picovrStoreArm64Release',
-                'wavevrArm64Debug',
-                'wavevrArm64Release',
-                'wavevrStoreArm64Debug',
-                'wavevrStoreArm64Release',
-                'noapiArm64Debug',
-                'noapiArm64Release',
-                'noapiX86_64Debug',
-                'noapiX86_64Release',
-                'hvrArm64Debug',
-                'hvrArm64Release',
-                'hvr3dofArm64Debug',
-                'hvr3dofArm64Release'
-        ]
-        variant.setIgnore(!needed)
+        def platform = variant.getFlavors().get(0).name
+        def abi = variant.getFlavors().get(1).name
+
+        // Create x86_64 variants only for noapi platform
+        if (abi == 'x86_64')
+            variant.setIgnore(platform != 'noapi');
     }
 
 
