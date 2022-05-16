@@ -86,6 +86,7 @@ android {
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
         buildConfigField "int", "MSAA_LEVEL", "1"
+        buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -148,7 +149,7 @@ android {
         disable "ExtraTranslation"
     }
 
-    flavorDimensions "platform", "abi"
+    flavorDimensions "platform", "abi", "country"
 
     productFlavors {
         // Supported platforms
@@ -243,7 +244,6 @@ android {
             }
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
-            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "int", "MSAA_LEVEL", "0"
         }
 
@@ -258,8 +258,15 @@ android {
             }
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
-            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "int", "MSAA_LEVEL", "0"
+        }
+
+        cn {
+            dimension "country"
+        }
+
+        world {
+            dimension "country"
         }
 
         noapi {
@@ -291,10 +298,15 @@ android {
     variantFilter { variant ->
         def platform = variant.getFlavors().get(0).name
         def abi = variant.getFlavors().get(1).name
+        def country = variant.getFlavors().get(2).name
 
         // Create x86_64 variants only for noapi platform
         if (abi == 'x86_64')
             variant.setIgnore(platform != 'noapi');
+
+        // Create variants for China only for HVR platforms
+        if (country == 'cn' && !platform.startsWith('hvr'))
+            variant.setIgnore(true);
     }
 
 
@@ -344,29 +356,29 @@ android {
             ]
         }
 
-        oculusvrArm64Debug {
+        oculusvrArm64WorldDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrArm64Release {
+        oculusvrArm64WorldRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64Debug {
+        oculusvrStoreArm64WorldDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64Release {
+        oculusvrStoreArm64WorldRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvr3dofStoreArm64Debug {
+        oculusvr3dofStoreArm64WorldDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvr3dofStoreArm64Release {
+        oculusvr3dofStoreArm64WorldRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
@@ -611,4 +623,9 @@ android.applicationVariants.all { variant ->
         println("X_X")
     }
 
+    def platform = variant.productFlavors.get(0).name
+    def country = variant.productFlavors.get(2).name
+
+    if (platform.toLowerCase().startsWith('hvr') && country != 'cn')
+        variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
 }
