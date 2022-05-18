@@ -1010,7 +1010,8 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-  if (m.renderMode == device::RenderMode::StandAlone) {
+  if (m.renderMode == device::RenderMode::StandAlone &&
+      (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED)) {
     head.TranslateInPlace(kAverageHeight);
   }
 
