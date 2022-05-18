@@ -57,7 +57,9 @@ import java.util.Collection;
 
         @Override
         public void execute(@NonNull String action) {
-            mSelection.execute(action);
+            if (mSelection.isActionAvailable(action)) {
+                mSelection.execute(action);
+            }
         }
     }
 
