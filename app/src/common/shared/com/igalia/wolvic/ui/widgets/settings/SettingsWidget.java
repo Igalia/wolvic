@@ -181,9 +181,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
             String app_name = getResources().getString(R.string.app_name);
-            String[] app_name_parts = app_name.split(" ");
-            mBinding.versionText.setText(Html.fromHtml("<b>" + app_name_parts[0] + "</b>" +
-                            " " + app_name_parts[1] + " " +
+            mBinding.versionText.setText(Html.fromHtml("<b>" + app_name + "</b>" +
                             " <b>" + pInfo.versionName + "</b>",
                     Html.FROM_HTML_MODE_LEGACY));
 
