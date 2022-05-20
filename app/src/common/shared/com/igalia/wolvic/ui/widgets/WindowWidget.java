@@ -17,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -1573,7 +1574,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
         };
 
-        download.run();
+        // In Android >= Q we don't need additional permissions to write to our own external dir.
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            mWidgetManager.requestPermission(
+                    downloadJob.getUri(),
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    new WSession.PermissionDelegate.Callback() {
+                        @Override
+                        public void grant() {
+                            download.run();
+                        }
+
+                        @Override
+                        public void reject() {
+                            mWidgetManager.getFocusedWindow().showAlert(
+                                    getContext().getString(R.string.download_error_title_v1),
+                                    getContext().getString(R.string.download_error_external_storage),
+                                    null
+                            );
+                        }
+                    });
+        } else {
+            download.run();
+        }
     }
 
     private boolean isContextMenuVisible() {
@@ -1822,6 +1845,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         } else {
             hideLibraryPanel();
+        }
+
+        if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // Check that we have permission to open the file, otherwise try to request it.
+            File file = new File(uri.getPath());
+            if (file.exists() && !file.canRead() &&
+                    !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                mWidgetManager.requestPermission(
+                        aRequest.uri,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        new WSession.PermissionDelegate.Callback() {
+                            @Override
+                            public void grant() {
+                                result.complete(WAllowOrDeny.ALLOW);
+                            }
+
+                            @Override
+                            public void reject() {
+                                result.complete(WAllowOrDeny.DENY);
+                            }
+                        });
+                return result;
+            }
         }
 
         result.complete(WAllowOrDeny.ALLOW);

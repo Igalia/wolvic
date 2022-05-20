@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.io.File;
@@ -98,10 +97,6 @@ public class DownloadsManager {
     }
 
     public void startDownload(@NonNull DownloadJob job) {
-        startDownload(job, SettingsStore.getInstance(mContext).getDownloadsStorage());
-    }
-
-    public void startDownload(@NonNull DownloadJob job, @SettingsStore.Storage int storageType) {
         if (!URLUtil.isHttpUrl(job.getUri()) && !URLUtil.isHttpsUrl(job.getUri())) {
             notifyDownloadError(mContext.getString(R.string.download_error_protocol), job.getFilename());
             return;
@@ -114,19 +109,9 @@ public class DownloadsManager {
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(false);
+
         if (job.getOutputPath() == null) {
-            if (storageType == SettingsStore.EXTERNAL) {
-                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
-
-            } else {
-                String outputPath = getOutputPathForJob(job);
-                if (outputPath == null) {
-                    notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
-                    return;
-                }
-                request.setDestinationUri(Uri.parse(outputPath));
-            }
-
+            request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
         } else {
             request.setDestinationUri(Uri.parse("file://" + job.getOutputPath()));
         }
@@ -140,17 +125,6 @@ public class DownloadsManager {
             }
             scheduleUpdates();
         }
-    }
-
-    @Nullable
-    private String getOutputPathForJob(@NonNull DownloadJob job) {
-        File outputFolder =  new File(mContext.getExternalFilesDir(null), Environment.DIRECTORY_DOWNLOADS);
-        if (outputFolder.exists() || (!outputFolder.exists() && outputFolder.mkdir())) {
-            File outputFile = new File(outputFolder, job.getFilename());
-            return "file://" + outputFile.getAbsolutePath();
-        }
-
-        return null;
     }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {

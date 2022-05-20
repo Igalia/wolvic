@@ -154,10 +154,6 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.trackingProtectionRadio.setOnCheckedChangeListener(mTrackingProtectionListener);
         setTrackingProtection(mBinding.trackingProtectionRadio.getIdForValue(etpLevel), false);
 
-        @SettingsStore.Storage int downloadsStorage = SettingsStore.getInstance(getContext()).getDownloadsStorage();
-        mBinding.downloadsStorage.setOnCheckedChangeListener(mDownloadsStorageListener);
-        setDownloadsStorage(mBinding.downloadsStorage.getIdForValue(downloadsStorage), false);
-
         mBinding.loginsAndPasswords.setOnClickListener(view -> mDelegate.showView(SettingViewType.LOGINS_AND_PASSWORDS));
     }
 
@@ -220,10 +216,6 @@ class PrivacyOptionsView extends SettingsView {
         setWebXR(value, doApply);
     };
 
-    private RadioGroupSetting.OnCheckedChangeListener mDownloadsStorageListener = (radioGroup, checkedId, doApply) -> {
-        setDownloadsStorage(checkedId, true);
-    };
-
     private void resetOptions() {
         if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
@@ -264,10 +256,6 @@ class PrivacyOptionsView extends SettingsView {
 
         if (mBinding.webxrSwitch.isChecked() != SettingsStore.WEBXR_ENABLED_DEFAULT) {
             setWebXR(SettingsStore.WEBXR_ENABLED_DEFAULT, true);
-        }
-
-        if (!mBinding.downloadsStorage.getValueForId(mBinding.downloadsStorage.getCheckedRadioButtonId()).equals(SettingsStore.DOWNLOADS_STORAGE_DEFAULT)) {
-            setDownloadsStorage(mBinding.downloadsStorage.getIdForValue(SettingsStore.DOWNLOADS_STORAGE_DEFAULT), true);
         }
     }
 
@@ -372,14 +360,6 @@ class PrivacyOptionsView extends SettingsView {
                 window.getSession().reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
         }
-    }
-
-    private void setDownloadsStorage(int checkId, boolean doApply) {
-        mBinding.downloadsStorage.setOnCheckedChangeListener(null);
-        mBinding.downloadsStorage.setChecked(checkId, doApply);
-        mBinding.downloadsStorage.setOnCheckedChangeListener(mDownloadsStorageListener);
-
-        SettingsStore.getInstance(getContext()).setDownloadsStorage((Integer)mBinding.downloadsStorage.getValueForId(checkId));
     }
 
     @Override
