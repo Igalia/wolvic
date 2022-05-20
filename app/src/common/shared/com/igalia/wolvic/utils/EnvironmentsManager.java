@@ -133,21 +133,21 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
                 // In Android >= Q we don't need additional permissions to write to our own external dir.
                 if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     mApplicationDelegate.requestPermission(
-                            job.getUri(),
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            new WSession.PermissionDelegate.Callback() {
-                                @Override
-                                public void grant() {
-                                    mDownloadManager.startDownload(job);
-                                }
+                                job.getUri(),
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                new WSession.PermissionDelegate.Callback() {
+                                    @Override
+                                    public void grant() {
+                                        mDownloadManager.startDownload(job);
+                                    }
 
-                                @Override
-                                public void reject() {
-                                    mListeners.forEach(listener -> listener.onEnvironmentSetError(
-                                            mContext.getString(R.string.environment_download_permission_error_body)
-                                    ));
-                                }
-                            });
+                                    @Override
+                                    public void reject() {
+                                        mListeners.forEach(listener -> listener.onEnvironmentSetError(
+                                                mContext.getString(R.string.environment_download_permission_error_body)
+                                        ));
+                                    }
+                                });
 
                 } else {
                     mDownloadManager.startDownload(job);
