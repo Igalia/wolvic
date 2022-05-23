@@ -697,8 +697,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     head.TranslateInPlace(vrb::Vector(-m.firstPose->position.x, -m.firstPose->position.y, -m.firstPose->position.z));
   #endif
 
-  if (m.renderMode == device::RenderMode::StandAlone &&
-      (location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT)) {
+  if (m.renderMode == device::RenderMode::StandAlone) {
     head.TranslateInPlace(kAverageHeight);
   }
 
