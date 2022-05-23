@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadJob;
 import com.igalia.wolvic.downloads.DownloadsManager;
@@ -128,29 +127,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
             if (!isDownloading) {
                 // If the env is not being downloaded, start downloading it
                 DownloadJob job = DownloadJob.create(environment.getPayload());
-                @SettingsStore.Storage int storage = SettingsStore.getInstance(mContext).getDownloadsStorage();
-                if (storage == SettingsStore.EXTERNAL &&
-                        !mApplicationDelegate.isPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    mApplicationDelegate.requestPermission(
-                                job.getUri(),
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                new WSession.PermissionDelegate.Callback() {
-                                    @Override
-                                    public void grant() {
-                                        mDownloadManager.startDownload(job);
-                                    }
-
-                                    @Override
-                                    public void reject() {
-                                        mListeners.forEach(listener -> listener.onEnvironmentSetError(
-                                                mContext.getString(R.string.environment_download_permission_error_body)
-                                        ));
-                                    }
-                                });
-
-                } else {
-                    mDownloadManager.startDownload(job);
-                }
+                mDownloadManager.startDownload(job);
             }
         }
     }

@@ -1552,49 +1552,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void startDownload(@NonNull DownloadJob downloadJob, boolean showConfirmDialog) {
-        Runnable download = () -> {
-            if (showConfirmDialog) {
-                mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                        R.drawable.ic_icon_downloads,
-                        getResources().getString(R.string.download_confirm_title),
-                        downloadJob.getFilename(),
-                        new String[]{
-                                getResources().getString(R.string.download_confirm_cancel),
-                                getResources().getString(R.string.download_confirm_download)},
-                        (index, isChecked) ->  {
-                            if (index == PromptDialogWidget.POSITIVE) {
-                                mDownloadsManager.startDownload(downloadJob);
-                            }
+        if (showConfirmDialog) {
+            mWidgetManager.getFocusedWindow().showConfirmPrompt(
+                    R.drawable.ic_icon_downloads,
+                    getResources().getString(R.string.download_confirm_title),
+                    downloadJob.getFilename(),
+                    new String[]{
+                            getResources().getString(R.string.download_confirm_cancel),
+                            getResources().getString(R.string.download_confirm_download)},
+                    (index, isChecked) -> {
+                        if (index == PromptDialogWidget.POSITIVE) {
+                            mDownloadsManager.startDownload(downloadJob);
                         }
-                );
-
-            } else {
-                mDownloadsManager.startDownload(downloadJob);
-            }
-        };
-        @SettingsStore.Storage int storage = SettingsStore.getInstance(getContext()).getDownloadsStorage();
-        if (storage == SettingsStore.EXTERNAL) {
-            mWidgetManager.requestPermission(
-                    downloadJob.getUri(),
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    new WSession.PermissionDelegate.Callback() {
-                        @Override
-                        public void grant() {
-                            download.run();
-                        }
-
-                        @Override
-                        public void reject() {
-                            mWidgetManager.getFocusedWindow().showAlert(
-                                    getContext().getString(R.string.download_error_title_v1),
-                                    getContext().getString(R.string.download_error_external_storage),
-                                    null
-                            );
-                        }
-                    });
-
+                    }
+            );
         } else {
-            download.run();
+            mDownloadsManager.startDownload(downloadJob);
         }
     }
 
@@ -1846,23 +1819,27 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hideLibraryPanel();
         }
 
-        if ("file".equalsIgnoreCase(uri.getScheme()) &&
-                !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            mWidgetManager.requestPermission(
-                    aRequest.uri,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    new WSession.PermissionDelegate.Callback() {
-                        @Override
-                        public void grant() {
-                            result.complete(WAllowOrDeny.ALLOW);
-                        }
+        if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // Check that we have permission to open the file, otherwise try to request it.
+            File file = new File(uri.getPath());
+            if (file.exists() && !file.canRead() &&
+                    !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                mWidgetManager.requestPermission(
+                        aRequest.uri,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        new WSession.PermissionDelegate.Callback() {
+                            @Override
+                            public void grant() {
+                                result.complete(WAllowOrDeny.ALLOW);
+                            }
 
-                        @Override
-                        public void reject() {
-                            result.complete(WAllowOrDeny.DENY);
-                        }
-                    });
-            return result;
+                            @Override
+                            public void reject() {
+                                result.complete(WAllowOrDeny.DENY);
+                            }
+                        });
+                return result;
+            }
         }
 
         result.complete(WAllowOrDeny.ALLOW);
