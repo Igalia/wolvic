@@ -111,7 +111,13 @@ public class DownloadsManager {
         request.setVisibleInDownloadsUi(false);
 
         if (job.getOutputPath() == null) {
-            request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+            try {
+                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
+                return;
+            }
         } else {
             request.setDestinationUri(Uri.parse("file://" + job.getOutputPath()));
         }
@@ -120,6 +126,7 @@ public class DownloadsManager {
             try {
                 mDownloadManager.enqueue(request);
             } catch (SecurityException e) {
+                e.printStackTrace();
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
                 return;
             }
