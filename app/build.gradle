@@ -96,6 +96,7 @@ android {
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
         buildConfigField "int", "MSAA_LEVEL", "1"
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
+        buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -272,6 +273,7 @@ android {
 
         cn {
             dimension "country"
+            buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
         }
 
         world {
