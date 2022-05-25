@@ -1,5 +1,7 @@
 package com.igalia.wolvic.crashreporting;
 
+import static org.mozilla.gecko.util.ThreadUtils.runOnUiThread;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -59,8 +61,7 @@ public class CrashReporterService extends JobIntentService {
         return files;
     }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
+    private void onHandleWorkInternal(@NonNull Intent intent) {
         String action = intent.getAction();
         WRuntime.CrashReportIntent crash = EngineProvider.INSTANCE.getOrCreateRuntime(getBaseContext()).getCrashReportIntent();
         if (crash.action_crashed.equals(action)) {
@@ -134,6 +135,11 @@ public class CrashReporterService extends JobIntentService {
         }
 
         Log.d(LOGTAG, "Crash reporter job finished");
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        runOnUiThread(() -> onHandleWorkInternal(intent));
     }
 
     public static void submitCaughtException(@NonNull Exception exception) {
