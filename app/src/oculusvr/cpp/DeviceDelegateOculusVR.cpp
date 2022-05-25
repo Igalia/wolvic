@@ -402,7 +402,11 @@ struct DeviceDelegateOculusVR::State {
 
             float offsetX = controllerState.hand == ElbowModel::HandEnum::Left ? 0.011f : -0.011f;
             const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(offsetX, 0.025f, 0.05f));
-            controller->SetImmersiveBeamTransform(controllerState.index, trans);
+
+            // Apply a 45º rotation to controller in immersive mode.
+            vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI_4);
+            transform = transform.PostMultiply(trans);
+            controller->SetImmersiveBeamTransform(controllerState.index, transform);
           } else {
             // Oculus Go only has one kind of controller model.
             controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
@@ -474,16 +478,10 @@ struct DeviceDelegateOculusVR::State {
       controller->SetCapabilityFlags(controllerState.index, flags);
       if (renderMode == device::RenderMode::Immersive) {
         static vrb::Matrix transform(vrb::Matrix::Identity());
-        if (transform.IsIdentity()) {
-          if (controllerState.Is6DOF()) {
-            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.77f);
-            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.025f));
-            transform = transform.PostMultiply(trans);
-          } else {
-            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.60f);
-          }
+        if (transform.IsIdentity() && !controllerState.Is6DOF()) {
+          transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.60f);
+          controllerState.transform = controllerState.transform.PostMultiply(transform);
         }
-        controllerState.transform = controllerState.transform.PostMultiply(transform);
       }
       controller->SetTransform(controllerState.index, controllerState.transform);
 
