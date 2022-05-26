@@ -59,7 +59,7 @@ public class RuntimeImpl implements WRuntime {
                 .screenSizeOverride(settings.getScreenWidthOverride(), settings.getScreenHeightOverride())
                 .inputAutoZoomEnabled(settings.isInputAutoZoomEnabled())
                 .doubleTapZoomingEnabled(settings.isDoubleTapZoomingEnabled())
-                .debugLogging(settings.isDoubleTapZoomingEnabled())
+                .debugLogging(settings.isConsoleServiceToLogcat())
                 .consoleOutput(settings.isConsoleOutputEnabled())
                 .loginAutofillEnabled(settings.isAutofillLoginsEnabled())
                 .configFilePath(settings.getConfigFilePath())
