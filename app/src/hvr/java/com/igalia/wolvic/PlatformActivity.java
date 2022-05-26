@@ -115,7 +115,8 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
-            ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
+            if (BuildConfig.FLAVOR_country == "cn")
+                ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
         } catch (Exception e) {
             e.printStackTrace();
         }
