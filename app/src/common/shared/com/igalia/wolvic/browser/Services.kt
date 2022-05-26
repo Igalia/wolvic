@@ -40,7 +40,7 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
     private val LOGTAG = SystemUtils.createLogtag(Services::class.java)
 
     companion object {
-        const val CLIENT_ID = "7ad9917f6c55fb77"
+        const val CLIENT_ID = "a2270f727f45f648"
         const val REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
     }
     interface TabReceivedDelegate {
