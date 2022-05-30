@@ -116,10 +116,13 @@ struct DeviceDelegateOculusVR::State {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
     float fovY = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
 
-    ovrMatrix4f projection = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0, 0.0, near, far);
-    auto matrix = vrb::Matrix::FromRowMajor(projection.M);
+    ovrMatrix4f fov = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0, 0.0, near, far);
+    auto fovMatrix = vrb::Matrix::FromRowMajor(fov.M);
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
-      cameras[i]->SetPerspective(matrix);
+      ovrMatrix4f projection = predictedTracking.Eye[i].ProjectionMatrix;
+      auto projectionMatrix = vrb::Matrix::FromRowMajor(projection.M);
+      auto perspectiveMatrix = projectionMatrix.PostMultiply(fovMatrix);
+      cameras[i]->SetPerspective(perspectiveMatrix);
     }
 
     if (immersiveDisplay) {
@@ -1031,6 +1034,8 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
     }
     m.immersiveDisplay->SetCapabilityFlags(caps);
   }
+
+  m.UpdatePerspective();
 
   int lastReorientCount = m.reorientCount;
   m.UpdateControllers(head);
