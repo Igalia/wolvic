@@ -19,3 +19,5 @@ prefs:
   dom.webcomponents.customelements.enabled: true
   javascript.options.ion: true
   media.webspeech.synth.enabled: false
+  # GPU process in Android broke WebXR. https://bugzilla.mozilla.org/show_bug.cgi?id=1771854
+  layers.gpu-process.enabled: false
