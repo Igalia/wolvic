@@ -27,7 +27,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.UserAgentOverride;
+import com.igalia.wolvic.browser.UriOverride;
 import com.igalia.wolvic.browser.VideoAvailabilityListener;
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
 import com.igalia.wolvic.browser.api.WAutocomplete;
@@ -66,7 +66,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         WSession.SelectionActionDelegate, SharedPreferences.OnSharedPreferenceChangeListener, SessionChangeListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
-    private static UserAgentOverride sUserAgentOverride;
+    private static UriOverride sUserAgentOverride;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
@@ -195,7 +195,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         mPrivatePage = InternalPages.createAboutPage(mContext, pageResources);
 
         if (sUserAgentOverride == null) {
-            sUserAgentOverride = new UserAgentOverride();
+            sUserAgentOverride = new UriOverride();
             sUserAgentOverride.loadOverridesFromAssets((Activity)mContext, mContext.getString(R.string.user_agent_override_file));
         }
     }

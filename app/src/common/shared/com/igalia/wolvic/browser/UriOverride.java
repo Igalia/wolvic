@@ -20,12 +20,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class UserAgentOverride {
-    private final static String LOGTAG = SystemUtils.createLogtag(UserAgentOverride.class);
+public class UriOverride {
+    private final static String LOGTAG = SystemUtils.createLogtag(UriOverride.class);
     private static final String NO_OVERRIDE_FOUND = "NO OVERRIDE USER AGENT FOUND";
     private ArrayMap<String, String> mOverrideMap;
     private ArrayMap<String, String> mOverrideCache;
-    public UserAgentOverride() {
+    public UriOverride() {
         mOverrideMap = new ArrayMap<>();
         mOverrideCache = new ArrayMap<>();
     }
