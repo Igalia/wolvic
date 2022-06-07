@@ -67,6 +67,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
     private static UriOverride sUserAgentOverride;
+    private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
@@ -195,8 +196,12 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         mPrivatePage = InternalPages.createAboutPage(mContext, pageResources);
 
         if (sUserAgentOverride == null) {
-            sUserAgentOverride = new UriOverride();
+            sUserAgentOverride = new UriOverride("user agent");
             sUserAgentOverride.loadOverridesFromAssets((Activity)mContext, mContext.getString(R.string.user_agent_override_file));
+        }
+        if (sDesktopModeOverrides == null) {
+            sDesktopModeOverrides = new UriOverride("desktop mode");
+            sDesktopModeOverrides.loadOverridesFromAssets((Activity)mContext, "desktopModeOverrides.json");
         }
     }
 
