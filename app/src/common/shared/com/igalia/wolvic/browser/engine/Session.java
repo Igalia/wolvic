@@ -1072,6 +1072,15 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
             aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
+        } else if ((getUaMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) && !mState.mPreviousUri.equals(mState.mUri)) {
+            // The URL check above allows users to switch to mobile mode even for overriding sites.
+            if (sDesktopModeOverrides.lookupOverride(aUri) != null) {
+                trySetUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
+                String overrideUri = checkForMobileSite(aUri);
+                if (overrideUri == null)
+                    overrideUri = aUri;
+                aSession.loadUri(overrideUri);
+            }
         }
     }
 
