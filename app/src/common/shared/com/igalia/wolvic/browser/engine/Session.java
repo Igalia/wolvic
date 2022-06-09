@@ -999,20 +999,26 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         return result;
     }
 
-    public void setUaMode(int mode) {
+    private boolean trySetUaMode(int mode) {
         if (mState.mSession == null || mState.mSettings.getUserAgentMode() == mode) {
-            return;
+            return false;
         }
         mState.mSettings.setUserAgentMode(mode);
         mState.mSession.getSettings().setUserAgentMode(mode);
-        String overrideUri = null;
         if (mode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
             mState.mSettings.setViewportMode(WSessionSettings.VIEWPORT_MODE_DESKTOP);
-            overrideUri = checkForMobileSite(mState.mUri);
         } else {
             mState.mSettings.setViewportMode(WSessionSettings.VIEWPORT_MODE_MOBILE);
         }
         mState.mSession.getSettings().setViewportMode(mState.mSettings.getViewportMode());
+        return true;
+    }
+
+    public void setUaMode(int mode) {
+        if (!trySetUaMode(mode))
+            return;
+
+        String overrideUri = mode == WSessionSettings.USER_AGENT_MODE_DESKTOP ? checkForMobileSite(mState.mUri) : null;
         if (overrideUri != null) {
             mState.mSession.loadUri(overrideUri, WSession.LOAD_FLAGS_BYPASS_CACHE | WSession.LOAD_FLAGS_REPLACE_HISTORY);
         } else {
