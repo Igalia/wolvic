@@ -11,8 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
+import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.ui.adapters.Language;
 
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ import java.util.stream.Stream;
 
 public class LocaleUtils {
 
-    private static final String DEFAULT_LANGUAGE_ID = "default";
-    private static final String FALLBACK_LANGUAGE_TAG = "en-US";
+    public static final String DEFAULT_LANGUAGE_ID = "default";
+    public static final String FALLBACK_LANGUAGE_TAG = "en-US";
 
     private static HashMap<String, Language> mLanguagesCache;
     private static Map<String, Language> mSupportedLanguagesCache;
@@ -201,24 +203,16 @@ public class LocaleUtils {
         return languageId;
     }
 
-    @NonNull
-    public static String getVoiceSearchLanguageTag(@NonNull Context aContext) {
-        String languageId = getVoiceSearchLanguageId(aContext);
-        Language language = mSupportedLanguagesCache.get(languageId);
-        if (language != null) {
-            return language.getLanguageTag();
+    public static String getVoiceSearchLanguageName(@NonNull Context aContext) {
+        VRBrowserApplication application = (VRBrowserApplication) aContext.getApplicationContext();
+        SpeechRecognizer speechRecognizer = application.getSpeechRecognizer();
+        String language = getVoiceSearchLanguageId(aContext);
+        String name = speechRecognizer.getNameForLanguage(language);
+        if (name != null) {
+            return name;
+        } else {
+            return speechRecognizer.getNameForLanguage(FALLBACK_LANGUAGE_TAG);
         }
-
-        return getClosestSupportedLanguageTag(languageId);
-    }
-
-    public static Language getVoiceSearchLanguage(@NonNull Context aContext) {
-        String languageId = getVoiceSearchLanguageId(aContext);
-        Language language = mSupportedLanguagesCache.get(languageId);
-        if (language == null) {
-            language = mSupportedLanguagesCache.get(FALLBACK_LANGUAGE_TAG);
-        }
-        return language;
     }
 
     public static void setVoiceSearchLanguageId(@NonNull Context context, @NonNull String languageId) {

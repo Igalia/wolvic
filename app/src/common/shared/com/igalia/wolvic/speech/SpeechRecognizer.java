@@ -41,4 +41,9 @@ public interface SpeechRecognizer {
     boolean shouldDisplayStoreDataPrompt();
     default boolean supportsASR(@NonNull Settings settings) {return true;}
     boolean isSpeechError(int code);
+    // FIXME https://github.com/Igalia/wolvic/issues/151
+    String[] getSupportedLanguagesNames();
+    int getIndexForLanguage(String language);
+    String getLanguageForIndex(int index);
+    String getNameForLanguage(String language);
 }

@@ -218,7 +218,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         @Override
         public void onError(@ErrorType int errorType, @Nullable String error) {
-            Log.d(LOGTAG, "===> ERROR: " + error);
+            Log.e(LOGTAG, "===> ERROR: " + error);
             setResultState(errorType);
             if (mDelegate != null) {
                 mDelegate.OnVoiceSearchError(errorType);
@@ -233,7 +233,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICE_SEARCH_AUDIO_REQUEST_CODE);
         } else {
-            String locale = LocaleUtils.getVoiceSearchLanguageTag(getContext());
+            String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
             boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
             if (SessionStore.get().getActiveSession().isPrivateMode()) {
                 storeData = false;
