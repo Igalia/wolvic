@@ -4,23 +4,66 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.huawei.hms.mlsdk.asr.MLAsrConstants;
 import com.huawei.hms.mlsdk.asr.MLAsrListener;
 import com.huawei.hms.mlsdk.asr.MLAsrRecognizer;
-
 import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.utils.LocaleUtils;
+import com.igalia.wolvic.utils.StringUtils;
+import com.igalia.wolvic.utils.SystemUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     private Context mContext;
     private MLAsrRecognizer mRecognizer;
     private Callback mCallback;
 
+    protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
+
+    // TODO Language support depends on the region and English is the only one supported everywhere.
+    // https://developer.huawei.com/consumer/en/doc/development/hiai-Guides/ml-asr-0000001050066212
+    private static final List<String> DEFAULT_SUPPORTED_LANGUAGES = Collections.singletonList(MLAsrConstants.LAN_EN_US);
+    // The first element in these two lists corresponds to "Follow device language"
+    private final List<String> mSupportedLanguages = new ArrayList<>();
+    private final List<String> mSupportedLanguagesNames = new ArrayList<>();
+
     public HVRSpeechRecognizer(Context context) {
         mContext = context;
+
+        setSupportedLanguages(DEFAULT_SUPPORTED_LANGUAGES);
+        mRecognizer = MLAsrRecognizer.createAsrRecognizer(mContext);
+        mRecognizer.getLanguages(new MLAsrRecognizer.LanguageCallback() {
+            @Override
+            public void onResult(List<String> list) {
+                setSupportedLanguages(list);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e(LOGTAG, "Getting the list of supported languages failed: " + s);
+            }
+        });
+    }
+
+    private void setSupportedLanguages(List<String> supportedLanguages) {
+        mSupportedLanguages.clear();
+        mSupportedLanguages.add(LocaleUtils.DEFAULT_LANGUAGE_ID);
+        mSupportedLanguages.addAll(supportedLanguages);
+
+        mSupportedLanguagesNames.clear();
+        mSupportedLanguagesNames.add(mContext.getString(R.string.settings_language_follow_device));
+        for (String language : supportedLanguages) {
+            Locale locale = new Locale(language);
+            mSupportedLanguagesNames.add(StringUtils.capitalize(locale.getDisplayLanguage(locale)));
+        }
     }
 
     @Override
@@ -40,6 +83,7 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
                 // MLAsrConstants.FEATURE_ALLINONE: After the recognition is complete, texts are returned through onResults.
                 .putExtra(MLAsrConstants.FEATURE, MLAsrConstants.FEATURE_ALLINONE);
         // Start speech recognition.
+        Log.w(LOGTAG, "Starting speech recognition, language = " + settings.locale);
         mRecognizer.startRecognizing(intent);
     }
 
@@ -61,6 +105,31 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     @Override
     public boolean isSpeechError(int code) {
         return true;
+    }
+
+    @Override
+    public String[] getSupportedLanguagesNames() {
+        return mSupportedLanguagesNames.toArray(new String[0]);
+    }
+
+    @Override
+    public int getIndexForLanguage(String language) {
+        return mSupportedLanguages.indexOf(language);
+    }
+
+    @Override
+    public String getLanguageForIndex(int index) {
+        return mSupportedLanguages.get(index);
+    }
+
+    @Override
+    public String getNameForLanguage(String language) {
+        int index = getIndexForLanguage(language);
+        if (index < 0) {
+            return null;
+        } else {
+            return mSupportedLanguagesNames.get(index);
+        }
     }
 
     private void dispatch(Runnable runnable) {

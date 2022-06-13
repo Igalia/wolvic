@@ -98,7 +98,7 @@ class LanguageOptionsView extends SettingsView {
     };
 
     private void setVoiceLanguage() {
-        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguage(getContext()).getDisplayName()),  TextView.BufferType.SPANNABLE);
+        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguageName(getContext())), TextView.BufferType.SPANNABLE);
     }
 
     private void setContentLanguage() {
