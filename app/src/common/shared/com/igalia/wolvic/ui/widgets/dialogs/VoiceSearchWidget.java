@@ -207,6 +207,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         public void onNoVoice() {
             // Handle when the api didn't detect any voice
             Log.d(LOGTAG, "===> NO_VOICE");
+            mBinding.voiceSearchStart.setText(getContext().getString(R.string.voice_search_error));
+        }
+
+        @Override
+        public void onCanceled() {
+            // Handle when the voice recognition was canceled
+            Log.d(LOGTAG, "===> CANCELED");
         }
 
         @Override

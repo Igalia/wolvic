@@ -32,6 +32,7 @@ public interface SpeechRecognizer {
         default void onPartialResult(String transcription) {};
         void onResult(String transcription, float confidence);
         void onNoVoice();
+        void onCanceled();
         void onError(@ErrorType int errorType, @Nullable String error);
     }
 
