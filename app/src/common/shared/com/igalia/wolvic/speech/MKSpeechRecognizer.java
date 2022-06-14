@@ -50,6 +50,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
             callback.onError(Callback.ERROR_LANGUAGE_NOT_SUPPORTED, "language not supported");
             stop();
         } else {
+            Log.w(LOGTAG, "start speech recognition, language =  " + settings.locale);
             mkSpeechService.start(mContext, settings.locale, key);
         }
     }
@@ -83,12 +84,10 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
             double db = (double) fftsum * -1; // the higher the value, quieter the user/environment is
             db = db == Double.POSITIVE_INFINITY ? MAX_DB : db;
             int level = (int) (MAX_CLIPPING - (((db - MIN_DB) / (MAX_DB - MIN_DB)) * MAX_CLIPPING));
-            Log.d(LOGTAG, "===> db:      " + db);
-            Log.d(LOGTAG, "===> level    " + level);
+            Log.d(LOGTAG, "onMicActivity:  db = " + db + "  level = " + level);
             mCallback.onMicActivity(level);
         }
     }
-
 
     private void dispatch(Runnable runnable) {
         ((Activity) mContext).runOnUiThread(runnable);
@@ -113,7 +112,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
                     break;
                 case INTERIM_STT_RESULT:
                     if (mCallback != null) {
-                        Log.w(LOGTAG, "INTERIM_STT_RESULT " + (String) aPayload);
+                        Log.w(LOGTAG, "INTERIM_STT_RESULT " + aPayload);
                         mCallback.onPartialResult((String) aPayload);
                     }
                     break;
@@ -136,7 +135,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
                     break;
                 case CANCELED:
                     if (mCallback != null) {
-                        mCallback.onNoVoice();
+                        mCallback.onCanceled();
                     }
                     removeListener();
                     break;
