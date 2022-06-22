@@ -4,7 +4,9 @@ import android.view.PointerIcon;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WSlowScriptResponse;
 import com.igalia.wolvic.browser.api.WWebResponse;
 
 import org.json.JSONObject;
@@ -166,7 +168,10 @@ class ContentDelegateImpl implements GeckoSession.ContentDelegate {
     @Nullable
     @Override
     public GeckoResult<SlowScriptResponse> onSlowScript(@NonNull GeckoSession geckoSession, @NonNull String scriptFileName) {
-        return ResultImpl.from(mDelegate.onSlowScript(mSession, scriptFileName)).map(value -> {
+        WResult<WSlowScriptResponse> result = mDelegate.onSlowScript(mSession, scriptFileName);
+        if (result == null)
+            return null;
+        return ResultImpl.from(result).map(value -> {
             switch (Objects.requireNonNull(value)) {
                 case STOP:
                     return SlowScriptResponse.STOP;
