@@ -111,6 +111,7 @@ struct DeviceDelegateOculusVR::State {
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
+  float ipd = 0.0f;
 
   void UpdatePerspective() {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
@@ -1030,6 +1031,13 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
       caps |= device::PositionEmulated;
     }
     m.immersiveDisplay->SetCapabilityFlags(caps);
+  }
+
+  // Changes in IPD might cause distortions in WebXR when rotating the headset unless we update
+  // the perspective projection.
+  if (ipd != m.ipd) {
+    m.ipd = ipd;
+    m.UpdatePerspective();
   }
 
   int lastReorientCount = m.reorientCount;
