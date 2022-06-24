@@ -173,6 +173,15 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         queueRunnable(this::nativeOnSurfaceDestroyed);
     }
 
+    @Override
+    public void onBackPressed() {
+        // HVR SDK does a pretty bad job handling presses on the Menu button of the R controller.
+        // Instead of letting applications handle their own termination it just kills the activities.
+        // That's why we need to handle this event to let the render thread know that it should stop
+        // because the activity is about to be destroyed (we cannot rely on things like onDestroy().
+        queueRunnable(this::onBackPressedNative);
+    }
+
     protected boolean platformExit() {
         return false;
     }
@@ -183,6 +192,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected native void nativeOnResume();
     protected native void nativeOnSurfaceChanged(Surface surface);
     protected native void nativeOnSurfaceDestroyed();
+    protected native void onBackPressedNative();
 }
 
 

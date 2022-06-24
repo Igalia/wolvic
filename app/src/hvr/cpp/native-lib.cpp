@@ -43,13 +43,13 @@ GetAssetManager(JNIEnv *aEnv, jobject aActivity) {
   return result;
 }
 
-
 struct AppContext {
   vrb::RunnableQueuePtr mQueue;
   BrowserEGLContextPtr mEgl;
   PlatformDeviceDelegatePtr mDevice;
   pthread_t mThreadId { 0 };
   JavaContext mJavaContext;
+  bool mShouldExitRenderThread { false };
 
   void RenderThread() {
     // Attach JNI thread
@@ -71,7 +71,12 @@ struct AppContext {
     while (true) {
       mQueue->ProcessRunnables();
 
-      if (mDevice->ShouldExitRenderLoop()) {
+      if (mDevice->ShouldExitRenderLoop() && mShouldExitRenderThread) {
+        // In order to exit the render loop we need to get confirmation from both the OpenXR SDK
+        // (ShouldExitRenderLoop()) and also from the Android Activity (mShouldExitRenderThread).
+        // We should not exit the loop just based on the OpenXR session state, because there are
+        // situations in which we want to keep the session in a not running state (STOPPED/EXITING)
+        // without killing the application, for example when exiting the security zone.
         break;
       }
 
@@ -94,6 +99,7 @@ struct AppContext {
     }
 
     BrowserWorld::Instance().ShutdownJava();
+    BrowserWorld::Instance().ShutdownGL();
     BrowserWorld::Destroy();
     mEgl->Destroy();
     mEgl.reset();
@@ -151,20 +157,21 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
     VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
     VRB_GL_CHECK(glEnable(GL_CULL_FACE));
     BrowserWorld::Instance().InitializeGL();
+    sAppContext->mDevice->EnterVR(*sAppContext->mEgl);
   } else {
     sAppContext->mEgl->UpdateNativeWindow(window);
     sAppContext->mEgl->MakeCurrent();
+    sAppContext->mDevice->BeginXRSession();
   }
-
-   sAppContext->mDevice->EnterVR(*sAppContext->mEgl);
 }
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)
 (JNIEnv *aEnv, jobject) {
-  if (sAppContext && sAppContext->mDevice) {
+  // Here we just ask the OpenXR session to stop. We don't close the application because we could
+  // get the OnSurfaceDestroyed event when we move out of the security zone, for example. We do
+  // also get this event when the application is terminated by the user/system.
+  if (sAppContext && sAppContext->mDevice)
     sAppContext->mDevice->LeaveVR();
-    BrowserWorld::Instance().ShutdownGL();
-  }
 }
 
 
@@ -183,6 +190,11 @@ JNI_METHOD(jboolean, platformExit)
     return (jboolean) sAppContext->mDevice->ExitApp();
   }
   return (jboolean) false;
+}
+
+JNI_METHOD(void, onBackPressedNative)
+(JNIEnv *, jobject) {
+    sAppContext->mShouldExitRenderThread = true;
 }
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {
