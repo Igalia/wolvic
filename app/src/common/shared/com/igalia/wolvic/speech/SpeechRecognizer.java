@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 public interface SpeechRecognizer {
     class Settings {
@@ -41,9 +42,5 @@ public interface SpeechRecognizer {
     boolean shouldDisplayStoreDataPrompt();
     default boolean supportsASR(@NonNull Settings settings) {return true;}
     boolean isSpeechError(int code);
-    // FIXME https://github.com/Igalia/wolvic/issues/151
-    String[] getSupportedLanguagesNames();
-    int getIndexForLanguage(String language);
-    String getLanguageForIndex(int index);
-    String getNameForLanguage(String language);
+    List<String> getSupportedLanguages();
 }

@@ -11,10 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
-import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.ui.adapters.Language;
 
 import java.util.ArrayList;
@@ -203,15 +201,12 @@ public class LocaleUtils {
         return languageId;
     }
 
-    public static String getVoiceSearchLanguageName(@NonNull Context aContext) {
-        VRBrowserApplication application = (VRBrowserApplication) aContext.getApplicationContext();
-        SpeechRecognizer speechRecognizer = application.getSpeechRecognizer();
-        String language = getVoiceSearchLanguageId(aContext);
-        String name = speechRecognizer.getNameForLanguage(language);
-        if (name != null) {
-            return name;
+    public static String getVoiceLanguageName(@NonNull Context aContext, @NonNull String language) {
+        if (language.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
+            return aContext.getString(R.string.settings_language_follow_device);
         } else {
-            return speechRecognizer.getNameForLanguage(FALLBACK_LANGUAGE_TAG);
+            Locale locale = Locale.forLanguageTag(language);
+            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
         }
     }
 

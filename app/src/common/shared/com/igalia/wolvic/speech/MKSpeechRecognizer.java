@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.BuildConfig;
-import com.igalia.wolvic.R;
 import com.igalia.wolvic.ui.widgets.dialogs.VoiceSearchWidget;
 import com.igalia.wolvic.utils.LocaleUtils;
 import com.igalia.wolvic.utils.StringUtils;
@@ -17,7 +16,6 @@ import com.meetkai.speechlibrary.ISpeechRecognitionListener;
 import com.meetkai.speechlibrary.MKSpeechService;
 import com.meetkai.speechlibrary.STTResult;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -41,21 +39,10 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
             "en-US", "zh-CN", "ja-JP", "fr-FR", "de-DE", "es-ES", "ru-RU", "ko-KR",
             "it-IT", "pl-PL", "sv-SE", "fi-FI", "ar-SA", "id-ID", "th-TH", "he-IL");
 
-    private static final List<String> mSupportedLanguagesNames = new ArrayList<>();
-
     private static final String DEBUG_API_KEY = "WOLVIC_DEBUG";
 
     public MKSpeechRecognizer(Context context) {
         mContext = context;
-
-        for (String language : mSupportedLanguages) {
-            if (language.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
-                mSupportedLanguagesNames.add(mContext.getString(R.string.settings_language_follow_device));
-            } else {
-                Locale locale = Locale.forLanguageTag(language);
-                mSupportedLanguagesNames.add(StringUtils.capitalize(locale.getDisplayLanguage(locale)));
-            }
-        }
     }
 
     @Override
@@ -102,28 +89,8 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
     }
 
     @Override
-    public String[] getSupportedLanguagesNames() {
-        return mSupportedLanguagesNames.toArray(new String[0]);
-    }
-
-    @Override
-    public int getIndexForLanguage(String language) {
-        return mSupportedLanguages.indexOf(language);
-    }
-
-    @Override
-    public String getLanguageForIndex(int index) {
-        return mSupportedLanguages.get(index);
-    }
-
-    @Override
-    public String getNameForLanguage(String language) {
-        int index = getIndexForLanguage(language);
-        if (index < 0) {
-            return null;
-        } else {
-            return mSupportedLanguagesNames.get(index);
-        }
+    public List<String> getSupportedLanguages() {
+        return mSupportedLanguages;
     }
 
     // SpeechResultCallback
