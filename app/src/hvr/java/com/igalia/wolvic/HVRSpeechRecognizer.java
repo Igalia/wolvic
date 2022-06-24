@@ -13,13 +13,11 @@ import com.huawei.hms.mlsdk.asr.MLAsrListener;
 import com.huawei.hms.mlsdk.asr.MLAsrRecognizer;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.utils.LocaleUtils;
-import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     private Context mContext;
@@ -33,7 +31,6 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     private static final List<String> DEFAULT_SUPPORTED_LANGUAGES = Collections.singletonList(MLAsrConstants.LAN_EN_US);
     // The first element in these two lists corresponds to "Follow device language"
     private final List<String> mSupportedLanguages = new ArrayList<>();
-    private final List<String> mSupportedLanguagesNames = new ArrayList<>();
 
     public HVRSpeechRecognizer(Context context) {
         mContext = context;
@@ -57,13 +54,6 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
         mSupportedLanguages.clear();
         mSupportedLanguages.add(LocaleUtils.DEFAULT_LANGUAGE_ID);
         mSupportedLanguages.addAll(supportedLanguages);
-
-        mSupportedLanguagesNames.clear();
-        mSupportedLanguagesNames.add(mContext.getString(R.string.settings_language_follow_device));
-        for (String language : supportedLanguages) {
-            Locale locale = new Locale(language);
-            mSupportedLanguagesNames.add(StringUtils.capitalize(locale.getDisplayLanguage(locale)));
-        }
     }
 
     @Override
@@ -108,28 +98,8 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     }
 
     @Override
-    public String[] getSupportedLanguagesNames() {
-        return mSupportedLanguagesNames.toArray(new String[0]);
-    }
-
-    @Override
-    public int getIndexForLanguage(String language) {
-        return mSupportedLanguages.indexOf(language);
-    }
-
-    @Override
-    public String getLanguageForIndex(int index) {
-        return mSupportedLanguages.get(index);
-    }
-
-    @Override
-    public String getNameForLanguage(String language) {
-        int index = getIndexForLanguage(language);
-        if (index < 0) {
-            return null;
-        } else {
-            return mSupportedLanguagesNames.get(index);
-        }
+    public List<String> getSupportedLanguages() {
+        return mSupportedLanguages;
     }
 
     private void dispatch(Runnable runnable) {

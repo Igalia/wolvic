@@ -21,9 +21,14 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.LocaleUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class VoiceSearchLanguageOptionsView extends SettingsView {
 
     private OptionsLanguageVoiceBinding mBinding;
+    private List<String> mSupportedLanguages;
+    private List<String> mLanguagesNames;
 
     public VoiceSearchLanguageOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -34,16 +39,14 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         updateUI();
     }
 
-    private SpeechRecognizer getSpeechRecognizer() {
-        return ((VRBrowserApplication) getContext().getApplicationContext()).getSpeechRecognizer();
-    }
-
     @Override
     protected void updateUI() {
         super.updateUI();
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        SpeechRecognizer speechRecognizer = getSpeechRecognizer();
+        SpeechRecognizer speechRecognizer =
+                ((VRBrowserApplication) getContext().getApplicationContext()).getSpeechRecognizer();
+        mSupportedLanguages = speechRecognizer.getSupportedLanguages();
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_language_voice, this, true);
@@ -62,11 +65,15 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        mBinding.languageRadio.setOptions(speechRecognizer.getSupportedLanguagesNames());
+        mLanguagesNames = new ArrayList<>(mSupportedLanguages.size());
+        for (String language : mSupportedLanguages) {
+            mLanguagesNames.add(LocaleUtils.getVoiceLanguageName(getContext(), language));
+        }
+        mBinding.languageRadio.setOptions(mLanguagesNames.toArray(new String[0]));
 
         String languageId = LocaleUtils.getVoiceSearchLanguageId(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
-        setLanguage(speechRecognizer.getIndexForLanguage(languageId), false);
+        setLanguage(mSupportedLanguages.indexOf(languageId), false);
     }
 
     @Override
@@ -77,8 +84,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
     }
 
     private RadioGroupSetting.OnCheckedChangeListener mLanguageListener = (radioGroup, checkedId, doApply) -> {
-        SpeechRecognizer speechRecognizer = getSpeechRecognizer();
-        String languageId = speechRecognizer.getLanguageForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
+        String languageId = mSupportedLanguages.get(mBinding.languageRadio.getCheckedRadioButtonId());
         String currentLanguageId = LocaleUtils.getVoiceSearchLanguageId(getContext());
 
         if (!languageId.equalsIgnoreCase(currentLanguageId)) {
@@ -94,8 +100,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
 
         if (doApply) {
-            SpeechRecognizer speechRecognizer = getSpeechRecognizer();
-            String languageId = speechRecognizer.getLanguageForIndex(checkedId);
+            String languageId = mSupportedLanguages.get(checkedId);
             LocaleUtils.setVoiceSearchLanguageId(getContext(), languageId);
         }
     }
