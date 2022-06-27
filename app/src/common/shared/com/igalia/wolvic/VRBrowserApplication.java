@@ -8,7 +8,6 @@ package com.igalia.wolvic;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -17,12 +16,13 @@ import com.igalia.wolvic.browser.Addons;
 import com.igalia.wolvic.browser.LoginStorage;
 import com.igalia.wolvic.browser.Places;
 import com.igalia.wolvic.browser.Services;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.db.AppDatabase;
 import com.igalia.wolvic.db.DataRepository;
 import com.igalia.wolvic.downloads.DownloadsManager;
-import com.igalia.wolvic.speech.MKSpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
@@ -30,7 +30,6 @@ import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.EnvironmentsManager;
 import com.igalia.wolvic.utils.LocaleUtils;
-import com.igalia.wolvic.utils.SystemUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
@@ -62,11 +61,17 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
         mDownloadsManager = new DownloadsManager(activityContext);
         mDownloadsManager.init();
-        mSpeechRecognizer = new MKSpeechRecognizer(activityContext);
         mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
         mEnvironmentsManager.init();
         mAddons = new Addons(activityContext, mSessionStore);
+
+        try {
+            String speechService = SettingsStore.getInstance(activityContext).getVoiceSearchService();
+            setSpeechRecognizer(SpeechServices.getInstance(activityContext, speechService));
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void onActivityDestroy() {

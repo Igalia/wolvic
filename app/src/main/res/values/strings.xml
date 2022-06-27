@@ -233,6 +233,18 @@
     <string name="settings_language_choose_language_display_description">Choose the language used to display menus, messages, and notifications.</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Service' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of online services for the user to choose as their
+         preferred way to carry out voice recognition. -->
+    <string name="settings_language_choose_language_voice_search_service_title">Voice Search Service</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Service' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of online services for the user to choose as their
+         preferred way to carry out voice recognition. -->
+    <string name="settings_language_choose_language_voice_search_service_description">Choose your preferred online service for voice search.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
@@ -1393,6 +1405,9 @@
     <!-- This string labels the Reset button that restores the default environment settings values. -->
     <string name="environment_options_reset">Reset Environment Settings</string>
 
+    <!-- This string labels the Reset button that restores the default voice search service settings values. -->
+    <string name="language_service_options_reset">Reset Voice Search Service Settings</string>
+
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Reset Voice Search Language Settings</string>
 
@@ -1404,6 +1419,9 @@
 
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">Reset All Language Settings</string>
+
+    <!-- This string labels the description in the Voice Search Service button in the main language setting dialog. -->
+    <string name="language_options_voice_search_service_title">Voice Search Service</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
     <string name="language_options_voice_search_language_title">Voice Search Language:</string>
@@ -2278,4 +2296,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         This Privacy Policy is subject to Spanish law. The Privacy Policy language of this application is Spanish. For this reason, any possible divergence between the original version in Spanish and its translation into another language will be considered as predominant in the Spanish version that can be found here: https://wolvic.com/es/legal/privacy/ .
     </string>
 
+    <!-- Display names for the supported voice recognition services -->
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
 </resources>
