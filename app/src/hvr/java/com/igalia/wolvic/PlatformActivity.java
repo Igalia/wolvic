@@ -22,7 +22,10 @@ import android.view.WindowManager;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hvr.LibUpdateClient;
 import com.igalia.wolvic.browser.PermissionDelegate;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
+import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
@@ -110,13 +113,19 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
     private void initializeAGConnect() {
         try {
-            if (StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+            String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+                Log.e(TAG, "HVR API key is not available");
                 return;
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
-            if (BuildConfig.FLAVOR_country == "cn")
-                ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
+            try {
+                SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
+                ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(speechRecognizer);
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

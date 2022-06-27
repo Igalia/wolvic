@@ -22,6 +22,7 @@ import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.engine.EngineProvider;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
@@ -470,6 +471,17 @@ public class SettingsStore {
     public void setAudioEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_audio), isEnabled);
+        editor.commit();
+    }
+
+    public String getVoiceSearchService() {
+        return mPrefs.getString(
+                mContext.getString(R.string.settings_key_voice_search_service), SpeechServices.DEFAULT);
+    }
+
+    public void setVoiceSearchService(String service) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_voice_search_service), service);
         editor.commit();
     }
 

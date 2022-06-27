@@ -411,6 +411,9 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             case LANGUAGE_CONTENT:
                 showView(new ContentLanguageOptionsView(getContext(), mWidgetManager));
                 break;
+            case LANGUAGE_VOICE_SERVICE:
+                showView(new VoiceSearchServiceOptionsView(getContext(), mWidgetManager));
+                break;
             case LANGUAGE_VOICE:
                 showView(new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager));
                 break;

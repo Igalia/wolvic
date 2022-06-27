@@ -10,6 +10,10 @@
             type="android.view.View.OnClickListener" />
 
         <variable
+            name="voiceSearchServiceClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="contentClickListener"
             type="android.view.View.OnClickListener" />
 
@@ -53,6 +57,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/voiceSearchServiceButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{(view) -> voiceSearchServiceClickListener.onClick(view)}"
+                    app:buttonText="@string/settings_button_edit"
+                    app:description="@string/language_options_voice_search_service_title" />
+
+                <TextView
+                    android:id="@+id/voiceSearchServiceDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/rhino"
+                    android:textSize="@dimen/text_medium_size"
+                    tools:text="Description" />
 
                 <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/voiceSearchLanguageButton"
