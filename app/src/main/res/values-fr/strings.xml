@@ -93,7 +93,7 @@
     <string name="settings_privacy_policy_popups_title_v1">Exceptions pour les popups</string>
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
-    <string name="settings_privacy_policy_popups_description">Vous pouvez spécifier quels sites web sont autorisés à ouvrir des fenêtres popup.</string>
+    <string name="settings_privacy_policy_popups_description">Vous pouvez spécifier quels sites web sont autorisés à ouvrir des fenêtres popup</string>
     <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
     <string name="settings_privacy_policy_webxr_title">Autorisations de réalité virtuelle</string>
     <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
@@ -1107,7 +1107,7 @@
     <string name="drm_disabled_tooltip">DRM non autorisé</string>
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
-    <string name="site_info_tooltip">Afficher les informations du site</string>
+    <string name="site_info_tooltip">Afficher les informations du site.</string>
     <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
          'Servo' refers to the Servo engine. -->
     <string name="servo_tooltip">Utiliser Servo</string>
@@ -1594,4 +1594,91 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_headset">Casque : %1$s</string>
     <string name="settings_privacy_search_engine_title">Moteur de recherche</string>
     <string name="settings_terms_service">Conditions d’utilisation</string>
+    <string name="hvr_connect_glass_message">Connectez vos lunettes de réalité virtuelle HUAWEI afin d\'utiliser cette application</string>
+    <string name="terms_service_subtitle_2">Services d’information basés sur le Web de Wolvic</string>
+    <string name="privacy_policy_title">Politique de confidentialité générale</string>
+    <string name="privacy_policy_subtitle_1">Informations générales</string>
+    <string name="privacy_dialog_title">Vie Privée</string>
+    <string name="hvr_enter_vr">Entrer en réalité virtuelle</string>
+    <string name="terms_service_title">Conditions d\'utilisation</string>
+    <string name="privacy_dialog_agree">Accepter</string>
+    <string name="privacy_policy_subtitle_3">Droit applicable et langue d’origine</string>
+    <string name="privacy_dialog_disagree">Fermer Wolvic</string>
+    <string name="settings_privacy_choose_search_engine_reset">Réinitialiser les préférences de moteur de recherche</string>
+    <string name="voice_search_server_error">La commande vocale n\'est actuellement pas disponible.</string>
+    <string name="external_open_uri_error_title">Erreur lors de l\'ouverture de l\'application externe</string>
+    <string name="privacy_policy_section_1">Cette application a été conçue et développée par Igalia, SL (ci-après IGALIA), dont le siège social est situé à Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galice (Espagne), et dont les coordonnées sont les suivantes :
+\n
+\n\t- Numéro de téléphone +34 981 913991 ;
+\n\t- Courriel : info@igalia.com
+\n
+\nLe contenu et les éléments qui composent l’application ont été implémentés ou conçus et développés par IGALIA sous des licences à code source ouvert, étant protégés, sans limitations, par les lois de propriété intellectuelle et industrielle du royaume d\'Espagne et par les traités et accords internationaux qui peuvent résulter de l\'application.</string>
+    <string name="privacy_policy_section_3">Cette politique de confidentialité est soumise à la loi espagnole. La langue de la politique de confidentialité de cette application est l’espagnol. Pour cette raison, toute divergence éventuelle entre la version originale en espagnol et sa traduction dans une autre langue sera considérée comme prédominante dans la version espagnole qui peut être trouvée ici : https://wolvic.com/es/legal/privacy/ .</string>
+    <string name="terms_service_section_2">"Wolvic utilise des services d\'information basés sur le Web (« Services ») pour fournir certaines des fonctionnalités prévues pour votre utilisation avec cette version binaire de Wolvic, selon les conditions décrites ci-dessous.
+\n
+\n\t- Igalia et ses contributeurs, concédants de licence et partenaires s\'efforcent de fournir les Services les plus précis et les plus à jour. Cependant, nous ne pouvons pas garantir que ces informations sont complètes et sans erreur. Par exemple, le service de navigation sécurisée peut ne pas identifier certains sites à risque et peut identifier certains sites sûrs par erreur, et dans le service de localisation, tous les emplacements retournés par nos fournisseurs de services sont uniquement des estimations et ni nous ni nos fournisseurs de services ne garantissent l\'exactitude des emplacements fournis.
+\n
+\n\t- Igalia peut interrompre ou modifier les Services à sa discrétion.
+\n
+\n\t- Vous êtes invité·e à utiliser ces Services avec la version de Wolvic qui les accompagne, et Igalia vous accorde ses droits pour ce faire. Igalia et ses concédants de licence se réservent tous les autres droits sur les Services. Ces conditions ne sont pas destinées à limiter les droits accordés en vertu des licences open source applicables à Wolvic et aux versions correspondantes du code source de Wolvic.
+\n
+\n\t- Les Services sont fournis « en l\'état ». Igalia, ses contributeurs, concédants de licence et distributeurs, déclinent toute garantie, expresse ou implicite, y compris, sans limitation, les garanties que les Services sont commercialisables et adaptés à vos besoins particuliers. Vous assumez l\'intégralité des risques liés à la sélection des Services à vos fins et à la qualité et aux performances des Services.
+\n
+\n\t- Sauf dans la mesure où la loi l\'exige, Igalia, ses contributeurs, concédants de licence et distributeurs ne seront pas responsables des dommages indirects, spéciaux, accidentels, consécutifs, punitifs ou exemplaires découlant de ou liés de quelque manière que ce soit à l\'utilisation de Wolvic et des Services. La responsabilité collective en vertu des présentes conditions ne dépassera pas 500 $. Certaines juridictions ne permettent pas l\'exclusion ou la limitation de certains dommages, de sorte que cette exclusion et cette limitation peuvent ne pas s\'appliquer à vous.
+\n
+\n\t- Igalia peut mettre à jour les présentes conditions si nécessaire de temps à autre. Ces conditions ne peuvent être modifiées ou annulées sans l\'accord écrit d\'Igalia.
+\n
+\n\t- Ces conditions sont régies par les lois de l\'Espagne, à l\'exclusion de ses dispositions en matière de conflit de lois. Si une partie des présentes conditions est jugée invalide ou inapplicable, les autres parties resteront en vigueur et de plein effet. En cas de conflit entre une version traduite de ces conditions et la version en langue espagnole, la version en langue espagnole prévaudra.
+\n
+\n\t- Si vous ne souhaitez pas utiliser un ou plusieurs des services ou si les conditions ci-dessus sont inacceptables, vous pouvez désactiver la fonction ou le(s) service(s). Vous trouverez ci-dessous des instructions sur la manière de désactiver une fonction ou un service particulier. D\'autres fonctions et services peuvent être désactivés dans les préférences de l\'application.
+\n
+\n\t\t◦ La navigation sécurisée est activée par défaut. La désactivation de la fonction de navigation sécurisée n\'est pas recommandée car elle peut vous amener à consulter des sites non sécurisés. Si vous souhaitez désactiver complètement la fonction, suivez ces étapes :
+\n
+\n\t\t\t⁃ Dans la barre d\'URL, tapez about:config.
+\n
+\n\t\t\t⁃ Tapez browser.safebrowsing.malware.enabled
+\n
+\n\t\t\t⁃ Double-cliquez sur la préférence browser.safebrowsing.malware.enabled.
+\n
+\n\t\t\t⁃ Tapez browser.safebrowsing.phishing.enabled
+\n
+\n\t\t\t⁃ Double-cliquez sur la préférence browser.safebrowsing.phishing.enabled.
+\n
+\n\t\t\t⁃ La navigation sécurisée est maintenant désactivée.
+\n
+\n\t\t◦  La navigation en fonction de l\'emplacement est toujours facultatif dans Wolvic. Aucune information de localisation n\'est jamais envoyée sans votre autorisation. Si vous souhaitez désactiver complètement la fonctionnalité, suivez ces étapes :
+\n
+\n\t\t\t⁃ Dans la barre d\'URL, tapez about:config.
+\n
+\n\t\t\t⁃ Tapez geo.enabled
+\n
+\n\t\t\t⁃ Double clic sur la préférence geo.enabled
+\n
+\n\t\t\t⁃ La navigation en fonction de l\'emplacement est maintenant désactivée.
+\n
+\n\t\t◦ La protection améliorée contre le pistage dans Wolvic protège automatiquement votre vie privée lorsque vous naviguez. Elle bloque les trackers qui vous suivent en ligne pour collecter des informations sur vos habitudes de navigation et vos centres d\'intérêt sans rompre les fonctionnalités du site. Elle inclut également des protections contre les scripts nuisibles, tels que les logiciels malveillants qui vident votre batterie. Il existe trois modes de protection contre le pistage : Standard, Strict et Désactivé. Si vous souhaitez la désactiver, procédez comme suit :
+\n
+\n\t\t\t⁃ Allez dans les paramètres « Confidentialité et sécurité ».
+\n
+\n\t\t\t⁃ Sélectionnez le bouton radio « Désactivé ».
+\n
+\n\t\t\t⁃ La protection améliorée contre le pistage est maintenant désactivée."</string>
+    <string name="voice_search_unsupported">La commande vocale n\'est pas supportée pour votre langue.</string>
+    <string name="settings_privacy_choose_search_engine_description">Choisissez votre moteur de recherche préféré.</string>
+    <string name="external_open_uri_error_bad_uri_body">uri non valide %1$s</string>
+    <string name="external_open_uri_error_no_activity_body">Aucune application trouvée pour gérer %1$s</string>
+    <string name="privacy_dialog_message">Votre vie privée est important pour nous. Afin de lancer le navigateur, veuillez accepter nos conditions d\'utilisation et notre politique de vie privée. Merci d\'utiliser Wolvic !</string>
+    <string name="privacy_policy_subtitle_2">Protection des données</string>
+    <string name="external_open_uri_error_security_exception_body">Exception de sécurité lors de l\'ouverture de %1$s</string>
+    <string name="terms_service_section_1">Wolvic est un logiciel libre et gratuit, construit par une communauté de milliers de personnes dans le monde entier. Il y a certaines choses que vous devez savoir :
+\n
+\n\t- Wolvic est mis à votre disposition selon les termes de la Mozilla Public License. Cela signifie que vous pouvez utiliser, copier et distribuer Wolvic à d\'autres personnes. Vous êtes également invité à modifier le code source de Wolvic comme vous le souhaitez pour répondre à vos besoins. La Mozilla Public License vous donne également le droit de distribuer vos versions modifiées.
+\n
+\n\t- Il ne vous est pas accordé de droits ou de licences sur les marques d\'Igalia ou de toute autre partie, y compris, sans limitation, le nom ou le logo Wolvic.
+\n
+\n\t- Certaines fonctionnalités de Wolvic, telles que le Crash Reporter, vous donnent la possibilité de fournir des commentaires à Igalia. En choisissant de soumettre des commentaires, vous donnez à Igalia la permission d\'utiliser les commentaires pour améliorer ses produits, de publier des commentaires anonymes sur ses sites Web, et de distribuer les commentaires anonymes.
+\n
+\n\t- La façon dont nous utilisons vos renseignements personnels et les commentaires soumis à Igalia par l\'intermédiaire de Wolvic est décrite dans la politique de confidentialité de Wolvic.
+\n
+\n\t- Certaines fonctionnalités de Wolvic font appel à des services d\'information basés sur le Web ; cependant, nous ne pouvons pas garantir qu\'ils sont 100 % exacts ou sans erreur. Plus de détails, y compris des informations sur la façon de désactiver les fonctions qui utilisent ces services, peuvent être trouvés dans les conditions de service (ci-dessous).</string>
 </resources>
