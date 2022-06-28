@@ -1,2 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="settings_privacy_search_engine_title">Motor de buscas</string>
+    <string name="settings_language_follow_device">Igual que o idioma do dispositivo</string>
+    <string name="settings_help">Axuda</string>
+    <string name="settings_accounts_sign_out">Saír</string>
+    <string name="fxa_account_options_account">Conta</string>
+    <string name="fxa_account_options_logins_sync">Identificacións</string>
+    <string name="security_options_permission_camera">Cámara</string>
+    <string name="security_options_permission_microphone">Micrófono</string>
+    <string name="brightness_mode_dark">Escuro</string>
+    <string name="bookmarks_desktop_unfiled_title">Outros marcadores</string>
+    <string name="history_section_older">Máis antigo</string>
+    <string name="addons_title">Complementos</string>
+    <string name="fxa_syncing">Sincronizando…</string>
+    <string name="url_bookmarks_title">Marcadores</string>
+    <string name="tabs_close_selected">Pechar lapelas</string>
+    <string name="drm_dialog_button_on">Activado</string>
+    <string name="drm_first_use_allow">Permitir</string>
+    <string name="drm_first_use_do_not_allow">Non permitir</string>
+    <string name="login_edit_dialog_site_description">Sitio</string>
+    <string name="login_edit_dialog_username_description">Nome de usuario</string>
+    <string name="login_edit_dialog_password_description">Contrasinal</string>
+    <string name="col_name">Nome</string>
+    <string name="back_tooltip">Atrás</string>
+    <string name="forward_tooltip">Adiante</string>
+    <string name="refresh_tooltip">Actualizar</string>
+    <string name="settings_tooltip">Configuración</string>
+    <string name="url_library_title">Biblioteca</string>
+    <string name="privacy_options_logins_button">Opcións avanzadas</string>
+    <string name="settings_language">Idioma</string>
+    <string name="security_options_permission_notifications">Notificacións</string>
+    <string name="download_delete_confirm_cancel">Cancelar</string>
+    <string name="url_history_title">Historial</string>
+    <string name="url_downloads_title">Descargas</string>
+    <string name="bookmarks_desktop_folder_title">Marcadores do escritorio</string>
+    <string name="bookmarks_desktop_menu_title">Menú dos marcadores</string>
+    <string name="bookmarks_desktop_toolbar_title">Barra de marcadores</string>
+    <string name="voice_search_close">Pechar</string>
+    <string name="download_delete_confirm_delete">Eliminar</string>
+    <string name="history_clear_range_today">Hoxe</string>
+    <string name="col_url">Posición</string>
+    <string name="history_clear_range_yesterday">Onte</string>
+    <string name="settings_button_edit">Editar</string>
+    <string name="context_menu_copy_text">Copiar</string>
+    <string name="autofill_dialog_save_button_text">Gardar</string>
+    <string name="drm_dialog_button_off">Desactivado</string>
+    <string name="exit_confirm_dialog_button_quit">Saír</string>
+    <string name="privacy_options_tracking_strict">Estrito</string>
+    <string name="tabs_select_all">Seleccionar todo</string>
+    <string name="context_menu_paste_text">Pegar</string>
+    <string name="addons_install_dialog_add">Engadir</string>
+    <string name="security_options_login_save">Gardar Inicios de sesión e contrasinais</string>
+    <string name="max_windows_button">De acordo</string>
+</resources>
