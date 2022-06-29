@@ -411,4 +411,23 @@ public class LocaleUtils {
         return FALLBACK_LANGUAGE_TAG;
     }
 
+    // Returns the closest language (among those supported) for the given locale, or the fallback.
+    public static String getClosestLanguageForLocale(Locale locale, List<String> supported, String fallback) {
+        final String defaultLanguageTag = locale.toLanguageTag();
+        if (supported.contains(defaultLanguageTag)) {
+            return defaultLanguageTag;
+        }
+
+        final String defaultLanguage = locale.getLanguage();
+        if (supported.contains(defaultLanguage)) {
+            return defaultLanguage;
+        }
+
+        Optional<String> closestLanguage = supported.stream().filter(s -> s.startsWith(defaultLanguage)).findFirst();
+        if (closestLanguage.isPresent()) {
+            return closestLanguage.get();
+        }
+
+        return fallback;
+    }
 }

@@ -18,6 +18,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     private Context mContext;
@@ -60,6 +61,10 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     public void start(@NonNull Settings settings, @NonNull Callback callback) {
         if (mRecognizer != null) {
             stop();
+        }
+        if (settings.locale.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
+            settings.locale = LocaleUtils.getClosestLanguageForLocale(
+                    Locale.getDefault(), mSupportedLanguages, LocaleUtils.FALLBACK_LANGUAGE_TAG);
         }
         mCallback = callback;
         mRecognizer = MLAsrRecognizer.createAsrRecognizer(mContext);
