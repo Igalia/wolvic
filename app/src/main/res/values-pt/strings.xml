@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="keyboard_done_label">FEITO</string>
+    <string name="keyboard_enter_label">ENTRAR</string>
+    <string name="keyboard_search_label">BUSCAR</string>
+    <string name="keyboard_next_label">PRÓXIMO</string>
+    <string name="permission_enable">Habilitar</string>
+    <string name="permission_enabled">Habilitado</string>
+    <string name="permission_camera">Você permite %1$s para utilizar sua câmera\?</string>
+    <string name="permission_location">Você permite %1$s para acessar sua localização\?</string>
+    <string name="keyboard_go_label">IR</string>
+    <string name="permission_reject">Não Permitir</string>
+    <string name="keyboard_send_label">ENVIAR</string>
+    <string name="keyboard_space_label">espaço</string>
+    <string name="permission_allow">Permitir</string>
+    <string name="permission_microphone">Você permite %1$s para utilizar seu microfone\?</string>
+    <string name="permission_notification">Você permite %1$s para enviar notificações\?</string>
+    <string name="permission_camera_and_microphone">Você permite %1$s para utilizar sua câmera e seu microfone\?</string>
+</resources>
