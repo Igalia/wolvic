@@ -1601,4 +1601,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_terms_service">利用規約</string>
     <string name="settings_privacy_choose_search_engine_reset">検索エンジン設定をリセットする</string>
     <string name="voice_search_server_error">音声検査は現在利用できません。</string>
+    <string name="terms_service_title">利用規約</string>
+    <string name="privacy_dialog_disagree">Wolvicを閉じる</string>
+    <string name="privacy_dialog_title">プライバシー</string>
+    <string name="external_open_uri_error_security_exception_body">%1$sのインテント起動時にセキュリティ例外が発生しました</string>
+    <string name="hvr_enter_vr">VRを開始する</string>
+    <string name="external_open_uri_error_title">外部アプリを開けませんでした</string>
+    <string name="privacy_dialog_agree">同意する</string>
+    <string name="external_open_uri_error_bad_uri_body">無効なuri %1$s</string>
+    <string name="hvr_connect_glass_message">このアプリを使用するにはHUAWEI VR Glassを接続してください</string>
+    <string name="privacy_dialog_message">Wolvic開発チームは皆様のプライバシーの重要性を認識しています。このブラウザーを実行するには、下記の利用規約及びプライバシーポリシーに同意してください。Wolvicをご利用くださいましてありがとうございます。</string>
+    <string name="external_open_uri_error_no_activity_body">%1$sを扱えるアプリケーションが見つかりませんでした</string>
 </resources>
