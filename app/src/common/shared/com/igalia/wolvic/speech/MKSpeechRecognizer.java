@@ -55,12 +55,8 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
             key = DEBUG_API_KEY;
         }
         if (settings.locale.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
-            final String defaultLanguage = Locale.getDefault().getLanguage();
-            if (mSupportedLanguages.stream().noneMatch(s -> s.startsWith(defaultLanguage))) {
-                settings.locale = defaultLanguage;
-            } else {
-                settings.locale = LocaleUtils.FALLBACK_LANGUAGE_TAG;
-            }
+            settings.locale = LocaleUtils.getClosestLanguageForLocale(
+                    Locale.getDefault(), mSupportedLanguages, LocaleUtils.FALLBACK_LANGUAGE_TAG);
         }
         if (!supportsASR(settings)) {
             callback.onError(Callback.ERROR_LANGUAGE_NOT_SUPPORTED, "language not supported");
