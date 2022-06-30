@@ -146,7 +146,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onBorderChanged(@NonNull WindowWidget aWindow) {}
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
         default void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {}
-        default void onMediaFullScreen(@NonNull final WMediaSession mediaSession, boolean aFullScreen) {}
         default void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {}
     }
 
@@ -1733,12 +1732,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
        public void onStop(@NonNull @NotNull WSession session, @NonNull @NotNull WMediaSession mediaSession) {
            mViewModel.setIsMediaAvailable(true);
            mViewModel.setIsMediaPlaying(false);
-       }
-
-       @Override
-       public void onFullscreen(@NonNull final WSession session, @NonNull final WMediaSession mediaSession, final boolean enabled, @Nullable final WMediaSession.ElementMetadata meta) {
-           for (WindowListener listener: mListeners)
-               listener.onMediaFullScreen(mediaSession, enabled);
        }
     };
 

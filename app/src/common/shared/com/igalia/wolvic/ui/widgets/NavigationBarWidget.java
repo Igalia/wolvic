@@ -39,7 +39,6 @@ import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
@@ -599,7 +598,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
             if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
                 mViewModel.setAutoEnteredVRVideo(true);
-                enterVRVideo(mAutoSelectedProjection);
+                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
             } else {
                 mViewModel.setAutoEnteredVRVideo(false);
                 if (mProjectionMenu != null) {
@@ -779,31 +778,28 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mWidgetManager.updateWidget(mAttachedWindow);
     }
 
-    private void enterVRVideoInternal(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
-        assert mFullScreenMedia != null;
-
+    private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
+        if (mViewModel.getIsInVRVideo().getValue().get()) {
+            return;
+        }
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
-        this.setVisible(false);
-        final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
-                aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
-        int mediaWidth = (int) mFullScreenMedia.getWidth();
-        int mediaHeight = (int) mFullScreenMedia.getHeight();
-        if (mediaWidth == 0 || mediaHeight == 0) {
-            Log.i(LOGTAG, "Unavailable media width/height. Defaulting to window sizes");
-            mediaWidth = mAttachedWindow.getWidth();
-            mediaHeight = mAttachedWindow.getHeight();
-        }
-        mAttachedWindow.enableVRVideoMode(mediaWidth, mediaHeight, resetBorder);
-        // Handle video resize while in VR video playback
-        mFullScreenMedia.setResizeDelegate((width, height) -> {
-            mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
-        });
+        mFullScreenMedia = getSession().getFullScreenVideo();
 
+        this.setVisible(false);
+        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
+            final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
+                    aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+            mAttachedWindow.enableVRVideoMode((int)mFullScreenMedia.getWidth(), (int)mFullScreenMedia.getHeight(), resetBorder);
+            // Handle video resize while in VR video playback
+            mFullScreenMedia.setResizeDelegate((width, height) -> {
+                mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
+            });
+        }
         mAttachedWindow.setVisible(false);
 
         closeFloatingMenus();
@@ -825,35 +821,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mMediaControlsWidget.setProjectionSelectorEnabled(true);
         mWidgetManager.updateWidget(mMediaControlsWidget);
         mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), aProjection);
-
-    }
-
-    private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
-        if (mViewModel.getIsInVRVideo().getValue().get()) {
-            return;
-        }
-
-        mFullScreenMedia = getSession().getFullScreenVideo();
-        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
-            enterVRVideoInternal(aProjection);
-            return;
-        }
-
-        Log.d(LOGTAG, "enterVRVideo: NOT enough data -> WAITING");
-        mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-            @Override
-            public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                WindowWidget.WindowListener.super.onMediaFullScreen(mediaSession, aFullScreen);
-                mAttachedWindow.removeWindowListener(this);
-                if (!aFullScreen) {
-                    Log.i(LOGTAG, "enterVRVideo: got exit fullscreen while waiting for media fullscreen.");
-                    return;
-                }
-
-                mFullScreenMedia = getSession().getFullScreenVideo();
-                enterVRVideoInternal(aProjection);
-            }
-        });
     }
 
     private void exitVRVideo() {
