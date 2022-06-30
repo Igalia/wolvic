@@ -1712,6 +1712,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mViewModel.setIsMediaAvailable(false);
             mViewModel.setIsMediaPlaying(false);
         }
+        for (WindowListener listener: mListeners)
+            listener.onVideoAvailabilityChanged(this);
     }
 
    WMediaSession.Delegate mMediaDelegate = new WMediaSession.Delegate() {
