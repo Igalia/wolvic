@@ -58,13 +58,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private VoiceSearchDialogBinding mBinding;
-    private SpeechRecognizer mSpeechRecognizer;
     private VoiceSearchDelegate mDelegate;
     private ClipDrawable mVoiceInputClipDrawable;
     private AnimatedVectorDrawable mSearchingAnimation;
     private VRBrowserApplication mApplication;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
+    private SpeechRecognizer mCurrentSpeechRecognizer;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -95,8 +95,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         if (DeviceType.isPicoVR()) {
             ViewUtils.forceAnimationOnUI(mSearchingAnimation);
         }
-
-        mSpeechRecognizer = mApplication.getSpeechRecognizer();
 
         mApplication.registerActivityLifecycleCallbacks(this);
     }
@@ -135,7 +133,10 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mWidgetManager.removePermissionListener(this);
         mApplication.unregisterActivityLifecycleCallbacks(this);
 
-        mSpeechRecognizer.stop();
+        if (mCurrentSpeechRecognizer != null) {
+            mCurrentSpeechRecognizer.stop();
+            mCurrentSpeechRecognizer = null;
+        }
 
         super.releaseWidget();
     }
@@ -240,26 +241,27 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             }
 
             mIsSpeechRecognitionRunning = true;
+            mCurrentSpeechRecognizer = mApplication.getSpeechRecognizer();
 
             SpeechRecognizer.Settings settings = new SpeechRecognizer.Settings();
             settings.locale = locale;
             settings.storeData = storeData;
             settings.productTag = getContext().getString(R.string.voice_app_id);
 
-            mSpeechRecognizer.start(settings, mResultCallback);
+            mCurrentSpeechRecognizer.start(settings, mResultCallback);
         }
     }
 
     public void stopVoiceSearch() {
         try {
-            mSpeechRecognizer.stop();
-
+            mCurrentSpeechRecognizer.stop();
         } catch (Exception e) {
             Log.d(LOGTAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Unknown voice error");
             e.printStackTrace();
         }
 
         mIsSpeechRecognitionRunning = false;
+        mCurrentSpeechRecognizer = null;
     }
 
     @Override
@@ -285,7 +287,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        if (!mSpeechRecognizer.shouldDisplayStoreDataPrompt() ||
+        if (!mApplication.getSpeechRecognizer().shouldDisplayStoreDataPrompt() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
             mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
