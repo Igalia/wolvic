@@ -642,7 +642,7 @@
     <string name="voice_search_start">Hvad vil du søge efter på nettet?</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">Sig for eksempel: “360 videos, weather, news…”</string>
+    <string name="voice_search_example">Sig for eksempel: “360 videos, vejret, nyheder…”</string>
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Søger…</string>
@@ -672,7 +672,7 @@
     <string name="crash_dialog_heading">Vi løb ind i et problem, der førte til nedbrud</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[Hjælp Mozilla med at gøre %1$s bedre ved at indsende dine nedbruds-data.]]></string>
+    <string name="crash_dialog_message"><![CDATA[Hjælp Mozilla med at gøre %1$s bedre ved at indsende dine nedbruds-data. <a href="more">Læs mere</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Send altid data uden at spørge</string>
@@ -1596,9 +1596,32 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_headset">Headset: %1$s</string>
     <string name="settings_privacy_search_engine_title">Søgetjeneste</string>
     <string name="settings_privacy_choose_search_engine_reset">Gendan søgetjeneste indstillinger</string>
-    <string name="settings_privacy_choose_search_engine_description">Vælg din standard-søgetjeneste</string>
+    <string name="settings_privacy_choose_search_engine_description">Vælg din standard-søgetjeneste.</string>
     <string name="voice_search_unsupported">Stemme-søgning understøttes ikke på dit sprog.</string>
     <string name="voice_search_server_error">Stemme-søgning er i øjeblikket ikke tilgængelig.</string>
     <string name="settings_terms_service">Brugsvilkår</string>
     <string name="external_open_uri_error_title">Fejl ved åbning af ekstern app</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Stemme-søgningstjeneste</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Vælg din foretrukne onlinetjeneste til stemme-søgning.</string>
+    <string name="language_service_options_reset">Nulstil indstillingerne for stemme-søgetjenesten</string>
+    <string name="external_open_uri_error_bad_uri_body">Ugyldig uri %1$s</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException ved start af hensigten for %1$s</string>
+    <string name="hvr_connect_glass_message">Tilslut din HUAWEI VR Glass for at bruge denne app</string>
+    <string name="privacy_dialog_title">Privatliv</string>
+    <string name="privacy_policy_subtitle_3">Lovvalg og original sprog</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="privacy_dialog_message">Dit privatliv er vigtigt for os. For at kunne bruge browseren skal du acceptere vores servicevilkår og privatlivspolitik. Tak fordi du bruger Wolvic!</string>
+    <string name="privacy_policy_title">Generel privatlivspolitik</string>
+    <string name="voice_service_huawei_asr">Automatisk talegenkendelse fra Huawei (ASR)</string>
+    <string name="external_open_uri_error_no_activity_body">Ingen app fundet til at åbne %1$s</string>
+    <string name="privacy_policy_subtitle_2">Databeskyttelse</string>
+    <string name="privacy_policy_subtitle_1">Generelle oplysninger</string>
+    <string name="privacy_dialog_disagree">Luk Wolvic</string>
+    <string name="hvr_enter_vr">Gå ind i VR</string>
+    <string name="privacy_dialog_agree">Enig</string>
+    <string name="terms_service_subtitle_2">Wolvic Web-baserede Informationstjenester</string>
+    <string name="terms_service_title">Servicevilkår</string>
+    <string name="language_options_voice_search_service_title">Stemmesøgningstjeneste</string>
+    <string name="settings_language_galician">Galicisk</string>
+    <string name="permissions_dialog_remember_choice">Husk denne beslutning</string>
 </resources>
