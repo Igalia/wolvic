@@ -66,8 +66,8 @@ def getHVRMLSpeechServices = { ->
     if (getHVRMLApiKey().isEmpty()) {
         return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
     } else {
-        return "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR, " +
-                "com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI, " +
+                " com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }";
     }
 }
 
@@ -672,6 +672,12 @@ android.applicationVariants.all { variant ->
     def platform = variant.productFlavors.get(0).name
     def country = variant.productFlavors.get(2).name
 
-    if (platform.toLowerCase().startsWith('hvr') && country != 'cn')
-        variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
+    // HVR packages for mainland china must only use HVR speech recognition system.
+    // HVR packages for overseas should have 2D phone UI enabled.
+    if (platform.toLowerCase().startsWith('hvr')) {
+        if (country != 'cn')
+            variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
+        else
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
+    }
 }
