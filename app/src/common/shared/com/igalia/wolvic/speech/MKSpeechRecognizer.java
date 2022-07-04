@@ -34,10 +34,21 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
     // temporary
     private static float FINAL_CONF = 1.0f;
 
+    // TODO update automatically with the content of https://meetkai.ai/speech/beta/languages
     private static final List<String> mSupportedLanguages = Arrays.asList(
-            LocaleUtils.DEFAULT_LANGUAGE_ID,
-            "en-US", "zh-CN", "ja-JP", "fr-FR", "de-DE", "es-ES", "ru-RU", "ko-KR",
-            "it-IT", "pl-PL", "sv-SE", "fi-FI", "ar-SA", "id-ID", "th-TH", "he-IL");
+            LocaleUtils.DEFAULT_LANGUAGE_ID, "en", "zh", "ja", "fr", "de", "es", "pt",
+            "ru", "ko", "it", "pl", "sv", "fi", "nl", "id", "th", "he", "ar"
+    );
+    private static final List<String> mSupportedLocales = Arrays.asList(
+            "ar-BH", "ar-EG", "ar-IQ", "ar-IL", "ar-JO", "ar-KW", "ar-LB", "ar-LY", "ar-MA", "ar-OM",
+            "ar-PS", "ar-QA", "ar-SA", "ar-SY", "ar-TN", "ar-AE", "ar-YE", "zh-HK", "zh-CN", "zh-TW",
+            "nl-NL", "en-AU", "en-CA", "en-GH", "en-HK", "en-IN", "en-IE", "en-KE", "en-NZ", "en-NG",
+            "en-PH", "en-SG", "en-ZA", "en-TZ", "en-GB", "en-US", "fi-FI", "fr-CA", "fr-FR", "fr-CH",
+            "de-AT", "de-DE", "de-CH", "he-IL", "id-ID", "it-IT", "ja-JP", "ko-KR", "pl-PL", "pt-BR",
+            "pt-PT", "ru-RU", "es-AR", "es-BO", "es-CL", "es-CO", "es-CR", "es-CU", "es-DO", "es-EC",
+            "es-SV", "es-GQ", "es-GT", "es-HN", "es-MX", "es-NI", "es-PA", "es-PY", "es-PE", "es-PR",
+            "es-ES", "es-UY", "es-US", "sv-SE", "th-TH"
+    );
 
     private static final String DEBUG_API_KEY = "WOLVIC_DEBUG";
 
@@ -54,10 +65,25 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
         if (StringUtils.isEmpty(key)) {
             key = DEBUG_API_KEY;
         }
-        if (settings.locale.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
-            settings.locale = LocaleUtils.getClosestLanguageForLocale(
-                    Locale.getDefault(), mSupportedLanguages, LocaleUtils.FALLBACK_LANGUAGE_TAG);
+
+        // locale set by the app's configuration
+        Locale defaultLocale = mContext.getResources().getConfiguration().getLocales().get(0);
+        if (defaultLocale == null) {
+            // default locale for this JVM
+            defaultLocale = Locale.getDefault();
         }
+
+        Locale locale;
+        if (mSupportedLanguages.contains(settings.locale)) {
+            // the user has selected a specific language in the Settings UI
+            // TODO use the device's location to find the country code
+            locale = new Locale(settings.locale, defaultLocale.getCountry());
+        } else {
+            locale = defaultLocale;
+        }
+        settings.locale = LocaleUtils.getClosestLanguageForLocale(
+                locale, mSupportedLocales, LocaleUtils.FALLBACK_LANGUAGE_TAG);
+
         if (!supportsASR(settings)) {
             callback.onError(Callback.ERROR_LANGUAGE_NOT_SUPPORTED, "language not supported");
             stop();
