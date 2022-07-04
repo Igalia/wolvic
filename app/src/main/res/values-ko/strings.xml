@@ -1683,4 +1683,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t\t\t⁃ 이제 향상된 추적 방지가 해제됐습니다.</string>
     <string name="privacy_policy_subtitle_3">준거법 및 원어</string>
     <string name="privacy_policy_section_3">이 개인 정보 정책은 스페인 법률의 적용을 받습니다. 이 응용 프로그램의 개인 정보 정책 언어는 스페인어 입니다. 이러한 이유로, 스페인어로 된 원본 버전과 다른 언어로 번역된 버전 간에 발생하는 차이는 https://wolvic.com/es/legal/privacy/ 에서 찾을 수 있는 스페인어 버전이 우선적인 것으로 고려됩니다.</string>
+    <string name="settings_language_choose_language_voice_search_service_description">음성 검색을 위해 선호하는 온라인 서비스를 선택하십시오.</string>
+    <string name="language_options_voice_search_service_title">음성 검색 서비스</string>
+    <string name="settings_language_choose_language_voice_search_service_title">음성 검색 서비스</string>
+    <string name="language_service_options_reset">음성 검색 서비스 설정 초기화</string>
 </resources>
