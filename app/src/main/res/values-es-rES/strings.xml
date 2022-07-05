@@ -1702,4 +1702,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="voice_search_server_error">La búsqueda por voz no está disponible actualmente.</string>
     <string name="settings_terms_service">Términos del servicio</string>
     <string name="external_open_uri_error_security_exception_body">Excepción de seguridad al intentar abrir %1$s</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Elige tu servicio online preferido para la búsqueda por voz.</string>
+    <string name="language_options_voice_search_service_title">Servicio de búsqueda por voz</string>
+    <string name="voice_service_huawei_asr">Reconocimiento automático de voz de Huawei</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Servicio de búsqueda por voz</string>
+    <string name="language_service_options_reset">Restablecer la configuración del servicio de búsqueda por voz</string>
+    <string name="voice_service_metkai">MeetKai</string>
 </resources>
