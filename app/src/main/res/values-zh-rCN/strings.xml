@@ -1698,4 +1698,10 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
     <string name="external_open_uri_error_security_exception_body">启动为 %1$s的 intent 出现安全异常错误</string>
     <string name="external_open_uri_error_bad_uri_body">非法uri %1$s</string>
     <string name="external_open_uri_error_no_activity_body">无法找到处理%1$s的应用程序</string>
+    <string name="language_options_voice_search_service_title">语音搜索服务</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">华为自动语音识别</string>
+    <string name="language_service_options_reset">重新设置语音搜索服务</string>
+    <string name="settings_language_choose_language_voice_search_service_title">语音搜索服务</string>
+    <string name="settings_language_choose_language_voice_search_service_description">用你首选的线上服务来进行语音搜索。</string>
 </resources>
