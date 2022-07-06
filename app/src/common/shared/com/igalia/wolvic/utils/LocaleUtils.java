@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 
 public class LocaleUtils {
 
-    private static final String DEFAULT_LANGUAGE_ID = "default";
-    private static final String FALLBACK_LANGUAGE_TAG = "en-US";
+    public static final String DEFAULT_LANGUAGE_ID = "default";
+    public static final String FALLBACK_LANGUAGE_TAG = "en-US";
 
     private static HashMap<String, Language> mLanguagesCache;
     private static Map<String, Language> mSupportedLanguagesCache;
@@ -201,24 +201,13 @@ public class LocaleUtils {
         return languageId;
     }
 
-    @NonNull
-    public static String getVoiceSearchLanguageTag(@NonNull Context aContext) {
-        String languageId = getVoiceSearchLanguageId(aContext);
-        Language language = mSupportedLanguagesCache.get(languageId);
-        if (language != null) {
-            return language.getLanguageTag();
+    public static String getVoiceLanguageName(@NonNull Context aContext, @NonNull String language) {
+        if (language.equals(LocaleUtils.DEFAULT_LANGUAGE_ID)) {
+            return aContext.getString(R.string.settings_language_follow_device);
+        } else {
+            Locale locale = Locale.forLanguageTag(language);
+            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
         }
-
-        return getClosestSupportedLanguageTag(languageId);
-    }
-
-    public static Language getVoiceSearchLanguage(@NonNull Context aContext) {
-        String languageId = getVoiceSearchLanguageId(aContext);
-        Language language = mSupportedLanguagesCache.get(languageId);
-        if (language == null) {
-            language = mSupportedLanguagesCache.get(FALLBACK_LANGUAGE_TAG);
-        }
-        return language;
     }
 
     public static void setVoiceSearchLanguageId(@NonNull Context context, @NonNull String languageId) {
@@ -422,4 +411,23 @@ public class LocaleUtils {
         return FALLBACK_LANGUAGE_TAG;
     }
 
+    // Returns the closest language (among those supported) for the given locale, or the fallback.
+    public static String getClosestLanguageForLocale(Locale locale, List<String> supported, String fallback) {
+        final String defaultLanguageTag = locale.toLanguageTag();
+        if (supported.contains(defaultLanguageTag)) {
+            return defaultLanguageTag;
+        }
+
+        final String defaultLanguage = locale.getLanguage();
+        if (supported.contains(defaultLanguage)) {
+            return defaultLanguage;
+        }
+
+        Optional<String> closestLanguage = supported.stream().filter(s -> s.startsWith(defaultLanguage)).findFirst();
+        if (closestLanguage.isPresent()) {
+            return closestLanguage.get();
+        }
+
+        return fallback;
+    }
 }

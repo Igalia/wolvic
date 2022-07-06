@@ -111,6 +111,7 @@ struct DeviceDelegateOculusVR::State {
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
+  float ipd = 0.0f;
 
   void UpdatePerspective() {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
@@ -402,7 +403,11 @@ struct DeviceDelegateOculusVR::State {
 
             float offsetX = controllerState.hand == ElbowModel::HandEnum::Left ? 0.011f : -0.011f;
             const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(offsetX, 0.025f, 0.05f));
-            controller->SetImmersiveBeamTransform(controllerState.index, trans);
+
+            // Apply a 45º rotation to controller in immersive mode.
+            vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI_4);
+            transform = transform.PostMultiply(trans);
+            controller->SetImmersiveBeamTransform(controllerState.index, transform);
           } else {
             // Oculus Go only has one kind of controller model.
             controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
@@ -474,16 +479,10 @@ struct DeviceDelegateOculusVR::State {
       controller->SetCapabilityFlags(controllerState.index, flags);
       if (renderMode == device::RenderMode::Immersive) {
         static vrb::Matrix transform(vrb::Matrix::Identity());
-        if (transform.IsIdentity()) {
-          if (controllerState.Is6DOF()) {
-            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.77f);
-            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.025f));
-            transform = transform.PostMultiply(trans);
-          } else {
-            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.60f);
-          }
+        if (transform.IsIdentity() && !controllerState.Is6DOF()) {
+          transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.60f);
+          controllerState.transform = controllerState.transform.PostMultiply(transform);
         }
-        controllerState.transform = controllerState.transform.PostMultiply(transform);
       }
       controller->SetTransform(controllerState.index, controllerState.transform);
 
@@ -1010,7 +1009,8 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-  if (m.renderMode == device::RenderMode::StandAlone) {
+  if (m.renderMode == device::RenderMode::StandAlone &&
+      (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED)) {
     head.TranslateInPlace(kAverageHeight);
   }
 
@@ -1031,6 +1031,13 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
       caps |= device::PositionEmulated;
     }
     m.immersiveDisplay->SetCapabilityFlags(caps);
+  }
+
+  // Changes in IPD might cause distortions in WebXR when rotating the headset unless we update
+  // the perspective projection.
+  if (ipd != m.ipd) {
+    m.ipd = ipd;
+    m.UpdatePerspective();
   }
 
   int lastReorientCount = m.reorientCount;

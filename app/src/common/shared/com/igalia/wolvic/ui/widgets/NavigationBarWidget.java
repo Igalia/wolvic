@@ -39,6 +39,7 @@ import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
@@ -582,28 +583,53 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setIsFullScreen(false);
     }
 
+    private void onEnterFullScreen(@NonNull WindowWidget aWindow) {
+        enterFullScreenMode();
+
+        mBeforeFullscreenPlacement = mWidgetPlacement.clone();
+        mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
+        updateWidget();
+
+        if (mAttachedWindow.isResizing()) {
+            exitResizeMode(ResizeAction.KEEP_SIZE);
+        }
+        AtomicBoolean autoEnter = new AtomicBoolean(false);
+        mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+        if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
+            mViewModel.setAutoEnteredVRVideo(true);
+            postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+        } else {
+            mViewModel.setAutoEnteredVRVideo(false);
+            if (mProjectionMenu != null) {
+                mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
+            }
+        }
+    }
+
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
-            enterFullScreenMode();
-
-            mBeforeFullscreenPlacement = mWidgetPlacement.clone();
-            mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
-            updateWidget();
-
-            if (mAttachedWindow.isResizing()) {
-                exitResizeMode(ResizeAction.KEEP_SIZE);
-            }
-            AtomicBoolean autoEnter = new AtomicBoolean(false);
-            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
-            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
-                mViewModel.setAutoEnteredVRVideo(true);
-                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+            if (getSession().getFullScreenVideo() != null) {
+                onEnterFullScreen(aWindow);
             } else {
-                mViewModel.setAutoEnteredVRVideo(false);
-                if (mProjectionMenu != null) {
-                    mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
-                }
+                // No active fullscreen video. There might be two reasons for that:
+                // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
+                // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
+                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
+                    @Override
+                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
+                        assert getSession().getActiveVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                    @Override
+                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+                        assert getSession().getFullScreenVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                });
             }
         } else {
             mWidgetPlacement = mBeforeFullscreenPlacement;
@@ -789,17 +815,25 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
         mFullScreenMedia = getSession().getFullScreenVideo();
+        // This should not happen, but Gecko does not notify about fullscreen changes in media if
+        // the web content is already in fullscreen state.
+        if (mFullScreenMedia == null)
+            mFullScreenMedia = getSession().getActiveVideo();
+        assert mFullScreenMedia != null;
 
         this.setVisible(false);
-        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
-            final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
-                    aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
-            mAttachedWindow.enableVRVideoMode((int)mFullScreenMedia.getWidth(), (int)mFullScreenMedia.getHeight(), resetBorder);
-            // Handle video resize while in VR video playback
-            mFullScreenMedia.setResizeDelegate((width, height) -> {
-                mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
-            });
-        }
+        boolean hasValidFullscreenSizes = mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0;
+        // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
+        int mediaWidth = hasValidFullscreenSizes ? (int) mFullScreenMedia.getWidth() : mAttachedWindow.getWindowWidth();
+        int mediaHeight = hasValidFullscreenSizes ? (int) mFullScreenMedia.getHeight() : mAttachedWindow.getWindowHeight();
+        final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
+                aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+        mAttachedWindow.enableVRVideoMode(mediaWidth, mediaHeight, resetBorder);
+        // Handle video resize while in VR video playback
+        mFullScreenMedia.setResizeDelegate((width, height) -> {
+            mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
+        });
+
         mAttachedWindow.setVisible(false);
 
         closeFloatingMenus();

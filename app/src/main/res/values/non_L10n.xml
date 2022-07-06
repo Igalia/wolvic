@@ -26,6 +26,7 @@
     <string name="settings_key_scroll_direction" translatable="false">settings_scroll_direction</string>
     <string name="settings_key_msaa" translatable="false">settings_gfx_msaa_v3</string>
     <string name="settings_key_audio" translatable="false">settings_audio</string>
+    <string name="settings_key_voice_search_service" translatable="false">settings_voice_search_service</string>
     <string name="settings_key_voice_search_language" translatable="false">settings_voice_search_language</string>
     <string name="settings_key_display_language" translatable="false">settings_display_language</string>
     <string name="settings_key_content_languages" translatable="false">settings_content_languages</string>
@@ -65,13 +66,14 @@
     <string name="settings_key_login_autocomplete_enabled" translatable="false">settings_key_login_autocomplete_enabled</string>
     <string name="settings_key_login_sync_enabled" translatable="false">settings_key_login_sync_enabled</string>
     <string name="settings_key_tab_after_restore" translatable="false">settings_key_tab_after_restore</string>
+    <string name="settings_key_terms_service_accepted" translatable="false">settings_key_terms_service_accepted</string>
     <string name="settings_key_privacy_policy_accepted" translatable="false">settings_key_privacy_policy_accepted</string>
     <string name="settings_key_search_engine_id" translatable="false">settings_key_search_engine_id</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/igalia/wolvic/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://wolvic.com/legal/privacy/</string>
     <string name="private_report_url" translatable="false">https://www.igalia.com/privacy/&amp;url=%1$s</string>
     <string name="terms_service_url" translatable="false">https://wolvic.com/legal/terms/</string>
-    <string name="help_url" translatable="false">https://www.wolvic.com</string>
+    <string name="help_url" translatable="false">https://wolvic.com/support/</string>
     <string name="sumo_language_voice_url" translatable="false">https://support.mozilla.org/kb/using-voice-search-firefox-reality</string>
     <string name="sumo_language_display_url" translatable="false">https://support.mozilla.org/kb/use-firefox-another-language?as=u&amp;utm_source=inproduct</string>
     <string name="sumo_language_content_url" translatable="false">https://support.mozilla.org/kb/choose-display-languages-multilingual-web-pages?as=u&amp;utm_source=inproduct</string>
@@ -208,5 +210,10 @@
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
     <!-- Settings Survey link -->
-    <string name="survey_link" translatable="false">https://www.wolvic.com</string>
+    <string name="survey_link" translatable="false">https://github.com/Igalia/wolvic/issues/</string>
+
+    <!-- Phone UI links -->
+    <string name="hvr_learn_more_url" translatable="false">https://consumer.huawei.com/cn/wearables/vr-glass/</string>
+    <string name="landing_page_url" translatable="false">https://wolvic.com/en/welcome/</string>
+
 </resources>

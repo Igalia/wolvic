@@ -22,14 +22,8 @@ namespace crow {
         Iterator end() const { return Iterator(static_cast<int>(T::enum_count)); }
     };
 
-#ifdef HVR
-    // Workaround for SDK bug
-    constexpr const char* kPathLeftHand { "/user/hand/right" };
-    constexpr const char* kPathRightHand { "/user/hand/left" };
-#else
     constexpr const char* kPathLeftHand { "/user/hand/left" };
     constexpr const char* kPathRightHand { "/user/hand/right" };
-#endif
     constexpr const char* kPathGripPose { "input/grip/pose" };
     constexpr const char* kPathAimPose { "input/aim/pose" };
     constexpr const char* kPathTrigger { "input/trigger" };
@@ -194,23 +188,28 @@ namespace crow {
     };
 
   const OpenXRInputMapping Hvr6DOF {
-      "/interaction_profiles/huawei/controller",
+      "/interaction_profiles/huawei/6dof_controller",
       "Haliday: G3HMD by Huawei",
       "hvr_6dof_left.obj",
       "hvr_6dof_right.obj",
       device::OculusQuest,
       std::vector<OpenXRInputProfile> { "oculus-touch-v3", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
       std::vector<OpenXRButton> {
-          { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ClickValue, OpenXRHandFlags::Both },
-          { OpenXRButtonType::Squeeze, "input/grip", OpenXRButtonFlags::ClickValue, OpenXRHandFlags::Both },
-          { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::Click, OpenXRHandFlags::Both },
-          { OpenXRButtonType::ButtonX, "input/ax", OpenXRButtonFlags::Click, OpenXRHandFlags::Both },
-          { OpenXRButtonType::ButtonY, "input/by", OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP },
-          { OpenXRButtonType::ButtonY, "input/by", OpenXRButtonFlags::Click, OpenXRHandFlags::Right },
-          { OpenXRButtonType::Menu, "input/home", OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
+          { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+          { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+          { OpenXRButtonType::Menu, kPathMenu, OpenXRButtonFlags::Click, OpenXRHandFlags::Left },
+
+          { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+          { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+          { OpenXRButtonType::Menu, "input/home", OpenXRButtonFlags::Click, OpenXRHandFlags::Right, ControllerDelegate::Button::BUTTON_APP, true },
+
+          { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ClickValue | OpenXRButtonFlags::Touch, OpenXRHandFlags::Both },
+          { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+
+          { OpenXRButtonType::Squeeze,"input/grip", OpenXRButtonFlags::ClickValue | OpenXRButtonFlags::Touch, OpenXRHandFlags::Both }
       },
       std::vector<OpenXRAxis> {
-          { OpenXRAxisType::Thumbstick, "input/trackpad/value",  OpenXRHandFlags::Both },
+          { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
       }
   };
 

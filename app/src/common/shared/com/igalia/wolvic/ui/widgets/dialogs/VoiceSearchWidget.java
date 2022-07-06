@@ -58,13 +58,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private VoiceSearchDialogBinding mBinding;
-    private SpeechRecognizer mSpeechRecognizer;
     private VoiceSearchDelegate mDelegate;
     private ClipDrawable mVoiceInputClipDrawable;
     private AnimatedVectorDrawable mSearchingAnimation;
     private VRBrowserApplication mApplication;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
+    private SpeechRecognizer mCurrentSpeechRecognizer;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -95,8 +95,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         if (DeviceType.isPicoVR()) {
             ViewUtils.forceAnimationOnUI(mSearchingAnimation);
         }
-
-        mSpeechRecognizer = mApplication.getSpeechRecognizer();
 
         mApplication.registerActivityLifecycleCallbacks(this);
     }
@@ -135,7 +133,10 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mWidgetManager.removePermissionListener(this);
         mApplication.unregisterActivityLifecycleCallbacks(this);
 
-        mSpeechRecognizer.stop();
+        if (mCurrentSpeechRecognizer != null) {
+            mCurrentSpeechRecognizer.stop();
+            mCurrentSpeechRecognizer = null;
+        }
 
         super.releaseWidget();
     }
@@ -207,11 +208,18 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         public void onNoVoice() {
             // Handle when the api didn't detect any voice
             Log.d(LOGTAG, "===> NO_VOICE");
+            mBinding.voiceSearchStart.setText(getContext().getString(R.string.voice_search_error));
+        }
+
+        @Override
+        public void onCanceled() {
+            // Handle when the voice recognition was canceled
+            Log.d(LOGTAG, "===> CANCELED");
         }
 
         @Override
         public void onError(@ErrorType int errorType, @Nullable String error) {
-            Log.d(LOGTAG, "===> ERROR: " + error);
+            Log.e(LOGTAG, "===> ERROR: " + error);
             setResultState(errorType);
             if (mDelegate != null) {
                 mDelegate.OnVoiceSearchError(errorType);
@@ -226,33 +234,34 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICE_SEARCH_AUDIO_REQUEST_CODE);
         } else {
-            String locale = LocaleUtils.getVoiceSearchLanguageTag(getContext());
+            String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
             boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
             if (SessionStore.get().getActiveSession().isPrivateMode()) {
                 storeData = false;
             }
 
             mIsSpeechRecognitionRunning = true;
+            mCurrentSpeechRecognizer = mApplication.getSpeechRecognizer();
 
             SpeechRecognizer.Settings settings = new SpeechRecognizer.Settings();
             settings.locale = locale;
             settings.storeData = storeData;
             settings.productTag = getContext().getString(R.string.voice_app_id);
 
-            mSpeechRecognizer.start(settings, mResultCallback);
+            mCurrentSpeechRecognizer.start(settings, mResultCallback);
         }
     }
 
     public void stopVoiceSearch() {
         try {
-            mSpeechRecognizer.stop();
-
+            mCurrentSpeechRecognizer.stop();
         } catch (Exception e) {
             Log.d(LOGTAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Unknown voice error");
             e.printStackTrace();
         }
 
         mIsSpeechRecognitionRunning = false;
+        mCurrentSpeechRecognizer = null;
     }
 
     @Override
@@ -278,7 +287,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        if (!mSpeechRecognizer.shouldDisplayStoreDataPrompt() ||
+        if (!mApplication.getSpeechRecognizer().shouldDisplayStoreDataPrompt() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
             mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
@@ -331,11 +340,11 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         postDelayed(() -> {
             switch (errorType) {
-                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR);
-                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK);
-                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER);
-                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS);
-                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED);
+                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR); break;
+                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK); break;
+                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER); break;
+                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS); break;
+                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED); break;
                 default: break;
             }
             mSearchingAnimation.stop();

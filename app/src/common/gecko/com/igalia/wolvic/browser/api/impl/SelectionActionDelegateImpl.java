@@ -1,17 +1,22 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.RectF;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import org.mozilla.geckoview.GeckoSession;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /* package */ class SelectionActionDelegateImpl implements GeckoSession.SelectionActionDelegate {
+    static final String LOGTAG = SystemUtils.createLogtag(SelectionActionDelegateImpl.class);
+
     private WSession.SelectionActionDelegate mDelegate;
     private WSession mSession;
 
@@ -47,17 +52,80 @@ import java.util.Collection;
         @NonNull
         @Override
         public Collection<String> availableActions() {
-            return mSelection.availableActions;
+            Collection<String> sessionSelectionActions = new ArrayList<String>();
+            for (String geckoAction : mSelection.availableActions)
+                sessionSelectionActions.add(fromGecko(geckoAction));
+
+            return sessionSelectionActions;
         }
 
         @Override
         public boolean isActionAvailable(@NonNull String action) {
-            return mSelection.isActionAvailable(action);
+            return mSelection.isActionAvailable(toGecko(action));
         }
 
         @Override
         public void execute(@NonNull String action) {
-            mSelection.execute(action);
+            String geckoAction = toGecko(action);
+            if (mSelection.isActionAvailable(geckoAction)) {
+                mSelection.execute(geckoAction);
+            }
+        }
+
+        private String fromGecko(@NonNull String action) {
+            switch (action) {
+                case GeckoSession.SelectionActionDelegate.ACTION_HIDE:
+                    return WSession.SelectionActionDelegate.ACTION_HIDE;
+                case GeckoSession.SelectionActionDelegate.ACTION_CUT:
+                    return WSession.SelectionActionDelegate.ACTION_CUT;
+                case GeckoSession.SelectionActionDelegate.ACTION_COPY:
+                    return WSession.SelectionActionDelegate.ACTION_COPY;
+                case GeckoSession.SelectionActionDelegate.ACTION_DELETE:
+                    return WSession.SelectionActionDelegate.ACTION_DELETE;
+                case GeckoSession.SelectionActionDelegate.ACTION_PASTE:
+                    return WSession.SelectionActionDelegate.ACTION_PASTE;
+                case GeckoSession.SelectionActionDelegate.ACTION_PASTE_AS_PLAIN_TEXT:
+                    return WSession.SelectionActionDelegate.ACTION_PASTE_AS_PLAIN_TEXT;
+                case GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL:
+                    return WSession.SelectionActionDelegate.ACTION_SELECT_ALL;
+                case GeckoSession.SelectionActionDelegate.ACTION_UNSELECT:
+                    return WSession.SelectionActionDelegate.ACTION_UNSELECT;
+                case GeckoSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_START:
+                    return WSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_START;
+                case GeckoSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_END:
+                    return WSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_END;
+                default:
+                    Log.w(LOGTAG, "Unhandled Gecko action: " + action);
+            }
+            return action;
+        }
+
+        private String toGecko(@NonNull String action) {
+            switch (action) {
+                case WSession.SelectionActionDelegate.ACTION_HIDE:
+                    return GeckoSession.SelectionActionDelegate.ACTION_HIDE;
+                case WSession.SelectionActionDelegate.ACTION_CUT:
+                    return GeckoSession.SelectionActionDelegate.ACTION_CUT;
+                case WSession.SelectionActionDelegate.ACTION_COPY:
+                    return GeckoSession.SelectionActionDelegate.ACTION_COPY;
+                case WSession.SelectionActionDelegate.ACTION_DELETE:
+                    return GeckoSession.SelectionActionDelegate.ACTION_DELETE;
+                case WSession.SelectionActionDelegate.ACTION_PASTE:
+                    return GeckoSession.SelectionActionDelegate.ACTION_PASTE;
+                case WSession.SelectionActionDelegate.ACTION_PASTE_AS_PLAIN_TEXT:
+                    return GeckoSession.SelectionActionDelegate.ACTION_PASTE_AS_PLAIN_TEXT;
+                case WSession.SelectionActionDelegate.ACTION_SELECT_ALL:
+                    return GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL;
+                case WSession.SelectionActionDelegate.ACTION_UNSELECT:
+                    return GeckoSession.SelectionActionDelegate.ACTION_UNSELECT;
+                case WSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_START:
+                    return GeckoSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_START;
+                case WSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_END:
+                    return GeckoSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_END;
+                default:
+                    Log.w(LOGTAG, "Unhandled action: " + action);
+                    return action;
+            }
         }
     }
 

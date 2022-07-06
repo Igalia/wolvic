@@ -20,14 +20,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class UserAgentOverride {
-    private final static String LOGTAG = SystemUtils.createLogtag(UserAgentOverride.class);
-    private static final String NO_OVERRIDE_FOUND = "NO OVERRIDE USER AGENT FOUND";
+public class UriOverride {
+    private final static String LOGTAG = SystemUtils.createLogtag(UriOverride.class);
+    private static final String NO_OVERRIDE_FOUND = "NO OVERRIDE FOUND";
     private ArrayMap<String, String> mOverrideMap;
     private ArrayMap<String, String> mOverrideCache;
-    public UserAgentOverride() {
+    private String mOverrideName;
+    public UriOverride(String name) {
         mOverrideMap = new ArrayMap<>();
         mOverrideCache = new ArrayMap<>();
+        mOverrideName = name;
     }
 
     public void loadOverridesFromAssets(Activity aActivity, String aFileName) {
@@ -40,7 +42,7 @@ public class UserAgentOverride {
             json = new String(buffer, "UTF-8");
             importJSONData(json);
         } catch (IOException e) {
-            Log.e(LOGTAG, "Failed reading user agent override file: " + aFileName + " Error: " + e.getMessage());
+            Log.e(LOGTAG, "Failed reading " + mOverrideName + " override file: " + aFileName + " Error: " + e.getMessage());
         }
     }
 
@@ -136,15 +138,15 @@ public class UserAgentOverride {
                 String key = iter.next();
                 try {
                     String value = json.getString(key);
-                    Log.d(LOGTAG, "User agent override: " + key + " -> " + value);
+                    Log.d(LOGTAG, mOverrideName + " override: " + key + " -> " + value);
                     mOverrideMap.put(key, value);
                 } catch (JSONException e) {
-                    Log.e(LOGTAG, "Failed to find UA Override while parsing file for key: " + key);
+                    Log.e(LOGTAG, "Failed to find " + mOverrideName + " override while parsing file for key: " + key);
                 }
             }
 
         } catch (JSONException e) {
-            Log.e(LOGTAG, "Failed to import user agent override JSON data: " + e.getMessage());
+            Log.e(LOGTAG, "Failed to import " + mOverrideName + " override JSON data: " + e.getMessage());
         }
     }
 }

@@ -5,36 +5,29 @@
 
 package com.igalia.wolvic;
 
-import com.huawei.hms.mlsdk.common.MLApplication;
-import com.huawei.hvr.LibUpdateClient;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.huawei.hms.mlsdk.common.MLApplication;
+import com.huawei.hvr.LibUpdateClient;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
-import com.igalia.wolvic.generated.callback.OnClickListener;
+import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
-
-import org.mozilla.geckoview.GeckoSession;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
@@ -69,69 +62,37 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             }
         };
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            setContentView(R.layout.hvr_connect_glasses);
-            manager.registerDisplayListener(new DisplayManager.DisplayListener() {
-                @Override
-                public void onDisplayAdded(int displayId) {
-                    initializeVR();
-                }
-
-                @Override
-                public void onDisplayRemoved(int displayId) {
-                }
-
-                @Override
-                public void onDisplayChanged(int displayId) {
-                }
-            }, null);
-
-            if (!SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
-                showPrivacyDialog();
-            }
-
+            showPhoneUI();
         } else {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             initializeVR();
         }
     }
 
-    private void showPrivacyDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.hvr_privacy_dialog);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.setCancelable(false);
+    private void showPhoneUI() {
+        DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        manager.registerDisplayListener(new DisplayManager.DisplayListener() {
+            @Override
+            public void onDisplayAdded(int displayId) {
+                // create the activity again, so the theme is set up properly
+                recreate();
+            }
 
-        dialog.findViewById(R.id.privacyOpenButton).setOnClickListener(v -> {
-            String url = getString(R.string.private_policy_url);
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        });
+            @Override
+            public void onDisplayRemoved(int displayId) {
+            }
 
-        dialog.findViewById(R.id.termsOpenButton).setOnClickListener(v -> {
-            String url = getString(R.string.terms_service_url);
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        });
+            @Override
+            public void onDisplayChanged(int displayId) {
+            }
+        }, null);
 
-        dialog.findViewById(R.id.privacyCancelButton).setOnClickListener(v -> {
-            finish();
-        });
-
-        dialog.findViewById(R.id.privacyAcceptButton).setOnClickListener(v -> {
-            SettingsStore.getInstance(PlatformActivity.this).setPrivacyPolicyAccepted(true);
-            dialog.dismiss();
-            mActiveDialog = null;
-        });
-
-        dialog.show();
-        mActiveDialog = dialog;
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setTheme(R.style.Theme_WolvicPhone);
+        setContentView(R.layout.activity_main);
     }
 
     private void initializeVR() {
@@ -139,6 +100,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             mActiveDialog.dismiss();
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setTheme(R.style.FxR_Dark);
         mView = new SurfaceView(this);
         setContentView(mView);
 
@@ -151,12 +113,19 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
     private void initializeAGConnect() {
         try {
-            if (StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+            String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+                Log.e(TAG, "HVR API key is not available");
                 return;
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
-            ((VRBrowserApplication)getApplicationContext()).setSpeechRecognizer(new HVRSpeechRecognizer(this));
+            try {
+                SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
+                ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(speechRecognizer);
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

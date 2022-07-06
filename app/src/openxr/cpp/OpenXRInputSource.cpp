@@ -188,16 +188,15 @@ std::optional<XrVector2f> OpenXRInputSource::GetAxis(OpenXRAxisType axisType) co
         return std::nullopt;
 
 #if HVR
-    // axes must be between -1 and 1
-    axis.x = axis.x * 2 - 1;
-    axis.y = -(axis.y * 2 - 1);
-
     // Workaround for HVR controller precision issues
     const float kPrecision = 0.16;
     if (abs(axis.x) < kPrecision && abs(axis.y) < kPrecision) {
       axis.x = 0;
       axis.y = 0;
     }
+#ifdef HVR_6DOF
+    axis.y = -axis.y;
+#endif
 #endif
 
     return axis;
@@ -409,6 +408,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
 #ifdef HVR_6DOF
     const bool positionTracked = true;
+    // The HVR OpenXR SDK incorrectly returns the same value for aim and grip poses, we have to workaround it in the meantime.
+    // As it actually always return the grip pose we have to generate the aim pose from it.
+    pointerTransform.PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 4));
 #else
     const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
 #endif
@@ -436,12 +438,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         bool hasPosition = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
         delegate.SetImmersiveBeamTransform(mIndex, hasPosition ? gripTransform : pointerTransform);
         flags |= device::GripSpacePosition;
-#if HVR_6DOF
-        delegate.SetBeamTransform(mIndex, vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 4));
-#else
         delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
-#endif
-
     } else {
         delegate.SetImmersiveBeamTransform(mIndex, vrb::Matrix::Identity());
     }

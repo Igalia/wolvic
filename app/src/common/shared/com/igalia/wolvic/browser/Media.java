@@ -163,7 +163,7 @@ public class Media implements WMediaSession.Delegate {
         if (mMediaSession == mediaSession) {
             mMetaData = meta;
         }
-        mMediaListeners.forEach(listener -> listener.onDeactivated(session, mediaSession));
+        mMediaListeners.forEach(listener -> listener.onMetadata(session, mediaSession, meta));
     }
 
     @Override

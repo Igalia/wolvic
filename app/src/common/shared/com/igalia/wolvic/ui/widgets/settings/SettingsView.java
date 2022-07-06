@@ -21,6 +21,7 @@ public abstract class SettingsView extends FrameLayout {
         LANGUAGE,
         LANGUAGE_DISPLAY,
         LANGUAGE_CONTENT,
+        LANGUAGE_VOICE_SERVICE,
         LANGUAGE_VOICE,
         DISPLAY,
         PRIVACY,
@@ -36,6 +37,7 @@ public abstract class SettingsView extends FrameLayout {
         LOGIN_EXCEPTIONS,
         LOGIN_EDIT,
         SEARCH_ENGINE,
+        TERMS_OF_SERVICE,
         PRIVACY_POLICY
     }
 

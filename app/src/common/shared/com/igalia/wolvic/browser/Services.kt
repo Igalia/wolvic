@@ -9,6 +9,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.R
 import com.igalia.wolvic.browser.api.WAllowOrDeny
 import com.igalia.wolvic.browser.api.WResult
@@ -39,7 +40,7 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
     private val LOGTAG = SystemUtils.createLogtag(Services::class.java)
 
     companion object {
-        const val CLIENT_ID = "7ad9917f6c55fb77"
+        const val CLIENT_ID = "a2270f727f45f648"
         const val REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
     }
     interface TabReceivedDelegate {
@@ -84,7 +85,7 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
             }
         }
     }
-    val serverConfig = ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL)
+    val serverConfig = ServerConfig(if (BuildConfig.FXA_USE_CHINA_SERVER) Server.CHINA else Server.RELEASE, CLIENT_ID, REDIRECT_URL)
 
     val accountManager = FxaAccountManager(
         context = context,

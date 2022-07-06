@@ -20,7 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsLanguageBinding;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
@@ -69,9 +71,11 @@ class LanguageOptionsView extends SettingsView {
         // Set listeners
         mBinding.setContentClickListener(mContentListener);
         mBinding.setDisplayClickListener(mDisplayListener);
+        mBinding.setVoiceSearchServiceClickListener(mVoiceSearchServiceListener);
         mBinding.setVoiceSearchClickListener(mVoiceSearchListener);
 
         // Set descriptions
+        setVoiceService();
         setVoiceLanguage();
         setContentLanguage();
         setDisplayLanguage();
@@ -97,8 +101,18 @@ class LanguageOptionsView extends SettingsView {
         mVoiceLanguage.reset();
     };
 
+    private void setVoiceService() {
+        String service = SettingsStore.getInstance(getContext()).getVoiceSearchService();
+        mBinding.voiceSearchServiceDescription.setText(
+                getSpannedLanguageText(getContext().getString(SpeechServices.getNameResource(service))),
+                TextView.BufferType.SPANNABLE);
+    }
+
     private void setVoiceLanguage() {
-        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguage(getContext()).getDisplayName()),  TextView.BufferType.SPANNABLE);
+        String language = LocaleUtils.getVoiceSearchLanguageId(getContext());
+        mBinding.voiceSearchLanguageDescription.setText(
+                getSpannedLanguageText(LocaleUtils.getVoiceLanguageName(getContext(), language)),
+                TextView.BufferType.SPANNABLE);
     }
 
     private void setContentLanguage() {
@@ -137,6 +151,8 @@ class LanguageOptionsView extends SettingsView {
 
     private OnClickListener mContentListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_CONTENT);
 
+    private OnClickListener mVoiceSearchServiceListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_VOICE_SERVICE);
+
     private OnClickListener mVoiceSearchListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_VOICE);
 
     private OnClickListener mDisplayListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_DISPLAY);
@@ -145,18 +161,21 @@ class LanguageOptionsView extends SettingsView {
         if (key.equals(getContext().getString(R.string.settings_key_content_languages))) {
             setContentLanguage();
 
+        } else if (key.equals(getContext().getString(R.string.settings_key_voice_search_service))) {
+            setVoiceService();
+
         } else if (key.equals(getContext().getString(R.string.settings_key_voice_search_language))) {
             setVoiceLanguage();
 
-        } else if(key.equals(getContext().getString(R.string.settings_key_display_language))) {
+        } else if (key.equals(getContext().getString(R.string.settings_key_display_language))) {
             setDisplayLanguage();
         }
     };
 
     @Override
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
+        return new Point(WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
     }
 
     @Override

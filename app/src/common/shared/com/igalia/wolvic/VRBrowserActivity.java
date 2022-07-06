@@ -12,6 +12,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -59,6 +61,8 @@ import com.igalia.wolvic.crashreporting.GlobalExceptionHandler;
 import com.igalia.wolvic.geolocation.GeolocationWrapper;
 import com.igalia.wolvic.input.MotionEventGenerator;
 import com.igalia.wolvic.search.SearchEngineWrapper;
+import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.OffscreenDisplay;
 import com.igalia.wolvic.ui.adapters.Language;
@@ -76,7 +80,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
-import com.igalia.wolvic.ui.widgets.dialogs.PrivacyPolicyDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.LegalDocumentDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.WhatsNewWidget;
@@ -99,7 +103,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner {
+public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
+        ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
@@ -186,6 +191,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
     private SettingsStore mSettings;
+    private SharedPreferences mPrefs;
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
@@ -292,6 +298,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mSettings = SettingsStore.getInstance(this);
         mSettings.initModel(this);
 
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+
         queueRunnable(() -> {
             createOffscreenDisplay();
             createCaptureSurface();
@@ -383,8 +392,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
 
         // Show the launch dialogs, if needed.
-        if (!showPrivacyDialogIfNeeded()) {
-            showWhatsNewDialogIfNeeded();
+        if (!showTermsServiceDialogIfNeeded()) {
+            if (!showPrivacyDialogIfNeeded()) {
+                showWhatsNewDialogIfNeeded();
+            }
         }
 
         mWindows.restoreSessions();
@@ -408,12 +419,39 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     // Returns true if the dialog was shown, false otherwise.
+    private boolean showTermsServiceDialogIfNeeded() {
+        if (SettingsStore.getInstance(this).isTermsServiceAccepted()) {
+            return false;
+        }
+
+        LegalDocumentDialogWidget termsServiceDialog =
+                new LegalDocumentDialogWidget(this, LegalDocumentDialogWidget.LegalDocument.TERMS_OF_SERVICE);
+
+        termsServiceDialog.setDelegate(response -> {
+            if (response) {
+                SettingsStore.getInstance(this).setTermsServiceAccepted(true);
+                if (!showPrivacyDialogIfNeeded()) {
+                    showWhatsNewDialogIfNeeded();
+                }
+            } else {
+                // TODO ask for confirmation ("are you really sure that you want to close Wolvic?")
+                Log.w(LOGTAG, "The user rejected the privacy policy, closing the app.");
+                finish();
+            }
+        });
+        termsServiceDialog.attachToWindow(mWindows.getFocusedWindow());
+        termsServiceDialog.show(UIWidget.REQUEST_FOCUS);
+        return true;
+    }
+
+    // Returns true if the dialog was shown, false otherwise.
     private boolean showPrivacyDialogIfNeeded() {
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
             return false;
         }
 
-        PrivacyPolicyDialogWidget privacyPolicyDialog = new PrivacyPolicyDialogWidget(this);
+        LegalDocumentDialogWidget privacyPolicyDialog
+                = new LegalDocumentDialogWidget(this, LegalDocumentDialogWidget.LegalDocument.PRIVACY_POLICY);
         privacyPolicyDialog.setDelegate(response -> {
             if (response) {
                 SettingsStore.getInstance(this).setPrivacyPolicyAccepted(true);
@@ -563,6 +601,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         getServicesProvider().getConnectivityReceiver().removeListener(mConnectivityDelegate);
 
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+
         super.onDestroy();
         mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
         mViewModelStore.clear();
@@ -599,6 +639,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SendTabDialogWidget.getInstance(this).onConfigurationChanged(newConfig);
 
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        try {
+            if (key.equals(getString(R.string.settings_key_voice_search_service))) {
+                SpeechRecognizer speechRecognizer =
+                        SpeechServices.getInstance(this, SettingsStore.getInstance(this).getVoiceSearchService());
+                ((VRBrowserApplication) getApplication()).setSpeechRecognizer(speechRecognizer);
+            }
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 
     void loadFromIntent(final Intent intent) {

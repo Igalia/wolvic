@@ -233,6 +233,18 @@
     <string name="settings_language_choose_language_display_description">Choose the language used to display menus, messages, and notifications.</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Service' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of online services for the user to choose as their
+         preferred way to carry out voice recognition. -->
+    <string name="settings_language_choose_language_voice_search_service_title">Voice Search Service</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Service' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of online services for the user to choose as their
+         preferred way to carry out voice recognition. -->
+    <string name="settings_language_choose_language_voice_search_service_description">Choose your preferred online service for voice search.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
@@ -783,7 +795,7 @@
     <!-- This string labels the button that displays or enables application access to the device's
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
-    <string name="security_options_permission_storage">Read External Storage</string>
+    <string name="security_options_permission_storage">Storage</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          camera and microphone, if present. -->
@@ -1393,6 +1405,9 @@
     <!-- This string labels the Reset button that restores the default environment settings values. -->
     <string name="environment_options_reset">Reset Environment Settings</string>
 
+    <!-- This string labels the Reset button that restores the default voice search service settings values. -->
+    <string name="language_service_options_reset">Reset Voice Search Service Settings</string>
+
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Reset Voice Search Language Settings</string>
 
@@ -1404,6 +1419,9 @@
 
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">Reset All Language Settings</string>
+
+    <!-- This string labels the description in the Voice Search Service button in the main language setting dialog. -->
+    <string name="language_options_voice_search_service_title">Voice Search Service</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
     <string name="language_options_voice_search_language_title">Voice Search Language:</string>
@@ -2189,6 +2207,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
          This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">Connect your HUAWEI VR Glass to use this app</string>
+    <string name="hvr_enter_vr">Enter VR</string>
 
     <!-- These strings are displayed in the privacy dialog on first launch. -->
     <string name="privacy_dialog_title">Privacy</string>
@@ -2196,8 +2215,47 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_dialog_agree">Agree</string>
     <string name="privacy_dialog_disagree">Close Wolvic</string>
 
+    <!-- These strings are the content of the Terms of Service. -->
+    <string name="terms_service_title">Terms of Service</string>
+    <string name="terms_service_section_1">
+    Wolvic is free and open source software, built by a community of thousands from all over the world. There are a few things you should know:
+    \n\n\t\u2022 Wolvic is made available to you under the terms of the Mozilla Public License. This means you may use, copy, and distribute Wolvic to others. You are also welcome to modify the source code of Wolvic as you want to meet your needs. The Mozilla Public License also gives you the right to distribute your modified versions.
+    \n\n\t\u2022 You are not granted any trademark rights or licenses to the trademarks of Igalia or any party, including without limitation the Wolvic name or logo.
+    \n\n\t\u2022 Some features in Wolvic, such as the Crash Reporter, give you the option to provide feedback to Igalia. By choosing to submit feedback, you give Igalia permission to use the feedback to improve its products, to publish anonymized feedback on its websites, and to distribute the anonymized feedback.
+    \n\n\t\u2022 How we use your personal information and feedback submitted to Igalia through Wolvic is described in the Wolvic Privacy Policy.
+    \n\n\t\u2022 Some Wolvic features make use of web-based information services; however, we cannot guarantee they are 100% accurate or error-free. More details, including information on how to disable the features that use these services, can be found in the service terms (below).
+    </string>
+    <string name="terms_service_subtitle_2">Wolvic Web-Based Information Services</string>
+    <string name="terms_service_section_2">
+    Wolvic uses web-based information services (“Services”) to provide some of the features provided for your use with this binary version of Wolvic under the terms described below.
+    \n\n\t\u2022 Igalia and its contributors, licensors, and partners work to provide the most accurate and up-to-date Services. However, we cannot guarantee that this information is comprehensive and error-free. For example, the Safe Browsing Service may not identify some risky sites and may identify some safe sites in error, and in the Location Aware Service all locations returned by our service providers are estimates only and neither we nor our service providers guarantee the accuracy of the locations provided.
+    \n\n\t\u2022 Igalia may discontinue or change the Services at its discretion.
+    \n\n\t\u2022 You are welcome to use these Services with the accompanying version of Wolvic, and Igalia grants you its rights to do so. Igalia and its licensors reserve all other rights in the Services. These terms are not intended to limit any rights granted under open source licenses applicable to Wolvic and to corresponding source code versions of Wolvic.
+    \n\n\t\u2022 The Services are provided “as-is.” Igalia, its contributors, licensors, and distributors, disclaim all warranties, whether express or implied, including without limitation, warranties that the Services are merchantable and fit for your particular purposes. You bear the entire risk as to selecting the Services for your purposes and as to the quality and performance of the Services.
+    \n\n\t\u2022 Except as required by law, Igalia, its contributors, licensors, and distributors will not be liable for any indirect, special, incidental, consequential, punitive, or exemplary damages arising out of or in any way relating to the use of Wolvic and the Services. The collective liability under these terms will not exceed $500 (five hundred dollars). Some jurisdictions do not allow the exclusion or limitation of certain damages, so this exclusion and limitation may not apply to you.
+    \n\n\t\u2022 Igalia may update these terms as necessary from time to time. These terms may not be modified or canceled without Igalia’s written agreement.
+    \n\n\t\u2022 These terms are governed by the laws of Spain, excluding its conflict of law provisions. If any portion of these terms is held to be invalid or unenforceable, the remaining portions will remain in full force and effect. In the event of a conflict between a translated version of these terms and the Spanish language version, the Spanish language version shall control.
+    \n\n\t\u2022 If you do not want to use one or more of the Services or the terms above are unacceptable, you may disable the feature or Service(s). Instructions on how to disable a particular feature or Service may be found below. Other features and Services can be disabled in the application preferences.
+    \n\n\t\t\u25e6 Safe browsing is enabled by default. Disabling the Safe Browsing feature is not recommended as it may result in you going to unsafe sites. If you wish to disable the feature completely, follow these steps:
+    \n\n\t\t\t\u2043 In the URL bar, type about:config
+    \n\n\t\t\t\u2043 Type browser.safebrowsing.malware.enabled
+    \n\n\t\t\t\u2043 Double click on the browser.safebrowsing.malware.enabled preference
+    \n\n\t\t\t\u2043 Type browser.safebrowsing.phishing.enabled
+    \n\n\t\t\t\u2043 Double click on the browser.safebrowsing.phishing.enabled preference
+    \n\n\t\t\t\u2043 Safe browsing is now disabled
+    \n\n\t\t\u25e6 Location Aware Browsing: is always opt-in. No location information is ever sent without your permission. If you wish to disable the feature completely, follow these steps:
+    \n\n\t\t\t\u2043 In the URL bar, type about:config
+    \n\n\t\t\t\u2043 Type geo.enabled
+    \n\n\t\t\t\u2043 Double click on the geo.enabled preference
+    \n\n\t\t\t\u2043 Location-Aware Browsing is now disabled
+    \n\n\t\t\u25e6 Enhanced Tracking Protection in Wolvic automatically protects your privacy while you browse. It blocks trackers that follow you around online to collect information about your browsing habits and interests without breaking site functionality. It also includes protections against harmful scripts, such as malware that drains your battery. There are three modes of tracking protection: Standard, Strict and Off. If you wish to switch it off, follow these steps:
+    \n\n\t\t\t\u2043 Go to “Privacy &amp; Security” settings.
+    \n\n\t\t\t\u2043 Select “Off” radio button.
+    \n\n\t\t\t\u2043 Enhanced Tracking Protection is now disabled.
+    </string>
+
     <!-- These strings are the content of the Privacy Policy. -->
-    <string name="privacy_policy_title">General privacy policy of Wolvic</string>
+    <string name="privacy_policy_title">General privacy policy</string>
     <string name="privacy_policy_subtitle_1">General information</string>
     <string name="privacy_policy_section_1">
         This application has been developed by Igalia, SL (hereinafter IGALIA), with registered office at Bugallal Marchesi, 22 – 1º, 15008, A Coruña, Galicia (Spain), whose contact details are:
@@ -2238,4 +2296,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         This Privacy Policy is subject to Spanish law. The Privacy Policy language of this application is Spanish. For this reason, any possible divergence between the original version in Spanish and its translation into another language will be considered as predominant in the Spanish version that can be found here: https://wolvic.com/es/legal/privacy/ .
     </string>
 
+    <!-- Display names for the supported voice recognition services -->
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
 </resources>
