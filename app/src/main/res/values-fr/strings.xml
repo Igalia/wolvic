@@ -1713,4 +1713,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nLes documents justificatifs (réception de la demande/réponse, communications, etc.) seront archivés dans le but de prouver leur bonne gestion.
 \nDe même, nous vous rappelons que vous avez le droit d\'introduire une réclamation auprès de l\'Agence espagnole de protection des données.</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Choisissez votre service en ligne préféré pour la recherche vocale.</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">Reconnaissance automatique de la parole de Huawei</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Service de recherche vocale</string>
+    <string name="language_service_options_reset">Réinitialiser les préférences de service de recherche vocale</string>
+    <string name="language_options_voice_search_service_title">Service de recherche vocale</string>
 </resources>
