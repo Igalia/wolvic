@@ -2,1354 +2,1007 @@
 <resources>
     <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
     https://github.com/Igalia/wolvic/wiki/Localization -->
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">ENTER</string>
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
          The action key performs a "go" operation to take the user to the target of the text they typed.
          Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
     -->
     <string name="keyboard_go_label">SIIRRY</string>
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
          The action key performs a "search" operation, taking the user to the results of searching for the text
          they have typed. (stylized in uppercase letters as 'SEARCH')
     -->
     <string name="keyboard_search_label">HAE</string>
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Send" IME action.
          The action key performs a "send" operation, delivering the text to its target. This is typically used
          when composing a message in IM or SMS where sending is immediate. (stylized in uppercase letters as 'SEND')
     -->
     <string name="keyboard_send_label">LÄHETÄ</string>
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Next" IME action.
          The action key performs a "next" operation, taking the user to the next field that will accept text.
          (stylized in uppercase letters as 'NEXT')
     -->
     <string name="keyboard_next_label">SEURAAVA</string>
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Done" IME action.
      The action key performs a "done" operation, typically meaning there is nothing more to input and the
      IME will be closed. (stylized in uppercase letters as 'DONE')
     -->
     <string name="keyboard_done_label">VALMIS</string>
-
     <!-- This string is used on the virtual keyboard to label the 'space' key-->
     <string name="keyboard_space_label">välilyönti</string>
-
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
     <string name="permission_allow">Salli</string>
-
     <!-- This string is displayed in the button that means the user rejects the
          permission requested for in the permission dialog box. -->
     <string name="permission_reject">Älä salli</string>
-
     <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
     <string name="permission_enable">Käytä</string>
-
     <!-- This string is displayed in a label that means the permission has already been granted -->
     <string name="permission_enabled">Käytössä</string>
-
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_camera">Sallitko sivuston %1$s käyttää kameraasi?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_microphone">Sallitko sivuston %1$s käyttää mikrofoniasi?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_camera_and_microphone">Sallitko sivuston %1$s käyttää kameraasi sekä mikrofoniasi?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_location">Sallitko sivuston %1$s käyttää sijaintiasi?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_notification">Sallitko sivuston %1$s lähettää ilmoituksia?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_read_external_storage">Sallitko sivuston %1$s käyttää ulkoista tallennustilaa?</string>
-
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">Sallitko sivuston %1$s tallentaa laitteeseesi tietoja?</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
     <string name="settings_crash_reporting">Kaatumisilmoitus</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">Telemetria</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Yksityisyys ja tietoturva</string>
-
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Yksityisyyskäytäntö</string>
-
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_title_v1">Ponnahdusikkunoiden poikkeukset</string>
-
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">Voit määrittää, mitkä sivustot voivat avata ponnahdusikkunoita</string>
-
     <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
     <string name="settings_privacy_policy_webxr_title">Virtuaalitodellisuuden oikeudet</string>
-
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_title">Tehostetun seurannan suojauksen poikkeukset</string>
-
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_description">Olet poistanut suojaukset käytöstä näillä sivustoilla.</string>
-
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Salli</string>
-
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is denied. -->
     <string name="pop_up_site_switch_block">Estä</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Kehittäjävalinnat</string>
-
-    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
     <string name="settings_fxa_account_sign_in">Kirjaudu tilille</string>
-
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_manage">Hallitse tiliä</string>
-
-    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_sign_out">Kirjaudu ulos</string>
-
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Yhdistä uudelleen</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
     <string name="settings_language">Kieli</string>
-
     <!-- This string is used to label the first string in the language list for voice and display languages.
          If chosen the device will use the system language as the main language. -->
     <string name="settings_language_follow_device">Seuraa laitteen kieltä</string>
-
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears
          the different options for language settings. -->
     <string name="settings_language_settings">Kieliasetukset</string>
-
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
     <string name="settings_language_choose_language_webpage_content">Valitse ensisijainen kieli, jolla sivut näytetään</string>
-
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">Valitse ensisijainen kieli äänihakua varten</string>
-
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Wolvic Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
          language for the application UI.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="settings_language_choose_display_language_title">%1$s-näyttökieli</string>
-
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Wolvic Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
          language for the application UI. -->
     <string name="settings_language_choose_language_display_description">Valitse kieli, jolla valikot, viestit ja ilmoitukset näytetään.</string>
-
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
     <string name="settings_language_choose_language_voice_search_title">Äänihaun kieli</string>
-
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
     <string name="settings_language_choose_language_voice_search_description">Valitse ensisijainen kieli äänihakua varten.</string>
-
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_title">Ensisijainen kieli sivustoille</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'English (US)'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_english">englanti (Yhdysvallat)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
     <string name="settings_language_english_us">englanti (US)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'English (UK)'. -->
     <string name="settings_language_english_uk">englanti (UK)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_traditional_chinese">kiina (perinteinen/bopomofo)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_simplified_chinese">kiina (yksinkertaistettu/pinyin)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Japanese'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_japanese">japani</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'French'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_french">ranska</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'German'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_german">saksa</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Spanish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_spanish">espanja</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Spanish (Spain)'. -->
     <string name="settings_language_spanish_spain">espanja (Espanja)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Korean'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_korean">korea</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Italian'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_italian">italia</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Russian'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_russian">venäjä</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Polish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_polish">puola</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Danish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_danish">tanska</string>
-  
     <!-- The string is used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_norwegian">norja</string>
-  
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Norwegian (Bokmaal)'. -->
     <string name="settings_language_norwegian_bokmaal">norja (bokmål)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Norwegian (Nynorsk)'. -->
     <string name="settings_language_norwegian_nynorsk">norja (nynorsk)</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Swedish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_swedish">ruotsi</string>
-
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Finnish'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_finnish">suomi</string>
-  
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Dutch'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_dutch">hollanti</string>
-
     <!-- The string is used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_thai">thai</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">Ohjainvalinnat</string>
-
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
     <string name="settings_report_issue">Ilmoita ongelmasta</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Ohje</string>
-
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Lähetä palautetta</string>
-
-    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
     <string name="settings_accounts_sign_in">Kirjaudu sisään</string>
-
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
     <string name="settings_accounts_sign_out">Kirjaudu ulos</string>
-
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Yhdistä uudelleen</string>
-
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">Mitä uutta</string>
-
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Uudelleenkäynnistys vaaditaan</string>
-
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
     <string name="restart_dialog_text">%1$s pitää käynnistää uudelleen, jotta muutokset tulevat voimaan. Haluatko tehdä sen nyt?</string>
-
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
     <string name="restart_now_dialog_button">Käynnistä uudelleen nyt</string>
-
     <!-- This string is used to label the button the user presses in order to skip the application
          from being restarted. -->
     <string name="restart_later_dialog_button">Käynnistä myöhemmin uudelleen</string>
-
     <!-- The string labels the description text for the clear cookies and site data button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_cookies_site_description">Evästeet ja sivustotiedot</string>
-
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">Välimuistissa oleva sisältö</string>
-
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">Tyhjennä tiedot</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
     <string name="developer_options_edit">Muokkaa</string>
-
     <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
          indicates that, when the button is pressed, the user's edits will be saved. -->
     <string name="developer_options_save">Tallenna</string>
-
     <!-- This string is used to label the 'Show' button in Settings. It
      indicates that, when the button is pressed opens a dialog box that contains more information.
      For example it's used to open a URL with the privacy policy. -->
     <string name="developer_options_show">Näytä</string>
-
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">MSAA</string>
-
     <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_disabled">Pois käytöstä</string>
-
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_2">2x</string>
-
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
-
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Työpöytä</string>
-
     <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_mobile">Mobiili</string>
-
     <!-- This string is used to label the 'Internal Storage' radio button of the 'Downloads Storage' settings option. -->
     <string name="privacy_options_downloads_storage_internal">Sisäinen</string>
-
     <!-- This string is used to label the 'External Storage' radio button of the 'Downloads Storage' settings option. -->
     <string name="privacy_options_downloads_storage_external">Ulkoinen</string>
-
     <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_etp">Tavallinen</string>
-
     <!-- This string is used as the description of the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_etp_description">Tasapainotettu suojauksen ja suorituskyvyn välillä. Sivut latautuvat normaalisti.</string>
-
     <!-- This string is used to label the 'Strict' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_strict">Tiukka</string>
-
     <!-- This string is used as the description of the 'Strict' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_strict_description">Vahvempi suojaus, mutta saattaa aiheuttaa sivustojen tai sisällön toimimattomuutta.</string>
-
     <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_off">Pois</string>
-
     <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
     <string name="developer_options_foveated_1">1</string>
     <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
     <string name="developer_options_foveated_2">2</string>
     <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
     <string name="developer_options_foveated_3">3</string>
-
     <!-- This string is used to label a set of radio buttons that allow the user to change the
      scroll direction of the remote controller. -->
     <string name="developer_options_scroll_direction">Vierityksen suunta</string>
-
     <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
          "Natural" refers to the motion of scrolled material being congruent with respect to direction of
          motion of user input. -->
     <string name="developer_options_scroll_direction_natural">Luonnollinen</string>
-
     <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
          "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
          motion of user input. -->
     <string name="developer_options_scroll_direction_reversed">Käänteinen</string>
-
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">Nollaa kehittäjäasetukset</string>
-
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Nollaa</string>
-
     <!-- This string is used to label buttons to enable editing of other options. -->
     <string name="settings_button_edit">Muokkaa</string>
-
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">Ympäristö</string>
-
     <!-- This string labels the radio button that selects the 'Underwater' environment,
          a brightly lit submarine themed environment. -->
     <string name="developer_options_env_underwater">Vedenalainen</string>
-
     <!-- This string labels the radio button that selects the 'Winter' environment,
          a snow-covered outdoor winter mountain scene. -->
     <string name="developer_options_env_winter">Talvi</string>
-
     <!-- This string labels the radio button that selects the 'Meadow' environment,
          a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
     <string name="developer_options_env_meadow">Niitty</string>
-
     <!-- This string labels the radio button that selects the 'Cave' environment,
          a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
     <string name="developer_options_env_cave">Luolasto</string>
-
     <!-- This string describes the radio buttons used to select the pointer color. -->
     <string name="developer_options_pointer_color">Osoittimen väri</string>
-
     <!-- This string labels the radio button that sets the pointer color to purple. -->
     <string name="developer_options_pointer_purple">Liila</string>
-
     <!-- This string labels the radio button that sets the pointer color to white. -->
     <string name="developer_options_pointer_white">Valkoinen</string>
-
     <!-- This string is used to label a text entry field where the user may enter a new value
          for the home page. -->
     <string name="developer_options_homepage">Aloitussivu</string>
-
     <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
     <string name="fxa_account_options_account">Tili</string>
-
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">Synkronointiasetukset</string>
-
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_sync_now">Synkronoi nyt</string>
-
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">Synkronoidaan...</string>
-
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Kirjanmerkit</string>
-
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Historia</string>
-
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
     <string name="fxa_account_sing_to_sync">Kirjaudu tilillesi synkronoidaksesi</string>
-
     <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
     <string name="fxa_account_sync_settings">Synkronointiasetukset</string>
-
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          when that the content was just synced. -->
     <string name="fxa_account_last_synced_now">Viimeksi synkronoitu nyt</string>
-
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that the content has never been synced yet. -->
     <string name="fxa_account_last_no_synced">Ei vielä synkronoitu</string>
-
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that the syncing is off. -->
     <string name="fxa_account_syncing_off">Synkronointi on kytketty pois päältä</string>
-
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that there was an error while syncing. -->
     <string name="fxa_account_last_sync_error">Synkronointivirhe</string>
-
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          when that the content was just synced some time ago.
          '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">Viimeksi synkronoitu %1$d minuuttia sitten</string>
-
-        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Palauta välilehdet ja ikkunat uudelleenkäynnistyksen jälkeen</string>
-
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the address bar autocomplete. -->
     <string name="security_options_autocomplete">Osoitepalkin automaattinen täydennys</string>
-
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Seurannan suojaus</string>
-
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable media autoplay. -->
     <string name="security_options_autoplay">Toista media automaattisesti</string>
-
     <!-- This string labels the button that displays or enables application access to the device's
          camera, if a camera is present. -->
     <string name="security_options_permission_camera">Kamera</string>
-
     <!-- This string labels the button that displays or enables application access to the device's
          microphone, if a microphone is present. -->
     <string name="security_options_permission_microphone">Mikrofoni</string>
-
     <!-- This string labels the button that displays or enables application access to the device's
          geographic location, if the device supports determination of geographic location. -->
     <string name="security_options_permission_location">Sijainti</string>
-
     <!-- This string labels the button that displays or enables the application to post system-wide
          notifications. -->
     <string name="security_options_permission_notifications">Ilmoitukset</string>
-
     <!-- This string labels the button that displays or enables application access to the device's
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Tallennustila</string>
-
     <!-- This string labels the button that displays or enables application access to the device's
          camera and microphone, if present. -->
     <string name="security_options_permission_camera_and_microphone">Kamera Ja mikrofoni</string>
-
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Estä ponnahdusikkunat</string>
-
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Lisäasetukset</string>
-
     <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
         Devices access to websites (WebXR). -->
     <string name="security_options_permission_webxr">Virtuaalitodellisuuslaitteet (WebXR)</string>
-
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          webxr blocked sites. -->
     <string name="security_options_webxr_settings">Lisäasetukset</string>
-
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">Päällä</string>
-
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Pois</string>
-
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
          i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Synkronoi</string>
-
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
          i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Älä synkronoi</string>
-
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">Mitä haluat etsiä verkosta?</string>
-
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Haetaan…</string>
-
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_error">Valitettavasti en ymmärtänyt.</string>
-
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
     <string name="voice_search_try_again">Yritä uudelleen.</string>
-
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Salli mikrofonin käyttö käyttääksesi äänihakua.</string>
-
     <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
     <string name="voice_search_close">Sulje</string>
-
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
     <string name="search_placeholder">Hae verkosta tai kirjoita osoite</string>
-
     <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="cancel_button">Peruuta</string>
-
     <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="ok_button">OK</string>
-
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Takaisin</string>
-
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">Sovellus kohtasi ongelman ja kaatui</string>
-
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Lähetä aina tiedot kysymättä</string>
-
     <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
     <string name="learn_more_button">Lue lisää</string>
-
     <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
     <string name="do_not_sent_button">Älä lähetä</string>
-
     <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
     <string name="send_data_button">Lähetä tiedot</string>
-
     <!-- This string appears in the tooltip for the button to change the 'Brightness'
          (i.e., the brightness level of the background environment), in particular when playing a video. -->
     <string name="brightness_mode_tooltip">Kirkkaus</string>
-
     <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
     <string name="brightness_mode_normal">Normaali</string>
-
     <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
     <string name="brightness_mode_dark">Tumma</string>
-
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
-
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360_stereo">360 Stereo</string>
-
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
-
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_2d">2D</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_play">Toista</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_exit">Poistu</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Tauko</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_mute">Mykistä</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_unmute">Poista mykistys</string>
-
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Äänenvoimakkuus</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
     <string name="video_controls_seek_forward">Siirry +%1$s sekuntia</string>
-
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
     <string name="video_controls_seek_backward">Siirry -%1$s sekuntia</string>
-
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
     <string name="video_controls_live">LIVE</string>
-
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Kirjanmerkit</string>
-
     <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
     <string name="bookmarks_empty">Kirjanmerkkilistasi on tyhjä</string>
-
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Ladataan kirjanmerkkejä</string>
-
     <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
     <string name="bookmarks_mobile_folder_title">Kannettavan laitteen kirjanmerkit</string>
-
     <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
     <string name="bookmarks_desktop_folder_title">Työpöydän kirjanmerkit</string>
-
     <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
     <string name="bookmarks_desktop_menu_title">Kirjanmerkkivalikko</string>
-
     <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
     <string name="bookmarks_desktop_toolbar_title">Kirjanmerkkipalkki</string>
-
     <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
     <string name="bookmarks_desktop_unfiled_title">Muut kirjanmerkit</string>
-
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Poista kirjanmerkki</string>
-
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
          bookmarks tray button then a new item is bookmarked. -->
     <string name="bookmarks_saved_notification">Tallennettu kirjanmerkkeihin!</string>
-
     <!-- This string is displayed in a notification that appears in the tray bar on top of the
          downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
     <string name="download_completed_notification">%1$s ladattu</string>
-
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_edit">Muokkaa tätä kirjanmerkkiä</string>
-
     <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
     <string name="bookmarks_search">Etsi kirjanmerkkejä</string>
-
     <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
     <string name="bookmarks_bookmark">Lisää sivu kirjanmerkkeihin</string>
-
     <!-- This string is displayed in the Bookmarks List for as the header of the most recently
          bookmarked items. -->
     <string name="bookmarks_recent">Äskettäin lisätyt kirjanmerkit</string>
-
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
     <string name="bookmarks_show_all">Näytä kaikki kirjanmerkit</string>
-
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
          bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Synkronoi</string>
-
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Historia</string>
-
     <!-- This string is displayed as the title of the history list when the history is empty. -->
     <string name="history_empty">Historia on tyhjä</string>
-
     <!-- This string is displayed under the history title in the history list. -->
     <string name="history_description">Voit katsella selaushistoriaasi täällä</string>
-
     <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
     <string name="history_loading">Ladataan historiaa</string>
-
     <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
     <string name="history_section_today">Tänään</string>
-
     <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
     <string name="history_section_yesterday">Eilen</string>
-
     <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
     <string name="history_section_last_week">Viime viikolla</string>
-
     <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
     <string name="history_section_older">Vanhemmat</string>
-
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">Tyhjennä historia</string>
-
     <!-- This string is displayed as the title of the downloads list, which contains the user's downloaded files. -->
     <string name="downloads_title">Lataukset</string>
-
     <!-- This string is displayed as the title of the downloads list when the downloads is empty. -->
     <string name="downloads_empty">Latausluettelosi on tyhjä</string>
-
     <!-- This string is displayed in the "Delete All" button in the downloads list.
          When pressed the all the downloads in the list are deleted both from the list and the disk. -->
     <string name="downloads_delete">Poista kaikki</string>
-
     <!-- This string is displayed in the "Sort By" button in the downloads list.
          When pressed a dropdown menu is displayed with the sorting options. -->
     <string name="downloads_sort">Lajitteluperuste</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in alphabetical order from A to Z. -->
     <string name="downloads_filename_sort_az">Nimen mukaan (A-Ö)</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in alphabetically order from Z to A. -->
     <string name="downloads_filename_sort_za">Nimen mukaan (Ö-A)</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in download date ascending order. -->
     <string name="downloads_sort_download_date_asc">Vanhimmat</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_date_desc">Uusimmat</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in download date ascending order. -->
     <string name="downloads_sort_download_size_asc">Pienimmät</string>
-
     <!-- This string is displayed as an option in the downloads sorting menu
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_size_desc">Suurimmat</string>
-
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Mozilla account. -->
     <string name="fxa_sync">Synkronoi</string>
-
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synkronoidaan…</string>
-
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Haluatko kirjautua ulos Mozilla-tililtäsi?</string>
-
+    <string name="fxa_signout_confirmation_title">Haluatko kirjautua ulos Firefox-tililtäsi?</string>
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
     <string name="fxa_signout_confirmation_signout">Kirjaudu ulos</string>
-
     <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
     <string name="fxa_signout_confirmation_cancel">Peruuta</string>
-
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
     <string name="history_clear_cancel">Peruuta</string>
-
     <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
          When pressed the selected history range is deleted from the history storage. -->
     <string name="history_clear_now">Tyhjennä nyt</string>
-
     <!-- This string is displayed is the clear history dialog.
          If selected today's history is deleted from the history storage. -->
     <string name="history_clear_range_today">Tänään</string>
-
     <!-- This string is displayed is the clear history dialog.
          If selected history since yesterday is deleted from the history storage. -->
     <string name="history_clear_range_yesterday">Eilen</string>
-
     <!-- This string is displayed is the clear history dialog.
          If selected history since last week is removed from the history storage. -->
     <string name="history_clear_range_last_week">Viime viikko</string>
-
     <!-- This string is displayed is the clear history dialog.
          If selected all the history is deleted from the history storage. -->
     <string name="history_clear_range_everything">Kaikki</string>
-
     <!-- This string is displayed in the header of the radio button where the clear cache time range
          can be selected. -->
     <string name="history_clear_time_range">Tyhjennettävä aikajakso:</string>
-
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new window. -->
     <string name="history_context_menu_new_window">Avaa uuteen ikkunaan</string>
-
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new tab. -->
     <string name="history_context_menu_new_tab">Avaa uuteen välilehteen</string>
-
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
     <string name="history_context_add_bookmarks">Lisää kirjanmerkkeihin</string>
-
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It removes the selected item from favorites. -->
     <string name="history_context_remove_bookmarks">Poista kirjanmerkeistä</string>
-
     <!-- This string is displayed is the downloads context menu that is displayed when
          the more button is pressed in a downloads item. It deletes the selected item from the downloads list
          and also from disk. -->
     <string name="download_context_delete">Poista</string>
-
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Nollaa näyttöasetukset</string>
-
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
     <string name="privacy_options_reset">Nollaa tietosuojan ja turvallisuuden asetukset</string>
-
     <!-- This string labels the Clear All button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_clear_all">Tyhjennä kaikki</string>
-
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Nollaa ponnahdusikkunoiden eston asetukset</string>
-
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header_v1">Seuraavilla verkkosivustoilla on lupa avata ponnahdusikkunoita:</string>
-
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
     <string name="privacy_options_tracking"><![CDATA[Tehostettu seurannan suojaus. (<a href="%1$s">Lue lisää</a>)]]></string>
-
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Lisäasetukset</string>
-
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Nollaa ohjainasetukset</string>
-
     <!-- This string labels the Reset button that restores the default environment settings values. -->
     <string name="environment_options_reset">Nollaa ympäristöasetukset</string>
-
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Nollaa äänihaun kieliasetukset</string>
-
     <!-- This string labels the Reset button that restores the default display language settings values. -->
     <string name="display_language_options_reset">Nollaa näyttökieli</string>
-
     <!-- This string labels the Reset button that restores the default content language settings values. -->
     <string name="content_language_options_reset">Nollaa sivustojen ensisijaisen kielen asetukset</string>
-
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">Nollaa kaikki kieliasetukset</string>
-
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
     <string name="language_options_voice_search_language_title">Äänihaun kieli:</string>
-
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
     <string name="language_options_content_language_title">Ensisijainen kieli sivustojen sisällölle:</string>
-
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
     <string name="language_options_display_language_title">Sovelluksen käyttöliittymän kieli:</string>
-
     <!-- This string labels the description in the Content Language header for preferred languages list. -->
     <string name="language_options_preferred_languages">Ensisijainen kieli/kielet</string>
-
     <!-- This string labels the description in the Content Language header for available languages list. -->
     <string name="language_options_available_languages">Saatavilla olevat kielet</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Nimi</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
     <string name="col_tags">Tunnisteet</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
     <string name="col_url">Sijainti</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
     <string name="col_most_recent_visit">Viimeisin käynti</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
     <string name="col_date_added">Lisätty</string>
-
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
     <string name="col_date_last_modified">Viimeksi muokattu</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
          'Back' refers to going back one page in 'History'. -->
     <string name="back_tooltip">Taaksepäin</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
          'Forward' refers to going back one page in 'History'. -->
     <string name="forward_tooltip">Eteenpäin</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
          'Refresh' refers to reloading the current page. -->
     <string name="refresh_tooltip">Päivitä</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
          'Stop' stops the current page load. -->
     <string name="stop_tooltip">Pysäytä lataaminen</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
          When clicked the current media playback is resumed. -->
     <string name="media_resume_tooltip">Jatka toistoa</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
          When clicked the current media playback is paused. -->
     <string name="media_pause_tooltip">Tauko</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Wolvic Home Page). -->
     <string name="home_tooltip">Aloitussivu</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
          browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Äänihaku</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
          browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
     <string name="request_dekstop_site_tooltip">Pyydä työpöytäversiota</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Tyhjennä</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
          browser's navigation bar if popups are not blocked for the site.
          The button it labels, when pressed, Shows the pop-up dialog. -->
     <string name="popup_tooltip_v1">Ponnahdusikkunoita ei ole estetty</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
          browser's navigation bar if popups are blocked for the site.
          The button it labels, when pressed, Shows the pop-up dialog. -->
     <string name="popup_blocked_tooltip">Ponnahdusikkunat estetty</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
          browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
          shows the DRM bubble on top of the button. -->
     <string name="drm_enabled_tooltip">DRM sallittu</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
          browser's navigation bar when DRM not allowed for the site. The button it labels, when pressed,
          shows the DRM bubble on top of the button. -->
     <string name="drm_disabled_tooltip">DRM ei sallittu</string>
-
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Näytä sivuston tiedot.</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
          'Servo' refers to the Servo engine. -->
     <string name="servo_tooltip">Käytä Servoa</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">Muuta kokoa</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
     <string name="webxr_allowed_tooltip">WebXR sallittu</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
  browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
     <string name="webxr_blocked_tooltip">WebXR estetty</string>
-
     <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
      has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
      \n is used to create a new line  -->
     <string name="webxr_interstitial_exit_webxr">Poistu\nWebXR:stä</string>
-
     <!-- This string appears in the WebXR interstitial. -->
     <string name="webxr_interstitial_how_to_continue_1">Jatka painamalla mitä tahansa muuta painiketta</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
     <string name="tracking_allowed_tooltip">Seurannan suojaus on käytössä</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
  browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
     <string name="tracking_disabled_tooltip">Seurannan suojaus ei ole käytössä</string>
-
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_enter_tooltip">Siirry yksityiseen selaukseen</string>
-
     <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_exit_tooltip">Poistu yksityisestä selauksesta</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window_1">Avaa uuteen ikkunaan</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
     <string name="context_menu_open_new_tab_1">Avaa uuteen välilehteen</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_link_new_window_1">Avaa linkki uuteen ikkunaan</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
     <string name="context_menu_open_link_new_tab_1">Avaa linkki uuteen välilehteen</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the image in the current window. -->
     <string name="context_menu_view_image">Näytä kuva</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the video in the current window. -->
     <string name="context_menu_view_video">Näytä video</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the audio in the current window. -->
     <string name="context_menu_view_audio">Näytä ääni</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the image element download. -->
     <string name="context_menu_download_image">Lataa kuva</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Kopioi linkki</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the image uri to the clipboard -->
     <string name="context_menu_copy_image_location">Kopioi kuvan sijainti</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the video uri to the clipboard -->
     <string name="context_menu_copy_video_location">Kopioi videon sijainti</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the audio uri to the clipboard -->
     <string name="context_menu_copy_audio_location">Kopioi äänitteen sijainti</string>
-
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
     <string name="context_menu_cut_text">Leikkaa</string>
-
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it copies the selected text and can be pasted later. -->
     <string name="context_menu_copy_text">Kopioi</string>
-
     <!-- This string is shown in the context menu after a longpress on a input. When clicked it pastes the current text on the clipboard. -->
     <string name="context_menu_paste_text">Liitä</string>
-
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it selects all text from the longpressed page area. -->
     <string name="context_menu_select_all_text">Valitse kaikki</string>
-
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
     <string name="context_menu_unselect">Poista valinta</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
     <string name="bookmark_tooltip">Lisää tämä sivu kirjanmerkkeihin</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar if the site is already bookmarked. The button it labels, when pressed,
          removes the currently open web site from bookmarks. -->
     <string name="remove_bookmark_tooltip">Poista kirjanmerkeistä</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">Kirjanmerkit</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="open_bookmarks_tooltip">Avaa kirjanmerkit</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
     <string name="close_bookmarks_tooltip">Sulje kirjanmerkit</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
          tray. The button it labels, when pressed, opens the Settings panel. -->
     <string name="settings_tooltip">Asetukset</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Avaa uusi ikkuna</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
          pages. -->
     <string name="open_history_tooltip">Avaa historia</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
     <string name="close_history_tooltip">Sulje historia</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, opens a list view of the user's downloads. -->
     <string name="open_downloads_tooltip">Avaa lataukset</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">Sulje lataukset</string>
-
     <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
          Navigation Bar. The button it labels, when pressed, open the release notes page. -->
     <string name="whats_new_tooltip">Mitä uutta</string>
-
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Poista kaikki</string>
-
     <!-- This string is used as the title of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked. -->
     <string name="private_browsing_title">Yksityinen selaus</string>
-
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">Tunnistautuminen vaaditaan</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
     <string name="authentication_username">Käyttäjätunnus:</string>
     <!-- This string is displayed as the label of a password input in an authentication prompt. -->
     <string name="authentication_password">Salasana:</string>
-
-
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
     <string name="authentication_show_password">Näytä salasana:</string>
-
-
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">Internetyhteys menetettiin</string>
-
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_message">Tarkista laitteen asetukset ongelman korjaamiseksi.</string>
-
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
     <string name="max_windows_msg">Vain %1$s ikkunaa voi olla avoina. Sulje yksi ikkuna avataksesi uuden.</string>
-
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">OK</string>
-
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">Suorittaminen ei onnistu</string>
-
-
     <!-- This string is displayed in the title of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
     <string name="before_unload_prompt_title">Poistu sivulta?</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it cancels the navigation and stays on the same page. -->
     <string name="before_unload_prompt_stay">Jää sivulle</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Poistu sivulta</string>
-
     <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
     <string name="repost_confirm_title">Vahvista lomakkeen uudelleenlähetys</string>
     <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
     <string name="repost_confirm_message">Etsimäsi sivu käytti antamiasi tietoja. Sivulle palaaminen voi johtaa jokaisen tekemäsi toiminnon toistamiseen. Haluatko jatkaa?</string>
     <!-- This string is displayed in the resend button for post warning -->
     <string name="repost_confirm_continue">Jatka</string>
-
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
     <string name="performance_title">Huono sivuston suorituskyky</string>
-
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">Salli</string>
-
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts out of the voice data collection. -->
     <string name="voice_samples_collect_dialog_do_not_allow">Älä salli</string>
-
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Oletus</string>
-
     <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
     <string name="url_bookmarks_title">Kirjanmerkit</string>
-
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">Historia</string>
-
     <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
     <string name="url_downloads_title">Lataukset</string>
-
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Tyhjennä</string>
-
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Wolvic will never ask again to block pop-ups for this site -->
     <string name="popup_block_checkbox">Älä kysy uudestaan tämän sivuston kohdalla</string>
-
     <!-- This string is displayed on the left button of the pop-up blocking dialog.
          If the button is clicked the pop-up will be shown -->
     <string name="popup_block_button_show">Näytä</string>
-
     <!-- This string is displayed on the right button of the pop-up blocking dialog.
          If the button is clicked the pop-up will be blocked -->
     <string name="popup_block_button_cancel">Peruuta</string>
-
     <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
         it allows to select tabs from the tab -->
     <string name="tabs_select">Valitse</string>
-
     <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
         the Select` button. When clicked it closes the selection mode -->
     <string name="tabs_select_done">Valmis</string>
-
     <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
     the Select` button. When clicked it selects all the available tabs -->
     <string name="tabs_select_all">Valitse kaikki</string>
-
     <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
 the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tabs_close_selected">Sulje välilehdet</string>
-
     <!-- This string is displayed in a button on the header of the tabs dialog.
      When clicked it closes all the available tabs -->
     <string name="tabs_close_all">Sulje kaikki</string>
-
     <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there is one tab
         available -->
     <string name="tabs_counter_singular">1 välilehti</string>
-
     <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there are n tabs available.
         %1$s expands to a integer which indicates the number of tabs. This number is always larger than 1, ortherwise
         tabs_counter_singular key is used-->
     <string name="tabs_counter_plural">%1$s välilehteä</string>
-
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
         It indicates that there is one tab selected -->
     <string name="tabs_selected_counter_singular">1 välilehti valittu</string>
-
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
         It indicates that there are n tabs selected. %1$s expands to a integer which indicates the number of tabs.
         This number is always larger than 1, ortherwise tabs_selected_counter_singular key is used-->
     <string name="tabs_selected_counter_plural">%1$s välilehteä valittu</string>
-
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
      It indicates that there are no tabs selected -->
     <string name="tabs_selected_counter_none">0 välilehteä valittu</string>
-
     <!-- This string is for the tooltip that appears when the users hovers in the tabs icon in the browser's
         tray menu. When clicked it opens the tray dialog in the current active window -->
     <string name="tabs_tray_tooltip">Näytä välilehdet</string>
-
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been added on the background. -->
     <string name="tab_added_notification">Uusi välilehti lisätty!</string>
-
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been sent. -->
     <string name="tab_sent_notification">Välilehti lähetetty!</string>
-
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the send tab dialog -->
     <string name="hamburger_menu_send_tab">Lähetä välilehti laitteeseen</string>
-
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">Muuta ikkunan kokoa</string>
-
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the find in page option -->
     <string name="hamburger_menu_find_in_page">Hae sivulta</string>
@@ -1357,192 +1010,135 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it switches User Agent from desktop to mobile and vice versa -->
     <string name="hamburger_menu_switch_to_desktop">Työpöytätila</string>
-
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Valikko</string>
-
     <!-- This string is displayed in the title of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_title">Lähetä välilehti laitteeseen</string>
-
     <!-- This string is displayed in the description of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_description">Valitse laite, jolle välilehti lähetetään.</string>
-
     <!-- This string is displayed on top of the available devices list. -->
     <string name="send_tab_dialog_options_header">Käytettävissä olevat laitteet:</string>
-
     <!-- This string is displayed instead of the devices list if there are no available devices. -->
     <string name="send_tab_dialog_no_devices">Ei yhdistettyjä laitteita.</string>
-
     <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
     <string name="send_tab_dialog_syncing">Synkronoidaan...</string>
-
     <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
     <string name="send_tab_dialog_button">Lähetä</string>
-
     <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
     <string name="whats_new_title_1">Kirjaudu sisään lähettääksesi välilehtiä</string>
-
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Mozilla-tili mahdollistaa kirjanmerkkien ja historian synkronoinnin kaikkien laitteidesi välillä.</string>
-
+    <string name="whats_new_body_sub_1">Firefox-tili mahdollistaa kirjanmerkkien ja historian synkronoinnin kaikkien laitteidesi välillä.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Kirjaudu sisään</string>
-
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Aloita selaaminen</string>
-
-
     <!-- This string is displayed in the title of the slow script dialog. -->
     <string name="slow_script_dialog_title">Hidas komentosarja</string>
-
     <!-- This string is displayed as a description below the title of slow script dialog.
         '%1$s' will be replaced the script filename that is causing the slow down. -->
     <string name="slow_script_dialog_description">Verkkosivu hidastaa selaintasi (%1$s). Mitä haluat tehdä?</string>
-
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
         it stops the slow script that is causing the web page slow down. -->
     <string name="slow_script_dialog_action_stop">Pysäytä se</string>
-
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Odota</string>
-
-
     <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
     <string name="popup_dialog_button_on">Päällä</string>
-
     <!-- This string is displayed in the off button of the quick Popup blocking dialog when it's in disabled state. It's accessed from the Popup icon in the URL bar. -->
     <string name="popup_dialog_button_off">Pois päältä</string>
-
     <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_on">Päällä</string>
-
     <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_off">Pois päältä</string>
-
     <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_on">Päällä</string>
-
     <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_off">Pois päältä</string>
-
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
     <string name="drm_dialog_button_on">Päällä</string>
-
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
     <string name="drm_dialog_button_off">Pois päältä</string>
-
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Tämä sivusto sisältää DRM-sisältöä.</string>
-  
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_allow">Salli</string>
-  
     <!-- This string is displayed in the do not enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_do_not_allow">Älä salli</string>
-
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Poista käytöstä</string>
-
     <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.
          '%1$s' will be replaced at runtime with the app name. -->
     <string name="exit_confirm_dialog_body">Suljetaanko %1$s?</string>
-
     <!-- This string is displayed in the Cancel button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
     <string name="exit_confirm_dialog_button_cancel">Peruuta</string>
-
     <!-- This string is displayed in the Quit button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
     <string name="exit_confirm_dialog_button_quit">Lopeta</string>
-
     <!-- This string is displayed in the title of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. -->
     <string name="download_open_file_unsupported_title">Tiedostotyyppiä ei tueta</string>
-
     <!-- This string is displayed in the body of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. -->
     <string name="download_open_file_unsupported_body">Tiedostoa ei voi avata. Haluatko avata sen ulkoisella sovelluksella?</string>
-
     <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. When clicked the dialog is closed.-->
     <string name="download_open_file_unsupported_cancel">Peruuta</string>
-
     <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. When clicked we hand over the file open to the system.-->
     <string name="download_open_file_unsupported_open">Avaa</string>
-
     <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
          the system but the system can't handle it either. -->
     <string name="download_open_file_error_title">Virhe</string>
-
     <!-- This string is displayed in the body of the dialog displayed when the file type cannot be opened and
      there is no system app available to handle it either. -->
     <string name="download_open_file_open_unsupported_body">Tiedostotyyppiä ei tueta.</string>
-
     <!-- This string is displayed in the title of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. -->
     <string name="download_confirm_title">Haluatko ladata tämän tiedoston?</string>
-
     <!-- This string is displayed in the "Cancel" button of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. If clicked the download is not started. -->
     <string name="download_confirm_cancel">Peruuta</string>
-
     <!-- This string is displayed in the "Download" button of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. If clicked the download is queued. -->
     <string name="download_confirm_download">Lataa</string>
-
     <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
     <string name="download_delete_file_confirm_title">Poista tiedosto</string>
-
     <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
     <string name="download_delete_file_confirm_body">Haluatko varmasti poistaa tämän tiedoston?</string>
-
     <!-- This string is displayed in the confirmation dialog checkbox to also delete the file from disk. -->
     <string name="download_delete_file_confirm_checkbox">Poista tiedosto myös levyltä</string>
-
     <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
     <string name="download_delete_all_confirm_title">Poista kaikki ladatut tiedostot</string>
-
     <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
     <string name="download_delete_all_confirm_body">Haluatko varmasti poistaa kaikki ladatut tiedostot?</string>
-
     <!-- This string is displayed in the delete download confirmation dialog checkbox to also delete the file from disk. -->
     <string name="download_delete_all_confirm_checkbox">Poista tiedostot myös levyltä</string>
-
     <!-- This string is displayed in the delete download confirmation dialog cancel button. -->
     <string name="download_delete_confirm_cancel">Peruuta</string>
-
     <!-- This string is displayed in the confirmation dialog delete button. -->
     <string name="download_delete_confirm_delete">Poista</string>
-
     <!-- This string is displayed in the title of the download error dialog. -->
     <string name="download_error_title_v1">Latausvirhe</string>
-
     <!-- This string is displayed in the button to dismiss the download error dialog. -->
     <string name="download_error_ok">OK</string>
-
     <!-- This string is displayed in the downloads panel, in the download status when the download has failed. -->
     <string name="download_status_failed">Epäonnistui</string>
-
     <!-- This string is displayed in the downloads panel, in the download status when the download is paused. -->
     <string name="download_status_paused">Keskeytetty</string>
-
     <!-- This string is displayed in the downloads panel, in the download status when the download is pending. -->
     <string name="download_status_pending">Odottaa</string>
-
     <!-- This string is displayed in the downloads panel, in the download status when the resource is no longer available. -->
     <string name="download_status_unavailable">Ei saatavilla</string>
-
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Tuntematon virhe</string>
-
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Ympäristövirhe</string>
-
-    </resources>
+    <string name="settings_privacy_saved_logins">Tallennetut kirjautumistiedot</string>
+</resources>
