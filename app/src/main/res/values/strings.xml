@@ -2299,4 +2299,134 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- Display names for the supported voice recognition services -->
     <string name="voice_service_metkai">MeetKai</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+
+
+	<!-- A string used on the home page of wolvic.com -->
+	<string name="website_home_leadoff_heading">Join the pack</string>
+	<string name="website_home_leadoff_text"><p>Wolvic is an open source browser that opens a portal to the Web and all it has to offer, including immersive games, videos, and environments built for XR.</p></string>
+	<string name="website_available_devices_heading">Available now, for free, in these fine online stores!</string>
+	<string name="website_why_a_browser_heading">Why a web browser in XR?</string>
+	<string name="website_why_a_browser_text"><p>Because entering a virtual experience should NOT exclude you from accessing the vast resources the Web has to offer. WebXR, too, will offer opportunities to continue to expand XR (eXtended Reality), in the model of the Web - and that is most ideally experienced through a browser built for XR. It’s true that XR is full of interesting things, but huge amount of information is already on the web and will continue to be created on the web. You don’t want to leave the immersive environment to access it. Wolvic also lets you find immersive stuff on the web and jump into it.</p><p><strong>Wolvic is built for XR</strong>, and that matters. How we interact with content in XR is fundamentally different than interacting on a mobile device or desktop computer. Instead of being limited to 2D surfaces, everything can be placed in 3D (including multiple 2D surfaces!). Wolvic rethinks content interaction in ways that make sense for XR.</p></string>
+	<string name="website_join_the_pack_heading">Join the pack: Help us make Wolvic a success</string>
+	<string name="website_join_the_pack_text"><p>If you have one of these devices, you can help make this project successful, reach stable release sooner, help us enrich browser diversity in the XR space, and ensure the web remains important and vibrant in XR, by helping us test it out on your device. Bugs <a href="https://github.com/Igalia/wolvic/issues">can be filed on the GitHub repository</a>.</p></string>
+	<string name="website_how_to_get_heading">Target devices and how to get Wolvic</string>
+	<string name="website_how_to_get_text"><p>Our first focus is on AOSP-based, stand-alone XR systems and HarmonyOS tethered systems, including: Huawei VR Glass, HTC Vive Focus, Oculus, Pico Interactive, and Lynx. We are also hoping to work with companies such as Qualcomm and Lenovo to get the browser running into their XR devices.</p><p>Look for the Wolvic in the Oculus App store and the Huawei AppGallery very soon. More options to follow.</p></string>
+	<string name="website_about_heading">About Wolvic: Origins</string>
+	<string name="website_about_text"><p>Wolvic begins a new branch of the evolutionary tree of the Firefox Reality Browser. Firefox Reality was an interesting and important development that began in Mozilla Research while XR devices were still quite young. Since then, more mature standalone devices have entered much wider consumer markets and the Firefox Reality Browser project needed new investment, updates and nurturing.</p><p>In 2022, Igalia took over stewardship of this project and are calling the project “Wolvic”. It will be available as a beta release while it is transitioning.</p></string>
+
+	<!-- The 404 error page used on wolvic.com (Markdown format) -->
+	<string name="website_error_404"># The requested page is missing. <small>HTTP 404</small>
+
+The bad news: the URL you requested isn’t available, and possibly never was.
+
+The good news: from here, you can go to the [main page of the site](https://wolvic.com/), or check out one of the other links in the footer.
+
+We’re sorry this particular page request didn’t go as planned, but we hope you enjoy Wolvic!</string>
+
+	<!-- The full Privacy Policy used on wolvic.com (Markdown format) -->
+	<string name="website_privacy_policy"># GENERAL PRIVACY POLICY OF WOLVIC
+
+## General information
+
+This application has been developed by Igalia, SL (hereinafter IGALIA), with registered office at Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia (Spain), whose contact details are: 
+   * Phone number +34 981 913991; 
+   * Email: info@igalia.com
+
+The content and elements that make up the application have been implemented and/or developed by IGALIA under open source licenses, being protected, without limitations, by the intellectual and industrial property laws of the Kingdom of Spain and by the international Treaties and Agreements that may result of application.
+
+## DATA PROTECTION
+
+IGALIA is committed to complying with the legal provisions regarding the protection of personal data: Regulation (EU) 2016/679 of the European Parliament and of the Council of 27th April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data and repealing Directive 95/46/EC (General Data Protection Regulation) and in the Organic Law 3/2018, of December 5, on Data Protection and Guarantee of Digital Rights (LOPDGDD).
+
+“Personal data” is any information related to an identified or identifiable natural person, provided that their identity can be traced, directly or indirectly, in particular by means of an identifier, such as their name, an identification number, location data, etc. alone, or when combined with other personal or identifying information which is linked or linkable to a specific individual, such as one or more elements of the physical, physiological, genetic, mental, economic, cultural or social identifiers of the aforesaid person.
+
+IGALIA does not collect personal data in such a way that the user can be identified. Therefore, you can use the application, consult and browse the virtual reality environment without revealing your identity or providing personal data to IGALIA, either directly or indirectly; therefore, IGALIA will not be liable for any the data that is entered in WOLVIC.
+
+The only data and information that IGALIA will obtain for the use of this application, which at no time will be individually linked to the user, are the following:
+
+   *  Analytical, purely statistical, and non-identifying data.
+   *  In order to capture and translate the voice into text, the user's sound data is sent to the servers owned by the third party company responsible for each platform, through an API for this purpose: for example, in Oculus, from Facebook, a service that sends it to Oculus Voice SDK. At no time is the aforementioned data processed, accessed, or incorporated into the servers owned by IGALIA. The data transmitted will be the exclusive responsibility of the third party companies that own each platform (hereinafter, the Third Parties), which may be located outside the European Union and subject to a legal regime that is less protective of user privacy. We recommend that you carefully read the privacy policy and terms of use of each of these external platforms before accepting and using their services. IGALIA will not be directly or indirectly responsible for the processing of personal data by said Third Parties.
+   * Geographic location information maybe be obtained from the browser, instead of the one used by the system. However, in order to do so, you must set the location permissions of your device through a specific notice in this regard and IGALIA will in no way link the aforementioned information to you as an identified or identifiable person, although the Third Parties mentioned in the previous point could do so, if applicable. We recommend you to pay attention to their legal terms.
+   * IGALIA will not access or store, in any way, the addresses or URLs visited by you.
+   * Integration with Cloud services (such as Firefox Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA's servers.
+
+Likewise, you will notice that the application will request a series of special permissions with respect to your device, which we clarify below in terms of their function and purpose:
+
+* Permission for audio recording: If you authorize this, it will be used for the aforementioned voice-to-text translation function in addition to the voice search functionality ("voice search") provided by Meetkai, whose privacy policy can be read here: [https://meetkai.com/privacy](https://meetkai.com/privacy)
+* Permission to capture photos and videos: This may be requested if the user's device uses cameras to record the environment and place the user in the physical space through tracing or “tracking” systems. IGALIA does not access or process any information.
+* Permission to read, modify or delete photos, multimedia content and files on the memory card: This is necessary so that the browser can save local information on the device such as cache files, settings, pages visited and favorites, etc. IGALIA does not access or process said information.
+* Permission to obtain location information based on sources such as GPS, telephone stations or WIFI: If you authorize this, an icon will be displayed at all times with the type of connection in your application, as well as, where appropriate, the aforementioned geolocation function mentioned above. IGALIA will in no way link the aforesaid information to you as an identified or identifiable person, although the Third Parties mentioned above may do so, if applicable. Pay attention to their legal terms. Specifically, in Huawei devices GPS information is also accessed and provided to a service of that company called "LocationService".
+    
+We remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
+
+   * Facebook: [https://www.facebook.com/about/privacy/update](https://www.facebook.com/about/privacy/update)
+   * Google: [https://policies.google.com/privacy](https://policies.google.com/privacy)
+   * Huawei: [https://www.huawei.com/es/privacy-policy](https://www.huawei.com/es/privacy-policy)
+
+Likewise, IGALIA informs you that while using the voice recognition option of the browser, Meetkai will keep totally anonymized voice transcriptions of your voice with the purposes of improving the service provided by them. Your voice will not be kept or will be any way to connect the transcriptions with your identity. More information about MeetKai privacy policy in the following link: [https://meetkai.com/es/privacy](https://meetkai.com/privacy). Igalia neither has any interest in linking transcriptions with any user nor in affecting their privacy; consequently, Igalia requests that no personal or confidential information of any kind is included in their sound voice addresses.
+
+In any case, IGALIA guarantees to the interested parties the exercise of the rights of access, rectification, deletion, opposition, limitation of treatment, and portability, regarding their personal data.
+
+For such purposes, IGALIA has established an internal protocol/procedure to carry them out.
+
+Interested parties can exercise their rights are as follows: by sending a request to IGALIA's physical address: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: "Data Protection"; or, to the following email address: info@igalia.com.
+
+In both cases, the interested party must attach a copy of their national ID, passport, or identification document to prove their identity.
+
+The Data Protection Officer or the department entrusted with the management of the rights will record the exercises of rights in the form, available for this purpose, in which the following data will be recorded:
+
+   * Application number: a number will be assigned to each of the received applications.
+   * Headquarters: if the person in charge has several headquarters, the headquarters where the request was received will be stated.
+   * Channel to file claims: the channel through which the request was received will be indicated: physical mail address, mail, etc.
+   * Filing date: the date when the request has been filed will be indicated.
+   * Exercised rights: the type of right the person exercised.
+   * Response day: the day on which the response was sent to the interested party.
+
+The supporting documentation (receipt of request/response, communications, etc.) will be archived for the purpose of proving its correct management.
+
+Likewise, you are reminded that you have the right to file a claim with the Spanish Data Protection Agency.
+
+## APPLICABLE LAW AND ORIGINAL LANGUAGE
+
+This Privacy Policy is subject to Spanish law. The Privacy Policy language of this application is Spanish. For this reason, any possible divergence between the original version in Spanish and its translation into another language will be considered as predominant in the Spanish version that can be found [here](/es/legal/privacy/).</string>
+
+	<!-- The full Terms of Service used on wolvic.com (Markdown format) -->
+	<string name="website_privacy_policy"># Terms of Service
+
+Wolvic is free and open source software, built by a community of thousands from all over the world. There are a few things you should know:
+
+   * Wolvic is made available to you under the terms of the [Mozilla Public License](https://www.mozilla.org/MPL/). This means you may use, copy, and distribute Wolvic to others. You are also welcome to modify the source code of Wolvic as you want to meet your needs. The Mozilla Public License also gives you the right to distribute your modified versions.
+   * You are not granted any trademark rights or licenses to the trademarks of Igalia or any party, including without limitation the Wolvic name or logo.
+   * Some features in Wolvic, such as the Crash Reporter, give you the option to provide feedback to Igalia. By choosing to submit feedback, you give Igalia permission to use the feedback to improve its products, to publish anonymized feedback on its websites, and to distribute the anonymized feedback.
+   * How we use your personal information and feedback submitted to Igalia through Wolvic is described in the [Wolvic Privacy Policy](/{{locale}}/legal/privacy/).
+   * Some Wolvic features make use of web-based information services; however, we cannot guarantee they are 100% accurate or error-free. More details, including information on how to disable the features that use these services, can be found in the service terms (below).
+
+## Wolvic Web-Based Information Services
+
+Wolvic uses web-based information services ("Services") to provide some of the features provided for your use with this binary version of Wolvic under the terms described below.
+
+   * Igalia and its contributors, licensors, and partners work to provide the most accurate and up-to-date Services. However, we cannot guarantee that this information is comprehensive and error-free. For example, the Safe Browsing Service may not identify some risky sites and may identify some safe sites in error, and in the Location Aware Service all locations returned by our service providers are estimates only and neither we nor our service providers guarantee the accuracy of the locations provided.
+   * Igalia may discontinue or change the Services at its discretion.
+   * You are welcome to use these Services with the accompanying version of Wolvic, and Igalia grants you its rights to do so. Igalia and its licensors reserve all other rights in the Services. These terms are not intended to limit any rights granted under open source licenses applicable to Wolvic and to corresponding source code versions of Wolvic.
+   * **The Services are provided "as-is." Igalia, its contributors, licensors, and distributors, disclaim all warranties, whether express or implied, including without limitation, warranties that the Services are merchantable and fit for your particular purposes. You bear the entire risk as to selecting the Services for your purposes and as to the quality and performance of the Services.**
+   * Except as required by law, Igalia, its contributors, licensors, and distributors will not be liable for any indirect, special, incidental, consequential, punitive, or exemplary damages arising out of or in any way relating to the use of Wolvic and the Services. The collective liability under these terms will not exceed $500 (five hundred dollars). Some jurisdictions do not allow the exclusion or limitation of certain damages, so this exclusion and limitation may not apply to you.
+   * Igalia may update these terms as necessary from time to time. These terms may not be modified or canceled without Igalia's written agreement.
+   * These terms are governed by the laws of Spain, excluding its conflict of law provisions. If any portion of these terms is held to be invalid or unenforceable, the remaining portions will remain in full force and effect. In the event of a conflict between a translated version of these terms and the Spanish language version, the Spanish language version shall control.
+   * If you do not want to use one or more of the Services or the terms above are unacceptable, you may disable the feature or Service(s). Instructions on how to disable a particular feature or Service may be found below. Other features and Services can be disabled in the application preferences.
+      * Safe browsing is enabled by default. Disabling the Safe Browsing feature is not recommended as it may result in you going to unsafe sites. If you wish to disable the feature completely, follow these steps:
+         * In the URL bar, type `about:config`
+         * Type `browser.safebrowsing.malware.enabled`
+         * Double click on the browser.safebrowsing.malware.enabled preference
+         * Type `browser.safebrowsing.phishing.enabled`
+         * Double click on the  browser.safebrowsing.phishing.enabled preference
+         * Safe browsing is now disabled
+      * Location Aware Browsing: is always opt-in. No location information is ever sent without your permission. If you wish to disable the feature completely, follow these steps:
+         * In the URL bar, type `about:config`
+         * Type `geo.enabled`
+         * Double click on the geo.enabled preference
+         * Location-Aware Browsing is now disabled
+      * Enhanced Tracking Protection in Wolvic automatically protects your privacy while you browse. It blocks trackers that follow you around online to collect information about your browsing habits and interests without breaking site functionality. It also includes protections against harmful scripts, such as malware that drains your battery. There are three modes of tracking protection: Standard, Strict and Off. If you wish to switch it off, follow these steps:
+         * Go to "Privacy & Security" settings.
+         * Select "Off" radio button.
+         * Enhanced Tracking Protection is now disabled.</string>
 </resources>
