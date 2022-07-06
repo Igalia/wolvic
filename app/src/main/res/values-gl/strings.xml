@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings_privacy_search_engine_title">Motor de buscas</string>
+    <string name="settings_privacy_search_engine_title">Motor de busca</string>
     <string name="settings_language_follow_device">Igual que o idioma do dispositivo</string>
     <string name="settings_help">Axuda</string>
-    <string name="settings_accounts_sign_out">Saír</string>
+    <string name="settings_accounts_sign_out">Pechar sesión</string>
     <string name="fxa_account_options_account">Conta</string>
-    <string name="fxa_account_options_logins_sync">Identificacións</string>
+    <string name="fxa_account_options_logins_sync">Inicios de sesión</string>
     <string name="security_options_permission_camera">Cámara</string>
     <string name="security_options_permission_microphone">Micrófono</string>
     <string name="brightness_mode_dark">Escuro</string>
@@ -14,12 +14,12 @@
     <string name="addons_title">Complementos</string>
     <string name="fxa_syncing">Sincronizando…</string>
     <string name="url_bookmarks_title">Marcadores</string>
-    <string name="tabs_close_selected">Pechar lapelas</string>
+    <string name="tabs_close_selected">Pechar pestanas</string>
     <string name="drm_dialog_button_on">Activado</string>
     <string name="drm_first_use_allow">Permitir</string>
     <string name="drm_first_use_do_not_allow">Non permitir</string>
-    <string name="login_edit_dialog_site_description">Sitio</string>
-    <string name="login_edit_dialog_username_description">Nome de usuario</string>
+    <string name="login_edit_dialog_site_description">Páxina web</string>
+    <string name="login_edit_dialog_username_description">Usuario</string>
     <string name="login_edit_dialog_password_description">Contrasinal</string>
     <string name="col_name">Nome</string>
     <string name="back_tooltip">Atrás</string>
@@ -27,7 +27,7 @@
     <string name="refresh_tooltip">Actualizar</string>
     <string name="settings_tooltip">Configuración</string>
     <string name="url_library_title">Biblioteca</string>
-    <string name="privacy_options_logins_button">Opcións avanzadas</string>
+    <string name="privacy_options_logins_button">Avanzado</string>
     <string name="settings_language">Idioma</string>
     <string name="security_options_permission_notifications">Notificacións</string>
     <string name="download_delete_confirm_cancel">Cancelar</string>
@@ -39,7 +39,7 @@
     <string name="voice_search_close">Pechar</string>
     <string name="download_delete_confirm_delete">Eliminar</string>
     <string name="history_clear_range_today">Hoxe</string>
-    <string name="col_url">Posición</string>
+    <string name="col_url">Enderezo</string>
     <string name="history_clear_range_yesterday">Onte</string>
     <string name="settings_button_edit">Editar</string>
     <string name="context_menu_copy_text">Copiar</string>
@@ -50,6 +50,650 @@
     <string name="tabs_select_all">Seleccionar todo</string>
     <string name="context_menu_paste_text">Pegar</string>
     <string name="addons_install_dialog_add">Engadir</string>
-    <string name="security_options_login_save">Gardar Inicios de sesión e contrasinais</string>
-    <string name="max_windows_button">De acordo</string>
+    <string name="security_options_login_save">Gardar inicios de sesión e contrasinais</string>
+    <string name="max_windows_button">OK</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Servizo de busca por voz</string>
+    <string name="keyboard_send_label">ENVIAR</string>
+    <string name="keyboard_next_label">SEGUINTE</string>
+    <string name="settings_terms_service">Termos de servizo</string>
+    <string name="keyboard_done_label">FEITO</string>
+    <string name="settings_telemetry">Telemetría</string>
+    <string name="permission_camera">Quere permitir que %1$s use a cámara\?</string>
+    <string name="settings_crash_reporting">Informes de erros</string>
+    <string name="permission_microphone">Quere permitir que %1$s use o micrófono\?</string>
+    <string name="settings_privacy_choose_search_engine_reset">Restablecer configuración do motor de busca</string>
+    <string name="settings_privacy_policy_webxr_description">As seguintes páxinas teñen bloqueados os permisos para acceder coa API WebXR ao dispositivo.</string>
+    <string name="settings_privacy_policy_login_exceptions_description">Os inicios de sesión que non se gardan aparecerán aquí</string>
+    <string name="developer_options_env_meadow">Meadow</string>
+    <string name="settings_privacy_security">Privacidade e seguridade</string>
+    <string name="pop_up_site_switch_allow">Permitir</string>
+    <string name="settings_privacy_policy_popups_title_v1">Excepcións para Pop-Ups</string>
+    <string name="settings_privacy_policy_webxr_empty_description">Cando se abre unha páxina web que usa WebXR, podes abrir un diálogo que che permite bloquear WebXR nesa páxina.</string>
+    <string name="settings_privacy_policy_webxr_reset">Restablecer as páxinas ás que non se lles permite acceder a dispositivos VR.</string>
+    <string name="settings_privacy_policy_tracking_description">Desactiváronse as proteccións nestas páxinas web.</string>
+    <string name="settings_fxa_account_reconnect">Reconectar</string>
+    <string name="settings_privacy_policy_tracking_title">Excepcións para protección de tracking mellorada</string>
+    <string name="settings_privacy_policy_login_exceptions_empty_description">Os inicios de sesión que non se gardan aparecerán aquí.</string>
+    <string name="settings_privacy_policy_login_exceptions_reset">Restablecer as excepcións de inicio de sesión.</string>
+    <string name="settings_fxa_account_sign_in">Iniciar sesión na conta</string>
+    <string name="settings_fxa_account_manage">Xestionar conta</string>
+    <string name="settings_fxa_account_sign_out">Pechar sesión</string>
+    <string name="pop_up_site_switch_block">Bloquear</string>
+    <string name="settings_developer_options">Opcións de desenvolvedor</string>
+    <string name="settings_language_english_uk">Inglés (UK)</string>
+    <string name="settings_language_traditional_chinese">Chinés (Tradicional/Zhuyin)</string>
+    <string name="settings_language_polish">Polaco</string>
+    <string name="settings_language_danish">Danés</string>
+    <string name="developer_options_show">Amosar</string>
+    <string name="developer_options_msaa_disabled">Desactivado</string>
+    <string name="developer_options_display_dpi">DPI do display:</string>
+    <string name="developer_options_msaa">MSAA</string>
+    <string name="security_options_drm_content_v1">Permitir automaticamente ás páxinas web identificar o dispositivo para reproducir contido controlado por DRM (<a href="%1$s">Saber máis</a>)</string>
+    <string name="voice_search_try_again">Intente de novo, por favor.</string>
+    <string name="back_button">Retroceder</string>
+    <string name="video_mode_2d">2D</string>
+    <string name="do_not_sent_button">Non enviar</string>
+    <string name="history_section_yesterday">Onte</string>
+    <string name="downloads_delete">Borrar todos</string>
+    <string name="downloads_filename_sort_za">Por nome (do Z ao A)</string>
+    <string name="history_context_menu_new_tab">Abrir nunha nova pestana</string>
+    <string name="addons_remove_success_dialog_ok">Ok</string>
+    <string name="privacy_options_saved_logins_list_empty_first">Cando un inicio de sesión pode ser gardado, aparecerá un diálogo que permite gardalo.</string>
+    <string name="close_bookmarks_tooltip">Pechar marcadores</string>
+    <string name="private_browsing_body"><p>Cando navegas nunha xanela privada, %1$s <strong>non garda</strong>:</p><ul class="two-column"><li>Páxinas visitadas</li><li>Buscas</li><li>Cookies</li><li>Arquivos temporais</li></ul><p>A navegación privada <strong>non garante o anonimato</strong> en Internet. O empregador ou o servizo que proporciona conexión a Internet pode saber que páxinas foron visitadas.</p><p class="about-info">Saber máis sobre <a id="learnMore">navegación privada</a>.</p></string>
+    <string name="voice_samples_collect_dialog_description2">Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a></string>
+    <string name="hamburger_menu_tooltip">Menú</string>
+    <string name="hamburger_menu_switch_to_desktop">Modo escritorio</string>
+    <string name="whats_new_body_1">Inicie sesión ou cree unha nova Firefox Account para enviar pestanas dende o escritorio ou móbil ao dispositivo XR.</string>
+    <string name="tracking_dialog_message">A protección mellorada de seguimento está %1$s para esta páxina web. <a href="%2$s">Saber máis</a></string>
+    <string name="exit_confirm_dialog_body">Seguro que quere saír de %1$s\?</string>
+    <string name="download_delete_all_confirm_body">Seguro que quere borrar todos os arquivos descargados\?</string>
+    <string name="privacy_policy_section_1">Esta aplicación foi desenvolvida por Igalia, SL (a partir de agora IGALIA), rexistrada na rúa Bugallal Marchesi, 22- 1º, 15008, A Coruña, Galicia, coa seguinte información de contacto:
+\n
+\n• Teléfono +34 981 913991;
+\n• Email: info@igalia.com
+\n
+\nO contido e elementos que forman a aplicación foron implementados e/ou desenvolvidos por IGALIA baixo licencias open source, estando protexidos, sen limitacións, pola propiedade intelectual e industrial do Reino de España, e polos tratados e acordos internacionais que resulten aplicables.</string>
+    <string name="terms_service_section_1">Wolvic é un software libre e aberto, construído por unha comunidade de miles de persoas por todo o mundo. Hai algunhas cousas que debe saber:
+\n
+\n• Wolvic é publicado baixo a licencia Mozilla Public License. Isto significa que pode usar, copiar e distribuír Wolvic a outras persoas. Tamén é posible modificar o código fonte de Wolvic para satisfacer novas necesidades. A licencia permite distribuír a versión modificada.
+\n
+\n• Non se cede ningún dereito ou licencia de Igalia o de ningunha outra parte, incluíndo sen limitación o nome e o logo de Wolvic.
+\n
+\n• Algunhas funcionalidades de Wolvic, como o Crash Reporter, permiten enviar feedback a Igalia. Se se escolle que se quere enviar ese feedback, dáselle permiso a Igalia para usar esa información para mellorar os seus productos, para publicar información anónima nas súas páxinas web, e para distribuír ese feedback anónimo.
+\n
+\n• O uso da información persoal e feedback enviado a Igalia mediante Wolvic descríbese na política de privacidade de Wolvic.
+\n
+\n• Algunhas funcionalidades de Wolvic fan uso de servizos web externos. Non podemos garantizar que estean completamente libres de erros. Máis detalles, incluíndo o xeito de desactivar as funcionalidades que usan esos servizos, podense atopar nos termos de servizo (abaixo).</string>
+    <string name="keyboard_enter_label">ENTER</string>
+    <string name="keyboard_go_label">IR</string>
+    <string name="keyboard_search_label">BUSCAR</string>
+    <string name="keyboard_space_label">espacio</string>
+    <string name="permission_allow">Permitir</string>
+    <string name="permission_reject">Non permitir</string>
+    <string name="permission_enable">Habilitar</string>
+    <string name="permission_enabled">Habilitado</string>
+    <string name="permission_camera_and_microphone">Quere permitir que %1$s use a cámara e o micrófono\?</string>
+    <string name="permission_location">Quere permitir que %1$s acceda á súa ubicación\?</string>
+    <string name="permission_notification">Quere permitir que %1$s envíe notificacións\?</string>
+    <string name="permission_read_external_storage">Quere permitir que %1$s lea a súa memoria externa\?</string>
+    <string name="permission_persistent_storage">Quere permitir que %1$s garde datos no almacenamento persistente\?</string>
+    <string name="settings_privacy_saved_logins">Inicios de sesión gardados</string>
+    <string name="settings_privacy_logins">Inicións de sesión e contrasinais</string>
+    <string name="settings_privacy_policy">Política de privacidade</string>
+    <string name="settings_privacy_choose_search_engine_description">Escolla o seu motor de busca preferido.</string>
+    <string name="settings_privacy_policy_popups_description">Pode especificar que páxinas web poden abrir xanelas pop-up</string>
+    <string name="settings_privacy_policy_webxr_title">Permisos de Realidade Virtual</string>
+    <string name="settings_privacy_policy_tracking_empty_description">Cando permita a unha páxina web seguir a súa actividade, aparecerá aquí.</string>
+    <string name="settings_privacy_policy_tracking_reset">Restablecer as excepcións para protección de tracking mellorada.</string>
+    <string name="settings_privacy_policy_login_exceptions_title">Excepcións de inicio de sesión</string>
+    <string name="settings_language_settings">Configuracións de idioma</string>
+    <string name="settings_language_choose_language_webpage_content">Escolla o seu idioma preferido para amosar páxinas web</string>
+    <string name="settings_language_choose_display_language_title">Idioma da interfaz de %1$s</string>
+    <string name="settings_language_choose_language_display_description">Escolla o idioma usado para amosar menús, mensaxes e notificacións.</string>
+    <string name="settings_language_choose_language_voice_search">Escolla o seu idioma preferido para busca por voz</string>
+    <string name="settings_language_choose_language_voice_search_title">Idioma de busca por voz</string>
+    <string name="settings_language_simplified_chinese">Chinés (Simplificado/Pinyin)</string>
+    <string name="settings_language_japanese">Xaponés</string>
+    <string name="settings_language_french">Francés</string>
+    <string name="settings_language_spanish">Español</string>
+    <string name="settings_language_spanish_spain">Español (España)</string>
+    <string name="settings_language_korean">Coreano</string>
+    <string name="settings_language_italian">Italiano</string>
+    <string name="settings_language_russian">Ruso</string>
+    <string name="settings_language_swedish">Sueco</string>
+    <string name="settings_language_finnish">Finés</string>
+    <string name="settings_language_dutch">Neerlandés</string>
+    <string name="settings_language_thai">Tailandés</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_report_issue">Reportar un problema</string>
+    <string name="settings_version_developer">Versión de desenvolvedor</string>
+    <string name="settings_send_your_feedback">Envíe o seu feedback</string>
+    <string name="settings_accounts_sign_in">Iniciar sesión</string>
+    <string name="settings_accounts_reconnect">Reconectar</string>
+    <string name="settings_whats_new">Novidades</string>
+    <string name="developer_options_curved_display">Activar display curvo</string>
+    <string name="developer_options_remote_debugging">Activar depuración remota</string>
+    <string name="developer_options_debug_logging">Activar logging de depuración</string>
+    <string name="hardware_acceleration_switch">Activar aceleración hardware da interface</string>
+    <string name="developer_options_servo">Activar Servo</string>
+    <string name="developer_options_clear_cache">Borrar datos</string>
+    <string name="developer_options_clear_cache_cookies_site_description">Datos das cookies e da páxina</string>
+    <string name="developer_options_display_density">Densidade de display:</string>
+    <string name="developer_options_msaa_2">2x</string>
+    <string name="developer_options_msaa_4">4x</string>
+    <string name="security_options_downloads_storage">Almacenamento por defecto para descargas</string>
+    <string name="developer_options_ua_mode">Modo User-Agent</string>
+    <string name="developer_options_ua_vr">VR</string>
+    <string name="privacy_options_downloads_storage_internal">Interno</string>
+    <string name="privacy_options_downloads_storage_external">Externo</string>
+    <string name="privacy_options_tracking_etp">Estándar</string>
+    <string name="privacy_options_tracking_strict_description">Protección forte, mais pode romper algunhas páxinas ou contidos.</string>
+    <string name="privacy_options_tracking_off">Desactivado</string>
+    <string name="privacy_options_tracking_off_description">Permitir que todas as páxinas fagan un seguimento online para recopilar hábitos de navegación e intereses.</string>
+    <string name="developer_options_foveated_disabled">Desactivado</string>
+    <string name="developer_options_foveated_1">1</string>
+    <string name="developer_options_foveated_app">Nivel de foveation (App)</string>
+    <string name="developer_options_foveated_webvr">Nivel de foveation (WebVR)</string>
+    <string name="developer_options_foveated_2">2</string>
+    <string name="developer_options_foveated_3">3</string>
+    <string name="developer_options_scroll_direction">Dirección do scroll</string>
+    <string name="developer_options_scroll_direction_natural">Natural</string>
+    <string name="developer_options_reset_button">Restablecer</string>
+    <string name="developer_options_pointer_purple">Morado</string>
+    <string name="developer_options_pointer_white">Branco</string>
+    <string name="developer_options_homepage">Páxina de inicio</string>
+    <string name="fxa_account_options_sync_title">Configuracións de sincronización</string>
+    <string name="fxa_account_options_sync_now">Sincronizar agora</string>
+    <string name="fxa_account_options_syncing">Sincronizando...</string>
+    <string name="fxa_account_options_bookmarks_sync">Marcadores</string>
+    <string name="fxa_account_options_history_sync">Historial</string>
+    <string name="fxa_account_sing_to_sync">Iniciar sesión na conta para sincronizar</string>
+    <string name="fxa_account_last_synced_now">Última sincronización agora mesmo</string>
+    <string name="fxa_account_sync_settings">Configuracións de sincronización</string>
+    <string name="fxa_account_last_no_synced">Non sincronizado aínda</string>
+    <string name="fxa_account_syncing_off">Sincronización desactivada</string>
+    <string name="fxa_account_last_synced">Última sincronización fai %1$d minutos</string>
+    <string name="security_options_restore_tabs">Restaurar pestanas e xanelas ao reiniciar</string>
+    <string name="security_options_autocomplete">Autocompletado na barra de enderezos</string>
+    <string name="security_options_login_autofill">Autocompletado</string>
+    <string name="security_options_login_sync">Sincronizar inicios de sesión con Firefox Accounts</string>
+    <string name="security_options_login_fxa">Conta…</string>
+    <string name="security_options_login_exceptions">Excepcións…</string>
+    <string name="security_options_tracking_protection">Protección de tracking</string>
+    <string name="security_options_permissions_title">Permisos (Permitir a %1$s acceder a)</string>
+    <string name="security_options_permissions_reject_message">Este permiso só se pode desactivar nos permisos do sistema</string>
+    <string name="security_options_permission_location">Localización</string>
+    <string name="security_options_permission_storage">Almacenamento</string>
+    <string name="security_options_permission_camera_and_microphone">Cámara e micrófono</string>
+    <string name="security_options_block_pup_up_windows">Bloquear xanelas pop-up</string>
+    <string name="security_options_block_pup_up_settings">Avanzado</string>
+    <string name="security_options_permission_webxr">Dispositivos de realidade virtual (WebXR)</string>
+    <string name="security_options_webxr_settings">Avanzado</string>
+    <string name="security_options_crash_reports_send_data">Permitir a %1$s enviar informes de erros automáticos</string>
+    <string name="security_options_telemetry_send_data">Permitir a %1$s enviar datos técnicos e de interacción a Mozilla</string>
+    <string name="sync">Sincronización</string>
+    <string name="on">Activado</string>
+    <string name="off">Desactivado</string>
+    <string name="do_not_sync">Non sincronizar</string>
+    <string name="voice_search_start">Que queres buscar na web\?</string>
+    <string name="voice_search_decoding">Buscando…</string>
+    <string name="voice_search_error">Sintoo! Non puiden entender.</string>
+    <string name="voice_search_unsupported">Busca por voz non soportada para o seu idioma.</string>
+    <string name="voice_search_server_error">Busca por voz non dispoñible actualmente.</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="crash_dialog_message">Axude a mellorar %1$s enviando datos do problema. <a href="more">Saber máis</a></string>
+    <string name="crash_dialog_send_data">Enviar sempre información sen preguntar</string>
+    <string name="learn_more_button">Saber máis</string>
+    <string name="send_data_button">Enviar datos</string>
+    <string name="brightness_mode_normal">Normal</string>
+    <string name="video_mode_tooltip">Proxección de video</string>
+    <string name="video_mode_3d_side">3D Side by Side</string>
+    <string name="video_mode_360">360</string>
+    <string name="video_mode_360_stereo">360 Stereo</string>
+    <string name="video_mode_180">180</string>
+    <string name="video_controls_play">Reproducir</string>
+    <string name="video_controls_exit">Saír</string>
+    <string name="video_controls_pause">Pausa</string>
+    <string name="video_controls_mute">Silenciar</string>
+    <string name="video_controls_volume">Volume</string>
+    <string name="video_controls_projection">Proxección de video</string>
+    <string name="video_controls_live">LIVE</string>
+    <string name="bookmarks_title">Marcadores</string>
+    <string name="bookmarks_empty">A lista de marcadores está baleira</string>
+    <string name="bookmarks_description">Preme @ cando esteas nunha páxina para engadila aos marcadores.</string>
+    <string name="bookmarks_loading">Cargando marcadores</string>
+    <string name="bookmarks_mobile_folder_title">Marcadores móbiles</string>
+    <string name="bookmarks_remove">Borrar marcador</string>
+    <string name="bookmarks_saved_notification">Marcadores gardados!</string>
+    <string name="download_completed_notification">%1$s descargado</string>
+    <string name="download_error_protocol">Só se soportan as descargas por http/https</string>
+    <string name="download_error_output">Non se pode crear o arquivo para a descarga</string>
+    <string name="download_error_external_storage">Permiso de escritura en almacenamento externo necesario para descargar arquivos en almacenamento externo</string>
+    <string name="bookmarks_edit">Editar este marcador</string>
+    <string name="bookmarks_search">Buscar marcadores</string>
+    <string name="bookmarks_bookmark">Gardar esta páxina nos marcadores</string>
+    <string name="bookmarks_recent">Marcadores gardados recentemente</string>
+    <string name="bookmarks_show_all">Amosar todos os marcadores</string>
+    <string name="bookmarks_sync">Sincronizar</string>
+    <string name="history_title">Historial</string>
+    <string name="history_empty">O seu historial está baleiro</string>
+    <string name="history_description">Pode acceder o historial de navegación aquí</string>
+    <string name="history_section_last_week">Semana pasada</string>
+    <string name="downloads_filename_sort_az">Por nome (do A ao Z)</string>
+    <string name="downloads_sort_download_date_desc">Máis novos</string>
+    <string name="downloads_sort_download_size_asc">Máis pequenos</string>
+    <string name="downloads_sort_download_size_desc">Máis grandes</string>
+    <string name="web_extensions_title">Extensión web</string>
+    <string name="addons_loading">Cargando complementos</string>
+    <string name="addons_description">Descrición do complemento</string>
+    <string name="addons_no_description">Sen descrición</string>
+    <string name="addons_authors_title">Autores</string>
+    <string name="addons_version_title">Versión</string>
+    <string name="addons_last_updated_title">Actualizado por última vez</string>
+    <string name="addons_homepage_title">Páxina de inicio</string>
+    <string name="addons_close_tooltip">Pechar complementos</string>
+    <string name="addons_rating_title">Valoración</string>
+    <string name="addons_details_enabled">Activado</string>
+    <string name="addons_details_disabled">Desactivado</string>
+    <string name="addons_details_private_mode">Executar en navegación privada</string>
+    <string name="addons_details_settings">Configuración</string>
+    <string name="addons_details_remove">Eliminar complemento</string>
+    <string name="addons_details_details">Detalles</string>
+    <string name="addons_details_permissions">Permisos</string>
+    <string name="addons_install_dialog_title">Engadir %1$s\?</string>
+    <string name="addons_install_dialog_body"><p align="LEFT">Precisa o seu permiso para:</p><ul>%1$s</ul><p/></string>
+    <string name="addons_install_dialog_cancel">Cancelar</string>
+    <string name="addons_downloading_dialog_cancel">Cancelar</string>
+    <string name="addons_downloading_dialog_title">Descargando e verificando complemento…</string>
+    <string name="addons_download_success_dialog_title">%1$s foi engadido a %2$s</string>
+    <string name="addons_download_success_dialog_body">Abrir no menú</string>
+    <string name="addons_download_success_dialog_ok">De acordo</string>
+    <string name="addons_download_error_dialog_title">Houbo un erro na descarga. Por favor, ténteo de novo.</string>
+    <string name="addons_remove_error_dialog_title">Ocorreu un erro ao eliminar %1$s</string>
+    <string name="addons_permissions_learn_more">Saber máis sobre permisos</string>
+    <string name="addons_remove_error_dialog_ok">Ok</string>
+    <string name="fxa_signout_confirmation_title">Pechar a sesión de Firefox Accounts\?</string>
+    <string name="fxa_signout_confirmation_body">Cando peche a sesión, non vai poder enviar ou recibir pestanas doutros dispositivos. O seu historial e os marcadores tamén deixarán de sincronizarse.</string>
+    <string name="fxa_signout_confirmation_checkbox_v1">Limpar historial, marcadores e inicios de sesión neste dispositivo</string>
+    <string name="fxa_signout_confirmation_signout">Pechar sesión</string>
+    <string name="fxa_signout_confirmation_cancel">Cancelar</string>
+    <string name="history_clear_cancel">Cancelar</string>
+    <string name="history_clear_now">Limpar agora</string>
+    <string name="history_clear_range_last_week">Pasada semana</string>
+    <string name="history_clear_range_everything">Todo</string>
+    <string name="history_clear_time_range">Intervalo de tempo a limpar:</string>
+    <string name="history_context_menu_new_window">Abrir nunha nova xanela</string>
+    <string name="history_context_add_bookmarks">Engadir aos marcadores</string>
+    <string name="history_context_remove_bookmarks">Eliminar dos marcadores</string>
+    <string name="download_context_delete">Borrar</string>
+    <string name="display_options_reset">Restablecer configuración de display</string>
+    <string name="privacy_options_reset">Restablecer configuración de privacidade e seguridade</string>
+    <string name="privacy_options_saved_logins_list_header">Inicios de sesión gardados:</string>
+    <string name="privacy_options_saved_logins_list_empty_second">Unha lista dos inicios de sesión gardados aparecerá aquí.</string>
+    <string name="privacy_options_saved_login_delete">Borrar</string>
+    <string name="privacy_options_tracking">Protección de seguimento mellorada (<a href="%1$s">Saber máis</a>)</string>
+    <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
+    <string name="controller_options_reset">Restablecer configuración de controlador</string>
+    <string name="environment_options_reset">Restablecer configuración de contorna</string>
+    <string name="language_options_reset">Restablecer configuración de idioma de busca por voz</string>
+    <string name="display_language_options_reset">Restablecer idioma da interface</string>
+    <string name="content_language_options_reset">Restablecer idioma preferido para as páxinas web</string>
+    <string name="all_language_options_reset">Restablecer todas as configuracións de idioma</string>
+    <string name="language_options_voice_search_language_title">Idioma de busca por voz:</string>
+    <string name="language_options_content_language_title">Idioma preferido para amosar páxinas web:</string>
+    <string name="language_options_preferred_languages">Idioma(s) preferidos</string>
+    <string name="language_options_display_language_title">Idioma da interface para a aplicación:</string>
+    <string name="language_options_available_languages">Idiomas dispoñibles</string>
+    <string name="col_tags">Etiquetas</string>
+    <string name="col_most_recent_visit">Visita máis recente</string>
+    <string name="col_date_added">Engadido</string>
+    <string name="col_date_last_modified">Modificado por última vez</string>
+    <string name="stop_tooltip">Deixar de cargar</string>
+    <string name="media_resume_tooltip">Retomar</string>
+    <string name="media_pause_tooltip">Pausar</string>
+    <string name="home_tooltip">Páxina de inicio</string>
+    <string name="voice_search_tooltip">Busca por voz</string>
+    <string name="request_dekstop_site_tooltip">Solicitar páxina para escritorio</string>
+    <string name="clear_tooltip">Limpar</string>
+    <string name="popup_tooltip_v1">Pop-ups non bloqueados</string>
+    <string name="drm_disabled_tooltip">DRM non permitido</string>
+    <string name="site_info_tooltip">Amosar información da páxina web.</string>
+    <string name="servo_tooltip">Usar Servo</string>
+    <string name="resize_tooltip">Redimensionar</string>
+    <string name="webxr_allowed_tooltip">WebXR permitido</string>
+    <string name="webxr_blocked_tooltip">WebXR non permitido</string>
+    <string name="webxr_interstitial_exit_webxr">Saír
+\nWebXR</string>
+    <string name="webxr_interstitial_how_to_continue_1">Premer calquera botón para continuar</string>
+    <string name="private_browsing_enter_tooltip">Entrar en navegación privada</string>
+    <string name="private_browsing_exit_tooltip">Saír da navegación privada</string>
+    <string name="context_menu_open_new_window_1">Abrir nunha nova xanela</string>
+    <string name="context_menu_open_new_tab_1">Abrir nunha nova pestana</string>
+    <string name="context_menu_open_link_new_window_1">Abrir ligazón nunha nova xanela</string>
+    <string name="context_menu_open_link_new_tab_1">Abrir ligazón nunha nova pestana</string>
+    <string name="context_menu_view_image">Ver imaxe</string>
+    <string name="context_menu_view_video">Ver video</string>
+    <string name="context_menu_view_audio">Ver audio</string>
+    <string name="context_menu_download_link">Descargar ligazón</string>
+    <string name="context_menu_download_video">Descargar video</string>
+    <string name="context_menu_copy_link">Copiar ligazón</string>
+    <string name="context_menu_copy_image_location">Copiar enderezo da imaxe</string>
+    <string name="context_menu_cut_text">Cortar</string>
+    <string name="context_menu_select_all_text">Seleccionar todo</string>
+    <string name="context_menu_unselect">Deixar de seleccionar</string>
+    <string name="context_menu_web_search">Buscar con %1$s</string>
+    <string name="remove_bookmark_tooltip">Borrar dos marcadores</string>
+    <string name="new_window_tooltip">Abrir unha nova xanela</string>
+    <string name="open_history_tooltip">Abrir historial</string>
+    <string name="open_downloads_tooltip">Abrir descargas</string>
+    <string name="close_history_tooltip">Pechar historial</string>
+    <string name="close_downloads_tooltip">Pechar descargas</string>
+    <string name="open_library_tooltip">Abrir biblioteca</string>
+    <string name="close_library_tooltip">Pechar biblioteca</string>
+    <string name="whats_new_tooltip">Novidades</string>
+    <string name="remove_all">Borrar todo</string>
+    <string name="homepage_hint">Páxina de inicio de %1$s (por defecto)</string>
+    <string name="authentication_required">É necesario introducir usuario e contrasinal</string>
+    <string name="authentication_username">Usuario:</string>
+    <string name="authentication_password">Contrasinal:</string>
+    <string name="authentication_show_password">Amosar contrasinal:</string>
+    <string name="no_internet_title">Perdeuse a conexión a Internet</string>
+    <string name="no_internet_message">Revisa a configuración do dispositivo para solucionar o problema.</string>
+    <string name="max_windows_msg">Só se poden abrir %1$s xanelas. Peche algunha das abertas para abrir unha nova.</string>
+    <string name="not_entitled_title">Non se pode executar</string>
+    <string name="not_entitled_message">%1$s non ten permiso para executarse neste dispositivo e vaise pechar.</string>
+    <string name="before_unload_prompt_title">Deixar a páxina\?</string>
+    <string name="before_unload_prompt_message">Esta páxina está pedindo confirmación de que desexa abandonala. Os datos introducidos pódense perder.</string>
+    <string name="before_unload_prompt_stay">Quedar na páxina</string>
+    <string name="before_unload_prompt_leave">Abandonar a páxina</string>
+    <string name="performance_unblock_page">Desbloquear a páxina</string>
+    <string name="performance_title">Rendemento baixo da páxina</string>
+    <string name="performance_message">Probe a reducir o tamaño da xanela para mellorar o rendemento. Desbloquear esta páxina pode facer que a aplicación se peche por un erro.</string>
+    <string name="voice_samples_collect_data_dialog_title">Permitir a %1$s recoller fragmentos de voz para a busca\?</string>
+    <string name="voice_samples_collect_dialog_allow">Permitir</string>
+    <string name="language_default">Por defecto</string>
+    <string name="url_home_title">Páxina de inicio de %1$s</string>
+    <string name="url_addons_title">Complementos</string>
+    <string name="private_clear_button">Limpar</string>
+    <string name="popup_block_title_v1">%1$s impediu que se amosaran pop-ups nesta páxina web</string>
+    <string name="popup_block_description_v1">Quere que se amosen en calquera caso\?</string>
+    <string name="popup_block_checkbox">Non volver a preguntar para esta páxina web</string>
+    <string name="popup_block_button_show">Amosar</string>
+    <string name="popup_block_button_cancel">Cancelar</string>
+    <string name="tabs_select_done">Feito</string>
+    <string name="tabs_close_all">Pechar todas</string>
+    <string name="tabs_unselect">Deixar de seleccionar todas</string>
+    <string name="tabs_counter_singular">1 pestana</string>
+    <string name="tabs_counter_plural">%1$s pestanas</string>
+    <string name="tabs_selected_counter_singular">1 pestana seleccionada</string>
+    <string name="tabs_tray_tooltip">Ver pestanas</string>
+    <string name="tab_added_notification">Nova pestana engadida!</string>
+    <string name="tab_sent_notification">Pestana enviada!</string>
+    <string name="send_tab_dialog_title">Enviar pestana a dispositivo</string>
+    <string name="send_tab_dialog_description">Escoller un dispositivo para enviar a pestana.</string>
+    <string name="send_tab_dialog_options_header">Dispositivos dispoñibles:</string>
+    <string name="send_tab_dialog_no_devices">Non hai dispositivos conectados.</string>
+    <string name="send_tab_dialog_syncing">Sincronizando...</string>
+    <string name="send_tab_dialog_button">Enviar</string>
+    <string name="whats_new_title_1">Iniciar sesión para enviar pestanas</string>
+    <string name="whats_new_button_sign_in">Iniciar sesión</string>
+    <string name="whats_new_body_sub_1">Firefox Account tamén permite sincronizar os marcadores e o historial en todos os dispositivos.</string>
+    <string name="slow_script_dialog_title">Script lento</string>
+    <string name="slow_script_dialog_action_stop">Deter o script</string>
+    <string name="slow_script_dialog_description">Unha páxina web está ralentizando o navegador (%1$s). Que desexa facer\?</string>
+    <string name="slow_script_dialog_action_wait">Agardar</string>
+    <string name="popup_permission_dialog_message">O bloqueo de popups está %1$s para esta páxina web.</string>
+    <string name="popup_dialog_button_on">Activado</string>
+    <string name="popup_dialog_button_off">Desactivado</string>
+    <string name="webxr_permission_dialog_message">WebXR está %1$s para esta páxina web. <a href="%2$s">Saber máis</a></string>
+    <string name="webxr_dialog_button_off">Desactivado</string>
+    <string name="tracking_dialog_button_on">Activada</string>
+    <string name="tracking_dialog_button_off">Desactivada</string>
+    <string name="drm_dialog_message">Algún video ou audio nesta páxina web usa software DRM, que pode limitar o que %1$s pode facer con el. <a href="%2$s">Saber máis</a></string>
+    <string name="drm_first_use_title_v1">Esta páxina web ten contido DRM.</string>
+    <string name="drm_first_use_body_v2">Permitir DRM fai que esta páxina web poda identificar este dispositivo cada vez que a visitas. <a href="%1$s">Saber máis</a></string>
+    <string name="tracking_dialog_button_disable">Desactivar</string>
+    <string name="download_open_file_unsupported_title">Tipo de arquivo non soportado</string>
+    <string name="download_open_file_unsupported_body">Este arquivo non pode abrirse, quere acceder a el cunha aplicación externa\?</string>
+    <string name="download_open_file_unsupported_cancel">Cancelar</string>
+    <string name="download_open_file_open_unsupported_body">Tipo de arquivo non soportado.</string>
+    <string name="download_open_file_error_body">Non se atopou ningunha aplicación que poda abrir este tipo de arquivo.</string>
+    <string name="download_confirm_title">Quere descargar este arquivo\?</string>
+    <string name="download_confirm_cancel">Cancelar</string>
+    <string name="download_delete_file_confirm_title">Borrar arquivo</string>
+    <string name="download_delete_all_confirm_checkbox">Borrar tamén os arquivos do disco</string>
+    <string name="download_error_title_v1">Erro de descarga</string>
+    <string name="download_status_pending">Pendente</string>
+    <string name="download_error_body">Ocorreu un erro ao descargar %1$s. Ténteo de novo.</string>
+    <string name="download_error_ok">Ok</string>
+    <string name="download_status_failed">Erro na descarga</string>
+    <string name="download_status_paused">Pausada</string>
+    <string name="download_status_unavailable">Non dispoñible</string>
+    <string name="download_status_unknown_error">Erro descoñecido</string>
+    <string name="environment_download_permission_error_body">É necesario ter permiso de escritura no almacenamento externo para descargar a contorna.</string>
+    <string name="environment_error_title">Erro na contorna</string>
+    <string name="autofill_dialog_save_title">Gardar este inicio de sesión\?</string>
+    <string name="autofill_dialog_never_save_button_text">Nunca gardar</string>
+    <string name="autofill_dialog_save_password_text">Contrasinal</string>
+    <string name="autofill_dialog_save_username_text">Usuario</string>
+    <string name="autofill_dialog_use_login_title_text">Usar inicio de sesión gardado</string>
+    <string name="login_edit_password_empty_error">A contrasinal non pode estar baleira</string>
+    <string name="username_hint">usuario</string>
+    <string name="password_hint">contrasinal</string>
+    <string name="tray_wifi_no_connection">Sen conexión</string>
+    <string name="tray_status_left_controller">Controlador esquerdo: %1$s</string>
+    <string name="tray_status_right_controller">Controlador dereito: %1$s</string>
+    <string name="tray_status_headset">Headset: %1$s</string>
+    <string name="external_open_uri_error_title">Erro abrindo aplicación externa</string>
+    <string name="external_open_uri_error_no_activity_body">Non se atopou unha aplicación para manexar %1$s</string>
+    <string name="external_open_uri_error_bad_uri_body">Uri inválida %1$s</string>
+    <string name="hvr_connect_glass_message">Conecte o seu HUAWEI VR Glass para usar esta aplicación</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException cando se iniciou un intent para %1$s</string>
+    <string name="hvr_enter_vr">Entrar en VR</string>
+    <string name="privacy_dialog_disagree">Pechar Wolvic</string>
+    <string name="terms_service_title">Termos de servizo</string>
+    <string name="privacy_policy_title">Política de privacidade xeral</string>
+    <string name="terms_service_section_2">"Wolvic usa servizos web (\"Servizos\") para proporcionar algunhas das funcionalidades incluídas para o seu uso nesta versión binaria de Wolvic, baixo os termos descritos a continuación.
+\n
+\n\t• Igalia e os seus colaboradores, licenciadores e socios traballan para proporcionar Servizos o máis precisos e actualizados posible. Porén, non podemos garantir que esta información sexa completa e libre de erros. Por exemplo, o Servizo de navegación segura pode non identificar algunha das páxinas webs perigosas, e pode identificar algunhas páxinas seguras como perigosas por erro, e no Servizo de localización todas as localizacións proporcionadas polos nosos proveedores son estimacións e nin nós nin os nosos proveedores do serrvizo garantimos a precisión das localizacións proporcionadas.
+\n
+\n\t•  Igalia resérvase o dereito a eliminar ou cambiar os Servizos á súa discreción.
+\n
+\n\t• Igalia pon a disposición estes Servizos coa versión adxunta de Wolvic, e garante dereitos de uso. Igalia e os seus licenciadores resérvanse todos os demais dereitos sobre os Servizos. Estes termos non pretenden limitar ningún dereito que proporcionen licencias open source que se podan aplicar a Wolvic e o seu código fonte.
+\n
+\n\t•  Os servizos proporciónanse \"tal e como están\". Igalia, os seus contribuidores, licenciadores e distribuidores, non proporcionan ningunha garantía, incluídas sen limitacións, garantías que os Servizos son axeitados para os propósitos particulares de cada usuario. O usuario asume todo o risco ao seleccionar os Servizos para os obxectivos concretos, en canto á calidade e rendemento dos mesmos.
+\n
+\n\t• Salvo se fose requerido por lei, Igalia, os contribuidores, licenciadores e distribuidores, non serán responsables de ningún dano indirecto, especial, incidental, consecuente, punitivo ou exemplar que xurda ou estea relacionado de algún xeito co uso de Wolvic e os Servizos. En calquera caso, a responsabilidade colectiva baixo estes termos non excederá os 500 USD (quinientos dólares). Algunhas xurisdiccións non permiten a exclusión ou limitación de certos danos, polo que é posible que esta exclusión e limitación non lle afecte.
+\n
+\n\t• Igalia poderá actualizar estos termos á súa discreción en calquera momento. En calquera caso, estes termos non poderán ser modificados ou cancelados sen o consentimento por escrito de Igalia.
+\n
+\n\t• Estes termos ríxense polas leis de España, excluíndo disposicións en materia de conflictos de leis. Se algunha parte destes termos é considerada inválida ou inaplicable por un xuíz, as partes restantes permanecerán en pleno vigor e efecto. En caso de conflicto entre unha versión traducida destes termos e a versión en español, prevalecerá a versión en español.
+\n
+\n\t• No caso de que vostede non desexe utilizar If you do not want to use one or more of the Services or the terms above are unacceptable, you may disable the feature or Service(s). Instructions on how to disable a particular feature or Service may be found below. Other features and Services can be disabled in the application preferences.
+\n
+\n\t\t◦ Safe browsing is enabled by default. Disabling the Safe Browsing feature is not recommended as it may result in you going to unsafe sites. If you wish to disable the feature completely, follow these steps:
+\n
+\n\t\t\t⁃ In the URL bar, type about:config
+\n
+\n\t\t\t⁃ Type browser.safebrowsing.malware.enabled
+\n
+\n\t\t\t⁃ Double click on the browser.safebrowsing.malware.enabled preference
+\n
+\n\t\t\t⁃ Type browser.safebrowsing.phishing.enabled
+\n
+\n\t\t\t⁃ Double click on the browser.safebrowsing.phishing.enabled preference
+\n
+\n\t\t\t⁃ Safe browsing is now disabled
+\n
+\n\t\t◦ Location Aware Browsing: is always opt-in. No location information is ever sent without your permission. If you wish to disable the feature completely, follow these steps:
+\n
+\n\t\t\t⁃ In the URL bar, type about:config
+\n
+\n\t\t\t⁃ Type geo.enabled
+\n
+\n\t\t\t⁃ Double click on the geo.enabled preference
+\n
+\n\t\t\t⁃ Location-Aware Browsing is now disabled
+\n
+\n\t\t◦ Enhanced Tracking Protection in Wolvic automatically protects your privacy while you browse. It blocks trackers that follow you around online to collect information about your browsing habits and interests without breaking site functionality. It also includes protections against harmful scripts, such as malware that drains your battery. There are three modes of tracking protection: Standard, Strict and Off. If you wish to switch it off, follow these steps:
+\n
+\n\t\t\t⁃ Go to “Privacy &amp; Security” settings.
+\n
+\n\t\t\t⁃ Select “Off” radio button.
+\n
+\n\t\t\t⁃ Enhanced Tracking Protection is now disabled."</string>
+    <string name="privacy_policy_subtitle_1">Información xeral</string>
+    <string name="privacy_policy_subtitle_2">Protección de datos</string>
+    <string name="privacy_policy_section_2">IGALIA is committed to complying with the legal provisions regarding the protection of personal data: Regulation (EU) 2016/679 of the European Parliament and of the Council of 27th April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data and repealing Directive 95/46/EC (General Data Protection Regulation) and in the Organic Law 3/2018, of December 5, on Data Protection and Guarantee of Digital Rights (LOPDGDD).
+\nIGALIA does not collect personal data in such a way that the user can be identified. Therefore, you can use the application, consult and browse the virtual reality environment without revealing your identity or providing personal data to IGALIA, either directly or indirectly; therefore, IGALIA will not be liable for any the data that is entered in WOLVIC.
+\nThe only data and information that IGALIA will obtain for the use of this application, which at no time will be individually linked to the user, are the following:
+\n
+\n\t• Analytical, purely statistical, and non-identifying data.
+\n\t• In order to capture and translate the voice into text, the user’s sound data is sent to the servers owned by the third party company responsible for each platform, through an API for this purpose: for example, in Oculus, from Facebook, a service that sends it to Oculus Voice SDK. At no time is the aforementioned data processed, accessed, or incorporated into the servers owned by IGALIA. The data transmitted will be the exclusive responsibility of the third party companies that own each platform (hereinafter, the Third Parties), which may be located outside the European Union and subject to a legal regime that is less protective of user privacy. We recommend that you carefully read the privacy policy and terms of use of each of these external platforms before accepting and using their services. IGALIA will not be directly or indirectly responsible for the processing of personal data by said Third Parties.
+\n\t• Geographic location information maybe be obtained from the browser, instead of the one used by the system. However, in order to do so, you must set the location permissions of your device through a specific notice in this regard and IGALIA will in no way link the aforementioned information to you as an identified or identifiable person, although the Third Parties mentioned in the previous point could do so, if applicable. We recommend you to pay attention to their legal terms.
+\n\t• IGALIA will not access or store, in any way, the addresses or URLs visited by you.
+\n\t• Integration with Cloud services (such as Firefox Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
+\n
+\nWe remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
+\n
+\n\t• Google: https://policies.google.com/privacy
+\n\t• Facebook: https://www.facebook.com/about/privacy/update
+\n\t• MeetKai: https://meetkai.com/privacy
+\n
+\nLikewise, IGALIA informs you that while using the voice recognition option of the browser, Meetkai will keep totally anonymized voice transcriptions of your voice with the purposes of improving the service provided by them. Your voice will not be kept or will be any way to connect the transcriptions with your identity. More information about MeetKai privacy policy in the following link: https://meetkai.com/es/privacy. Igalia neither has any interest in linking transcriptions with any user nor in affecting their privacy; consequently, Igalia requests that no personal or confidential information of any kind is included in their sound voice addresses.
+\nIn any case, IGALIA guarantees to the interested parties the exercise of the rights of access, rectification, deletion, opposition, limitation of treatment, and portability, regarding their personal data.
+\nFor such purposes, IGALIA has established an internal protocol/procedure to carry them out.
+\nInterested parties can exercise their rights are as follows: by sending a request to IGALIA’s physical address: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: “Data Protection”; or, to the following email address: info@igalia.com.
+\nIn both cases, the interested party must attach a copy of their national ID, passport, or identification document to prove their identity.
+\nThe Data Protection Officer or the department entrusted with the management of the rights will record the exercises of rights in the form, available for this purpose, in which the following data will be recorded:
+\n
+\n\t• Application number: a number will be assigned to each of the received applications.
+\n\t• Headquarters: if the person in charge has several headquarters, the headquarters where the request was received will be stated.
+\n\t• Channel to file claims: the channel through which the request was received will be indicated: physical mail address, mail, etc.
+\n\t• Filing date: the date when the request has been filed will be indicated.
+\n\t• Exercised rights: the type of right the person exercised.
+\n\t• Response day: the day on which the response was sent to the interested party.
+\n
+\nThe supporting documentation (receipt of request/response, communications, etc.) will be archived for the purpose of proving its correct management.
+\nLikewise, you are reminded that you have the right to file a claim with the Spanish Data Protection Agency.</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Escolla o seu servizo online preferido para busca por voz.</string>
+    <string name="settings_language_choose_language_voice_search_description">Escolla o seu idioma preferido para busca por voz.</string>
+    <string name="settings_language_choose_language_content_title">Idiomas preferidos para amosar páxinas web</string>
+    <string name="settings_language_choose_language_content_description">As páxinas web poden estar disponibles en máis de un idioma. Escolla o idioma que quere usar en orde de preferencia á esquerda.</string>
+    <string name="settings_language_english">Inglés (US)</string>
+    <string name="settings_language_german">Alemán</string>
+    <string name="settings_language_english_us">Inglés (US)</string>
+    <string name="settings_language_norwegian">Noruegués</string>
+    <string name="settings_language_norwegian_bokmaal">Noruegués (Bokmaal)</string>
+    <string name="settings_language_norwegian_nynorsk">Noruegués (Nyorsk)</string>
+    <string name="settings_controller_options">Opcións de controlador</string>
+    <string name="settings_report_speech_data">Reportar datos de voz</string>
+    <string name="restart_dialog_restart">Reinicio necesario</string>
+    <string name="restart_dialog_text">Debe reiniciar %1$s para completar as modificacións. Quere facelo agora\?</string>
+    <string name="restart_now_dialog_button">Reiniciar agora</string>
+    <string name="restart_later_dialog_button">Reiniciar despois</string>
+    <string name="developer_options_env_override">Activar sobreescritura de entorno</string>
+    <string name="developer_options_performance_monitor">Activar monitor de rendemento</string>
+    <string name="bypass_cache_on_reload_switch">Activar saltarse a cache ao recargar</string>
+    <string name="multi_e10s_switch">Activar Multi-e10s</string>
+    <string name="developer_options_clear_cache_web_content_description">Contido web na caché</string>
+    <string name="developer_options_edit">Editar</string>
+    <string name="developer_options_save">Gardar</string>
+    <string name="developer_options_ua_desktop">Escritorio</string>
+    <string name="developer_options_ua_mobile">Móbil</string>
+    <string name="privacy_options_tracking_etp_description">Equilibrado para protección e rendemento. As páxinas cargaran normalmente.</string>
+    <string name="developer_options_scroll_direction_reversed">Invertida</string>
+    <string name="developer_options_reset">Restablecer configuración de desenvolvedor</string>
+    <string name="developer_options_environments">Contorna</string>
+    <string name="developer_options_env_void">Void</string>
+    <string name="developer_options_env_offworld">Offworld</string>
+    <string name="developer_options_env_underwater">Underwater</string>
+    <string name="developer_options_env_winter">Winter</string>
+    <string name="developer_options_env_cave">Cave</string>
+    <string name="developer_options_pointer_color">Cor do punteiro</string>
+    <string name="fxa_account_options_sync_description">Escolla que sincronizar nos seus dispositivos usando Firefox</string>
+    <string name="fxa_account_options_reset">Restablecer</string>
+    <string name="fxa_account_last_sync_error">Erro de sincronización</string>
+    <string name="security_options_login_saved">Inicios de sesión gardados…</string>
+    <string name="security_options_autoplay">Reprodución automática de multimedia</string>
+    <string name="security_options_speech_data_collection_title">Recolección e uso de datos de %1$s</string>
+    <string name="security_options_speech_data_collect">Permitir a %1$s recoller datos de voz</string>
+    <string name="voice_search_example">Exemplo: Por favor diga \"Videos 360, tempo, novas do día...\"</string>
+    <string name="voice_search_permission_after_decline">Dea acceso ao micrófono para usar busca por voz.</string>
+    <string name="search_placeholder">Busque na web ou introduza un enderezo</string>
+    <string name="ok_button">OK</string>
+    <string name="crash_dialog_heading">Tivemos un problema e pechouse a aplicación</string>
+    <string name="brightness_mode_tooltip">Brillo</string>
+    <string name="brightness_mode_void">Void</string>
+    <string name="video_mode_180_left_right">Stereo 180 Left to Right</string>
+    <string name="video_mode_180_top_bottom">Stereo 180 Top to Bottom</string>
+    <string name="video_controls_unmute">Deixar de silenciar</string>
+    <string name="video_controls_seek_forward">Avanzar +%1$s segundos</string>
+    <string name="video_controls_seek_backward">Retroceder -%1$s segundos</string>
+    <string name="history_loading">Cargando historial</string>
+    <string name="history_section_today">Hoxe</string>
+    <string name="history_clear">Limpar historial</string>
+    <string name="downloads_title">Descargas</string>
+    <string name="downloads_empty">A lista de descargas está baleira</string>
+    <string name="downloads_description">Pode acceder ás súas descargas aquí</string>
+    <string name="downloads_loading">Cargando lista de descargas</string>
+    <string name="downloads_sort">Ordenar por</string>
+    <string name="downloads_sort_download_date_asc">Máis antigos</string>
+    <string name="addons_no_authors">Sen autores</string>
+    <string name="addons_download_success_dialog_checkbox">Permitir en navegación privada</string>
+    <string name="addons_download_error_dialog_ok">Ok</string>
+    <string name="addons_remove_success_dialog_title">Desinstalación de %1$s completada</string>
+    <string name="fxa_sync">Sincronizar</string>
+    <string name="privacy_options_popups_clear_all">Limpar todo</string>
+    <string name="privacy_options_popups_reset">Restablecer configuración de bloqueo de xanelas pop-up</string>
+    <string name="privacy_options_popups_list_header_v1">As seguintes páxinas web teñen permiso para abrir xanelas pop-up:</string>
+    <string name="privacy_options_popups_list_empty_first">Cando se abre unha páxina con xanelas pop-up, verase un diálogo que permite escoller bloquear as xanelas pop-up.</string>
+    <string name="privacy_options_popups_list_empty_second">Unha lista de páxinas web con permisos aparecerá aquí.</string>
+    <string name="privacy_options_saved_logins_reset">Restablecer configuración de gardado de inicios de sesión</string>
+    <string name="privacy_options_saved_logins_clear_all">Limpar todo</string>
+    <string name="privacy_options_logins">Usuarios e contrasinais</string>
+    <string name="language_service_options_reset">Restablecer configuración do servizo de busca por voz</string>
+    <string name="language_options_voice_search_service_title">Servizo de busca por voz</string>
+    <string name="popup_blocked_tooltip">Pop-ups bloqueados</string>
+    <string name="drm_enabled_tooltip">DRM permitido</string>
+    <string name="tracking_allowed_tooltip">Protección de seguimento activada</string>
+    <string name="tracking_disabled_tooltip">Protección de seguimento desactivada</string>
+    <string name="context_menu_download_audio">Descargar audio</string>
+    <string name="context_menu_download_image">Descargar imaxe</string>
+    <string name="context_menu_copy_video_location">Copiar enderezo do video</string>
+    <string name="context_menu_copy_audio_location">Copiar enderezo do audio</string>
+    <string name="bookmark_tooltip">Engadir esta páxina aos marcadores</string>
+    <string name="bookmarks_tooltip">Marcadores</string>
+    <string name="open_bookmarks_tooltip">Abrir marcadores</string>
+    <string name="private_browsing_title">Navegación privada</string>
+    <string name="voice_samples_collect_dialog_do_not_allow">Non permitir</string>
+    <string name="tabs_select">Seleccionar</string>
+    <string name="tabs_selected_counter_plural">%1$s pestanas seleccionadas</string>
+    <string name="tabs_selected_counter_none">0 pestanas seleccionadas</string>
+    <string name="hamburger_menu_send_tab">Enviar pestana a dispositivo</string>
+    <string name="hamburger_menu_resize">Redimensionar xanela</string>
+    <string name="hamburger_menu_addons">Complementos</string>
+    <string name="whats_new_button_start_browsing">Comezar a navegar</string>
+    <string name="webxr_dialog_button_on">Activado</string>
+    <string name="exit_confirm_dialog_button_cancel">Cancelar</string>
+    <string name="download_open_file_unsupported_open">Abrir</string>
+    <string name="download_open_file_error_title">Erro</string>
+    <string name="download_confirm_download">Descargar</string>
+    <string name="download_delete_file_confirm_body">Seguro que quere borrar este arquivo\?</string>
+    <string name="download_delete_file_confirm_checkbox">Borrar tamén o arquivo do disco</string>
+    <string name="download_delete_all_confirm_title">Borrar todos os arquivos descargados</string>
+    <string name="environment_download_unzip_error_body">Ocorreu un erro cando se descomprimía a contorna.</string>
+    <string name="autofill_dialog_use_login_settings_button">Configuración…</string>
+    <string name="autofill_item_autogenerated">Autoxerado</string>
+    <string name="login_edit_dialog_site_button">Abrir</string>
+    <string name="privacy_dialog_title">Privacidade</string>
+    <string name="privacy_dialog_message">A súa privacidade é importante para nós. Para usar o navegador, por favor acepte os nosos termos de servizo e a política de privacidade. Grazas por usar Wolvic!</string>
+    <string name="privacy_dialog_agree">De acordo</string>
+    <string name="terms_service_subtitle_2">Servizos de información web de Wolvic</string>
+    <string name="privacy_policy_subtitle_3">Lei aplicable e idioma orixinal</string>
+    <string name="privacy_policy_section_3">Esta política de privacidade está suxeita á lei española. O idioma de aplicación desta política de privacidade é o español. Por esta razón, ante calquera posible diferencia entre o orixinal en Español e as traduccións a outros idiomas será considerada prevalente a versión en español que pode atoparse aquí:
+\nhttps://wolvic.com/es/legal/privacy/ .</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
 </resources>
