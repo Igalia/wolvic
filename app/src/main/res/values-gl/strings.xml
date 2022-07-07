@@ -494,15 +494,15 @@
     <string name="privacy_dialog_disagree">Pechar Wolvic</string>
     <string name="terms_service_title">Termos de servizo</string>
     <string name="privacy_policy_title">Política de privacidade xeral</string>
-    <string name="terms_service_section_2">"Wolvic usa servizos web (\"Servizos\") para proporcionar algunhas das funcionalidades incluídas para o seu uso nesta versión binaria de Wolvic, baixo os termos descritos a continuación.
+    <string name="terms_service_section_2">Wolvic usa servizos web (\"Servizos\") para proporcionar algunhas das funcionalidades incluídas para o seu uso nesta versión binaria de Wolvic, baixo os termos descritos a continuación.
 \n
 \n\t• Igalia e os seus colaboradores, licenciadores e socios traballan para proporcionar Servizos o máis precisos e actualizados posible. Porén, non podemos garantir que esta información sexa completa e libre de erros. Por exemplo, o Servizo de navegación segura pode non identificar algunha das páxinas webs perigosas, e pode identificar algunhas páxinas seguras como perigosas por erro, e no Servizo de localización todas as localizacións proporcionadas polos nosos proveedores son estimacións e nin nós nin os nosos proveedores do serrvizo garantimos a precisión das localizacións proporcionadas.
 \n
-\n\t•  Igalia resérvase o dereito a eliminar ou cambiar os Servizos á súa discreción.
+\n\t• Igalia resérvase o dereito a eliminar ou cambiar os Servizos á súa discreción.
 \n
 \n\t• Igalia pon a disposición estes Servizos coa versión adxunta de Wolvic, e garante dereitos de uso. Igalia e os seus licenciadores resérvanse todos os demais dereitos sobre os Servizos. Estes termos non pretenden limitar ningún dereito que proporcionen licencias open source que se podan aplicar a Wolvic e o seu código fonte.
 \n
-\n\t•  Os servizos proporciónanse \"tal e como están\". Igalia, os seus contribuidores, licenciadores e distribuidores, non proporcionan ningunha garantía, incluídas sen limitacións, garantías que os Servizos son axeitados para os propósitos particulares de cada usuario. O usuario asume todo o risco ao seleccionar os Servizos para os obxectivos concretos, en canto á calidade e rendemento dos mesmos.
+\n\t• Os servizos proporciónanse \"tal e como están\". Igalia, os seus contribuidores, licenciadores e distribuidores, non proporcionan ningunha garantía, incluídas sen limitacións, garantías que os Servizos son axeitados para os propósitos particulares de cada usuario. O usuario asume todo o risco ao seleccionar os Servizos para os obxectivos concretos, en canto á calidade e rendemento dos mesmos.
 \n
 \n\t• Salvo se fose requerido por lei, Igalia, os contribuidores, licenciadores e distribuidores, non serán responsables de ningún dano indirecto, especial, incidental, consecuente, punitivo ou exemplar que xurda ou estea relacionado de algún xeito co uso de Wolvic e os Servizos. En calquera caso, a responsabilidade colectiva baixo estes termos non excederá os 500 USD (quinientos dólares). Algunhas xurisdiccións non permiten a exclusión ou limitación de certos danos, polo que é posible que esta exclusión e limitación non lle afecte.
 \n
@@ -510,39 +510,41 @@
 \n
 \n\t• Estes termos ríxense polas leis de España, excluíndo disposicións en materia de conflictos de leis. Se algunha parte destes termos é considerada inválida ou inaplicable por un xuíz, as partes restantes permanecerán en pleno vigor e efecto. En caso de conflicto entre unha versión traducida destes termos e a versión en español, prevalecerá a versión en español.
 \n
-\n\t• No caso de que vostede non desexe utilizar If you do not want to use one or more of the Services or the terms above are unacceptable, you may disable the feature or Service(s). Instructions on how to disable a particular feature or Service may be found below. Other features and Services can be disabled in the application preferences.
+\n\t• No caso de que vostede non desexe utilizar un ou máis dos Servizos disponibles ou os termos anteriores sexan inaceptables para vostede, lembrámoslle que é posible desactivar certas funcións ou algúns dos Servizos. A continuación, explicamos como desactivar unha función ou servizo en concreto. É posible desactivar outras funcións ou servizos usando as preferencias da aplicación.
 \n
-\n\t\t◦ Safe browsing is enabled by default. Disabling the Safe Browsing feature is not recommended as it may result in you going to unsafe sites. If you wish to disable the feature completely, follow these steps:
+\n\t\t◦ A navegación segura está activada por defecto. Desactivala non é recomendado porque pode que se acceda a sitios non seguros. Se desexa desactivar esa función por completo, siga estes pasos:
 \n
-\n\t\t\t⁃ In the URL bar, type about:config
+\n\t\t\t⁃ Na barra de enderezos, escriba about:config
 \n
-\n\t\t\t⁃ Type browser.safebrowsing.malware.enabled
+\n\t\t\t⁃ Escriba browser.safebrowsing.malware.enabled
 \n
-\n\t\t\t⁃ Double click on the browser.safebrowsing.malware.enabled preference
+\n\t\t\t⁃ Faga doble click en browser.safebrowsing.malware.enabled
 \n
-\n\t\t\t⁃ Type browser.safebrowsing.phishing.enabled
+\n\t\t\t⁃ Escriba browser.safebrowsing.phishing.enabled
 \n
-\n\t\t\t⁃ Double click on the browser.safebrowsing.phishing.enabled preference
+\n\t\t\t⁃ Faga doble click en browser.safebrowsing.phishing.enabled
 \n
-\n\t\t\t⁃ Safe browsing is now disabled
+\n\t\t\t⁃ A navegación segura estará agora desactivada
 \n
-\n\t\t◦ Location Aware Browsing: is always opt-in. No location information is ever sent without your permission. If you wish to disable the feature completely, follow these steps:
+\n\t\t◦ Navegación coa localización activada: sempre require confirmación. Nunca se envía información de localización sen o seu permiso. Se desexa desactivar a función por completo, siga estes pasos:
 \n
-\n\t\t\t⁃ In the URL bar, type about:config
+\n\t\t\t⁃ Na barra de enderezos, escriba about:config
 \n
-\n\t\t\t⁃ Type geo.enabled
+\n\t\t\t⁃ Escriba geo.enabled
 \n
-\n\t\t\t⁃ Double click on the geo.enabled preference
+\n\t\t\t⁃ Faga doble click en geo.enabled
 \n
-\n\t\t\t⁃ Location-Aware Browsing is now disabled
+\n\t\t\t⁃ A navegación con localización está agora desactivada
 \n
-\n\t\t◦ Enhanced Tracking Protection in Wolvic automatically protects your privacy while you browse. It blocks trackers that follow you around online to collect information about your browsing habits and interests without breaking site functionality. It also includes protections against harmful scripts, such as malware that drains your battery. There are three modes of tracking protection: Standard, Strict and Off. If you wish to switch it off, follow these steps:
+\n\t\t◦ A protección mellorada contra o seguimento de Wolvic protexe a súa privacidade automaticamente durante a navegación, bloqueando rastrexadores que podan facer un seguimento online para recoller información sobre hábitos e intereses de navegación, sen romper a funcionalidade das páxinas web. Tamén inclúe protección contra programas malignos, tal e como aplicacións daniñas que esgoten a batería do dispositivo. Hai tres modos de protección mellorada de seguimento: estándar, estrito e desactivado. Se desexa desactivalo, siga os seguintes pasos:
 \n
-\n\t\t\t⁃ Go to “Privacy &amp; Security” settings.
+\n\t\t\t⁃ Vaia á configuración de “Privacidade e seguridade\".
 \n
-\n\t\t\t⁃ Select “Off” radio button.
+\n\t\t\t⁃ Acceda á opción \"Protección mellorada contra seguimento\".
 \n
-\n\t\t\t⁃ Enhanced Tracking Protection is now disabled."</string>
+\n\t\t\t⁃ Seleccione a opción \"Desactivada”.
+\n
+\n\t\t\t⁃ Enhanced Tracking Protection is now disabled.</string>
     <string name="privacy_policy_subtitle_1">Información xeral</string>
     <string name="privacy_policy_subtitle_2">Protección de datos</string>
     <string name="privacy_policy_section_2">IGALIA is committed to complying with the legal provisions regarding the protection of personal data: Regulation (EU) 2016/679 of the European Parliament and of the Council of 27th April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data and repealing Directive 95/46/EC (General Data Protection Regulation) and in the Organic Law 3/2018, of December 5, on Data Protection and Guarantee of Digital Rights (LOPDGDD).
