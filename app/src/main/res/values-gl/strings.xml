@@ -88,7 +88,7 @@
     <string name="developer_options_msaa_disabled">Desactivado</string>
     <string name="developer_options_display_dpi">DPI do display:</string>
     <string name="developer_options_msaa">MSAA</string>
-    <string name="security_options_drm_content_v1">Permitir automaticamente ás páxinas web identificar o dispositivo para reproducir contido controlado por DRM (<a href="%1$s">Saber máis</a>)</string>
+    <string name="security_options_drm_content_v1"><![CDATA[Permitir automaticamente ás páxinas web identificar o dispositivo para reproducir contido controlado por DRM (<a href="%1$s">Saber máis</a>)]]></string>
     <string name="voice_search_try_again">Intente de novo, por favor.</string>
     <string name="back_button">Retroceder</string>
     <string name="video_mode_2d">2D</string>
@@ -100,12 +100,12 @@
     <string name="addons_remove_success_dialog_ok">Ok</string>
     <string name="privacy_options_saved_logins_list_empty_first">Cando un inicio de sesión pode ser gardado, aparecerá un diálogo que permite gardalo.</string>
     <string name="close_bookmarks_tooltip">Pechar marcadores</string>
-    <string name="private_browsing_body"><p>Cando navegas nunha xanela privada, %1$s <strong>non garda</strong>:</p><ul class="two-column"><li>Páxinas visitadas</li><li>Buscas</li><li>Cookies</li><li>Arquivos temporais</li></ul><p>A navegación privada <strong>non garante o anonimato</strong> en Internet. O empregador ou o servizo que proporciona conexión a Internet pode saber que páxinas foron visitadas.</p><p class="about-info">Saber máis sobre <a id="learnMore">navegación privada</a>.</p></string>
-    <string name="voice_samples_collect_dialog_description2">Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a></string>
+    <string name="private_browsing_body"><![CDATA[<p>Cando navegas nunha xanela privada, %1$s <strong>non garda</strong>:</p><ul class="two-column"><li>Páxinas visitadas</li><li>Buscas</li><li>Cookies</li><li>Arquivos temporais</li></ul><p>A navegación privada <strong>non garante o anonimato</strong> en Internet. O empregador ou o servizo que proporciona conexión a Internet pode saber que páxinas foron visitadas.</p><p class="about-info">Saber máis sobre <a id="learnMore">navegación privada</a>.</p>]]></string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a>]]></string>
     <string name="hamburger_menu_tooltip">Menú</string>
     <string name="hamburger_menu_switch_to_desktop">Modo escritorio</string>
     <string name="whats_new_body_1">Inicie sesión ou cree unha nova Firefox Account para enviar pestanas dende o escritorio ou móbil ao dispositivo XR.</string>
-    <string name="tracking_dialog_message">A protección mellorada de seguimento está %1$s para esta páxina web. <a href="%2$s">Saber máis</a></string>
+    <string name="tracking_dialog_message"><![CDATA[A protección mellorada de seguimento está %1$s para esta páxina web. <a href="%2$s">Saber máis</a>]]></string>
     <string name="exit_confirm_dialog_body">Seguro que quere saír de %1$s\?</string>
     <string name="download_delete_all_confirm_body">Seguro que quere borrar todos os arquivos descargados\?</string>
     <string name="privacy_policy_section_1">Esta aplicación foi desenvolvida por Igalia, SL (a partir de agora IGALIA), rexistrada na rúa Bugallal Marchesi, 22- 1º, 15008, A Coruña, Galicia, coa seguinte información de contacto:
@@ -242,7 +242,7 @@
     <string name="voice_search_unsupported">Busca por voz non soportada para o seu idioma.</string>
     <string name="voice_search_server_error">Busca por voz non dispoñible actualmente.</string>
     <string name="cancel_button">Cancelar</string>
-    <string name="crash_dialog_message">Axude a mellorar %1$s enviando datos do problema. <a href="more">Saber máis</a></string>
+    <string name="crash_dialog_message"><![CDATA[Axude a mellorar %1$s enviando datos do problema. <a href="more">Saber máis</a>]]></string>
     <string name="crash_dialog_send_data">Enviar sempre información sen preguntar</string>
     <string name="learn_more_button">Saber máis</string>
     <string name="send_data_button">Enviar datos</string>
@@ -302,7 +302,7 @@
     <string name="addons_details_details">Detalles</string>
     <string name="addons_details_permissions">Permisos</string>
     <string name="addons_install_dialog_title">Engadir %1$s\?</string>
-    <string name="addons_install_dialog_body"><p align="LEFT">Precisa o seu permiso para:</p><ul>%1$s</ul><p/></string>
+    <string name="addons_install_dialog_body"><![CDATA[<p align="LEFT">Precisa o seu permiso para:</p><ul>%1$s</ul><p/>]]></string>
     <string name="addons_install_dialog_cancel">Cancelar</string>
     <string name="addons_downloading_dialog_cancel">Cancelar</string>
     <string name="addons_downloading_dialog_title">Descargando e verificando complemento…</string>
@@ -332,7 +332,7 @@
     <string name="privacy_options_saved_logins_list_header">Inicios de sesión gardados:</string>
     <string name="privacy_options_saved_logins_list_empty_second">Unha lista dos inicios de sesión gardados aparecerá aquí.</string>
     <string name="privacy_options_saved_login_delete">Borrar</string>
-    <string name="privacy_options_tracking">Protección de seguimento mellorada (<a href="%1$s">Saber máis</a>)</string>
+    <string name="privacy_options_tracking"><![CDATA[Protección de seguimento mellorada (<a href="%1$s">Saber máis</a>)]]></string>
     <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
     <string name="controller_options_reset">Restablecer configuración de controlador</string>
     <string name="environment_options_reset">Restablecer configuración de contorna</string>
@@ -446,13 +446,13 @@
     <string name="popup_permission_dialog_message">O bloqueo de popups está %1$s para esta páxina web.</string>
     <string name="popup_dialog_button_on">Activado</string>
     <string name="popup_dialog_button_off">Desactivado</string>
-    <string name="webxr_permission_dialog_message">WebXR está %1$s para esta páxina web. <a href="%2$s">Saber máis</a></string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR está %1$s para esta páxina web. <a href="%2$s">Saber máis</a>]]></string>
     <string name="webxr_dialog_button_off">Desactivado</string>
     <string name="tracking_dialog_button_on">Activada</string>
     <string name="tracking_dialog_button_off">Desactivada</string>
-    <string name="drm_dialog_message">Algún video ou audio nesta páxina web usa software DRM, que pode limitar o que %1$s pode facer con el. <a href="%2$s">Saber máis</a></string>
+    <string name="drm_dialog_message"><![CDATA[Algún video ou audio nesta páxina web usa software DRM, que pode limitar o que %1$s pode facer con el. <a href="%2$s">Saber máis</a>]]></string>
     <string name="drm_first_use_title_v1">Esta páxina web ten contido DRM.</string>
-    <string name="drm_first_use_body_v2">Permitir DRM fai que esta páxina web poda identificar este dispositivo cada vez que a visitas. <a href="%1$s">Saber máis</a></string>
+    <string name="drm_first_use_body_v2"><![CDATA[Permitir DRM fai que esta páxina web poda identificar este dispositivo cada vez que a visitas. <a href="%1$s">Saber máis</a>]]></string>
     <string name="tracking_dialog_button_disable">Desactivar</string>
     <string name="download_open_file_unsupported_title">Tipo de arquivo non soportado</string>
     <string name="download_open_file_unsupported_body">Este arquivo non pode abrirse, quere acceder a el cunha aplicación externa\?</string>
