@@ -3,6 +3,7 @@ const path = require('path');
 const gulp = require('gulp');
 const sharp = require('sharp');
 const tmp = require('tmp');
+const os = require('os');
 const execSync = require('child_process').execSync;
 const readdirp = require('readdirp');
 
@@ -40,7 +41,8 @@ function compressAsset(source, target, srgb, alpha, done) {
         } else {
             format = alpha  ? "RGBA8" : "RGB8"
         }
-        var out = execSync(`EtcTool ${source} -output ${target} -format ${format} -effort 100 -v`).toString();
+        var numberOfCPUs = os.cpus().length
+        var out = execSync(`EtcTool ${source} -output ${target} -format ${format} -effort 100 -j ${numberOfCPUs} -v`).toString();
         console.log(out);
         done();
     } catch (err) {
