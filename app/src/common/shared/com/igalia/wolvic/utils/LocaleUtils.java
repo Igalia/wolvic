@@ -285,8 +285,6 @@ public class LocaleUtils {
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english_us, locale)));
             locale = new Locale("en","GB");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english_uk, locale)));
-            locale = new Locale.Builder().setLanguage("zh").setScript("Hant").setRegion("TW").build();
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_traditional_chinese, locale)));
             locale = new Locale.Builder().setLanguage("zh").setScript("Hans").setRegion("CN").build();
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_simplified_chinese, locale)));
             locale = new Locale("ja","JP");
@@ -303,22 +301,12 @@ public class LocaleUtils {
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_russian, locale)));
             locale = new Locale("ko","KR");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_korean, locale)));
-            locale = new Locale("it","IT");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_italian, locale)));
             locale = new Locale("da","DK");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_danish, locale)));
-            locale = new Locale("pl","PL");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_polish, locale)));
-            locale = new Locale("nb","NO");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_norwegian_bokmaal, locale)));
-            locale = new Locale("nn","NO");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_norwegian_nynorsk, locale)));
-            locale = new Locale("sv","SE");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_swedish, locale)));
             locale = new Locale("fi","FI");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_finnish, locale)));
-            locale = new Locale("nl","NL");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_dutch, locale)));
+            locale = new Locale("gl", "ES");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_galician, locale)));
         }};
 
         Locale locale = getDeviceLocale();
