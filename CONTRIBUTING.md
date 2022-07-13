@@ -13,7 +13,7 @@ Head over to [Good First Issue](https://github.com/Igalia/wolvic/issues?q=is%3Ao
 
 ## Pull Request Checklist
 
-- Branch from the [main]([https://github.com/mozillareality/firefoxreality/tree/main](https://github.com/Igalia/wolvic/tree/main)) branch and, if needed, [rebase](https://help.github.com/en/articles/about-git-rebase) to the current main branch before submitting your pull request. If it doesn't merge cleanly with main, you may be asked to [rebase](https://help.github.com/en/articles/about-git-rebase) your changes.
+- Branch from the [main](https://github.com/Igalia/wolvic/tree/main) branch and, if needed, [rebase](https://help.github.com/en/articles/about-git-rebase) to the current main branch before submitting your pull request. If it doesn't merge cleanly with main, you may be asked to [rebase](https://help.github.com/en/articles/about-git-rebase) your changes.
 
 - Commits should be as small as possible, while ensuring that each commit is correct independently (i.e., each commit should compile and pass tests). 
 
