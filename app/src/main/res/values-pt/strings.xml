@@ -101,4 +101,17 @@
     <string name="fxa_signout_confirmation_body">Ao sair você não poderá enviar e receber abas de outros dispositivos. Seu Favoritos e Histórico também não serão mais sincronizados.</string>
     <string name="fxa_signout_confirmation_checkbox_v1">Apagar histórico, favoritos e logins deste dispositivo</string>
     <string name="history_context_remove_bookmarks">Remover do Favoritos</string>
+    <string name="settings_privacy_policy_webxr_description">Os sites a seguir bloqueiam a WebXR API de acessar seu dispositivo RV.</string>
+    <string name="settings_privacy_policy_webxr_empty_description">Quando você abre um site que utiliza WebXR API, você pode abrir uma janela \"dialog\" que permite bloquear WebXR naquele site.</string>
+    <string name="settings_privacy_policy_webxr_reset">Redefinir sites não permitidos acessar dispositivos RV.</string>
+    <string name="settings_privacy_policy_tracking_description">Você desligou proteções nestes sites.</string>
+    <string name="settings_privacy_policy_tracking_reset">Redefinir as exceções de Proteção de Rastreamento Aprimorada.</string>
+    <string name="settings_privacy_policy_login_exceptions_title">Exceções de Login</string>
+    <string name="settings_privacy_policy_login_exceptions_description">Logins que não estão salvos, aparecerão aqui</string>
+    <string name="settings_privacy_policy_login_exceptions_empty_description">Logins que não estão salvos, aparecerão aqui.</string>
+    <string name="settings_privacy_policy_login_exceptions_reset">Redefinir exceções de login.</string>
+    <string name="settings_language_follow_device">Utilizar o idioma do dispositivo</string>
+    <string name="settings_language_settings">Configurações de Idioma</string>
+    <string name="settings_privacy_policy_tracking_title">Exceções para Proteção de Rastreamento Aprimorada</string>
+    <string name="settings_privacy_policy_tracking_empty_description">Quando você permite um site rastrear sua atividade, ele aparacerá aqui.</string>
 </resources>
