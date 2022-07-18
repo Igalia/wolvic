@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
+import mozilla.appservices.logins.InvalidKeyException
 import mozilla.components.concept.storage.Login
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
@@ -22,7 +23,11 @@ class LoginStorage(
     init {
         EngineProvider.getOrCreateRuntime(context).setUpLoginPersistence(places.logins)
         GlobalScope.launch(Dispatchers.IO) {
-            places.logins.value.warmUp()
+            try {
+                storage.value.warmUp()
+            } catch (e: InvalidKeyException) {
+                storage.value.wipeLocal()
+            }
         }
 
         GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to storage)
