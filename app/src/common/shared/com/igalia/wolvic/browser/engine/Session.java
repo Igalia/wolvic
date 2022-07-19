@@ -55,6 +55,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -1072,7 +1073,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
             aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
-        } else if ((getUaMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) && !mState.mPreviousUri.equals(mState.mUri)) {
+        } else if ((getUaMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) && !Objects.equals(mState.mPreviousUri, mState.mUri)) {
             // The URL check above allows users to switch to mobile mode even for overriding sites.
             if (sDesktopModeOverrides.lookupOverride(aUri) != null) {
                 trySetUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
