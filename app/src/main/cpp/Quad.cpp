@@ -337,6 +337,13 @@ Quad::SetTextureSize(int32_t aWidth, int32_t aHeight) {
   }
 }
 
+void Quad::RecreateSurface() {
+  if (m.layer) {
+    bool force = true;
+    m.layer->Resize(m.textureWidth , m.textureHeight, force);
+  }
+}
+
 void
 Quad::GetWorldMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
   aMin = m.worldMin;

@@ -44,6 +44,7 @@ public:
   void SetBackgroundColor(const vrb::Color& aColor);
   void GetTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetTextureSize(int32_t aWidth, int32_t aHeight);
+  void RecreateSurface();
   void GetWorldMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   const vrb::Vector& GetWorldMin() const;
   const vrb::Vector& GetWorldMax() const;

@@ -48,6 +48,7 @@ public:
   const vrb::TextureSurfacePtr GetSurfaceTexture() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight);
+  void RecreateSurface();
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   void SetWorldWidth(float aWorldWidth) const;
   void GetWorldSize(float& aWidth, float& aHeight) const;

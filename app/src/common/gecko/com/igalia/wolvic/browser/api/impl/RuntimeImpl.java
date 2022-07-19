@@ -120,6 +120,12 @@ public class RuntimeImpl implements WRuntime {
     }
 
     @Override
+    public float getDensity() {
+        // GeckoDisplay uses 1.0 density and internally scales the devicePixelRatio to provided Surface.
+        return 1.0f;
+    }
+
+    @Override
     public void configurationChanged(@NonNull Configuration newConfig) {
         mRuntime.configurationChanged(newConfig);
     }

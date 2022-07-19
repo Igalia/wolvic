@@ -280,6 +280,13 @@ Cylinder::SetTextureSize(int32_t aWidth, int32_t aHeight) {
   }
   m.updateTextureLayout();
 }
+void
+Cylinder::RecreateSurface() {
+  if (m.layer) {
+    bool force = true;
+    m.layer->Resize(m.textureWidth , m.textureHeight, force);
+  }
+}
 
 void
 Cylinder::SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight) {
