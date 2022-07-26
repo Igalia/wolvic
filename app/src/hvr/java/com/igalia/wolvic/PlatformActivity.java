@@ -7,10 +7,15 @@ package com.igalia.wolvic;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -20,21 +25,24 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.huawei.hms.mlsdk.common.MLApplication;
+import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hvr.LibUpdateClient;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
-public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
+public class PlatformActivity extends Activity implements SurfaceHolder.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = "PlatformActivity";
+    private static final String HMS_MESSAGE_RECEIVED = "HmsMessageReceived";
     private SurfaceView mView;
     private Context mContext = null;
     private HVRLocationManager mLocationManager;
     private Dialog mActiveDialog;
+    private SharedPreferences mPrefs;
+    private BroadcastReceiver mHmsMessageBroadcastReceiver;
 
     static {
         Log.i(TAG, "LoadLibrary");
@@ -55,12 +63,24 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         super.onCreate(savedInstanceState);
         mContext = this;
         mLocationManager = new HVRLocationManager(this);
-        PermissionDelegate.sPlatformLocationOverride = new PermissionDelegate.PlatformLocationOverride() {
+        PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
+
+        mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onLocationGranted(Session session) {
-                mLocationManager.start(session);
+            public void onReceive(Context context, Intent intent) {
+                handlemHmsMessageBroadcast(intent);
             }
         };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(HMS_MESSAGE_RECEIVED);
+        registerReceiver(mHmsMessageBroadcastReceiver, filter);
+
+        if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
+            setHmsMessageServiceAutoInit(true);
+        }
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
@@ -69,6 +89,27 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             initializeVR();
+        }
+    }
+
+    private void handlemHmsMessageBroadcast(Intent intent) {
+        if (!HMS_MESSAGE_RECEIVED.equals(intent.getAction()))
+            return;
+
+        RemoteMessage message = intent.getParcelableExtra(WolvicHmsMessageService.MESSAGE_EXTRA);
+        Log.i(TAG, "PushKit received message: " + message);
+        // TODO notify the user
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
+            if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
+                // We need to wait until the Privacy Policy is accepted to request a message token.
+                getHmsMessageServiceToken();
+            } else {
+                deleteHmsMessageServiceToken();
+            }
         }
     }
 
@@ -131,9 +172,39 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         }
     }
 
+    private void setHmsMessageServiceAutoInit(boolean enabled) {
+        Intent intent = new Intent(this, WolvicHmsMessageService.class);
+        intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_AUTO_INIT);
+        intent.putExtra(WolvicHmsMessageService.ENABLED_EXTRA, enabled);
+        startService(intent);
+    }
+
+    private void getHmsMessageServiceToken() {
+        Intent intent = new Intent(this, WolvicHmsMessageService.class);
+        intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_GET_TOKEN);
+        startService(intent);
+    }
+
+    private void deleteHmsMessageServiceToken() {
+        Intent intent = new Intent(this, WolvicHmsMessageService.class);
+        intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_DELETE_TOKEN);
+        startService(intent);
+    }
+
+    private void stopHmsMessageService() {
+        Intent intent = new Intent(this, WolvicHmsMessageService.class);
+        intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_STOP_SERVICE);
+        startService(intent);
+    }
+
     @Override
     protected void onDestroy() {
         Log.i(TAG, "PlatformActivity onDestroy");
+
+        stopHmsMessageService();
+        unregisterReceiver(mHmsMessageBroadcastReceiver);
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+
         super.onDestroy();
         nativeOnDestroy();
     }

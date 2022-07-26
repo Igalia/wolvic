@@ -594,6 +594,8 @@ dependencies {
     hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
+    hvrImplementation 'com.huawei.hms:push:6.5.0.300'
+    hvr3dofImplementation 'com.huawei.hms:push:6.5.0.300'
 }
 
 if (getBackend() == 'chromium') {
@@ -679,5 +681,13 @@ android.applicationVariants.all { variant ->
             variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         else
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
+
+        if (platform.toLowerCase().startsWith('hvr3dof') && gradle.hasProperty("userProperties.HVR_3DOF_APP_ID")) {
+            buildConfigField "String", "HVR_APP_ID", gradle."userProperties.HVR_3DOF_APP_ID"
+        } else if (gradle.hasProperty("userProperties.HVR_APP_ID")) {
+            buildConfigField "String", "HVR_APP_ID", gradle."userProperties.HVR_APP_ID"
+        } else {
+            buildConfigField "String", "HVR_APP_ID", ""
+        }
     }
 }
