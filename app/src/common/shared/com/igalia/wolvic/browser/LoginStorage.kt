@@ -26,6 +26,10 @@ class LoginStorage(
             try {
                 storage.value.warmUp()
             } catch (e: InvalidKeyException) {
+                // Login database sometimes gets corrupted for unknown reasons. This has been reported
+                // to mozilla components in the past (https://github.com/mozilla-mobile/android-components/issues/6681
+                // or https://github.com/mozilla-mobile/fenix/issues/15597) but it was never really
+                // fixed so clients have to deal with that. The only thing we could do is to wipe.
                 storage.value.wipeLocal()
             }
         }
