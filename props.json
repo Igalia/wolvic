@@ -1,4 +1,9 @@
 {
+  "1.0.1": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.0.1",
+    "environments": [
+    ]
+  },
   "1.0": {
     "whatsNewUrl": "https://wolvic.com/blog/release_1.0.0",
     "environments": [
