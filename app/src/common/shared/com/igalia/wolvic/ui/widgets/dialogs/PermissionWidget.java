@@ -53,7 +53,9 @@ public class PermissionWidget extends PromptDialogWidget {
                 handlePermissionResult(true);
             }
         });
-        setCheckboxVisible(false);
+        setCheckboxVisible(true);
+        setChecked(false);
+        setCheckboxText(R.string.permissions_dialog_remember_choice);
         setDescriptionVisible(false);
 
         if (isVisible()) {

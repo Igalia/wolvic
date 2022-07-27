@@ -82,10 +82,35 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
         }
     }
 
+    private @SitePermission.Category int toSitePermission(final PermissionWidget.PermissionType aType) {
+        // So far we only handle Location.
+        switch (aType) {
+            case Location:
+                return SitePermission.SITE_PERMISSION_LOCATION;
+            default:
+                return SitePermission.SITE_PERMISSION_NONE;
+        }
+    }
+
     public void handlePermission(final String aUri, final PermissionWidget.PermissionType aType, final Callback aCallback) {
         if (mPermissionWidget == null) {
             mPermissionWidget = new PermissionWidget(mContext);
             mWidgetManager.addWidget(mPermissionWidget);
+        }
+
+        final String domain = UrlUtils.getHost(aUri);
+        if (mSitePermissions != null) {
+            SitePermission site = mSitePermissions.stream()
+                    .filter(sitePermission -> sitePermission.category == toSitePermission(aType) && sitePermission.url.equalsIgnoreCase(domain))
+                    .findFirst().orElse(null);
+            if (site != null) {
+                Log.d(LOGTAG, "Permission " + aType + " already " + (site.allowed ? "granted" : "denied") + " for " + aUri);
+                if (site.allowed)
+                    aCallback.grant();
+                else
+                    aCallback.reject();
+                return;
+            }
         }
 
         mPermissionWidget.showPrompt(aUri, aType, aCallback);
@@ -215,17 +240,35 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
 
         final WResult<Integer> result = WResult.create();
         handlePermission(perm.uri, type, new Callback() {
+
+            private void addPermissionExceptionIfNeeded(boolean allowed) {
+                @SitePermission.Category int sitePermissionCategory = toSitePermission(type);
+                if (!mPermissionWidget.isChecked() || sitePermissionCategory == SitePermission.SITE_PERMISSION_NONE)
+                    return;
+
+                final String domain = UrlUtils.getHost(perm.uri);
+                SitePermission site = mSitePermissions.stream()
+                        .filter(sitePermission -> sitePermission.category == sitePermissionCategory && sitePermission.url.equalsIgnoreCase(domain))
+                        .findFirst().orElse(null);
+                if (site != null)
+                    return;
+                Log.d(LOGTAG, "Adding permission exception " + allowed + " for " + perm.uri + " for permission " + type);
+                addPermissionException(UrlUtils.getHost(perm.uri), sitePermissionCategory, allowed);
+            }
+
             @Override
             public void grant() {
                 result.complete(ContentPermission.VALUE_ALLOW);
                 if (type == PermissionWidget.PermissionType.Location && sPlatformLocationOverride != null) {
                     sPlatformLocationOverride.onLocationGranted(SessionStore.get().getSession(aSession));
                 }
+                addPermissionExceptionIfNeeded(true);
             }
 
             @Override
             public void reject() {
                 result.complete(ContentPermission.VALUE_DENY);
+                addPermissionExceptionIfNeeded(false);
             }
         });
         return result;
@@ -315,7 +358,8 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
             }
         }
     }
-    public void addPermissionException(@NonNull String uri, @SitePermission.Category int category) {
+    public void addPermissionException(@NonNull String uri, @SitePermission.Category int category, boolean allowed) {
+        assert category != SitePermission.SITE_PERMISSION_NONE;
         @Nullable SitePermission site = mSitePermissions.stream()
                 .filter((item) -> item.category == category && item.url.equals(uri))
                 .findFirst().orElse(null);
@@ -324,6 +368,7 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
             site = new SitePermission(uri, "", category);
             mSitePermissions.add(site);
         }
+        site.allowed = allowed;
         mSitePermissionModel.insertSite(site);
 
         // Reload URIs with the same domain
@@ -337,6 +382,7 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
     }
 
     public void removePermissionException(String uri, @SitePermission.Category int category) {
+        assert category != SitePermission.SITE_PERMISSION_NONE;
         @Nullable SitePermission site = mSitePermissions.stream()
                 .filter((item) -> item.category == category && item.url.equals(uri))
                 .findFirst().orElse(null);

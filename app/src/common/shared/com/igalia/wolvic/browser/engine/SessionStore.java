@@ -479,7 +479,7 @@ public class SessionStore implements
 
     public void addPermissionException(@NonNull String uri, @SitePermission.Category int category) {
         if (mPermissionDelegate != null) {
-            mPermissionDelegate.addPermissionException(uri, category);
+            mPermissionDelegate.addPermissionException(uri, category, false);
         }
     }
 
