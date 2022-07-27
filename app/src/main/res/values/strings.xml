@@ -2305,4 +2305,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- Display names for the supported voice recognition services -->
     <string name="voice_service_metkai">MeetKai</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+
+    <!-- This string labels a checkbox in the permissions dialog. When checked, the user will no longer
+     be prompted for that specific permission in that same web page. -->
+    <string name="permissions_dialog_remember_choice">Remember this decision</string>
+
 </resources>
