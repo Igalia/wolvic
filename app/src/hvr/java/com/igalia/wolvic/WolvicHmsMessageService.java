@@ -25,8 +25,9 @@ public class WolvicHmsMessageService extends HmsMessageService {
     public static final int COMMAND_DELETE_TOKEN = 3;
     public static final int COMMAND_AUTO_INIT = 4;
     public static final String ENABLED_EXTRA = "enabled";
-    public static final String MESSAGE_ACTION = "WolvicHmsMessageService.message";
-    public static final String MESSAGE_EXTRA = "message";
+
+    public static final String MESSAGE_RECEIVED_ACTION = "WolvicHmsMessageService.messageReceived";
+    public static final String NOTIFICATION_EXTRA = "notification";
 
     protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
 
@@ -118,8 +119,8 @@ public class WolvicHmsMessageService extends HmsMessageService {
 
         // notify the activity
         Intent intent = new Intent();
-        intent.setAction(MESSAGE_ACTION);
-        intent.putExtra(MESSAGE_EXTRA, message);
+        intent.setAction(MESSAGE_RECEIVED_ACTION);
+        intent.putExtra(NOTIFICATION_EXTRA, message.getNotification());
         sendBroadcast(intent);
     }
 

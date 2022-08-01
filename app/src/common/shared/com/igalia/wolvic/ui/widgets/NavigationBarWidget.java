@@ -83,6 +83,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
     private static final int POPUP_NOTIFICATION_ID = 3;
+    private static final int INCOMING_MESSAGE_NOTIFICATION_ID = 4;
 
     public interface NavigationListener {
         void onBack();
@@ -1307,6 +1308,14 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         showNotification(BOOKMARK_ADDED_NOTIFICATION_ID,
                 NotificationManager.Notification.BOTTOM,
                 R.string.bookmarks_saved_notification);
+    }
+
+    public void showIncomingMessageNotification(String message) {
+        NotificationManager.Notification notification = new NotificationManager.Builder(this)
+                .withString(message)
+                .withPosition(NotificationManager.Notification.TOP)
+                .withMargin(20.0f).build();
+        NotificationManager.show(INCOMING_MESSAGE_NOTIFICATION_ID, notification);
     }
 
     private void showNotification(int notificationId, UIButton button, @NotificationPosition int position, int stringRes) {

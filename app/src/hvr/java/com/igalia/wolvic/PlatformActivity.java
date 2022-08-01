@@ -36,7 +36,6 @@ import com.igalia.wolvic.utils.StringUtils;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = "PlatformActivity";
-    private static final String HMS_MESSAGE_RECEIVED = "HmsMessageReceived";
     private SurfaceView mView;
     private Context mContext = null;
     private HVRLocationManager mLocationManager;
@@ -72,7 +71,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             }
         };
         IntentFilter filter = new IntentFilter();
-        filter.addAction(HMS_MESSAGE_RECEIVED);
+        filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
         registerReceiver(mHmsMessageBroadcastReceiver, filter);
 
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
@@ -93,12 +92,14 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     private void handlemHmsMessageBroadcast(Intent intent) {
-        if (!HMS_MESSAGE_RECEIVED.equals(intent.getAction()))
+        if (!WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION.equals(intent.getAction()))
             return;
 
-        RemoteMessage message = intent.getParcelableExtra(WolvicHmsMessageService.MESSAGE_EXTRA);
-        Log.i(TAG, "PushKit received message: " + message);
-        // TODO notify the user
+        RemoteMessage.Notification notification = intent.getParcelableExtra(WolvicHmsMessageService.NOTIFICATION_EXTRA);
+        Log.i(TAG, "PushKit received notification: " + notification);
+
+        // TODO use all the content in the incoming message's notification
+        showIncomingMessageNotification(notification.getTitle());
     }
 
     @Override
@@ -247,10 +248,13 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
+    }
+
+    protected void showIncomingMessageNotification(String message) {
+        Log.w(TAG, "showIncomingMessageNotification: not implemented");
     }
 
     protected boolean platformExit() {
