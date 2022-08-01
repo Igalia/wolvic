@@ -393,6 +393,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    private void recreateWidgetSurfaceIfNeeded(float prevDensity) {
+        if (prevDensity != mWidgetPlacement.density || !isLayer())
+            return;
+
+        // If the densities are the same updateWidget won't generate a new surface as the resulting
+        // texture sizes are equal. We need to force a new surface creation when using layers.
+        mWidgetManager.recreateWidgetSurface(this);
+    }
+
     private void setView(View view, boolean switchSurface) {
         Runnable setView = () -> {
             if (switchSurface) {
@@ -419,12 +428,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 setWillNotDraw(false);
                 postInvalidate();
 
-                if (prevDensity == mWidgetPlacement.density && isLayer()) {
-                    // If the densities are the same updateWidget won't generate a new surface
-                    // as the resulting texture sizes are equal. We need to force a new surface
-                    // creation when using layers.
-                    mWidgetManager.recreateWidgetSurface(this);
-                }
+                recreateWidgetSurfaceIfNeeded(prevDensity);
             }
         };
 
@@ -462,12 +466,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 if (mTexture != null) {
                     resumeCompositor();
                 }
-                if (prevDensity == mWidgetPlacement.density && isLayer()) {
-                    // If the densities are the same updateWidget won't generate a new surface
-                    // as the resulting texture sizes are equal. We need to force a new surface
-                    // creation when using layers.
-                    mWidgetManager.recreateWidgetSurface(this);
-                }
+                recreateWidgetSurfaceIfNeeded(prevDensity);
             }
         }
     }
