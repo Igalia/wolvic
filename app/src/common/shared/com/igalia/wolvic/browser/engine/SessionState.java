@@ -49,6 +49,7 @@ public class SessionState {
     public String mPreviousUri;
     public String mTitle = "";
     public transient boolean mFullScreen;
+    public transient boolean mInKioskMode;
     public transient WSession mSession;
     public transient WDisplay mDisplay;
     public SessionSettings mSettings;

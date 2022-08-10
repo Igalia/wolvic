@@ -1280,6 +1280,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    @Override
+    public void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {
+        // TODO
+    }
+
 public void selectTab(@NonNull Session aTab) {
         onTabSelect(aTab);
     }
@@ -1358,6 +1363,14 @@ public void selectTab(@NonNull Session aTab) {
                 addBackgroundTab(mFocusedWindow, aUri);
             }
         }
+    }
+
+    public void openInKioskMode(@NonNull String aUri) {
+        Session session = SessionStore.get().createSuspendedSession(aUri, false);
+        setFirstPaint(mFocusedWindow, session);
+        mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
+        mFocusedWindow.setKioskMode(true);
+        mFocusedWindow.setIsFullScreen(true);
     }
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {

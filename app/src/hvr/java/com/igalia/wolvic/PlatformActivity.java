@@ -29,8 +29,11 @@ import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
-public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
+public class PlatformActivity extends Activity implements SurfaceHolder.Callback, PlatformSpecificBehavior {
     public static final String TAG = "PlatformActivity";
+
+    private static HVR_INTENT_ACTION ="com.huawei.android.vr.action.MAIN";
+
     private SurfaceView mView;
     private Context mContext = null;
     private HVRLocationManager mLocationManager;
@@ -180,6 +183,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     {
         Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
+    }
+
+    @Override
+    public boolean shouldOpenInKioskMode(@NonNull Intent intent) {
+        return HVR_INTENT_ACTION.equals(intent.getAction()) && intent.getData() != null;
     }
 
     protected boolean platformExit() {

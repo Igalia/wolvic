@@ -643,6 +643,17 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     @Override
+    public void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {
+        if (isKioskMode) {
+            mTrayViewModel.setShouldBeVisible(false);
+            hide(KEEP_WIDGET);
+        } else {
+            mTrayViewModel.setShouldBeVisible(true);
+            show(KEEP_FOCUS);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }

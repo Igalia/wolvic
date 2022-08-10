@@ -1764,6 +1764,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         Log.d(LOGTAG, "\tActive: " + mState.isActive());
         Log.d(LOGTAG, "\tUri: " + (mState.mUri != null ? mState.mUri : "null"));
         Log.d(LOGTAG, "\tFullscreen: " + mState.mFullScreen);
+        Log.d(LOGTAG, "\tKiosk mode: " + mState.mInKioskMode);
         Log.d(LOGTAG, "\tCan go back: " + mState.mCanGoBack);
         Log.d(LOGTAG, "\tCan go forward: " + mState.mCanGoForward);
         if (mState.mSettings != null) {

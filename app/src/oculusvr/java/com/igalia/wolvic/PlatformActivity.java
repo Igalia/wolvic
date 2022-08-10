@@ -7,6 +7,7 @@ package com.igalia.wolvic;
 
 import android.Manifest;
 import android.app.NativeActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,7 +16,7 @@ import android.view.WindowManager;
 
 import com.igalia.wolvic.utils.SystemUtils;
 
-public class PlatformActivity extends NativeActivity {
+public class PlatformActivity extends NativeActivity implements PlatformSpecificBehavior {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static boolean filterPermission(final String aPermission) {
@@ -62,6 +63,12 @@ public class PlatformActivity extends NativeActivity {
         if (hasFocus) {
             setFullScreen();
         }
+    }
+
+    @Override
+    public boolean shouldOpenInKioskMode(Intent intent) {
+        // FIXME this is just for testing
+        return intent.getData() != null;
     }
 
     protected void setFullScreen() {
