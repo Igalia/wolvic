@@ -8,6 +8,7 @@ package com.igalia.wolvic;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hvr.LibUpdateClient;
@@ -32,7 +35,7 @@ import com.igalia.wolvic.utils.StringUtils;
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback, PlatformSpecificBehavior {
     public static final String TAG = "PlatformActivity";
 
-    private static HVR_INTENT_ACTION ="com.huawei.android.vr.action.MAIN";
+    private static String HVR_INTENT_ACTION = "com.huawei.android.vr.action.MAIN";
 
     private SurfaceView mView;
     private Context mContext = null;

@@ -14,6 +14,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity implements PlatformSpecificBehavior {
@@ -66,7 +68,7 @@ public class PlatformActivity extends NativeActivity implements PlatformSpecific
     }
 
     @Override
-    public boolean shouldOpenInKioskMode(Intent intent) {
+    public boolean shouldOpenInKioskMode(@NonNull Intent intent) {
         // FIXME this is just for testing
         return intent.getData() != null;
     }

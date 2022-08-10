@@ -471,6 +471,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
             return;
         }
+        if (shouldOpenInKioskMode(getIntent())) {
+            return;
+        }
         mWhatsNewWidget = new WhatsNewWidget(this);
         mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
         mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
