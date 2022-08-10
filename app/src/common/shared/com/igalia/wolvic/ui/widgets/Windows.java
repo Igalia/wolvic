@@ -1366,7 +1366,7 @@ public void selectTab(@NonNull Session aTab) {
     }
 
     public void openInKioskMode(@NonNull String aUri) {
-        Session session = SessionStore.get().createSuspendedSession(aUri, false);
+        Session session = SessionStore.get().createSuspendedSession(aUri, true);
         setFirstPaint(mFocusedWindow, session);
         mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         mFocusedWindow.setKioskMode(true);
