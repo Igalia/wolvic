@@ -936,11 +936,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setKioskMode(boolean isKioskMode) {
-        if (mViewModel.getIsKioskMode().getValue().get() != isKioskMode) {
-            mViewModel.setIsKioskMode(isKioskMode);
-            for (WindowListener listener : mListeners) {
-                listener.onKioskMode(this, isKioskMode);
-            }
+        if (mViewModel.getIsKioskMode().getValue().get() == isKioskMode)
+            return;
+
+        mViewModel.setIsKioskMode(isKioskMode);
+        for (WindowListener listener : mListeners) {
+            listener.onKioskMode(this, isKioskMode);
         }
     }
 

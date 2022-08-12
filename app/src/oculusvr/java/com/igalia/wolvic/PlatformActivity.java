@@ -67,12 +67,6 @@ public class PlatformActivity extends NativeActivity implements PlatformSpecific
         }
     }
 
-    @Override
-    public boolean shouldOpenInKioskMode(@NonNull Intent intent) {
-        // FIXME this is just for testing
-        return intent.getData() != null;
-    }
-
     protected void setFullScreen() {
         int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

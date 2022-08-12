@@ -9,5 +9,7 @@ import androidx.annotation.NonNull;
  */
 public interface PlatformSpecificBehavior {
 
-    boolean shouldOpenInKioskMode(@NonNull Intent intent);
+    default boolean shouldOpenInKioskMode(@NonNull Intent intent) {
+        return false;
+    }
 }
