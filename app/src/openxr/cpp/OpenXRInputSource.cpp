@@ -46,6 +46,9 @@ XrResult OpenXRInputSource::Initialize()
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "grip", OpenXRHandFlags::Both, mGripAction));
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "pointer", OpenXRHandFlags::Both, mPointerAction));
 
+    // Initialize haptic action.
+    RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_VIBRATION_OUTPUT, "haptic", OpenXRHandFlags::Both, mHapticAction));
+
     // Filter mappings
     for (auto& mapping: OpenXRInputMappings) {
       if (mapping.systemFilter && strcmp(mapping.systemFilter, mSystemProperties.systemName) != 0) {
@@ -140,6 +143,33 @@ XrResult OpenXRInputSource::GetPoseState(XrAction action, XrSpace space, XrSpace
 
     location = { XR_TYPE_SPACE_LOCATION };
     RETURN_IF_XR_FAILED(xrLocateSpace(space, baseSpace, frameState.predictedDisplayTime, &location));
+
+    return XR_SUCCESS;
+}
+
+XrResult OpenXRInputSource::applyHapticFeedback(XrAction action, XrDuration duration, float frequency, float amplitude) const
+{
+    XrHapticActionInfo hapticActionInfo { XR_TYPE_HAPTIC_ACTION_INFO };
+    hapticActionInfo.action = action;
+    hapticActionInfo.subactionPath = mSubactionPath;
+
+    XrHapticVibration hapticVibration { XR_TYPE_HAPTIC_VIBRATION };
+    hapticVibration.duration = duration;
+    hapticVibration.frequency = frequency;
+    hapticVibration.amplitude = amplitude;
+
+    RETURN_IF_XR_FAILED(xrApplyHapticFeedback(mSession, &hapticActionInfo, reinterpret_cast<const XrHapticBaseHeader *>(&hapticVibration)));
+
+    return XR_SUCCESS;
+}
+
+XrResult OpenXRInputSource::stopHapticFeedback(XrAction action) const
+{
+    XrHapticActionInfo hapticActionInfo { XR_TYPE_HAPTIC_ACTION_INFO };
+    hapticActionInfo.action = action;
+    hapticActionInfo.subactionPath = mSubactionPath;
+
+    RETURN_IF_XR_FAILED(xrStopHapticFeedback(mSession, &hapticActionInfo));
 
     return XR_SUCCESS;
 }
@@ -356,9 +386,44 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
             assert(action != XR_NULL_HANDLE);
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, action, mSubactionPathName + "/" + axis.path, bindings));
         }
+
+        // Suggest binding for haptic feedback action.
+        RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mHapticAction, mSubactionPathName + "/" + kPathHaptic, bindings));
     }
 
     return XR_SUCCESS;
+}
+
+void OpenXRInputSource::UpdateHaptics(ControllerDelegate &controller)
+{
+    uint64_t frameId = 0;
+    float pulseDuration = 0.0f;
+    float pulseIntensity = 0.0f;
+    controller.GetHapticFeedback(mIndex, frameId, pulseDuration, pulseIntensity);
+    if (frameId == 0 || pulseDuration <= 0.0f || pulseIntensity <= 0.0f) {
+        // No current haptic feedback, stop any ongoing haptic.
+        if (mStartHapticFrameId != 0) {
+            mStartHapticFrameId = 0;
+            VRB_LOG("stopHapticFeedback(%lu)", mStartHapticFrameId);
+            CHECK_XRCMD(stopHapticFeedback(mHapticAction));
+        }
+        return;
+    }
+
+    // Bail out if already running this haptic event.
+    if (frameId == mStartHapticFrameId)
+        return;
+    mStartHapticFrameId = frameId;
+
+    VRB_LOG("applyHapticFeedback(%lu, %f, %f)", frameId, pulseDuration, pulseIntensity);
+
+    // Duration should be expressed in nanoseconds.
+    auto duration = (uint64_t) (pulseDuration * 1000000.0f);
+    // Clamp intensity to [0.0 - 1.0]
+    if (pulseIntensity > 1.0f)
+        pulseIntensity = 1.0f;
+
+    CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, float offsetY, device::RenderMode renderMode, ControllerDelegate& delegate)
@@ -535,6 +600,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
       }
     }
     delegate.SetAxes(mIndex, axesContainer.data(), axesContainer.size());
+
+    // Update haptic feedback
+    UpdateHaptics(delegate);
 }
 
 XrResult OpenXRInputSource::UpdateInteractionProfile()

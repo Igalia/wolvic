@@ -35,6 +35,10 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
     if (auto inputSource = OpenXRInputSource::Create(mInstance, mSession, *mActionSet, mSystemProperties, handeness, index)) {
       mInputSources.push_back(std::move(inputSource));
       delegate.CreateController(index, index, "Oculus");
+
+      // @FIXME: Do check that actual controller supports haptics.
+      delegate.SetHapticCount(index, 1);
+
       index++;
     }
   }
