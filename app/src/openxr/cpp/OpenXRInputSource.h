@@ -37,6 +37,9 @@ private:
     XrResult GetActionState(XrAction, XrVector2f*) const;
     ControllerDelegate::Button GetBrowserButton(const OpenXRButton&) const;
     std::optional<uint8_t> GetImmersiveButton(const OpenXRButton&) const;
+    XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
+    XrResult stopHapticFeedback(XrAction) const;
+    void UpdateHaptics(ControllerDelegate &controller);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -51,6 +54,8 @@ private:
     XrSpace mPointerSpace { XR_NULL_HANDLE };
     std::unordered_map<OpenXRButtonType, OpenXRActionSet::OpenXRButtonActions> mButtonActions;
     std::unordered_map<OpenXRAxisType, XrAction> mAxisActions;
+    XrAction mHapticAction;
+    uint64_t mStartHapticFrameId;
     XrSystemProperties mSystemProperties;
     std::vector<OpenXRInputMapping> mMappings;
     OpenXRInputMapping* mActiveMapping { XR_NULL_HANDLE };

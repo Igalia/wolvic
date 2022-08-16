@@ -33,6 +33,7 @@ namespace crow {
     constexpr const char* kPathTrackpad { "input/trackpad" };
     constexpr const char* kPathSelect { "/input/select" };
     constexpr const char* kPathMenu { "input/menu" };
+    constexpr const char* kPathHaptic { "output/haptic" };
     constexpr const char* kPathButtonA { "input/a" };
     constexpr const char* kPathButtonB { "input/b" };
     constexpr const char* kPathButtonX { "input/x" };
