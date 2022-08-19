@@ -711,10 +711,11 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     if (location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
       caps |= m.Is6DOF() ? device::Position : device::PositionEmulated;
     }
-    m.immersiveDisplay->SetCapabilityFlags(caps);
 
     // Update WebXR room scale transform if the device supports stage space
     if (m.stageSpace != XR_NULL_HANDLE) {
+      caps |= device::StageParameters;
+
       // Compute the transform between local and stage space
       XrSpaceLocation stageLocation{XR_TYPE_SPACE_LOCATION};
       xrLocateSpace(m.localSpace, m.stageSpace, m.predictedDisplayTime, &stageLocation);
@@ -727,6 +728,8 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
       m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
 #endif
     }
+
+    m.immersiveDisplay->SetCapabilityFlags(caps);
   }
 
   // Query eyeTransform and perspective for each view
