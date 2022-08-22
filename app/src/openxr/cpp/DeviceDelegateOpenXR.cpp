@@ -96,6 +96,7 @@ struct DeviceDelegateOpenXR::State {
   std::vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
   std::function<void()> controllersReadyCallback;
   std::optional<XrPosef> firstPose;
+  bool mHandTrackingSupported = false;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -182,9 +183,20 @@ struct DeviceDelegateOpenXR::State {
     CHECK_XRCMD(xrGetSystem(instance, &systemInfo, &system));
     CHECK_MSG(system != XR_NULL_SYSTEM_ID, "Failed to initialize XRSystem");
 
+    // If hand tracking extension is present, query whether the runtime actually supports it
+    XrSystemHandTrackingPropertiesEXT handTrackingProperties{XR_TYPE_SYSTEM_HAND_TRACKING_PROPERTIES_EXT};
+    handTrackingProperties.supportsHandTracking = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME)) {
+        handTrackingProperties.next = systemProperties.next;
+        systemProperties.next = &handTrackingProperties;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
+
+    mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
+    VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
