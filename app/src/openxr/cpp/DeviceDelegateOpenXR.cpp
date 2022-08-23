@@ -622,7 +622,7 @@ DeviceDelegateOpenXR::ProcessEvents() {
       }
       case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED: {
         if (m.input) {
-          m.input->UpdateInteractionProfile();
+          m.input->UpdateInteractionProfile(*m.controller);
           if (m.controllersReadyCallback && m.input->AreControllersReady()) {
             m.controllersReadyCallback();
             m.controllersReadyCallback = nullptr;

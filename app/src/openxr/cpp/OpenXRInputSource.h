@@ -39,7 +39,7 @@ private:
     std::optional<uint8_t> GetImmersiveButton(const OpenXRButton&) const;
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
     XrResult stopHapticFeedback(XrAction) const;
-    void UpdateHaptics(ControllerDelegate &controller);
+    void UpdateHaptics(ControllerDelegate&);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -70,7 +70,7 @@ public:
 
     XrResult SuggestBindings(SuggestedBindings&) const;
     void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, float offsetY, device::RenderMode, ControllerDelegate& delegate);
-    XrResult UpdateInteractionProfile();
+    XrResult UpdateInteractionProfile(ControllerDelegate&);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
 };
