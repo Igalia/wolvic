@@ -147,13 +147,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private DownloadsManager mDownloadsManager;
     private ConnectivityReceiver mConnectivityReceived;
 
-    @IntDef(value = { NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS})
+    @IntDef(value = {NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS, NOTIFICATIONS})
     public @interface PanelType {}
     public static final int NONE = 0;
     public static final int BOOKMARKS = 1;
     public static final int HISTORY = 2;
     public static final int DOWNLOADS = 3;
     public static final int ADDONS = 4;
+    public static final int NOTIFICATIONS = 5;
 
     public enum WindowPlacement{
         FRONT(0),

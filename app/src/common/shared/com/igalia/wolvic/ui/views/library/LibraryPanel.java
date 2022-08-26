@@ -32,6 +32,7 @@ public class LibraryPanel extends FrameLayout {
     private HistoryView mHistoryView;
     private DownloadsView mDownloadsView;
     private AddonsView mAddonsView;
+    private SystemNotificationsView mSystemNotificationsView;
     private LibraryView mCurrentView;
     private @Windows.PanelType int mCurrentPanel;
 
@@ -58,6 +59,7 @@ public class LibraryPanel extends FrameLayout {
         mHistoryView = new HistoryView(getContext(), this);
         mDownloadsView = new DownloadsView(getContext(), this);
         mAddonsView = new AddonsView(getContext(), this);
+        mSystemNotificationsView = new SystemNotificationsView(getContext(), this);
         mCurrentPanel = Windows.BOOKMARKS;
 
         updateUI();
@@ -114,6 +116,7 @@ public class LibraryPanel extends FrameLayout {
         mBookmarksView.updateUI();
         mDownloadsView.updateUI();
         mAddonsView.updateUI();
+        mSystemNotificationsView.updateUI();
 
         updateUI();
     }
@@ -143,6 +146,7 @@ public class LibraryPanel extends FrameLayout {
         mHistoryView.onDestroy();
         mDownloadsView.onDestroy();
         mAddonsView.onDestroy();
+        mSystemNotificationsView.onDestroy();
     }
 
     public @Windows.PanelType int getSelectedPanelType() {
@@ -158,6 +162,9 @@ public class LibraryPanel extends FrameLayout {
         } else if (mCurrentView == mAddonsView) {
             return Windows.ADDONS;
 
+        } else if (mCurrentView == mSystemNotificationsView) {
+            return Windows.NOTIFICATIONS;
+
         } else {
             return Windows.NONE;
         }
@@ -170,6 +177,7 @@ public class LibraryPanel extends FrameLayout {
         mBinding.history.setActiveMode(false);
         mBinding.downloads.setActiveMode(false);
         mBinding.addons.setActiveMode(false);
+        mBinding.notifications.setActiveMode(false);
         if(view.getId() == R.id.bookmarks){
             selectBookmarks();
 
@@ -181,6 +189,9 @@ public class LibraryPanel extends FrameLayout {
 
         } else if(view.getId() == R.id.addons){
             selectAddons();
+
+        } else if (view.getId() == R.id.notifications) {
+            selectNotifications();
         }
 
         mBinding.setCanGoBack(mCurrentView.canGoBack());
@@ -207,6 +218,9 @@ public class LibraryPanel extends FrameLayout {
             case Windows.ADDONS:
                 selectTab(mBinding.addons);
                 break;
+            case Windows.NOTIFICATIONS:
+                selectTab(mBinding.notifications);
+                break;
         }
     }
 
@@ -232,6 +246,12 @@ public class LibraryPanel extends FrameLayout {
         mCurrentView = mAddonsView;
         mBinding.addons.setActiveMode(true);
         mBinding.tabcontent.addView(mAddonsView);
+    }
+
+    private void selectNotifications() {
+        mCurrentView = mSystemNotificationsView;
+        mBinding.notifications.setActiveMode(true);
+        mBinding.tabcontent.addView(mSystemNotificationsView);
     }
 
     public void onViewUpdated(@NonNull String title) {

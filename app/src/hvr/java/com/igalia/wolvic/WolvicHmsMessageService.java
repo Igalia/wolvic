@@ -27,7 +27,7 @@ public class WolvicHmsMessageService extends HmsMessageService {
     public static final String ENABLED_EXTRA = "enabled";
 
     public static final String MESSAGE_RECEIVED_ACTION = "WolvicHmsMessageService.messageReceived";
-    public static final String NOTIFICATION_EXTRA = "notification";
+    public static final String MESSAGE_EXTRA = "message";
 
     protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
 
@@ -92,14 +92,14 @@ public class WolvicHmsMessageService extends HmsMessageService {
 
     @Override
     public void onNewToken(String token, Bundle bundle) {
-        Log.e(LOGTAG, "PushKit: new token: " + token);
+        Log.i(LOGTAG, "PushKit: new token: " + token);
 
         mToken = token;
     }
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
-        Log.e(LOGTAG, "PushKit: onMessageReceived: " + message);
+        Log.i(LOGTAG, "PushKit: onMessageReceived: " + message);
 
         if (message == null) {
             Log.e(LOGTAG, "PushKit: Received message entity is null!");
@@ -110,17 +110,18 @@ public class WolvicHmsMessageService extends HmsMessageService {
         Log.i(LOGTAG, "PushKit message: get Data: " + message.getData()
                 + "\n getFrom: " + message.getFrom()
                 + "\n getTo: " + message.getTo()
+                + "\n getNotification: " + message.getNotification()
                 + "\n getMessageId: " + message.getMessageId()
-                + "\n getSentTime: " + message.getSentTime()
-                + "\n getDataMap: " + message.getDataOfMap()
                 + "\n getMessageType: " + message.getMessageType()
+                + "\n getSentTime: " + message.getSentTime()
                 + "\n getTtl: " + message.getTtl()
+                + "\n getDataMap: " + message.getDataOfMap()
                 + "\n getToken: " + message.getToken());
 
         // notify the activity
         Intent intent = new Intent();
         intent.setAction(MESSAGE_RECEIVED_ACTION);
-        intent.putExtra(NOTIFICATION_EXTRA, message.getNotification());
+        intent.putExtra(MESSAGE_EXTRA, message);
         sendBroadcast(intent);
     }
 
@@ -132,10 +133,10 @@ public class WolvicHmsMessageService extends HmsMessageService {
 
             String token = HmsInstanceId.getInstance(this).getToken(appId, tokenScope);
 
-            Log.i(LOGTAG, "PushKit: got token: " + token);
+            Log.i(LOGTAG, "PushKit: received token: " + token);
             mToken = token;
         } catch (ApiException e) {
-            Log.i(LOGTAG, "PushKit: getToken failed, " + e);
+            Log.e(LOGTAG, "PushKit: getToken failed, " + e);
             e.printStackTrace();
         }
     }

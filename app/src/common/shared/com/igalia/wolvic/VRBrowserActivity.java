@@ -1555,11 +1555,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    protected void showIncomingMessageNotification(String message) {
-        mNavigationBar.showIncomingMessageNotification(message);
-    }
-
-    @Override
     public void addUpdateListener(@NonNull UpdateListener aUpdateListener) {
         if (!mWidgetUpdateListeners.contains(aUpdateListener)) {
             mWidgetUpdateListeners.add(aUpdateListener);

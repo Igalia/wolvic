@@ -32,7 +32,16 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
+import com.igalia.wolvic.ui.adapters.SystemNotification;
+import com.igalia.wolvic.ui.widgets.SystemNotificationsManager;
+import com.igalia.wolvic.ui.widgets.UIWidget;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.StringUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = "PlatformActivity";
@@ -67,6 +76,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.i(TAG, "PushKit: mHmsMessageBroadcastReceiver " + intent);
                 handlemHmsMessageBroadcast(intent);
             }
         };
@@ -78,6 +88,10 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             setHmsMessageServiceAutoInit(true);
         }
 
+        if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
+            Log.i(TAG, "PushKit: privacy policy is already accepted, calling getHmsMessageServiceToken");
+            getHmsMessageServiceToken();
+        }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -95,11 +109,77 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         if (!WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION.equals(intent.getAction()))
             return;
 
-        RemoteMessage.Notification notification = intent.getParcelableExtra(WolvicHmsMessageService.NOTIFICATION_EXTRA);
-        Log.i(TAG, "PushKit received notification: " + notification);
+        RemoteMessage message = (RemoteMessage) intent.getParcelableExtra(WolvicHmsMessageService.MESSAGE_EXTRA);
+        Log.i(TAG, "PushKit: received remote message");
 
-        // TODO use all the content in the incoming message's notification
-        showIncomingMessageNotification(notification.getTitle());
+        String title = null;
+        String body = null;
+        SystemNotification.Action action = null;
+
+        if (message.getNotification() != null && message.getNotification().getTitle() != null) {
+            Log.i(TAG, "PushKit: message has a Notification object");
+            // the message was already parsed into a notification object
+            RemoteMessage.Notification remoteNotification = message.getNotification();
+            title = remoteNotification.getTitle();
+            body = remoteNotification.getBody();
+
+            if (remoteNotification.getClickAction() != null) {
+                try {
+                    JSONObject actionJson = new JSONObject(remoteNotification.getClickAction());
+                    action = new SystemNotification.Action(actionJson.optInt("type"),
+                            actionJson.optString("intent"),
+                            actionJson.optString("url"),
+                            actionJson.optString("action"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            // the message data contains a JSON description
+            String dataString = message.getData();
+
+            Log.i(TAG, "PushKit: message has data: " + message.getData());
+
+            try {
+                JSONObject dataJson = new JSONObject(dataString);
+                JSONObject messageJson = dataJson.getJSONObject("message");
+
+                JSONObject notificationJson = messageJson.optJSONObject("notification");
+                if (notificationJson != null) {
+                    title = notificationJson.getString("title");
+                    body = notificationJson.getString("body");
+                }
+
+                JSONObject androidJson = messageJson.optJSONObject("android");
+                if (androidJson != null) {
+                    JSONObject androidNotificationJson = androidJson.optJSONObject("notification");
+                    if (androidNotificationJson != null) {
+                        String androidTitle = androidNotificationJson.optString("title");
+                        title = androidTitle.isEmpty() ? title : androidTitle;
+                        String androidBody = androidNotificationJson.optString("body");
+                        body = androidBody.isEmpty() ? body : androidBody;
+                        JSONObject actionJson = androidNotificationJson.getJSONObject("click_action");
+                        action = new SystemNotification.Action(actionJson.optInt("type"),
+                                actionJson.optString("intent"),
+                                actionJson.optString("url"),
+                                actionJson.optString("action"));
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "PushKit: error parsing JSON: " + e);
+                e.printStackTrace();
+            }
+        }
+
+        Log.i(TAG, "PushKit: title= " + title + " , body= " + body + " , action= " + action);
+
+        if (title != null) {
+            SystemNotification systemNotification = new SystemNotification(title, body, action, Calendar.getInstance());
+            Log.i(TAG, "PushKit: created SystemNotification: " + systemNotification);
+            // FIXME here and in a few other places we cast the current Context to WidgetManagerDelegate
+            UIWidget parentWidget = ((WidgetManagerDelegate) this).getTray();
+            SystemNotificationsManager.getInstance().show(systemNotification, parentWidget);
+        }
     }
 
     @Override
@@ -174,6 +254,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     private void setHmsMessageServiceAutoInit(boolean enabled) {
+        Log.i(TAG, "PushKit: setHmsMessageServiceAutoInit");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_AUTO_INIT);
         intent.putExtra(WolvicHmsMessageService.ENABLED_EXTRA, enabled);
@@ -181,18 +262,21 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     private void getHmsMessageServiceToken() {
+        Log.i(TAG, "PushKit: getHmsMessageServiceToken");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_GET_TOKEN);
         startService(intent);
     }
 
     private void deleteHmsMessageServiceToken() {
+        Log.i(TAG, "PushKit: deleteHmsMessageServiceToken");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_DELETE_TOKEN);
         startService(intent);
     }
 
     private void stopHmsMessageService() {
+        Log.i(TAG, "PushKit: stopHmsMessageService");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_STOP_SERVICE);
         startService(intent);
@@ -251,10 +335,6 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
-    }
-
-    protected void showIncomingMessageNotification(String message) {
-        Log.w(TAG, "showIncomingMessageNotification: not implemented");
     }
 
     protected boolean platformExit() {

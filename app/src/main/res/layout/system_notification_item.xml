@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.igalia.wolvic.ui.adapters.SystemNotification" />
+
+        <variable
+            name="callback"
+            type="com.igalia.wolvic.ui.callbacks.SystemNotificationItemCallback" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:background="@color/void_color">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/library_item_background_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{(view) -> callback.onClick(view, item)}"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@{item.title}"
+                android:textColor="@color/library_panel_title_text_color"
+                android:textSize="@dimen/library_item_title_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:paddingStart="20sp"
+                android:scrollHorizontally="true"
+                android:singleLine="false"
+                android:text="@{item.body}"
+                android:textColor="@color/library_panel_description_color"
+                android:textSize="@dimen/library_item_url_text_size" />
+
+            <TextView
+                android:id="@+id/url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:paddingStart="20sp"
+                android:scrollHorizontally="true"
+                android:singleLine="false"
+                android:text="@{(item.action != null) ? item.action.url : null}"
+                android:textColor="@color/library_panel_description_color"
+                android:textSize="@dimen/library_item_url_text_size" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:ellipsize="middle"
+                android:paddingStart="20sp"
+                android:scrollHorizontally="true"
+                android:singleLine="false"
+                android:text="@{item.receivedDate.getTime().toString()}"
+                android:textColor="@color/library_panel_description_color"
+                android:textSize="@dimen/library_item_url_text_size" />
+
+        </LinearLayout>
+    </FrameLayout>
+</layout>
