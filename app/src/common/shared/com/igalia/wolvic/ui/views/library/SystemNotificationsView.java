@@ -122,7 +122,7 @@ public class SystemNotificationsView extends LibraryView implements SystemNotifi
 
                 WindowWidget window = mWidgetManager.getFocusedWindow();
                 window.hidePanel();
-            } else if (action.getType() == SystemNotification.Action.OPEN_APP) {
+            } else if (action.getType() == SystemNotification.Action.OPEN_APP_PAGE) {
                 Intent intent;
                 if (action.getAction() == null) {
                     intent = new Intent(Intent.ACTION_MAIN);
