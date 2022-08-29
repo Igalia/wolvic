@@ -1704,4 +1704,6 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
     <string name="language_service_options_reset">重新设置语音搜索服务</string>
     <string name="settings_language_choose_language_voice_search_service_title">语音搜索服务</string>
     <string name="settings_language_choose_language_voice_search_service_description">用你首选的线上服务来进行语音搜索。</string>
+    <string name="settings_language_galician">加利西亚语</string>
+    <string name="permissions_dialog_remember_choice">记住这个决定</string>
 </resources>
