@@ -698,4 +698,6 @@
 \nhttps://wolvic.com/es/legal/privacy/ .</string>
     <string name="voice_service_metkai">MeetKai</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+    <string name="permissions_dialog_remember_choice">Lembrar esta decisión</string>
+    <string name="settings_language_galician">Galego</string>
 </resources>
