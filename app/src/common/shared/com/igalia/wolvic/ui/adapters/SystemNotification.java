@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.Objects;
 
 /**
- * Represents a system notification that will be displayed inside of Wolvic instead of,
- * for example, in Android's Notification Center.
+ * Represents a system notification that will be displayed inside of Wolvic instead of
+ * Android's Notification Center. For example, it can be used to represent push messages.
  */
 public class SystemNotification {
 
@@ -56,16 +56,16 @@ public class SystemNotification {
 
     @Override
     public String toString() {
-        return "SystemNotification{" + " mTitle='" + mTitle + " , mBody='" + mBody +
-                " , mReceivedDate=" + mReceivedDate + " , mAction=" + mAction + '}';
+        return "SystemNotification{ " + " mTitle='" + mTitle + " , mBody='" + mBody +
+                " , mReceivedDate=" + mReceivedDate + " , mAction=" + mAction + " }";
     }
 
     public static class Action {
 
-        private int mType;
-        private String mIntent;
-        private String mUrl;
-        private String mAction;
+        private final int mType;
+        private final String mIntent;
+        private final String mUrl;
+        private final String mAction;
 
         public int getType() {
             return mType;
@@ -99,6 +99,7 @@ public class SystemNotification {
             mAction = action;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "Action{ Type=" + mType + " , Intent='" + mIntent + " , Url='" + mUrl + " , Action='" + mAction + " }";

@@ -9,7 +9,6 @@ import com.igalia.wolvic.ui.adapters.SystemNotification;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,30 +21,29 @@ public class SystemNotificationsManager {
 
     private static final SystemNotificationsManager mInstance = new SystemNotificationsManager();
 
-    // TODO the system notifications should be stored until the used has dismissed them
+    // TODO notifications should be in permanent storage until the user dismisses them
     private final List<SystemNotification> mSystemNotifications = Collections.synchronizedList(new ArrayList<>());
 
     private final Set<ChangeListener> mChangeListeners = new LinkedHashSet<>();
 
+    public interface ChangeListener {
+        void onDataChanged(List<SystemNotification> newData);
+
+        void onItemAdded(int index, SystemNotification newItem);
+    }
+
     private SystemNotificationsManager() {
-        mSystemNotifications.add(new SystemNotification("TEST Notification title", "Notification body",
-                new SystemNotification.Action(SystemNotification.Action.OPEN_URL, null, "https://google.com", null),
-                Calendar.getInstance()));
-        mSystemNotifications.add(new SystemNotification("TEST Notification title 2", "Notification body 2",
-                new SystemNotification.Action(SystemNotification.Action.OPEN_URL, null, "https://reddit.com", null),
-                Calendar.getInstance()));
     }
 
     public static SystemNotificationsManager getInstance() {
         return mInstance;
     }
 
-    public void show(SystemNotification notification, UIWidget parent) {
-
-        Log.i(LOGTAG, "PushKit: show notification = " + notification + " , parent widget = " + parent);
+    public void addNewSystemNotification(SystemNotification notification, UIWidget parent) {
+        Log.i(LOGTAG, "PushKit: add system notification = " + notification + " , parent widget = " + parent);
 
         mSystemNotifications.add(0, notification);
-        notifyChangeListeners(mSystemNotifications);
+        notifyListenersItemAdded(0, notification);
 
         NotificationManager.Notification tooltipNotification = new NotificationManager.Builder(parent)
                 .withString(notification.getTitle())
@@ -61,11 +59,6 @@ public class SystemNotificationsManager {
         return mSystemNotifications;
     }
 
-    // TODO notify of individual changes to the list
-    public interface ChangeListener {
-        void onDataChanged(List<SystemNotification> newData);
-    }
-
     public void addChangeListener(@NonNull ChangeListener listener) {
         mChangeListeners.add(listener);
     }
@@ -74,9 +67,15 @@ public class SystemNotificationsManager {
         mChangeListeners.remove(listener);
     }
 
-    private void notifyChangeListeners(List<SystemNotification> newData) {
+    private void notifyListenersDataChanged(List<SystemNotification> newData) {
         for (ChangeListener listener : mChangeListeners) {
             listener.onDataChanged(newData);
+        }
+    }
+
+    private void notifyListenersItemAdded(int index, SystemNotification newItem) {
+        for (ChangeListener listener : mChangeListeners) {
+            listener.onItemAdded(index, newItem);
         }
     }
 }

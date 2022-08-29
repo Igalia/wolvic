@@ -93,20 +93,6 @@ ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('../../WolvicDevCertificate.jks')
-            storePassword 'WolvicDev'
-            keyAlias 'WolvicDev'
-            keyPassword 'WolvicDev'
-        }
-        release {
-            storeFile file('../../WolvicDevCertificate.jks')
-            storePassword 'WolvicDev'
-            keyAlias 'WolvicDev'
-            keyPassword 'WolvicDev'
-        }
-    }
     compileSdkVersion build_versions.target_sdk
     defaultConfig {
         applicationId "com.igalia.wolvic"
@@ -157,13 +143,12 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
             buildConfigField "String", "MK_API_KEY", "\"${getMKApiKey()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
-            signingConfig signingConfigs.debug
             pseudoLocalesEnabled true
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
             buildConfigField "String", "MK_API_KEY", "\"\""

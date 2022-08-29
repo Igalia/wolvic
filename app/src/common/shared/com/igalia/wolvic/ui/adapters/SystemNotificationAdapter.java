@@ -67,9 +67,9 @@ public class SystemNotificationAdapter extends RecyclerView.Adapter<RecyclerView
         notifyDataSetChanged();
     }
 
-    public void addItem(SystemNotification notification) {
-        mDisplayList.add(0, notification);
-        notifyItemInserted(0);
+    public void addItem(int index, SystemNotification notification) {
+        mDisplayList.add(index, notification);
+        notifyItemInserted(index);
     }
 
     static class SystemNotificationItemViewHolder extends RecyclerView.ViewHolder {

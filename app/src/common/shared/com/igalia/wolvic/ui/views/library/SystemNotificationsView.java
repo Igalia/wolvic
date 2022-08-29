@@ -63,9 +63,11 @@ public class SystemNotificationsView extends LibraryView implements SystemNotifi
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.system_notifications, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
+        mBinding.setNotificationsViewModel(mViewModel);
 
         mAdapter = new SystemNotificationAdapter(this);
         mBinding.notificationsList.setAdapter(mAdapter);
+        mViewModel.setIsEmpty(mAdapter.getItemCount() == 0);
 
         mBinding.executePendingBindings();
 
@@ -77,8 +79,14 @@ public class SystemNotificationsView extends LibraryView implements SystemNotifi
 
     @Override
     public void onDataChanged(List<SystemNotification> newData) {
-        if (mAdapter != null)
-            mAdapter.setItems(SystemNotificationsManager.getInstance().getSystemNotifications());
+        mAdapter.setItems(newData);
+        mViewModel.setIsEmpty(mAdapter.getItemCount() == 0);
+    }
+
+    @Override
+    public void onItemAdded(int index, SystemNotification newItem) {
+        mAdapter.addItem(index, newItem);
+        mViewModel.setIsEmpty(mAdapter.getItemCount() == 0);
     }
 
     @Override

@@ -178,7 +178,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             Log.i(TAG, "PushKit: created SystemNotification: " + systemNotification);
             // FIXME here and in a few other places we cast the current Context to WidgetManagerDelegate
             UIWidget parentWidget = ((WidgetManagerDelegate) this).getTray();
-            SystemNotificationsManager.getInstance().show(systemNotification, parentWidget);
+            SystemNotificationsManager.getInstance().addNewSystemNotification(systemNotification, parentWidget);
         }
     }
 
