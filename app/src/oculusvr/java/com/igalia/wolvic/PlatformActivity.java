@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.utils.SystemUtils;
 
-public class PlatformActivity extends NativeActivity implements PlatformSpecificBehavior {
+public class PlatformActivity extends NativeActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static boolean filterPermission(final String aPermission) {

@@ -8,7 +8,6 @@ package com.igalia.wolvic;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
@@ -20,8 +19,6 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.annotation.NonNull;
-
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hvr.LibUpdateClient;
 import com.igalia.wolvic.browser.PermissionDelegate;
@@ -32,10 +29,8 @@ import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
 
-public class PlatformActivity extends Activity implements SurfaceHolder.Callback, PlatformSpecificBehavior {
+public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
-
-    private static String HVR_INTENT_ACTION = "com.huawei.android.vr.action.MAIN";
 
     private SurfaceView mView;
     private Context mContext = null;
@@ -186,11 +181,6 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     {
         Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
-    }
-
-    @Override
-    public boolean shouldOpenInKioskMode(@NonNull Intent intent) {
-        return HVR_INTENT_ACTION.equals(intent.getAction()) && intent.getData() != null;
     }
 
     protected boolean platformExit() {

@@ -99,6 +99,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -762,6 +763,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else {
             mWindows.getFocusedWindow().loadHomeIfBlank();
         }
+    }
+
+    private boolean shouldOpenInKioskMode(@NonNull Intent intent) {
+        if (DeviceType.isHVRBuild()) {
+            // This action is specific to HVR in Virtual Reality mode.
+            // The data of the Intent points at the URL that will be opened in kiosk mode.
+            return Objects.equals(intent.getAction(), "com.huawei.android.vr.action.MAIN")
+                    && intent.getData() != null;
+        }
+        return false;
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
