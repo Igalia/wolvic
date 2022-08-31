@@ -1722,4 +1722,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="language_service_options_reset">음성 검색 서비스 설정 초기화</string>
     <string name="voice_service_metkai">MeetKai</string>
     <string name="voice_service_huawei_asr">HUAWEI 자동 음성 인식</string>
+    <string name="permissions_dialog_remember_choice">이 결정을 기억함</string>
+    <string name="settings_language_galician">갈리시아어</string>
 </resources>
