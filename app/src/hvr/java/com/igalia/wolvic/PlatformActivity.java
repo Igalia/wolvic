@@ -28,17 +28,16 @@ import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.utils.StringUtils;
-import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
-    private static final String LOGCAT = SystemUtils.createLogtag(PlatformActivity.class);
+    public static final String TAG = "PlatformActivity";
     private SurfaceView mView;
     private Context mContext = null;
     private HVRLocationManager mLocationManager;
     private Dialog mActiveDialog;
 
     static {
-        Log.i(LOGCAT, "LoadLibrary");
+        Log.i(TAG, "LoadLibrary");
     }
 
     public static boolean filterPermission(final String aPermission) {
@@ -52,7 +51,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(LOGCAT, "PlatformActivity onCreate");
+        Log.i(TAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
         mContext = this;
         mLocationManager = new HVRLocationManager(this);
@@ -116,7 +115,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         try {
             String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
             if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
-                Log.e(LOGCAT, "HVR API key is not available");
+                Log.e(TAG, "HVR API key is not available");
                 return;
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
@@ -134,7 +133,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
     @Override
     protected void onDestroy() {
-        Log.i(LOGCAT, "PlatformActivity onDestroy");
+        Log.i(TAG, "PlatformActivity onDestroy");
         super.onDestroy();
         nativeOnDestroy();
     }
@@ -142,44 +141,44 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i(LOGCAT, "PlatformActivity onStart");
+        Log.i(TAG, "PlatformActivity onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i(LOGCAT, "PlatformActivity onStop");
+        Log.i(TAG, "PlatformActivity onStop");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(LOGCAT, "PlatformActivity onPause");
+        Log.i(TAG, "PlatformActivity onPause");
         queueRunnable(this::nativeOnPause);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(LOGCAT, "PlatformActivity onResume");
+        Log.i(TAG, "PlatformActivity onResume");
         queueRunnable(this::nativeOnResume);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.e(LOGCAT, "makelele life surfaceCreated");
+        Log.e(TAG, "makelele life surfaceCreated");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(LOGCAT, "PlatformActivity surfaceChanged");
+        Log.i(TAG, "PlatformActivity surfaceChanged");
         queueRunnable(() -> nativeOnSurfaceChanged(holder.getSurface()));
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        Log.i(LOGCAT, "PlatformActivity surfaceDestroyed");
+        Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
     }
 
