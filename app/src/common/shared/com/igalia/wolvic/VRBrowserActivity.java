@@ -99,6 +99,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -471,6 +472,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
             return;
         }
+        if (shouldOpenInKioskMode(getIntent())) {
+            return;
+        }
         mWhatsNewWidget = new WhatsNewWidget(this);
         mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
         mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
@@ -745,15 +749,30 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
             int location = Windows.OPEN_IN_FOREGROUND;
 
-            if (openInWindow) {
-                location = Windows.OPEN_IN_NEW_WINDOW;
-            } else if (openInBackground) {
-                location = Windows.OPEN_IN_BACKGROUND;
+            if (shouldOpenInKioskMode(intent)) {
+                // FIXME this might not work as expected if the app was already running
+                mWindows.openInKioskMode(uri.toString());
+            } else {
+                if (openInWindow) {
+                    location = Windows.OPEN_IN_NEW_WINDOW;
+                } else if (openInBackground) {
+                    location = Windows.OPEN_IN_BACKGROUND;
+                }
+                mWindows.openNewTabAfterRestore(uri.toString(), location);
             }
-            mWindows.openNewTabAfterRestore(uri.toString(), location);
         } else {
             mWindows.getFocusedWindow().loadHomeIfBlank();
         }
+    }
+
+    private boolean shouldOpenInKioskMode(@NonNull Intent intent) {
+        if (DeviceType.isHVRBuild()) {
+            // This action is specific to HVR in Virtual Reality mode.
+            // The data of the Intent points at the URL that will be opened in kiosk mode.
+            return Objects.equals(intent.getAction(), "com.huawei.android.vr.action.MAIN")
+                    && intent.getData() != null;
+        }
+        return false;
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {

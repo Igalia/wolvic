@@ -37,6 +37,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<Windows.WindowPlacement> placement;
     private MutableLiveData<ObservableBoolean> isOnlyWindow;
     private MutableLiveData<ObservableBoolean> isFullscreen;
+    private MutableLiveData<ObservableBoolean> isKioskMode;
     private MediatorLiveData<ObservableBoolean> isTopBarVisible;
     private MutableLiveData<ObservableBoolean> isResizeMode;
     private MutableLiveData<ObservableBoolean> isPrivateSession;
@@ -86,12 +87,14 @@ public class WindowViewModel extends AndroidViewModel {
         placement = new MutableLiveData<>(Windows.WindowPlacement.FRONT);
         isOnlyWindow = new MutableLiveData<>(new ObservableBoolean(false));
         isFullscreen = new MutableLiveData<>(new ObservableBoolean(false));
+        isKioskMode = new MutableLiveData<>(new ObservableBoolean(false));
         isResizeMode = new MutableLiveData<>(new ObservableBoolean(false));
         isPrivateSession = new MutableLiveData<>(new ObservableBoolean(false));
 
         isTopBarVisible = new MediatorLiveData<>();
         isTopBarVisible.addSource(isOnlyWindow, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isFullscreen, mIsTopBarVisibleObserver);
+        isTopBarVisible.addSource(isKioskMode, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isResizeMode, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isPrivateSession, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isWindowVisible, mIsTopBarVisibleObserver);
@@ -102,6 +105,7 @@ public class WindowViewModel extends AndroidViewModel {
         showClearButton.addSource(isPrivateSession, mShowClearButtonObserver);
         showClearButton.addSource(isResizeMode, mShowClearButtonObserver);
         showClearButton.addSource(isFullscreen, mShowClearButtonObserver);
+        showClearButton.addSource(isKioskMode, mShowClearButtonObserver);
         showClearButton.addSource(isWindowVisible, mShowClearButtonObserver);
         showClearButton.setValue(new ObservableBoolean(false));
 
@@ -110,6 +114,7 @@ public class WindowViewModel extends AndroidViewModel {
 
         isTitleBarVisible = new MediatorLiveData<>();
         isTitleBarVisible.addSource(isFullscreen, mIsTitleBarVisibleObserver);
+        isTitleBarVisible.addSource(isKioskMode, mIsTitleBarVisibleObserver);
         isTitleBarVisible.addSource(isResizeMode, mIsTitleBarVisibleObserver);
         isTitleBarVisible.addSource(isActiveWindow, mIsTitleBarVisibleObserver);
         isTitleBarVisible.addSource(isWindowVisible, mIsTitleBarVisibleObserver);
@@ -174,7 +179,7 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            if (isFullscreen.getValue().get() || isResizeMode.getValue().get() || !isWindowVisible.getValue().get()) {
+            if (isFullscreen.getValue().get() || isKioskMode.getValue().get() || isResizeMode.getValue().get() || !isWindowVisible.getValue().get()) {
                 isTopBarVisible.postValue(new ObservableBoolean(false));
 
             } else {
@@ -193,14 +198,15 @@ public class WindowViewModel extends AndroidViewModel {
         public void onChanged(ObservableBoolean o) {
             showClearButton.postValue(new ObservableBoolean(isWindowVisible.getValue().get() &&
                     isPrivateSession.getValue().get() && isOnlyWindow.getValue().get() &&
-                    !isResizeMode.getValue().get() && !isFullscreen.getValue().get()));
+                    !isResizeMode.getValue().get() && !isFullscreen.getValue().get() &&
+                    !isKioskMode.getValue().get()));
         }
     };
 
     private Observer<ObservableBoolean> mIsTitleBarVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            if (isFullscreen.getValue().get() || isResizeMode.getValue().get() || isActiveWindow.getValue().get()) {
+            if (isFullscreen.getValue().get() || !isKioskMode.getValue().get() || isResizeMode.getValue().get() || isActiveWindow.getValue().get()) {
                 isTitleBarVisible.postValue(new ObservableBoolean(false));
 
             } else {
@@ -453,6 +459,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsFullscreen(boolean isFullscreen) {
         this.isFullscreen.postValue(new ObservableBoolean(isFullscreen));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsKioskMode() {
+        return isKioskMode;
+    }
+
+    public void setIsKioskMode(boolean isKioskMode) {
+        this.isKioskMode.postValue(new ObservableBoolean(isKioskMode));
     }
 
     @NonNull
