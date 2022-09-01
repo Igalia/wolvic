@@ -106,7 +106,7 @@ if(OPENXR)
                 )
     elseif (HVR)
         include_directories(
-                ${CMAKE_SOURCE_DIR}/../third_party/hvr/include
+                ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
                 ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
         add_custom_command(TARGET native-lib POST_BUILD
