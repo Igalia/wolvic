@@ -25,15 +25,10 @@ import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
-import org.chromium.weblayer.CaptureScreenShotCallback;
-import org.chromium.weblayer.NavigateParams;
-import org.chromium.weblayer.Tab;
-
 import java.util.logging.Handler;
 
 public class SessionImpl implements WSession {
     RuntimeImpl mRuntime;
-    Tab mTab;
     SettingsImpl mSettings;
     ContentDelegate mContentDelegate;
     ProgressDelegate mProgressDelegate;
@@ -48,10 +43,6 @@ public class SessionImpl implements WSession {
     DisplayImpl mDisplay;
     TextInputImpl mTextInput;
     PanZoomCrontrollerImpl mPanZoomCrontroller;
-    NavigationCallbackImpl mNavigationCallback;
-    TabCallbackImpl mTabCallback;
-    FullScreenCallbackImpl mFullScreenCallback;
-    NewTabCallbackImpl mNewTabCallback;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
@@ -59,11 +50,10 @@ public class SessionImpl implements WSession {
     }
 
 
-    public SessionImpl(@NonNull RuntimeImpl runtime, @NonNull Tab tab) {
+    public SessionImpl(@NonNull RuntimeImpl runtime) {
         mRuntime = runtime;
-        mTab = tab;
-        mSettings = new SettingsImpl(mTab.getBrowser().getProfile().isIncognito());
-        mSettings.setTab(tab);
+//        mSettings = new SettingsImpl(mTab.getBrowser().getProfile().isIncognito());
+//        mSettings.setTab(tab);
         init();
         registerCallbacks();
     }
@@ -84,6 +74,7 @@ public class SessionImpl implements WSession {
     @Override
     public void loadUri(@NonNull String uri, int flags) {
         assertSessionOpened();
+/*
         NavigateParams.Builder params = new NavigateParams.Builder()
                 .disableIntentProcessing()
                 .setShouldReplaceCurrentEntry((flags & WSession.LOAD_FLAGS_REPLACE_HISTORY) != 0);
@@ -92,12 +83,13 @@ public class SessionImpl implements WSession {
         }
 
         mTab.getNavigationController().navigate(getUriFromString(uri), params.build());
+ */
     }
 
     @Override
     public void loadData(@NonNull byte[] bytes, String mimeType) {
         assertSessionOpened();
-
+/*
         NavigateParams.Builder params = new NavigateParams.Builder()
                 .disableIntentProcessing();
 
@@ -105,18 +97,19 @@ public class SessionImpl implements WSession {
                 mimeType != null ? mimeType : "", Base64.encodeToString(bytes, Base64.NO_WRAP));
 
         mTab.getNavigationController().navigate(Uri.parse(dataUri), params.build());
+ */
     }
 
     @Override
     public void reload(int flags) {
         assertSessionOpened();
-        mTab.getNavigationController().reload();
+        //mTab.getNavigationController().reload();
     }
 
     @Override
     public void stop() {
         assertSessionOpened();
-        mTab.getNavigationController().stop();
+        //mTab.getNavigationController().stop();
     }
 
     @Override
@@ -132,33 +125,33 @@ public class SessionImpl implements WSession {
 
     @Override
     public void open(@NonNull WRuntime runtime) {
-        assert mTab == null;
+        //assert mTab == null;
         mRuntime = (RuntimeImpl) runtime;
-        mTab = mRuntime.createTab(mSettings.getUsePrivateMode());
+        //mTab = mRuntime.createTab(mSettings.getUsePrivateMode());
         registerCallbacks();
     }
 
     private void registerCallbacks() {
-        mSettings.setTab(mTab);
-        mNavigationCallback = new NavigationCallbackImpl(this);
-        mTabCallback = new TabCallbackImpl(this);
-        mFullScreenCallback = new FullScreenCallbackImpl(this);
+        //mSettings.setTab(mTab);
+//        mTabCallback = new TabCallbackImpl(this);
+//        mFullScreenCallback = new FullScreenCallbackImpl(this);
 
-        mTab.getNavigationController().registerNavigationCallback(mNavigationCallback);
-        mTab.registerTabCallback(mTabCallback);
-        mTab.setFullscreenCallback(mFullScreenCallback);
-        mTab.setNewTabCallback(mNewTabCallback);
+//        mTab.getNavigationController().registerNavigationCallback(mNavigationCallback);
+//        mTab.registerTabCallback(mTabCallback);
+//        mTab.setFullscreenCallback(mFullScreenCallback);
+//        mTab.setNewTabCallback(mNewTabCallback);
     }
 
     @Override
     public boolean isOpen() {
-        return mTab != null;
+//        return mTab != null;
+        return true;
     }
 
     @Override
     public void close() {
         assertSessionOpened();
-
+/*
         mTab.getNavigationController().unregisterNavigationCallback(mNavigationCallback);
         mTab.unregisterTabCallback(mTabCallback);
         mTab.setFullscreenCallback(null);
@@ -170,21 +163,22 @@ public class SessionImpl implements WSession {
         mTabCallback = null;
         mFullScreenCallback = null;
         mNewTabCallback = null;
+ */
     }
 
     @Override
     public void goBack(boolean userInteraction) {
-        mTab.getNavigationController().goBack();
+        //mTab.getNavigationController().goBack();
     }
 
     @Override
     public void goForward(boolean userInteraction) {
-        mTab.getNavigationController().goForward();
+        //mTab.getNavigationController().goForward();
     }
 
     @Override
     public void gotoHistoryIndex(int index) {
-        mTab.getNavigationController().goToIndex(index);
+        //mTab.getNavigationController().goToIndex(index);
     }
 
     @Override
@@ -200,19 +194,21 @@ public class SessionImpl implements WSession {
 
     @Override
     public void exitFullScreen() {
+        /*
         if (mFullScreenCallback != null) {
             mFullScreenCallback.exitFullscreen();
         }
+         */
     }
 
     @NonNull
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        assert mTab != null;
+        //assert mTab != null;
         mDisplay = new DisplayImpl(mRuntime.acquireDisplay(mSettings.getUsePrivateMode()), this);
-        mDisplay.getBrowserDisplay().getBrowser().addTab(mTab);
-        mDisplay.getBrowserDisplay().getBrowser().setActiveTab(mTab);
+        //mDisplay.getBrowserDisplay().getBrowser().addTab(mTab);
+        //mDisplay.getBrowserDisplay().getBrowser().setActiveTab(mTab);
         return mDisplay;
     }
 
@@ -386,7 +382,7 @@ public class SessionImpl implements WSession {
     }
 
     private void assertSessionOpened() {
-        assert mTab != null;
+        //assert mTab != null;
     }
 
     private boolean isAutoplayEnabled() {

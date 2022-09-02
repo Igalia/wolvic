@@ -4,10 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
-import org.chromium.weblayer.Tab;
-
 public class SettingsImpl implements WSessionSettings {
-    @Nullable Tab mTab;
     boolean mPrivateMode;
     boolean mUseTrackingProtection = true;
     boolean mSuspendMediaWhenInactive = false;
@@ -22,11 +19,11 @@ public class SettingsImpl implements WSessionSettings {
         mPrivateMode = aPrivateMode;
     }
 
-
+/*
     void setTab(Tab tab) {
         mTab = tab;
     }
-
+*/
     @Override
     public void setUseTrackingProtection(boolean value) {
         mUseTrackingProtection = value;
@@ -54,9 +51,11 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public boolean getUsePrivateMode() {
+/*
         if (mTab != null) {
             return mTab.getBrowser().getProfile().isIncognito();
         }
+ */
         return mPrivateMode;
     }
 
@@ -83,9 +82,10 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setUserAgentMode(int value) {
+        /*
         if (mTab != null) {
             mTab.setDesktopUserAgentEnabled(value == WSessionSettings.USER_AGENT_MODE_DESKTOP);
-        }
+        }*/
         mUserAgentMode = value;
     }
 
@@ -96,17 +96,20 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setViewportMode(int value) {
+        /*
         if (mTab != null) {
             mTab.setDesktopUserAgentEnabled(value == WSessionSettings.VIEWPORT_MODE_DESKTOP);
         }
+         */
         mViewportMode = value;
     }
 
     @Override
     public int getUserAgentMode() {
+        /*
         if (mTab != null) {
             return mTab.isDesktopUserAgentEnabled() ? WSessionSettings.USER_AGENT_MODE_DESKTOP : WSessionSettings.USER_AGENT_MODE_VR;
-        }
+        }*/
         return mUserAgentMode;
     }
 

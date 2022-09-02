@@ -31,17 +31,20 @@ public class DisplayImpl implements WDisplay {
         // Make sure we update the current active tab. We have an empty SessionImpl.setActive implementation
         // because in weblayer the browser window is selected from a pool. We can use the hint that
         // the session want's to be rendered into this surface to set it active too.
-        
+        /*
         if (mDisplay.getBrowser().getActiveTab() != mSession.mTab) {
             mDisplay.getBrowser().setActiveTab(mSession.mTab);
         }
+         */
         mWidth = width;
         mDisplay.surfaceChanged(surface, width, height, mFirstCompositeRunnable);
         if (!mIsFirstSurfaceChangedCall && mSurface != null && mSurface != surface) {
+            /*
             // Workaround for what it looks like a Chrome bug.
             // When Surface is a different instance from previous one, chrome doesn't render
             // correctly to it until navigation changes.
             mSession.mTab.getNavigationController().reload();
+             */
         }
         mIsFirstSurfaceChangedCall = false;
         mSurface = surface;
@@ -72,6 +75,7 @@ public class DisplayImpl implements WDisplay {
     public WResult<Bitmap> capturePixelsWithAspectPreservingSize(int width) {
         WResult<Bitmap> result = WResult.create();
         float scale = (float)width / (float)mWidth;
+        /*
         mSession.mTab.captureScreenShot(scale, (bitmap, errorCode) -> {
             if (errorCode == 0) {
                 result.complete(bitmap);
@@ -79,6 +83,7 @@ public class DisplayImpl implements WDisplay {
                 result.completeExceptionally(new RuntimeException("Error code:" + errorCode));
             }
         });
+        */
         return result;
     }
 

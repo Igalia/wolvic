@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.igalia.wolvic.browser.SettingsStore;
-import org.chromium.weblayer.Browser;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -25,7 +24,6 @@ public class BrowserDisplay extends FrameLayout {
     protected FragmentContainerView mFragmentContainer;
     protected Fragment mBrowserFragment;
     private FragmentManager mFragmentManager;
-    protected Browser mBrowser;
     protected boolean mAcquired;
     private Object mContentViewRenderViewListener;
     private Method mMethodSurfaceCreated;
@@ -70,11 +68,12 @@ public class BrowserDisplay extends FrameLayout {
         transaction.commitNow();
 
         mBrowserFragment = fragment;
-        mBrowser = Browser.fromFragment(fragment);
+        /*mBrowser = Browser.fromFragment(fragment);
         assert mBrowser != null;
 
         Point point = getDisplaySize();
         mBrowser.setMinimumSurfaceSize(point.x, point.y);
+         */
 
         overrideFragmentSurface();
     }
@@ -112,11 +111,11 @@ public class BrowserDisplay extends FrameLayout {
         field.setAccessible(true);
         return field.get(instance);
     }
-
+/*
     public Browser getBrowser() {
         return mBrowser;
     }
-
+*/
     public boolean isAcquired() {
         return mAcquired;
     }
