@@ -7,6 +7,9 @@
         <variable
             name="canGoBack"
             type="boolean" />
+        <variable
+            name="supportsSystemNotifications"
+            type="boolean" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"
@@ -48,7 +51,8 @@
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_dialog_notification"
                         android:id="@+id/notifications"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"
+                        visibleGone="@{supportsSystemNotifications}"/>
                 </LinearLayout>
             </FrameLayout>
             <RelativeLayout

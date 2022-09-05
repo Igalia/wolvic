@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -74,6 +75,7 @@ public class LibraryPanel extends FrameLayout {
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.library, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
+        mBinding.setSupportsSystemNotifications(BuildConfig.SUPPORTS_SYSTEM_NOTIFICATIONS);
         mBinding.setDelegate(new LibraryNavigationDelegate() {
             @Override
             public void onClose(@NonNull View view) {

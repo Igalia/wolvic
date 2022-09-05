@@ -114,6 +114,7 @@ android {
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -274,6 +275,7 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         hvr3dof {
@@ -290,6 +292,7 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         cn {
