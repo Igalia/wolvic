@@ -332,7 +332,8 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public void surfaceDestroyed(SurfaceHolder holder)
+    {
         Log.i(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
     }

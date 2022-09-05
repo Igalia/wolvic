@@ -55,6 +55,13 @@ def getOpenXRCMakeFlags = { ->
     return ""
 }
 
+def getHVRAppId = { ->
+    if (gradle.hasProperty("userProperties.HVR_APP_ID")) {
+        return gradle."userProperties.HVR_APP_ID"
+    }
+    return ""
+}
+
 def getHVRMLApiKey = { ->
     if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
         return gradle."userProperties.HVR_ML_API_KEY"
@@ -262,6 +269,7 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
@@ -277,6 +285,7 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
@@ -681,13 +690,5 @@ android.applicationVariants.all { variant ->
             variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         else
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
-
-        if (platform.toLowerCase().startsWith('hvr3dof') && gradle.hasProperty("userProperties.HVR_3DOF_APP_ID")) {
-            buildConfigField "String", "HVR_APP_ID", gradle."userProperties.HVR_3DOF_APP_ID"
-        } else if (gradle.hasProperty("userProperties.HVR_APP_ID")) {
-            buildConfigField "String", "HVR_APP_ID", gradle."userProperties.HVR_APP_ID"
-        } else {
-            buildConfigField "String", "HVR_APP_ID", ""
-        }
     }
 }

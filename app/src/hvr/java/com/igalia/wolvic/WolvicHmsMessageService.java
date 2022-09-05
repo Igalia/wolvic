@@ -19,6 +19,9 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 public class WolvicHmsMessageService extends HmsMessageService {
 
+    private static final String HVR_APP_ID = BuildConfig.HVR_APP_ID;
+    private static final String TOKEN_SCOPE = "HCM";
+
     public static final String COMMAND = "WolvicHmsMessageService.command";
     public static final int COMMAND_STOP_SERVICE = 1;
     public static final int COMMAND_GET_TOKEN = 2;
@@ -106,7 +109,6 @@ public class WolvicHmsMessageService extends HmsMessageService {
             return;
         }
 
-        // Obtain the message content.
         Log.i(LOGTAG, "PushKit message: get Data: " + message.getData()
                 + "\n getFrom: " + message.getFrom()
                 + "\n getTo: " + message.getTo()
@@ -128,10 +130,7 @@ public class WolvicHmsMessageService extends HmsMessageService {
     // Request a PushKit token from the server.
     private void getToken() {
         try {
-            String appId = BuildConfig.HVR_APP_ID;
-            String tokenScope = "HCM";
-
-            String token = HmsInstanceId.getInstance(this).getToken(appId, tokenScope);
+            String token = HmsInstanceId.getInstance(this).getToken(HVR_APP_ID, TOKEN_SCOPE);
 
             Log.i(LOGTAG, "PushKit: received token: " + token);
             mToken = token;
@@ -143,10 +142,7 @@ public class WolvicHmsMessageService extends HmsMessageService {
 
     private void deleteToken() {
         try {
-            String appId = BuildConfig.HVR_APP_ID;
-            String tokenScope = "HCM";
-
-            HmsInstanceId.getInstance(this).deleteToken(appId, tokenScope);
+            HmsInstanceId.getInstance(this).deleteToken(HVR_APP_ID, TOKEN_SCOPE);
 
             Log.i(LOGTAG, "PushKit: token deleted");
         } catch (ApiException e) {
