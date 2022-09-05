@@ -76,7 +76,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i(TAG, "PushKit: mHmsMessageBroadcastReceiver " + intent);
+                Log.d(TAG, "PushKit: mHmsMessageBroadcastReceiver " + intent);
                 handlemHmsMessageBroadcast(intent);
             }
         };
@@ -89,7 +89,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         }
 
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-            Log.i(TAG, "PushKit: privacy policy is already accepted, calling getHmsMessageServiceToken");
+            Log.d(TAG, "PushKit: privacy policy is already accepted, calling getHmsMessageServiceToken");
             getHmsMessageServiceToken();
         }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -109,15 +109,15 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         if (!WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION.equals(intent.getAction()))
             return;
 
-        RemoteMessage message = (RemoteMessage) intent.getParcelableExtra(WolvicHmsMessageService.MESSAGE_EXTRA);
-        Log.i(TAG, "PushKit: received remote message");
+        RemoteMessage message = intent.getParcelableExtra(WolvicHmsMessageService.MESSAGE_EXTRA);
+        Log.i(TAG, "PushKit: received remote message " + message);
 
         String title = null;
         String body = null;
         SystemNotification.Action action = null;
 
         if (message.getNotification() != null && message.getNotification().getTitle() != null) {
-            Log.i(TAG, "PushKit: message has a Notification object");
+            Log.d(TAG, "PushKit: message has a Notification object");
             // the message was already parsed into a notification object
             RemoteMessage.Notification remoteNotification = message.getNotification();
             title = remoteNotification.getTitle();
@@ -138,7 +138,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             // the message data contains a JSON description
             String dataString = message.getData();
 
-            Log.i(TAG, "PushKit: message has data: " + message.getData());
+            Log.d(TAG, "PushKit: message has data: " + message.getData());
 
             try {
                 JSONObject dataJson = new JSONObject(dataString);
@@ -171,7 +171,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             }
         }
 
-        Log.i(TAG, "PushKit: title= " + title + " , body= " + body + " , action= " + action);
+        Log.d(TAG, "PushKit: title= " + title + " , body= " + body + " , action= " + action);
 
         if (title != null) {
             SystemNotification systemNotification = new SystemNotification(title, body, action, Calendar.getInstance());
@@ -254,7 +254,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     private void setHmsMessageServiceAutoInit(boolean enabled) {
-        Log.i(TAG, "PushKit: setHmsMessageServiceAutoInit");
+        Log.d(TAG, "PushKit: setHmsMessageServiceAutoInit");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_AUTO_INIT);
         intent.putExtra(WolvicHmsMessageService.ENABLED_EXTRA, enabled);
@@ -262,21 +262,21 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     private void getHmsMessageServiceToken() {
-        Log.i(TAG, "PushKit: getHmsMessageServiceToken");
+        Log.d(TAG, "PushKit: getHmsMessageServiceToken");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_GET_TOKEN);
         startService(intent);
     }
 
     private void deleteHmsMessageServiceToken() {
-        Log.i(TAG, "PushKit: deleteHmsMessageServiceToken");
+        Log.d(TAG, "PushKit: deleteHmsMessageServiceToken");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_DELETE_TOKEN);
         startService(intent);
     }
 
     private void stopHmsMessageService() {
-        Log.i(TAG, "PushKit: stopHmsMessageService");
+        Log.d(TAG, "PushKit: stopHmsMessageService");
         Intent intent = new Intent(this, WolvicHmsMessageService.class);
         intent.putExtra(WolvicHmsMessageService.COMMAND, WolvicHmsMessageService.COMMAND_STOP_SERVICE);
         startService(intent);
