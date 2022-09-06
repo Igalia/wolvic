@@ -17,6 +17,11 @@ namespace crow {
 
     static PFN_xrGetOpenGLESGraphicsRequirementsKHR sXrGetOpenGLESGraphicsRequirementsKHR;
     static PFN_xrCreateSwapchainAndroidSurfaceKHR sXrCreateSwapchainAndroidSurfaceKHR;
+
+    // hand tracking extension prototypes
+    static PFN_xrCreateHandTrackerEXT sXrCreateHandTrackerEXT;
+    static PFN_xrDestroyHandTrackerEXT sXrDestroyHandTrackerEXT;
+    static PFN_xrLocateHandJointsEXT sXrLocateHandJointsEXT;
   private:
      static std::unordered_set<std::string> sSupportedExtensions;
   };

@@ -6,6 +6,9 @@ namespace crow {
 std::unordered_set<std::string> OpenXRExtensions::sSupportedExtensions { };
 PFN_xrGetOpenGLESGraphicsRequirementsKHR OpenXRExtensions::sXrGetOpenGLESGraphicsRequirementsKHR = nullptr;
 PFN_xrCreateSwapchainAndroidSurfaceKHR OpenXRExtensions::sXrCreateSwapchainAndroidSurfaceKHR = nullptr;
+PFN_xrCreateHandTrackerEXT OpenXRExtensions::sXrCreateHandTrackerEXT = nullptr;
+PFN_xrDestroyHandTrackerEXT OpenXRExtensions::sXrDestroyHandTrackerEXT = nullptr;
+PFN_xrLocateHandJointsEXT OpenXRExtensions::sXrLocateHandJointsEXT = nullptr;
 
 void OpenXRExtensions::Initialize() {
     uint32_t extensionCount { 0 };
@@ -30,6 +33,14 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
       CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateSwapchainAndroidSurfaceKHR",
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreateSwapchainAndroidSurfaceKHR)));
   }
+    if (IsExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME)) {
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateHandTrackerEXT",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreateHandTrackerEXT)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrDestroyHandTrackerEXT",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyHandTrackerEXT)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLocateHandJointsEXT",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&sXrLocateHandJointsEXT)));
+    }
 }
 
 bool OpenXRExtensions::IsExtensionSupported(const char* name) {
