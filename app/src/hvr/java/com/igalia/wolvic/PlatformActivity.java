@@ -43,7 +43,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public class PlatformActivity extends Activity implements SurfaceHolder.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
+public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
     public static final String TAG = "PlatformActivity";
     private SurfaceView mView;
     private Context mContext = null;
@@ -64,6 +64,20 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         return true;
     }
 
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
+            (sharedPreferences, key) -> {
+                if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
+                    if (SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
+                        Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
+                        setHmsMessageServiceAutoInit(true);
+                        getHmsMessageServiceToken();
+                    } else {
+                        Log.d(TAG, "PushKit: privacy policy is denied, calling deleteHmsMessageServiceToken");
+                        setHmsMessageServiceAutoInit(false);
+                        deleteHmsMessageServiceToken();
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,16 +98,14 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
         registerReceiver(mHmsMessageBroadcastReceiver, filter);
 
+        // We need to wait until the Privacy Policy is accepted before requesting a message token.
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
+            Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
             setHmsMessageServiceAutoInit(true);
-        }
-
-        if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-            Log.d(TAG, "PushKit: privacy policy is already accepted, calling getHmsMessageServiceToken");
             getHmsMessageServiceToken();
         }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        mPrefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
@@ -179,18 +191,6 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             // FIXME here and in a few other places we cast the current Context to WidgetManagerDelegate
             UIWidget parentWidget = ((WidgetManagerDelegate) this).getTray();
             SystemNotificationsManager.getInstance().addNewSystemNotification(systemNotification, parentWidget);
-        }
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
-            if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-                // We need to wait until the Privacy Policy is accepted to request a message token.
-                getHmsMessageServiceToken();
-            } else {
-                deleteHmsMessageServiceToken();
-            }
         }
     }
 
@@ -288,7 +288,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
 
         stopHmsMessageService();
         unregisterReceiver(mHmsMessageBroadcastReceiver);
-        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
         super.onDestroy();
         nativeOnDestroy();
