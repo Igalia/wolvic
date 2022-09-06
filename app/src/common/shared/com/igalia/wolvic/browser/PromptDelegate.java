@@ -119,6 +119,15 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
+    public WResult<PromptResponse> onFilePrompt(@NonNull final WSession session, @NonNull final WSession.PromptDelegate.FilePrompt prompt) {
+        // TODO: we don't support File dialogs yet
+        final WResult<PromptResponse> result = WResult.create();
+        result.complete(prompt.dismiss());
+        return result;
+    }
+
+    @Nullable
+    @Override
     public WResult<PromptResponse> onAlertPrompt(@NonNull WSession session, @NonNull AlertPrompt alertPrompt) {
         final WResult<PromptResponse> result = WResult.create();
 
