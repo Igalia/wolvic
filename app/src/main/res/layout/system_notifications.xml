@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="notificationsViewModel"
+            type="com.igalia.wolvic.ui.viewmodel.SystemNotificationsViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical"
+            app:visibleGone="@{!notificationsViewModel.isLoading &amp;&amp; notificationsViewModel.isEmpty}">
+
+            <ImageView
+                android:layout_width="@{notificationsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{notificationsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:src="@drawable/ic_icon_dialog_notification"
+                android:tint="@color/concrete"
+                app:srcCompat="@drawable/ic_icon_dialog_notification" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/notifications_empty"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/notifications_loading"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/notifications_loading"
+            android:textAlignment="center"
+            android:textColor="@color/fog"
+            android:visibility="gone"
+            app:visibleGone="@{notificationsViewModel.isLoading}" />
+
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
+            android:id="@+id/notifications_list"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/header"
+            android:layout_alignParentTop="true"
+            android:contentDescription="System notifications"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:visibleGone="@{!notificationsViewModel.isLoading &amp;&amp; !notificationsViewModel.isEmpty}"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+
+        <FrameLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="20dp">
+
+        </FrameLayout>
+    </RelativeLayout>
+
+</layout>

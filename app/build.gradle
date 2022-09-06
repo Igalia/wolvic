@@ -55,6 +55,13 @@ def getOpenXRCMakeFlags = { ->
     return ""
 }
 
+def getHVRAppId = { ->
+    if (gradle.hasProperty("userProperties.HVR_APP_ID")) {
+        return gradle."userProperties.HVR_APP_ID"
+    }
+    return ""
+}
+
 def getHVRMLApiKey = { ->
     if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
         return gradle."userProperties.HVR_ML_API_KEY"
@@ -107,6 +114,7 @@ android {
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -262,10 +270,12 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         hvr3dof {
@@ -277,10 +287,12 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         cn {
@@ -594,6 +606,8 @@ dependencies {
     hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
+    hvrImplementation 'com.huawei.hms:push:6.5.0.300'
+    hvr3dofImplementation 'com.huawei.hms:push:6.5.0.300'
 }
 
 if (getBackend() == 'chromium') {

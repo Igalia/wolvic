@@ -1354,6 +1354,16 @@
          and also from disk. -->
     <string name="download_context_delete">Delete</string>
 
+    <!-- This string is displayed as the title of the System Notifications List, which contains
+         the notifications received by the system (similar to Android's Notification Center). -->
+    <string name="notifications_title">Notifications</string>
+
+    <!-- This string is displayed in the System Notifications List when the list is empty. -->
+    <string name="notifications_empty">Your Notifications List is Empty</string>
+
+    <!-- This string is displayed in the System Notifications List while it is being loaded. -->
+    <string name="notifications_loading">Loading Notifications</string>
+
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Reset Display Settings</string>
 
