@@ -1,4 +1,5 @@
 #include "OpenXRInputSource.h"
+#include "OpenXRExtensions.h"
 #include <unordered_set>
 
 namespace crow {
@@ -32,6 +33,8 @@ OpenXRInputSource::~OpenXRInputSource()
         xrDestroySpace(mGripSpace);
     if (mPointerSpace != XR_NULL_HANDLE)
         xrDestroySpace(mPointerSpace);
+    if (mHandTracker != XR_NULL_HANDLE)
+        OpenXRExtensions::sXrDestroyHandTrackerEXT(mHandTracker);
 }
 
 XrResult OpenXRInputSource::Initialize()
@@ -93,6 +96,17 @@ XrResult OpenXRInputSource::Initialize()
           RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_FLOAT_INPUT, name, static_cast<OpenXRHandFlags>(item.second), axisAction));
         }
         mAxisActions.emplace(item.first, axisAction);
+    }
+
+    // Initialize hand tracking, if supported
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME) &&
+            OpenXRExtensions::sXrCreateHandTrackerEXT != nullptr) {
+        XrHandTrackerCreateInfoEXT handTrackerInfo{XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT};
+        handTrackerInfo.hand = (mHandeness == OpenXRHandFlags::Right) ? XR_HAND_RIGHT_EXT : XR_HAND_LEFT_EXT;
+        handTrackerInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
+
+        RETURN_IF_XR_FAILED(OpenXRExtensions::sXrCreateHandTrackerEXT(mSession, &handTrackerInfo,
+                                                                      &mHandTracker));
     }
 
     return XR_SUCCESS;
@@ -421,6 +435,36 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     pulseIntensity = std::max(pulseIntensity, 1.0f);
 
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
+}
+
+bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace) {
+    if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
+        return false;
+
+    // @FIXME: We currently require XR_FB_hand_tracking_aim to show beam and pointer target
+    if (!OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME))
+        return false;
+
+    mHasHandJoints = false;
+
+    // Update hand locations
+    XrHandJointsLocateInfoEXT locateInfo { XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
+    locateInfo.baseSpace = localSpace;
+    locateInfo.time = frameState.predictedDisplayTime;
+
+    mAimState.status = 0;
+    mAimState.next = XR_NULL_HANDLE;
+
+    XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
+    jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
+    jointLocations.jointLocations = mHandJoints.data();
+    jointLocations.next = &mAimState;
+
+    CHECK_XRCMD(OpenXRExtensions::sXrLocateHandJointsEXT(mHandTracker, &locateInfo, &jointLocations));
+    mHasHandJoints = jointLocations.isActive;
+    mHasAimState = (mAimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB) != 0;
+
+    return mHasHandJoints && mHasAimState;
 }
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, float offsetY, device::RenderMode renderMode, ControllerDelegate& delegate)

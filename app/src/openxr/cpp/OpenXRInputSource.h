@@ -40,6 +40,7 @@ private:
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
     XrResult stopHapticFeedback(XrAction) const;
     void UpdateHaptics(ControllerDelegate&);
+    bool GetHandTrackingInfo(const XrFrameState&, XrSpace);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -63,6 +64,11 @@ private:
     bool squeezeActionStarted { false };
     std::vector<float> axesContainer;
     crow::ElbowModelPtr elbow;
+    XrHandTrackerEXT mHandTracker { XR_NULL_HANDLE };
+    std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> mHandJoints;
+    bool mHasHandJoints { false };
+    XrHandTrackingAimStateFB mAimState { XR_TYPE_HAND_TRACKING_AIM_STATE_FB };
+    bool mHasAimState { false };
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
