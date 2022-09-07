@@ -24,12 +24,12 @@ import org.mozilla.geckoview.GeckoDisplay;
 
     @Override
     public void surfaceChanged(@NonNull Surface surface, int width, int height) {
-        mDisplay.surfaceChanged(new GeckoDisplay.SurfaceInfo.Builder(surface).size(width, height).build());
+        mDisplay.surfaceChanged(surface, width, height);
     }
 
     @Override
     public void surfaceChanged(@NonNull Surface surface, int left, int top, int width, int height) {
-        mDisplay.surfaceChanged(new GeckoDisplay.SurfaceInfo.Builder(surface).size(width, height).offset(left, top).build());
+        mDisplay.surfaceChanged(surface, left, top, width, height);
     }
 
     @Override
