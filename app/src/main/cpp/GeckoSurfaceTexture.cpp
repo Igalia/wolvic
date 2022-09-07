@@ -28,7 +28,7 @@ jmethodID sDecrementUse;
 
 const char* kClassName = "org/mozilla/gecko/gfx/GeckoSurfaceTexture";
 const char* kLookupName = "lookup";
-const char* kLookupSignature = "(J)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
+const char* kLookupSignature = "(I)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
 const char* kAttachToGLContextName = "attachToGLContext";
 const char* kAttachToGLContextSignature = "(JI)V";
 const char* kIsAttachedToGLContextName = "isAttachedToGLContext";
