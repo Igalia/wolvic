@@ -622,7 +622,7 @@ if (getBackend() == 'chromium') {
 } else {
     dependencies {
         // "nightly" or "beta" or "release"
-        def branch = "release"
+        def branch = "nightly"
         arm64Implementation deps.gecko_view."${branch}_arm64"
         x86_64Implementation deps.gecko_view."${branch}_x86_64"
     }
