@@ -162,7 +162,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public CrashReportIntent getCrashReportIntent() {
-        return new CrashReportIntent(GeckoRuntime.ACTION_CRASHED, GeckoRuntime.EXTRA_MINIDUMP_PATH, GeckoRuntime.EXTRA_EXTRAS_PATH, GeckoRuntime.EXTRA_CRASH_PROCESS_TYPE);
+        return new CrashReportIntent(GeckoRuntime.ACTION_CRASHED, GeckoRuntime.EXTRA_MINIDUMP_PATH, GeckoRuntime.EXTRA_EXTRAS_PATH, GeckoRuntime.EXTRA_CRASH_FATAL);
     }
 
     static int toGeckoColorScheme(@WRuntimeSettings.ColorScheme int flags) {
