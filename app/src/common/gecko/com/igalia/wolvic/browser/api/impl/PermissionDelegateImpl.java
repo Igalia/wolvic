@@ -114,8 +114,8 @@ class PermissionDelegateImpl implements GeckoSession.PermissionDelegate {
     private static class MediaSourceImpl extends WSession.PermissionDelegate.MediaSource {
         private MediaSource geckoMediaSource;
 
-        public MediaSourceImpl(@NonNull String id, @Nullable String name, int source, int type, MediaSource geckoMediaSource) {
-            super(id, name, source, type);
+        public MediaSourceImpl(@NonNull String id, @NonNull String rawId, @Nullable String name, int source, int type, MediaSource geckoMediaSource) {
+            super(id, rawId, name, source, type);
             this.geckoMediaSource = geckoMediaSource;
         }
     }
@@ -153,7 +153,7 @@ class PermissionDelegateImpl implements GeckoSession.PermissionDelegate {
         }
 
 
-        return new MediaSourceImpl(geckoSource.id, geckoSource.name, source, type, geckoSource);
+        return new MediaSourceImpl(geckoSource.id, geckoSource.rawId, geckoSource.name, source, type, geckoSource);
     }
 
     private static @Nullable MediaSource toGeckoMediaSource(@Nullable WSession.PermissionDelegate.MediaSource source) {

@@ -2030,6 +2030,9 @@ public interface WSession {
             /** A string giving the origin-specific source identifier. */
             public final @NonNull String id;
 
+            /** A string giving the non-origin-specific source identifier. */
+            public final @NonNull String rawId;
+
             /**
              * A string giving the name of the video source from the system (for example, "Camera 0,
              * Facing back, Orientation 90"). May be empty.
@@ -2046,8 +2049,9 @@ public interface WSession {
             /** An int giving the type of media, must be either TYPE_VIDEO or TYPE_AUDIO. */
             public final @Type int type;
 
-            public MediaSource(@NonNull String id, @Nullable String name, @Source int source, @Type int type) {
+            public MediaSource(@NonNull String id, @NonNull String rawId, @Nullable String name, @Source int source, @Type int type) {
                 this.id = id;
+                this.rawId = rawId;
                 this.name = name;
                 this.source = source;
                 this.type = type;
@@ -2056,6 +2060,7 @@ public interface WSession {
             /** Empty constructor for tests. */
             protected MediaSource() {
                 id = null;
+                rawId = null;
                 name = null;
                 source = SOURCE_CAMERA;
                 type = TYPE_VIDEO;
