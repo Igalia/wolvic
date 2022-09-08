@@ -15,7 +15,6 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WRuntime;
-import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.io.FileOutputStream;
@@ -23,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CrashReporterService extends JobIntentService {
+public abstract class CrashReporterService extends JobIntentService {
 
     private static final String LOGTAG = SystemUtils.createLogtag(CrashReporterService.class);
 
@@ -42,7 +41,7 @@ public class CrashReporterService extends JobIntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOGTAG, "onStartCommand");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            enqueueWork(this, CrashReporterService.class, JOB_ID, intent);
+            enqueueWork(this, this.getClass(), JOB_ID, intent);
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -60,10 +59,16 @@ public class CrashReporterService extends JobIntentService {
         return files;
     }
 
+    @NonNull
+    protected abstract WRuntime.CrashReportIntent createCrashReportIntent();
+
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         String action = intent.getAction();
-        WRuntime.CrashReportIntent crash = EngineProvider.INSTANCE.getOrCreateRuntime(getBaseContext()).getCrashReportIntent();
+        // We cannot use WRuntime::getCrashReportIntent() because we don't know whether the runtime
+        // is alive at this point and creating the runtime might have additional constraints (like
+        // for example, the GeckoRuntime must be created in the main thread).
+        WRuntime.CrashReportIntent crash = createCrashReportIntent();
         if (crash.action_crashed.equals(action)) {
             final int activityPid = SettingsStore.getInstance(getBaseContext()).getPid();
             boolean fatal = intent.getBooleanExtra(crash.extra_crash_fatal, false);
@@ -109,7 +114,7 @@ public class CrashReporterService extends JobIntentService {
                     }
 
                     if (!activityFound || (pidCheckCount > MAX_PID_CHECK_COUNT)) {
-                        intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
+                        intent.setClass(this, VRBrowserActivity.class);
                         intent.setPackage(BuildConfig.APPLICATION_ID);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

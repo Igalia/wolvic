@@ -13,7 +13,7 @@ import com.igalia.wolvic.browser.api.WRuntime
 import com.igalia.wolvic.browser.api.WRuntimeSettings
 import com.igalia.wolvic.browser.content.TrackingProtectionPolicy
 import com.igalia.wolvic.browser.content.TrackingProtectionStore
-import com.igalia.wolvic.crashreporting.CrashReporterService
+import com.igalia.wolvic.browser.api.impl.CrashReporterServiceImpl
 import mozilla.components.concept.fetch.Client
 
 object EngineProvider {
@@ -28,7 +28,7 @@ object EngineProvider {
             val settingsStore = SettingsStore.getInstance(context)
 
             val policy : TrackingProtectionPolicy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
-            builder.crashHandler(CrashReporterService::class.java)
+            builder.crashHandler(CrashReporterServiceImpl::class.java)
             builder.contentBlocking(
                 WContentBlocking.Settings.Builder()
                     .antiTracking(policy.antiTrackingPolicy)

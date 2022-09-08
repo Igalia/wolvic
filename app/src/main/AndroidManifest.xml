@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.igalia.wolvic.crashreporting.CrashReporterService"
+            android:name="com.igalia.wolvic.browser.api.impl.CrashReporterServiceImpl"
             android:exported="false"
             android:process=":crash"
             android:permission="android.permission.BIND_JOB_SERVICE">
