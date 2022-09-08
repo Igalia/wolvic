@@ -1614,7 +1614,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nLe contenu et les éléments qui composent l’application ont été implémentés ou conçus et développés par IGALIA sous des licences à code source ouvert, étant protégés, sans limitations, par les lois de propriété intellectuelle et industrielle du royaume d\'Espagne et par les traités et accords internationaux qui peuvent résulter de l\'application.</string>
     <string name="privacy_policy_section_3">Cette politique de confidentialité est soumise à la loi espagnole. La langue de la politique de confidentialité de cette application est l’espagnol. Pour cette raison, toute divergence éventuelle entre la version originale en espagnol et sa traduction dans une autre langue sera considérée comme prédominante dans la version espagnole qui peut être trouvée ici : https://wolvic.com/es/legal/privacy/ .</string>
-    <string name="terms_service_section_2">"Wolvic utilise des services d\'information basés sur le Web (« Services ») pour fournir certaines des fonctionnalités prévues pour votre utilisation avec cette version binaire de Wolvic, selon les conditions décrites ci-dessous.
+    <string name="terms_service_section_2">Wolvic utilise des services d\'information basés sur le Web (« Services ») pour fournir certaines des fonctionnalités prévues pour votre utilisation avec cette version binaire de Wolvic, selon les conditions décrites ci-dessous.
 \n
 \n\t- Igalia et ses contributeurs, concédants de licence et partenaires s\'efforcent de fournir les Services les plus précis et les plus à jour. Cependant, nous ne pouvons pas garantir que ces informations sont complètes et sans erreur. Par exemple, le service de navigation sécurisée peut ne pas identifier certains sites à risque et peut identifier certains sites sûrs par erreur, et dans le service de localisation, tous les emplacements retournés par nos fournisseurs de services sont uniquement des estimations et ni nous ni nos fournisseurs de services ne garantissent l\'exactitude des emplacements fournis.
 \n
@@ -1646,7 +1646,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t\t\t⁃ La navigation sécurisée est maintenant désactivée.
 \n
-\n\t\t◦  La navigation en fonction de l\'emplacement est toujours facultatif dans Wolvic. Aucune information de localisation n\'est jamais envoyée sans votre autorisation. Si vous souhaitez désactiver complètement la fonctionnalité, suivez ces étapes :
+\n\t\t◦ La navigation en fonction de l\'emplacement est toujours facultatif dans Wolvic. Aucune information de localisation n\'est jamais envoyée sans votre autorisation. Si vous souhaitez désactiver complètement la fonctionnalité, suivez ces étapes :
 \n
 \n\t\t\t⁃ Dans la barre d\'URL, tapez about:config.
 \n
@@ -1662,10 +1662,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t\t\t⁃ Sélectionnez le bouton radio « Désactivé ».
 \n
-\n\t\t\t⁃ La protection améliorée contre le pistage est maintenant désactivée."</string>
+\n\t\t\t⁃ La protection améliorée contre le pistage est maintenant désactivée.</string>
     <string name="voice_search_unsupported">La commande vocale n\'est pas supportée pour votre langue.</string>
     <string name="settings_privacy_choose_search_engine_description">Choisissez votre moteur de recherche préféré.</string>
-    <string name="external_open_uri_error_bad_uri_body">uri non valide %1$s</string>
+    <string name="external_open_uri_error_bad_uri_body">URI invalide %1$s</string>
     <string name="external_open_uri_error_no_activity_body">Aucune application trouvée pour gérer %1$s</string>
     <string name="privacy_dialog_message">Votre vie privée est important pour nous. Afin de lancer le navigateur, veuillez accepter nos conditions d\'utilisation et notre politique de vie privée. Merci d\'utiliser Wolvic !</string>
     <string name="privacy_policy_subtitle_2">Protection des données</string>
@@ -1722,4 +1722,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_galician">Galicien</string>
     <string name="permissions_dialog_remember_choice">Se souvenir de cette décision</string>
     <string name="settings_language_portuguese_br">Portugais (Brésil)</string>
+    <string name="notifications_empty">Votre liste de notifications est vide</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_loading">Chargement des notifications</string>
 </resources>
