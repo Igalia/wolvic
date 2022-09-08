@@ -2168,4 +2168,76 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
 
+    <string name="language_service_options_reset">Einstellungen des Sprachsuchdienstes zurücksetzen</string>
+    <string name="external_open_uri_error_no_activity_body">Keine Anwendung gefunden, die mit %1$s</string>
+    <string name="voice_search_unsupported">Sprachsuche wird für Ihre Sprache nicht unterstützt.</string>
+    <string name="settings_privacy_search_engine_title">Suchmaschine</string>
+    <string name="settings_privacy_choose_search_engine_reset">Einstellungen der Suchmaschine zurücksetzen</string>
+    <string name="voice_search_server_error">Die Sprachsuche ist derzeit nicht verfügbar.</string>
+    <string name="settings_privacy_choose_search_engine_description">Wählen Sie Ihre bevorzugte Suchmaschine.</string>
+    <string name="external_open_uri_error_bad_uri_body">Ungültige URI %1$s</string>
+    <string name="settings_terms_service">Nutzungsbedingungen</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Sprachsuchdienst</string>
+    <string name="language_options_voice_search_service_title">Sprachsuchdienst</string>
+    <string name="notifications_title">Benachrichtigungen</string>
+    <string name="notifications_empty">Ihre Benachrichtigungsliste ist leer</string>
+    <string name="settings_language_portuguese_br">Portugiesisch (Brasilien)</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Wählen Sie Ihren bevorzugten Online-Dienst für die Sprachsuche.</string>
+    <string name="notifications_loading">Benachrichtigungen werden geladen</string>
+    <string name="settings_language_galician">Galizisch</string>
+    <string name="external_open_uri_error_title">Fehler beim Öffnen einer externen Anwendung</string>
+    <string name="web_apps_loading">Lade Web Apps</string>
+    <string name="upload_button">Hochladen</string>
+    <string name="keyboardview_keycode_shift">Umschalttaste</string>
+    <string name="developer_options_clear_user_data_description">Alle Benutzerdaten</string>
+    <string name="privacy_dialog_message">Ihre Privatsphäre ist uns wichtig. Um den Browser nutzen zu können, akzeptieren Sie bitte unsere Nutzungsbedingungen und Datenschutzrichtlinien. Vielen Dank für die Nutzung von Wolvic!</string>
+    <string name="rCN_first_launch_confirmation_disagree">Ablehnen und Beenden</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="security_options_use_system_root_ca">Nutze vom System vertraute Root-Zertifikate</string>
+    <string name="terms_service_title">Nutzungsbedingungen</string>
+    <string name="web_apps_empty">Deine Web Apps Liste ist leer</string>
+    <string name="terms_service_subtitle_2">Wolvic web-basierte Informationsdienste</string>
+    <string name="deprecated_version_dialog_store_button">Installiere…</string>
+    <string name="web_apps_dialog_install">Installieren</string>
+    <string name="download_addon_install_cancel">Abbrechen</string>
+    <string name="web_apps_saved_notification">Web App hinzugefügt!</string>
+    <string name="addons_experimental_section_title">Experimentell</string>
+    <string name="keyboardview_keycode_cancel">Abbrechen</string>
+    <string name="privacy_policy_title">Allgemeine Datenschutzbestimmungen</string>
+    <string name="privacy_policy_subtitle_2">Datenschutz</string>
+    <string name="privacy_dialog_agree">Zustimmen</string>
+    <string name="deprecated_version_dialog_title">Support endet bald</string>
+    <string name="rCN_first_launch_agree">Zustimmen</string>
+    <string name="download_addon_install">Erweiterung installieren</string>
+    <string name="privacy_policy_subtitle_1">Allgemeine Informationen</string>
+    <string name="user_feedback_tooltip">Teile Ideen und Feedback</string>
+    <string name="deprecated_version_dialog_info_button">Erfahre mehr…</string>
+    <string name="hvr_connect_glass_message">Verbinden Sie Ihre HUAWEI VR Glass, um diese App zu nutzen</string>
+    <string name="web_apps_dialog_title_parameter">%1$s installieren</string>
+    <string name="settings_language_portuguese">Portugiesisch</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="rCN_first_launch_confirmation_agree">Zustimmen und Fortfahren</string>
+    <string name="keyboardview_keycode_delete">Entfernen</string>
+    <string name="privacy_dialog_disagree">Wolvic schließen</string>
+    <string name="voice_service_huawei_asr">Huawei automatische Spracherkennung</string>
+    <string name="clear_user_data_dialog_title">Lösche %1$s Nutzerdaten</string>
+    <string name="deprecated_version_dialog_body">Diese \"App Lab\" version von Wolvic wird bald entfernt.
+\n
+\nBitte installieren Sie die neueste Version von Wolvic aus dem Meta Store.
+\n
+\nWICHTIG: Lesezeichen und Tabs werden nur durch Sync übertragen.</string>
+    <string name="web_apps_title">Web Apps</string>
+    <string name="clear_user_data_dialog_text">%1$s wird zurückgesezt. Alle Daten, inklusive gespeicherter Anmeldungen, Historie und Lesezeichen, werden permantent gelöscht sein, sofern diese nicht synchronisiert sind. %1$s wird automatisch nach Abschluss des Zurücksetzens geschlossen. Möchten Sie fortfahren\?</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic kann nur deinen ungefähren Standort ermitteln. Dies kann in den Systemeinstellungen geändert werden.</string>
+    <string name="privacy_policy_subtitle_3">Anwendbares Recht und Originalsprache</string>
+    <string name="upload_list_empty">Keine Dateien zum Hochladen verfügbar</string>
+    <string name="rCN_first_launch_disagree">Ablehnen</string>
+    <string name="web_apps_dialog_cancel">Abbrechen</string>
+    <string name="privacy_dialog_title">Privatsphäre</string>
+    <string name="hamburger_menu_save_web_app">Speichere Web app…</string>
+    <string name="web_apps_dialog_title">Web App installieren</string>
+    <string name="tray_wifi_unavailable_ssid">SSID nicht verfügbar</string>
+    <string name="download_addon_install_confirm_install">Installieren</string>
+    <string name="voice_input_start">Was würdest du gerne eingeben\?</string>
 </resources>
