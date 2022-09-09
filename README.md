@@ -14,6 +14,10 @@ For more info on localization, how it works in the Wolvic XR project, and how to
 
 ## Setup instructions
 
+> By default Wolvic will try to download prebuilt GeckoView libraries from [Mozilla's maven repositories](https://maven.mozilla.org/maven2/org/mozilla/geckoview/?prefix=maven2/org/mozilla/geckoview/). Note that after [PR #70](https://github.com/Igalia/wolvic/pull/70) WebXR sessions won't work with those images because that PR introduced a change in the GeckoView protocol that is only available in the `wolvic_release` branch from [this repository](https://github.com/Igalia/gecko-dev/). For additional details on how to use a local GeckoView build check [this section](#dependency-substitutions)
+
+>  **UPDATE**: use `FIREFOX_103_0_2_RELEASE` instead of `wolvic_release` after [PR #256](https://github.com/Igalia/wolvic/pull/256).
+
 *Clone Wolvic.*
 
 ```bash
