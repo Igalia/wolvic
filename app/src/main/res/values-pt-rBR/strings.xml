@@ -26,7 +26,7 @@
     <string name="settings_privacy_choose_search_engine_reset">Resetar as configurações do Motor de busca</string>
     <string name="settings_privacy_choose_search_engine_description">Escolher seu Motor de busca preferido.</string>
     <string name="settings_privacy_policy_popups_title_v1">Exceções para Pop-Ups</string>
-    <string name="settings_privacy_policy_popups_description">Você pode especificar quais sites são permitidos para abrir janelas pop-up</string>
+    <string name="settings_privacy_policy_popups_description">Você pode especificar quais sites são permitidos a abrir janelas pop-up</string>
     <string name="settings_privacy_policy_webxr_title">Permissões de Realidade Virtual</string>
     <string name="pop_up_site_switch_allow">Permitir</string>
     <string name="pop_up_site_switch_block">Bloquear</string>
@@ -55,7 +55,7 @@
     <string name="addons_details_enabled">Ativado</string>
     <string name="addons_details_private_mode">Executar em navegação privada</string>
     <string name="addons_details_permissions">Permissões</string>
-    <string name="addons_download_error_dialog_title">Um erro aconteceu no download. Por favor, tente novamente.</string>
+    <string name="addons_download_error_dialog_title">Ocorreu um erro no download. Por favor, tente novamente.</string>
     <string name="addons_permissions_learn_more">Saiba mais sobre permissões</string>
     <string name="history_description">Você pode acessar seu histórico de buscas aqui</string>
     <string name="downloads_delete">Apagar Todos</string>
@@ -103,7 +103,7 @@
     <string name="history_context_remove_bookmarks">Remover do Favoritos</string>
     <string name="settings_privacy_policy_webxr_description">Os sites a seguir bloqueiam a WebXR API de acessar seu dispositivo RV.</string>
     <string name="settings_privacy_policy_webxr_empty_description">Quando você abre um site que utiliza WebXR API, você pode abrir uma janela \"dialog\" que permite bloquear WebXR naquele site.</string>
-    <string name="settings_privacy_policy_webxr_reset">Redefinir sites não permitidos acessar dispositivos RV.</string>
+    <string name="settings_privacy_policy_webxr_reset">Redefinir sites não autorizados à acessar dispositivos RV.</string>
     <string name="settings_privacy_policy_tracking_description">Você desligou proteções nestes sites.</string>
     <string name="settings_privacy_policy_tracking_reset">Redefinir as exceções de Proteção de Rastreamento Aprimorada.</string>
     <string name="settings_privacy_policy_login_exceptions_title">Exceções de Login</string>
@@ -130,8 +130,8 @@
     <string name="settings_language_traditional_chinese">Chinês (Tradicional)</string>
     <string name="settings_language_german">Alemão</string>
     <string name="settings_language_norwegian">Norueguês</string>
-    <string name="settings_language_norwegian_bokmaal">Norueguês</string>
-    <string name="settings_language_norwegian_nynorsk">Norueguês</string>
+    <string name="settings_language_norwegian_bokmaal">Norueguês Bokmål</string>
+    <string name="settings_language_norwegian_nynorsk">Norueguês Nynorsk</string>
     <string name="settings_display">Monitor</string>
     <string name="settings_report_speech_data">Relatório de Dados de Fala</string>
     <string name="settings_send_your_feedback">Envie Seu Feedback</string>
@@ -141,7 +141,7 @@
     <string name="restart_now_dialog_button">Reiniciar Agora</string>
     <string name="restart_later_dialog_button">Reiniciar Depois</string>
     <string name="settings_language_simplified_chinese">Chinês (Simplificado)</string>
-    <string name="settings_language_choose_language_webpage_content">Escolha seu idioma favorito para mostrar as páginas</string>
+    <string name="settings_language_choose_language_webpage_content">Escolha seu idioma favorito para exibir as páginas</string>
     <string name="settings_language_choose_language_voice_search_service_title">Serviço de Busca por Voz</string>
     <string name="developer_options_curved_display">Ativar Monitor Curvo</string>
     <string name="settings_language_choose_language_voice_search">Escolha seu idioma favorito para busca por voz</string>
@@ -621,7 +621,7 @@
     <string name="slow_script_dialog_action_wait">Esperar</string>
     <string name="tracking_dialog_button_disable">Desativar</string>
     <string name="whats_new_body_sub_1">A Conta Firefox também permite sincronizar favoritos e histórico em todos os seus dispositivos.</string>
-    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Firefox para enviar guias do Firefox do computador ou dispositivo móvel para o seu fone de ouvido.</string>
+    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Firefox para enviar guias do Firefox do computador ou dispositivo móvel para o seu headset.</string>
     <string name="whats_new_button_start_browsing">Iniciar navegação</string>
     <string name="popup_dialog_button_on">Ligado</string>
     <string name="webxr_permission_dialog_message">WebXR é %1$s para este site. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
@@ -697,4 +697,8 @@
 \n
 \nOs conteúdos e elementos que compõem este aplicativo foram implementados e/ou desenvolvidos pela IGALIA sob licenças open source, estando protegidos, sem limitações, pelas leis de propriedade intelectual e industrial do Reino de Espanha e pelos Tratados e Acordos internacionais que possam resultado da aplicação.</string>
     <string name="tray_status_right_controller">Controle direito: %1$s</string>
+    <string name="settings_language_portuguese_br">Português (Brasil)</string>
+    <string name="notifications_empty">Sua Lista de Notificações está Vazia</string>
+    <string name="notifications_loading">Carregando Notificações</string>
+    <string name="notifications_title">Notificações</string>
 </resources>
