@@ -1706,4 +1706,8 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
     <string name="settings_language_choose_language_voice_search_service_description">用你首选的线上服务来进行语音搜索。</string>
     <string name="settings_language_galician">加利西亚语</string>
     <string name="permissions_dialog_remember_choice">记住这个决定</string>
+    <string name="settings_language_portuguese_br">西班牙语（巴西）</string>
+    <string name="notifications_title">通知</string>
+    <string name="notifications_empty">您的通知列表是空的</string>
+    <string name="notifications_loading">加载通知中</string>
 </resources>
