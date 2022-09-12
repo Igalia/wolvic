@@ -1711,4 +1711,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permissions_dialog_remember_choice">Recordar esta decisión</string>
     <string name="settings_language_galician">Gallego</string>
     <string name="settings_language_portuguese_br">Portugués (Brasil)</string>
+    <string name="notifications_title">Notificaciones</string>
+    <string name="notifications_empty">Tu lista de notificaciones está vacía</string>
+    <string name="notifications_loading">Cargando notificaciones</string>
 </resources>
