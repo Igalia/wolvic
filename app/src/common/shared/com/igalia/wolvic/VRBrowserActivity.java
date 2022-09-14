@@ -99,7 +99,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -472,9 +471,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
             return;
         }
-        if (shouldOpenInKioskMode(getIntent())) {
-            return;
-        }
+        // TODO do not show in kiosk mode?
         mWhatsNewWidget = new WhatsNewWidget(this);
         mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
         mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
@@ -683,26 +680,44 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         }
 
-        Uri uri = intent.getData();
-
         boolean openInWindow = false;
         boolean openInBackground = false;
+        boolean openInKioskMode = false;
 
-        Bundle extras = intent.getExtras();
+        Uri dataUri = intent.getData();
+        Uri targetUri = null;
+        Bundle extras;
+
+        if (dataUri != null && dataUri.getScheme().equals("wolvic") && dataUri.getHost().equals("com.igalia.wolvic")) {
+            Log.d(LOGTAG, "Parsing custom URI from intent: " + dataUri);
+
+            extras = new Bundle();
+            Set<String> keys = dataUri.getQueryParameterNames();
+            for (String key : keys) {
+                if (key.equals("url") || key.equals("homepage"))
+                    extras.putString(key, dataUri.getQueryParameter(key));
+                else
+                    extras.putBoolean(key, Boolean.parseBoolean(dataUri.getQueryParameter(key)));
+            }
+        } else {
+            targetUri = intent.getData();
+            extras = intent.getExtras();
+        }
+
         if (extras != null) {
             // If there is no data uri and there is a url parameter we get that
-            if (uri == null && extras.containsKey("url")) {
-                uri = Uri.parse(extras.getString("url"));
+            if (extras.containsKey("url")) {
+                targetUri = Uri.parse(extras.getString("url"));
             }
             // SEND Actions received WebBrowser share dialogs
-            if (uri == null && extras.containsKey(Intent.EXTRA_TEXT)) {
+            if (targetUri == null && extras.containsKey(Intent.EXTRA_TEXT)) {
                 String text = extras.getString(Intent.EXTRA_TEXT, "");
                 int i = text.indexOf("https://");
                 if (i < 0) {
                     i = text.indexOf("http://");
                 }
                 if (i >= 0) {
-                    uri = Uri.parse(text.substring(i));
+                    targetUri = Uri.parse(text.substring(i));
                 }
             }
 
@@ -715,16 +730,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // Open the tab in background/foreground, if there is no URL provided we just open the homepage
             if (extras.containsKey("background")) {
                 openInBackground = extras.getBoolean("background", false);
-                if (uri == null) {
-                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
+                if (targetUri == null) {
+                    targetUri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
                 }
             }
 
             // Open the provided URL in a new window, if there is no URL provided we just open the homepage
             if (extras.containsKey("create_new_window")) {
                 openInWindow = extras.getBoolean("create_new_window", false);
-                if (uri == null) {
-                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
+                if (targetUri == null) {
+                    targetUri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
                 }
             }
 
@@ -741,38 +756,30 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     mWhatsNewWidget.hide(REMOVE_WIDGET);
                 }
             }
+
+            openInKioskMode = extras.getBoolean("kiosk", false);
         }
 
         // If there is a URI we open it
-        if (uri != null) {
-            Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
+        if (targetUri != null) {
+            Log.d(LOGTAG, "Loading URI from intent: " + targetUri);
 
             int location = Windows.OPEN_IN_FOREGROUND;
 
-            if (shouldOpenInKioskMode(intent)) {
+            if (openInKioskMode) {
                 // FIXME this might not work as expected if the app was already running
-                mWindows.openInKioskMode(uri.toString());
+                mWindows.openInKioskMode(targetUri.toString());
             } else {
                 if (openInWindow) {
                     location = Windows.OPEN_IN_NEW_WINDOW;
                 } else if (openInBackground) {
                     location = Windows.OPEN_IN_BACKGROUND;
                 }
-                mWindows.openNewTabAfterRestore(uri.toString(), location);
+                mWindows.openNewTabAfterRestore(targetUri.toString(), location);
             }
         } else {
             mWindows.getFocusedWindow().loadHomeIfBlank();
         }
-    }
-
-    private boolean shouldOpenInKioskMode(@NonNull Intent intent) {
-        if (DeviceType.isHVRBuild()) {
-            // This action is specific to HVR in Virtual Reality mode.
-            // The data of the Intent points at the URL that will be opened in kiosk mode.
-            return Objects.equals(intent.getAction(), "com.huawei.android.vr.action.MAIN")
-                    && intent.getData() != null;
-        }
-        return false;
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
