@@ -765,10 +765,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private boolean shouldOpenInKioskMode(@NonNull Intent intent) {
-        // The data of the Intent contains a URL that will be opened by Wolvic.
-        // Kiosk mode is the default in HVR, it will be used unless the "kiosk" extra is false.
+        // Kiosk mode is the default in the China version, it will be used unless the "kiosk" extra is false.
         // Everywhere else the default is to open a new tab, unless the "kiosk" extra is true.
-        return intent.getData() != null && intent.getBooleanExtra("kiosk", DeviceType.isHVRBuild());
+        boolean isKioskDefault = BuildConfig.FLAVOR_country.equalsIgnoreCase("cn");
+
+        // The data of the Intent contains a URL that will be opened by Wolvic.
+        return intent.getData() != null && intent.getBooleanExtra("kiosk", isKioskDefault);
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
