@@ -103,6 +103,7 @@ public class SystemNotificationsView extends LibraryView implements SystemNotifi
         }
         mAdapter.setItems(SystemNotificationsManager.getInstance().getSystemNotifications());
         SystemNotificationsManager.getInstance().addChangeListener(this);
+        mViewModel.setIsEmpty(mAdapter.getItemCount() == 0);
     }
 
     @Override
