@@ -721,7 +721,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mWidgetManager.popWorldBrightness(this);
         AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
-        mTrayViewModel.setShouldBeVisible(true);
+        // if we are in kiosk mode, don't show the tray
+        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
     }
