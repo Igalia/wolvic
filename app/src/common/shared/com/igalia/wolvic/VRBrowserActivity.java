@@ -705,8 +705,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         if (extras != null) {
-            // If there is no data uri and there is a url parameter we get that
-            if (extras.containsKey("url")) {
+            // targetUri will be null here if the data URI is empty or contains a custom URI;
+            // in that case, we will use the "url" parameter if it exists
+            if (targetUri == null && extras.containsKey("url")) {
                 targetUri = Uri.parse(extras.getString("url"));
             }
             // SEND Actions received WebBrowser share dialogs
