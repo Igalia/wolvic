@@ -694,10 +694,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             extras = new Bundle();
             Set<String> keys = dataUri.getQueryParameterNames();
             for (String key : keys) {
-                if (key.equals("url") || key.equals("homepage"))
-                    extras.putString(key, dataUri.getQueryParameter(key));
+                String queryParameter = dataUri.getQueryParameter(key);
+                if (queryParameter == null)
+                    continue;
+
+                if (key.equalsIgnoreCase("url") || key.equalsIgnoreCase("homepage"))
+                    extras.putString(key, queryParameter);
                 else
-                    extras.putBoolean(key, Boolean.parseBoolean(dataUri.getQueryParameter(key)));
+                    extras.putBoolean(key, Boolean.parseBoolean(queryParameter));
             }
         } else {
             targetUri = intent.getData();
