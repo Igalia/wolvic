@@ -199,6 +199,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
     private FragmentController mFragmentController;
+    private boolean mIsKioskMode = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -468,10 +469,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private void showWhatsNewDialogIfNeeded() {
-        if (SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
+        if (SettingsStore.getInstance(this).isWhatsNewDisplayed() || mWindows.getFocusedWindow().isKioskMode()) {
             return;
         }
-        // TODO do not show in kiosk mode?
+
         mWhatsNewWidget = new WhatsNewWidget(this);
         mWhatsNewWidget.setLoginOrigin(Accounts.LoginOrigin.NONE);
         mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
