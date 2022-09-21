@@ -1371,7 +1371,6 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(mFocusedWindow, session);
         mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         mFocusedWindow.setKioskMode(true);
-        mFocusedWindow.setIsFullScreen(true);
     }
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {
