@@ -323,6 +323,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
+        // Show the launch dialogs, if needed.
+        if (!showTermsServiceDialogIfNeeded()) {
+            if (!showPrivacyDialogIfNeeded()) {
+                showWhatsNewDialogIfNeeded();
+            }
+        }
+
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
     }
 
@@ -390,13 +397,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         attachToWindow(mWindows.getFocusedWindow(), null);
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
-
-        // Show the launch dialogs, if needed.
-        if (!showTermsServiceDialogIfNeeded()) {
-            if (!showPrivacyDialogIfNeeded()) {
-                showWhatsNewDialogIfNeeded();
-            }
-        }
 
         mWindows.restoreSessions();
     }
