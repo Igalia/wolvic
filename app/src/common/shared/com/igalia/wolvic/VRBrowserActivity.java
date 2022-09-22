@@ -761,6 +761,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             openInKioskMode = extras.getBoolean("kiosk", false);
         }
 
+        // In some variants Wolvic will always open in kiosk mode.
+        if (BuildConfig.KIOSK_MODE_ALWAYS) {
+            openInKioskMode = true;
+            if (targetUri == null)
+                targetUri = Uri.parse(getString(R.string.homepage_url));
+        }
+
         // If there is a URI we open it
         if (targetUri != null) {
             Log.d(LOGTAG, "Loading URI from intent: " + targetUri);
