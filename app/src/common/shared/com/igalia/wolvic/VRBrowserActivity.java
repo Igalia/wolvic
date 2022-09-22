@@ -699,10 +699,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     continue;
 
                 // all supported parameters are booleans, except "url"
-                if (key.equalsIgnoreCase("url"))
-                    extras.putString(key, queryParameter);
+                String lowerCaseKey = key.toLowerCase();
+                if (lowerCaseKey.equals("url"))
+                    extras.putString(lowerCaseKey, queryParameter);
                 else
-                    extras.putBoolean(key, Boolean.parseBoolean(queryParameter));
+                    extras.putBoolean(lowerCaseKey, Boolean.parseBoolean(queryParameter));
             }
         } else {
             targetUri = intent.getData();
