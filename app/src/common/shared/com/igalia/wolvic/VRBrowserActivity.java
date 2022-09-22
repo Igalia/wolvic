@@ -699,7 +699,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 if (queryParameter == null)
                     continue;
 
-                if (key.equalsIgnoreCase("url") || key.equalsIgnoreCase("homepage"))
+                // all supported parameters are booleans, except "url"
+                if (key.equalsIgnoreCase("url"))
                     extras.putString(key, queryParameter);
                 else
                     extras.putBoolean(key, Boolean.parseBoolean(queryParameter));
@@ -725,12 +726,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 if (i >= 0) {
                     targetUri = Uri.parse(text.substring(i));
                 }
-            }
-
-            // Overwrite the stored homepage
-            if (extras.containsKey("homepage")) {
-                Uri homepageUri = Uri.parse(extras.getString("homepage"));
-                SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
             }
 
             // Open the tab in background/foreground, if there is no URL provided we just open the homepage
