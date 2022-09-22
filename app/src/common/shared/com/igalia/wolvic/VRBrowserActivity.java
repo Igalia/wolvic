@@ -199,7 +199,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
     private FragmentController mFragmentController;
-    private boolean mIsKioskMode = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -764,11 +763,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // In some variants Wolvic will always open in kiosk mode.
         if (BuildConfig.KIOSK_MODE_ALWAYS) {
             openInKioskMode = true;
-            if (targetUri == null)
-                targetUri = Uri.parse(getString(R.string.homepage_url));
+            if (targetUri == null) {
+                // If we don't have a target URI we will load the default homepage in kiosk mode,
+                // unless we are already showing a website in kiosk mode.
+                WindowWidget window = mWindows.getFocusedWindow();
+                if (window == null || !window.isKioskMode() || window.isCurrentUriBlank())
+                    targetUri = Uri.parse(getString(R.string.homepage_url));
+            }
         }
 
-        // If there is a URI we open it
+        // If there is a target URI we open it
         if (targetUri != null) {
             Log.d(LOGTAG, "Loading URI from intent: " + targetUri);
 
@@ -785,8 +789,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
                 mWindows.openNewTabAfterRestore(targetUri.toString(), location);
             }
-        } else {
-            mWindows.getFocusedWindow().loadHomeIfBlank();
+        } else if (mWindows.getFocusedWindow().isCurrentUriBlank()) {
+            mWindows.getFocusedWindow().loadHome();
         }
     }
 
