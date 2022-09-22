@@ -526,12 +526,7 @@ struct DeviceDelegateOculusVR::State {
 
           controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_X, device::kImmersiveButtonA, xPressed, xTouched);
           controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, device::kImmersiveButtonB, yPressed, yTouched);
-
-          if (renderMode != device::RenderMode::Immersive) {
-            controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, yPressed, yTouched);
-          } else {
-            controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
-          }
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
         } else if (controllerState.hand == ElbowModel::HandEnum::Right) {
           const bool aPressed = (controllerState.inputState.Buttons & ovrButton_A) != 0;
           const bool aTouched = (controllerState.inputState.Touches & ovrTouch_A) != 0;
