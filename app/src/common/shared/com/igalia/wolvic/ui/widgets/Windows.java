@@ -672,6 +672,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mFocusedWindow == null) {
             return false;
         }
+        if (mFocusedWindow.getSession().isInFullScreen()) {
+            mFocusedWindow.getSession().exitFullScreen();
+            return true;
+        }
         if (mFocusedWindow.getSession().canGoBack()) {
             mFocusedWindow.getSession().goBack();
             return true;
