@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.viewmodel;
 
 import android.app.Application;
 import android.content.res.Resources;
+import android.os.Looper;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -467,7 +468,12 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsKioskMode(boolean isKioskMode) {
-        this.isKioskMode.postValue(new ObservableBoolean(isKioskMode));
+        // setValue changes the data immediately, but must be called from the main thread
+        if (Looper.getMainLooper().isCurrentThread()) {
+            this.isKioskMode.setValue(new ObservableBoolean(isKioskMode));
+        } else {
+            this.isKioskMode.postValue(new ObservableBoolean(isKioskMode));
+        }
     }
 
     @NonNull
