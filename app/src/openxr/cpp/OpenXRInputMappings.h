@@ -112,9 +112,15 @@ namespace crow {
         OpenXRHandFlags hand;
     };
 
+    enum DoF {
+        IS_3DOF,
+        IS_6DOF,
+    };
+
     struct OpenXRInputMapping {
         const char* const path { nullptr };
         const char* const systemFilter {nullptr };
+        DoF systemDoF;
         const char* const leftControllerModel { nullptr };
         const char* const rightControllerModel { nullptr };
         device::DeviceType controllerType { device::OculusQuest };
@@ -132,6 +138,7 @@ namespace crow {
     const OpenXRInputMapping OculusTouch {
         "/interaction_profiles/oculus/touch_controller",
         "Oculus Quest",
+        IS_6DOF,
         "vr_controller_oculusquest_left.obj",
         "vr_controller_oculusquest_right.obj",
         device::OculusQuest,
@@ -159,6 +166,7 @@ namespace crow {
     const OpenXRInputMapping OculusTouch2 {
             "/interaction_profiles/oculus/touch_controller",
             "Oculus Quest2",
+            IS_6DOF,
             "vr_controller_oculusquest2_left.obj",
             "vr_controller_oculusquest2_right.obj",
             device::OculusQuest2,
@@ -186,6 +194,7 @@ namespace crow {
     const OpenXRInputMapping Hvr3DOF {
             "/interaction_profiles/huawei/controller",
             "Haliday: G3HMD by Huawei",
+            IS_3DOF,
             nullptr,
             "vr_controller_focus.obj",
             device::ViveFocus,
@@ -206,6 +215,7 @@ namespace crow {
   const OpenXRInputMapping Hvr6DOF {
       "/interaction_profiles/huawei/6dof_controller",
       "Haliday: G3HMD by Huawei",
+      IS_6DOF,
       "hvr_6dof_left.obj",
       "hvr_6dof_right.obj",
       device::OculusQuest,
@@ -235,6 +245,7 @@ namespace crow {
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
             nullptr,
+            IS_3DOF,
             "vr_controller_oculusgo.obj",
             "vr_controller_oculusgo.obj",
             device::OculusGo,
@@ -248,14 +259,8 @@ namespace crow {
             },
     };
 
-#if defined(HVR_6DOF)
-#define HVR_MAPPING Hvr6DOF
-#else
-#define HVR_MAPPING Hvr3DOF
-#endif
-
-    const std::array<OpenXRInputMapping, 4> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, HVR_MAPPING, KHRSimple
+    const std::array<OpenXRInputMapping, 5> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, Hvr6DOF, Hvr3DOF, KHRSimple
     };
 
 } // namespace crow
