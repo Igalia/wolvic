@@ -469,6 +469,7 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsKioskMode(boolean isKioskMode) {
         // setValue changes the data immediately, but must be called from the main thread
+        // FIXME rework the execution flow so only postValue() is needed
         if (Looper.getMainLooper().isCurrentThread()) {
             this.isKioskMode.setValue(new ObservableBoolean(isKioskMode));
         } else {
