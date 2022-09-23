@@ -379,11 +379,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void loadHomeIfBlank() {
+    public boolean isCurrentUriBlank() {
         final String currentUri = mSession.getCurrentUri();
-        if ((currentUri == null) || currentUri.isEmpty() || UrlUtils.isBlankUri(getContext(), mSession.getCurrentUri())) {
-            loadHome();
-        }
+        return (currentUri == null) || currentUri.isEmpty() || UrlUtils.isBlankUri(getContext(), currentUri);
     }
 
     public void loadHome() {
