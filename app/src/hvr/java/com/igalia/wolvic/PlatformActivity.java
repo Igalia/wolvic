@@ -314,6 +314,17 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     }
 
     @Override
+    public void onBackPressed() {
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                System.exit(0);
+            }
+        });
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "PlatformActivity onResume");
