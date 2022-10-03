@@ -381,12 +381,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   bool Is6DOF() const {
-#if defined(HVR_6DOF)
-    // Workaround for systemProperties.trackingProperties.positionTracking always 0.
-    return true;
-#else
     return systemProperties.trackingProperties.positionTracking != 0;
-#endif
   }
 
   const XrEventDataBaseHeader* PollEvent() {
