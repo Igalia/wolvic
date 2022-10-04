@@ -399,6 +399,13 @@ struct DeviceDelegateOpenXR::State {
     return nullptr;
   }
 
+  void BeginXRSession() {
+      XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
+      sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
+      CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
+      vrReady = true;
+    }
+
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
     VRB_LOG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
         to_string(sessionState), to_string(event.state), event.session, event.time);
@@ -410,10 +417,8 @@ struct DeviceDelegateOpenXR::State {
 
     switch (sessionState) {
       case XR_SESSION_STATE_READY: {
-        XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
-        sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
-        CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
-        vrReady = true;
+        VRB_LOG("XR_SESSION_STATE_READY");
+        BeginXRSession();
         break;
       }
       case XR_SESSION_STATE_STOPPING: {
@@ -423,7 +428,6 @@ struct DeviceDelegateOpenXR::State {
       }
       case XR_SESSION_STATE_EXITING: {
         vrReady = false;
-        //exit(0);
         break;
       }
       case XR_SESSION_STATE_LOSS_PENDING: {
@@ -469,6 +473,11 @@ struct DeviceDelegateOpenXR::State {
 
     // Release input
     input = nullptr;
+
+    if (session) {
+      CHECK_XRCMD(xrDestroySession(session));
+      session = XR_NULL_HANDLE;
+    }
 
     // Shutdown OpenXR instance
     if (instance) {
@@ -1047,8 +1056,10 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   m.firstPose = std::nullopt;
 
   if (m.session != XR_NULL_HANDLE && m.graphicsBinding.context == aEGLContext.Context()) {
+    // Session already created, call begin again. This can happen for example in HVR when reentering
+    // the security zone, because HVR forces us to stop and end the session when exiting.
+    m.BeginXRSession();
     ProcessEvents();
-    // Session already created and valid.
     return;
   }
 
