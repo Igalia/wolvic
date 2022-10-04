@@ -421,16 +421,31 @@ struct DeviceDelegateOpenXR::State {
         BeginXRSession();
         break;
       }
+      case XR_SESSION_STATE_VISIBLE: {
+        VRB_LOG("XR_SESSION_STATE_VISIBLE");
+        break;
+      }
+      case XR_SESSION_STATE_FOCUSED: {
+        VRB_LOG("XR_SESSION_STATE_FOCUSED");
+        break;
+      }
+      case XR_SESSION_STATE_SYNCHRONIZED: {
+        VRB_LOG("XR_SESSION_STATE_SYNCHRONIZED");
+        break;
+      }
       case XR_SESSION_STATE_STOPPING: {
+        VRB_LOG("XR_SESSION_STATE_STOPPING");
         vrReady = false;
         CHECK_XRCMD(xrEndSession(session))
         break;
       }
       case XR_SESSION_STATE_EXITING: {
+        VRB_LOG("XR_SESSION_STATE_EXITING");
         vrReady = false;
         break;
       }
       case XR_SESSION_STATE_LOSS_PENDING: {
+        VRB_LOG("XR_SESSION_STATE_LOSS_PENDING");
         vrReady = false;
         break;
       }
