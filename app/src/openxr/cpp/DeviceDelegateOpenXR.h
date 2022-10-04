@@ -57,6 +57,7 @@ public:
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   // Custom methods for NativeActivity render loop based devices.
+  void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
   void OnDestroy();

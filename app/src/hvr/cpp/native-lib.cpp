@@ -50,6 +50,7 @@ struct AppContext {
   PlatformDeviceDelegatePtr mDevice;
   pthread_t mThreadId { 0 };
   JavaContext mJavaContext;
+  bool mShouldExitRenderThread { false };
 
   void RenderThread() {
     // Attach JNI thread
@@ -71,7 +72,7 @@ struct AppContext {
     while (true) {
       mQueue->ProcessRunnables();
 
-      if (mDevice->ShouldExitRenderLoop()) {
+      if (mDevice->ShouldExitRenderLoop() && mShouldExitRenderThread) {
         break;
       }
 
@@ -94,6 +95,7 @@ struct AppContext {
     }
 
     BrowserWorld::Instance().ShutdownJava();
+    BrowserWorld::Instance().ShutdownGL();
     BrowserWorld::Destroy();
     mEgl->Destroy();
     mEgl.reset();
@@ -122,6 +124,7 @@ JNI_METHOD(void, nativeOnCreate)
 
 JNI_METHOD(void, nativeOnDestroy)
 (JNIEnv *aEnv, jobject) {
+  sAppContext->mShouldExitRenderThread = true;
   pthread_join(sAppContext->mThreadId, nullptr);
   if (sAppContext && sAppContext->mJavaContext.activity) {
     aEnv->DeleteGlobalRef(sAppContext->mJavaContext.activity);
@@ -161,10 +164,7 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)
 (JNIEnv *aEnv, jobject) {
-  if (sAppContext && sAppContext->mDevice) {
-    sAppContext->mDevice->LeaveVR();
-    BrowserWorld::Instance().ShutdownGL();
-  }
+  sAppContext->mDevice->LeaveVR();
 }
 
 
