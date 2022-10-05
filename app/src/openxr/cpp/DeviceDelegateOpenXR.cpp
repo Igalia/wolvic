@@ -381,7 +381,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   bool Is6DOF() const {
-    return systemProperties.trackingProperties.positionTracking != 0;
+    return systemProperties.trackingProperties.positionTracking == XR_TRUE;
   }
 
   const XrEventDataBaseHeader* PollEvent() {
@@ -687,10 +687,12 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   }
 
   vrb::Matrix head = XrPoseToMatrix(location.pose);
-  #if defined(HVR_6DOF)
+#if HVR
+  if (m.Is6DOF()) {
     // Convert from floor to local (HVR doesn't support stageSpace yet)
     head.TranslateInPlace(vrb::Vector(-m.firstPose->position.x, -m.firstPose->position.y, -m.firstPose->position.z));
-  #endif
+  }
+#endif
 
   if (m.renderMode == device::RenderMode::StandAlone) {
     head.TranslateInPlace(kAverageHeight);
@@ -716,11 +718,15 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
       xrLocateSpace(m.localSpace, m.stageSpace, m.predictedDisplayTime, &stageLocation);
       vrb::Matrix transform = XrPoseToMatrix(stageLocation.pose);
       m.immersiveDisplay->SetSittingToStandingTransform(transform);
-#if HVR_6DOF
+#if HVR
       // Workaround for empty stage transform bug in HVR
-      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(vrb::Vector(0.0f, m.firstPose->position.y, 0.0f)));
-#elif HVR
-      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
+      if (m.Is6DOF()) {
+          m.immersiveDisplay->SetSittingToStandingTransform(
+                  vrb::Matrix::Translation(vrb::Vector(0.0f, m.firstPose->position.y, 0.0f)));
+      } else {
+          m.immersiveDisplay->SetSittingToStandingTransform(
+                  vrb::Matrix::Translation(kAverageHeight));
+      }
 #endif
     }
 
