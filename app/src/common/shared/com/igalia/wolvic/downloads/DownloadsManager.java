@@ -132,17 +132,15 @@ public class DownloadsManager {
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(false);
-//        Log.d("HARI00","Inside startDownload Download Manager"+job);
+        Log.d("HARI00","Inside startDownload Download Manager"+job);
         //Code runs till here.
 //        Log.d("HARI1",job.getOutputPath());
-        //.getOutputPath is not working.
+        //.getOutputPath is not working i think.
         Log.d("HARI2",String.valueOf(job));
         Log.d("HARI3",Environment.DIRECTORY_DOWNLOADS);
-        if (job.getOutputPath() == null) {
+        if (job.getOutputPath()==null) {
             try {
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
-                Log.d("HARI33","try block");
-                Log.d("HARI333",job.getFilename().toString());
                 //dont use this job.filename()
                 //instead give it a
                 //should job.getFilename() work?
@@ -153,10 +151,11 @@ public class DownloadsManager {
                 return;
             }
         } else {
-            Log.d("HARI44",job.getOutputPath().toString());
+//            Log.d("HARI44",job.getOutputPath().toString());
             request.setDestinationUri(Uri.parse("file://" + job.getOutputPath()));
-            Log.d("HARI444","else block"+job.getOutputPath());
             Log.d("HARI5","else block"+request);
+            Log.d("HARI444","else block"+job.getOutputPath());
+
         }
 
         if (mDownloadManager != null) {
