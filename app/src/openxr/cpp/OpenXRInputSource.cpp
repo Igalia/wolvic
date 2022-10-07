@@ -226,9 +226,8 @@ std::optional<XrVector2f> OpenXRInputSource::GetAxis(OpenXRAxisType axisType) co
       axis.x = 0;
       axis.y = 0;
     }
-#ifdef HVR_6DOF
-    axis.y = -axis.y;
-#endif
+    if (mSystemProperties.trackingProperties.positionTracking == XR_TRUE)
+        axis.y = -axis.y;
 #endif
 
     return axis;
