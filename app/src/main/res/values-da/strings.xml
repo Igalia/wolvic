@@ -1624,4 +1624,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="language_options_voice_search_service_title">Stemmesøgningstjeneste</string>
     <string name="settings_language_galician">Galicisk</string>
     <string name="permissions_dialog_remember_choice">Husk denne beslutning</string>
+    <string name="settings_language_portuguese_br">Portugisisk (Brasilien)</string>
 </resources>

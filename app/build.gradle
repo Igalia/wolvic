@@ -55,6 +55,13 @@ def getOpenXRCMakeFlags = { ->
     return ""
 }
 
+def getHVRAppId = { ->
+    if (gradle.hasProperty("userProperties.HVR_APP_ID")) {
+        return gradle."userProperties.HVR_APP_ID"
+    }
+    return ""
+}
+
 def getHVRMLApiKey = { ->
     if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
         return gradle."userProperties.HVR_ML_API_KEY"
@@ -98,8 +105,8 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 46
-        versionName "1.0.2"
+        versionCode 50
+        versionName "1.1.1"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
@@ -107,6 +114,8 @@ android {
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
+        buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -262,10 +271,12 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         hvr3dof {
@@ -277,15 +288,18 @@ android {
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
+            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
 
         cn {
             dimension "country"
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
+            buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "true"
         }
 
         world {
@@ -594,6 +608,8 @@ dependencies {
     hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
+    hvrImplementation 'com.huawei.hms:push:6.5.0.300'
+    hvr3dofImplementation 'com.huawei.hms:push:6.5.0.300'
 }
 
 if (getBackend() == 'chromium') {
@@ -607,7 +623,7 @@ if (getBackend() == 'chromium') {
     }
 } else {
     dependencies {
-        // "nightly" or "beta" or "release"
+        // "nightly" or "beta"
         def branch = "nightly"
         arm64Implementation deps.gecko_view."${branch}_arm64"
         x86_64Implementation deps.gecko_view."${branch}_x86_64"

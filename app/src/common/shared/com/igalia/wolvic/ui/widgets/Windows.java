@@ -147,13 +147,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private DownloadsManager mDownloadsManager;
     private ConnectivityReceiver mConnectivityReceived;
 
-    @IntDef(value = { NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS})
+    @IntDef(value = {NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS, NOTIFICATIONS})
     public @interface PanelType {}
     public static final int NONE = 0;
     public static final int BOOKMARKS = 1;
     public static final int HISTORY = 2;
     public static final int DOWNLOADS = 3;
     public static final int ADDONS = 4;
+    public static final int NOTIFICATIONS = 5;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -670,6 +671,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public boolean handleBack() {
         if (mFocusedWindow == null) {
             return false;
+        }
+        if (mFocusedWindow.getSession().isInFullScreen()) {
+            mFocusedWindow.getSession().exitFullScreen();
+            return true;
         }
         if (mFocusedWindow.getSession().canGoBack()) {
             mFocusedWindow.getSession().goBack();
@@ -1370,7 +1375,6 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(mFocusedWindow, session);
         mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         mFocusedWindow.setKioskMode(true);
-        mFocusedWindow.setIsFullScreen(true);
     }
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {

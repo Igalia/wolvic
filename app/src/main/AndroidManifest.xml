@@ -39,6 +39,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data
+                    android:scheme="wolvic"
+                    android:host="com.igalia.wolvic" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

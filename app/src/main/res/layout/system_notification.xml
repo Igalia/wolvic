@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/library_notification_background">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/tooltip_default_padding_v"
+                android:paddingStart="@dimen/tooltip_default_padding_h"
+                android:paddingEnd="@dimen/tooltip_default_padding_h">
+
+                <TextView
+                    android:id="@+id/tooltipText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/ic_icon_dialog_notification"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@color/smoke"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:shadowColor="@color/asphalt_blur"
+                    android:shadowDx="2.0"
+                    android:shadowDy="2.0"
+                    android:shadowRadius="0.5"
+                    android:singleLine="true"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/tooltip_default_text_size"
+                    android:textStyle="bold"
+                    android:typeface="sans"
+                    tools:text="Library Notification" />
+            </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
+</merge>

@@ -1017,7 +1017,7 @@
     <string name="privacy_options_saved_login_delete">Удалить</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking"><![CDATA[Улучшенная защита от отслеживания. (<a href="%1$s">Подробнее</a>)]]></string>
+    <string name="privacy_options_tracking">Улучшенная защита от отслеживания. (&lt;a href=%1$s&gt;Подробнее&lt;/a&gt;)</string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Дополнительно</string>
@@ -1605,4 +1605,35 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_choose_language_voice_search_service_description">Выберите предпочитаемый онлайн-сервис для голосового поиска.</string>
     <string name="voice_search_server_error">Голосовой поиск в настоящее время недоступен.</string>
     <string name="privacy_dialog_message">Ваша конфиденциальность важна для нас. Для того чтобы запустить браузер, пожалуйста, примите наши условия обслуживания и политику конфиденциальности. Спасибо за использование Wolvic!</string>
+    <string name="settings_language_portuguese_br">Португальский (Бразилия)</string>
+    <string name="notifications_title">Уведомления</string>
+    <string name="external_open_uri_error_title">Ошибка запуска стороннего приложения</string>
+    <string name="terms_service_section_1">Wolvic — это свободное и открытое ПО, созданное сообществом из тысяч разработчиков со всего мира. Вот некоторые сведения, которые могут быть вам полезны:
+\n
+\n\t• Wolvic распространяется по лицензии Mozilla Public License. Вы можете использовать Wolvic, копировать его и передавать другим пользователям. Вы также можете дорабатывать исходный код Wolvic, как пожелаете. Лицензия Mozilla Public License также даёт вам право публиковать ваши изменения.
+\n
+\n\t• Вы не получаете прав или лицензий на использование торговых марок Igalia и других участников, в том числе названия или логотипа Wolvic.
+\n
+\n\t• Некоторые функции Wolvic, такие как сбор информации об авариях, дают вам возможность обратной связи с компанией Igalia. Отправляя отчёт, вы разрешаете Igalia воспользоваться полученной информацией, чтобы улучшить продукт и/или опубликовать анонимизированный отзыв о продукте.
+\n
+\n\t• Использование вашей персональной информации и данных, полученных в виде обратной связи, регулируется политикой конфиденциальности Wolvic.
+\n
+\n\t• Некоторые функции Wolvic используют сторонние информационные ресурсы. Мы не можем гарантировать, что они не содержат ошибок и на 100% точны. Более подробную информацию об этих ресурсах, а также как их отключить, вы можете узнать в условиях использования (ниже).</string>
+    <string name="hvr_enter_vr">Войти в VR</string>
+    <string name="settings_privacy_search_engine_title">Поисковая система</string>
+    <string name="privacy_dialog_agree">Согласиться</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException при вызове intent для %1$s</string>
+    <string name="external_open_uri_error_no_activity_body">Не найдено приложение для обработки %1$s</string>
+    <string name="settings_privacy_choose_search_engine_reset">Сбросить настройки поисковой системы</string>
+    <string name="settings_language_choose_language_voice_search_service_title">Служба голосового поиска</string>
+    <string name="terms_service_subtitle_2">Информационные веб-службы Wolvic</string>
+    <string name="settings_language_galician">Галисийский</string>
+    <string name="language_options_voice_search_service_title">Служба голосового поиска</string>
+    <string name="language_service_options_reset">Сбросить настройки службы голосового поиска</string>
+    <string name="external_open_uri_error_bad_uri_body">Неверный uri %1$s</string>
+    <string name="hvr_connect_glass_message">Подключите ваш HUAWEI VR Glass для использования этого приложения</string>
+    <string name="notifications_empty">Список уведомлений пуст</string>
+    <string name="notifications_loading">Загрузка уведомлений</string>
+    <string name="terms_service_title">Условия обслуживания</string>
+    <string name="terms_service_section_2"></string>
 </resources>

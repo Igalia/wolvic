@@ -465,15 +465,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     device::CapabilityFlags flags = device::Orientation;
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
 
-#ifdef HVR_6DOF
-    const bool positionTracked = true;
-    // The HVR OpenXR SDK incorrectly returns the same value for aim and grip poses, we have to workaround it in the meantime.
-    // As it actually always return the grip pose we have to generate the aim pose from it.
-    pointerTransform.PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 4));
-#else
     const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
-#endif
-
     if (positionTracked) {
       if (renderMode == device::RenderMode::StandAlone) {
         pointerTransform.TranslateInPlace(kAverageHeight);

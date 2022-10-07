@@ -128,7 +128,7 @@
     <string name="keyboard_enter_label">ENTER</string>
     <string name="keyboard_go_label">IR</string>
     <string name="keyboard_search_label">BUSCAR</string>
-    <string name="keyboard_space_label">espacio</string>
+    <string name="keyboard_space_label">espazo</string>
     <string name="permission_allow">Permitir</string>
     <string name="permission_reject">Non permitir</string>
     <string name="permission_enable">Habilitar</string>
@@ -496,21 +496,21 @@
     <string name="privacy_policy_title">Política de privacidade xeral</string>
     <string name="terms_service_section_2">Wolvic usa servizos web (\"Servizos\") para proporcionar algunhas das funcionalidades incluídas para o seu uso nesta versión binaria de Wolvic, baixo os termos descritos a continuación.
 \n
-\n\t• Igalia e os seus colaboradores, licenciadores e socios traballan para proporcionar Servizos o máis precisos e actualizados posible. Porén, non podemos garantir que esta información sexa completa e libre de erros. Por exemplo, o Servizo de navegación segura pode non identificar algunha das páxinas webs perigosas, e pode identificar algunhas páxinas seguras como perigosas por erro, e no Servizo de localización todas as localizacións proporcionadas polos nosos proveedores son estimacións e nin nós nin os nosos proveedores do serrvizo garantimos a precisión das localizacións proporcionadas.
+\n\t• Igalia e os seus colaboradores, licenciadores e socios traballan para proporcionar Servizos o máis precisos e actualizados posible. Porén, non podemos garantir que esta información sexa completa e libre de erros. Por exemplo, o Servizo de navegación segura pode non identificar algunha das páxinas webs perigosas, e pode identificar algunhas páxinas seguras como perigosas por erro, e no Servizo de localización todas as localizacións proporcionadas polos nosos provedores son estimacións e nin nós nin os nosos provedores do serrvizo garantimos a precisión das localizacións proporcionadas.
 \n
 \n\t• Igalia resérvase o dereito a eliminar ou cambiar os Servizos á súa discreción.
 \n
-\n\t• Igalia pon a disposición estes Servizos coa versión adxunta de Wolvic, e garante dereitos de uso. Igalia e os seus licenciadores resérvanse todos os demais dereitos sobre os Servizos. Estes termos non pretenden limitar ningún dereito que proporcionen licencias open source que se podan aplicar a Wolvic e o seu código fonte.
+\n\t• Igalia pon a disposición estes Servizos coa versión adxunta de Wolvic, e garante dereitos de uso. Igalia e os seus licenciadores resérvanse todos os demais dereitos sobre os Servizos. Estes termos non pretenden limitar ningún dereito que proporcionen licencias open source que se poidan aplicar a Wolvic e o seu código fonte.
 \n
 \n\t• Os servizos proporciónanse \"tal e como están\". Igalia, os seus contribuidores, licenciadores e distribuidores, non proporcionan ningunha garantía, incluídas sen limitacións, garantías que os Servizos son axeitados para os propósitos particulares de cada usuario. O usuario asume todo o risco ao seleccionar os Servizos para os obxectivos concretos, en canto á calidade e rendemento dos mesmos.
 \n
-\n\t• Salvo se fose requerido por lei, Igalia, os contribuidores, licenciadores e distribuidores, non serán responsables de ningún dano indirecto, especial, incidental, consecuente, punitivo ou exemplar que xurda ou estea relacionado de algún xeito co uso de Wolvic e os Servizos. En calquera caso, a responsabilidade colectiva baixo estes termos non excederá os 500 USD (quinientos dólares). Algunhas xurisdiccións non permiten a exclusión ou limitación de certos danos, polo que é posible que esta exclusión e limitación non lle afecte.
+\n\t• Salvo se fose requirido por lei, Igalia, os contribuidores, licenciadores e distribuidores, non serán responsables de ningún dano indirecto, especial, incidental, consecuente, punitivo ou exemplar que xurda ou estea relacionado de algún xeito co uso de Wolvic e os Servizos. En calquera caso, a responsabilidade colectiva baixo estes termos non excederá os 500 USD (cincocentos dólares). Algunhas xurisdicións non permiten a exclusión ou limitación de certos danos, polo que é posible que esta exclusión e limitación non lle afecte.
 \n
-\n\t• Igalia poderá actualizar estos termos á súa discreción en calquera momento. En calquera caso, estes termos non poderán ser modificados ou cancelados sen o consentimento por escrito de Igalia.
+\n\t• Igalia poderá actualizar estes termos á súa discreción en calquera momento. En calquera caso, estes termos non poderán ser modificados ou cancelados sen o consentimento por escrito de Igalia.
 \n
-\n\t• Estes termos ríxense polas leis de España, excluíndo disposicións en materia de conflictos de leis. Se algunha parte destes termos é considerada inválida ou inaplicable por un xuíz, as partes restantes permanecerán en pleno vigor e efecto. En caso de conflicto entre unha versión traducida destes termos e a versión en español, prevalecerá a versión en español.
+\n\t• Estes termos réxense polas leis de España, excluíndo disposicións en materia de conflitos de leis. Se algunha parte destes termos é considerada inválida ou inaplicable por un xuíz, as partes restantes permanecerán en pleno vigor e efecto. En caso de conflito entre unha versión traducida destes termos e a versión en español, prevalecerá a versión en español.
 \n
-\n\t• No caso de que vostede non desexe utilizar un ou máis dos Servizos disponibles ou os termos anteriores sexan inaceptables para vostede, lembrámoslle que é posible desactivar certas funcións ou algúns dos Servizos. A continuación, explicamos como desactivar unha función ou servizo en concreto. É posible desactivar outras funcións ou servizos usando as preferencias da aplicación.
+\n\t• No caso de que vostede non desexe utilizar un ou máis dos Servizos dispoñibles ou os termos anteriores sexan inaceptables para vostede, lembrámoslle que é posible desactivar certas funcións ou algúns dos Servizos. A continuación, explicamos como desactivar unha función ou servizo en concreto. É posible desactivar outras funcións ou servizos usando as preferencias da aplicación.
 \n
 \n\t\t◦ A navegación segura está activada por defecto. Desactivala non é recomendado porque pode que se acceda a sitios non seguros. Se desexa desactivar esa función por completo, siga estes pasos:
 \n
@@ -532,7 +532,7 @@
 \n
 \n\t\t\t⁃ Escriba geo.enabled
 \n
-\n\t\t\t⁃ Faga doble click en geo.enabled
+\n\t\t\t⁃ Faga dobre click en geo.enabled
 \n
 \n\t\t\t⁃ A navegación con localización está agora desactivada
 \n
@@ -547,38 +547,40 @@
 \n\t\t\t⁃ Enhanced Tracking Protection is now disabled.</string>
     <string name="privacy_policy_subtitle_1">Información xeral</string>
     <string name="privacy_policy_subtitle_2">Protección de datos</string>
-    <string name="privacy_policy_section_2">IGALIA is committed to complying with the legal provisions regarding the protection of personal data: Regulation (EU) 2016/679 of the European Parliament and of the Council of 27th April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data and repealing Directive 95/46/EC (General Data Protection Regulation) and in the Organic Law 3/2018, of December 5, on Data Protection and Guarantee of Digital Rights (LOPDGDD).
-\nIGALIA does not collect personal data in such a way that the user can be identified. Therefore, you can use the application, consult and browse the virtual reality environment without revealing your identity or providing personal data to IGALIA, either directly or indirectly; therefore, IGALIA will not be liable for any the data that is entered in WOLVIC.
-\nThe only data and information that IGALIA will obtain for the use of this application, which at no time will be individually linked to the user, are the following:
+    <string name="privacy_policy_section_2">IGALIA está comprometida co cumprimento das provisións legais en relación coa protección de datos persoais: Regulación (EU) 2016/679 do Parlamento Europeo e do Consello do 27th April 2016 da protección das persoas físicas con respecto ao procesamento de datos persoais e á libre circulación dos mesmos (RGPD) e na Lei Orgánica 3/2018, de 5 de decembro, de protección de datos e garantía dos dereitos dixitais (LOPDGDD).
 \n
-\n\t• Analytical, purely statistical, and non-identifying data.
-\n\t• In order to capture and translate the voice into text, the user’s sound data is sent to the servers owned by the third party company responsible for each platform, through an API for this purpose: for example, in Oculus, from Facebook, a service that sends it to Oculus Voice SDK. At no time is the aforementioned data processed, accessed, or incorporated into the servers owned by IGALIA. The data transmitted will be the exclusive responsibility of the third party companies that own each platform (hereinafter, the Third Parties), which may be located outside the European Union and subject to a legal regime that is less protective of user privacy. We recommend that you carefully read the privacy policy and terms of use of each of these external platforms before accepting and using their services. IGALIA will not be directly or indirectly responsible for the processing of personal data by said Third Parties.
-\n\t• Geographic location information maybe be obtained from the browser, instead of the one used by the system. However, in order to do so, you must set the location permissions of your device through a specific notice in this regard and IGALIA will in no way link the aforementioned information to you as an identified or identifiable person, although the Third Parties mentioned in the previous point could do so, if applicable. We recommend you to pay attention to their legal terms.
-\n\t• IGALIA will not access or store, in any way, the addresses or URLs visited by you.
-\n\t• Integration with Cloud services (such as Firefox Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
+\nIGALIA non recolle datos persoais de maneira que o usuario poida ser identificado. Polo tanto, vostede pode usar a aplicación, consultar e navegar o entorno de realidade virtual sen revelar a súa identidade ou proporcionar datos persoais a IGALIA, nin directa nin indirectamente; polo tanto IGALIA non será responsable de ningún dos datos introducidos en WOLVIC.
 \n
-\nWe remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
+\nOs únicos datos e información que IGALIA obterá do uso da aplicación, os cales non poderán ser utilizados en ningún momento para identificar ao usuario, son os seguintes:
+\n
+\n\t• Datos analíticos, puramente estatísticos e non identificativos.
+\n\t• Para capturar e traducir a voz en texto, os datos de son do usuario son transferidos a servidores propiedade da compañía responsable de cada plataforma, a través da API para este propósito: por exemplo, en Oculus, de Facebook, un servizo que o envía ao SDK de voz de Oculus. En ningún momento, os datos mencionados son procesados, accedidos ou incorporados a servidores propiedade de IGALIA. Os datos transmitidos serán responsabilidade exclusiva das compañías que posúen cada plataforma (de aquí en diante, Terceiras Partes), que poden estar localizadas fora da Unión Europea e suxeitas a un réxime legar menos protector da privacidade do usuario. Recomendámoslle que lea con coidade a política de privacidade e os termos de uso de cada unha destas plataformas externas antes de aceptar e usar os seus servizos. IGALIA non será directa nin indirectamente responsable do procesamento dos datos persoais por estas Terceiras Partes.
+\n\t• A información de localización xeográfica podería obterse dende o navegador, en lugar da usada polo sistema. No entanto, para facer isto, debe configurar os permisos de localización do seu dispositivo cun aviso específico neste sentido e IGALIA non enlazará en ningún momento esta información a vostede como persoa identificada ou identificable, aínda que as Terceiras Partes mencionadas no punto anterior poderían facelo, se é aplicable. Recomendámoslle que preste atención aos seus termos legais.
+\n\t• IGALIA non accederá nin almacenará, de ningún modo, os enderezos ou URLs que visite.
+\n\t• A integración con servizos cloud (como Firefox Accounts ou Google Accounts) para sincronizar datos como o historial de busca ou os seus marcadores podería ser posible. Neste caso, IGALIA non accederá ou procesará ningunha información de ningún modo, e tampouco a transmitirá a través dos servidores de IGALIA.
+\n
+\nRecordámoslle de novo que as plataformas de Terceiras Partes ás que vostede acceda ou use con esta aplicación poderían recoller estes ou outros datos identificativos de seu, ben proporcionándoos de maneira voluntaria ou involuntaria, consciente ou inconscientemente, posiblemente fora do alcance da lexislación de protección de datos Europea. Polo tanto, recomendámoslle que se informe e preste especial atención aos termos legais de ditas Terceiras Partes, como por exemplo, as seguintes:
 \n
 \n\t• Google: https://policies.google.com/privacy
 \n\t• Facebook: https://www.facebook.com/about/privacy/update
 \n\t• MeetKai: https://meetkai.com/privacy
 \n
-\nLikewise, IGALIA informs you that while using the voice recognition option of the browser, Meetkai will keep totally anonymized voice transcriptions of your voice with the purposes of improving the service provided by them. Your voice will not be kept or will be any way to connect the transcriptions with your identity. More information about MeetKai privacy policy in the following link: https://meetkai.com/es/privacy. Igalia neither has any interest in linking transcriptions with any user nor in affecting their privacy; consequently, Igalia requests that no personal or confidential information of any kind is included in their sound voice addresses.
-\nIn any case, IGALIA guarantees to the interested parties the exercise of the rights of access, rectification, deletion, opposition, limitation of treatment, and portability, regarding their personal data.
-\nFor such purposes, IGALIA has established an internal protocol/procedure to carry them out.
-\nInterested parties can exercise their rights are as follows: by sending a request to IGALIA’s physical address: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: “Data Protection”; or, to the following email address: info@igalia.com.
-\nIn both cases, the interested party must attach a copy of their national ID, passport, or identification document to prove their identity.
-\nThe Data Protection Officer or the department entrusted with the management of the rights will record the exercises of rights in the form, available for this purpose, in which the following data will be recorded:
+\nAsí mesmo, IGALIA infórmalle de que mentres utilice a opción de recoñecemento de voz do navegador, Meetkai manterá transcricións de voz totalmente anónimas da súa voz coa finalidade de mellorar o servizo que prestan. A súa voz non se conservará nin haberá ningún xeito de conectar as transcricións coa súa identidade. Máis información sobre a política de privacidade de MeetKai na seguinte ligazón: https://meetkai.com/es/privacy. Igalia nin ten interese en vincular transcricións con ningún usuario nin en afectar á súa privacidade; en consecuencia, Igalia solicita que non se inclúa información persoal ou confidencial de ningún tipo nos seus enderezos de voz sonora.
+\nEn todo caso, IGALIA garante aos interesados o exercicio dos dereitos de acceso, rectificación, supresión, oposición, limitación do tratamento e portabilidade, respecto dos seus datos persoais.
+\nPara tales efectos, IGALIA estableceu un protocolo/procedemento interno para levalos a cabo.
+\nAs partes interesadas poden exercer os seus dereitos como segue: mediante o envío dunha solicitude ao enderezo físico de IGALIA: rúa Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referencia: “Protección de datos”; ou ben, ao seguinte enderezo de correo electrónico: info@igalia.com.
+\nEn ambos os casos, o interesado deberá achegar copia do seu DNI, pasaporte ou documento identificativo que acredite a súa identidade.
+\nO Delegado de Protección de Datos ou o departamento encargado da xestión dos dereitos rexistrarán os exercicios dos dereitos no formulario, dispoñible para o efecto, no que se recollerán os seguintes datos:
 \n
-\n\t• Application number: a number will be assigned to each of the received applications.
-\n\t• Headquarters: if the person in charge has several headquarters, the headquarters where the request was received will be stated.
-\n\t• Channel to file claims: the channel through which the request was received will be indicated: physical mail address, mail, etc.
-\n\t• Filing date: the date when the request has been filed will be indicated.
-\n\t• Exercised rights: the type of right the person exercised.
-\n\t• Response day: the day on which the response was sent to the interested party.
+\n\t• Número de solicitude: asignarase un número a cada unha das solicitudes recibidas.
+\n\t• Sede: se o responsable ten varias sedes, farase constar a sede onde se recibiu a solicitude.
+\n\t• Canle para presentar reclamacións: indicarase a canle pola que se recibiu a solicitude: enderezo físico, correo, etc.
+\n\t• Data de presentación: indicarase a data na que se presentou a solicitude.
+\n\t• Dereitos exercidos: o tipo de dereito que exerceu a persoa.
+\n\t• Día da resposta: o día no que se enviou a resposta á parte interesada.
 \n
-\nThe supporting documentation (receipt of request/response, communications, etc.) will be archived for the purpose of proving its correct management.
-\nLikewise, you are reminded that you have the right to file a claim with the Spanish Data Protection Agency.</string>
+\nArquivarase a documentación xustificativa (recibo de solicitude/resposta, comunicacións, etc.) co fin de acreditar a súa correcta xestión.
+\nAsí mesmo, lémbraselle que ten dereito a presentar unha reclamación ante a Axencia Española de Protección de Datos.</string>
     <string name="settings_language_choose_language_voice_search_service_description">Escolla o seu servizo online preferido para busca por voz.</string>
     <string name="settings_language_choose_language_voice_search_description">Escolla o seu idioma preferido para busca por voz.</string>
     <string name="settings_language_choose_language_content_title">Idiomas preferidos para amosar páxinas web</string>
@@ -610,9 +612,9 @@
     <string name="developer_options_environments">Contorna</string>
     <string name="developer_options_env_void">Void</string>
     <string name="developer_options_env_offworld">Offworld</string>
-    <string name="developer_options_env_underwater">Underwater</string>
-    <string name="developer_options_env_winter">Winter</string>
-    <string name="developer_options_env_cave">Cave</string>
+    <string name="developer_options_env_underwater">Submarino</string>
+    <string name="developer_options_env_winter">Inverno</string>
+    <string name="developer_options_env_cave">Caverna</string>
     <string name="developer_options_pointer_color">Cor do punteiro</string>
     <string name="fxa_account_options_sync_description">Escolla que sincronizar nos seus dispositivos usando Firefox</string>
     <string name="fxa_account_options_reset">Restablecer</string>
@@ -628,8 +630,8 @@
     <string name="crash_dialog_heading">Tivemos un problema e pechouse a aplicación</string>
     <string name="brightness_mode_tooltip">Brillo</string>
     <string name="brightness_mode_void">Void</string>
-    <string name="video_mode_180_left_right">Stereo 180 Left to Right</string>
-    <string name="video_mode_180_top_bottom">Stereo 180 Top to Bottom</string>
+    <string name="video_mode_180_left_right">Estéreo 180 de Esquerda a Dereita</string>
+    <string name="video_mode_180_top_bottom">Estéreo 180 de Arriba a Abaixo</string>
     <string name="video_controls_unmute">Deixar de silenciar</string>
     <string name="video_controls_seek_forward">Avanzar +%1$s segundos</string>
     <string name="video_controls_seek_backward">Retroceder -%1$s segundos</string>
@@ -697,7 +699,11 @@
     <string name="privacy_policy_section_3">Esta política de privacidade está suxeita á lei española. O idioma de aplicación desta política de privacidade é o español. Por esta razón, ante calquera posible diferencia entre o orixinal en Español e as traduccións a outros idiomas será considerada prevalente a versión en español que pode atoparse aquí:
 \nhttps://wolvic.com/es/legal/privacy/ .</string>
     <string name="voice_service_metkai">MeetKai</string>
-    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+    <string name="voice_service_huawei_asr">Recoñecemento de voz automático de Huawei</string>
     <string name="permissions_dialog_remember_choice">Lembrar esta decisión</string>
     <string name="settings_language_galician">Galego</string>
+    <string name="settings_language_portuguese_br">Portugués (Brasil)</string>
+    <string name="notifications_title">Notificacións</string>
+    <string name="notifications_empty">A túa lista de notificacións está baleira</string>
+    <string name="notifications_loading">Cargando notificacións</string>
 </resources>
