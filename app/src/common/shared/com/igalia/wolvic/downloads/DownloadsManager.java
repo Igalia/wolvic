@@ -116,6 +116,7 @@ public class DownloadsManager {
             try {
                 //Changed the line to PublicDir, and added some permissions.
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
