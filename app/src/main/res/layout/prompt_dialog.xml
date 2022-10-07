@@ -126,9 +126,9 @@
                 android:background="@drawable/dialog_highlighted_button_background"
                 android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
-                tools:text="Accept"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:text="Accept" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>

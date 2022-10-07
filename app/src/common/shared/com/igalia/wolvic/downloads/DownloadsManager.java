@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 
 public class DownloadsManager {
 
@@ -103,23 +106,57 @@ public class DownloadsManager {
         }
 
         Uri url = Uri.parse(job.getUri());
+//        Log.d("HARI0","Inside StartDownloads url is : "+url);
         DownloadManager.Request request = new DownloadManager.Request(url);
+
+//        request.setDestinationUri()
+//        https://developer.android.com/reference/android/app/DownloadManager.Request#setDestinationUri(android.net.Uri)
+//        request.setDestinationInExternalPublicDir()
+//        might be useful = https://stackoverflow.com/questions/16749845/android-download-manager-setdestinationinexternalfilesdir
+//        int buildVersion = Build.VERSION.SDK_INT;
+//        if(buildVersion < Build.VERSION_CODES.Q){
+//            if(readWritePermissionCheck()){
+//            }
+//            else{
+//                readWritePermissionRequest();
+//            }
+//        }
+//        request.setDestinationInExternalFilesDir(this,filePath, outputFileName);
+//        Did you test that code? As it cannot work. filePath should be no full path but only a folder. You are supplying a full path.
+//found from stackoverflow this post = https://stackoverflow.com/questions/68585815/using-download-manager-in-andorid-11-and-the-impact-of-scoped-storage
+
+//        >>This stackoverflow site is really really useful the comment section is tbh
+
         request.setTitle(job.getTitle());
         request.setDescription(job.getDescription());
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(false);
-
+//        Log.d("HARI00","Inside startDownload Download Manager"+job);
+        //Code runs till here.
+//        Log.d("HARI1",job.getOutputPath());
+        //.getOutputPath is not working.
+        Log.d("HARI2",String.valueOf(job));
+        Log.d("HARI3",Environment.DIRECTORY_DOWNLOADS);
         if (job.getOutputPath() == null) {
             try {
-                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+                Log.d("HARI33","try block");
+                Log.d("HARI333",job.getFilename().toString());
+                //dont use this job.filename()
+                //instead give it a
+                //should job.getFilename() work?
             } catch (IllegalStateException e) {
                 e.printStackTrace();
+                Log.d("HARI4","catch block");
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
                 return;
             }
         } else {
+            Log.d("HARI44",job.getOutputPath().toString());
             request.setDestinationUri(Uri.parse("file://" + job.getOutputPath()));
+            Log.d("HARI444","else block"+job.getOutputPath());
+            Log.d("HARI5","else block"+request);
         }
 
         if (mDownloadManager != null) {
@@ -133,6 +170,10 @@ public class DownloadsManager {
             scheduleUpdates();
         }
     }
+
+//    private boolean readWritePermissionCheck() {
+//        boolean result =
+//    }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {
         Download download = getDownload(downloadId);
