@@ -24,6 +24,9 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.huawei.hms.analytics.HiAnalytics;
+import com.huawei.hms.analytics.HiAnalyticsInstance;
+import com.huawei.hms.analytics.HiAnalyticsTools;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hvr.LibUpdateClient;
@@ -86,6 +89,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         mContext = this;
         mLocationManager = new HVRLocationManager(this);
         PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
+
+        // Enable analytics
+        HiAnalyticsTools.enableLog();
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -236,11 +244,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     private void initializeAGConnect() {
         try {
             String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
-            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_API_KEY)) {
                 Log.e(TAG, "HVR API key is not available");
                 return;
             }
-            MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
+            MLApplication.getInstance().setApiKey(BuildConfig.HVR_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
             try {
                 SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);

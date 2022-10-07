@@ -62,15 +62,15 @@ def getHVRAppId = { ->
     return ""
 }
 
-def getHVRMLApiKey = { ->
-    if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
-        return gradle."userProperties.HVR_ML_API_KEY"
+def getHVRApiKey = { ->
+    if (gradle.hasProperty("userProperties.HVR_API_KEY")) {
+        return gradle."userProperties.HVR_API_KEY"
     }
     return ""
 }
 
 def getHVRMLSpeechServices = { ->
-    if (getHVRMLApiKey().isEmpty()) {
+    if (getHVRApiKey().isEmpty()) {
         return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
     } else {
         return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI, " +
@@ -272,7 +272,7 @@ android {
                 }
             }
             buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
-            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
+            buildConfigField "String", "HVR_API_KEY", "\"${getHVRApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
@@ -289,7 +289,7 @@ android {
                 }
             }
             buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
-            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
+            buildConfigField "String", "HVR_API_KEY", "\"${getHVRApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
