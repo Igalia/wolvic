@@ -52,6 +52,10 @@ XrResult OpenXRInputSource::Initialize()
       if (mapping.systemFilter && strcmp(mapping.systemFilter, mSystemProperties.systemName) != 0) {
         continue;
       }
+      bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
+      bool mappingIs6DoF = mapping.systemDoF == DoF::IS_6DOF;
+      if (mappingIs6DoF != systemIs6DoF)
+          continue;
       mMappings.push_back(mapping);
     }
 
