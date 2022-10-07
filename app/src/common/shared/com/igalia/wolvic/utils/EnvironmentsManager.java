@@ -127,9 +127,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
             if (!isDownloading) {
                 // If the env is not being downloaded, start downloading it
-                Log.d("HARI1","EnvironmentsManager"+"PAth");
                 DownloadJob job = DownloadJob.create(environment.getPayload());
-                Log.d("HARI1", String.valueOf(job));
                 mDownloadManager.startDownload(job);
             }
         }
