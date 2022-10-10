@@ -24,6 +24,9 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.huawei.hms.analytics.HiAnalytics;
+import com.huawei.hms.analytics.HiAnalyticsInstance;
+import com.huawei.hms.analytics.HiAnalyticsTools;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hvr.LibUpdateClient;
@@ -86,6 +89,13 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         mContext = this;
         mLocationManager = new HVRLocationManager(this);
         PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
+
+        // Enable analytics
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+            HiAnalyticsTools.enableLog();
+        }
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
+        instance.setUserProfile("userKey", BuildConfig.HVR_ML_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
