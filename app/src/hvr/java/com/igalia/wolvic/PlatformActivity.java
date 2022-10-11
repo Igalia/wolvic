@@ -95,7 +95,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             HiAnalyticsTools.enableLog();
         }
         HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
-        instance.setUserProfile("userKey", BuildConfig.HVR_ML_API_KEY);
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -246,11 +246,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     private void initializeAGConnect() {
         try {
             String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
-            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_API_KEY)) {
                 Log.e(TAG, "HVR API key is not available");
                 return;
             }
-            MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
+            MLApplication.getInstance().setApiKey(BuildConfig.HVR_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
             try {
                 SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
