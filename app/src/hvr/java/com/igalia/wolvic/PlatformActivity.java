@@ -95,7 +95,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             HiAnalyticsTools.enableLog();
         }
         HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
-        instance.setUserProfile("userKey", BuildConfig.HVR_ML_API_KEY);
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
