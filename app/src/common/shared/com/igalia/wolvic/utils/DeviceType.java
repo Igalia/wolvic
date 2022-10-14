@@ -8,7 +8,7 @@ import com.igalia.wolvic.BuildConfig;
 
 public class DeviceType {
     // These values need to match those in Device.h
-    @IntDef(value = { Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3 })
+    @IntDef(value = {Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3, HVR3DoF, HVR6DoF})
     public @interface Type {}
     public static final int Unknown = 0;
     public static final int OculusGo = 1;
@@ -19,6 +19,10 @@ public class DeviceType {
     public static final int PicoG2 = 7;
     public static final int PicoNeo3 = 8;
     public static final int OculusQuest2 = 9;
+
+    // These values are not present in Device.h yet but are needed for the WebXR UI
+    public static final int HVR3DoF = 10;
+    public static final int HVR6DoF = 11;
 
     private static @Type int mType = Unknown;
 
