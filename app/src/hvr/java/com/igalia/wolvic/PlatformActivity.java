@@ -67,6 +67,10 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
@@ -369,6 +373,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected native void nativeOnResume();
     protected native void nativeOnSurfaceChanged(Surface surface);
     protected native void nativeOnSurfaceDestroyed();
+    protected static native boolean nativeIsPositionTrackingSupported();
 }
 
 

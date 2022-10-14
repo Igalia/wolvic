@@ -185,7 +185,15 @@ JNI_METHOD(jboolean, platformExit)
   return (jboolean) false;
 }
 
-jint JNI_OnLoad(JavaVM* aVm, void*) {
+JNI_METHOD(jboolean, nativeIsPositionTrackingSupported)
+(JNIEnv *, jclass) {
+  if (sAppContext && sAppContext->mDevice) {
+    return (jboolean) sAppContext->mDevice->IsPositionTrackingSupported();
+  }
+  return (jboolean) false;
+}
+
+jint JNI_OnLoad(JavaVM *aVm, void *) {
   if (sAppContext) {
     return JNI_VERSION_1_6;
   }

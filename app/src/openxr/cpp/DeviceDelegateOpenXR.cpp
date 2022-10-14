@@ -380,10 +380,6 @@ struct DeviceDelegateOpenXR::State {
     boundSwapChain->BindFBO(aTarget);
   }
 
-  bool Is6DOF() const {
-    return systemProperties.trackingProperties.positionTracking == XR_TRUE;
-  }
-
   const XrEventDataBaseHeader* PollEvent() {
     if (!instance) {
       return nullptr;
@@ -578,6 +574,12 @@ DeviceDelegateOpenXR::GetControllerModelName(const int32_t aModelIndex) const {
   return m.input->GetControllerModelName(aModelIndex);
 }
 
+bool
+DeviceDelegateOpenXR::IsPositionTrackingSupported() const {
+  // returns true for 6DoF controllers
+  return m.systemProperties.trackingProperties.positionTracking == XR_TRUE;
+}
+
 void
 DeviceDelegateOpenXR::OnControllersReady(const std::function<void()>& callback) {
   if (m.input && m.input->AreControllersReady()) {
@@ -688,7 +690,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
 
   vrb::Matrix head = XrPoseToMatrix(location.pose);
 #if HVR
-  if (m.Is6DOF()) {
+  if (IsPositionTrackingSupported()) {
     // Convert from floor to local (HVR doesn't support stageSpace yet)
     head.TranslateInPlace(vrb::Vector(-m.firstPose->position.x, -m.firstPose->position.y, -m.firstPose->position.z));
   }
@@ -706,7 +708,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     device::CapabilityFlags caps =
         device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession;
     if (location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
-      caps |= m.Is6DOF() ? device::Position : device::PositionEmulated;
+      caps |= IsPositionTrackingSupported() ? device::Position : device::PositionEmulated;
     }
 
     // Update WebXR room scale transform if the device supports stage space
@@ -720,7 +722,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
       m.immersiveDisplay->SetSittingToStandingTransform(transform);
 #if HVR
       // Workaround for empty stage transform bug in HVR
-      if (m.Is6DOF()) {
+      if (IsPositionTrackingSupported()) {
           m.immersiveDisplay->SetSittingToStandingTransform(
                   vrb::Matrix::Translation(vrb::Vector(0.0f, m.firstPose->position.y, 0.0f)));
       } else {
