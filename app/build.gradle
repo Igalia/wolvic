@@ -110,7 +110,6 @@ android {
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
-        buildConfigField "int", "MSAA_LEVEL", "1"
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
@@ -274,7 +273,6 @@ android {
             buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
             buildConfigField "String", "HVR_API_KEY", "\"${getHVRApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
-            buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
