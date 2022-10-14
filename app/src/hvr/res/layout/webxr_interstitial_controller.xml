@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="com.igalia.wolvic.utils.DeviceType"/>
@@ -15,6 +17,97 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#00000000"
         android:padding="5dp">
+
+        <!-- 6 DoF Left Controller -->
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="130dp"
+            app:visibleGone="@{model == DeviceType.HVR6DoF &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_hvr6dof_left"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="59dp"
+                android:layout_marginRight="55dp"
+                android:scaleY="-1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="100dp"
+                android:text="@string/webxr_interstitial_exit_webxr"
+                android:textAlignment="textEnd"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
+        </RelativeLayout>
+
+        <!-- 6 DoF Right Controller -->
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/controller_hvr6dof_right"
+            app:visibleGone="@{model == DeviceType.HVR6DoF &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
+            tools:ignore="RtlHardcoded"
+            tools:visibility="gone" />
+
+        <!-- 3 DoF Controller -->
+        <RelativeLayout
+            android:layout_width="250dp"
+            android:layout_height="120dp"
+            app:visibleGone="@{model == DeviceType.HVR3DoF }"
+            tools:visibility="gone">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_hvr3dof"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="60dp"
+                android:paddingRight="60dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="20dp"
+                android:paddingRight="160dp"
+                android:text="@string/webxr_interstitial_exit_webxr"
+                android:textAlignment="textEnd"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
+        </RelativeLayout>
+
     </FrameLayout>
 </layout>

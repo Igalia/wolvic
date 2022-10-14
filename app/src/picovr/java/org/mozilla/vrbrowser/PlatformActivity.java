@@ -66,6 +66,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         return event.getKeyCode() != CONFIRM_BUTTON;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        // Dummy implementation.
+        return true;
+    }
+
     private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

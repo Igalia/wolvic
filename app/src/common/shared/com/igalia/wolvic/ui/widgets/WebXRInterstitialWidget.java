@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.igalia.wolvic.PlatformActivity;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.WebxrInterstitialBinding;
@@ -101,6 +102,13 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         } else if (deviceType == DeviceType.PicoNeo3) {
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_RIGHT);
+        } else if (DeviceType.isHVRBuild()) {
+            if (PlatformActivity.isPositionTrackingSupported()) {
+                addController(DeviceType.HVR6DoF, WebXRInterstitialController.HAND_LEFT);
+                addController(DeviceType.HVR6DoF, WebXRInterstitialController.HAND_RIGHT);
+            } else {
+                addController(DeviceType.HVR3DoF, WebXRInterstitialController.HAND_NONE);
+            }
         }
         for (UIWidget controller: mControllers) {
             controller.getPlacement().parentHandle = getHandle();
