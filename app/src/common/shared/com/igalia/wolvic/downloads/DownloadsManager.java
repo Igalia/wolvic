@@ -25,7 +25,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-
 public class DownloadsManager {
 
     private static final String LOGTAG = DownloadsManager.class.getSimpleName();
@@ -112,14 +111,10 @@ public class DownloadsManager {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(false);
 
-        if (job.getOutputPath()==null) {
+        if (job.getOutputPath() == null) {
             try {
-                //Changed the line to PublicDir, and added some permissions.
-                //the file gets stored in Downloads, but, we cannot open it from within wolvic.
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
-                //Can see downloaded files in app using this line
                 // :request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
-                //but then the file wont get stored in Downloads.
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());

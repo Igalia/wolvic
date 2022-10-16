@@ -1580,8 +1580,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mWidgetManager.updateWidget(this);
         }
     }
-    //TODO() Remove this comment later
-    //Downloads
+
     public void startDownload(@NonNull DownloadJob downloadJob, boolean showConfirmDialog) {
         if (showConfirmDialog) {
             mWidgetManager.getFocusedWindow().showConfirmPrompt(

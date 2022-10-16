@@ -16,7 +16,7 @@
 
     <permission android:name="${applicationId}.CRASH_RECEIVER_PERMISSION"
                 android:protectionLevel="signature"/>
-<!--    android:requestLegacyExternalStorage="true" Not needed since we are not changing-->
+
     <application
         android:name="com.igalia.wolvic.VRBrowserApplication"
         android:allowBackup="true"
