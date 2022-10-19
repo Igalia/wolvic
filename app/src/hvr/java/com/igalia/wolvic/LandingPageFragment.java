@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,15 +34,27 @@ public class LandingPageFragment extends Fragment {
 
         WebView webView = view.findViewById(R.id.web_view);
 
-        // wolvic.com links will be opened in this WebView and outside links will be opened in the default browser
+        // Links to wolvic.com will be opened in this Web view, "mailto" links will launch the email app
+        // and all other links will be opened in the default browser.
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String host = request.getUrl().getHost();
+                if (request == null || request.getUrl() == null) {
+                    return true;
+                }
+
+                Uri url = request.getUrl();
+                if (url.getScheme() != null && url.getScheme().equalsIgnoreCase("mailto")) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, url);
+                    startActivity(Intent.createChooser(emailIntent, null));
+                    return true;
+                }
+
+                String host = url.getHost();
                 if (Stream.of(WOLVIC_HOSTS).anyMatch(host::equalsIgnoreCase)) {
                     return false;
                 } else {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, url);
                     startActivity(browserIntent);
                     return true;
                 }
