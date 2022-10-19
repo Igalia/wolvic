@@ -29,6 +29,10 @@ public class PlatformActivity extends NativeActivity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"in onCreate");
@@ -91,4 +95,5 @@ public class PlatformActivity extends NativeActivity {
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
+    protected static native boolean nativeIsPositionTrackingSupported();
 }

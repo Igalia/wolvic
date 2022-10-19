@@ -66,6 +66,10 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         return event.getKeyCode() != CONFIRM_BUTTON;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -430,4 +434,5 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
     protected native void nativeRecenter();
     protected native void queueRunnable(Runnable aRunnable);
+    protected static native boolean nativeIsPositionTrackingSupported();
 }

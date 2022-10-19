@@ -29,6 +29,10 @@ public class PlatformActivity extends VRActivity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     public PlatformActivity() {}
 
     @Override
@@ -52,4 +56,5 @@ public class PlatformActivity extends VRActivity {
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native void initializeJava(AssetManager aAssets);
+    protected static native boolean nativeIsPositionTrackingSupported();
 }

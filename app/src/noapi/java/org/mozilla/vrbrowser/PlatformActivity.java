@@ -36,6 +36,10 @@ public class PlatformActivity extends Activity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     private GLSurfaceView mView;
     private TextView mFrameRate;
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();
@@ -295,4 +299,5 @@ public class PlatformActivity extends Activity {
     private native void rotatePitch(float aPitch);
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void controllerButtonPressed(boolean aDown);
+    protected static native boolean nativeIsPositionTrackingSupported();
 }
