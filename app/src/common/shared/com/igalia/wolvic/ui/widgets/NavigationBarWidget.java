@@ -692,7 +692,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mWidgetManager.addWidget(mBrightnessWidget);
         }
         closeFloatingMenus();
-        mWidgetManager.pushWorldBrightness(mBrightnessWidget, mBrightnessWidget.getSelectedBrightness());
     }
 
     private void exitFullScreenMode() {
@@ -724,7 +723,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         // if we are in kiosk mode, don't show the tray
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
-        mWidgetManager.popWorldBrightness(mBrightnessWidget);
     }
 
     private void enterResizeMode() {

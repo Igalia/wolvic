@@ -35,7 +35,7 @@ public interface WidgetManagerDelegate {
         void onWebXRRenderStateChange(boolean aRendering);
     }
 
-    float DEFAULT_DIM_BRIGHTNESS = 0.25f;
+    float DEFAULT_DIM_BRIGHTNESS = 0.025f;
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
 
