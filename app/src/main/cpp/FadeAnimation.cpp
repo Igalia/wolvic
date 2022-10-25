@@ -11,7 +11,7 @@
 namespace crow {
 
 static float kFadeAlpha = 0.75f;
-static int kAnimationLength = 100;
+static int kAnimationLength = 40;
 
 struct FadeAnimation::State {
   vrb::Color fadeColor;
