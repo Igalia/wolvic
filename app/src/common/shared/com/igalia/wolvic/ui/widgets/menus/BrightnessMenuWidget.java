@@ -59,7 +59,6 @@ public class BrightnessMenuWidget extends MenuWidget {
         mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_dark), 0, action));
         mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_void), 0, action));
 
-
         super.updateMenuItems(mItems);
         super.setSelectedItem(1);
 
@@ -69,8 +68,8 @@ public class BrightnessMenuWidget extends MenuWidget {
 
     public float getSelectedBrightness() {
         switch (super.getSelectedItem()) {
-            case 0: return 1.0f;
-            case 1: return 0.5f;
+            case 0: return 0.5f;
+            case 1: return 0.05f;
             case 2: return 0.0f;
         }
         return 1.0f;
