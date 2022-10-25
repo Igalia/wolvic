@@ -145,6 +145,12 @@ JNI_METHOD(void, nativeOnPause)
   BrowserWorld::Instance().Pause();
 }
 
+JNI_METHOD(void, nativeOnStop)
+(JNIEnv *aEnv, jobject) {
+  LOGD("onStop");
+  sAppContext->mShouldExitRenderThread = BrowserWorld::Instance().WasButtonAppPressed();
+}
+
 JNI_METHOD(void, nativeOnResume)
 (JNIEnv *aEnv, jobject) {
   LOGD("onResume");

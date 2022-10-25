@@ -195,6 +195,9 @@ struct BrowserWorld::State {
   vrb::Matrix widgetsYaw;
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
+#if HVR
+  bool wasButtonAppPressed = false;
+#endif
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -234,6 +237,7 @@ struct BrowserWorld::State {
   void ChangeControllerFocus(const Controller& aController);
   void UpdateGazeModeState();
   void UpdateControllers(bool& aRelayoutWidgets);
+  void SimulateBack();
   void ClearWebXRControllerData();
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
@@ -245,6 +249,14 @@ struct BrowserWorld::State {
 };
 
 void
+BrowserWorld::State::SimulateBack() {
+#if HVR
+    wasButtonAppPressed = true;
+#endif
+    VRBrowser::HandleBack();
+}
+
+void
 BrowserWorld::State::CheckBackButton() {
   for (Controller& controller: controllers->GetControllers()) {
       if (!controller.enabled || (controller.index < 0)) {
@@ -253,7 +265,7 @@ BrowserWorld::State::CheckBackButton() {
 
       if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
           (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
-          VRBrowser::HandleBack();
+          SimulateBack();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
                  && controller.lastButtonState && controller.buttonState == 0) {
@@ -394,7 +406,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     }
 
     if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
-      VRBrowser::HandleBack();
+      SimulateBack();
     }
 
 
@@ -788,6 +800,13 @@ vrb::RenderContextPtr&
 BrowserWorld::GetRenderContext() {
   return m.context;
 }
+
+#if HVR
+bool
+BrowserWorld::WasButtonAppPressed() {
+  return m.wasButtonAppPressed;
+}
+#endif
 
 void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
