@@ -74,6 +74,9 @@ public:
   void SetIsServo(const bool aIsServo);
   void SetCPULevel(const device::CPULevel aLevel);
   JNIEnv* GetJNIEnv() const;
+#if HVR
+  bool WasButtonAppPressed();
+#endif
 protected:
   struct State;
   static BrowserWorldPtr Create();

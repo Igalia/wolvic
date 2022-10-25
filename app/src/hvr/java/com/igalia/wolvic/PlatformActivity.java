@@ -314,6 +314,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected void onStop() {
         super.onStop();
         Log.i(TAG, "PlatformActivity onStop");
+        queueRunnable(this::nativeOnStop);
     }
 
     @Override
@@ -366,6 +367,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected native void nativeOnCreate();
     protected native void nativeOnDestroy();
     protected native void nativeOnPause();
+    protected native void nativeOnStop();
     protected native void nativeOnResume();
     protected native void nativeOnSurfaceChanged(Surface surface);
     protected native void nativeOnSurfaceDestroyed();

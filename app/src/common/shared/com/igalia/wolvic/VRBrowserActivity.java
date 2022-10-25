@@ -1099,14 +1099,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 onBackPressed();
                 return;
             }
-            // FIXME: remove this once https://github.com/hms-ecosystem/OpenXR-SDK/issues/43 is fixed
-            // HVR lifecycle is so broken that it isn't impossible to differentiate between exiting
-            // the security zone and the application being closed by pressing the right controller
-            // menu button. We detect the latter here and force the application to exit.
-            if (DeviceType.isHVRBuild()) {
-                finish();
-                return;
-            }
             dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
             dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
         });
