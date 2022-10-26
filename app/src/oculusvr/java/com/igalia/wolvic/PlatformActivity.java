@@ -30,7 +30,8 @@ public class PlatformActivity extends NativeActivity {
     }
 
     public static boolean isPositionTrackingSupported() {
-        return nativeIsPositionTrackingSupported();
+        // Dummy implementation.
+        return true;
     }
 
     @Override
@@ -95,5 +96,4 @@ public class PlatformActivity extends NativeActivity {
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
-    protected static native boolean nativeIsPositionTrackingSupported();
 }

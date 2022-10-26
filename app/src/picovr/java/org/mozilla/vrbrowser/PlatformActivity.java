@@ -67,7 +67,8 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     public static boolean isPositionTrackingSupported() {
-        return nativeIsPositionTrackingSupported();
+        // Dummy implementation.
+        return true;
     }
 
     private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
@@ -434,5 +435,4 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
     protected native void nativeRecenter();
     protected native void queueRunnable(Runnable aRunnable);
-    protected static native boolean nativeIsPositionTrackingSupported();
 }

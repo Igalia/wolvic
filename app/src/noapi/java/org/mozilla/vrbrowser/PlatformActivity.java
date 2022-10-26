@@ -37,7 +37,8 @@ public class PlatformActivity extends Activity {
     }
 
     public static boolean isPositionTrackingSupported() {
-        return nativeIsPositionTrackingSupported();
+        // Dummy implementation.
+        return false;
     }
 
     private GLSurfaceView mView;
@@ -299,5 +300,4 @@ public class PlatformActivity extends Activity {
     private native void rotatePitch(float aPitch);
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void controllerButtonPressed(boolean aDown);
-    protected static native boolean nativeIsPositionTrackingSupported();
 }
