@@ -103,7 +103,6 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_RIGHT);
         } else if (DeviceType.isHVRBuild()) {
-            // TODO identify the specific type of controller
             if (PlatformActivity.isPositionTrackingSupported()) {
                 addController(DeviceType.HVR6DoF, WebXRInterstitialController.HAND_LEFT);
                 addController(DeviceType.HVR6DoF, WebXRInterstitialController.HAND_RIGHT);
