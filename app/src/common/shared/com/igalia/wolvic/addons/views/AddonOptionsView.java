@@ -124,7 +124,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
                         R.string.addons_remove_success_dialog_title,
-                        ExtensionsKt.getTranslatedName(addon)))
+                        ExtensionsKt.translateName(addon, mContext)))
                 .withBody(mContext.getString(
                         R.string.addons_install_dialog_body,
                         permissionsHtml))
@@ -141,7 +141,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
                         R.string.addons_remove_error_dialog_title,
-                        ExtensionsKt.getTranslatedName(addon)))
+                        ExtensionsKt.translateName(addon, mContext)))
                 .withBtnMsg(new String[]{
                         mContext.getString(R.string.addons_remove_error_dialog_ok)
                 })

@@ -118,12 +118,11 @@ public class InternalPages {
     public static String createErrorPageDataURI(Context context,
                                                 @Nullable String uri,
                                                 int errorType) {
-        String html = ErrorPages.INSTANCE.createErrorPage(
+        String html = ErrorPages.INSTANCE.createUrlEncodedErrorPage(
                 context,
                 fromSessionErrorToErrorType(errorType),
                 uri,
-                R.raw.error_pages,
-                R.raw.error_style);
+                context.getResources().getResourceName(R.raw.error_pages));
 
         boolean showSSLAdvanced;
         switch (errorType) {

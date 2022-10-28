@@ -165,7 +165,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                 .withIconUrl(addon.getIconUrl())
                 .withTitle(mContext.getString(
                         R.string.addons_install_dialog_title,
-                        ExtensionsKt.getTranslatedName(addon)))
+                        ExtensionsKt.translateName(addon, mContext)))
                 .withBody(mContext.getString(
                         R.string.addons_install_dialog_body,
                         permissionsHtml))
@@ -215,7 +215,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         PromptData data = new PromptData.Builder()
                 .withIconUrl(addon.getIconUrl())
                 .withTitle(mContext.getString(R.string.addons_download_success_dialog_title,
-                        ExtensionsKt.getTranslatedName(addon),
+                        ExtensionsKt.translateName(addon, mContext),
                         mContext.getString(R.string.app_name)))
                 .withBody(mContext.getString(R.string.addons_download_success_dialog_body))
                 .withBtnMsg(new String[]{

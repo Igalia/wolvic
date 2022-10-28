@@ -164,6 +164,7 @@ public class SettingsStore {
                     null,
                     Request.Redirect.FOLLOW,
                     Request.CookiePolicy.INCLUDE,
+                    false,
                     false
             );
 

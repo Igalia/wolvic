@@ -7,6 +7,7 @@ package com.igalia.wolvic.browser.components
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.JsonReader
 import com.igalia.wolvic.browser.api.*
 import com.igalia.wolvic.browser.engine.Session
 import com.igalia.wolvic.browser.engine.SessionStore
@@ -62,7 +63,7 @@ class WolvicWebExtensionRuntime(
         val onInstallSuccess: ((WebExtension) -> Unit) = {
             webExtensionDelegate?.onInstalled(it)
             it.registerActionHandler(webExtensionActionHandler)
-            it.registerTabHandler(webExtensionTabHandler)
+            it.registerTabHandler(webExtensionTabHandler, null)
             onSuccess(it)
         }
 
@@ -119,7 +120,7 @@ class WolvicWebExtensionRuntime(
         runtime.webExtensionController.update(extension).then({ updatedExtension ->
             if (updatedExtension != null) {
                 updatedExtension.registerActionHandler(webExtensionActionHandler)
-                updatedExtension.registerTabHandler(webExtensionTabHandler)
+                updatedExtension.registerTabHandler(webExtensionTabHandler, null)
             }
             onSuccess(updatedExtension)
             WResult.create<Void>()
@@ -186,7 +187,7 @@ class WolvicWebExtensionRuntime(
 
             extensions.forEach { extension ->
                 extension.registerActionHandler(webExtensionActionHandler)
-                extension.registerTabHandler(webExtensionTabHandler)
+                extension.registerTabHandler(webExtensionTabHandler, null)
             }
 
             onSuccess(extensions)
@@ -277,6 +278,10 @@ class WolvicWebExtensionRuntime(
 
     override fun createSessionState(json: JSONObject): EngineSessionState {
         TODO("Not yet implemented")
+    }
+
+    override fun createSessionStateFrom(reader: JsonReader): EngineSessionState {
+        TODO("Not yet implemented");
     }
 
     override fun createView(context: Context, attrs: AttributeSet?): EngineView {

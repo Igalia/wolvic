@@ -14,7 +14,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:navigationBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="textColor">@color/black</item>
+        <item name="android:textColor">@color/black</item>
         <item name="backgroundColor">@color/midnight</item>
     </style>
 
