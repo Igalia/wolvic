@@ -11,6 +11,7 @@ import com.igalia.wolvic.browser.api.impl.SessionImpl
 import com.igalia.wolvic.browser.engine.Session
 import com.igalia.wolvic.browser.engine.SessionStore
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.webextension.*
 import mozilla.components.support.base.log.logger.Logger
 import org.json.JSONObject
@@ -241,7 +242,7 @@ class GeckoWebExtension(
     /**
      * See [WebExtension.registerTabHandler].
      */
-    override fun registerTabHandler(tabHandler: TabHandler) {
+    override fun registerTabHandler(tabHandler: TabHandler, defaultSettings: Settings?) {
 
         val tabDelegate = object : GeckoNativeWebExtension.TabDelegate {
 
