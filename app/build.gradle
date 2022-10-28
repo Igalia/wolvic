@@ -510,6 +510,7 @@ dependencies {
     implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
+    implementation deps.android_components.browser_icons
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location
