@@ -53,7 +53,8 @@ public class SessionStore implements
 
     private static final List<Pair<String, String>> BUILTIN_WEB_EXTENSIONS = Arrays.asList(
             new Pair<>("fxr-webcompat_youtube@mozilla.org", "resource://android/assets/extensions/fxr_youtube/"),
-            new Pair<>("fxr-webcompat_mediasession@mozilla.org", "resource://android/assets/extensions/fxr_mediasession/")
+            new Pair<>("fxr-webcompat_mediasession@mozilla.org", "resource://android/assets/extensions/fxr_mediasession/"),
+            new Pair<>("icons@mozac.org", "resource://android/assets/extensions/browser-icons/")
     );
 
     private static SessionStore mInstance;
