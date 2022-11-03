@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.browser.components.BrowserIconsHelper;
+import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.BookmarkItemBinding;
 import com.igalia.wolvic.databinding.BookmarkItemFolderBinding;
 import com.igalia.wolvic.databinding.BookmarkSeparatorBinding;
@@ -202,7 +202,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             binding.setIsNarrow(mIsNarrowLayout);
 
             // Load favicon
-            BrowserIconsHelper.loadIntoView(binding.favicon.getContext(), binding.favicon, item.getUrl(), IconRequest.Size.DEFAULT);
+            SessionStore.get().getBrowserIcons().loadIntoView(binding.favicon, item.getUrl(), IconRequest.Size.DEFAULT);
 
             binding.layout.setOnHoverListener((view, motionEvent) -> {
                 int ev = motionEvent.getActionMasked();

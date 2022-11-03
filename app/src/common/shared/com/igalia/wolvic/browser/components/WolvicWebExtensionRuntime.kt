@@ -6,20 +6,22 @@
 package com.igalia.wolvic.browser.components
 
 import android.content.Context
+import android.util.AttributeSet
 import com.igalia.wolvic.browser.api.*
 import com.igalia.wolvic.browser.engine.Session
 import com.igalia.wolvic.browser.engine.SessionStore
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
-import mozilla.components.concept.engine.CancellableOperation
-import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.base.profiler.Profiler
+import mozilla.components.concept.engine.*
+import mozilla.components.concept.engine.utils.EngineVersion
 import mozilla.components.concept.engine.webextension.*
 import mozilla.components.support.ktx.kotlin.isResourceUrl
+import org.json.JSONObject
 
 class WolvicWebExtensionRuntime(
         private val context: Context,
         private val runtime: WRuntime
-): WebExtensionRuntime {
+) : WebExtensionRuntime, Engine {
 
     private var webExtensionDelegate: WebExtensionDelegate? = null
     private val webExtensionActionHandler = object : ActionHandler {
@@ -254,6 +256,35 @@ class WolvicWebExtensionRuntime(
             onError(throwable)
             WResult.create<Void>()
         })
+    }
+
+    // Functionality specific to the Engine interface.
+
+    override val profiler: Profiler?
+        get() = TODO("Not yet implemented")
+    override val settings: Settings
+        get() = TODO("Not yet implemented")
+    override val version: EngineVersion
+        get() = TODO("Not yet implemented")
+
+    override fun name(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun createSession(private: Boolean, contextId: String?): EngineSession {
+        TODO("Not yet implemented")
+    }
+
+    override fun createSessionState(json: JSONObject): EngineSessionState {
+        TODO("Not yet implemented")
+    }
+
+    override fun createView(context: Context, attrs: AttributeSet?): EngineView {
+        TODO("Not yet implemented")
+    }
+
+    override fun speculativeConnect(url: String) {
+        TODO("Not yet implemented")
     }
 
 }
