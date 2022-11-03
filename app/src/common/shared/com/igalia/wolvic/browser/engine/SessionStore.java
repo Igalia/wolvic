@@ -21,6 +21,7 @@ import com.igalia.wolvic.browser.adapter.ComponentsAdapter;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.components.BrowserIconsHelper;
 import com.igalia.wolvic.browser.components.WolvicWebExtensionRuntime;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.browser.extensions.BuiltinExtension;
@@ -80,6 +81,7 @@ public class SessionStore implements
     private WolvicWebExtensionRuntime mWebExtensionRuntime;
     private FxaWebChannelFeature mWebChannelsFeature;
     private Store.Subscription mStoreSubscription;
+    private BrowserIconsHelper mBrowserIconsHelper;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
@@ -119,13 +121,15 @@ public class SessionStore implements
 
         mWebExtensionRuntime = new WolvicWebExtensionRuntime(mContext, mRuntime);
 
-        mServices = ((VRBrowserApplication)context.getApplicationContext()).getServices();
+        mServices = ((VRBrowserApplication) context.getApplicationContext()).getServices();
 
         mBookmarksStore = new BookmarksStore(context);
         mHistoryStore = new HistoryStore(context);
 
         // Web Extensions initialization
         BUILTIN_WEB_EXTENSIONS.forEach(extension -> BuiltinExtension.install(mWebExtensionRuntime, extension.first, extension.second));
+        mBrowserIconsHelper = new BrowserIconsHelper(context, mWebExtensionRuntime, ComponentsAdapter.get().getStore());
+
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
         WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime, context.getString(R.string.app_name));
         mWebChannelsFeature = new FxaWebChannelFeature(
@@ -380,8 +384,13 @@ public class SessionStore implements
         return mWebExtensionRuntime;
     }
 
+    @NonNull
+    public BrowserIconsHelper getBrowserIcons() {
+        return mBrowserIconsHelper;
+    }
+
     public void purgeSessionHistory() {
-        for (Session session: mSessions) {
+        for (Session session : mSessions) {
             session.purgeHistory();
         }
     }
