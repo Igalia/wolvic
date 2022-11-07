@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -250,19 +251,42 @@ public class DownloadsManager {
         Log.e(LOGTAG, "************************ copyToDownloadsFolder ************************");
         Log.e(LOGTAG, "DISPLAY_NAME : " + download.getFilename());
         Log.e(LOGTAG, "EXTERNAL_CONTENT_URI : " + MediaStore.Downloads.EXTERNAL_CONTENT_URI);
-        Log.e(LOGTAG, "MIME_TYPE : " + download.getMediaType());
         Log.e(LOGTAG, "SIZE : " + download.getSizeBytes());
         Log.e(LOGTAG, "OutputFilePath : " + download.getOutputFilePath());
 
         // Create a new entry for the Downloads table in MediaStore.
+        ContentResolver contentResolver = mContext.getContentResolver();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Downloads.DISPLAY_NAME, download.getFilename());
         contentValues.put(MediaStore.Downloads.SIZE, download.getSizeBytes());
-        contentValues.put(MediaStore.Downloads.MIME_TYPE, download.getMediaType());
         contentValues.put(MediaStore.Downloads.DATE_MODIFIED, download.getLastModified());
-        String mime = mDownloadManager.getMimeTypeForDownloadedFile(download.getId());
-        contentValues.put(MediaStore.Downloads.MIME_TYPE, mime);
         contentValues.put(MediaStore.Downloads.DOWNLOAD_URI, download.getUri());
+
+        // TODO There are several ways to obtain the MIME type. But how do we pick the right one?
+
+        String mimeFromExtension = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(download.getOutputFilePath());
+        if (extension != null) {
+            mimeFromExtension = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        Log.e(LOGTAG, "MIME type from extension : " + mimeFromExtension);
+
+        File downloadedFile = new File(download.getOutputFilePath());
+        Uri downloadedFileUri = Uri.fromFile(downloadedFile);
+        String mimeFromFile = contentResolver.getType(downloadedFileUri);
+        Log.e(LOGTAG, "MIME type from file " + downloadedFileUri + " : " + mimeFromFile);
+
+        String mimeFromDownload = download.getMediaType();
+        Log.e(LOGTAG, "MIME type from download : " + download.getMediaType());
+
+        // TODO : find out which of the possible MIME types is the most specific.
+        if (mimeFromExtension != null) {
+            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromExtension);
+        } else if (mimeFromFile != null) {
+            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromFile);
+        } else {
+            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromDownload);
+        }
 
         // This flag indicates that the file is not yet ready.
         contentValues.put(MediaStore.Downloads.IS_PENDING, 1);
@@ -273,7 +297,6 @@ public class DownloadsManager {
 
         Log.e(LOGTAG, "Inserting : " + contentValues);
 
-        ContentResolver contentResolver = mContext.getContentResolver();
         Uri uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
 
         Log.e(LOGTAG, "Inserted URI : " + uri);
@@ -282,11 +305,10 @@ public class DownloadsManager {
         //     adb shell content query --uri content://media/external/downloads/362
 
         try {
-            File file = new File(download.getOutputFilePath());
-            Log.e(LOGTAG, "Source file : " + file);
+            Log.e(LOGTAG, "Source file : " + downloadedFile);
 
             Log.e(LOGTAG, "Copying to : " + uri);
-            Files.copy(file.toPath(), contentResolver.openOutputStream(uri));
+            Files.copy(downloadedFile.toPath(), contentResolver.openOutputStream(uri));
 
             // The file is finally ready.
             Log.e(LOGTAG, "Updating IS_PENDING");
