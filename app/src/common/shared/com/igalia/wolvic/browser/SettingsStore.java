@@ -917,4 +917,13 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), false);
     }
 
+    public void setWebAppsData(String aWebAppsData) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_web_apps_data), aWebAppsData);
+        editor.commit();
+    }
+
+    public String getWebAppsData() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_web_apps_data), "");
+    }
 }
