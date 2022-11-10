@@ -17,6 +17,7 @@ import com.igalia.wolvic.browser.HistoryStore;
 import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.SessionChangeListener;
+import com.igalia.wolvic.browser.WebAppsStore;
 import com.igalia.wolvic.browser.adapter.ComponentsAdapter;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
@@ -75,6 +76,7 @@ public class SessionStore implements
     private PermissionDelegate mPermissionDelegate;
     private BookmarksStore mBookmarksStore;
     private HistoryStore mHistoryStore;
+    private WebAppsStore mWebAppStore;
     private Services mServices;
     private boolean mSuspendPending;
     private TrackingProtectionStore mTrackingProtectionStore;
@@ -125,6 +127,7 @@ public class SessionStore implements
 
         mBookmarksStore = new BookmarksStore(context);
         mHistoryStore = new HistoryStore(context);
+        mWebAppStore = new WebAppsStore(context);
 
         // Web Extensions initialization
         BUILTIN_WEB_EXTENSIONS.forEach(extension -> BuiltinExtension.install(mWebExtensionRuntime, extension.first, extension.second));
@@ -374,6 +377,10 @@ public class SessionStore implements
 
     public HistoryStore getHistoryStore() {
         return mHistoryStore;
+    }
+
+    public WebAppsStore getWebAppsStore() {
+        return mWebAppStore;
     }
 
     public TrackingProtectionStore getTrackingProtectionStore() {
