@@ -140,6 +140,9 @@ struct DeviceDelegateOpenXR::State {
         if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME)) {
             extensions.push_back(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
         }
+        if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+            extensions.push_back(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME);
+        }
     }
 #ifdef OCULUSVR
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
