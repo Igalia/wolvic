@@ -30,6 +30,24 @@ private:
       bool touched { false };
       float value { 0 };
     };
+
+    struct OpenXRHandMesh {
+        // Skeleton
+        uint32_t jointCount;
+        std::vector<XrPosef> jointPoses;
+        std::vector<XrHandJointEXT> jointParents;
+        std::vector<float> jointRadii;
+        // Vertex
+        uint32_t vertexCount;
+        std::vector<XrVector3f> vertexPositions;
+        std::vector<XrVector3f> vertexNormals;
+        std::vector<XrVector2f> vertexUVs;
+        std::vector<XrVector4sFB> vertexBlendIndices;
+        std::vector<XrVector4f> vertexBlendWeights;
+        // Index
+        uint32_t indexCount;
+        std::vector<int16_t> indices;
+    };
     std::optional<OpenXRButtonState> GetButtonState(const OpenXRButton&) const;
     std::optional<XrVector2f> GetAxis(OpenXRAxisType) const;
     XrResult GetActionState(XrAction, bool*) const;
@@ -69,6 +87,8 @@ private:
     bool mHasHandJoints { false };
     XrHandTrackingAimStateFB mAimState { XR_TYPE_HAND_TRACKING_AIM_STATE_FB };
     bool mHasAimState { false };
+    OpenXRHandMesh mHandMesh;
+    bool mHasHandMesh { false };
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
