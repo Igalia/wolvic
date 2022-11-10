@@ -1079,7 +1079,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
 
         // TODO Check that this is the correct place to clear the stored manifest. Update the UI if needed.
-        Log.d(LOGTAG, "OnLocationChange: clear stored Web app manifest");
+        Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
         mState.mWebAppManifest = null;
 
         // The homepage finishes loading after the region has been updated

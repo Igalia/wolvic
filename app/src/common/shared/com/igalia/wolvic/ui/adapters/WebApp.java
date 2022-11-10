@@ -42,7 +42,7 @@ public class WebApp {
     // TODO icons, shortcuts, languages
 
     /**
-     * Will throw {@link java.io.IOException} if there is an error parsing the manifest.
+     * @throws java.io.IOException if there is an error parsing the manifest.
      */
     public WebApp(JSONObject manifest) throws IOException {
         mStartUrl = manifest.optString("start_url");

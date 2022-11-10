@@ -44,27 +44,22 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
     }
 
     private void updateWebAppsListFromStorage() {
-        String json = SettingsStore.getInstance(mContext).getWebAppsData();
+        mWebApps.clear();
 
-        if (StringUtils.isEmpty(json)) {
-            mWebApps.clear();
-            notifyListeners();
-        } else {
+        String json = SettingsStore.getInstance(mContext).getWebAppsData();
+        if (!StringUtils.isEmpty(json)) {
             try {
                 Gson gson = new Gson();
                 WebApp[] webAppsArray = gson.fromJson(json, WebApp[].class);
-                mWebApps.clear();
                 mWebApps.addAll(Arrays.asList(webAppsArray));
-                notifyListeners();
             } catch (RuntimeException e) {
                 Log.w(LOGTAG, "retrieveListFromStorage: error parsing stored data: " + e.getMessage());
 
                 // the stored data is invalid, so we need to clear it
                 SettingsStore.getInstance(mContext).setWebAppsData("");
-                mWebApps.clear();
-                notifyListeners();
             }
         }
+        notifyListeners();
     }
 
     private void saveWebAppsListToStorage() {
