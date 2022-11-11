@@ -39,6 +39,7 @@ import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.WebAppsStore;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
@@ -49,6 +50,7 @@ import com.igalia.wolvic.databinding.NavigationBarBinding;
 import com.igalia.wolvic.db.SitePermission;
 import com.igalia.wolvic.search.suggestions.SuggestionsProvider;
 import com.igalia.wolvic.telemetry.TelemetryService;
+import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.TrayViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
@@ -1235,8 +1237,27 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 if (!mAttachedWindow.isLibraryVisible()) {
                     mAttachedWindow.switchPanel(Windows.ADDONS);
 
-                } else if (mAttachedWindow.getSelectedPanel() != Windows.ADDONS){
+                } else if (mAttachedWindow.getSelectedPanel() != Windows.ADDONS) {
                     mAttachedWindow.showPanel(Windows.ADDONS);
+                }
+            }
+
+            @Override
+            public void onSaveWebApp() {
+                hideMenu();
+
+                // TODO add UI to describe what will happen and confirm
+                if (getSession() != null && getSession().getWebAppManifest() != null) {
+                    if (mAudio != null) {
+                        mAudio.playSound(AudioEngine.Sound.CLICK);
+                    }
+
+                    WebApp webApp = getSession().getWebAppManifest();
+                    WebAppsStore webAppsStore = SessionStore.get().getWebAppsStore();
+
+                    webAppsStore.addWebApp(webApp);
+                } else {
+                    Log.w(LOGTAG, "onSaveWebApp: missing Session or Web app manifest");
                 }
             }
         });

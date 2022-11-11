@@ -1364,6 +1364,21 @@
     <!-- This string is displayed in the System Notifications List while it is being loaded. -->
     <string name="notifications_loading">Loading Notifications</string>
 
+    <!-- This string is displayed as the title of the Web Apps List, which contains
+         the Web Apps saved by the user. -->
+    <string name="webapps_title">Web Apps</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <!-- TODO improve this explanation -->
+    <string name="webapps_description">Click the "Save Web app…" button when you’re on a page to add it to your web apps.</string>
+
+    <!-- This string is displayed in the Web Apps List when the list is empty. -->
+    <!-- TODO explain how to save a Web app -->
+    <string name="webapps_empty">Your Web Apps List is Empty</string>
+
+    <!-- This string is displayed in the System Notifications List while it is being loaded. -->
+    <string name="webapps_loading">Loading Web Apps</string>
+
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Reset Display Settings</string>
 
@@ -1915,6 +1930,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it switches User Agent from desktop to mobile and vice versa -->
     <string name="hamburger_menu_switch_to_desktop">Desktop Mode</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it saves the Web App provided by the current page -->
+    <string name="hamburger_menu_save_webapp">Save Web app…</string>
 
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
