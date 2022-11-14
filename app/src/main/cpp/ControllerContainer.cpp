@@ -238,7 +238,10 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
 
   if (aControllerIndex != m.gazeIndex) {
     if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
-      controller.transform->AddNode(m.models[aModelIndex]);
+      controller.modelToggle = vrb::Toggle::Create(create);
+      controller.modelToggle->AddNode(m.models[aModelIndex]);
+      controller.transform->AddNode(controller.modelToggle);
+      controller.modelToggle->ToggleAll(true);
       controller.beamToggle = vrb::Toggle::Create(create);
       controller.beamToggle->ToggleAll(true);
       vrb::TransformPtr beamTransform = Transform::Create(create);
@@ -329,6 +332,14 @@ ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnab
   m.SetVisible(m.list[aControllerIndex], aEnabled);
 }
 
+void
+ControllerContainer::SetModelVisible(const int32_t aControllerIndex, const bool aVisible) {
+    if (!m.Contains(aControllerIndex))
+        return;
+
+    assert(m.list[aControllerIndex].modelToggle != nullptr);
+    m.list[aControllerIndex].modelToggle->ToggleAll(aVisible);
+}
 
 void
 ControllerContainer::SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) {
