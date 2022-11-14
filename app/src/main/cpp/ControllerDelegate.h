@@ -42,6 +42,7 @@ public:
   virtual uint32_t GetControllerCount() = 0;
   virtual void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) = 0;
   virtual void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) = 0;
+  virtual void SetModelVisible(const int32_t aControllerIndex, const bool aVisible) = 0;
   virtual void SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) = 0;
   virtual void SetTargetRayMode(const int32_t aControllerIndex, device::TargetRayMode aMode) = 0;
   virtual void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) = 0;
