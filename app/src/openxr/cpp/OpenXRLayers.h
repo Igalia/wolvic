@@ -336,11 +336,15 @@ public:
   std::weak_ptr<OpenXRLayer> sourceLayer;
 
   static OpenXRLayerEquirectPtr
-  Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer);
+  Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer, bool aVerticalFlip);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
   void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
   void Destroy() override;
   bool IsDrawRequested() const override;
+
+protected:
+  XrCompositionLayerImageLayoutFB mLayerImageLayout;
+  bool mVerticalFlip;
 };
 
 }
