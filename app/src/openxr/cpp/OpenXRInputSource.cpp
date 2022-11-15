@@ -756,23 +756,35 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     UpdateHaptics(delegate);
 }
 
-XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegate)
+XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegate, const char* emulateProfile)
 {
-    XrInteractionProfileState state { XR_TYPE_INTERACTION_PROFILE_STATE };
-    RETURN_IF_XR_FAILED(xrGetCurrentInteractionProfile(mSession, mSubactionPath, &state));
-    if (state.interactionProfile == XR_NULL_PATH) {
-      return XR_SUCCESS; // Not ready yet
-    }
+    const char* path = nullptr;
+    size_t path_len = 0;
 
-    constexpr uint32_t bufferSize = 100;
-    char buffer[bufferSize];
-    uint32_t writtenCount = 0;
-    RETURN_IF_XR_FAILED(xrPathToString(mInstance, state.interactionProfile, bufferSize, &writtenCount, buffer));
+    if (emulateProfile == nullptr) {
+        XrInteractionProfileState state{XR_TYPE_INTERACTION_PROFILE_STATE};
+        RETURN_IF_XR_FAILED(xrGetCurrentInteractionProfile(mSession, mSubactionPath, &state));
+        if (state.interactionProfile == XR_NULL_PATH) {
+            return XR_SUCCESS; // Not ready yet
+        }
+
+        constexpr uint32_t bufferSize = 100;
+        char buffer[bufferSize];
+        uint32_t writtenCount = 0;
+        RETURN_IF_XR_FAILED(xrPathToString(mInstance, state.interactionProfile,
+                                           bufferSize, &writtenCount,
+                                           buffer));
+        path = buffer;
+        path_len = writtenCount;
+    } else {
+        path = emulateProfile;
+        path_len = strlen(emulateProfile);
+    }
 
     mActiveMapping = nullptr;
 
     for (auto& mapping : mMappings) {
-        if (!strncmp(mapping.path, buffer, writtenCount)) {
+        if (!strncmp(mapping.path, path, path_len)) {
             mActiveMapping = &mapping;
             break;
         }
