@@ -129,7 +129,8 @@ public class WebAppsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         binding.setItem(item);
         binding.setIsNarrow(mIsNarrowLayout);
 
-        SessionStore.get().getBrowserIcons().loadIntoView(binding.webAppIcon, item.getStartUrl(), IconRequest.Size.LAUNCHER);
+        SessionStore.get().getBrowserIcons().loadIntoView(binding.webAppIcon,
+                item.getStartUrl(), item.getIconResources(), IconRequest.Size.LAUNCHER);
 
         binding.layout.setOnHoverListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
