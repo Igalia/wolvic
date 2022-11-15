@@ -144,6 +144,9 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
       extensions.push_back(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME);
     }
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME)) {
+      extensions.push_back(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME);
+    }
 #endif
 
 
@@ -1043,7 +1046,13 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
   if (m.equirectLayer) {
     m.equirectLayer->Destroy();
   }
-  m.equirectLayer = OpenXRLayerEquirect::Create(result, source);
+  bool verticalFlip = false;
+#ifdef OCULUSVR
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME)) {
+        verticalFlip = true;
+    }
+#endif
+  m.equirectLayer = OpenXRLayerEquirect::Create(result, source, verticalFlip);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
     m.equirectLayer->Init(m.javaContext->env, m.session, context);
