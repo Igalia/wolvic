@@ -224,7 +224,7 @@ public class PromptDialogWidget extends UIDialog {
     }
 
     public void setDescription(String description) {
-        mBinding.title.setText(description);
+        mBinding.description.setText(description);
     }
 
     public void setButtons(@NonNull @StringRes int[] buttons) {

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.net.Uri" />
 
         <variable
             name="item"
@@ -25,12 +26,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
+        android:paddingEnd="20dp"
         android:background="@color/void_color"
         android:minHeight="@dimen/library_item_row_height"
         app:layout_height="@dimen/library_item_row_height">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,32 +45,42 @@
             android:padding="10dp"
             android:soundEffectsEnabled="false">
 
-            <ImageView
-                android:id="@+id/web_app_icon"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_icon_globe" />
+            <FrameLayout
+                android:id="@+id/web_app_icon_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@{item.themeColor}"
+                android:padding="1dp">
+
+                <ImageView
+                    android:id="@+id/web_app_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_icon_globe" />
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/name_url"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:addStatesFromChildren="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/trash_button"
+                android:layout_toEndOf="@id/web_app_icon_frame"
                 android:paddingStart="10dp">
 
                 <TextView
                     android:id="@+id/_webapp_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:ellipsize="middle"
                     android:gravity="center_vertical"
-                    android:paddingEnd="20dp"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:text="@{item.name}"
@@ -81,14 +92,13 @@
                 <TextView
                     android:id="@+id/web_app_url"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:ellipsize="middle"
                     android:gravity="center_vertical"
-                    android:paddingEnd="20dp"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@{item.startUrl}"
+                    android:text="@{Uri.parse(item.startUrl).authority}"
                     android:textColor="@color/library_panel_description_color"
                     android:textSize="@dimen/library_item_url_text_size"
                     android:textStyle="bold"
@@ -96,7 +106,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/trashButton"
+                android:id="@+id/trash_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
@@ -105,8 +115,10 @@
                 android:drawableTint="@color/library_panel_icon_color"
                 android:gravity="center"
                 android:onClick="@{(view) -> callback != null ? callback.onDelete(view, item) : void}"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:padding="16dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 </layout>

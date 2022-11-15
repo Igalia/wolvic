@@ -1079,8 +1079,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
 
         // TODO Check that this is the correct place to clear the stored manifest. Update the UI if needed.
-        Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
-        mState.mWebAppManifest = null;
+        if (mState.mWebAppManifest != null) {
+            Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
+            mState.mWebAppManifest = null;
+        }
 
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
@@ -1352,11 +1354,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (mState.mSession == aSession) {
             try {
                 mState.mWebAppManifest = new WebApp(manifest);
-                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest");
+                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest from " + mState.mUri);
             } catch (IOException e) {
                 Log.w(LOGTAG, "onWebAppManifest: malformed Web app manifest: " + e.getMessage());
                 mState.mWebAppManifest = null;
             }
+
+            // TODO update the stored manifest??
 
             for (WSession.ContentDelegate listener : mContentListeners) {
                 listener.onWebAppManifest(aSession, manifest);

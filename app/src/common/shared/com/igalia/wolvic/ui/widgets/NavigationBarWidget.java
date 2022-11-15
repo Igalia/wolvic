@@ -58,6 +58,8 @@ import com.igalia.wolvic.ui.views.NavigationURLBar;
 import com.igalia.wolvic.ui.views.UIButton;
 import com.igalia.wolvic.ui.views.UITextButton;
 import com.igalia.wolvic.ui.widgets.NotificationManager.Notification.NotificationPosition;
+import com.igalia.wolvic.ui.widgets.dialogs.InstallWebAppDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.QuickPermissionWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
@@ -85,6 +87,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
     private static final int POPUP_NOTIFICATION_ID = 3;
+    private static final int WEB_APP_ADDED_NOTIFICATION_ID = 4;
 
     public interface NavigationListener {
         void onBack();
@@ -1246,16 +1249,24 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onSaveWebApp() {
                 hideMenu();
 
-                // TODO add UI to describe what will happen and confirm
                 if (getSession() != null && getSession().getWebAppManifest() != null) {
                     if (mAudio != null) {
                         mAudio.playSound(AudioEngine.Sound.CLICK);
                     }
 
                     WebApp webApp = getSession().getWebAppManifest();
-                    WebAppsStore webAppsStore = SessionStore.get().getWebAppsStore();
-
-                    webAppsStore.addWebApp(webApp);
+                    InstallWebAppDialogWidget installWebAppDialog =
+                            new InstallWebAppDialogWidget(getContext(), webApp);
+                    installWebAppDialog.setButtonsDelegate((index, isChecked) -> {
+                        if (index == PromptDialogWidget.POSITIVE) {
+                            WebAppsStore webAppsStore = SessionStore.get().getWebAppsStore();
+                            webAppsStore.addWebApp(webApp);
+                            mWidgetManager.getWindows().showWebAppAddedNotification();
+                        }
+                        installWebAppDialog.onDismiss();
+                    });
+                    installWebAppDialog.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+                    installWebAppDialog.show(UIWidget.REQUEST_FOCUS);
                 } else {
                     Log.w(LOGTAG, "onSaveWebApp: missing Session or Web app manifest");
                 }
@@ -1325,6 +1336,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         showNotification(BOOKMARK_ADDED_NOTIFICATION_ID,
                 NotificationManager.Notification.BOTTOM,
                 R.string.bookmarks_saved_notification);
+    }
+
+    public void showWebAppAddedNotification() {
+        showNotification(WEB_APP_ADDED_NOTIFICATION_ID,
+                NotificationManager.Notification.BOTTOM,
+                R.string.web_apps_saved_notification);
     }
 
     private void showNotification(int notificationId, UIButton button, @NotificationPosition int position, int stringRes) {

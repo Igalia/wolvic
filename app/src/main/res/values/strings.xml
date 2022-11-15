@@ -1366,18 +1366,37 @@
 
     <!-- This string is displayed as the title of the Web Apps List, which contains
          the Web Apps saved by the user. -->
-    <string name="webapps_title">Web Apps</string>
+    <string name="web_apps_title">Web Apps</string>
 
     <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
     <!-- TODO improve this explanation -->
-    <string name="webapps_description">Click the "Save Web app…" button when you’re on a page to add it to your web apps.</string>
+    <string name="web_apps_description">Click the "Save Web app…" button when you’re on a page to add it to your web apps.</string>
 
     <!-- This string is displayed in the Web Apps List when the list is empty. -->
     <!-- TODO explain how to save a Web app -->
-    <string name="webapps_empty">Your Web Apps List is Empty</string>
+    <string name="web_apps_empty">Your Web Apps List is Empty</string>
 
-    <!-- This string is displayed in the System Notifications List while it is being loaded. -->
-    <string name="webapps_loading">Loading Web Apps</string>
+    <!-- This string is displayed in the Web Apps List while it is being loaded. -->
+    <string name="web_apps_loading">Loading Web Apps</string>
+
+    <!-- This string is displayed as the title in the dialog to install a Web app. -->
+    <string name="web_apps_dialog_title">Install Web App</string>
+
+    <!-- This string is displayed as the title in the dialog to install a Web app.
+         '%1$s' will be replaced at runtime with the Web app name. -->
+    <string name="web_apps_dialog_title_parameter">Install %1$s</string>
+
+    <!-- This string is displayed as the body text in the dialog to install a Web app. -->
+    <string name="web_apps_dialog_body">Do you want to install the following Web app? It will be available in the Library.</string>
+
+    <!-- This string is displayed as the positive answer button in the dialog to install a Web app. -->
+    <string name="web_apps_dialog_install">Install</string>
+
+    <!-- This string is displayed as the negative answer button in the dialog to install a Web app. -->
+    <string name="web_apps_dialog_cancel">Cancel</string>
+
+    <!-- This string is displayed as the negative answer button in the dialog to install a Web app. -->
+    <string name="web_apps_saved_notification">Web app added!</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Reset Display Settings</string>

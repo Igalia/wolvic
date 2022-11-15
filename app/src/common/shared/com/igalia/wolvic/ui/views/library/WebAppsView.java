@@ -104,12 +104,8 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
     private void setWebApps(@NonNull List<WebApp> webApps) {
         mHandler = new Handler(Looper.getMainLooper());
         mHandler.post(() -> {
-            if (webApps.isEmpty()) {
-                mViewModel.setIsEmpty(true);
-            } else {
-                mViewModel.setIsEmpty(false);
-                mWebAppsAdapter.setWebAppsList(webApps);
-            }
+            mWebAppsAdapter.setWebAppsList(webApps);
+            mViewModel.setIsEmpty(webApps.isEmpty());
             mViewModel.setIsLoading(false);
             mBinding.executePendingBindings();
         });
@@ -120,7 +116,7 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
         updateLayout();
         mBinding.webAppsList.smoothScrollToPosition(0);
         if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(getContext().getString(R.string.webapps_title));
+            mRootPanel.onViewUpdated(getContext().getString(R.string.web_apps_title));
         }
     }
 

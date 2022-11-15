@@ -71,6 +71,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private static final int RIGHT_CONTROLLER_NOTIFICATION_ID = 6;
     private static final int HEADSET_NOTIFICATION_ID = 7;
     private static final int TIME_NOTIFICATION_ID = 8;
+    private static final int WEB_APP_ADDED_NOTIFICATION_ID = 9;
 
     private WindowViewModel mViewModel;
     private TrayViewModel mTrayViewModel;
@@ -668,6 +669,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     public void showBookmarkAddedNotification() {
         showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, mBinding.libraryButton, R.string.bookmarks_saved_notification);
+    }
+
+    public void showWebAppAddedNotification() {
+        showNotification(WEB_APP_ADDED_NOTIFICATION_ID, mBinding.libraryButton, R.string.web_apps_saved_notification);
     }
 
     public void showDownloadCompletedNotification(String filename) {

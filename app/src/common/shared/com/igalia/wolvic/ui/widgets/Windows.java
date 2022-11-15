@@ -77,6 +77,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
+    private static final int WEB_APP_ADDED_NOTIFICATION_ID = 3;
 
     class WindowState {
         WindowPlacement placement;
@@ -1589,6 +1590,24 @@ public void selectTab(@NonNull Session aTab) {
                         .withZTranslation(25.0f)
                         .withCurved(true).build();
                 NotificationManager.show(BOOKMARK_ADDED_NOTIFICATION_ID, notification);
+            }
+        }
+    }
+
+    public void showWebAppAddedNotification() {
+        if (mFocusedWindow.isFullScreen()) {
+            mWidgetManager.getNavigationBar().showWebAppAddedNotification();
+
+        } else {
+            if (mWidgetManager.getTray().isVisible()) {
+                mWidgetManager.getTray().showWebAppAddedNotification();
+
+            } else {
+                NotificationManager.Notification notification = new NotificationManager.Builder(mFocusedWindow)
+                        .withString(R.string.web_apps_saved_notification)
+                        .withZTranslation(25.0f)
+                        .withCurved(true).build();
+                NotificationManager.show(WEB_APP_ADDED_NOTIFICATION_ID, notification);
             }
         }
     }

@@ -26,7 +26,7 @@
             <ImageView
                 android:layout_width="@{webAppsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:layout_height="@{webAppsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
-                android:contentDescription="@string/webapps_empty"
+                android:contentDescription="@string/web_apps_empty"
                 android:src="@drawable/ic_icon_webapps"
                 app:srcCompat="@drawable/ic_icon_webapps"
                 app:tint="@color/concrete" />
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="35dp"
                 android:fontFamily="sans-serif"
-                android:text="@string/webapps_empty"
+                android:text="@string/web_apps_empty"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/fog"
@@ -49,13 +49,13 @@
                 android:layout_marginTop="35dp"
                 android:fontFamily="sans-serif"
                 android:maxWidth="360dp"
-                android:text="@{@string/webapps_description}"
+                android:text="@{@string/web_apps_description}"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/concrete"
                 android:textSize="@dimen/text_medium_big_size"
                 android:textStyle="normal"
-                tools:text="@string/webapps_description" />
+                tools:text="@string/web_apps_description" />
 
         </LinearLayout>
 
@@ -64,9 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:contentDescription="@string/webapps_loading"
+            android:contentDescription="@string/web_apps_loading"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/webapps_loading"
+            android:text="@string/web_apps_loading"
             android:textAlignment="center"
             android:textColor="@color/fog"
             android:visibility="gone"
@@ -79,7 +79,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-            android:contentDescription="@string/webapps_title"
+            android:contentDescription="@string/web_apps_title"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
