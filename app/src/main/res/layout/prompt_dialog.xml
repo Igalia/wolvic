@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="Description"
+                tools:text="Description"
                 android:textColor="@color/rhino"
                 android:textSize="@dimen/text_smaller_size" />
         </FrameLayout>
