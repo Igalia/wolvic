@@ -448,7 +448,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mWidgetManager.removeWorldClickListener(this);
         mWidgetManager.getServicesProvider().getConnectivityReceiver().removeListener(mConnectivityDelegate);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
-        
+
         if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {
             // Workaround for https://issuetracker.google.com/issues/37123764
             // exitFullScreenMode() may animate some views that are then released
@@ -1102,6 +1102,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         return mWidgetManager.getFocusedWindow().onHandleExternalRequest(uri);
     }
 
+    @Override
+    public void onWebAppButtonClicked() {
+        showSaveWebAppDialog();
+    }
+
     // VoiceSearch Delegate
 
     @Override
@@ -1249,27 +1254,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onSaveWebApp() {
                 hideMenu();
 
-                if (getSession() != null && getSession().getWebAppManifest() != null) {
-                    if (mAudio != null) {
-                        mAudio.playSound(AudioEngine.Sound.CLICK);
-                    }
-
-                    WebApp webApp = getSession().getWebAppManifest();
-                    InstallWebAppDialogWidget installWebAppDialog =
-                            new InstallWebAppDialogWidget(getContext(), webApp);
-                    installWebAppDialog.setButtonsDelegate((index, isChecked) -> {
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            WebAppsStore webAppsStore = SessionStore.get().getWebAppsStore();
-                            webAppsStore.addWebApp(webApp);
-                            mWidgetManager.getWindows().showWebAppAddedNotification();
-                        }
-                        installWebAppDialog.onDismiss();
-                    });
-                    installWebAppDialog.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-                    installWebAppDialog.show(UIWidget.REQUEST_FOCUS);
-                } else {
-                    Log.w(LOGTAG, "onSaveWebApp: missing Session or Web app manifest");
-                }
+                showSaveWebAppDialog();
             }
         });
         boolean isSendTabEnabled = false;
@@ -1294,6 +1279,27 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mSendTabDialog.setSessionId(mAttachedWindow.getSession().getId());
         mSendTabDialog.setDelegate(null);
         mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
+    }
+
+    public void showSaveWebAppDialog() {
+        if (getSession() == null || getSession().getWebAppManifest() == null) {
+            Log.w(LOGTAG, "showSaveWebAppDialog: missing Session or Web app manifest");
+            return;
+        }
+
+        WebApp webApp = getSession().getWebAppManifest();
+        InstallWebAppDialogWidget installWebAppDialog =
+                new InstallWebAppDialogWidget(getContext(), webApp);
+        installWebAppDialog.setButtonsDelegate((index, isChecked) -> {
+            if (index == PromptDialogWidget.POSITIVE) {
+                WebAppsStore webAppsStore = SessionStore.get().getWebAppsStore();
+                webAppsStore.addWebApp(webApp);
+                mWidgetManager.getWindows().showWebAppAddedNotification();
+            }
+            installWebAppDialog.onDismiss();
+        });
+        installWebAppDialog.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+        installWebAppDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     public void showPopUpsBlockedNotification() {

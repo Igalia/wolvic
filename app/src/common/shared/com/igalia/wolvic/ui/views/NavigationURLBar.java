@@ -98,6 +98,7 @@ public class NavigationURLBar extends FrameLayout {
         void onWebXRButtonClicked();
         void onTrackingButtonClicked();
         void onDrmButtonClicked();
+        void onWebAppButtonClicked();
         boolean onHandleExternalRequest(@NonNull String uri);
     }
 
@@ -233,6 +234,9 @@ public class NavigationURLBar extends FrameLayout {
 
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
+
+        // Web app
+        mBinding.webAppButton.setOnClickListener(mWebAppButtonClick);
 
         clearFocus();
     }
@@ -424,6 +428,16 @@ public class NavigationURLBar extends FrameLayout {
 
         if (mDelegate != null) {
             mDelegate.onDrmButtonClicked();
+        }
+    };
+
+    private OnClickListener mWebAppButtonClick = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onWebAppButtonClicked();
         }
     };
 

@@ -234,8 +234,8 @@ public class HamburgerMenuWidget extends UIWidget implements
                         }
                         return null;
                     })
-                    .withTitle(getContext().getString(R.string.hamburger_menu_save_webapp))
-                    .withIcon(R.drawable.ic_icon_save)
+                    .withTitle(getContext().getString(R.string.hamburger_menu_save_web_app))
+                    .withIcon(R.drawable.ic_web_app_registration)
                     .build());
         }
 
