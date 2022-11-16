@@ -71,6 +71,7 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
         mBinding = DataBindingUtil.inflate(inflater, R.layout.webapps, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mWebAppsAdapter = new WebAppsAdapter(mWebAppItemCallback, getContext());
+        mBinding.setWebAppsViewModel(mViewModel);
         mBinding.webAppsList.setAdapter(mWebAppsAdapter);
         mBinding.webAppsList.setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
