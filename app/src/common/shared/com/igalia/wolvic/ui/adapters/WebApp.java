@@ -83,19 +83,11 @@ public class WebApp {
     }
 
     public int getThemeColor() {
-        if (mManifest.getThemeColor() != null) {
-            return mManifest.getThemeColor();
-        } else {
-            return Color.TRANSPARENT;
-        }
+        return mManifest.getThemeColor() != null ? mManifest.getThemeColor() : Color.TRANSPARENT;
     }
 
     public int getBackgroundColor() {
-        if (mManifest.getBackgroundColor() != null) {
-            return mManifest.getBackgroundColor();
-        } else {
-            return Color.TRANSPARENT;
-        }
+        return mManifest.getBackgroundColor() != null ? mManifest.getBackgroundColor() : Color.TRANSPARENT;
     }
 
     // Returns the list of icons in a format suitable to be used with BrowserIcons.
@@ -124,13 +116,7 @@ public class WebApp {
         if (o == null || getClass() != o.getClass())
             return false;
         WebApp webApp = (WebApp) o;
-        return mIdentity.equals(webApp.mIdentity) &&
-                getName().equals(webApp.getName()) &&
-                getShortName().equals(webApp.getShortName()) &&
-                getScope().equals(webApp.getScope()) &&
-                getStartUrl().equals(webApp.getStartUrl()) &&
-                getThemeColor() == webApp.getThemeColor() &&
-                getBackgroundColor() == webApp.getBackgroundColor();
+        return mIdentity.equals(webApp.mIdentity) && mManifest.equals(webApp.mManifest);
     }
 
     @Override
