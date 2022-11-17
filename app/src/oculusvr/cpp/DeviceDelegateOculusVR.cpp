@@ -38,9 +38,6 @@
 
 #include "VRBrowser.h"
 
-#define OCULUS_6DOF_APP_ID "4812663595466206"
-#define OCULUS_3DOF_APP_ID "2208418715853974"
-
 namespace crow {
 
 const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
@@ -171,8 +168,6 @@ struct DeviceDelegateOculusVR::State {
     // handle the gamepad events yourself.
     vrapi_SetPropertyInt(&java, VRAPI_EAT_NATIVE_GAMEPAD_EVENTS, 0);
 
-    const char * appId = OCULUS_6DOF_APP_ID;
-
     const int type = vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_DEVICE_TYPE);
     if ((type >= VRAPI_DEVICE_TYPE_OCULUSQUEST2_START) && (type <= VRAPI_DEVICE_TYPE_OCULUSQUEST2_END)) {
       VRB_DEBUG("Detected Oculus Quest 2");
@@ -182,24 +177,6 @@ struct DeviceDelegateOculusVR::State {
       deviceType = device::OculusQuest;
     } else {
       VRB_DEBUG("Detected Unknown Oculus device");
-    }
-
-    if (!ovr_IsPlatformInitialized()) {
-      ovrRequest result = ovr_PlatformInitializeAndroidAsynchronous(appId, java.ActivityObject,
-                                                                    java.Env);
-
-      if (invalidRequestID == result) {
-        // Initialization failed which means either the oculus service isn’t on the machine or they’ve hacked their DLL.
-        VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous failed: %d", (int32_t) result);
-#if STORE_BUILD == 1
-        VRBrowser::HaltActivity(0);
-#endif
-      } else {
-        VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous succeeded");
-        ovr_Entitlement_GetIsViewerEntitled();
-      }
-    } else if (!applicationEntitled) {
-      ovr_Entitlement_GetIsViewerEntitled();
     }
   }
 
@@ -914,54 +891,6 @@ DeviceDelegateOculusVR::ProcessEvents() {
           m.controller->SetVisible(false);
         }
         break;
-      default:
-        break;
-    }
-  }
-
-  ovrMessageHandle message;
-  while ((message = ovr_PopMessage()) != nullptr) {
-    switch (ovr_Message_GetType(message)) {
-      case ovrMessage_PlatformInitializeAndroidAsynchronous: {
-        ovrPlatformInitializeHandle handle = ovr_Message_GetPlatformInitialize(message);
-        ovrPlatformInitializeResult result = ovr_PlatformInitialize_GetResult(handle);
-        if (result == ovrPlatformInitialize_Success) {
-          VRB_DEBUG("OVR Platform Initialized.");
-        } else {
-          VRB_ERROR("OVR Platform Initialize failed: %s", ovrPlatformInitializeResult_ToString(result));
-#if STORE_BUILD == 1
-          VRBrowser::HaltActivity(0);
-#endif
-        }
-      }
-        break;
-      case ovrMessage_Entitlement_GetIsViewerEntitled:
-        if (ovr_Message_IsError(message)) {
-          VRB_LOG("User is not entitled");
-#if STORE_BUILD == 1
-          VRBrowser::HaltActivity(0);
-#else
-          // No need to process events anymore.
-          m.applicationEntitled = true;
-#endif
-        }
-        else {
-          VRB_LOG("User is entitled");
-          m.applicationEntitled = true;
-        }
-        break;
-      case ovrMessage_Notification_ApplicationLifecycle_LaunchIntentChanged: {
-        ovrLaunchDetailsHandle details = ovr_ApplicationLifecycle_GetLaunchDetails();
-        if (ovr_LaunchDetails_GetLaunchType(details) == ovrLaunchType_Deeplink) {
-          const char* msg = ovr_LaunchDetails_GetDeeplinkMessage(details);
-          if (msg) {
-            // FIXME see https://github.com/MozillaReality/FirefoxReality/issues/3066
-            // Currently handled in VRBrowserActivity.loadFromIntent()
-            // VRBrowser::OnAppLink(msg);
-          }
-        }
-        break;
-      }
       default:
         break;
     }

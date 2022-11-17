@@ -93,6 +93,9 @@ protected:
   void CreateSkyBox(const std::string& aBasePath, const std::string& aExtension);
   void CreateEnvironment();
 private:
+#if defined(OCULUSVR) && STORE_BUILD == 1
+  void ProcessOVRPlatformEvents();
+#endif
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
