@@ -14,6 +14,7 @@ import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionState;
+import com.igalia.wolvic.ui.adapters.WebApp;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class SessionState {
     public String mUri = "";
     public String mPreviousUri;
     public String mTitle = "";
+    public transient WebApp mWebAppManifest;
     public transient boolean mFullScreen;
     public transient boolean mInKioskMode;
     public transient WSession mSession;

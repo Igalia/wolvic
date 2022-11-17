@@ -667,8 +667,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mWidgetManager.setControllersVisible(false);
         AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
         mTrayViewModel.setShouldBeVisible(false);
 
         if (mProjectionMenu == null) {
@@ -718,8 +716,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
 
         AnimationHelper.fadeIn(mBinding.navigationBarNavigation.navigationBarContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
-
-        mWidgetManager.popWorldBrightness(this);
         AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
         // if we are in kiosk mode, don't show the tray
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());

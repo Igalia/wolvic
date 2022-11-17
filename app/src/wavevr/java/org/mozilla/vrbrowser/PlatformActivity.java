@@ -29,6 +29,11 @@ public class PlatformActivity extends VRActivity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        // Dummy implementation.
+        return true;
+    }
+
     public PlatformActivity() {}
 
     @Override

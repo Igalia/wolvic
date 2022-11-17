@@ -3,6 +3,7 @@ package com.igalia.wolvic.browser;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -92,7 +93,7 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
-    public final static int MSAA_DEFAULT_LEVEL = BuildConfig.MSAA_LEVEL;
+    public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     private final static long CRASH_RESTART_DELTA = 2000;
@@ -163,6 +164,7 @@ public class SettingsStore {
                     null,
                     Request.Redirect.FOLLOW,
                     Request.CookiePolicy.INCLUDE,
+                    false,
                     false
             );
 
@@ -441,8 +443,11 @@ public class SettingsStore {
 
 
     public int getMSAALevel() {
+        // We could get the exact HarmonyOS version using the Huawei's ohos package but there is little
+        // point in adding a dependency just for that. We can do an alternate check.
+        boolean isHarmonyOS2 = DeviceType.isHVRBuild() && Build.VERSION.SDK_INT < Build.VERSION_CODES.S;
         return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_msaa), MSAA_DEFAULT_LEVEL);
+                mContext.getString(R.string.settings_key_msaa), isHarmonyOS2 ? 0 : MSAA_DEFAULT_LEVEL);
     }
 
     public void setMSAALevel(int level) {
@@ -913,4 +918,13 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), false);
     }
 
+    public void setWebAppsData(String aWebAppsData) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_web_apps_data), aWebAppsData);
+        editor.commit();
+    }
+
+    public String getWebAppsData() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_web_apps_data), "");
+    }
 }

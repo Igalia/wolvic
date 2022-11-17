@@ -34,8 +34,6 @@ import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.feature.addons.ui.CustomViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.AddonViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.SectionViewHolder
-import mozilla.components.feature.addons.ui.translatedName
-import mozilla.components.feature.addons.ui.translatedSummary
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import java.io.IOException
@@ -90,7 +88,8 @@ class AddonsManagerAdapter(
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.addons_section_item, parent, false)
         val titleView = view.findViewById<TextView>(R.id.title)
-        return SectionViewHolder(view, titleView)
+        val divider = view.findViewById<View>(R.id.divider)
+        return SectionViewHolder(view, titleView, divider)
     }
 
     private fun createAddonViewHolder(parent: ViewGroup): AddonViewHolder {
@@ -162,13 +161,13 @@ class AddonsManagerAdapter(
 
         holder.titleView.text =
             if (addon.translatableName.isNotEmpty()) {
-                addon.translatedName
+                addon.translatableName.toString()
             } else {
                 addon.id
             }
 
         if (addon.translatableSummary.isNotEmpty()) {
-            holder.summaryView.text = addon.translatedSummary
+            holder.summaryView.text = addon.translatableSummary.toString()
         } else {
             holder.summaryView.visibility = View.GONE
         }

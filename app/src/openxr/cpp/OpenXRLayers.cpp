@@ -152,10 +152,11 @@ OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
 // OpenXRLayerEquirect;
 
 OpenXRLayerEquirectPtr
-OpenXRLayerEquirect::Create(const VRLayerEquirectPtr& aLayer, const OpenXRLayerPtr& aSourceLayer) {
+OpenXRLayerEquirect::Create(const VRLayerEquirectPtr& aLayer, const OpenXRLayerPtr& aSourceLayer, bool aVerticalFlip) {
   auto result = std::make_shared<OpenXRLayerEquirect>();
   result->layer = aLayer;
   result->sourceLayer = aSourceLayer;
+  result->mVerticalFlip = aVerticalFlip;
   return result;
 }
 
@@ -166,8 +167,14 @@ OpenXRLayerEquirect::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPt
     return;
   }
   swapchain = source->GetSwapChain();
+  if (mVerticalFlip) {
+      mLayerImageLayout.type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB;
+      mLayerImageLayout.flags = XR_COMPOSITION_LAYER_IMAGE_LAYOUT_VERTICAL_FLIP_BIT_FB;
+      mLayerImageLayout.next = XR_NULL_HANDLE;
+  }
   for (auto& xrLayer: xrLayers) {
     xrLayer = {XR_TYPE_COMPOSITION_LAYER_EQUIRECT_KHR};
+    xrLayer.next = mVerticalFlip ? &mLayerImageLayout : XR_NULL_HANDLE;
   }
   OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Init(aEnv, session, aContext);
 }

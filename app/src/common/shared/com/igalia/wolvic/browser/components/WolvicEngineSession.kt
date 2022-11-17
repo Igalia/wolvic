@@ -20,10 +20,9 @@ class WolvicEngineSession(
         session.loadUri(url, flags.value)
     }
 
+
     override val settings: Settings = object : Settings() {}
     override fun clearFindMatches() = Unit
-    override fun disableTrackingProtection() = Unit
-    override fun enableTrackingProtection(policy: TrackingProtectionPolicy) = Unit
     override fun exitFullScreenMode() = Unit
     override fun findAll(text: String) = Unit
     override fun findNext(forward: Boolean) = Unit
@@ -35,9 +34,10 @@ class WolvicEngineSession(
     override fun restoreState(state: EngineSessionState) = true
     override fun stopLoading() = Unit
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) = Unit
+    override fun updateTrackingProtection(policy: TrackingProtectionPolicy) = Unit
+    override fun purgeHistory() = Unit;
 }
 
 private class DummyEngineSessionState : EngineSessionState {
-    override fun toJSON(): JSONObject = JSONObject()
     override fun writeTo(writer: JsonWriter) {}
 }

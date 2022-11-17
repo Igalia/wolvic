@@ -29,6 +29,11 @@ public class PlatformActivity extends NativeActivity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        // Dummy implementation.
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"in onCreate");

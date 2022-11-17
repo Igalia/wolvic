@@ -48,7 +48,7 @@ public class SystemUtils {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent mPendingIntent = PendingIntent.getActivity(context, 0, i,
-                PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + delay, mPendingIntent);
 

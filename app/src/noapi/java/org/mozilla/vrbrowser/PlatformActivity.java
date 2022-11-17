@@ -36,6 +36,11 @@ public class PlatformActivity extends Activity {
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        // Dummy implementation.
+        return false;
+    }
+
     private GLSurfaceView mView;
     private TextView mFrameRate;
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();

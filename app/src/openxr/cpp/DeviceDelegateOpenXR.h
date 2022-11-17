@@ -40,6 +40,7 @@ public:
   void ReleaseControllerDelegate() override;
   int32_t GetControllerModelCount() const override;
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
+  bool IsPositionTrackingSupported() const override;
   void OnControllersReady(const std::function<void()>& callback) override;
   void SetCPULevel(const device::CPULevel aLevel) override;
   void ProcessEvents() override;
@@ -57,6 +58,7 @@ public:
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   // Custom methods for NativeActivity render loop based devices.
+  void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
   void OnDestroy();

@@ -24,6 +24,9 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.huawei.hms.analytics.HiAnalytics;
+import com.huawei.hms.analytics.HiAnalyticsInstance;
+import com.huawei.hms.analytics.HiAnalyticsTools;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hvr.LibUpdateClient;
@@ -64,6 +67,10 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         return true;
     }
 
+    public static boolean isPositionTrackingSupported() {
+        return nativeIsPositionTrackingSupported();
+    }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
@@ -86,6 +93,13 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         mContext = this;
         mLocationManager = new HVRLocationManager(this);
         PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
+
+        // Enable analytics
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+            HiAnalyticsTools.enableLog();
+        }
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -236,11 +250,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     private void initializeAGConnect() {
         try {
             String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
-            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_ML_API_KEY)) {
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_API_KEY)) {
                 Log.e(TAG, "HVR API key is not available");
                 return;
             }
-            MLApplication.getInstance().setApiKey(BuildConfig.HVR_ML_API_KEY);
+            MLApplication.getInstance().setApiKey(BuildConfig.HVR_API_KEY);
             TelemetryService.setService(new HVRTelemetry(this));
             try {
                 SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
@@ -304,6 +318,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected void onStop() {
         super.onStop();
         Log.i(TAG, "PlatformActivity onStop");
+        queueRunnable(this::nativeOnStop);
     }
 
     @Override
@@ -356,9 +371,11 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     protected native void nativeOnCreate();
     protected native void nativeOnDestroy();
     protected native void nativeOnPause();
+    protected native void nativeOnStop();
     protected native void nativeOnResume();
     protected native void nativeOnSurfaceChanged(Surface surface);
     protected native void nativeOnSurfaceDestroyed();
+    protected static native boolean nativeIsPositionTrackingSupported();
 }
 
 

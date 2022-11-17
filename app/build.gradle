@@ -62,15 +62,15 @@ def getHVRAppId = { ->
     return ""
 }
 
-def getHVRMLApiKey = { ->
-    if (gradle.hasProperty("userProperties.HVR_ML_API_KEY")) {
-        return gradle."userProperties.HVR_ML_API_KEY"
+def getHVRApiKey = { ->
+    if (gradle.hasProperty("userProperties.HVR_API_KEY")) {
+        return gradle."userProperties.HVR_API_KEY"
     }
     return ""
 }
 
 def getHVRMLSpeechServices = { ->
-    if (getHVRMLApiKey().isEmpty()) {
+    if (getHVRApiKey().isEmpty()) {
         return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
     } else {
         return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI, " +
@@ -105,12 +105,11 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 50
-        versionName "1.1.1"
+        versionCode 52
+        versionName "1.2"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
-        buildConfigField "int", "MSAA_LEVEL", "1"
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
@@ -267,31 +266,13 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -DHVR -DHVR_6DOF -DOPENXR -I" + file("src/openxr/cpp").absolutePath
-                    arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
-                }
-            }
-            buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
-            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
-            buildConfigField "String", "MK_API_KEY", "\"\""
-            buildConfigField "int", "MSAA_LEVEL", "0"
-            buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
-            buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
-        }
-
-        hvr3dof {
-            applicationId "com.igalia.wolvic.tdof"
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
                     cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
                     arguments "-DVR_SDK_LIB=hvr-lib", "-DHVR=ON", "-DOPENXR=ON"
                 }
             }
             buildConfigField "String", "HVR_APP_ID", "\"${getHVRAppId()}\""
-            buildConfigField "String", "HVR_ML_API_KEY", "\"${getHVRMLApiKey()}\""
+            buildConfigField "String", "HVR_API_KEY", "\"${getHVRApiKey()}\""
             buildConfigField "String", "MK_API_KEY", "\"\""
-            buildConfigField "int", "MSAA_LEVEL", "0"
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
         }
@@ -477,18 +458,6 @@ android {
             ]
         }
 
-        hvr3dof {
-            java.srcDirs = [
-                    'src/hvr/java'
-            ]
-            assets.srcDirs = [
-                    'src/hvr/assets'
-            ]
-            res.srcDirs = [
-                    'src/hvr/res'
-            ]
-        }
-
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -541,6 +510,7 @@ dependencies {
     implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
+    implementation deps.android_components.browser_icons
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location
@@ -597,19 +567,12 @@ dependencies {
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
-    hvr3dofImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
-    hvr3dofImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
     hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
-    hvr3dofImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
     hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
-    hvr3dofImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
-    hvr3dofImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
-    hvr3dofImplementation 'com.huawei.hms:location:6.2.0.300'
     hvrImplementation 'com.huawei.hms:push:6.5.0.300'
-    hvr3dofImplementation 'com.huawei.hms:push:6.5.0.300'
 }
 
 if (getBackend() == 'chromium') {
@@ -665,7 +628,7 @@ androidComponents {
         // HVR packages for China must use different applicationIds.
         def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn(Release|Debug)/
         if (hvrChinaBuildPattern.matcher(variant.name).matches())
-            variant.applicationId = variant.applicationId.get().replace('com.igalia','cn.igalia')
+            variant.applicationId = variant.applicationId.get().replace('com.igalia','com.cn.igalia')
     })
 }
 

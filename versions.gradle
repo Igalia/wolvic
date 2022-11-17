@@ -26,13 +26,13 @@ def versions = [:]
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
 versions.gecko_view_nightly = "105.0.20220822095220"
 versions.gecko_view_beta = "104.0.20220816121120"
-versions.android_components = "63.0.0"
+versions.android_components = "75.0.22"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
 // The version number below tracks the application-services version
 // that we depend on directly for its rustlog package, and it's important
 // that it be kept insync with the version used by android-components above.
-versions.mozilla_appservices = "63.0.0"
+versions.mozilla_appservices = "74.0.1"
 versions.openwnn = "1.3.7"
 versions.room = "2.2.0"
 versions.lifecycle = "2.3.1"
@@ -75,6 +75,7 @@ android_components.browser_search = "org.mozilla.components:browser-search:$vers
 android_components.browser_state = "org.mozilla.components:browser-state:$versions.android_components"
 android_components.browser_storage = "org.mozilla.components:browser-storage-sync:$versions.android_components"
 android_components.browser_domains = "org.mozilla.components:browser-domains:$versions.android_components"
+android_components.browser_icons = "org.mozilla.components:browser-icons:$versions.android_components"
 android_components.service_accounts = "org.mozilla.components:service-firefox-accounts:$versions.android_components"
 android_components.service_sync_logins = "org.mozilla.components:service-sync-logins:$versions.android_components"
 android_components.mozilla_service_location = "org.mozilla.components:service-location:${versions.android_components}"

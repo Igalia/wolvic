@@ -16,6 +16,7 @@
 #include <vrb/RunnableQueue.h>
 #include "DeviceDelegateOpenXR.h"
 #include <thread>
+#include <android/log.h>
 
 #include <android/looper.h>
 #include <unistd.h>
@@ -24,6 +25,8 @@
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
     Java_com_igalia_wolvic_PlatformActivity_##method_name
+
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "nativeLib", __VA_ARGS__)
 
 using namespace crow;
 
@@ -50,6 +53,7 @@ struct AppContext {
   PlatformDeviceDelegatePtr mDevice;
   pthread_t mThreadId { 0 };
   JavaContext mJavaContext;
+  bool mShouldExitRenderThread { false };
 
   void RenderThread() {
     // Attach JNI thread
@@ -71,16 +75,17 @@ struct AppContext {
     while (true) {
       mQueue->ProcessRunnables();
 
-      if (mDevice->ShouldExitRenderLoop()) {
+      if (mDevice->ShouldExitRenderLoop() && mShouldExitRenderThread) {
+        LOGD("exiting render loop");
         break;
       }
 
-      //LOGI("sessionRunning : %d",sessionRunning);
       if (mDevice->IsInVRMode() && mEgl && mEgl->IsSurfaceReady() && !BrowserWorld::Instance().IsPaused()) {
         BrowserWorld::Instance().Draw();
       }
       else {
         // Throttle loop since xrWaitFrame won't be called.
+        LOGD("Session throttled %s %s %s", (mDevice->IsInVRMode() ? "inVRMode" : ""), (mEgl ? "EGL" : ""), (BrowserWorld::Instance().IsPaused() ? "BrowserWorld.IsPaused" : ""));
         timespec total_time;
         timespec left_time;
         total_time.tv_sec = 0;
@@ -94,6 +99,7 @@ struct AppContext {
     }
 
     BrowserWorld::Instance().ShutdownJava();
+    BrowserWorld::Instance().ShutdownGL();
     BrowserWorld::Destroy();
     mEgl->Destroy();
     mEgl.reset();
@@ -116,12 +122,15 @@ extern "C" {
 
 JNI_METHOD(void, nativeOnCreate)
 (JNIEnv *aEnv, jobject activity) {
+  LOGD("onCreate");
   sAppContext->mJavaContext.activity = aEnv->NewGlobalRef(activity);
   pthread_create(&sAppContext->mThreadId, nullptr, StartRenderThread, sAppContext.get());
 }
 
 JNI_METHOD(void, nativeOnDestroy)
 (JNIEnv *aEnv, jobject) {
+  LOGD("onDestroy");
+  sAppContext->mShouldExitRenderThread = true;
   pthread_join(sAppContext->mThreadId, nullptr);
   if (sAppContext && sAppContext->mJavaContext.activity) {
     aEnv->DeleteGlobalRef(sAppContext->mJavaContext.activity);
@@ -132,17 +141,25 @@ JNI_METHOD(void, nativeOnDestroy)
 
 JNI_METHOD(void, nativeOnPause)
 (JNIEnv *aEnv, jobject) {
+  LOGD("onPause");
   BrowserWorld::Instance().Pause();
+}
+
+JNI_METHOD(void, nativeOnStop)
+(JNIEnv *aEnv, jobject) {
+  LOGD("onStop");
+  sAppContext->mShouldExitRenderThread = BrowserWorld::Instance().WasButtonAppPressed();
 }
 
 JNI_METHOD(void, nativeOnResume)
 (JNIEnv *aEnv, jobject) {
+  LOGD("onResume");
   BrowserWorld::Instance().Resume();
 }
 
 JNI_METHOD(void, nativeOnSurfaceChanged)
 (JNIEnv *aEnv, jobject, jobject surface) {
-
+  LOGD("onSurfaceChanged");
   ANativeWindow* window = ANativeWindow_fromSurface(aEnv, surface);
   if (!sAppContext->mEgl) {
     sAppContext->mEgl = BrowserEGLContext::Create();
@@ -152,6 +169,7 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
     VRB_GL_CHECK(glEnable(GL_CULL_FACE));
     BrowserWorld::Instance().InitializeGL();
   } else {
+    LOGD("onSurfaceChanged: updating window");
     sAppContext->mEgl->UpdateNativeWindow(window);
     sAppContext->mEgl->MakeCurrent();
   }
@@ -161,10 +179,7 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)
 (JNIEnv *aEnv, jobject) {
-  if (sAppContext && sAppContext->mDevice) {
-    sAppContext->mDevice->LeaveVR();
-    BrowserWorld::Instance().ShutdownGL();
-  }
+  sAppContext->mDevice->LeaveVR();
 }
 
 
@@ -185,7 +200,15 @@ JNI_METHOD(jboolean, platformExit)
   return (jboolean) false;
 }
 
-jint JNI_OnLoad(JavaVM* aVm, void*) {
+JNI_METHOD(jboolean, nativeIsPositionTrackingSupported)
+(JNIEnv *, jclass) {
+  if (sAppContext && sAppContext->mDevice) {
+    return (jboolean) sAppContext->mDevice->IsPositionTrackingSupported();
+  }
+  return (jboolean) false;
+}
+
+jint JNI_OnLoad(JavaVM *aVm, void *) {
   if (sAppContext) {
     return JNI_VERSION_1_6;
   }

@@ -46,11 +46,15 @@ import com.igalia.wolvic.browser.content.TrackingProtectionPolicy;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.geolocation.GeolocationData;
 import com.igalia.wolvic.telemetry.TelemetryService;
+import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.InternalPages;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -953,6 +957,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         return mState.mDrmState;
     }
 
+    public WebApp getWebAppManifest() {
+        return mState.mWebAppManifest;
+    }
+
     // Session Settings
 
     public int getUaMode() {
@@ -1069,6 +1077,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         for (WSession.NavigationDelegate listener : mNavigationListeners) {
             listener.onLocationChange(aSession, aUri);
         }
+
+        // TODO Check that this is the correct place to clear the stored manifest. Update the UI if needed.
+        Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
+        mState.mWebAppManifest = null;
 
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
@@ -1331,6 +1343,23 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (mState.mSession == aSession) {
             for (WSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstContentfulPaint(aSession);
+            }
+        }
+    }
+
+    @Override
+    public void onWebAppManifest(@NonNull WSession aSession, @NonNull JSONObject manifest) {
+        if (mState.mSession == aSession) {
+            try {
+                mState.mWebAppManifest = new WebApp(manifest);
+                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest");
+            } catch (IOException e) {
+                Log.w(LOGTAG, "onWebAppManifest: malformed Web app manifest: " + e.getMessage());
+                mState.mWebAppManifest = null;
+            }
+
+            for (WSession.ContentDelegate listener : mContentListeners) {
+                listener.onWebAppManifest(aSession, manifest);
             }
         }
     }

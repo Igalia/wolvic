@@ -588,6 +588,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    private void closeLibraryPanelInFocusedWindowIfNeeded() {
+        if (!mFocusedWindow.isLibraryVisible())
+            return;
+        mFocusedWindow.switchPanel(NONE);
+    }
+
     public void enterPrivateMode() {
         if (mPrivateMode) {
             return;
@@ -596,7 +602,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mFocusedWindow != null) {
             mRegularWindowPlacement = mFocusedWindow.getWindowPlacement();
-
+            // Make sure we close the library before entering private mode. Otherwise we would
+            // get a EGL crash in Gecko.
+            closeLibraryPanelInFocusedWindowIfNeeded();
         } else {
             mRegularWindowPlacement = WindowPlacement.FRONT;
         }
@@ -639,7 +647,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mFocusedWindow != null) {
             mPrivateWindowPlacement = mFocusedWindow.getWindowPlacement();
-
+            // Make sure we close the library before exiting private mode. Otherwise we would
+            // get a EGL crash in Gecko.
+            closeLibraryPanelInFocusedWindowIfNeeded();
         } else {
             mPrivateWindowPlacement = WindowPlacement.FRONT;
         }

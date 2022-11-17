@@ -134,9 +134,18 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME)) {
       extensions.push_back(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME);
     }
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME)) {
+        extensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
+        if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME)) {
+            extensions.push_back(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
+        }
+    }
 #ifdef OCULUSVR
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
       extensions.push_back(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME);
+    }
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME)) {
+      extensions.push_back(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME);
     }
 #endif
 
@@ -380,10 +389,6 @@ struct DeviceDelegateOpenXR::State {
     boundSwapChain->BindFBO(aTarget);
   }
 
-  bool Is6DOF() const {
-    return systemProperties.trackingProperties.positionTracking != 0;
-  }
-
   const XrEventDataBaseHeader* PollEvent() {
     if (!instance) {
       return nullptr;
@@ -399,6 +404,13 @@ struct DeviceDelegateOpenXR::State {
     return nullptr;
   }
 
+  void BeginXRSession() {
+      XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
+      sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
+      CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
+      vrReady = true;
+    }
+
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
     VRB_LOG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
         to_string(sessionState), to_string(event.state), event.session, event.time);
@@ -410,23 +422,35 @@ struct DeviceDelegateOpenXR::State {
 
     switch (sessionState) {
       case XR_SESSION_STATE_READY: {
-        XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
-        sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
-        CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
-        vrReady = true;
+        VRB_LOG("XR_SESSION_STATE_READY");
+        BeginXRSession();
+        break;
+      }
+      case XR_SESSION_STATE_VISIBLE: {
+        VRB_LOG("XR_SESSION_STATE_VISIBLE");
+        break;
+      }
+      case XR_SESSION_STATE_FOCUSED: {
+        VRB_LOG("XR_SESSION_STATE_FOCUSED");
+        break;
+      }
+      case XR_SESSION_STATE_SYNCHRONIZED: {
+        VRB_LOG("XR_SESSION_STATE_SYNCHRONIZED");
         break;
       }
       case XR_SESSION_STATE_STOPPING: {
+        VRB_LOG("XR_SESSION_STATE_STOPPING");
         vrReady = false;
         CHECK_XRCMD(xrEndSession(session))
         break;
       }
       case XR_SESSION_STATE_EXITING: {
+        VRB_LOG("XR_SESSION_STATE_EXITING");
         vrReady = false;
-        //exit(0);
         break;
       }
       case XR_SESSION_STATE_LOSS_PENDING: {
+        VRB_LOG("XR_SESSION_STATE_LOSS_PENDING");
         vrReady = false;
         break;
       }
@@ -469,6 +493,11 @@ struct DeviceDelegateOpenXR::State {
 
     // Release input
     input = nullptr;
+
+    if (session) {
+      CHECK_XRCMD(xrDestroySession(session));
+      session = XR_NULL_HANDLE;
+    }
 
     // Shutdown OpenXR instance
     if (instance) {
@@ -576,6 +605,12 @@ DeviceDelegateOpenXR::GetControllerModelCount() const {
 const std::string
 DeviceDelegateOpenXR::GetControllerModelName(const int32_t aModelIndex) const {
   return m.input->GetControllerModelName(aModelIndex);
+}
+
+bool
+DeviceDelegateOpenXR::IsPositionTrackingSupported() const {
+  // returns true for 6DoF controllers
+  return m.systemProperties.trackingProperties.positionTracking == XR_TRUE;
 }
 
 void
@@ -687,10 +722,12 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   }
 
   vrb::Matrix head = XrPoseToMatrix(location.pose);
-  #if defined(HVR_6DOF)
+#if HVR
+  if (IsPositionTrackingSupported()) {
     // Convert from floor to local (HVR doesn't support stageSpace yet)
     head.TranslateInPlace(vrb::Vector(-m.firstPose->position.x, -m.firstPose->position.y, -m.firstPose->position.z));
-  #endif
+  }
+#endif
 
   if (m.renderMode == device::RenderMode::StandAlone) {
     head.TranslateInPlace(kAverageHeight);
@@ -704,7 +741,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     device::CapabilityFlags caps =
         device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession;
     if (location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
-      caps |= m.Is6DOF() ? device::Position : device::PositionEmulated;
+      caps |= IsPositionTrackingSupported() ? device::Position : device::PositionEmulated;
     }
 
     // Update WebXR room scale transform if the device supports stage space
@@ -716,11 +753,15 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
       xrLocateSpace(m.localSpace, m.stageSpace, m.predictedDisplayTime, &stageLocation);
       vrb::Matrix transform = XrPoseToMatrix(stageLocation.pose);
       m.immersiveDisplay->SetSittingToStandingTransform(transform);
-#if HVR_6DOF
+#if HVR
       // Workaround for empty stage transform bug in HVR
-      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(vrb::Vector(0.0f, m.firstPose->position.y, 0.0f)));
-#elif HVR
-      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
+      if (IsPositionTrackingSupported()) {
+          m.immersiveDisplay->SetSittingToStandingTransform(
+                  vrb::Matrix::Translation(vrb::Vector(0.0f, m.firstPose->position.y, 0.0f)));
+      } else {
+          m.immersiveDisplay->SetSittingToStandingTransform(
+                  vrb::Matrix::Translation(kAverageHeight));
+      }
 #endif
     }
 
@@ -1005,7 +1046,13 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
   if (m.equirectLayer) {
     m.equirectLayer->Destroy();
   }
-  m.equirectLayer = OpenXRLayerEquirect::Create(result, source);
+  bool verticalFlip = false;
+#ifdef OCULUSVR
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME)) {
+        verticalFlip = true;
+    }
+#endif
+  m.equirectLayer = OpenXRLayerEquirect::Create(result, source, verticalFlip);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
     m.equirectLayer->Init(m.javaContext->env, m.session, context);
@@ -1041,8 +1088,10 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   m.firstPose = std::nullopt;
 
   if (m.session != XR_NULL_HANDLE && m.graphicsBinding.context == aEGLContext.Context()) {
+    // Session already created, call begin again. This can happen for example in HVR when reentering
+    // the security zone, because HVR forces us to stop and end the session when exiting.
+    m.BeginXRSession();
     ProcessEvents();
-    // Session already created and valid.
     return;
   }
 
