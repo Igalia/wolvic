@@ -29,6 +29,7 @@ public class LibraryPanel extends FrameLayout {
     private LibraryBinding mBinding;
     protected WidgetManagerDelegate mWidgetManager;
     protected Executor mUIThreadExecutor;
+    private WebAppsView mWebAppsView;
     private BookmarksView mBookmarksView;
     private HistoryView mHistoryView;
     private DownloadsView mDownloadsView;
@@ -54,8 +55,9 @@ public class LibraryPanel extends FrameLayout {
 
     protected void initialize() {
         mWidgetManager = ((VRBrowserActivity) getContext());
-        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
+        mUIThreadExecutor = ((VRBrowserApplication) getContext().getApplicationContext()).getExecutors().mainThread();
 
+        mWebAppsView = new WebAppsView(getContext(), this);
         mBookmarksView = new BookmarksView(getContext(), this);
         mHistoryView = new HistoryView(getContext(), this);
         mDownloadsView = new DownloadsView(getContext(), this);
@@ -116,6 +118,7 @@ public class LibraryPanel extends FrameLayout {
 
         mHistoryView.updateUI();
         mBookmarksView.updateUI();
+        mWebAppsView.updateUI();
         mDownloadsView.updateUI();
         mAddonsView.updateUI();
         mSystemNotificationsView.updateUI();
@@ -146,6 +149,7 @@ public class LibraryPanel extends FrameLayout {
     public void onDestroy() {
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
+        mWebAppsView.onDestroy();
         mDownloadsView.onDestroy();
         mAddonsView.onDestroy();
         mSystemNotificationsView.onDestroy();
@@ -154,6 +158,9 @@ public class LibraryPanel extends FrameLayout {
     public @Windows.PanelType int getSelectedPanelType() {
         if (mCurrentView == mBookmarksView) {
             return Windows.BOOKMARKS;
+
+        } else if (mCurrentView == mWebAppsView) {
+            return Windows.WEB_APPS;
 
         } else if (mCurrentView == mHistoryView) {
             return Windows.HISTORY;
@@ -194,6 +201,9 @@ public class LibraryPanel extends FrameLayout {
 
         } else if (view.getId() == R.id.notifications) {
             selectNotifications();
+
+        } else if (view.getId() == R.id.web_apps) {
+            selectWebApps();
         }
 
         mBinding.setCanGoBack(mCurrentView.canGoBack());
@@ -210,6 +220,9 @@ public class LibraryPanel extends FrameLayout {
             case Windows.NONE:
             case Windows.BOOKMARKS:
                 selectTab(mBinding.bookmarks);
+                break;
+            case Windows.WEB_APPS:
+                selectTab(mBinding.webApps);
                 break;
             case Windows.HISTORY:
                 selectTab(mBinding.history);
@@ -230,6 +243,12 @@ public class LibraryPanel extends FrameLayout {
         mCurrentView = mBookmarksView;
         mBinding.bookmarks.setActiveMode(true);
         mBinding.tabcontent.addView(mBookmarksView);
+    }
+
+    private void selectWebApps() {
+        mCurrentView = mWebAppsView;
+        mBinding.webApps.setActiveMode(true);
+        mBinding.tabcontent.addView(mWebAppsView);
     }
 
     private void selectHistory() {

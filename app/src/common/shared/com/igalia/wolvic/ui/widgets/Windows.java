@@ -77,6 +77,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
+    private static final int WEB_APP_ADDED_NOTIFICATION_ID = 3;
 
     class WindowState {
         WindowPlacement placement;
@@ -147,14 +148,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private DownloadsManager mDownloadsManager;
     private ConnectivityReceiver mConnectivityReceived;
 
-    @IntDef(value = {NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS, NOTIFICATIONS})
+    @IntDef(value = {NONE, BOOKMARKS, WEB_APPS, HISTORY, DOWNLOADS, ADDONS, NOTIFICATIONS})
     public @interface PanelType {}
     public static final int NONE = 0;
     public static final int BOOKMARKS = 1;
-    public static final int HISTORY = 2;
-    public static final int DOWNLOADS = 3;
-    public static final int ADDONS = 4;
-    public static final int NOTIFICATIONS = 5;
+    public static final int WEB_APPS = 2;
+    public static final int HISTORY = 3;
+    public static final int DOWNLOADS = 4;
+    public static final int ADDONS = 5;
+    public static final int NOTIFICATIONS = 6;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -1588,6 +1590,24 @@ public void selectTab(@NonNull Session aTab) {
                         .withZTranslation(25.0f)
                         .withCurved(true).build();
                 NotificationManager.show(BOOKMARK_ADDED_NOTIFICATION_ID, notification);
+            }
+        }
+    }
+
+    public void showWebAppAddedNotification() {
+        if (mFocusedWindow.isFullScreen()) {
+            mWidgetManager.getNavigationBar().showWebAppAddedNotification();
+
+        } else {
+            if (mWidgetManager.getTray().isVisible()) {
+                mWidgetManager.getTray().showWebAppAddedNotification();
+
+            } else {
+                NotificationManager.Notification notification = new NotificationManager.Builder(mFocusedWindow)
+                        .withString(R.string.web_apps_saved_notification)
+                        .withZTranslation(25.0f)
+                        .withCurved(true).build();
+                NotificationManager.show(WEB_APP_ADDED_NOTIFICATION_ID, notification);
             }
         }
     }

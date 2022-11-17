@@ -41,6 +41,8 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 tools:text="Title"
+                android:ellipsize="end"
+                android:lines="1"
                 android:textStyle="bold"
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_bigger_size" />
@@ -80,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="Description"
+                tools:text="Description"
                 android:textColor="@color/rhino"
                 android:textSize="@dimen/text_smaller_size" />
         </FrameLayout>

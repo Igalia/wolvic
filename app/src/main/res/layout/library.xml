@@ -33,6 +33,11 @@
                         android:id="@+id/bookmarks"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
+                        style="@style/libraryButtonStartTheme"
+                        android:src="@drawable/ic_icon_webapps"
+                        android:id="@+id/web_apps"
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                    <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_history"
                         android:id="@+id/history"

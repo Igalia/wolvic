@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.net.Uri" />
+
+        <variable
+            name="item"
+            type="com.igalia.wolvic.ui.adapters.WebApp" />
+
+        <variable
+            name="callback"
+            type="com.igalia.wolvic.ui.callbacks.WebAppItemCallback" />
+
+        <variable
+            name="isNarrow"
+            type="boolean" />
+
+        <variable
+            name="isHovered"
+            type="boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="20dp"
+        android:background="@color/void_color"
+        android:minHeight="@dimen/library_item_row_height"
+        app:layout_height="@dimen/library_item_row_height">
+
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/library_item_background_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{(view) ->  callback.onClick(view, item)}"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:soundEffectsEnabled="false">
+
+            <FrameLayout
+                android:id="@+id/web_app_icon_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@{item.themeColor}"
+                android:padding="1dp">
+
+                <ImageView
+                    android:id="@+id/web_app_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_icon_globe" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/name_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:addStatesFromChildren="true"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/trash_button"
+                android:layout_toEndOf="@id/web_app_icon_frame"
+                android:paddingStart="10dp">
+
+                <TextView
+                    android:id="@+id/_webapp_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:gravity="center_vertical"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{item.name}"
+                    android:textColor="@color/library_panel_title_text_color"
+                    android:textSize="@dimen/library_item_title_text_size"
+                    android:textStyle="bold"
+                    tools:text="Web App Name" />
+
+                <TextView
+                    android:id="@+id/web_app_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:gravity="center_vertical"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{Uri.parse(item.startUrl).authority}"
+                    android:textColor="@color/library_panel_description_color"
+                    android:textSize="@dimen/library_item_url_text_size"
+                    android:textStyle="bold"
+                    tools:text="http://www.example.com" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/trash_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_icon_trash"
+                android:drawableTint="@color/library_panel_icon_color"
+                android:gravity="center"
+                android:onClick="@{(view) -> callback != null ? callback.onDelete(view, item) : void}"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="16dp" />
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

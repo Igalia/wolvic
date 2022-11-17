@@ -84,6 +84,7 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
         }
         // otherwise, we add a new entry
         mWebApps.put(webAppToAdd.getId(), webAppToAdd);
+        saveWebAppsListToStorage();
         notifyListeners();
         return true;
     }
@@ -92,7 +93,15 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
      * @return {@code true} if an element was removed
      */
     public boolean removeWebAppById(@NonNull String webAppId) {
-        return mWebApps.remove(webAppId) != null;
+        WebApp removedWebApp = mWebApps.remove(webAppId);
+        saveWebAppsListToStorage();
+        notifyListeners();
+        return removedWebApp != null;
+    }
+
+    @NonNull
+    public List<WebApp> getWebApps() {
+        return new ArrayList<>(mWebApps.values());
     }
 
     @Override
@@ -103,7 +112,7 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
     }
 
     public interface WebAppsListener {
-        void onWebAppsUpdated(List<WebApp> webApps);
+        void onWebAppsUpdated(@NonNull List<WebApp> webApps);
     }
 
     public void addListener(@NonNull WebAppsListener listener) {

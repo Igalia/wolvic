@@ -46,6 +46,7 @@ public class HamburgerMenuWidget extends UIWidget implements
         void onResize();
         void onSwitchMode();
         void onAddons();
+        void onSaveWebApp();
     }
 
     public static final int SWITCH_ITEM_ID = 0;
@@ -222,6 +223,21 @@ public class HamburgerMenuWidget extends UIWidget implements
                 .withTitle(getContext().getString(R.string.hamburger_menu_resize))
                 .withIcon(R.drawable.ic_icon_resize)
                 .build());
+
+        // TODO this is hard to discover, consider adding a button in the URL bar instead
+        if (activeSession.getWebAppManifest() != null) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onSaveWebApp();
+                        }
+                        return null;
+                    })
+                    .withTitle(getContext().getString(R.string.hamburger_menu_save_web_app))
+                    .withIcon(R.drawable.ic_web_app_registration)
+                    .build());
+        }
 
         if (mSendTabEnabled) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
