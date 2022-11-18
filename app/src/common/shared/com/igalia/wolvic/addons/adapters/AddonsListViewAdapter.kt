@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.igalia.wolvic.R
+import com.igalia.wolvic.utils.LocaleUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -159,15 +160,34 @@ class AddonsManagerAdapter(
             holder.userCountView.text = String.format(userCount, getFormattedAmount(it.reviews))
         }
 
+        val displayLanguage = LocaleUtils.getDisplayLanguage(context).locale.language
+
         holder.titleView.text =
             if (addon.translatableName.isNotEmpty()) {
-                addon.translatableName.toString()
+                when {
+                    addon.translatableName.containsKey(displayLanguage) ->
+                        addon.translatableName[displayLanguage]
+                    addon.translatableName.containsKey(addon.defaultLocale) ->
+                        addon.translatableName[addon.defaultLocale]
+                    addon.translatableName.containsKey(Addon.DEFAULT_LOCALE) ->
+                        addon.translatableName[Addon.DEFAULT_LOCALE]
+                    else -> addon.id
+                }
             } else {
                 addon.id
             }
 
         if (addon.translatableSummary.isNotEmpty()) {
-            holder.summaryView.text = addon.translatableSummary.toString()
+            holder.summaryView.text =
+                when {
+                    addon.translatableSummary.containsKey(displayLanguage) ->
+                        addon.translatableSummary[displayLanguage]
+                    addon.translatableSummary.containsKey(addon.defaultLocale) ->
+                        addon.translatableSummary[addon.defaultLocale]
+                    addon.translatableSummary.containsKey(Addon.DEFAULT_LOCALE) ->
+                        addon.translatableSummary[Addon.DEFAULT_LOCALE]
+                    else -> ""
+                }
         } else {
             holder.summaryView.visibility = View.GONE
         }
