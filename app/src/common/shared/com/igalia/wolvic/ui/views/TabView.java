@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
+import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.BitmapCache;
@@ -23,6 +24,8 @@ import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.concurrent.CompletableFuture;
+
+import mozilla.components.browser.icons.IconRequest;
 
 public class TabView extends RelativeLayout implements WSession.ContentDelegate, Session.BitmapChangedListener {
 
@@ -32,6 +35,7 @@ public class TabView extends RelativeLayout implements WSession.ContentDelegate,
     protected RelativeLayout mTabAddView;
     protected View mTabOverlay;
     protected ImageView mPreview;
+    protected ImageView mFavicon;
     protected TextView mURL;
     protected TextView mTitle;
     protected UIButton mCloseButton;
@@ -106,6 +110,7 @@ public class TabView extends RelativeLayout implements WSession.ContentDelegate,
         mCloseButton.setOnHoverListener(mIconHoverListener);
 
         mPreview = findViewById(R.id.tabViewPreview);
+        mFavicon = findViewById(R.id.tabFavicon);
         mURL = findViewById(R.id.tabViewUrl);
         mTitle = findViewById(R.id.tabViewTitle);
         mTitle.setVisibility(View.GONE);
@@ -163,6 +168,8 @@ public class TabView extends RelativeLayout implements WSession.ContentDelegate,
             return null;
         });
 
+        SessionStore.get().getBrowserIcons().loadIntoView(
+                mFavicon, aSession.getCurrentUri(), IconRequest.Size.DEFAULT);
         mURL.setText(UrlUtils.stripProtocol(aSession.getCurrentUri()));
         if (!mShowAddTab) {
             if (mSession.getCurrentUri().equals(mSession.getHomeUri())) {
@@ -189,11 +196,13 @@ public class TabView extends RelativeLayout implements WSession.ContentDelegate,
         mShowAddTab = aShow;
         if (mShowAddTab) {
             mTabCardView.setVisibility(View.GONE);
+            mFavicon.setVisibility(View.INVISIBLE);
             mURL.setVisibility(View.INVISIBLE);
             mTabAddView.setVisibility(View.VISIBLE);
         } else {
             mTabCardView.setVisibility(View.VISIBLE);
             mTabAddView.setVisibility(View.GONE);
+            mFavicon.setVisibility(View.VISIBLE);
             mURL.setVisibility(View.VISIBLE);
         }
     }
