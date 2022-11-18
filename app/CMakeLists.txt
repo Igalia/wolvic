@@ -96,6 +96,7 @@ if(OPENXR)
     if (OCULUSVR)
         include_directories(
             ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
+            ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
             ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Include
             ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
