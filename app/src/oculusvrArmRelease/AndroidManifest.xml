@@ -45,6 +45,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.INFO" />
+                <category android:name="com.oculus.intent.category.VR" android:value="vr_only"/>
             </intent-filter>
             <!--
             <intent-filter>
