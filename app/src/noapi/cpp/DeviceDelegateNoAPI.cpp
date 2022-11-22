@@ -181,7 +181,7 @@ DeviceDelegateNoAPI::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller = aController;
-  m.controller->CreateController(kControllerIndex, -1, "Oculus Touch (Right)"); // "Firefox Reality Virtual Controller");
+  m.controller->CreateController(kControllerIndex, -1, "Oculus Touch (Right)"); // "Wolvic Virtual Controller");
   m.controller->SetEnabled(kControllerIndex, true);
   m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::Position);
   m.controller->SetButtonCount(kControllerIndex, 5);
