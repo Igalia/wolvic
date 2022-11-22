@@ -183,6 +183,7 @@ public class LibraryPanel extends FrameLayout {
         mBinding.tabcontent.removeAllViews();
 
         mBinding.bookmarks.setActiveMode(false);
+        mBinding.webApps.setActiveMode(false);
         mBinding.history.setActiveMode(false);
         mBinding.downloads.setActiveMode(false);
         mBinding.addons.setActiveMode(false);
