@@ -272,7 +272,7 @@ private:
   void InitSwapChain(JNIEnv* aEnv, XrSession session, OpenXRSwapChainPtr &swapChainOut) {
     swapChainOut = OpenXRSwapChain::create();
     XrSwapchainCreateInfo info = this->GetSwapChainCreateInfo(this->layer->GetSurfaceType(), this->layer->GetWidth(), this->layer->GetHeight());
-    if (this->layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
+    if (this->layer->GetSurfaceType() == VRLayerSurface::SurfaceType::AndroidSurface) {
       swapChainOut->InitAndroidSurface(aEnv, session, info);
       this->layer->SetSurface(swapChainOut->AndroidSurface());
     } else {
