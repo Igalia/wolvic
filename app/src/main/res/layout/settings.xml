@@ -43,7 +43,7 @@
             android:focusable="true"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:contentDescription="Firefox logo"
+            android:contentDescription="Wolvic logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

@@ -1,5 +1,5 @@
 /* To hide the "Download Vimeo app for Android" toast message,
-   which doesn't make sense to appear on Firefox Reality (but does make sense for Firefox for Android). */
+   which doesn't make sense to appear on Wolvic. */
 .app_banner_container,
 .app_banner {
   display: none !important;
