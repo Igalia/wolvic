@@ -73,8 +73,7 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
 
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    vrb::Matrix matrix = XrPoseToMatrix(aPose).PostMultiply(layer->GetModelTransform(eye));
-    xrLayers[i].pose = MatrixToXrPose(matrix);
+    xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye));
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();
