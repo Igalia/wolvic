@@ -1088,9 +1088,11 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   m.firstPose = std::nullopt;
 
   if (m.session != XR_NULL_HANDLE && m.graphicsBinding.context == aEGLContext.Context()) {
+#if HVR
     // Session already created, call begin again. This can happen for example in HVR when reentering
     // the security zone, because HVR forces us to stop and end the session when exiting.
     m.BeginXRSession();
+#endif
     ProcessEvents();
     return;
   }
