@@ -1179,6 +1179,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   WidgetPtr widget;
   if (aPlacement->cylinder && m.cylinderDensity > 0) {
     VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
+    layer->SetWorldSize(worldWidth, worldHeight);
     CylinderPtr cylinder = Cylinder::Create(m.create, layer);
     widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
   }
