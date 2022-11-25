@@ -363,9 +363,6 @@ struct DeviceDelegateOpenXR::State {
       CHECK_MSG(supportsSpace(XR_REFERENCE_SPACE_TYPE_LOCAL), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
       XrReferenceSpaceCreateInfo create{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
       create.poseInReferenceSpace  = XrPoseIdentity();
-      create.poseInReferenceSpace.position = {
-        -kAverageHeight.x(), -kAverageHeight.y(), -kAverageHeight.z()
-      };
       create.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
       CHECK_XRCMD(xrCreateReferenceSpace(session, &create, &layersSpace));
     }

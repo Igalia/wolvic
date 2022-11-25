@@ -38,7 +38,7 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
 
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye));
+    xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
     xrLayers[i].size.width = layer->GetWorldWidth();
     xrLayers[i].size.height = -layer->GetWorldHeight();
     device::EyeRect rect = layer->GetTextureRect(eye);
