@@ -19,6 +19,7 @@ public class DeviceType {
     public static final int PicoG2 = 7;
     public static final int PicoNeo3 = 8;
     public static final int OculusQuest2 = 9;
+    public static final int PicoXR = 12;
 
     // These values are not present in Device.h yet but are needed for the WebXR UI
     public static final int HVR3DoF = 10;
@@ -53,6 +54,9 @@ public class DeviceType {
             case PicoG2:
                 name = "Pico G2";
                 break;
+            case PicoXR:
+                name = "Pico XR";
+                break;
             default:
                 name = "Unknown Type";
         }
@@ -83,12 +87,18 @@ public class DeviceType {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("picovr");
     }
 
+    public static boolean isPicoXR() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("picoxr");
+    }
+
     public static String getDeviceTypeId() {
         String type = BuildConfig.FLAVOR_platform;
         if (DeviceType.isOculusBuild()) {
             type = "oculusvr";
         } else if (DeviceType.isPicoVR()) {
             type = "picovr";
+        } else if (DeviceType.isPicoXR()) {
+            type = "picoxr";
         } else if (DeviceType.isWaveBuild()) {
             type = "wavevrStore";
         }
