@@ -188,6 +188,15 @@ android_main(android_app *aAppState) {
   aAppState->userData = sAppContext.get();
   aAppState->onAppCmd = CommandCallback;
 
+#ifdef PICOXR
+  if (!sAppContext->mEgl && aAppState->window) {
+    // Work around APP_CMD_INIT_WINDOW and APP_CMD_RESUME callback not
+    // firing on Pico 4 when starting the app
+    CommandCallback(aAppState, APP_CMD_INIT_WINDOW);
+    CommandCallback(aAppState, APP_CMD_RESUME);
+  }
+#endif
+
   // Main render loop
   while (true) {
     int events;

@@ -40,6 +40,7 @@ const DeviceType PicoNeo2 = 6;
 const DeviceType PicoG2 = 7;
 const DeviceType PicoNeo3 = 8;
 const DeviceType OculusQuest2 = 9;
+const DeviceType PicoXR = 12;
 
 enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
 
