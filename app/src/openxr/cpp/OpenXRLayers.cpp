@@ -36,6 +36,9 @@ void
 OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerQuadPtr, XrCompositionLayerQuad>::Update(aSpace, aPose, aClearSwapChain);
 
+    auto oldi =  MatrixToXrPose(layer->GetModelTransform(device::Eye::Left)/*.Translate(-kAverageHeight)*/);
+    VRB_LOG("laller(Q)\tOLD %f %f %f", oldi.position.x,oldi.position.y,oldi.position.z);
+
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
@@ -71,14 +74,18 @@ void
 OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerCylinderPtr, XrCompositionLayerCylinderKHR>::Update(aSpace, aPose, aClearSwapChain);
 
-  for (int i = 0; i < xrLayers.size(); ++i) {
+    auto oldi =  MatrixToXrPose(layer->GetModelTransform(device::Eye::Left).Translate(-kAverageHeight));
+    VRB_LOG("laller(Cyl)\tOLD %f %f %f", oldi.position.x,oldi.position.y,oldi.position.z);
+
+    for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye));
+    xrLayers[i].pose = XrPoseIdentity();
+    xrLayers[i].space = aSpace;
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();
     xrLayers[i].aspectRatio = layer->GetWorldWidth() / layer->GetWorldHeight();
-    device::EyeRect rect = layer->GetTextureRect(device::Eye::Left);
+    device::EyeRect rect = layer->GetTextureRect(eye);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);

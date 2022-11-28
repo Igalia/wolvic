@@ -62,6 +62,7 @@ VRLayerNode::Draw(const Camera& aCamera, const Matrix& aModelTransform) {
   m.layer->RequestDraw();
   device::Eye eye = m.layer->GetCurrentEye();
   m.layer->SetModelTransform(eye, aModelTransform);
+  //VRB_LOG("DROW %s->%s", m.layer->GetName().c_str(), aModelTransform.ToString().c_str());
   m.layer->SetView(eye, aCamera.GetView());
 }
 

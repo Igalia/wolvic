@@ -94,6 +94,9 @@ OculusLayerCylinder::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking,
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     vrb::Matrix modelView = layer->GetView(eye).PostMultiply(layer->GetModelTransform(eye));
     ovrMatrix4f matrix = ovrMatrixFrom(modelView);
+    if (eye == device::Eye::Left) {
+      VRB_LOG("world eye %f %f %f\t%f %f %f", ovrLayer.HeadPose.Pose.Position.x,ovrLayer.HeadPose.Pose.Position.y,ovrLayer.HeadPose.Pose.Position.z,ovrLayer.HeadPose.Pose.Orientation.x,ovrLayer.HeadPose.Pose.Orientation.y,ovrLayer.HeadPose.Pose.Orientation.z);
+      }
     ovrLayer.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_Inverse(&matrix);
     ovrLayer.Textures[i].ColorSwapChain = GetTargetSwapChain(aClearSwapChain);
     ovrLayer.Textures[i].SwapChainIndex = 0;
