@@ -199,7 +199,7 @@ namespace crow {
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
             device::PicoXR,
-            std::vector<OpenXRInputProfile> { "oculus-touch-v3", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRInputProfile> { "generic-trigger-squeeze-thumbstick" },
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
                     { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
