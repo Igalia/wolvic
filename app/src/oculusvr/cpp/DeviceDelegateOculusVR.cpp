@@ -1136,6 +1136,7 @@ DeviceDelegateOculusVR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
     return nullptr;
   }
   VRLayerQuadPtr layer = VRLayerQuad::Create(aWidth, aHeight, aSurfaceType);
+  VRB_LOG("FIGURE %p: quad %dx%d", layer.get(), aWidth, aHeight);
   OculusLayerQuadPtr oculusLayer = OculusLayerQuad::Create(m.java.Env, layer);
   m.AddUILayer(oculusLayer, aSurfaceType);
   return layer;
@@ -1170,6 +1171,7 @@ DeviceDelegateOculusVR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
     return nullptr;
   }
   VRLayerCylinderPtr layer = VRLayerCylinder::Create(aWidth, aHeight, aSurfaceType);
+  VRB_LOG("FIGURE %p: cylinder %dx%d", layer.get(),aWidth, aHeight);
   OculusLayerCylinderPtr oculusLayer = OculusLayerCylinder::Create(m.java.Env, layer);
   m.AddUILayer(oculusLayer, aSurfaceType);
   return layer;

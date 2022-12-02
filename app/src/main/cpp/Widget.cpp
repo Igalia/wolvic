@@ -165,11 +165,12 @@ struct Widget::State {
     const float heightScale = surfaceHeight * (float)M_PI / cylinderDensity;
     // Scale the cylinder so that widget height matches cylinder height.
     const float scale = h / (cylinder->GetCylinderHeight() * heightScale);
+    //const float scale = 1.0;
     vrb::Matrix scaleMatrix = vrb::Matrix::Identity();
     scaleMatrix.ScaleInPlace(vrb::Vector(radius * scale, radius * scale * heightScale, radius * scale));
     // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius * scale));
-    cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    cylinder->SetTransform(translation/*.PostMultiply(scaleMatrix)*/);
     AdjustCylinderRotation(radius * scale);
     UpdateResizerTransform();
   }
@@ -373,7 +374,16 @@ Widget::SetTransform(const vrb::Matrix& aTransform) {
   if (m.cylinder) {
     m.UpdateCylinderMatrix();
   }
-  m.UpdateResizerTransform();
+  m.UpdateResizerTransform();/*
+  if (m.cylinder) {
+    if (m.cylinder->GetLayer()->GetName() == std::string("Window"))
+      VRB_LOG("WID(%s|%p) Setting transform %s", m.cylinder->GetLayer()->GetName().c_str(),
+            this, aTransform.ToString().c_str());
+  } else if (m.quad) {
+    if (m.quad->GetLayer()->GetName().c_str() == std::string("Window"))
+      VRB_LOG("WID(%s|%p) Setting transform %s", m.quad->GetLayer()->GetName().c_str(),
+            this, aTransform.ToString().c_str());
+  }*/
 }
 
 void
@@ -476,6 +486,7 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
   VRLayerSurfacePtr layer = GetLayer();
   if (layer) {
     layer->SetName(aPlacement->name);
+    VRB_LOG("FIGURE %p: %s", layer.get(),layer->GetName().c_str());
     layer->SetClearColor(aPlacement->clearColor);
     layer->SetTintColor(aPlacement->tintColor);
     layer->SetComposited(aPlacement->composited);

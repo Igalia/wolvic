@@ -175,6 +175,7 @@ struct Cylinder::State {
     const float texBiasX = -texScaleX * (0.5f * (1.0f - 1.0f / texScaleX));
     const float texScaleY = layer ? 0.5f  : 1.0f;
     const float texBiasY = -texScaleY * (0.5f * (1.0f - (1.0f / texScaleY)));
+    //VRB_LOG("laller %s\tscale %f %f\tbias %f %f", layer->GetName().c_str(), texScaleX, texScaleY, texBiasX, texBiasY);
     vrb::Matrix transform = vrb::Matrix::Translation(vrb::Vector(texBiasX, texBiasY, 0.0f));
     transform.ScaleInPlace(vrb::Vector(texScaleX, texScaleY, 1.0f));
     if (layer) {

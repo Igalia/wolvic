@@ -152,6 +152,8 @@ VRLayer::ClearRequestDraw() {
 
 void
 VRLayer::SetModelTransform(device::Eye aEye, const vrb::Matrix& aModelTransform) {
+  if (GetName() == std::string("Window"))
+    VRB_LOG("WID(%s|%p) Setting MODEL transform %s", GetName().c_str(), this, aModelTransform.ToString().c_str());
   m.modelTransform[device::EyeIndex(aEye)] = aModelTransform;
 }
 

@@ -74,13 +74,22 @@ void
 OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerCylinderPtr, XrCompositionLayerCylinderKHR>::Update(aSpace, aPose, aClearSwapChain);
 
-    auto oldi =  MatrixToXrPose(layer->GetModelTransform(device::Eye::Left).Translate(-kAverageHeight));
-    VRB_LOG("laller(Cyl)\tOLD %f %f %f", oldi.position.x,oldi.position.y,oldi.position.z);
-
     for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    xrLayers[i].pose = XrPoseIdentity();
-    xrLayers[i].space = aSpace;
+
+    //vrb::Matrix modelView = layer->GetView(eye).PostMultiply(layer->GetModelTransform(eye));
+    //xrLayers[i].pose = MatrixToXrPose(modelView);
+
+    //xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).PostMultiply(XrPoseToMatrix(aPose)));
+
+    //xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight).Translate(vrb::Vector(0,0,-1)));
+
+    xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
+/*
+    const vrb::Vector scale = layer->GetUVTransform(eye).GetScale();
+    const vrb::Vector translation = layer->GetUVTransform(eye).GetTranslation();
+    xrLayers[i].pose = MatrixToXrPose(vrb::Matrix::Identity().TranslateInPlace(translation));
+  */
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();

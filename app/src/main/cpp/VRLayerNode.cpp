@@ -32,11 +32,22 @@ struct VRLayerNode::State : public Node::State, public Drawable::State {
   State() {}
 };
 
+static void printNode(Node* node) {
+  VRB_LOG("Creating NODE for %s", node->GetName().c_str());
+  std::vector<std::shared_ptr<Group>> parents;
+  node->GetParents(parents);
+  for (auto &parent: parents)
+    printNode(parent.get());
+}
+
 VRLayerNodePtr
 VRLayerNode::Create(CreationContextPtr& aContext, const VRLayerPtr& aLayer) {
   auto result = std::make_shared<ConcreteClass<VRLayerNode, VRLayerNode::State> >(aContext);
   result->m.layer = aLayer;
   result->m.renderState = vrb::RenderState::Create(aContext);
+  {
+    //printNode(result.get());
+  }
   return result;
 }
 
@@ -64,6 +75,7 @@ VRLayerNode::Draw(const Camera& aCamera, const Matrix& aModelTransform) {
   m.layer->SetModelTransform(eye, aModelTransform);
   //VRB_LOG("DROW %s->%s", m.layer->GetName().c_str(), aModelTransform.ToString().c_str());
   m.layer->SetView(eye, aCamera.GetView());
+  //printNode(this);
 }
 
 VRLayerNode::VRLayerNode(State& aState, CreationContextPtr& aContext) :

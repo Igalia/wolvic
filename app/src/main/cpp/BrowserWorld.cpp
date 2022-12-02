@@ -768,7 +768,8 @@ BrowserWorld::State::SortWidgets() {
 
 void
 BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float aDensity) {
-  const bool useCylinder = aDensity > 0 && aWidget->GetPlacement()->cylinder;
+  bool useCylinder = aDensity > 0 && aWidget->GetPlacement()->cylinder;
+  //useCylinder = false;
   if (useCylinder && aWidget->GetCylinder()) {
     aWidget->SetCylinderDensity(aDensity);
   } else if (useCylinder && !aWidget->GetCylinder()) {
@@ -1180,7 +1181,8 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   if (aPlacement->cylinder && m.cylinderDensity > 0) {
     VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
     CylinderPtr cylinder = Cylinder::Create(m.create, layer);
-    widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
+    widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, worldWidth, worldHeight, cylinder);
+    VRB_LOG("Widget %s %fx%f (%f)", widget->GetLayer()->GetName().c_str(), worldWidth, worldHeight, aspect);
   }
 
   if (!widget) {
