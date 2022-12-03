@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsDisplayBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
@@ -85,6 +86,12 @@ class DisplayOptionsView extends SettingsView {
         mBinding.dpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
         mBinding.dpiEdit.setOnClickListener(mDpiListener);
         setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
+
+        mBinding.resolutionEdit.setHint1(String.valueOf(BuildConfig.RENDER_RESOLUTION_FACTOR_DEFAULT));
+        mBinding.resolutionEdit.setDefaultFirstValue(String.valueOf(BuildConfig.RENDER_RESOLUTION_FACTOR_DEFAULT));
+        mBinding.resolutionEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getRenderResolutionFactor()));
+        mBinding.resolutionEdit.setOnClickListener(mResolutionListener);
+        setRenderResolutionFactor(SettingsStore.getInstance(getContext()).getRenderResolutionFactor());
     }
 
     @Override
@@ -172,6 +179,20 @@ class DisplayOptionsView extends SettingsView {
         }
     };
 
+    private OnClickListener mResolutionListener = (view) -> {
+        try {
+            float newFactor = Float.parseFloat(mBinding.resolutionEdit.getFirstText());
+            if (setRenderResolutionFactor(newFactor)) {
+                showRestartDialog();
+            }
+
+        } catch (NumberFormatException e) {
+            if (setRenderResolutionFactor(BuildConfig.RENDER_RESOLUTION_FACTOR_DEFAULT)) {
+                showRestartDialog();
+            }
+        }
+    };
+
     private SwitchSetting.OnCheckedChangeListener mCurvedDisplayListener = (compoundButton, enabled, apply) ->
             setCurvedDisplay(enabled, true);
 
@@ -187,6 +208,7 @@ class DisplayOptionsView extends SettingsView {
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
+        restart = restart | setRenderResolutionFactor(BuildConfig.RENDER_RESOLUTION_FACTOR_DEFAULT);
 
 
         setHomepage(mDefaultHomepageUrl);
@@ -276,6 +298,23 @@ class DisplayOptionsView extends SettingsView {
         }
         mBinding.dpiEdit.setFirstText(Integer.toString(newDpi));
         mBinding.dpiEdit.setOnClickListener(mDpiListener);
+
+        return restart;
+    }
+
+    private boolean setRenderResolutionFactor(float newFactor) {
+        mBinding.resolutionEdit.setOnClickListener(null);
+        boolean restart = false;
+        float prevFactor = SettingsStore.getInstance(getContext()).getRenderResolutionFactor();
+        if (newFactor <= 0) {
+            newFactor = prevFactor;
+
+        } else if (prevFactor != newFactor) {
+            SettingsStore.getInstance(getContext()).setRenderResolutionFactor(newFactor);
+            restart = true;
+        }
+        mBinding.resolutionEdit.setFirstText(Float.toString(newFactor));
+        mBinding.resolutionEdit.setOnClickListener(mResolutionListener);
 
         return restart;
     }

@@ -41,6 +41,13 @@ def getUseDebugSigningOnRelease = { ->
     return false
 }
 
+def getOpenXRBool = { ->
+    if (gradle.hasProperty("userProperties.openxr")) {
+        return gradle."userProperties.openxr" == "true" ? "true" : "false"
+    }
+    return "false"
+}
+
 def getOpenXRFlags = { ->
     if (gradle.hasProperty("userProperties.openxr")) {
         return gradle."userProperties.openxr" == "true" ? " -DOPENXR" : ""
@@ -115,6 +122,8 @@ android {
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "false"
+        buildConfigField "float", "RENDER_RESOLUTION_FACTOR_DEFAULT", "1.0f"
+        buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -190,6 +199,7 @@ android {
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
+            buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", getOpenXRBool()
         }
 
         oculusvrStore {
@@ -201,6 +211,7 @@ android {
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
+            buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", getOpenXRBool()
         }
 
         oculusvr3dofStore {
@@ -212,6 +223,7 @@ android {
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.CAMERA" ]
+            buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", getOpenXRBool()
         }
 
         wavevr {
@@ -270,6 +282,8 @@ android {
                     arguments "-DVR_SDK_LIB=picoxr-lib", "-DPICOXR=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", "true"
+            buildConfigField "float", "RENDER_RESOLUTION_FACTOR_DEFAULT", "1.4f"
         }
 
         hvr {
@@ -285,6 +299,7 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
+            buildConfigField "boolean", "SUPPORTS_RENDER_RESOLUTION_FACTOR", "true"
         }
 
         cn {

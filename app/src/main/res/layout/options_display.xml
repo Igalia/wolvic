@@ -2,6 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <import type="com.igalia.wolvic.BuildConfig" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -94,6 +98,17 @@
                     android:maxLength="4"
                     app:description="@string/developer_options_display_dpi"
                     app:highlightedTextColor="@color/fog" />
+
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/resolution_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="75dp"
+                    android:inputType="numberDecimal"
+                    android:maxLength="4"
+                    app:description="@string/developer_options_render_resolution_factor"
+                    app:highlightedTextColor="@color/fog"
+                    app:visibleGone="@{BuildConfig.SUPPORTS_RENDER_RESOLUTION_FACTOR}"/>
 
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>

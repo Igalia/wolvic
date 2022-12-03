@@ -516,6 +516,10 @@
          use for the display density. -->
     <string name="developer_options_display_density">Display Density:</string>
 
+    <!-- This string is used to label a numerical-entry field where the user may set a new factor to
+         use when determining the render resolution (on supported devices). -->
+    <string name="developer_options_render_resolution_factor">Render Resolution:</string>
+
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->

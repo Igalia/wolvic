@@ -375,6 +375,17 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public float getRenderResolutionFactor() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_render_resolution_factor),
+                BuildConfig.RENDER_RESOLUTION_FACTOR_DEFAULT);
+    }
+
+    public void setRenderResolutionFactor(float aFactor) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_render_resolution_factor), aFactor);
+        editor.commit();
+    }
+
     public int getWindowWidth() {
         return WINDOW_WIDTH_DEFAULT;
     }

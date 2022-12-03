@@ -1299,6 +1299,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    public float getRenderResolutionFactor() {
+        return SettingsStore.getInstance(this).getRenderResolutionFactor();
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
         runOnUiThread(() -> DeviceType.setType(aType));
     }

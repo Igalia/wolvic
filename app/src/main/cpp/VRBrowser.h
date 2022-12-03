@@ -38,6 +38,7 @@ std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();
 int32_t GetPointerColor();
+float GetRenderResolutionFactor();
 bool AreLayersEnabled();
 void SetDeviceType(const jint aType);
 void HaltActivity(const jint aReason);

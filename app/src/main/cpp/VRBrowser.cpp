@@ -48,6 +48,8 @@ const char* const kGetActiveEnvironment = "getActiveEnvironment";
 const char* const kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 const char* const kGetPointerColor = "getPointerColor";
 const char* const kGetPointerColorSignature = "()I";
+const char* const kGetRenderResolutionFactor = "getRenderResolutionFactor";
+const char* const kGetRenderResolutionFactorSignature = "()F";
 const char* const kAreLayersEnabled = "areLayersEnabled";
 const char* const kAreLayersEnabledSignature = "()Z";
 const char* const kSetDeviceType = "setDeviceType";
@@ -87,6 +89,7 @@ jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
 jmethodID sGetActiveEnvironment = nullptr;
 jmethodID sGetPointerColor = nullptr;
+jmethodID sGetRenderResolutionFactor = nullptr;
 jmethodID sAreLayersEnabled = nullptr;
 jmethodID sSetDeviceType = nullptr;
 jmethodID sHaltActivity = nullptr;
@@ -133,6 +136,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
+  sGetRenderResolutionFactor = FindJNIMethodID(sEnv, sBrowserClass, kGetRenderResolutionFactor, kGetRenderResolutionFactorSignature);
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
   sSetDeviceType = FindJNIMethodID(sEnv, sBrowserClass, kSetDeviceType, kSetDeviceTypeSignature);
   sHaltActivity = FindJNIMethodID(sEnv, sBrowserClass, kHaltActivity, kHaltActivitySignature);
@@ -179,6 +183,7 @@ VRBrowser::ShutdownJava() {
   sIsOverrideEnvPathEnabled = nullptr;
   sGetActiveEnvironment = nullptr;
   sGetPointerColor = nullptr;
+  sGetRenderResolutionFactor = nullptr;
   sAreLayersEnabled = nullptr;
   sSetDeviceType = nullptr;
   sHaltActivity = nullptr;
@@ -357,6 +362,15 @@ VRBrowser::GetPointerColor() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return (int32_t )jHexColor;
+}
+
+float
+VRBrowser::GetRenderResolutionFactor() {
+  if (!ValidateMethodID(sEnv, sActivity, sGetRenderResolutionFactor, __FUNCTION__)) { return 1.0f; }
+  jfloat jFactor = (jfloat) sEnv->CallFloatMethod(sActivity, sGetRenderResolutionFactor);
+  CheckJNIException(sEnv, __FUNCTION__);
+
+  return (float )jFactor;
 }
 
 bool
