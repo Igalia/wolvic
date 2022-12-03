@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
@@ -74,6 +75,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
+    private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Android 10; Mobile VR; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
     private transient CopyOnWriteArrayList<WSession.ProgressDelegate> mProgressListeners;
@@ -1079,8 +1081,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
 
         // TODO Check that this is the correct place to clear the stored manifest. Update the UI if needed.
-        Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
-        mState.mWebAppManifest = null;
+        if (mState.mWebAppManifest != null) {
+            Log.d(LOGTAG, "onLocationChange: clear stored Web app manifest");
+            mState.mWebAppManifest = null;
+        }
 
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
@@ -1133,7 +1137,18 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (aSession == mState.mSession) {
             Log.d(LOGTAG, "Testing for UA override");
 
-            final String userAgentOverride = sUserAgentOverride.lookupOverride(uri);
+            String userAgentOverride = sUserAgentOverride.lookupOverride(uri);
+
+            // Here we set a default user agent if no override was found, BUT
+            // only if UA Mode is not Desktop, because the UA override
+            // takes precedence over mode overrides so if we set it, it will
+            // invalidate desktop mode UA. For VR and Mobile modes we don't change
+            // the UA so they are not affected.
+            if (mState.mSettings.getUserAgentMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP &&
+                    userAgentOverride == null) {
+                userAgentOverride = DEFAULT_USER_AGENT;
+            }
+
             aSession.getSettings().setUserAgentOverride(userAgentOverride);
             if (mState.mSettings != null) {
                 mState.mSettings.setUserAgentOverride(userAgentOverride);
@@ -1352,11 +1367,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (mState.mSession == aSession) {
             try {
                 mState.mWebAppManifest = new WebApp(manifest);
-                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest");
+                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest from " + mState.mUri);
             } catch (IOException e) {
                 Log.w(LOGTAG, "onWebAppManifest: malformed Web app manifest: " + e.getMessage());
                 mState.mWebAppManifest = null;
             }
+
+            // TODO update the stored manifest??
 
             for (WSession.ContentDelegate listener : mContentListeners) {
                 listener.onWebAppManifest(aSession, manifest);

@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.views.CustomListView;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.utils.ViewUtils;
@@ -35,6 +36,8 @@ import com.igalia.wolvic.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import mozilla.components.browser.icons.IconRequest;
 
 public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
@@ -280,15 +283,19 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                 itemViewHolder.favicon.setVisibility(VISIBLE);
             }
 
-            // Type related
-            if (selectedItem.type == SuggestionItem.Type.SUGGESTION) {
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_search);
-            } else if (selectedItem.type == SuggestionItem.Type.COMPLETION) {
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_globe);
-            } else if(selectedItem.type ==SuggestionItem.Type.HISTORY) {
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_history);
-            } else if (selectedItem.type == SuggestionItem.Type.BOOKMARK) {
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark);
+            switch (selectedItem.type) {
+                case SUGGESTION:
+                    itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_search);
+                    break;
+                case COMPLETION:
+                    itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_globe);
+                    break;
+                case HISTORY:
+                case BOOKMARK:
+                    String faviconURL = (selectedItem.faviconURL != null) ? selectedItem.faviconURL : selectedItem.url;
+                    SessionStore.get().getBrowserIcons().loadIntoView(
+                            itemViewHolder.favicon, faviconURL, IconRequest.Size.DEFAULT);
+                    break;
             }
 
             itemViewHolder.favicon.setVisibility(VISIBLE);

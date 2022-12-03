@@ -4,7 +4,7 @@
 
 name: CI
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        flavour: [assembleOculusvrArm64World, assembleHvrArm64World]
+        flavour: [assembleOculusvrArm64World, assembleHvrArm64World, assemblePicoxrArm64World]
 
     steps:
       - name: Checkout Wolvic

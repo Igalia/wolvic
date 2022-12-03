@@ -20,6 +20,11 @@
 #include "DeviceDelegateOculusVR.h"
 #endif
 
+#if defined(OCULUSVR) && STORE_BUILD == 1
+#include "OVR_Platform.h"
+#define META_APP_ID "4812663595466206"
+#endif
+
 #include <android/looper.h>
 #include <unistd.h>
 #include "VRBrowser.h"
@@ -155,6 +160,22 @@ android_main(android_app *aAppState) {
   sAppContext->mJavaContext.vm = aAppState->activity->vm;
   sAppContext->mJavaContext.activity = aAppState->activity->clazz;
 
+#if defined(OCULUSVR) && STORE_BUILD == 1
+  if (!ovr_IsPlatformInitialized()) {
+      auto result = ovr_PlatformInitializeAndroidAsynchronous(META_APP_ID, sAppContext->mJavaContext.activity, jniEnv);
+      if (result == invalidRequestID) {
+          // Initialization failed which means either the oculus service isn’t on the machine or they’ve hacked their DLL.
+          VRB_ERROR("ovr_PlatformInitializeAndroidAsynchronous failed: %d", (int32_t) result);
+          VRBrowser::HaltActivity(0);
+      } else {
+          VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous succeeded");
+          ovr_Entitlement_GetIsViewerEntitled();
+      }
+  } else {
+      ovr_Entitlement_GetIsViewerEntitled();
+  }
+#endif
+
   sAppContext->mDevice = PlatformDeviceDelegate::Create(BrowserWorld::Instance().GetRenderContext(), &sAppContext->mJavaContext);
   BrowserWorld::Instance().RegisterDeviceDelegate(sAppContext->mDevice);
 
@@ -166,6 +187,15 @@ android_main(android_app *aAppState) {
   // Set up activity & SurfaceView life cycle callbacks
   aAppState->userData = sAppContext.get();
   aAppState->onAppCmd = CommandCallback;
+
+#ifdef PICOXR
+  if (!sAppContext->mEgl && aAppState->window) {
+    // Work around APP_CMD_INIT_WINDOW and APP_CMD_RESUME callback not
+    // firing on Pico 4 when starting the app
+    CommandCallback(aAppState, APP_CMD_INIT_WINDOW);
+    CommandCallback(aAppState, APP_CMD_RESUME);
+  }
+#endif
 
   // Main render loop
   while (true) {

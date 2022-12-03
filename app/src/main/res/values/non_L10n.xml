@@ -89,7 +89,7 @@
     <string name="crash_dialog_learn_more_url" translatable="false">https://support.mozilla.org/kb/crash-reporting-firefox-reality</string>
     <string name="app_permission_name" translatable="false">CRASH_RECEIVER_PERMISSION</string>
     <string name="developer_options_by" translatable="false">x</string>
-    <string name="crash_app_name" translatable="false">FirefoxReality</string>
+    <string name="crash_app_name" translatable="false">Wolvic</string>
     <string name="user_agent_override_file" translatable="false">userAgentOverride.json</string>
     <string name="about_blank" translatable="false">about:blank</string>
     <string name="about_private_browsing" translatable="false">about:privatebrowsing</string>
@@ -99,7 +99,7 @@
     <string name="keyboard_mode_change" translatable="false">ABC</string>
     <string name="keyboard_symbol" translatable="false">%&amp;=</string>
     <string name="ellipsis" translatable="false">…</string>
-    <string name="release_notes_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Release-notes-for-version-%1$s</string>
+    <string name="release_notes_url" translatable="false">https://wolvic.com/blog/release_%1$s</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>

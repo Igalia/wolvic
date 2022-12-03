@@ -60,6 +60,10 @@
 #include <fstream>
 #include <unordered_map>
 
+#if defined(OCULUSVR) && STORE_BUILD == 1
+#include "OVR_Platform.h"
+#endif
+
 #define ASSERT_ON_RENDER_THREAD(X)                                          \
   if (m.context && !m.context->IsOnRenderThread()) {                        \
     VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
@@ -197,6 +201,8 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
 #if HVR
   bool wasButtonAppPressed = false;
+#elif defined(OCULUSVR) && STORE_BUILD == 1
+  bool isApplicationEntitled = false;
 #endif
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
@@ -976,6 +982,43 @@ BrowserWorld::ShutdownGL() {
   m.glInitialized = false;
 }
 
+#if defined(OCULUSVR) && STORE_BUILD == 1
+void
+BrowserWorld::ProcessOVRPlatformEvents() {
+  if (m.isApplicationEntitled)
+    return;
+
+  ovrMessageHandle message;
+  while ((message = ovr_PopMessage()) != nullptr) {
+    switch (ovr_Message_GetType(message)) {
+      case ovrMessage_PlatformInitializeAndroidAsynchronous: {
+          ovrPlatformInitializeHandle handle = ovr_Message_GetPlatformInitialize(message);
+          ovrPlatformInitializeResult result = ovr_PlatformInitialize_GetResult(handle);
+          if (result == ovrPlatformInitialize_Success) {
+            VRB_DEBUG("OVR Platform initialized");
+          } else {
+            VRB_ERROR("OVR Platform initialization failed: %s", ovrPlatformInitializeResult_ToString(result));
+            VRBrowser::HaltActivity(0);
+          }
+        }
+        break;
+      case ovrMessage_Entitlement_GetIsViewerEntitled: {
+          if (ovr_Message_IsError(message)) {
+            VRB_ERROR("User is NOT entitled");
+            VRBrowser::HaltActivity(0);
+          } else {
+            VRB_DEBUG("User is entitled");
+          }
+          m.isApplicationEntitled = true;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
+#endif
+
 void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
@@ -1001,6 +1044,9 @@ BrowserWorld::StartFrame() {
     }
   }
 
+#if defined(OCULUSVR) && STORE_BUILD == 1
+  ProcessOVRPlatformEvents();
+#endif
   m.device->ProcessEvents();
   m.context->Update();
   m.externalVR->PullBrowserState();

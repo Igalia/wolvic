@@ -33,6 +33,7 @@ namespace crow {
     constexpr const char* kPathTrackpad { "input/trackpad" };
     constexpr const char* kPathSelect { "/input/select" };
     constexpr const char* kPathMenu { "input/menu" };
+    constexpr const char* kPathBack { "input/back" };
     constexpr const char* kPathHaptic { "output/haptic" };
     constexpr const char* kPathButtonA { "input/a" };
     constexpr const char* kPathButtonB { "input/b" };
@@ -189,6 +190,33 @@ namespace crow {
                     { kPathHaptic, OpenXRHandFlags::Both },
             },
     };
+
+    // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
+    const OpenXRInputMapping Pico4 {
+            "/interaction_profiles/pico/neo3_controller",
+            "Pico: PICO HMD",
+            IS_6DOF,
+            "vr_controller_pico4_left.obj",
+            "vr_controller_pico4_right.obj",
+            device::PicoXR,
+            std::vector<OpenXRInputProfile> { "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
     
     // HVR 3DOF: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-trigger-touchpad.json
     const OpenXRInputMapping Hvr3DOF {
@@ -202,7 +230,7 @@ namespace crow {
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
                     { OpenXRButtonType::Trackpad, kPathTrackpad, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
-                    { OpenXRButtonType::Back, "input/back", OpenXRButtonFlags::All, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true },
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::All, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true },
             },
             std::vector<OpenXRAxis> {
                 { OpenXRAxisType::Trackpad, "input/trackpad/value",  OpenXRHandFlags::Both },
@@ -262,8 +290,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 5> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, Hvr6DOF, Hvr3DOF, KHRSimple
+    const std::array<OpenXRInputMapping, 6> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, Pico4, Hvr6DOF, Hvr3DOF, KHRSimple
     };
 
 } // namespace crow

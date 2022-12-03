@@ -27,4 +27,14 @@ class BrowserIconsHelper(context: Context, engine: Engine, store: BrowserStore) 
         val request = IconRequest(url, size, emptyList(), null, false)
         browserIcons.loadIntoView(view, request, null, null)
     }
+
+    fun loadIntoView(
+        view: ImageView,
+        url: String,
+        resources: List<IconRequest.Resource> = emptyList(),
+        size: IconRequest.Size = IconRequest.Size.DEFAULT
+    ) {
+        val request = IconRequest(url, size, resources, null, false)
+        browserIcons.loadIntoView(view, request, null, null)
+    }
 }

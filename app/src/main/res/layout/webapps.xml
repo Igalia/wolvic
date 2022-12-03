@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="webAppsViewModel"
+            type="com.igalia.wolvic.ui.viewmodel.WebAppsViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical"
+            app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; webAppsViewModel.isEmpty}">
+
+            <ImageView
+                android:layout_width="@{webAppsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{webAppsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:contentDescription="@string/web_apps_empty"
+                android:src="@drawable/ic_icon_webapps"
+                app:srcCompat="@drawable/ic_icon_webapps"
+                app:tint="@color/concrete" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/web_apps_empty"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:maxWidth="360dp"
+                android:text="@{@string/web_apps_description}"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/concrete"
+                android:textSize="@dimen/text_medium_big_size"
+                android:textStyle="normal"
+                tools:text="@string/web_apps_description" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/web_apps_loading"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/web_apps_loading"
+            android:textAlignment="center"
+            android:textColor="@color/fog"
+            android:visibility="gone"
+            app:visibleGone="@{webAppsViewModel.isLoading}" />
+
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
+            android:id="@+id/web_apps_list"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:contentDescription="@string/web_apps_title"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; !webAppsViewModel.isEmpty}" />
+
+    </RelativeLayout>
+</layout>

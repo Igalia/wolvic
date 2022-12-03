@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Reality YouTube.com WebCompat Enhancements",
+  "name": "Wolvic YouTube.com WebCompat Enhancements",
   "version": "1.0",
-  "description": "Fixes web-site compatibility quirks for YouTube.com when using Firefox Reality.",
+  "description": "Fixes web-site compatibility quirks for YouTube.com when using Wolvic.",
   "browser_specific_settings": {
     "gecko": {
       "id": "fxr-webcompat_youtube@mozilla.org"

@@ -131,11 +131,24 @@
             android:duplicateParentState="true"/>
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/tabFavicon"
+        android:layout_width="@dimen/tab_view_url_height"
+        android:layout_height="@dimen/tab_view_url_height"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingStart="@dimen/tab_shadow_padding"
+        android:paddingEnd="@dimen/tab_shadow_padding"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_icon_globe" />
 
     <TextView
         android:id="@+id/tabViewUrl"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="@dimen/tab_view_url_height"
+        android:layout_toEndOf="@id/tabFavicon"
         android:paddingStart="@dimen/tab_shadow_padding"
         android:paddingEnd="@dimen/tab_shadow_padding"
         android:textSize="12sp"
