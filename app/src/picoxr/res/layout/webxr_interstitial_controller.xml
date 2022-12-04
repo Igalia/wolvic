@@ -33,19 +33,20 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/empty_drawable"
+                android:src="@drawable/vr_controller_pico4_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="60dp"
-                android:layout_marginTop="52dp"
+                android:layout_marginRight="52dp"
+                android:layout_marginTop="44dp"
                 android:paddingBottom="16dp"
                 android:rotation="-30"
                 android:layout_alignParentTop="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_webxr_controller_arrow"
+                android:tint="@color/window_border_hover"
                 tools:ignore="RtlHardcoded,RtlSymmetry"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -73,32 +74,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/empty_drawable"
+                android:src="@drawable/vr_controller_pico4_right"
                 tools:ignore="RtlHardcoded" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="60dp"
-                android:layout_marginTop="52dp"
-                android:paddingBottom="16dp"
-                android:scaleX="-1"
-                android:rotation="30"
-                android:layout_alignParentTop="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_webxr_controller_arrow"
-                tools:ignore="RtlHardcoded,RtlSymmetry"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="textStart"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="100dp"
-                android:layout_marginTop="26dp"
-                android:layout_alignParentTop="true"
-                android:textSize="18sp"
-                tools:ignore="RtlHardcoded,RtlSymmetry"
-                android:text="@string/webxr_interstitial_exit_webxr"/>
         </RelativeLayout>
 
     </FrameLayout>
