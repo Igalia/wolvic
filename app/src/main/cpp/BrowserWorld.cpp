@@ -1770,8 +1770,13 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   GLenum glFormat = GL_RGBA8;
   if (extension == ".ktx") {
-#if defined(OPENXR) && defined(OCULUSVR)
-    glFormat =  GL_COMPRESSED_SRGB8_ETC2;
+#if defined(OPENXR)
+#if defined(OCULUSVR)
+    glFormat = GL_COMPRESSED_SRGB8_ETC2;
+#elif defined(PICOXR)
+    // FIXME: this is not a valid compressed texture format.
+    glFormat = GL_RGBA8;
+#endif
 #else
     glFormat =  GL_COMPRESSED_RGB8_ETC2;
 #endif
