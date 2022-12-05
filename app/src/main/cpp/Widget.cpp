@@ -165,12 +165,26 @@ struct Widget::State {
     const float heightScale = surfaceHeight * (float)M_PI / cylinderDensity;
     // Scale the cylinder so that widget height matches cylinder height.
     const float scale = h / (cylinder->GetCylinderHeight() * heightScale);
+    //VRB_LOG("%s\tscale %f\twh %f\tcylH %f\theightScale %f", cylinder->GetLayer()->GetName().c_str(),scale, h, cylinder->GetCylinderHeight(), heightScale);
     //const float scale = 1.0;
     vrb::Matrix scaleMatrix = vrb::Matrix::Identity();
     scaleMatrix.ScaleInPlace(vrb::Vector(radius * scale, radius * scale * heightScale, radius * scale));
     // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
+#if OCULUSVR && !OPENXR
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius * scale));
-    cylinder->SetTransform(translation/*.PostMultiply(scaleMatrix)*/);
+#else
+    //VRB_LOG("Using 1 instead of %f", radius*scale);
+    //vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius*scale));
+    vrb::Matrix translation = vrb::Matrix::Identity();
+    if (false && cylinder->GetLayer()->GetName() == std::string("Window")) {
+        VRB_LOG("MATRIX SCALE %s", scaleMatrix.ToString().c_str());
+        VRB_LOG("MATRIX PRESCALE %s", translation.ToString().c_str());
+        VRB_LOG("MATRIX POSTESCALE %s", translation.PostMultiply(scaleMatrix).ToString().c_str());
+    }
+#endif
+    cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    //cylinder->SetTransform(vrb::Matrix::Identity().PostMultiply(scaleMatrix));
+    //VRB_LOG("CYL transf %s", translation.PostMultiply(scaleMatrix).ToString().c_str());
     AdjustCylinderRotation(radius * scale);
     UpdateResizerTransform();
   }
@@ -186,7 +200,9 @@ struct Widget::State {
       transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, -delta)));
       transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, delta)));
       transformContainer->SetTransform(transform);
+      //VRB_LOG("TC %s", transform.ToString().c_str());
     } else {
+      //VRB_LOG("TC-a Identity");
       transformContainer->SetTransform(vrb::Matrix::Identity());
     }
   }

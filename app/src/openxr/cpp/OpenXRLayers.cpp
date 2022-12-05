@@ -36,9 +36,6 @@ void
 OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerQuadPtr, XrCompositionLayerQuad>::Update(aSpace, aPose, aClearSwapChain);
 
-    auto oldi =  MatrixToXrPose(layer->GetModelTransform(device::Eye::Left)/*.Translate(-kAverageHeight)*/);
-    VRB_LOG("laller(Q)\tOLD %f %f %f", oldi.position.x,oldi.position.y,oldi.position.z);
-
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
@@ -77,19 +74,12 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
 
-    //vrb::Matrix modelView = layer->GetView(eye).PostMultiply(layer->GetModelTransform(eye));
-    //xrLayers[i].pose = MatrixToXrPose(modelView);
+    auto model = layer->GetModelTransform(eye).Translate(-kAverageHeight);
+    auto scale = model.GetScale();
+    // MatrixToXrPose does not work with a scaled matrix
+    auto rotMat = model.Scale({ 1.0f/scale.x(), 1.0f/scale.y(), 1.0f/scale.z()});
+    xrLayers[i].pose = MatrixToXrPose(rotMat);
 
-    //xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).PostMultiply(XrPoseToMatrix(aPose)));
-
-    //xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight).Translate(vrb::Vector(0,0,-1)));
-
-    xrLayers[i].pose = MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
-/*
-    const vrb::Vector scale = layer->GetUVTransform(eye).GetScale();
-    const vrb::Vector translation = layer->GetUVTransform(eye).GetTranslation();
-    xrLayers[i].pose = MatrixToXrPose(vrb::Matrix::Identity().TranslateInPlace(translation));
-  */
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();

@@ -185,6 +185,8 @@ protected:
       info.arraySize = 0;
       info.usageFlags = 0;
     } else {
+      // FIXME: replace by the first format returned by the runtime as suggested by the specs. In
+      // theory it's the preferred format selected by the runtime.
       info.format = GL_SRGB8_ALPHA8;
       info.mipCount = 1;
       info.faceCount = 1;

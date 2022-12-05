@@ -979,7 +979,6 @@ DeviceDelegateOpenXR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
   }
 
   VRLayerQuadPtr layer = VRLayerQuad::Create(aWidth, aHeight, aSurfaceType);
-    VRB_LOG("FIGURE %p: quad %dx%d", layer.get(), aWidth, aHeight);
   OpenXRLayerQuadPtr xrLayer = OpenXRLayerQuad::Create(m.javaContext->env, layer);
   m.AddUILayer(xrLayer, aSurfaceType);
   return layer;
@@ -1015,7 +1014,6 @@ DeviceDelegateOpenXR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
   }
 
   VRLayerCylinderPtr layer = VRLayerCylinder::Create(aWidth, aHeight, aSurfaceType);
-    VRB_LOG("FIGURE %p: cylinder %dx%d", layer.get(),aWidth, aHeight);
   OpenXRLayerCylinderPtr xrLayer = OpenXRLayerCylinder::Create(m.javaContext->env, layer);
   m.AddUILayer(xrLayer, aSurfaceType);
   return layer;
