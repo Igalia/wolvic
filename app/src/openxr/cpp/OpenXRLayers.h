@@ -170,7 +170,12 @@ protected:
     XrSwapchainCreateInfo info{XR_TYPE_SWAPCHAIN_CREATE_INFO};
     info.width = width;
     info.height = height;
-    if (aSurfaceType == VRLayerSurface::SurfaceType::AndroidSurface) {
+    bool shouldZeroInitialize = aSurfaceType == VRLayerSurface::SurfaceType::AndroidSurface;
+#if defined(PICOXR)
+    // Circumvent a bug in the pico OpenXR runtime.
+    shouldZeroInitialize = false;
+#endif
+    if (shouldZeroInitialize) {
       // These members must be zero
       // See https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/xrCreateSwapchainAndroidSurfaceKHR.html#XR_KHR_android_surface_swapchain
       info.format = 0;

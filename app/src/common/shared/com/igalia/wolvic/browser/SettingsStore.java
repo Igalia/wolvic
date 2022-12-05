@@ -457,7 +457,7 @@ public class SettingsStore {
     }
 
     public boolean getLayersEnabled() {
-        if (DeviceType.isOculusBuild() && !mDisableLayers) {
+        if ((DeviceType.isOculusBuild() || DeviceType.isPicoXR()) && !mDisableLayers) {
             Log.i(LOGTAG, "Layers are enabled");
             return true;
         }
