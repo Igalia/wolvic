@@ -138,7 +138,8 @@ public class PromptDelegate implements
 
             @Override
             public void dismiss() {
-                result.complete(prompt.dismiss());
+                if (!prompt.isComplete())
+                    result.complete(prompt.dismiss());
             }
         });
 

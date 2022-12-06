@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -19,10 +18,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/library_item_row_height"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:background="@color/void_color"
-        app:layout_height="@dimen/library_item_row_height">
+        android:background="@color/void_color">
 
         <RelativeLayout
             android:id="@+id/layout"
@@ -36,14 +34,26 @@
             android:onClick="@{(view) -> callback.onClick(view, item)}"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:soundEffectsEnabled="false">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="@dimen/thumbnailSize"
+                android:layout_height="@dimen/thumbnailSize"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_generic_file" />
 
             <TextView
                 android:id="@+id/filename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/thumbnail"
                 android:ellipsize="middle"
                 android:paddingEnd="20dp"
                 android:scrollHorizontally="true"
@@ -52,7 +62,7 @@
                 android:textColor="@color/library_panel_title_text_color"
                 android:textSize="@dimen/library_item_title_text_size"
                 android:textStyle="bold"
-                tools:text="http://mozilla.org" />
+                tools:text="example.png" />
 
             <TextView
                 android:id="@+id/size"

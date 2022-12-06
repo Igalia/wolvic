@@ -17,7 +17,6 @@ import com.igalia.wolvic.ui.adapters.FileUploadAdapter;
 import com.igalia.wolvic.ui.adapters.FileUploaditem;
 import com.igalia.wolvic.ui.callbacks.FileUploadItemCallback;
 import com.igalia.wolvic.ui.views.CustomRecyclerView;
-import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,12 +81,14 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
             }
 
             mPromptDelegate.dismiss();
+            hide(REMOVE_WIDGET);
         });
 
         mUploadButton = findViewById(R.id.positiveButton);
         mUploadButton.setOnClickListener(view -> {
             // TODO upload the file
             mPromptDelegate.dismiss();
+            hide(REMOVE_WIDGET);
         });
     }
 
@@ -137,10 +138,5 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
     public void onDownloadError(@NonNull String error, @NonNull String file) {
         List<FileUploaditem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
         mFileUploadAdapter.setFilesList(fileItems);
-    }
-
-    @Override
-    public int getMinHeight() {
-        return WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_min_height);
     }
 }

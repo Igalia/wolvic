@@ -249,6 +249,7 @@
     <!-- PopUp Dialog -->
 
     <dimen name="scrollbarWidth">10dp</dimen>
+    <dimen name="thumbnailSize">48dp</dimen>
 
     <!-- Quick Permission -->
     <dimen name="quick_permission_width">420dp</dimen>

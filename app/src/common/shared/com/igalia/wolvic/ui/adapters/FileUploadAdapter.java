@@ -1,6 +1,7 @@
 package com.igalia.wolvic.ui.adapters;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.igalia.wolvic.ui.callbacks.FileUploadItemCallback;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -60,9 +62,22 @@ public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        FileUploadViewHolder item = (FileUploadViewHolder) holder;
-        FileUploadItemBinding binding = item.binding;
-        item.binding.setItem(mFilesList.get(position));
+        FileUploaditem item = mFilesList.get(position);
+        FileUploadViewHolder itemHolder = (FileUploadViewHolder) holder;
+        FileUploadItemBinding binding = itemHolder.binding;
+
+        binding.setItem(item);
+        final Uri itemUri = item.getUri();
+        ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), item.getUri(),
+                bitmap -> {
+                    if (binding.getItem() != null && Objects.equals(itemUri, binding.getItem().getUri()))
+                        binding.thumbnail.setImageBitmap(bitmap);
+                    else
+                        binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
+                }
+        );
+        task.execute();
+
         binding.layout.setOnHoverListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
