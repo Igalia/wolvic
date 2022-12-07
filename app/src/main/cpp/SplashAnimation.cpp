@@ -79,7 +79,7 @@ SplashAnimation::Load(vrb::RenderContextPtr& aContext, const DeviceDelegatePtr& 
     return;
   }
   vrb::CreationContextPtr create = m.context.lock();
-#ifdef OCULUSVR
+#if OCULUSVR || PICOXR
   VRB_GL_CHECK(glDisable(GL_FRAMEBUFFER_SRGB_EXT));
 #endif
   vrb::TextureGLPtr texture = create->LoadTexture("logo.png");
