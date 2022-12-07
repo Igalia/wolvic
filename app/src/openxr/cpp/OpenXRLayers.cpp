@@ -45,6 +45,7 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
+    xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
   }
 }
 
@@ -88,6 +89,7 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
+    xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
   }
 }
 
@@ -215,6 +217,8 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(swapchain->Width(), swapchain->Height(), rect);
+
+    xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
 
     // Zero radius value is treated as an infinite sphere
     xrLayers[i].radius = 0;
