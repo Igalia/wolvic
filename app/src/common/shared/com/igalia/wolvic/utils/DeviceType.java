@@ -19,11 +19,9 @@ public class DeviceType {
     public static final int PicoG2 = 7;
     public static final int PicoNeo3 = 8;
     public static final int OculusQuest2 = 9;
-    public static final int PicoXR = 12;
-
-    // These values are not present in Device.h yet but are needed for the WebXR UI
     public static final int HVR3DoF = 10;
     public static final int HVR6DoF = 11;
+    public static final int PicoXR = 12;
 
     private static @Type int mType = Unknown;
 
