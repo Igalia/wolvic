@@ -169,7 +169,7 @@ struct Widget::State {
     vrb::Matrix scaleMatrix = vrb::Matrix::Identity();
     scaleMatrix.ScaleInPlace(vrb::Vector(scaledRadius, scaledRadius * heightScale, scaledRadius));
     // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
-    vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, scaledRadius));
+    vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius));
     cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
     AdjustCylinderRotation(scaledRadius);
     UpdateResizerTransform();
