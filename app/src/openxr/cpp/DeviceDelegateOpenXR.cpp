@@ -98,6 +98,25 @@ struct DeviceDelegateOpenXR::State {
   std::optional<XrPosef> firstPose;
   bool mHandTrackingSupported = false;
 
+  bool IsPositionTrackingSupported() {
+      CHECK(system != XR_NULL_SYSTEM_ID);
+      CHECK(instance != XR_NULL_HANDLE);
+      return systemProperties.trackingProperties.positionTracking == XR_TRUE;
+  }
+
+  // This might require more sophisticated code to properly detect specific hardware. That was
+  // easy to do with propietary SDKs but it's a bit more difficult with OpenXR.
+  void InitializeDeviceType() {
+      VRB_LOG("Initializing device %s from vendor %d", systemProperties.systemName, systemProperties.vendorId);
+#if OCULUSVR
+      deviceType = device::OculusQuest2;
+#elif HVR
+      deviceType = IsPositionTrackingSupported() ? device::HVR6DoF : device::HVR3DoF;
+#elif PICOXR
+      deviceType = device::PicoXR;
+#endif
+  }
+
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
     elbow = ElbowModel::Create();
@@ -197,6 +216,8 @@ struct DeviceDelegateOpenXR::State {
 
     mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
+
+    InitializeDeviceType();
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -639,7 +660,7 @@ DeviceDelegateOpenXR::GetControllerModelName(const int32_t aModelIndex) const {
 bool
 DeviceDelegateOpenXR::IsPositionTrackingSupported() const {
   // returns true for 6DoF controllers
-  return m.systemProperties.trackingProperties.positionTracking == XR_TRUE;
+  return m.IsPositionTrackingSupported();
 }
 
 void
