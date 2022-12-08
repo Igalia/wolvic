@@ -92,4 +92,15 @@ class Places(var context: Context) {
             logins.value.wipeLocal()
         }
     }
+
+    fun clearLoginsDatabaseUglyHack() {
+        // This is the ugliest part of this hack. We're using the name extracted from the sources of the
+        // mozilla-components. That database file should be totally opaque to us, but that's what it is as
+        // long as mozilla-components don't provide a better solution for clients.
+        var loginsDatabase = context.getDatabasePath("logins.sqlite")
+        if (loginsDatabase != null) {
+            if (loginsDatabase.delete())
+                Logger.warn("Force-deleted logins database ${loginsDatabase.absolutePath}")
+        }
+    }
 }
