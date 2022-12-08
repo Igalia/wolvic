@@ -46,6 +46,10 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
     xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
+    //VRB_LOG("sss QUAD %dx%d",xrLayers[i].subImage.imageRect.extent.width,xrLayers[i].subImage.imageRect.extent.height);
+    if (i==0 && layer->GetName()=="TopBarWidget")
+    VRB_LOG("sss QUAD[%p] %s %f,%f,%f,%f\t%f,%f,%f", layer.get(), layer->GetName().c_str(),xrLayers[i].pose.orientation.x,xrLayers[i].pose.orientation.y,xrLayers[i].pose.orientation.z,xrLayers[i].pose.orientation.w,
+            xrLayers[i].pose.position.x,xrLayers[i].pose.position.y,xrLayers[i].pose.position.z);
   }
 }
 
@@ -81,6 +85,13 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     auto rotMat = model.Scale({ 1.0f/scale.x(), 1.0f/scale.y(), 1.0f/scale.z()});
     xrLayers[i].pose = MatrixToXrPose(rotMat);
 
+/*
+    vrb::Matrix modelView = layer->GetView(eye).PostMultiply(layer->GetModelTransform(eye));
+    VRB_LOG("zzz MODELVIEW %s", modelView.ToString().c_str());
+    const vrb::Vector translation = layer->GetUVTransform(eye).GetTranslation();
+    xrLayers[i].pose.position = { translation.x(), translation.y(), translation.z() };
+    xrLayers[i].pose.orientation = {0,0,0,1};
+*/
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();
@@ -90,6 +101,10 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     xrLayers[i].subImage.imageArrayIndex = 0;
     xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
     xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
+    //VRB_LOG("zzz CYL %dx%d %f",xrLayers[i].subImage.imageRect.extent.width,xrLayers[i].subImage.imageRect.extent.height,xrLayers[i].aspectRatio);
+      if (i==0 && layer->GetName()=="TopBarWidget")
+        VRB_LOG("sss CYL[%p] %s %f,%f,%f,%f\t%f,%f,%f", layer.get(), layer->GetName().c_str(),xrLayers[i].pose.orientation.x,xrLayers[i].pose.orientation.y,xrLayers[i].pose.orientation.z,xrLayers[i].pose.orientation.w,
+                xrLayers[i].pose.position.x,xrLayers[i].pose.position.y,xrLayers[i].pose.position.z);
   }
 }
 
@@ -219,6 +234,7 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     xrLayers[i].subImage.imageRect = GetRect(swapchain->Width(), swapchain->Height(), rect);
 
     xrLayers[i].subImage.imageRect.extent = {std::min(xrLayers[i].subImage.imageRect.extent.width,swapchain->Width()), std::min(xrLayers[i].subImage.imageRect.extent.height,swapchain->Height())};
+    //VRB_LOG("sss EQUI %dx%d",xrLayers[i].subImage.imageRect.extent.width,xrLayers[i].subImage.imageRect.extent.height);
 
     // Zero radius value is treated as an infinite sphere
     xrLayers[i].radius = 0;

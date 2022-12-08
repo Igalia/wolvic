@@ -769,7 +769,7 @@ BrowserWorld::State::SortWidgets() {
 void
 BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float aDensity) {
   bool useCylinder = aDensity > 0 && aWidget->GetPlacement()->cylinder;
-  //useCylinder = false;
+  useCylinder = aWidget->GetLayer()->GetName() != "TopBarWidget" ? false : useCylinder;
   if (useCylinder && aWidget->GetCylinder()) {
     aWidget->SetCylinderDensity(aDensity);
   } else if (useCylinder && !aWidget->GetCylinder()) {

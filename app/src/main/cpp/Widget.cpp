@@ -170,13 +170,16 @@ struct Widget::State {
     scaleMatrix.ScaleInPlace(vrb::Vector(scaledRadius, scaledRadius * heightScale, scaledRadius));
     // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius));
+    //VRB_LOG("SCALED RADIUS %f", scaledRadius);
     cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    //VRB_LOG("sss CYL transform %s", cylinder->GetTransformNode()->GetTransform().ToString().c_str());
     AdjustCylinderRotation(scaledRadius);
     UpdateResizerTransform();
   }
 
   void AdjustCylinderRotation(const float radius) {
     const float x = transform->GetTransform().GetTranslation().x();
+    VRB_LOG("sss adjustCYLtransform %s", transform->GetTransform().ToString().c_str());
     if (x != 0.0f && placement->cylinderMapRadius > 0) {
       // Automatically adjust correct yaw angle & position for the cylinders not centered on the X axis
       const float perimeter = 2.0f * radius * (float)M_PI;
