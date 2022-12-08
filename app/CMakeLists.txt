@@ -118,12 +118,12 @@ if(OPENXR)
     elseif (PICOXR)
         include_directories(
             ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
-            ${CMAKE_SOURCE_DIR}/../third_party/picoxr/Include
+            ${CMAKE_SOURCE_DIR}/../third_party/picoxr/include
             ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
         add_custom_command(TARGET native-lib POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_SOURCE_DIR}/../third_party/picoxr/Libs/Android/${ANDROID_ABI}/libopenxr_loader.so
+            ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
         )
     endif ()
@@ -205,7 +205,7 @@ set_target_properties(hvr-lib PROPERTIES IMPORTED_LOCATION
 
 add_library(picoxr-lib SHARED IMPORTED)
 set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/../third_party/picoxr/Libs/Android/${ANDROID_ABI}/libopenxr_loader.so)
+        ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
