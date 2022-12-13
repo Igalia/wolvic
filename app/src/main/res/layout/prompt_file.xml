@@ -23,35 +23,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Title" />
 
-    <TextView
-        android:id="@+id/promptMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:ellipsize="end"
-        android:gravity="top|start"
-        android:scrollbars="vertical"
-        android:singleLine="true"
-        android:textAlignment="viewStart"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/promptTitle"
-        tools:text="Message" />
-
     <com.igalia.wolvic.ui.views.CustomRecyclerView
         android:id="@+id/filesList"
         style="@style/customRecyclerViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:maxHeight="@dimen/prompt_content_max_height"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_weight="100"
         android:fadingEdgeLength="60dp"
-        android:minHeight="200dp"
+        android:minHeight="400dp"
         android:overScrollMode="never"
         android:requiresFadingEdge="vertical"
         android:smoothScrollbar="true"

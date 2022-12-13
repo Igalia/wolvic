@@ -13,7 +13,6 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -81,30 +80,20 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private Bitmap createFileThumbnail(@NonNull File file) {
-        Log.e(LOGTAG, "createFileThumbnail file = " + file);
-        String extension = MimeTypeMap.getFileExtensionFromUrl(file.getPath());
-        Log.e(LOGTAG, "  extension = " + extension);
-        if (extension == null) {
-            return null;
-        }
-        String mimeFromExtension = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        Log.e(LOGTAG, "createFileThumbnail");
+        String mimeType = UrlUtils.getMimeTypeFromUrl(file.getPath());
         mCancellationSignal = new CancellationSignal();
-        Log.e(LOGTAG, "  mimeFromExtension = " + mimeFromExtension);
 
         try {
-            if (mimeFromExtension.startsWith("audio")) {
-                Log.e(LOGTAG, "  createAudioThumbnail");
+            if (mimeType.startsWith("audio")) {
                 return ThumbnailUtils.createAudioThumbnail(file, DEFAULT_SIZE, mCancellationSignal);
-            } else if (mimeFromExtension.startsWith("video")) {
-                Log.e(LOGTAG, "  createVideoThumbnail");
+            } else if (mimeType.startsWith("video")) {
                 return ThumbnailUtils.createVideoThumbnail(file, DEFAULT_SIZE, mCancellationSignal);
-            } else if (mimeFromExtension.startsWith("image")) {
-                Log.e(LOGTAG, "  createImageThumbnail");
+            } else if (mimeType.startsWith("image")) {
                 return ThumbnailUtils.createImageThumbnail(file, DEFAULT_SIZE, mCancellationSignal);
             }
         } catch (IOException e) {
-            Log.e(LOGTAG, "  loadThumbnail: " + e.getMessage());
-            e.printStackTrace();
+            Log.w(LOGTAG, "createFileThumbnail error, file=" + file + " :  " + e.getMessage());
         }
         return null;
     }

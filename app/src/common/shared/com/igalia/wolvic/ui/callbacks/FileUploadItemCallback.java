@@ -4,8 +4,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.igalia.wolvic.ui.adapters.FileUploaditem;
+import com.igalia.wolvic.ui.adapters.FileUploadItem;
 
 public interface FileUploadItemCallback {
-    void onClick(@NonNull View view, @NonNull FileUploaditem item);
+    void onClick(@NonNull View view, @NonNull FileUploadItem item);
 }

@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets.prompts;
 import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,10 +15,12 @@ import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.ui.adapters.FileUploadAdapter;
-import com.igalia.wolvic.ui.adapters.FileUploaditem;
-import com.igalia.wolvic.ui.callbacks.FileUploadItemCallback;
+import com.igalia.wolvic.ui.adapters.FileUploadItem;
+import com.igalia.wolvic.ui.callbacks.FileUploadSelectionCallback;
 import com.igalia.wolvic.ui.views.CustomRecyclerView;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,9 +30,6 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
     public interface FilePromptDelegate extends PromptDelegate {
         void confirm(@NonNull Uri[] uris);
     }
-
-    private static final int DIALOG_CLOSE_DELAY = 250;
-    private static final int LISTVIEW_ITEM_HEIGHT = 20;
 
     private AudioEngine mAudio;
     private CustomRecyclerView mFilesList;
@@ -61,7 +61,7 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
 
         mLayout = findViewById(R.id.layout);
 
-        mFileUploadAdapter = new FileUploadAdapter(mFileUploadItemCallback);
+        mFileUploadAdapter = new FileUploadAdapter(mOnSelectionCallback);
         mFilesList = findViewById(R.id.filesList);
         mFilesList.setAdapter(mFileUploadAdapter);
         mFilesList.setHasFixedSize(true);
@@ -86,19 +86,41 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
 
         mUploadButton = findViewById(R.id.positiveButton);
         mUploadButton.setOnClickListener(view -> {
-            // TODO upload the file
-            mPromptDelegate.dismiss();
+            if (mPromptDelegate instanceof FilePromptDelegate) {
+                Collection<FileUploadItem> selectedItems = mFileUploadAdapter.getSelectedItems();
+                if (selectedItems.size() > 0) {
+                    Uri[] selectedUris = selectedItems.stream().map(FileUploadItem::getUri).toArray(Uri[]::new);
+                    ((FilePromptDelegate) mPromptDelegate).confirm(selectedUris);
+                } else {
+                    mPromptDelegate.dismiss();
+                }
+            } else {
+                Log.w(LOGTAG, "Prompt delegate is not an instance of FilePromptDelegate");
+                mPromptDelegate.dismiss();
+            }
             hide(REMOVE_WIDGET);
         });
+        // hidden unless multiple selection is enabled
+        mUploadButton.setVisibility(GONE);
     }
 
-    private final FileUploadItemCallback mFileUploadItemCallback = new FileUploadItemCallback() {
+    public void setIsMultipleSelection(boolean isMultipleSelection) {
+        mFileUploadAdapter.setIsMultipleSelection(isMultipleSelection);
+        mUploadButton.setVisibility(isMultipleSelection ? VISIBLE : GONE);
+
+        onDownloadsUpdate(mDownloadsManager.getDownloads());
+    }
+
+    public void setMimeTypes(String[] mimeTypes) {
+        mFileUploadAdapter.setMimeTypes(mimeTypes);
+
+        onDownloadsUpdate(mDownloadsManager.getDownloads());
+    }
+
+    private final FileUploadSelectionCallback mOnSelectionCallback = new FileUploadSelectionCallback() {
         @Override
-        public void onClick(@NonNull View view, @NonNull FileUploaditem item) {
-            mFilesList.requestFocusFromTouch();
-
-            ((FilePromptDelegate) mPromptDelegate).confirm(new Uri[]{item.getUri()});
-
+        public void onSelection(@NonNull Uri[] uris) {
+            ((FilePromptDelegate) mPromptDelegate).confirm(uris);
             hide(REMOVE_WIDGET);
         }
     };
@@ -117,26 +139,37 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
         mDownloadsManager.removeListener(this);
     }
 
-    private List<FileUploaditem> getFileItemsFromDownloads(@NonNull List<Download> downloads) {
+    @Override
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        super.initializeWidgetPlacement(aPlacement);
+        aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_file_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_file_height);
+    }
+
+    private List<FileUploadItem> getFileItemsFromDownloads(@NonNull List<Download> downloads) {
         return downloads.
                 stream().
                 filter(download -> download.getStatus() == Download.SUCCESSFUL).
-                map(download -> new FileUploaditem(download.getFilename(), Uri.parse(download.getOutputFileUri()), download.getSizeBytes())).
+                map(download -> new FileUploadItem(
+                        download.getFilename(),
+                        Uri.parse(download.getOutputFileUri()),
+                        download.getMediaType(),
+                        download.getSizeBytes())).
                 collect(Collectors.toList());
     }
 
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
-        List<FileUploaditem> fileItems = getFileItemsFromDownloads(downloads);
+        List<FileUploadItem> fileItems = getFileItemsFromDownloads(downloads);
         mFileUploadAdapter.setFilesList(fileItems);
     }
 
     public void onDownloadCompleted(@NonNull Download download) {
-        List<FileUploaditem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
+        List<FileUploadItem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
         mFileUploadAdapter.setFilesList(fileItems);
     }
 
     public void onDownloadError(@NonNull String error, @NonNull String file) {
-        List<FileUploaditem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
+        List<FileUploadItem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
         mFileUploadAdapter.setFilesList(fileItems);
     }
 }

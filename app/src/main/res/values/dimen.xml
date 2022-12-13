@@ -154,6 +154,8 @@
     <dimen name="prompt_choice_min_height">300dp</dimen>
     <dimen name="prompt_choice_max_height">520dp</dimen>
     <dimen name="prompt_min_height">400dp</dimen>
+    <dimen name="prompt_file_width">600dp</dimen>
+    <dimen name="prompt_file_height">600dp</dimen>
 
     <!-- Dialog buttons -->
 

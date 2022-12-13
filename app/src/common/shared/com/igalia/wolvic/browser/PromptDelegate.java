@@ -122,14 +122,13 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onFilePrompt(@NonNull final WSession session, @NonNull final WSession.PromptDelegate.FilePrompt prompt) {
-        // TODO: implement file prompt
         final WResult<PromptResponse> result = WResult.create();
 
-        mPrompt = new FilePromptWidget(mContext);
-        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-        mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle("PICK A FILE");
+        FilePromptWidget filePromptWidget = new FilePromptWidget(mContext);
+        filePromptWidget.setIsMultipleSelection(prompt.type() == FilePrompt.Type.MULTIPLE);
+        filePromptWidget.setMimeTypes(prompt.mimeTypes());
+        mPrompt = filePromptWidget;
+        mPrompt.setTitle(prompt.title());
         mPrompt.setPromptDelegate(new FilePromptWidget.FilePromptDelegate() {
             @Override
             public void confirm(@NonNull Uri[] uris) {
@@ -138,11 +137,13 @@ public class PromptDelegate implements
 
             @Override
             public void dismiss() {
-                if (!prompt.isComplete())
-                    result.complete(prompt.dismiss());
+                result.complete(prompt.dismiss());
             }
         });
 
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;

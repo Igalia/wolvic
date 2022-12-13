@@ -4,11 +4,11 @@
 
     <data>
 
-        <import type="com.igalia.wolvic.ui.adapters.FileUploaditem" />
+        <import type="com.igalia.wolvic.ui.adapters.FileUploadItem" />
 
         <variable
             name="item"
-            type="com.igalia.wolvic.ui.adapters.FileUploaditem" />
+            type="com.igalia.wolvic.ui.adapters.FileUploadItem" />
 
         <variable
             name="callback"
@@ -22,12 +22,13 @@
         android:layout_marginEnd="20dp"
         android:background="@color/void_color">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:addStatesFromChildren="true"
-            android:background="@drawable/library_item_background_color"
+            android:background="@drawable/library_item_selectable_background_color"
+            android:orientation="horizontal"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
@@ -42,8 +43,7 @@
                 android:id="@+id/thumbnail"
                 android:layout_width="@dimen/thumbnailSize"
                 android:layout_height="@dimen/thumbnailSize"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center"
                 android:layout_marginEnd="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_generic_file" />
@@ -52,10 +52,10 @@
                 android:id="@+id/filename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/thumbnail"
+                android:layout_gravity="start|center_vertical"
                 android:ellipsize="middle"
-                android:paddingEnd="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@{item.filename}"
@@ -68,18 +68,16 @@
                 android:id="@+id/size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/filename"
+                android:layout_gravity="end|center_vertical"
                 android:ellipsize="end"
                 android:gravity="end"
-                android:paddingEnd="20dp"
+                android:layout_marginEnd="20dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="@{item.sizeString}"
+                android:text="@{item.getSizeString(context)}"
                 android:textColor="@color/library_panel_description_color"
                 android:textSize="@dimen/library_item_url_text_size"
                 tools:text="1MB" />
-        </RelativeLayout>
+        </LinearLayout>
     </FrameLayout>
 </layout>
