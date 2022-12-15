@@ -116,6 +116,7 @@ public class Download {
         return mDescription;
     }
 
+    @Status
     public int getStatus() {
         return mStatus;
     }
