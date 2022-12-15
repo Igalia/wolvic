@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 
@@ -32,17 +31,13 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
     private static final Size DEFAULT_SIZE = new Size(96, 96);
-    private static final int DEFAULT_SIZE_KIND = MediaStore.Images.Thumbnails.MICRO_KIND;
 
     private final ContentResolver mContentResolver;
     private final Uri mFileUri;
     private final OnSuccessDelegate mOnSuccessDelegate;
     private CancellationSignal mCancellationSignal;
 
-    public ThumbnailAsyncTask(@NonNull Context context, @NonNull Uri fileUri, OnSuccessDelegate onSuccessDelegate) {
-
-        Log.e(LOGTAG, "new ThumbnailAsyncTask");
-
+    public ThumbnailAsyncTask(@NonNull Context context, Uri fileUri, OnSuccessDelegate onSuccessDelegate) {
         mContentResolver = context.getContentResolver();
         mFileUri = fileUri;
         mOnSuccessDelegate = onSuccessDelegate;
@@ -50,7 +45,8 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Void... voids) {
-        Log.e(LOGTAG, "doInBackground  mFileUri = " + mFileUri);
+        if (mFileUri == null)
+            return null;
 
         if (UrlUtils.isFileUri(mFileUri.toString())) {
             File file = new File(mFileUri.getPath());
@@ -80,7 +76,6 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private Bitmap createFileThumbnail(@NonNull File file) {
-        Log.e(LOGTAG, "createFileThumbnail");
         String mimeType = UrlUtils.getMimeTypeFromUrl(file.getPath());
         mCancellationSignal = new CancellationSignal();
 
@@ -93,7 +88,7 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
                 return ThumbnailUtils.createImageThumbnail(file, DEFAULT_SIZE, mCancellationSignal);
             }
         } catch (IOException e) {
-            Log.w(LOGTAG, "createFileThumbnail error, file=" + file + " :  " + e.getMessage());
+            Log.w(LOGTAG, "createFileThumbnail error, file=" + file + " : " + e.getMessage());
         }
         return null;
     }
@@ -105,12 +100,10 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private Bitmap createContentThumbnail(@NonNull Uri uri) {
-        Log.e(LOGTAG, "createContentThumbnail uri = " + uri);
         try {
-            Log.e(LOGTAG, "  loadThumbnail");
             return mContentResolver.loadThumbnail(uri, DEFAULT_SIZE, null);
         } catch (IOException e) {
-            Log.e(LOGTAG, "  loadThumbnail: " + e.getMessage());
+            Log.w(LOGTAG, "createContentThumbnail error, uri=" + uri + " : " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -123,8 +116,6 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        Log.e(LOGTAG, "  onPostExecute : " + bitmap);
-
         if (bitmap != null && mOnSuccessDelegate != null) {
             (new Handler(Looper.getMainLooper())).post(() -> mOnSuccessDelegate.onSuccess(bitmap));
         }
