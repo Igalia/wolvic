@@ -125,10 +125,10 @@ public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final Uri itemUri = item.getUri();
         ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), item.getUri(),
                 bitmap -> {
-                    if (binding.getItem() != null && Objects.equals(itemUri, binding.getItem().getUri()))
-                        binding.thumbnail.setImageBitmap(bitmap);
-                    else
+                    if (bitmap == null || binding.getItem() == null || !Objects.equals(itemUri, binding.getItem().getUri()))
                         binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
+                    else
+                        binding.thumbnail.setImageBitmap(bitmap);
                 }
         );
         task.execute();
