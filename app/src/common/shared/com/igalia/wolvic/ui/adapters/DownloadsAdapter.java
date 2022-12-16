@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -135,8 +137,43 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         DownloadItemViewHolder item = (DownloadItemViewHolder) holder;
         DownloadItemBinding binding = item.binding;
-        item.binding.setItem(mDownloadsList.get(position));
+        Download downloadItem = mDownloadsList.get(position);
+        item.binding.setItem(downloadItem);
         item.binding.setIsNarrow(mIsNarrowLayout);
+
+        switch (downloadItem.getStatus()) {
+            case Download.PENDING:
+                binding.thumbnail.setImageResource(R.drawable.ic_pending_circle);
+                break;
+            case Download.RUNNING:
+                binding.thumbnail.setImageResource(R.drawable.ic_downloading_circle);
+                break;
+            case Download.PAUSED:
+                binding.thumbnail.setImageResource(R.drawable.ic_pause_circle);
+                break;
+            case Download.FAILED:
+            case Download.UNAVAILABLE:
+                binding.thumbnail.setImageResource(R.drawable.ic_error_circle);
+                break;
+            case Download.SUCCESSFUL: {
+                String fileUri = downloadItem.getOutputFileUri();
+                if (fileUri == null) {
+                    // If this ever happens, we mark the item as unavailable.
+                    binding.thumbnail.setImageResource(R.drawable.ic_error_circle);
+                } else {
+                    ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), Uri.parse(fileUri),
+                            bitmap -> {
+                                if (bitmap == null || binding.getItem() == null || !Objects.equals(fileUri, binding.getItem().getOutputFileUri()))
+                                    binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
+                                else
+                                    binding.thumbnail.setImageBitmap(bitmap);
+                            }
+                    );
+                    task.execute();
+                }
+                break;
+            }
+        }
         binding.layout.setOnHoverListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
