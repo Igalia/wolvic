@@ -154,8 +154,6 @@
     <dimen name="prompt_choice_min_height">300dp</dimen>
     <dimen name="prompt_choice_max_height">520dp</dimen>
     <dimen name="prompt_min_height">400dp</dimen>
-    <dimen name="prompt_file_width">600dp</dimen>
-    <dimen name="prompt_file_height">600dp</dimen>
 
     <!-- Dialog buttons -->
 
@@ -251,7 +249,6 @@
     <!-- PopUp Dialog -->
 
     <dimen name="scrollbarWidth">10dp</dimen>
-    <dimen name="thumbnailSize">48dp</dimen>
 
     <!-- Quick Permission -->
     <dimen name="quick_permission_width">420dp</dimen>
