@@ -2,6 +2,7 @@ package com.igalia.wolvic.browser;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ import com.igalia.wolvic.ui.widgets.prompts.AlertPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.AuthPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ChoicePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ConfirmPromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.FilePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.PromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SaveLoginPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SelectLoginPromptWidget;
@@ -120,9 +122,30 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onFilePrompt(@NonNull final WSession session, @NonNull final WSession.PromptDelegate.FilePrompt prompt) {
-        // TODO: we don't support File dialogs yet
         final WResult<PromptResponse> result = WResult.create();
-        result.complete(prompt.dismiss());
+
+        FilePromptWidget filePromptWidget = new FilePromptWidget(mContext);
+        filePromptWidget.setIsMultipleSelection(prompt.type() == FilePrompt.Type.MULTIPLE);
+        filePromptWidget.setMimeTypes(prompt.mimeTypes());
+        mPrompt = filePromptWidget;
+        mPrompt.setTitle(prompt.title());
+        mPrompt.setPromptDelegate(new FilePromptWidget.FilePromptDelegate() {
+            @Override
+            public void confirm(@NonNull Uri[] uris) {
+                result.complete(prompt.confirm(mContext, uris));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
+
         return result;
     }
 
