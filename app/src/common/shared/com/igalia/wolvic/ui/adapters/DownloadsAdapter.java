@@ -156,13 +156,14 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 binding.thumbnail.setImageResource(R.drawable.ic_error_circle);
                 break;
             case Download.SUCCESSFUL: {
-                if (downloadItem.getOutputFileUri() == null) {
-                    binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
+                String fileUri = downloadItem.getOutputFileUri();
+                if (fileUri == null) {
+                    // If this ever happens, we mark the item as unavailable.
+                    binding.thumbnail.setImageResource(R.drawable.ic_error_circle);
                 } else {
-                    final String itemUri = downloadItem.getOutputFileUri();
-                    ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), Uri.parse(itemUri),
+                    ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), Uri.parse(fileUri),
                             bitmap -> {
-                                if (bitmap == null || binding.getItem() == null || !Objects.equals(itemUri, binding.getItem().getOutputFileUri()))
+                                if (bitmap == null || binding.getItem() == null || !Objects.equals(fileUri, binding.getItem().getOutputFileUri()))
                                     binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
                                 else
                                     binding.thumbnail.setImageBitmap(bitmap);
