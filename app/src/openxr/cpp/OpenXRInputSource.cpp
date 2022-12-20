@@ -790,14 +790,27 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
         }
     }
 
-    // Add haptic devices to controller, if any
     if (mActiveMapping != nullptr) {
+        // Add haptic devices to controller, if any
         uint32_t numHaptics = 0;
         for (auto& haptic: mActiveMapping->haptics) {
             if (haptic.hand == OpenXRHandFlags::Both || haptic.hand == mHandeness)
                 numHaptics++;
         }
         delegate.SetHapticCount(mIndex, numHaptics);
+
+        // On emulated profiles we need to set the button count here because it
+        // may never be set during Update() (e.g, when hand tracking is active).
+        if (emulateProfile) {
+            int buttonCount { 0 };
+            for (auto &button: mActiveMapping->buttons) {
+                if ((button.hand & mHandeness) == 0) {
+                    continue;
+                }
+                buttonCount++;
+            }
+            delegate.SetButtonCount(mIndex, buttonCount);
+        }
     }
 
     return XR_SUCCESS;
