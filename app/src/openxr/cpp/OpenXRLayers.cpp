@@ -40,7 +40,7 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye));
     xrLayers[i].size.width = layer->GetWorldWidth();
-    xrLayers[i].size.height = -layer->GetWorldHeight();
+    xrLayers[i].size.height = layer->GetWorldHeight();
     device::EyeRect rect = layer->GetTextureRect(eye);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
@@ -152,11 +152,10 @@ OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
 // OpenXRLayerEquirect;
 
 OpenXRLayerEquirectPtr
-OpenXRLayerEquirect::Create(const VRLayerEquirectPtr& aLayer, const OpenXRLayerPtr& aSourceLayer, bool aVerticalFlip) {
+OpenXRLayerEquirect::Create(const VRLayerEquirectPtr& aLayer, const OpenXRLayerPtr& aSourceLayer) {
   auto result = std::make_shared<OpenXRLayerEquirect>();
   result->layer = aLayer;
   result->sourceLayer = aSourceLayer;
-  result->mVerticalFlip = aVerticalFlip;
   return result;
 }
 
@@ -167,15 +166,10 @@ OpenXRLayerEquirect::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPt
     return;
   }
   swapchain = source->GetSwapChain();
-  if (mVerticalFlip) {
-      mLayerImageLayout.type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB;
-      mLayerImageLayout.flags = XR_COMPOSITION_LAYER_IMAGE_LAYOUT_VERTICAL_FLIP_BIT_FB;
-      mLayerImageLayout.next = XR_NULL_HANDLE;
-  }
-  for (auto& xrLayer: xrLayers) {
-    xrLayer = {XR_TYPE_COMPOSITION_LAYER_EQUIRECT_KHR};
-    xrLayer.next = mVerticalFlip ? &mLayerImageLayout : XR_NULL_HANDLE;
-  }
+
+  for (auto& xrLayer: xrLayers)
+    xrLayer = { XR_TYPE_COMPOSITION_LAYER_EQUIRECT_KHR };
+
   OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Init(aEnv, session, aContext);
 }
 
@@ -224,5 +218,12 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
   }
 }
 
+#if OCULUSVR
+const void*
+OpenXRLayerEquirect::GetNextStructureInChain() const {
+    // Oculus OpenXR backend flips layers vertically.
+    return OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME) ? &this->mLayerImageLayout : XR_NULL_HANDLE;
+}
+#endif
 
 }
