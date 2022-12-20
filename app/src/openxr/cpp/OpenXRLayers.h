@@ -14,6 +14,7 @@
 #include <openxr/openxr_platform.h>
 #include "OpenXRSwapChain.h"
 #include "OpenXRHelpers.h"
+#include "OpenXRExtensions.h"
 #include <array>
 
 
@@ -78,12 +79,15 @@ public:
     });
   }
 
+  virtual const void* GetNextStructureInChain() const { return XR_NULL_HANDLE; };
+
   virtual void
   Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override {
     for (int i = 0; i < xrLayers.size(); ++i) {
       xrLayers[i].layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
       xrLayers[i].eyeVisibility = XR_EYE_VISIBILITY_BOTH;
       xrLayers[i].space = aSpace;
+      xrLayers[i].next = GetNextStructureInChain();
     }
   }
 
@@ -190,6 +194,11 @@ protected:
 
     return info;
   }
+
+protected:
+#if OCULUSVR
+    XrCompositionLayerImageLayoutFB mLayerImageLayout { .type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB, .next = XR_NULL_HANDLE, .flags = XR_COMPOSITION_LAYER_IMAGE_LAYOUT_VERTICAL_FLIP_BIT_FB };
+#endif
 };
 
 
@@ -211,6 +220,13 @@ public:
     });
     OpenXRLayerBase<T, U>::Init(aEnv, session, aContext);
   }
+
+#if OCULUSVR
+  const void* GetNextStructureInChain() const override {
+    // Oculus OpenXR backend flips layers vertically.
+    return OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME) ? &this->mLayerImageLayout : XR_NULL_HANDLE;
+  }
+#endif
 
   void Resize() {
     if (!this->IsSwapChainReady()) {
@@ -336,15 +352,14 @@ public:
   std::weak_ptr<OpenXRLayer> sourceLayer;
 
   static OpenXRLayerEquirectPtr
-  Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer, bool aVerticalFlip);
+  Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
   void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
   void Destroy() override;
   bool IsDrawRequested() const override;
-
-protected:
-  XrCompositionLayerImageLayoutFB mLayerImageLayout;
-  bool mVerticalFlip;
+#if OCULUSVR
+  const void* GetNextStructureInChain() const override;
+#endif
 };
 
 }
