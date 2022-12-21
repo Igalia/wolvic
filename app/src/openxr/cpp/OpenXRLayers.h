@@ -240,7 +240,14 @@ public:
     // Delay the destruction of the current swapChain until the new one is composited.
     // This is required to prevent a black flicker when resizing.
     OpenXRSwapChainPtr newSwapChain;
-    InitSwapChain(this->swapchain->Env(), this->swapchain->Session(), newSwapChain);
+    auto env = this->swapchain->Env();
+    auto session = this->swapchain->Session();
+#if PICOXR
+    // We cannot delay the destruction for Pico otherwise he'll easily hit the 16 android layer limit
+    // of Pico platform (it'll trigger an XR_OUT_OF_MEMORY_ERROR).
+    this->swapchain = nullptr;
+#endif
+    InitSwapChain(env, session, newSwapChain);
     this->layer->SetSurface(newSwapChain->AndroidSurface());
 
     SurfaceChangedTargetWeakPtr weakTarget = this->surfaceChangedTarget;
