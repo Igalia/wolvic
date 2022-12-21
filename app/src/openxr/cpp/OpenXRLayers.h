@@ -196,8 +196,14 @@ protected:
   }
 
 protected:
-#if OCULUSVR
-    XrCompositionLayerImageLayoutFB mLayerImageLayout { .type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB, .next = XR_NULL_HANDLE, .flags = XR_COMPOSITION_LAYER_IMAGE_LAYOUT_VERTICAL_FLIP_BIT_FB };
+#if OCULUSVR \
+  // Oculus OpenXR backend flips layers vertically.
+  XrCompositionLayerImageLayoutFB mLayerImageLayout {
+    .type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB,
+    .next = XR_NULL_HANDLE,
+    .flags = XR_COMPOSITION_LAYER_IMAGE_LAYOUT_VERTICAL_FLIP_BIT_FB
+  };
+  void* nextStructureInChain { OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME) ? &mLayerImageLayout : XR_NULL_HANDLE };
 #endif
 };
 
@@ -223,8 +229,7 @@ public:
 
 #if OCULUSVR
   const void* GetNextStructureInChain() const override {
-    // Oculus OpenXR backend flips layers vertically.
-    return OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME) ? &this->mLayerImageLayout : XR_NULL_HANDLE;
+    return this->nextStructureInChain;
   }
 #endif
 

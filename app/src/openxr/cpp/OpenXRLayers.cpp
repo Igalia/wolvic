@@ -221,8 +221,7 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
 #if OCULUSVR
 const void*
 OpenXRLayerEquirect::GetNextStructureInChain() const {
-    // Oculus OpenXR backend flips layers vertically.
-    return OpenXRExtensions::IsExtensionSupported(XR_FB_COMPOSITION_LAYER_IMAGE_LAYOUT_EXTENSION_NAME) ? &this->mLayerImageLayout : XR_NULL_HANDLE;
+    return this->nextStructureInChain;
 }
 #endif
 
