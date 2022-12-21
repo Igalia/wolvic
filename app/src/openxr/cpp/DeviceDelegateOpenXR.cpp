@@ -268,19 +268,6 @@ struct DeviceDelegateOpenXR::State {
     viewConfig.resize(viewCount, {XR_TYPE_VIEW_CONFIGURATION_VIEW});
     CHECK_XRCMD(xrEnumerateViewConfigurationViews(instance, system, viewConfigType, viewCount, &viewCount, viewConfig.data()));
 
-#ifdef PICOXR
-    // The Pico 4 is much more capable than it advertises via OpenXR, and the primary device used
-    // with Pico XR builds. We thus bump resulutions by 1.4 for a drastic improvement in image clarity.
-    if (viewCount > 0) {
-      viewConfig.front().recommendedImageRectWidth = std::min<unsigned int>(
-          viewConfig.front().maxImageRectWidth,
-          viewConfig.front().recommendedImageRectWidth * 1.4f);
-      viewConfig.front().recommendedImageRectHeight = std::min<unsigned int>(
-          viewConfig.front().maxImageRectHeight,
-          viewConfig.front().recommendedImageRectHeight * 1.4f);
-    }
-#endif
-
     // Cache view buffer (used in xrLocateViews)
     views.resize(viewCount, {XR_TYPE_VIEW});
 
