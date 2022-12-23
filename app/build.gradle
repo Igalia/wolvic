@@ -7,7 +7,12 @@ apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: 'com.huawei.agconnect'
+
+// Apply AGConnect plugin only for Hvr builds
+if (getGradle().getStartParameter().getTaskRequests()
+        .toString().contains("Hvr")){
+    apply plugin: 'com.huawei.agconnect'
+}
 
 deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
 
