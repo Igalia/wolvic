@@ -8,6 +8,7 @@
 
 #include "vrb/MacroUtils.h"
 #include "vrb/Forward.h"
+#include "vrb/Geometry.h"
 
 namespace crow {
 
@@ -24,6 +25,7 @@ public:
                                      const uint32_t aRecommendedWidth, const uint32_t aRecommendedHeight,
                                      const uint32_t aMaxWidth, const uint32_t aMaxHeight,
                                      uint32_t& aTargetWidth, uint32_t& aTargetHeight);
+  static vrb::GeometryPtr GetSphereGeometry(vrb::CreationContextPtr& context, uint32_t resolution, float radius);
 private:
   VRB_NO_DEFAULTS(DeviceUtils)
 };

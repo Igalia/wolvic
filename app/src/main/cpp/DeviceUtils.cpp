@@ -6,6 +6,9 @@
 #include "DeviceUtils.h"
 #include "vrb/Matrix.h"
 #include "vrb/Quaternion.h"
+#include "vrb/Transform.h"
+#include "vrb/Vector.h"
+#include "vrb/VertexArray.h"
 
 namespace crow {
 
@@ -60,6 +63,44 @@ void DeviceUtils::GetTargetImmersiveSize(const uint32_t aRequestedWidth,
   aTargetHeight = (uint32_t) fmaxf(fminf(aRequestedHeight, aMaxHeight), minHeight);
 }
 
+vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context, uint32_t resolution, float radius)
+{
+    vrb::VertexArrayPtr array = vrb::VertexArray::Create(context);
+    vrb::GeometryPtr geometry = vrb::Geometry::Create(context);
+    vrb::TransformPtr transform = vrb::Transform::Create(context);
+    std::vector<int> indices;
+
+    int rings = (int) resolution;
+    int sectors = (int) resolution;
+    float const R = 1.0f / ((float) rings - 1.0f);
+    float const S = 1.0f / ((float) sectors - 1.0f);
+
+    for (int r = 0; r < rings; r++) {
+        for (int s = 0; s < sectors; s++) {
+            float const y = sinf(- (float) M_PI_2 + (float) M_PI * (float) r * R);
+            float const x = cosf(2.0f * (float) M_PI * (float) s * S) * sinf(M_PI * (float) r * R);
+            float const z = sinf(2.0f * (float) M_PI * (float) s * S) * sinf(M_PI * (float) r * R);
+            array->AppendVertex(vrb::Vector(x * radius, y * radius, z * radius));
+            array->AppendNormal(vrb::Vector(x, y, z).Normalize());
+            array->AppendUV(vrb::Vector((float)s * S, (float)r * R, 0.0));
+        }
+    }
+
+    geometry->SetVertexArray(array);
+
+    for (int r = 0; r < rings; r++) {
+        for (int s = 0; s < sectors; s++) {
+            indices.push_back(r * sectors + s);
+            indices.push_back(r * sectors + (s+1));
+            indices.push_back((r+1) * sectors + (s+1));
+            indices.push_back((r+1) * sectors + s);
+            geometry->AddFace(indices, indices, indices);
+            indices.clear();
+        }
+    }
+
+    return std::move(geometry);
+}
 
 }
 
