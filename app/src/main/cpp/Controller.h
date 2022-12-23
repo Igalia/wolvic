@@ -10,6 +10,7 @@
 #include "Device.h"
 #include "vrb/Forward.h"
 #include "vrb/Matrix.h"
+#include "vrb/Transform.h"
 
 namespace crow {
 
@@ -41,6 +42,8 @@ struct Controller {
   vrb::TransformPtr transform;
   vrb::TogglePtr beamToggle;
   vrb::TogglePtr modelToggle;
+  vrb::TogglePtr handMeshToggle;
+  std::vector<vrb::TransformPtr> handJointTransforms;
   vrb::TransformPtr beamParent;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;

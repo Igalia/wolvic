@@ -6,6 +6,7 @@
 #include "ControllerContainer.h"
 #include "Controller.h"
 #include "Pointer.h"
+#include "DeviceUtils.h"
 
 #include "vrb/ConcreteClass.h"
 #include "vrb/Color.h"
@@ -186,6 +187,63 @@ ControllerContainer::InitializeBeam() {
       controller.beamParent->AddNode(m.beamModel);
     }
   }
+}
+
+void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms)
+{
+    if (!m.Contains(aControllerIndex))
+        return;
+
+    Controller &controller = m.list[aControllerIndex];
+    if (!controller.beamParent)
+        return;
+
+    // Initialize hand joints if needed
+    if (controller.handJointTransforms.size() == 0) {
+        controller.handJointTransforms.resize(jointTransforms.size());
+
+        CreationContextPtr create = m.context.lock();
+        controller.handMeshToggle = Toggle::Create(create);
+        controller.beamParent->AddNode(controller.handMeshToggle);
+
+        ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
+        RenderStatePtr state = RenderState::Create(create);
+        state->SetProgram(program);
+        vrb::Color handColor = vrb::Color(0.0f, 0.50f, 0.0f);
+        handColor.SetAlpha(1.0);
+        state->SetMaterial(handColor, handColor,
+                           Color(0.0f, 0.0f, 0.0f),
+                           0.0f);
+        state->SetLightsEnabled(false);
+
+        GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, 1.0);
+        sphere->SetRenderState(state);
+
+        for (uint32_t i = 0; i < jointTransforms.size(); i++) {
+            TransformPtr transform = Transform::Create(create);
+            transform->AddNode(sphere);
+            controller.handJointTransforms[i] = transform;
+
+            controller.handMeshToggle->AddNode(transform);
+        }
+    }
+
+    assert(jointTransforms.size() == controller.handJointTransforms.size());
+    for (uint32_t i = 0; i < jointTransforms.size(); i++) {
+        auto transform = jointTransforms[i];
+        assert(controller.handJointTransforms[i]);
+        controller.handJointTransforms[i]->SetTransform(transform);
+    }
+}
+
+void ControllerContainer::SetHandVisible(const int32_t aControllerIndex, bool aVisible)
+{
+    if (!m.Contains(aControllerIndex)) {
+        return;
+    }
+    Controller &controller = m.list[aControllerIndex];
+    if (controller.handMeshToggle)
+        controller.handMeshToggle->ToggleAll(aVisible);
 }
 
 void
