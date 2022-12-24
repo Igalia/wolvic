@@ -256,6 +256,8 @@ class AddonsManagerAdapter(
         val installedAddons = ArrayList<Addon>()
         val recommendedAddons = ArrayList<Addon>()
         val disabledAddons = ArrayList<Addon>()
+        // TODO Create another section for locally installed addons
+        // addons.forEach { addon -> logger.debug("Addons list " + addon.id + " " + addon.installedState) }
 
         addons.forEach { addon ->
             when {
@@ -391,8 +393,9 @@ class AddonsManagerAdapter(
 }
 
 private fun Addon.inRecommendedSection() = !isInstalled()
-private fun Addon.inInstalledSection() = isInstalled() && isSupported() && isEnabled()
-private fun Addon.inDisabledSection() = isInstalled() && isSupported() && !isEnabled()
+//private fun Addon.inInstalledSection() = isInstalled() && isSupported() && isEnabled()
+private fun Addon.inInstalledSection() = isInstalled() && isEnabled()
+private fun Addon.inDisabledSection() = isInstalled() && !isEnabled()
 
 /**
  * Get the formatted number amount for the current default locale.
