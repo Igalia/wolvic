@@ -73,6 +73,9 @@ class DeveloperOptionsView extends SettingsView {
         } else {
             mBinding.webglOutOfProcessSwitch.setVisibility(View.GONE);
         }
+
+        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(mAllowLocalAddonListener);
+        setAllowLocalAddon(SettingsStore.getInstance(getContext()).isAllowLocalAddon(), false);
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
@@ -97,6 +100,10 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mWebGLOutOfProcessListener = (compundButton, value, doApply) -> {
         setWebGLOutOfProcess(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mAllowLocalAddonListener = (compoundButton, value, doApply) -> {
+        setAllowLocalAddon(value, doApply);
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -126,6 +133,10 @@ class DeveloperOptionsView extends SettingsView {
         if (BuildConfig.DEBUG && mBinding.webglOutOfProcessSwitch.isChecked() != SettingsStore.WEBGL_OUT_OF_PROCESS) {
             setWebGLOutOfProcess(SettingsStore.WEBGL_OUT_OF_PROCESS, true);
             restart = true;
+        }
+
+        if (mBinding.allowLocalAddonSwitch.isChecked() != SettingsStore.ALLOW_LOCAL_ADDON) {
+            setAllowLocalAddon(SettingsStore.ALLOW_LOCAL_ADDON, true);
         }
 
         if (restart) {
@@ -195,6 +206,16 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
             showRestartDialog();
+        }
+    }
+
+    private void setAllowLocalAddon(boolean value, boolean doApply) {
+        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(null);
+        mBinding.allowLocalAddonSwitch.setValue(value, false);
+        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(mAllowLocalAddonListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setAllowLocalAddon(value);
         }
     }
 
