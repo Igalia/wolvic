@@ -135,15 +135,11 @@ public class UrlUtils {
     }
 
     public static String getMimeTypeFromUrl(String url) {
-        String mimeType = UNKNOWN_MIME_TYPE;
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (mimeType == null) {
-                return UNKNOWN_MIME_TYPE;
-            }
-        }
-        return mimeType;
+        if (extension == null)
+            return UNKNOWN_MIME_TYPE;
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        return mimeType == null ? UNKNOWN_MIME_TYPE : mimeType;
     }
 
     public static String titleBarUrl(@Nullable String aUri) {
