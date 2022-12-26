@@ -25,11 +25,6 @@ public class LocalExtension {
      */
     public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl) {
         runtime.installWebExtension(extensionId, extensionUrl, webExtension -> {
-//            TODO Debug addon installedstate enabled false
-//            runtime.enableWebExtension(webExtension, EnableSource.APP_SUPPORT, addon1 -> null, throwable -> {
-//                Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
-//                return null;
-//            });
             Log.i(LOGTAG, extensionId + " from " + extensionUrl + " Web Extension successfully installed");
             return null;
         }, (s, throwable) -> {

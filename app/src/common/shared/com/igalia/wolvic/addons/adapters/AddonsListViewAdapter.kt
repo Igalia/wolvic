@@ -393,7 +393,6 @@ class AddonsManagerAdapter(
 }
 
 private fun Addon.inRecommendedSection() = !isInstalled()
-//private fun Addon.inInstalledSection() = isInstalled() && isSupported() && isEnabled()
 private fun Addon.inInstalledSection() = isInstalled() && isEnabled()
 private fun Addon.inDisabledSection() = isInstalled() && !isEnabled()
 
