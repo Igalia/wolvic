@@ -9,8 +9,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 // Apply AGConnect plugin only for Hvr builds
-if (getGradle().getStartParameter().getTaskRequests()
-        .toString().contains("Hvr")){
+if (getGradle().getStartParameter().getTaskRequests().toString() =~ /(h|H)vr/) {
     apply plugin: 'com.huawei.agconnect'
 }
 
