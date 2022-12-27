@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.igalia.wolvic.browser.Addons;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime;
@@ -23,9 +24,10 @@ public class LocalExtension {
     /**
      * Installs the web extension in the runtime through the WebExtensionRuntime install method
      */
-    public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl) {
+    public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl, Addons addons) {
         runtime.installWebExtension(extensionId, extensionUrl, webExtension -> {
             Log.i(LOGTAG, extensionId + " from " + extensionUrl + " Web Extension successfully installed");
+            addons.notifyListeners();
             return null;
         }, (s, throwable) -> {
             Log.e(LOGTAG, "Error installing the " + extensionId + " from " + extensionUrl + " Web Extension: " + throwable.getLocalizedMessage());

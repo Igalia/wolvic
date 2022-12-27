@@ -143,7 +143,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                 LocalExtension.install(
                         SessionStore.get().getWebExtensionRuntime(),
                         UUID.randomUUID().toString(),
-                        item.getOutputFileUri()
+                        item.getOutputFileUri(),
+                        ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
                 );
             } else {
                 SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());

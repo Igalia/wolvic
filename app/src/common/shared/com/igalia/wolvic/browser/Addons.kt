@@ -196,7 +196,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
         })
     }
 
-    private fun notifyListeners() {
+    fun notifyListeners() {
         if (listeners.size > 0) {
             val listenersCopy = ArrayList(listeners)
             Handler(Looper.getMainLooper()).post {
