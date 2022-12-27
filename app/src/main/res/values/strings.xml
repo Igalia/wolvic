@@ -1159,6 +1159,9 @@
     <!-- This string is displayed in the title bar when a web extension session is displayed. -->
     <string name="web_extensions_title">Web Extension</string>
 
+    <!-- This string is displayed as the title of the section that contains unsupported and locally installed addons. -->
+    <string name="addons_experimental_section_title">Experimental</string>
+
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_loading">Loading Add-ons</string>
 

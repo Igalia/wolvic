@@ -256,14 +256,14 @@ class AddonsManagerAdapter(
         val installedAddons = ArrayList<Addon>()
         val recommendedAddons = ArrayList<Addon>()
         val disabledAddons = ArrayList<Addon>()
-        // TODO Create another section for locally installed addons
-        // addons.forEach { addon -> logger.debug("Addons list " + addon.id + " " + addon.installedState) }
+        val experimentalAddons = ArrayList<Addon>()
 
         addons.forEach { addon ->
             when {
                 addon.inRecommendedSection() -> recommendedAddons.add(addon)
                 addon.inInstalledSection() -> installedAddons.add(addon)
                 addon.inDisabledSection() -> disabledAddons.add(addon)
+                addon.inExperimentalSection() -> experimentalAddons.add(addon)
             }
         }
 
@@ -283,6 +283,12 @@ class AddonsManagerAdapter(
         if (recommendedAddons.isNotEmpty()) {
             itemsWithSections.add(Section(R.string.mozac_feature_addons_recommended_section))
             itemsWithSections.addAll(recommendedAddons)
+        }
+
+        // Add experimental section and addons if available
+        if (experimentalAddons.isNotEmpty()) {
+            itemsWithSections.add(Section(R.string.addons_experimental_section_title))
+            itemsWithSections.addAll(experimentalAddons)
         }
 
         return itemsWithSections
@@ -393,8 +399,9 @@ class AddonsManagerAdapter(
 }
 
 private fun Addon.inRecommendedSection() = !isInstalled()
-private fun Addon.inInstalledSection() = isInstalled() && isEnabled()
-private fun Addon.inDisabledSection() = isInstalled() && !isEnabled()
+private fun Addon.inInstalledSection() = isInstalled() && isSupported() && isEnabled()
+private fun Addon.inDisabledSection() = isInstalled() && isSupported() && !isEnabled()
+private fun Addon.inExperimentalSection() = isInstalled() && !isSupported()
 
 /**
  * Get the formatted number amount for the current default locale.
