@@ -208,16 +208,14 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
     }
 
     fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> = GlobalScope.future {
-        val addons = addonManager.getAddons(waitForPendingActions)
+        val addons = addonManager.getAddons(waitForPendingActions).toMutableList()
         // Set the correct enabled state for unsupported addons
-        var changedAddons: MutableList<Addon>? = null
         for (i in addons.indices) {
             if (!addons[i].isSupported() && installedExtensions[addons[i].id]?.isEnabled() == true) {
-                changedAddons = changedAddons ?: addons.toMutableList()
-                changedAddons!![i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = true))
+                addons[i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = true))
             }
         }
-        changedAddons?.toList() ?: addons
+        addons.toList()
     }
 
     companion object {
