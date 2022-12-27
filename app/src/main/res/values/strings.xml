@@ -1153,7 +1153,7 @@
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_size_desc">Largest</string>
 
-    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <!-- This string is displayed as the title of the addons list -->
     <string name="addons_title">Add-ons</string>
 
     <!-- This string is displayed in the title bar when a web extension session is displayed. -->
