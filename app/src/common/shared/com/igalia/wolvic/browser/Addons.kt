@@ -32,6 +32,7 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.webextensions.WebExtensionSupport
+import mozilla.components.support.webextensions.WebExtensionSupport.installedExtensions
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -206,10 +207,18 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
         }
     }
 
-    fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> =
-            GlobalScope.future {
-                addonManager.getAddons(waitForPendingActions)
+    fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> = GlobalScope.future {
+        val addons = addonManager.getAddons(waitForPendingActions)
+        // Set the correct enabled state for unsupported addons
+        var changedAddons: MutableList<Addon>? = null
+        for (i in addons.indices) {
+            if (!addons[i].isSupported() && installedExtensions[addons[i].id]?.isEnabled() == true) {
+                changedAddons = changedAddons ?: addons.toMutableList()
+                changedAddons!![i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = true))
             }
+        }
+        changedAddons?.toList() ?: addons
+    }
 
     companion object {
         fun loadActionIcon(context: Context, action: Action, height: Int): CompletableFuture<Drawable?> =
