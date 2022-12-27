@@ -74,8 +74,8 @@ class DeveloperOptionsView extends SettingsView {
             mBinding.webglOutOfProcessSwitch.setVisibility(View.GONE);
         }
 
-        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(mAllowLocalAddonListener);
-        setAllowLocalAddon(SettingsStore.getInstance(getContext()).isAllowLocalAddon(), false);
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
+        setLocalAddon(SettingsStore.getInstance(getContext()).isLocalAddonAllowed(), false);
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
@@ -102,8 +102,8 @@ class DeveloperOptionsView extends SettingsView {
         setWebGLOutOfProcess(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mAllowLocalAddonListener = (compoundButton, value, doApply) -> {
-        setAllowLocalAddon(value, doApply);
+    private SwitchSetting.OnCheckedChangeListener mLocalAddonListener = (compoundButton, value, doApply) -> {
+        setLocalAddon(value, doApply);
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -135,8 +135,8 @@ class DeveloperOptionsView extends SettingsView {
             restart = true;
         }
 
-        if (mBinding.allowLocalAddonSwitch.isChecked() != SettingsStore.ALLOW_LOCAL_ADDON) {
-            setAllowLocalAddon(SettingsStore.ALLOW_LOCAL_ADDON, true);
+        if (mBinding.localAddonSwitch.isChecked() != SettingsStore.LOCAL_ADDON_ALLOWED) {
+            setLocalAddon(SettingsStore.LOCAL_ADDON_ALLOWED, true);
         }
 
         if (restart) {
@@ -209,13 +209,13 @@ class DeveloperOptionsView extends SettingsView {
         }
     }
 
-    private void setAllowLocalAddon(boolean value, boolean doApply) {
-        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(null);
-        mBinding.allowLocalAddonSwitch.setValue(value, false);
-        mBinding.allowLocalAddonSwitch.setOnCheckedChangeListener(mAllowLocalAddonListener);
+    private void setLocalAddon(boolean value, boolean doApply) {
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(null);
+        mBinding.localAddonSwitch.setValue(value, false);
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setAllowLocalAddon(value);
+            SettingsStore.getInstance(getContext()).setLocalAddonAllowed(value);
         }
     }
 

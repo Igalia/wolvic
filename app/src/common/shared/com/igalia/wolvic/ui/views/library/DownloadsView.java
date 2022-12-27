@@ -139,7 +139,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         public void onClick(@NonNull View view, @NonNull Download item) {
             mBinding.downloadsList.requestFocusFromTouch();
 
-            if (SettingsStore.getInstance(getContext()).isAllowLocalAddon() && item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
+            if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed() && item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
                 LocalExtension.install(
                         SessionStore.get().getWebExtensionRuntime(),
                         UUID.randomUUID().toString(),

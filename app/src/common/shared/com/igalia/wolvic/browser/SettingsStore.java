@@ -112,7 +112,7 @@ public class SettingsStore {
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_DESC;
     public final static boolean AUTOCOMPLETE_ENABLED = true;
     public final static boolean WEBGL_OUT_OF_PROCESS = false;
-    public final static boolean ALLOW_LOCAL_ADDON = false;
+    public final static boolean LOCAL_ADDON_ALLOWED = false;
     public final static int PREFS_LAST_RESET_VERSION_CODE = 0;
     public final static boolean PASSWORDS_ENCRYPTION_KEY_GENERATED = false;
     public final static boolean AUTOFILL_ENABLED = true;
@@ -813,14 +813,14 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), WEBGL_OUT_OF_PROCESS);
     }
 
-    public void setAllowLocalAddon(boolean isEnabled) {
+    public void setLocalAddonAllowed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_allow_local_addon), isEnabled);
+        editor.putBoolean(mContext.getString(R.string.settings_key_local_addon_allowed), isEnabled);
         editor.commit();
     }
 
-    public boolean isAllowLocalAddon() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_allow_local_addon), ALLOW_LOCAL_ADDON);
+    public boolean isLocalAddonAllowed() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_local_addon_allowed), LOCAL_ADDON_ALLOWED);
     }
 
     public int getPrefsLastResetVersionCode() {
