@@ -196,6 +196,7 @@ class AddonsManagerAdapter(
                         addon.translatableSummary[Addon.DEFAULT_LOCALE]
                     else -> ""
                 }
+            holder.summaryView.visibility = View.VISIBLE
         } else {
             holder.summaryView.visibility = View.GONE
         }
