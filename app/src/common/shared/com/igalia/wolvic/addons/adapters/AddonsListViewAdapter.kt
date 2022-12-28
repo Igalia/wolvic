@@ -145,19 +145,27 @@ class AddonsManagerAdapter(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun bindAddon(holder: AddonViewHolder, addon: Addon) {
         val context = holder.itemView.context
-        addon.rating?.let {
+        if (addon.rating != null) {
             val userCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
             val ratingContentDescription =
                 String.format(
                     context.getString(R.string.mozac_feature_addons_rating_content_description),
-                    it.average
+                    addon.rating!!.average
                 )
             holder.ratingView.contentDescription = ratingContentDescription
             // Android RatingBar is not very accessibility-friendly, we will use non visible TextView
             // for contentDescription for the TalkBack feature
             holder.ratingAccessibleView.text = ratingContentDescription
-            holder.ratingView.rating = it.average
-            holder.userCountView.text = String.format(userCount, getFormattedAmount(it.reviews))
+            holder.ratingView.rating = addon.rating!!.average
+            holder.userCountView.text = String.format(userCount, getFormattedAmount(addon.rating!!.reviews))
+
+            holder.ratingView.visibility = View.VISIBLE
+            holder.ratingAccessibleView.visibility = View.VISIBLE
+            holder.userCountView.visibility = View.VISIBLE
+        } else {
+            holder.ratingView.visibility = View.GONE
+            holder.ratingAccessibleView.visibility = View.GONE
+            holder.userCountView.visibility = View.GONE
         }
 
         val displayLanguage = LocaleUtils.getDisplayLanguage(context).locale.language
