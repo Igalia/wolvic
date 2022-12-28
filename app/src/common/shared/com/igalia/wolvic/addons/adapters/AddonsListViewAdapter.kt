@@ -5,9 +5,9 @@
 package com.igalia.wolvic.addons.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -229,6 +229,7 @@ class AddonsManagerAdapter(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
         return scope.launch {
+            var iconDrawable = iconView.context.getDrawable(R.drawable.ic_icon_addons)
             try {
                 // We calculate how much time takes to fetch an icon,
                 // if takes less than a second, we assume it comes
@@ -237,12 +238,13 @@ class AddonsManagerAdapter(
                 val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon)
                 val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
                 val isFromCache = timeToFetch < 1
+                if (iconBitmap != null) iconDrawable = BitmapDrawable(iconView.resources, iconBitmap)
                 iconBitmap?.let {
                     scope.launch(Main) {
                         if (isFromCache) {
-                            iconView.setImageDrawable(BitmapDrawable(iconView.resources, it))
+                            iconView.setImageDrawable(iconDrawable)
                         } else {
-                            setWithCrossFadeAnimation(iconView, it)
+                            setWithCrossFadeAnimation(iconView, iconDrawable!!)
                         }
                     }
                 }
@@ -251,7 +253,7 @@ class AddonsManagerAdapter(
                     val context = iconView.context
                     val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
                     iconView.setColorFilter(ContextCompat.getColor(context, att))
-                    iconView.setImageDrawable(context.getDrawable(R.drawable.ic_icon_addons))
+                    iconView.setImageDrawable(iconDrawable)
                 }
                 logger.error("Attempt to fetch the ${addon.id} icon failed", e)
             }
@@ -396,10 +398,9 @@ class AddonsManagerAdapter(
         }
     }
 
-    internal fun setWithCrossFadeAnimation(image: ImageView, bitmap: Bitmap, durationMillis: Int = 1700) {
+    internal fun setWithCrossFadeAnimation(image: ImageView, iconDrawable: Drawable, durationMillis: Int = 1700) {
         with(image) {
-            val bitmapDrawable = BitmapDrawable(context.resources, bitmap)
-            val animation = TransitionDrawable(arrayOf(drawable, bitmapDrawable))
+            val animation = TransitionDrawable(arrayOf(drawable, iconDrawable))
             animation.isCrossFadeEnabled = true
             setImageDrawable(animation)
             animation.startTransition(durationMillis)
