@@ -15,14 +15,14 @@ import com.igalia.wolvic.utils.SystemUtils;
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime;
 
 /**
- * Feature to install temporary extensions from local add-on files.
+ * Feature to install extensions from downloaded extension files.
  */
 public class LocalExtension {
 
     private static final String LOGTAG = SystemUtils.createLogtag(LocalExtension.class);
 
     /**
-     * Installs the web extension in the runtime through the WebExtensionRuntime install method
+     * Installs the web extension through the WebExtensionRuntime install method
      */
     public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl, Addons addons) {
         runtime.installWebExtension(extensionId, extensionUrl, webExtension -> {
