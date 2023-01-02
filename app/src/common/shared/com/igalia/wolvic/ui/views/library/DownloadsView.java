@@ -139,13 +139,21 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         public void onClick(@NonNull View view, @NonNull Download item) {
             mBinding.downloadsList.requestFocusFromTouch();
 
-            if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed() && item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
-                LocalExtension.install(
-                        SessionStore.get().getWebExtensionRuntime(),
-                        UUID.randomUUID().toString(),
-                        item.getOutputFileUri(),
-                        ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
-                );
+            if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
+                if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
+                    LocalExtension.install(
+                            SessionStore.get().getWebExtensionRuntime(),
+                            UUID.randomUUID().toString(),
+                            item.getOutputFileUri(),
+                            ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                    );
+                } else {
+                    mWidgetManager.getFocusedWindow().showAlert(
+                            getContext().getString(R.string.download_install_addon_blocked),
+                            getContext().getString(R.string.download_install_addon_blocked_body),
+                            null
+                    );
+                }
             } else {
                 SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());
 
