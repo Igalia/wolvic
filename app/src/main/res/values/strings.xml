@@ -2180,6 +2180,16 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Unknown error</string>
 
+    <!-- This string is displayed in the title of the dialog when user clicks on a downloaded addon
+     so the user can confirm if they want to actually install the addon. -->
+    <string name="download_install_addon">Install Addon</string>
+
+    <!-- This string is displayed in the install local addon confirmation dialog cancel button. -->
+    <string name="download_install_addon_cancel">Cancel</string>
+
+    <!-- This string is displayed in the install local addon confirmation dialog install button. -->
+    <string name="download_install_addon_confirm_install">Install</string>
+
     <!-- This string is displayed in the title of the error dialog shown when downloaded addon installation is blocked. -->
     <string name="download_install_addon_blocked">Local addon install blocked</string>
 

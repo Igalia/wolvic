@@ -141,11 +141,23 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
             if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
                 if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
-                    LocalExtension.install(
-                            SessionStore.get().getWebExtensionRuntime(),
-                            UUID.randomUUID().toString(),
-                            item.getOutputFileUri(),
-                            ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                    mWidgetManager.getFocusedWindow().showConfirmPrompt(
+                            getContext().getString(R.string.download_install_addon),
+                            item.getFilename(),
+                            new String[]{
+                                    getContext().getString(R.string.download_install_addon_cancel),
+                                    getContext().getString(R.string.download_install_addon_confirm_install),
+                            },
+                            (index, isChecked) -> {
+                                if (index == PromptDialogWidget.POSITIVE) {
+                                    LocalExtension.install(
+                                            SessionStore.get().getWebExtensionRuntime(),
+                                            UUID.randomUUID().toString(),
+                                            item.getOutputFileUri(),
+                                            ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                                    );
+                                }
+                            }
                     );
                 } else {
                     mWidgetManager.getFocusedWindow().showAlert(
