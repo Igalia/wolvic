@@ -38,7 +38,12 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
 
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
+#if PICOXR
+    // Seems like Pico does not properly use the layerSpace.
+    xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
+#else
     xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye));
+#endif
     xrLayers[i].size.width = layer->GetWorldWidth();
     xrLayers[i].size.height = layer->GetWorldHeight();
     device::EyeRect rect = layer->GetTextureRect(eye);
@@ -76,6 +81,10 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
 
     auto scale = layer->GetModelTransform(eye).GetScale();
     auto model = layer->GetModelTransform(eye).Scale({1/scale.x(), 1/scale.y(), 1/scale.z()});
+#if PICOXR
+    // Seems like Pico does not properly use the layerSpace.
+    model = model.Translate(-kAverageHeight);
+#endif
     xrLayers[i].pose.position = MatrixToXrPose(model).position;
     xrLayers[i].pose.orientation = MatrixToXrPose(layer->GetRotation()).orientation;
 
