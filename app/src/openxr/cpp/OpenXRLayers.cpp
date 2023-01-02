@@ -49,7 +49,7 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
     device::EyeRect rect = layer->GetTextureRect(eye);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
-    xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
+    xrLayers[i].subImage.imageRect = GetRect(swapchain->Width(), swapchain->Height(), rect);
   }
 }
 
@@ -95,7 +95,7 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     device::EyeRect rect = layer->GetTextureRect(device::Eye::Left);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;
-    xrLayers[i].subImage.imageRect = GetRect(layer->GetWidth(), layer->GetHeight(), rect);
+    xrLayers[i].subImage.imageRect = GetRect(swapchain->Width(), swapchain->Height(), rect);
   }
 }
 
