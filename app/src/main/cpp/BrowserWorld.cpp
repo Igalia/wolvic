@@ -1792,23 +1792,6 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   }
 }
 
-void BrowserWorld::CreateEnvironment() {
-  ASSERT_ON_RENDER_THREAD();
-  m.rootEnvironment = Transform::Create(m.create);
-  m.rootEnvironment->AddLight(Light::Create(m.create));
-
-  vrb::TransformPtr model = Transform::Create(m.create);
-  m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
-  m.rootEnvironment->AddNode(model);
-  vrb::Matrix transform = vrb::Matrix::Identity();
-  model->SetTransform(transform);
-
-  m.layerEnvironment = m.device->CreateLayerProjection(VRLayerSurface::SurfaceType::FBO);
-  if (m.layerEnvironment) {
-    m.rootEnvironment->AddNode(VRLayerNode::Create(m.create, m.layerEnvironment));
-  }
-}
-
 } // namespace crow
 
 
