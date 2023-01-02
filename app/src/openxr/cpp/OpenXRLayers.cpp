@@ -73,12 +73,16 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
 
   for (int i = 0; i < xrLayers.size(); ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    vrb::Matrix matrix = XrPoseToMatrix(aPose).PostMultiply(layer->GetModelTransform(eye));
-    xrLayers[i].pose = MatrixToXrPose(matrix);
+
+    auto scale = layer->GetModelTransform(eye).GetScale();
+    auto model = layer->GetModelTransform(eye).Scale({1/scale.x(), 1/scale.y(), 1/scale.z()});
+    xrLayers[i].pose.position = MatrixToXrPose(model).position;
+    xrLayers[i].pose.orientation = MatrixToXrPose(layer->GetRotation()).orientation;
+
     xrLayers[i].radius = layer->GetRadius();
     // See Cylinder.cpp: texScaleX = M_PI / theta;
     xrLayers[i].centralAngle = (float) M_PI / layer->GetUVTransform(eye).GetScale().x();
-    xrLayers[i].aspectRatio = layer->GetWorldWidth() / layer->GetWorldHeight();
+    xrLayers[i].aspectRatio = (float) layer->GetWidth() / layer->GetHeight();
     device::EyeRect rect = layer->GetTextureRect(device::Eye::Left);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();
     xrLayers[i].subImage.imageArrayIndex = 0;

@@ -176,18 +176,32 @@ struct Widget::State {
 
   void AdjustCylinderRotation(const float radius) {
     const float x = transform->GetTransform().GetTranslation().x();
+    const bool hasCylinderLayer = cylinder && cylinder->GetLayer();
+    auto setCylinderLayerTransformIfNeeded = [&](const vrb::Matrix& rotation) {
+        if (!hasCylinderLayer)
+          return;
+        cylinder->GetLayer()->SetRotation(rotation);
+    };
+
     if (x != 0.0f && placement->cylinderMapRadius > 0) {
       // Automatically adjust correct yaw angle & position for the cylinders not centered on the X axis
       const float perimeter = 2.0f * radius * (float)M_PI;
       float angle = 0.5f * (float)M_PI - x / perimeter * 2.0f * (float)M_PI;
       float delta = placement->cylinderMapRadius - radius;
       vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(-cosf(angle), 0.0f, sinf(angle)));
+      setCylinderLayerTransformIfNeeded(transform);
       transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, -delta)));
       transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, delta)));
       transformContainer->SetTransform(transform);
     } else {
-      transformContainer->SetTransform(vrb::Matrix::Identity());
+      auto identity = vrb::Matrix::Identity();
+      // We must reset the identity here because the current front Window might have been the left
+      // or the right window previously.
+      setCylinderLayerTransformIfNeeded(identity);
+      transformContainer->SetTransform(identity);
     }
+    if (hasCylinderLayer)
+      cylinder->GetLayer()->SetRadius(radius);
   }
 
   void RemoveResizer() {
