@@ -239,13 +239,11 @@ class AddonsManagerAdapter(
                 val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
                 val isFromCache = timeToFetch < 1
                 if (iconBitmap != null) iconDrawable = BitmapDrawable(iconView.resources, iconBitmap)
-                iconBitmap?.let {
-                    scope.launch(Main) {
-                        if (isFromCache) {
-                            iconView.setImageDrawable(iconDrawable)
-                        } else {
-                            setWithCrossFadeAnimation(iconView, iconDrawable!!)
-                        }
+                scope.launch(Main) {
+                    if (isFromCache) {
+                        iconView.setImageDrawable(iconDrawable)
+                    } else {
+                        setWithCrossFadeAnimation(iconView, iconDrawable!!)
                     }
                 }
             } catch (e: IOException) {
