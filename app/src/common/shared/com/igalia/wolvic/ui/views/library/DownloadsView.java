@@ -142,11 +142,11 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
             if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
                 if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
                     mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                            getContext().getString(R.string.download_install_addon),
+                            getContext().getString(R.string.download_addon_install),
                             item.getFilename(),
                             new String[]{
-                                    getContext().getString(R.string.download_install_addon_cancel),
-                                    getContext().getString(R.string.download_install_addon_confirm_install),
+                                    getContext().getString(R.string.download_addon_install_cancel),
+                                    getContext().getString(R.string.download_addon_install_confirm_install),
                             },
                             (index, isChecked) -> {
                                 if (index == PromptDialogWidget.POSITIVE) {
@@ -161,8 +161,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                     );
                 } else {
                     mWidgetManager.getFocusedWindow().showAlert(
-                            getContext().getString(R.string.download_install_addon_blocked),
-                            getContext().getString(R.string.download_install_addon_blocked_body),
+                            getContext().getString(R.string.download_addon_install_blocked),
+                            getContext().getString(R.string.download_addon_install_blocked_body),
                             null
                     );
                 }
