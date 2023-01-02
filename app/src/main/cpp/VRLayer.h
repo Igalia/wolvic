@@ -142,6 +142,8 @@ public:
   const vrb::Matrix& GetUVTransform(device::Eye aEye) const;
   void SetRadius(const float aRadius);
   void SetUVTransform(device::Eye aEye, const vrb::Matrix& aTransform);
+  void SetRotation(const vrb::Matrix& aTransform);
+  vrb::Matrix& GetRotation();
 protected:
   struct State;
   VRLayerCylinder(State& aState);
