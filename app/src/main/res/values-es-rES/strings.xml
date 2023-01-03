@@ -986,6 +986,10 @@
          the more button is pressed in a downloads item. It deletes the selected item from the downloads list
          and also from disk. -->
     <string name="download_context_delete">Eliminar</string>
+    <!-- This string is displayed is the downloads context menu that is displayed when
+     the more button is pressed in a downloads item. It creates a copy of the selected item
+     in the public Downloads folder so it may be used by other apps. -->
+    <string name="download_context_copy_to_content_uri">Compartir con otras aplicaciones</string>
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Restablecer los ajustes de visualización</string>
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
@@ -1546,6 +1550,21 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_status_unavailable">No disponible</string>
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Error desconocido</string>
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_copy_to_content_uri_confirm_title">¿Copiar archivo?</string>
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_copy_to_content_uri_confirm_body">Se creará una copia del archivo en la carpeta de Descarga del sistema, donde podrá ser utilizada por otras aplicaciones.\n\n¿Deseas continuar?</string>
+    <!-- This string is displayed in the title of the download error dialog. -->
+    <string name="download_copy_to_content_uri_success_title">Fichero copiado</string>
+    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
+    <string name="download_copy_to_content_uri_success_body">El fichero se copió con éxito y está disponible en las Descargas del sistema.</string>
+    <!-- This string is displayed in the title of the copy downloaded file error dialog. -->
+    <string name="download_copy_to_content_uri_error_title">Error durante la copia</string>
+    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
+    <string name="download_copy_to_content_uri_error_body">Se ha producido un error mientras se copiaba el archivo.</string>
+    <!-- This string is displayed in the body of the copy downloaded file error dialog.
+     '%1$s' will be replaced at runtime with the name of the downloaded file. -->
+    <string name="download_copy_to_content_uri_error_body_v1">An error occurred while copying %1$s</string>
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->
     <string name="environment_download_permission_error_body">Para descargar el entorno es necesario tener permiso de escritura en el almacenamiento externo.</string>
