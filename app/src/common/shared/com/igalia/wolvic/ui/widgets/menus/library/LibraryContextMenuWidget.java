@@ -41,12 +41,13 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
     Optional<LibraryContextMenuCallback> mItemDelegate;
     LibraryContextMenuItem mItem;
 
-    public LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, boolean canOpenWindows, boolean isBookmarked) {
+    public LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, boolean canOpenWindows,
+                                    boolean isBookmarked, boolean canCopyToContentUri) {
         super(aContext, R.layout.library_menu);
         initialize();
 
         mItem = item;
-        createMenuItems(canOpenWindows, isBookmarked);
+        createMenuItems(canOpenWindows, isBookmarked, canCopyToContentUri);
     }
 
     private void initialize() {
@@ -100,7 +101,7 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
         mItemDelegate = Optional.ofNullable(delegate);;
     }
 
-    private void createMenuItems(boolean canOpenWindows, boolean isBookmarked) {
+    private void createMenuItems(boolean canOpenWindows, boolean isBookmarked, boolean canCopyToContentUri) {
         mItems = new ArrayList<>();
 
         if (canOpenWindows) {
@@ -115,7 +116,7 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
                 R.drawable.ic_icon_newtab,
                 () -> mItemDelegate.ifPresent((present -> mItemDelegate.get().onOpenInNewTabClick(mItem)))));
 
-        setupCustomMenuItems(canOpenWindows, isBookmarked);
+        setupCustomMenuItems(canOpenWindows, isBookmarked, canCopyToContentUri);
 
         super.updateMenuItems(mItems);
 
@@ -123,6 +124,7 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
         mWidgetPlacement.height += mBorderWidth * 2;
     }
 
-    protected void setupCustomMenuItems(boolean canOpenWindows, boolean isBookmarked) {}
+    protected void setupCustomMenuItems(boolean canOpenWindows, boolean isBookmarked, boolean canCopyToContentUri) {
+    }
 
 }
