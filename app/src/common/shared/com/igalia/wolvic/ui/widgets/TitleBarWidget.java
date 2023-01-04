@@ -21,6 +21,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.TitleBarBinding;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.utils.DeviceType;
 
 public class TitleBarWidget extends UIWidget {
 
@@ -107,6 +108,10 @@ public class TitleBarWidget extends UIWidget {
         aPlacement.translationY = -35;
         aPlacement.cylinder = true;
         aPlacement.visible = true;
+        // FIXME: we temporarily disable the creation of a layer for this widget in order to
+        // limit the amount of layers we create, as Pico's runtime only allows 16 at a given time.
+        if (DeviceType.isPicoXR())
+            aPlacement.layer = false;
     }
 
     @Override
