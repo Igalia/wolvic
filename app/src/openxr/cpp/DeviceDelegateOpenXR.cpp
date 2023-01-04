@@ -449,7 +449,7 @@ struct DeviceDelegateOpenXR::State {
   const char* GetDefaultInteractionProfilePath() {
 #if OCULUSVR
       return OculusTouch.path;
-#elif PICO4
+#elif PICOXR
       return Pico4.path;
 #else
       return nullptr;
@@ -468,8 +468,7 @@ struct DeviceDelegateOpenXR::State {
       // This is a temporary situation while we don't implement WebXR hand tracking
       // APIs.
       if (mHandTrackingSupported) {
-          const char* defaultProfilePath = GetDefaultInteractionProfilePath();
-          if (defaultProfilePath)
+          if (const char* defaultProfilePath = GetDefaultInteractionProfilePath())
               UpdateInteractionProfile(defaultProfilePath);
       }
   }
@@ -571,8 +570,7 @@ struct DeviceDelegateOpenXR::State {
     // TODO: Check if activity globarRef needs to be released
   }
 
-  void UpdateInteractionProfile(const char* emulateProfile = nullptr)
-  {
+  void UpdateInteractionProfile(const char* emulateProfile = nullptr) {
       if (!input || !controller)
           return;
 
