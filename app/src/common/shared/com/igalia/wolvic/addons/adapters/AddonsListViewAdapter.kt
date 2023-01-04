@@ -235,7 +235,7 @@ class AddonsManagerAdapter(
                 // if takes less than a second, we assume it comes
                 // from a cache and we don't show any transition animation.
                 val startTime = System.currentTimeMillis()
-                val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon)
+                val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon) ?: addon.installedState?.icon
                 val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
                 val isFromCache = timeToFetch < 1
                 if (iconBitmap != null) iconDrawable = BitmapDrawable(iconView.resources, iconBitmap)

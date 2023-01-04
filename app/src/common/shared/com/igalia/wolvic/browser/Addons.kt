@@ -20,6 +20,7 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.await
 import kotlinx.coroutines.future.future
 import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.webextension.Action
@@ -209,10 +210,19 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
 
     fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> = GlobalScope.future {
         val addons = addonManager.getAddons(waitForPendingActions).toMutableList()
-        // Set the correct enabled state for unsupported addons
+        // Set the correct enabled state and icon for unsupported addons
         for (i in addons.indices) {
-            if (!addons[i].isSupported() && installedExtensions[addons[i].id]?.isEnabled() == true) {
-                addons[i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = true))
+            if (!addons[i].isSupported()) {
+                val enabled = installedExtensions[addons[i].id]?.isEnabled() ?: false
+                val icon = CoroutineScope(Dispatchers.Main).future {
+                    try {
+                        installedExtensions[addons[i].id]?.loadIcon(AddonManager.TEMPORARY_ADDON_ICON_SIZE)
+                    } catch (throwable: Throwable) {
+                        Logger.warn("Failed to load addon icon.", throwable)
+                        null
+                    }
+                }.await()
+                addons[i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = enabled, icon = icon))
             }
         }
         addons.toList()
