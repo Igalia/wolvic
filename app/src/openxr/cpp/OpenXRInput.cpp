@@ -107,10 +107,10 @@ std::string OpenXRInput::GetControllerModelName(const int32_t aModelIndex) const
   return mInputSources.at(aModelIndex)->ControllerModelName();
 }
 
-void OpenXRInput::UpdateInteractionProfile(ControllerDelegate& delegate)
+void OpenXRInput::UpdateInteractionProfile(ControllerDelegate& delegate, const char* emulateProfile)
 {
   for (auto& input : mInputSources) {
-    input->UpdateInteractionProfile(delegate);
+    input->UpdateInteractionProfile(delegate, emulateProfile);
   }
 }
 

@@ -38,6 +38,7 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRSwapChain.h"
 #include "OpenXRInput.h"
+#include "OpenXRInputMappings.h"
 #include "OpenXRExtensions.h"
 #include "OpenXRLayers.h"
 
@@ -445,12 +446,32 @@ struct DeviceDelegateOpenXR::State {
     return nullptr;
   }
 
+  const char* GetDefaultInteractionProfilePath() {
+#if OCULUSVR
+      return OculusTouch.path;
+#elif PICOXR
+      return Pico4.path;
+#else
+      return nullptr;
+#endif
+  }
+
   void BeginXRSession() {
       XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
       sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
       CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
       vrReady = true;
-    }
+
+      // If hand tracking is supported, we want to emulate a default interaction
+      // profile, so that if Wolvic is launched without controllers active, we can
+      // still use hand tracking for emulating the controllers.
+      // This is a temporary situation while we don't implement WebXR hand tracking
+      // APIs.
+      if (mHandTrackingSupported) {
+          if (const char* defaultProfilePath = GetDefaultInteractionProfilePath())
+              UpdateInteractionProfile(defaultProfilePath);
+      }
+  }
 
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
     VRB_LOG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
@@ -547,6 +568,17 @@ struct DeviceDelegateOpenXR::State {
     }
 
     // TODO: Check if activity globarRef needs to be released
+  }
+
+  void UpdateInteractionProfile(const char* emulateProfile = nullptr) {
+      if (!input || !controller)
+          return;
+
+      input->UpdateInteractionProfile(*controller, emulateProfile);
+      if (controllersReadyCallback && input->AreControllersReady()) {
+          controllersReadyCallback();
+          controllersReadyCallback = nullptr;
+      }
   }
 };
 
@@ -692,13 +724,7 @@ DeviceDelegateOpenXR::ProcessEvents() {
         return;
       }
       case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED: {
-        if (m.input) {
-          m.input->UpdateInteractionProfile(*m.controller);
-          if (m.controllersReadyCallback && m.input->AreControllersReady()) {
-            m.controllersReadyCallback();
-            m.controllersReadyCallback = nullptr;
-          }
-        }
+        m.UpdateInteractionProfile();
         break;
       }
       case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING:
