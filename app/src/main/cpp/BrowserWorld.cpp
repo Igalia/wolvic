@@ -773,7 +773,7 @@ BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float 
     aWidget->SetCylinderDensity(aDensity);
   } else if (useCylinder && !aWidget->GetCylinder()) {
     VRLayerSurfacePtr moveLayer = aWidget->GetLayer();
-    VRLayerCylinderPtr layer = device->CreateLayerCylinder(moveLayer);
+    VRLayerCylinderPtr layer = aWidget->GetPlacement()->layer ? device->CreateLayerCylinder(moveLayer) : nullptr;
     CylinderPtr cylinder = Cylinder::Create(create, layer);
     aWidget->SetCylinder(cylinder);
     aWidget->SetCylinderDensity(aDensity);
@@ -781,7 +781,7 @@ BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float 
     float w = 0, h = 0;
     aWidget->GetWorldSize(w, h);
     VRLayerSurfacePtr moveLayer = aWidget->GetLayer();
-    VRLayerQuadPtr layer = device->CreateLayerQuad(moveLayer);
+    VRLayerQuadPtr layer = aWidget->GetPlacement()->layer ? device->CreateLayerQuad(moveLayer) : nullptr;
     QuadPtr quad = Quad::Create(create, w, h, layer);
     aWidget->SetQuad(quad);
   }
@@ -1178,17 +1178,13 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
 
   WidgetPtr widget;
   if (aPlacement->cylinder && m.cylinderDensity > 0) {
-    VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
+    VRLayerCylinderPtr layer = aPlacement->layer ? m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface) : nullptr;
     CylinderPtr cylinder = Cylinder::Create(m.create, layer);
     widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
   }
 
   if (!widget) {
-    VRLayerQuadPtr layer;
-    if (aPlacement->layer) {
-      layer = m.device->CreateLayerQuad(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
-    }
-
+    VRLayerQuadPtr layer = aPlacement->layer ? m.device->CreateLayerQuad(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface) : nullptr;
     QuadPtr quad = Quad::Create(m.create, worldWidth, worldHeight, layer);
     widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, quad);
   }
