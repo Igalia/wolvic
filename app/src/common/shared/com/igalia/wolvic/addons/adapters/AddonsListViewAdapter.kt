@@ -5,9 +5,9 @@
 package com.igalia.wolvic.addons.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -145,19 +145,27 @@ class AddonsManagerAdapter(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun bindAddon(holder: AddonViewHolder, addon: Addon) {
         val context = holder.itemView.context
-        addon.rating?.let {
+        if (addon.rating != null) {
             val userCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
             val ratingContentDescription =
                 String.format(
                     context.getString(R.string.mozac_feature_addons_rating_content_description),
-                    it.average
+                    addon.rating!!.average
                 )
             holder.ratingView.contentDescription = ratingContentDescription
             // Android RatingBar is not very accessibility-friendly, we will use non visible TextView
             // for contentDescription for the TalkBack feature
             holder.ratingAccessibleView.text = ratingContentDescription
-            holder.ratingView.rating = it.average
-            holder.userCountView.text = String.format(userCount, getFormattedAmount(it.reviews))
+            holder.ratingView.rating = addon.rating!!.average
+            holder.userCountView.text = String.format(userCount, getFormattedAmount(addon.rating!!.reviews))
+
+            holder.ratingView.visibility = View.VISIBLE
+            holder.ratingAccessibleView.visibility = View.VISIBLE
+            holder.userCountView.visibility = View.VISIBLE
+        } else {
+            holder.ratingView.visibility = View.GONE
+            holder.ratingAccessibleView.visibility = View.GONE
+            holder.userCountView.visibility = View.GONE
         }
 
         val displayLanguage = LocaleUtils.getDisplayLanguage(context).locale.language
@@ -188,6 +196,7 @@ class AddonsManagerAdapter(
                         addon.translatableSummary[Addon.DEFAULT_LOCALE]
                     else -> ""
                 }
+            holder.summaryView.visibility = View.VISIBLE
         } else {
             holder.summaryView.visibility = View.GONE
         }
@@ -220,21 +229,21 @@ class AddonsManagerAdapter(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
         return scope.launch {
+            var iconDrawable = iconView.context.getDrawable(R.drawable.ic_icon_addons)
             try {
                 // We calculate how much time takes to fetch an icon,
                 // if takes less than a second, we assume it comes
                 // from a cache and we don't show any transition animation.
                 val startTime = System.currentTimeMillis()
-                val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon)
+                val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon) ?: addon.installedState?.icon
                 val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
                 val isFromCache = timeToFetch < 1
-                iconBitmap?.let {
-                    scope.launch(Main) {
-                        if (isFromCache) {
-                            iconView.setImageDrawable(BitmapDrawable(iconView.resources, it))
-                        } else {
-                            setWithCrossFadeAnimation(iconView, it)
-                        }
+                if (iconBitmap != null) iconDrawable = BitmapDrawable(iconView.resources, iconBitmap)
+                scope.launch(Main) {
+                    if (isFromCache) {
+                        iconView.setImageDrawable(iconDrawable)
+                    } else {
+                        setWithCrossFadeAnimation(iconView, iconDrawable!!)
                     }
                 }
             } catch (e: IOException) {
@@ -242,7 +251,7 @@ class AddonsManagerAdapter(
                     val context = iconView.context
                     val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
                     iconView.setColorFilter(ContextCompat.getColor(context, att))
-                    iconView.setImageDrawable(context.getDrawable(R.drawable.ic_icon_addons))
+                    iconView.setImageDrawable(iconDrawable)
                 }
                 logger.error("Attempt to fetch the ${addon.id} icon failed", e)
             }
@@ -256,12 +265,14 @@ class AddonsManagerAdapter(
         val installedAddons = ArrayList<Addon>()
         val recommendedAddons = ArrayList<Addon>()
         val disabledAddons = ArrayList<Addon>()
+        val experimentalAddons = ArrayList<Addon>()
 
         addons.forEach { addon ->
             when {
                 addon.inRecommendedSection() -> recommendedAddons.add(addon)
                 addon.inInstalledSection() -> installedAddons.add(addon)
                 addon.inDisabledSection() -> disabledAddons.add(addon)
+                addon.inExperimentalSection() -> experimentalAddons.add(addon)
             }
         }
 
@@ -281,6 +292,12 @@ class AddonsManagerAdapter(
         if (recommendedAddons.isNotEmpty()) {
             itemsWithSections.add(Section(R.string.mozac_feature_addons_recommended_section))
             itemsWithSections.addAll(recommendedAddons)
+        }
+
+        // Add experimental section and addons if available
+        if (experimentalAddons.isNotEmpty()) {
+            itemsWithSections.add(Section(R.string.addons_experimental_section_title))
+            itemsWithSections.addAll(experimentalAddons)
         }
 
         return itemsWithSections
@@ -379,10 +396,9 @@ class AddonsManagerAdapter(
         }
     }
 
-    internal fun setWithCrossFadeAnimation(image: ImageView, bitmap: Bitmap, durationMillis: Int = 1700) {
+    internal fun setWithCrossFadeAnimation(image: ImageView, iconDrawable: Drawable, durationMillis: Int = 1700) {
         with(image) {
-            val bitmapDrawable = BitmapDrawable(context.resources, bitmap)
-            val animation = TransitionDrawable(arrayOf(drawable, bitmapDrawable))
+            val animation = TransitionDrawable(arrayOf(drawable, iconDrawable))
             animation.isCrossFadeEnabled = true
             setImageDrawable(animation)
             animation.startTransition(durationMillis)
@@ -393,6 +409,7 @@ class AddonsManagerAdapter(
 private fun Addon.inRecommendedSection() = !isInstalled()
 private fun Addon.inInstalledSection() = isInstalled() && isSupported() && isEnabled()
 private fun Addon.inDisabledSection() = isInstalled() && isSupported() && !isEnabled()
+private fun Addon.inExperimentalSection() = isInstalled() && !isSupported()
 
 /**
  * Get the formatted number amount for the current default locale.

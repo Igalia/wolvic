@@ -1153,11 +1153,14 @@
          When pressed the download list is sorted in download date descending order. -->
     <string name="downloads_sort_download_size_desc">Largest</string>
 
-    <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
+    <!-- This string is displayed as the title of the addons list -->
     <string name="addons_title">Add-ons</string>
 
     <!-- This string is displayed in the title bar when a web extension session is displayed. -->
     <string name="web_extensions_title">Web Extension</string>
+
+    <!-- This string is displayed as the title of the section that contains unsupported and locally installed addons. -->
+    <string name="addons_experimental_section_title">Experimental</string>
 
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_loading">Loading Add-ons</string>
@@ -2176,6 +2179,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Unknown error</string>
+
+    <!-- This string is displayed in the title of the dialog when user clicks on a downloaded addon
+     so the user can confirm if they want to actually install the addon. -->
+    <string name="download_addon_install">Install Addon</string>
+
+    <!-- This string is displayed in the install local addon confirmation dialog cancel button. -->
+    <string name="download_addon_install_cancel">Cancel</string>
+
+    <!-- This string is displayed in the install local addon confirmation dialog install button. -->
+    <string name="download_addon_install_confirm_install">Install</string>
+
+    <!-- This string is displayed in the title of the error dialog shown when downloaded addon installation is blocked. -->
+    <string name="download_addon_install_blocked">Local addon install blocked</string>
+
+    <!-- This string is displayed in the body of the error dialog shown when downloaded addon installation is blocked. -->
+    <string name="download_addon_install_blocked_body">Allow local addon installation in Developer Options to proceed.</string>
 
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->

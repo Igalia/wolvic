@@ -61,6 +61,8 @@
     <string name="settings_key_webgl_out_of_process" translatable="false">settings_key_webgl_out_of_processe</string>
     <string name="settings_key_prefs_last_reset_version_code" translatable="false">settings_key_prefs_last_reset_version_code</string>
     <string name="enable_webgl_out_of_process_switch" translatable="false">Out of Process WebGL</string>
+    <string name="settings_key_local_addon_allowed" translatable="false">settings_key_local_addon_allowed</string>
+    <string name="allow_local_addon_switch" translatable="false">Allow Installation of Local Addons</string>
     <string name="settings_key_passwords_encryption_key_generated" translatable="false">settings_key_passwords_encryption_key_generated</string>
     <string name="settings_key_autofill_enabled" translatable="false">settings_key_autofill_enabled</string>
     <string name="settings_key_login_autocomplete_enabled" translatable="false">settings_key_login_autocomplete_enabled</string>

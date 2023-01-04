@@ -40,10 +40,13 @@ import com.igalia.wolvic.ui.widgets.menus.library.DownloadsContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.LibraryContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
 import com.igalia.wolvic.utils.SystemUtils;
+import com.igalia.wolvic.browser.extensions.LocalExtension;
+import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class DownloadsView extends LibraryView implements DownloadsManager.DownloadsListener {
 
@@ -136,10 +139,39 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         public void onClick(@NonNull View view, @NonNull Download item) {
             mBinding.downloadsList.requestFocusFromTouch();
 
-            SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());
+            if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
+                if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
+                    mWidgetManager.getFocusedWindow().showConfirmPrompt(
+                            getContext().getString(R.string.download_addon_install),
+                            item.getFilename(),
+                            new String[]{
+                                    getContext().getString(R.string.download_addon_install_cancel),
+                                    getContext().getString(R.string.download_addon_install_confirm_install),
+                            },
+                            (index, isChecked) -> {
+                                if (index == PromptDialogWidget.POSITIVE) {
+                                    LocalExtension.install(
+                                            SessionStore.get().getWebExtensionRuntime(),
+                                            UUID.randomUUID().toString(),
+                                            item.getOutputFileUri(),
+                                            ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                                    );
+                                }
+                            }
+                    );
+                } else {
+                    mWidgetManager.getFocusedWindow().showAlert(
+                            getContext().getString(R.string.download_addon_install_blocked),
+                            getContext().getString(R.string.download_addon_install_blocked_body),
+                            null
+                    );
+                }
+            } else {
+                SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());
 
-            WindowWidget window = mWidgetManager.getFocusedWindow();
-            window.hidePanel();
+                WindowWidget window = mWidgetManager.getFocusedWindow();
+                window.hidePanel();
+            }
         }
 
         @Override

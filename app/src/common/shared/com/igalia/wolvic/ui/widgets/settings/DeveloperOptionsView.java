@@ -73,6 +73,9 @@ class DeveloperOptionsView extends SettingsView {
         } else {
             mBinding.webglOutOfProcessSwitch.setVisibility(View.GONE);
         }
+
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
+        setLocalAddon(SettingsStore.getInstance(getContext()).isLocalAddonAllowed(), false);
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
@@ -97,6 +100,10 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mWebGLOutOfProcessListener = (compundButton, value, doApply) -> {
         setWebGLOutOfProcess(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mLocalAddonListener = (compoundButton, value, doApply) -> {
+        setLocalAddon(value, doApply);
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -126,6 +133,10 @@ class DeveloperOptionsView extends SettingsView {
         if (BuildConfig.DEBUG && mBinding.webglOutOfProcessSwitch.isChecked() != SettingsStore.WEBGL_OUT_OF_PROCESS) {
             setWebGLOutOfProcess(SettingsStore.WEBGL_OUT_OF_PROCESS, true);
             restart = true;
+        }
+
+        if (mBinding.localAddonSwitch.isChecked() != SettingsStore.LOCAL_ADDON_ALLOWED) {
+            setLocalAddon(SettingsStore.LOCAL_ADDON_ALLOWED, true);
         }
 
         if (restart) {
@@ -195,6 +206,16 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
             showRestartDialog();
+        }
+    }
+
+    private void setLocalAddon(boolean value, boolean doApply) {
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(null);
+        mBinding.localAddonSwitch.setValue(value, false);
+        mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setLocalAddonAllowed(value);
         }
     }
 

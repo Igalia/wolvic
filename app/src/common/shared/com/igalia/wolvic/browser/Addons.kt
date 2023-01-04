@@ -20,6 +20,7 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.await
 import kotlinx.coroutines.future.future
 import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.webextension.Action
@@ -32,6 +33,7 @@ import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.webextensions.WebExtensionSupport
+import mozilla.components.support.webextensions.WebExtensionSupport.installedExtensions
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -195,7 +197,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
         })
     }
 
-    private fun notifyListeners() {
+    fun notifyListeners() {
         if (listeners.size > 0) {
             val listenersCopy = ArrayList(listeners)
             Handler(Looper.getMainLooper()).post {
@@ -206,10 +208,25 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
         }
     }
 
-    fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> =
-            GlobalScope.future {
-                addonManager.getAddons(waitForPendingActions)
+    fun getAddons(waitForPendingActions: Boolean = true): CompletableFuture<List<Addon>> = GlobalScope.future {
+        val addons = addonManager.getAddons(waitForPendingActions).toMutableList()
+        // Set the correct enabled state and icon for unsupported addons
+        for (i in addons.indices) {
+            if (!addons[i].isSupported()) {
+                val enabled = installedExtensions[addons[i].id]?.isEnabled() ?: false
+                val icon = CoroutineScope(Dispatchers.Main).future {
+                    try {
+                        installedExtensions[addons[i].id]?.loadIcon(AddonManager.TEMPORARY_ADDON_ICON_SIZE)
+                    } catch (throwable: Throwable) {
+                        Logger.warn("Failed to load addon icon.", throwable)
+                        null
+                    }
+                }.await()
+                addons[i] = addons[i].copy(installedState = addons[i].installedState?.copy(enabled = enabled, icon = icon))
             }
+        }
+        addons.toList()
+    }
 
     companion object {
         fun loadActionIcon(context: Context, action: Action, height: Int): CompletableFuture<Drawable?> =

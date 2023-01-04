@@ -34,6 +34,7 @@ public class UrlUtils {
     private static List<String> ENGINE_SUPPORTED_SCHEMES = Arrays.asList(null, "about", "data", "file", "ftp", "http", "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob");
 
     public static String UNKNOWN_MIME_TYPE = "application/octet-stream";
+    public static String EXTENSION_MIME_TYPE = "application/x-xpinstall";
 
     public static String stripCommonSubdomains(@Nullable String host) {
         if (host == null) {
@@ -135,11 +136,10 @@ public class UrlUtils {
 
     public static String getMimeTypeFromUrl(String url) {
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension == null) {
+        if (extension == null)
             return UNKNOWN_MIME_TYPE;
-        } else {
-            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        return mimeType == null ? UNKNOWN_MIME_TYPE : mimeType;
     }
 
     public static String titleBarUrl(@Nullable String aUri) {

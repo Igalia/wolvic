@@ -73,6 +73,12 @@
                     android:layout_height="wrap_content"
                     app:description="@string/enable_webgl_out_of_process_switch" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/local_addon_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/allow_local_addon_switch" />
+
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 
