@@ -40,6 +40,10 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         aPlacement.anchorY = 0.5f;
         aPlacement.cylinder = false;
         aPlacement.visible = false;
+        // FIXME: we temporarily disable the creation of a layer for this widget in order to
+        // limit the amount of layers we create, as Pico's runtime only allows 16 at a given time.
+        if (DeviceType.isPicoXR())
+            aPlacement.layer = false;
     }
 
     private void initialize() {

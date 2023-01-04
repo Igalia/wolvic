@@ -22,6 +22,7 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.databinding.TopBarBinding;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.utils.DeviceType;
 
 public class TopBarWidget extends UIWidget {
 
@@ -70,6 +71,10 @@ public class TopBarWidget extends UIWidget {
         aPlacement.anchorY = 0.0f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 1.0f;
+        // FIXME: we temporarily disable the creation of a layer for this widget in order to
+        // limit the amount of layers we create, as Pico's runtime only allows 16 at a given time.
+        if (DeviceType.isPicoXR())
+            aPlacement.layer = false;
     }
 
     private void updateUI() {
