@@ -34,14 +34,14 @@
             style="@style/customRecyclerViewStyle"
             android:layout_width="340dp"
             android:layout_height="match_parent"
-            android:layout_below="@id/titleContainer"
             android:layout_above="@+id/buttonsLayout"
+            android:layout_below="@id/titleContainer"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:background="@color/asphalt"
             android:contentDescription="Saved Logins list"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            android:background="@color/asphalt"
             app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
 
         <RelativeLayout
@@ -60,7 +60,7 @@
                 android:scaleType="fitCenter"
                 android:text="@string/autofill_dialog_use_login_settings_button"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>
