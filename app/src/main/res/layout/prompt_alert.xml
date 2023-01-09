@@ -45,10 +45,9 @@
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top|start"
+            android:gravity="center_horizontal"
             android:maxHeight="@dimen/prompt_content_max_height"
             android:scrollbars="vertical"
-            android:textAlignment="viewStart"
             android:textSize="18sp"
             tools:text="Message" />
         </com.igalia.wolvic.ui.views.CustomScrollView>
