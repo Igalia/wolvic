@@ -1,12 +1,13 @@
 package com.igalia.wolvic.downloads;
 
+import android.webkit.URLUtil;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSession;
 
-import java.io.File;
-import java.net.URL;
+import java.util.Map;
 
 public class DownloadJob {
 
@@ -19,48 +20,25 @@ public class DownloadJob {
     private String mOutputPath;
 
     public static DownloadJob create(@NonNull String uri) {
-        return create(uri, null, 0, null, null);
-    }
-
-    public static DownloadJob create(@NonNull String uri, @Nullable String contentType,
-                                     long contentLength, @Nullable String filename) {
-        return create(uri, contentType, contentLength, filename, null);
-    }
-
-    public static DownloadJob create(@NonNull String uri, @Nullable String contentType,
-                                     long contentLength, @Nullable String filename,
-                                     @Nullable String outputPath) {
         DownloadJob job = new DownloadJob();
         job.mUri = uri;
-        job.mContentType = contentType;
-        job.mContentLength = contentLength;
-        if (filename != null) {
-            job.mFilename = filename;
-        } else {
-            try {
-                File f = new File(new URL(uri).getPath());
-                job.mFilename = f.getName();
-
-            } catch (Exception e) {
-                job.mFilename = "Untitled";
-            }
-        }
-        job.mTitle = filename;
-        job.mDescription = filename;
-        job.mOutputPath = outputPath;
+        job.mContentType = null;
+        job.mContentLength = 0;
+        job.mFilename = URLUtil.guessFileName(uri, null, null);
+        job.mTitle = job.mFilename;
+        job.mDescription = job.mFilename;
+        job.mOutputPath = null;
         return job;
     }
 
-    public static DownloadJob fromUri(@NonNull String uri) {
+    public static DownloadJob fromUri(@NonNull String uri, Map<String, String> headers) {
         DownloadJob job = new DownloadJob();
         job.mUri = uri;
         job.mContentLength = 0;
-        try {
-            File f = new File(new URL(uri).getPath());
-            job.mFilename = f.getName();
-
-        } catch (Exception e) {
-            job.mFilename = "Download";
+        if (headers != null) {
+            job.mFilename = URLUtil.guessFileName(uri, headers.get("content-disposition"), headers.get("content/type"));
+        } else {
+            job.mFilename = URLUtil.guessFileName(uri, null, null);
         }
         job.mTitle = job.mFilename;
         job.mDescription = job.mFilename;
@@ -84,13 +62,7 @@ public class DownloadJob {
                 job.mContentType = "video";
                 break;
         }
-        try {
-            File f = new File(new URL(contextElement.srcUri).getPath());
-            job.mFilename = f.getName();
-
-        } catch (Exception e) {
-            job.mFilename = "Unknown";
-        }
+        job.mFilename = URLUtil.guessFileName(job.mUri, null, null);
         job.mContentLength = 0;
         job.mTitle = job.mFilename;
         job.mDescription = job.mFilename;
@@ -114,13 +86,7 @@ public class DownloadJob {
                 job.mContentType = "video";
                 break;
         }
-        try {
-            File f = new File(new URL(contextElement.linkUri).getPath());
-            job.mFilename = f.getName();
-
-        } catch (Exception e) {
-            job.mFilename = "Unknown";
-        }
+        job.mFilename = URLUtil.guessFileName(job.mUri, null, null);
         job.mContentLength = 0;
         job.mTitle = job.mFilename;
         job.mDescription = job.mFilename;
