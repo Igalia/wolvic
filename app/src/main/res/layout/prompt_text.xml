@@ -9,7 +9,9 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/prompt_background">
+        android:background="@drawable/prompt_background"
+        app:layout_constraintBottom_toTopOf="@+id/promptText"
+        app:layout_constraintTop_toTopOf="@+id/promptText">
 
         <TextView
             android:id="@+id/textTitle"
@@ -26,24 +28,34 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
-        <TextView
-            android:id="@+id/textMessage"
-            android:layout_width="0dp"
+        <com.igalia.wolvic.ui.views.CustomScrollView
+            android:id="@+id/bodyContainer"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:gravity="top|start"
-            android:maxHeight="@dimen/prompt_content_max_height"
-            android:scrollbars="vertical"
-            android:textAlignment="viewStart"
-            android:textSize="18sp"
+            android:fastScrollAlwaysVisible="false"
             app:layout_constraintBottom_toTopOf="@+id/promptText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textTitle"
-            tools:text="Message" />
+            app:layout_constraintTop_toBottomOf="@+id/textTitle">
+
+            <TextView
+                android:id="@+id/textMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="top|start"
+                android:maxHeight="@dimen/prompt_content_max_height"
+                android:scrollbars="vertical"
+                android:textAlignment="viewStart"
+                android:textSize="18sp"
+                tools:text="Message" />
+        </com.igalia.wolvic.ui.views.CustomScrollView>
+
 
         <com.igalia.wolvic.ui.views.settings.SettingsEditText
             android:id="@+id/promptText"
@@ -58,13 +70,12 @@
             app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMessage" />
+            app:layout_constraintTop_toBottomOf="@+id/bodyContainer" />
 
         <LinearLayout
             android:id="@+id/buttonsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal"
