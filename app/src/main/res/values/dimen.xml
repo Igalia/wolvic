@@ -148,11 +148,11 @@
     <dimen name="voice_search_input_height">65dp</dimen>
 
     <!-- Prompts -->
-    <dimen name="prompt_width">420dp</dimen>
-    <dimen name="prompt_height">520dp</dimen>
-    <dimen name="prompt_content_max_height">565dp</dimen>
+    <dimen name="prompt_width">400dp</dimen>
+    <dimen name="prompt_height">375dp</dimen>
+    <dimen name="prompt_content_max_height">450dp</dimen>
     <dimen name="prompt_choice_min_height">350dp</dimen>
-    <dimen name="prompt_choice_max_height">520dp</dimen>
+    <dimen name="prompt_choice_max_height">475dp</dimen>
     <dimen name="prompt_min_height">300dp</dimen>
     <dimen name="prompt_file_width">400dp</dimen>
     <dimen name="prompt_file_height">400dp</dimen>
