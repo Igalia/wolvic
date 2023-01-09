@@ -26,9 +26,21 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
+        <com.igalia.wolvic.ui.views.CustomScrollView
+            android:id="@+id/bodyContainer"
+            style="@style/customScrollViewStyle"
+            android:fastScrollAlwaysVisible="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/confirmTitle"
+            android:layout_marginBottom="10dp">
         <TextView
             android:id="@+id/confirmMessage"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
@@ -39,11 +51,8 @@
             android:scrollbars="vertical"
             android:textAlignment="viewStart"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmTitle"
             tools:text="Message" />
+        </com.igalia.wolvic.ui.views.CustomScrollView>
 
         <LinearLayout
             android:id="@+id/buttonsLayout"
@@ -54,7 +63,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmMessage">
+            app:layout_constraintTop_toBottomOf="@+id/bodyContainer">
 
             <Button
                 android:id="@+id/negativeButton"
