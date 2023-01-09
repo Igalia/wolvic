@@ -136,7 +136,7 @@ public class UrlUtils {
 
     public static String getMimeTypeFromUrl(String url) {
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension == null)
+        if (extension.isEmpty())
             return UNKNOWN_MIME_TYPE;
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         return mimeType == null ? UNKNOWN_MIME_TYPE : mimeType;
