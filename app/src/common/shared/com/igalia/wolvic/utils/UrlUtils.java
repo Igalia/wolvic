@@ -134,12 +134,12 @@ public class UrlUtils {
         return context != null && aUri != null && aUri.equals(context.getString(R.string.about_blank));
     }
 
-    public static String getMimeTypeFromUrl(String url) {
+    public static @NonNull String getMimeTypeFromUrl(String url) {
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension.isEmpty())
+        if (StringUtils.isEmpty(extension))
             return UNKNOWN_MIME_TYPE;
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        return mimeType == null ? UNKNOWN_MIME_TYPE : mimeType;
+        return StringUtils.isEmpty(mimeType) ? UNKNOWN_MIME_TYPE : mimeType;
     }
 
     public static String titleBarUrl(@Nullable String aUri) {
