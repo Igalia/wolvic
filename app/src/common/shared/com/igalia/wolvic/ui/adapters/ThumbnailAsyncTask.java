@@ -77,8 +77,10 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private Bitmap createFileThumbnail(@NonNull File file) {
         String mimeType = UrlUtils.getMimeTypeFromUrl(file.getPath());
-        mCancellationSignal = new CancellationSignal();
+        if (mimeType == null)
+            return null;
 
+        mCancellationSignal = new CancellationSignal();
         try {
             if (mimeType.startsWith("audio")) {
                 return ThumbnailUtils.createAudioThumbnail(file, DEFAULT_SIZE, mCancellationSignal);
