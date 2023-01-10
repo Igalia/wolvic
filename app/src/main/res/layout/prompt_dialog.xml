@@ -51,22 +51,23 @@
         <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/bodyContainer"
             style="@style/customScrollViewStyle"
-            android:fastScrollAlwaysVisible="false"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/titleContainer"
             android:layout_above="@+id/descriptionContainer"
-            android:layout_marginBottom="10dp">
+            android:layout_below="@+id/titleContainer"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:fastScrollAlwaysVisible="false">
+
             <TextView
                 android:id="@+id/body"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                tools:text="Body"
                 android:textColor="@color/fog"
-                android:textSize="@dimen/text_medium_size" />
+                android:textSize="@dimen/text_medium_size"
+                tools:text="Body" />
         </com.igalia.wolvic.ui.views.CustomScrollView>
 
         <FrameLayout
