@@ -149,8 +149,8 @@
 
     <!-- Prompts -->
     <dimen name="prompt_width">400dp</dimen>
-    <dimen name="prompt_height">375dp</dimen>
-    <dimen name="prompt_content_max_height">520dp</dimen>
+    <dimen name="prompt_height">520dp</dimen>
+    <dimen name="prompt_content_max_height">650dp</dimen>
     <dimen name="prompt_choice_min_height">350dp</dimen>
     <dimen name="prompt_choice_max_height">475dp</dimen>
     <dimen name="prompt_min_height">300dp</dimen>
