@@ -119,10 +119,6 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void Initialize() {
-#ifdef PICOXR
-    deviceType = device::PicoXR;
-#endif
-
     vrb::RenderContextPtr localContext = context.lock();
     elbow = ElbowModel::Create();
     for (int i = 0; i < 2; ++i) {
