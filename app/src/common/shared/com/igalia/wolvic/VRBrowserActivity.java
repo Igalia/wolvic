@@ -993,7 +993,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
 
-            Runnable aFirstDrawCallback = () -> {
+            FinalizerRunnable firstDrawCallback = new FinalizerRunnable(() -> {
                 if (aNativeCallback != 0) {
                     queueRunnable(() -> runCallbackNative(aNativeCallback));
                 }
@@ -1001,9 +1001,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     widget.setFirstPaintReady(true);
                     updateWidget(widget);
                 }
-            };
+            },
+            () -> {
+                if (aNativeCallback != 0) {
+                    queueRunnable(() -> deleteCallbackNative(aNativeCallback));
+                }
+            });
 
-            widget.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
+            widget.setSurface(aSurface, aWidth, aHeight, firstDrawCallback);
 
             UIWidget view = (UIWidget) widget;
             // Add widget to a virtual display for invalidation
@@ -1869,6 +1874,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
+    private native void deleteCallbackNative(long aCallback);
     private native void setCylinderDensityNative(float aDensity);
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
