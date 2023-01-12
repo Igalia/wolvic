@@ -18,6 +18,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp">
+
             <ImageView
                 android:id="@+id/icon"
                 android:layout_width="match_parent"
@@ -31,21 +32,22 @@
             android:id="@+id/titleContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/imageContainer"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp">
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text="Title"
                 android:ellipsize="end"
+                android:gravity="center_horizontal"
                 android:lines="1"
-                android:textStyle="bold"
                 android:textColor="@color/fog"
-                android:textSize="@dimen/text_bigger_size" />
+                android:textSize="@dimen/text_bigger_size"
+                android:textStyle="bold"
+                tools:text="Title" />
         </FrameLayout>
 
         <com.igalia.wolvic.ui.views.CustomScrollView
@@ -74,27 +76,29 @@
             android:id="@+id/descriptionContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_above="@+id/checkboxContainer"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp">
+
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                tools:text="Description"
                 android:textColor="@color/rhino"
-                android:textSize="@dimen/text_smaller_size" />
+                android:textSize="@dimen/text_smaller_size"
+                tools:text="Description" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/checkboxContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonsLayout"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:layout_above="@+id/buttonsLayout">
+            android:layout_marginBottom="10dp">
+
             <CheckBox
                 android:id="@+id/checkbox"
                 style="@style/checkbox"
@@ -117,9 +121,9 @@
                 android:background="@drawable/dialog_regular_button_background"
                 android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
-                tools:text="Cancel"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:text="Cancel" />
 
             <Button
                 android:id="@+id/rightButton"
@@ -129,9 +133,9 @@
                 android:background="@drawable/dialog_highlighted_button_background"
                 android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
-                tools:text="Accept"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:text="Accept" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>

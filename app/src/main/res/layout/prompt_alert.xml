@@ -11,10 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/positiveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/positiveButton">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/alertTitle"
@@ -66,7 +66,8 @@
         android:background="@drawable/prompt_button_background"
         android:fontFamily="sans-serif"
         android:gravity="center"
-        android:scaleType="center"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
         android:text="@string/ok_button"
         android:textAllCaps="true"
         android:textColor="@drawable/prompt_button_text_color"

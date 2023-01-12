@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <RelativeLayout
         android:id="@+id/layout"
         android:layout_width="@dimen/autofill_dialog_width"
@@ -15,8 +16,9 @@
             android:id="@+id/titleContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true">
+
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="match_parent"
@@ -24,9 +26,9 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:text="@string/autofill_dialog_use_login_title_text"
-                android:textStyle="bold"
                 android:textColor="@color/fog"
-                android:textSize="@dimen/text_bigger_size" />
+                android:textSize="@dimen/text_bigger_size"
+                android:textStyle="bold" />
         </FrameLayout>
 
         <com.igalia.wolvic.ui.views.CustomRecyclerView
