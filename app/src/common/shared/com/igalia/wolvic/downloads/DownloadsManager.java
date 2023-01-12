@@ -10,15 +10,22 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
@@ -97,6 +104,11 @@ public class DownloadsManager {
     }
 
     public void startDownload(@NonNull DownloadJob job) {
+        if (UrlUtils.isBlobUri(job.getUri())) {
+            downloadBlobUri(job);
+            return;
+        }
+
         if (!URLUtil.isHttpUrl(job.getUri()) && !URLUtil.isHttpsUrl(job.getUri())) {
             notifyDownloadError(mContext.getString(R.string.download_error_protocol), job.getFilename());
             return;
@@ -132,6 +144,69 @@ public class DownloadsManager {
             }
             scheduleUpdates();
         }
+    }
+
+    public void downloadBlobUri(DownloadJob job) {
+        if (!UrlUtils.isBlobUri(job.getUri()) || job.getInputStream() == null) {
+            Log.w(LOGTAG, "Failed to download Blob URI: " + job.getUri());
+            return;
+        }
+
+        final File dir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        if (dir == null || (dir.exists() && !dir.isDirectory())) {
+            Log.e(LOGTAG, "Error when saving " + job.getUri() + " : failed to get the Downloads directory");
+            return;
+        }
+
+        File file = new File(dir, job.getFilename());
+        if (file.exists()) {
+            // If the file already exists, we try to generate a new one.
+            String extension = MimeTypeMap.getFileExtensionFromUrl(file.toString());
+            if (!StringUtils.isEmpty(extension)) {
+                extension = '.' + extension;
+            }
+            String name = file.getName();
+            int lastDot = name.lastIndexOf('.');
+            if (lastDot >= 0) {
+                name = name.substring(0, name.lastIndexOf('.'));
+            }
+            int currentIndex = 0;
+            int lastDash = name.lastIndexOf('-');
+            if (lastDash >= 0) {
+                try {
+                    name = name.substring(0, lastDash - 1);
+                    String index = name.substring(lastDash + 1);
+                    currentIndex = Integer.parseInt(index);
+                } catch (Exception e) {
+                }
+            }
+            do {
+                currentIndex++;
+                file = new File(dir, name + '-' + currentIndex + extension);
+            } while (file.exists() || file.isDirectory());
+        }
+        Log.i(LOGTAG, "Will save " + job.getUri() + " to " + file.getName());
+
+        long readBytes = 0L;
+        byte[] buf = new byte[8192];
+        int n;
+        try {
+            InputStream in = job.getInputStream();
+            OutputStream out = new FileOutputStream(file, false);
+            while ((n = in.read(buf)) > 0) {
+                out.write(buf, 0, n);
+                readBytes += n;
+            }
+            out.close();
+        } catch (IOException e) {
+            Log.e(LOGTAG, "Error when saving " + job.getUri() + " : " + e.getMessage());
+            return;
+        }
+        Log.i(LOGTAG, "Saved " + job.getUri() + " to " + file.getName() + " (" + readBytes + " bytes)");
+
+        mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
+                true, UrlUtils.getMimeTypeFromUrl(file.getPath()), file.getPath(), readBytes, true,
+                Uri.parse(job.getUri()), null);
     }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {
@@ -205,7 +280,7 @@ public class DownloadsManager {
     public boolean isDownloading() {
         return getDownloads().stream()
                 .filter(item ->
-                        item.getStatus() == DownloadManager.STATUS_RUNNING)
+                        item.getStatus() == Download.RUNNING)
                 .findFirst().orElse(null) != null;
     }
 

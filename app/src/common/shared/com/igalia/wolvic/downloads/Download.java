@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.utils.LocaleUtils;
+import com.igalia.wolvic.utils.StringUtils;
 
 import java.io.File;
 import java.net.URI;
@@ -152,16 +153,18 @@ public class Download {
     }
 
     public String getFilename() {
-        try {
-            File f = new File(new URL(mUri).getPath());
-            return f.getName();
-
-        } catch (Exception e) {
-            if (mOutputFile != null) {
-                return mOutputFile;
-                
-            } else {
-                return "";
+        if (!StringUtils.isEmpty(mTitle)) {
+            return mTitle;
+        } else {
+            try {
+                File f = new File(new URL(mUri).getPath());
+                return f.getName();
+            } catch (Exception e) {
+                if (mOutputFile != null) {
+                    return mOutputFile;
+                } else {
+                    return "";
+                }
             }
         }
     }
