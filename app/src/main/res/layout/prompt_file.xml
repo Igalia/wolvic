@@ -77,6 +77,7 @@
             android:background="@drawable/prompt_button_background"
             android:fontFamily="sans-serif"
             android:padding="10dp"
+            android:backgroundTint="@color/cardview_dark_background"
             android:scaleType="fitCenter"
             android:text="@string/upload_button"
             android:textAllCaps="true"

@@ -104,6 +104,7 @@
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:text="@string/ok_button"
+                android:backgroundTint="@color/cardview_dark_background"
                 android:textAllCaps="true"
                 android:textColor="@drawable/prompt_button_text_color"
                 android:textSize="10pt"

@@ -81,7 +81,7 @@
             android:textAllCaps="true"
             android:textColor="@drawable/prompt_button_text_color"
             android:textSize="10pt"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/positiveButton"
@@ -96,6 +96,7 @@
             android:textAllCaps="true"
             android:textColor="@drawable/prompt_button_text_color"
             android:textSize="10pt"
+            android:backgroundTint="@color/cardview_dark_background"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

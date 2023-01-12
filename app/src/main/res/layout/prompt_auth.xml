@@ -170,6 +170,7 @@
                 android:id="@+id/positiveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/cardview_dark_background"
                 android:background="@drawable/prompt_button_background"
                 android:fontFamily="sans-serif"
                 android:minWidth="110dp"
