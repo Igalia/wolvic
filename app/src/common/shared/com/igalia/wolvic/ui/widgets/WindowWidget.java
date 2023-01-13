@@ -1679,7 +1679,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // We don't want to trigger downloads of already downloaded files that we can't open
         // so we let the system handle it.
         if (!UrlUtils.isFileUri(webResponseInfo.uri())) {
-            DownloadJob job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
+            DownloadJob job;
+            if (UrlUtils.isBlobUri(webResponseInfo.uri())) {
+                job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers(), webResponseInfo.body());
+            } else {
+                job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
+            }
             // Don't show the confirmation dialog when we are in WebXR, because it will not be visible.
             boolean showConfirmDialog = !mWidgetManager.isWebXRPresenting();
             startDownload(job, showConfirmDialog);
