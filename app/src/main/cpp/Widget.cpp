@@ -174,13 +174,13 @@ struct Widget::State {
     UpdateResizerTransform();
   }
 
-  void AdjustCylinderRotation(const float radius) {
+  void AdjustCylinderRotation(const float radius, const vrb::Matrix* uiYaw = nullptr) {
     const float x = transform->GetTransform().GetTranslation().x();
     const bool hasCylinderLayer = cylinder && cylinder->GetLayer();
     auto setCylinderLayerTransformIfNeeded = [&](const vrb::Matrix& rotation) {
         if (!hasCylinderLayer)
           return;
-        cylinder->GetLayer()->SetRotation(rotation);
+        cylinder->GetLayer()->SetRotation(uiYaw ? rotation.PostMultiply(*uiYaw) : rotation);
     };
 
     if (x != 0.0f && placement->cylinderMapRadius > 0) {
@@ -680,6 +680,11 @@ void Widget::LayoutQuadWithCylinderParent(const WidgetPtr& aParent) {
     m.transformContainer->SetTransform(aParent->m.transformContainer->GetTransform());
   }
   m.UpdateResizerTransform();
+}
+
+void Widget::RecenterYawInCylinderLayer(const vrb::Matrix& reorientMatrix) {
+  const float radius = GetCylinder()->GetTransformNode()->GetTransform().GetScale().x();
+  m.AdjustCylinderRotation(radius, &reorientMatrix);
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

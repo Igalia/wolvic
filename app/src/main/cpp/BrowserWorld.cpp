@@ -1440,6 +1440,8 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
 
   if (!widget->GetCylinder()) {
     widget->LayoutQuadWithCylinderParent(parent);
+  } else if (widget->GetLayer()) {
+    widget->RecenterYawInCylinderLayer(m.device->GetReorientTransform());
   }
 }
 
@@ -1510,6 +1512,8 @@ BrowserWorld::RecenterUIYaw(const YawTarget aTarget) {
     const float yaw = atan2(vector.z(), vector.x());
     m.widgetsYaw = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yaw);
   }
+  // Force relayout of widgets so that cylinder layers are properly placed.
+  UpdateVisibleWidgets();
 }
 
 void
