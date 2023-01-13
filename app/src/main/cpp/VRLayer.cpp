@@ -366,11 +366,13 @@ VRLayerQuad::~VRLayerQuad() {}
 struct VRLayerCylinder::State: public VRLayerSurface::State {
   float radius;
   vrb::Matrix uvTransform[2];
+  vrb::Matrix rotation;
   State():
       radius(1.0f)
   {
     uvTransform[0] = vrb::Matrix::Identity();
     uvTransform[1] = vrb::Matrix::Identity();
+    rotation = vrb::Matrix::Identity();
   }
 };
 
@@ -397,6 +399,16 @@ VRLayerCylinder::GetUVTransform(device::Eye aEye) const {
 void
 VRLayerCylinder::SetUVTransform(device::Eye aEye, const vrb::Matrix& aTransform) {
   m.uvTransform[device::EyeIndex(aEye)] = aTransform;
+}
+
+void
+VRLayerCylinder::SetRotation(const vrb::Matrix& aTransform) {
+  m.rotation = aTransform;
+}
+
+vrb::Matrix&
+VRLayerCylinder::GetRotation() {
+  return m.rotation;
 }
 
 void

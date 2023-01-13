@@ -10,6 +10,7 @@
 #include "vrb/Quaternion.h"
 #include "vrb/Vector.h"
 #include "moz_external_vr.h"
+#include <assert.h>
 #include <pthread.h>
 #include <unistd.h>
 

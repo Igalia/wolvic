@@ -22,6 +22,8 @@
 #include "vrb/Vector.h"
 #include "vrb/VertexArray.h"
 
+#include <assert.h>
+
 using namespace vrb;
 
 namespace crow {

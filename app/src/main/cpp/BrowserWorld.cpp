@@ -1770,6 +1770,9 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   if (extension == ".ktx") {
 #if defined(OPENXR) && defined(OCULUSVR)
     glFormat =  GL_COMPRESSED_SRGB8_ETC2;
+#elif defined(PICOXR)
+    // FIXME: Pico does not support compressed textures yet.
+    glFormat = GL_RGBA8;
 #else
     glFormat =  GL_COMPRESSED_RGB8_ETC2;
 #endif
@@ -1931,6 +1934,14 @@ JNI_METHOD(void, runCallbackNative)
   if (aCallback) {
     auto func = reinterpret_cast<std::function<void()> *>((uintptr_t)aCallback);
     (*func)();
+    delete func;
+  }
+}
+
+JNI_METHOD(void, deleteCallbackNative)
+(JNIEnv*, jobject, jlong aCallback) {
+  if (aCallback) {
+    auto func = reinterpret_cast<std::function<void()> *>((uintptr_t)aCallback);
     delete func;
   }
 }
