@@ -81,6 +81,7 @@ public:
   void SetBorderColor(const vrb::Color& aColor);
   void SetProxifyLayer(const bool aValue);
   void LayoutQuadWithCylinderParent(const WidgetPtr& aParent);
+  void RecenterYawInCylinderLayer(const vrb::Matrix& reorientMatrix);
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);
