@@ -1607,7 +1607,25 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
         return WResult.fromValue(autocompleteRequest.dismiss());
     }
-    
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onSharePrompt(@NonNull WSession aSession, @NonNull SharePrompt prompt) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onSharePrompt(aSession, prompt);
+        }
+        return WResult.fromValue(prompt.dismiss());
+    }
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onRepostConfirmPrompt(@NonNull WSession aSession, @NonNull RepostConfirmPrompt prompt) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onRepostConfirmPrompt(aSession, prompt);
+        }
+        return WResult.fromValue(prompt.dismiss());
+    }
+
     // HistoryDelegate
     @Override
     public void onHistoryStateChange(@NonNull WSession aSession, @NonNull WSession.HistoryDelegate.HistoryList historyList) {
