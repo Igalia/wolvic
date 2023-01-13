@@ -147,13 +147,13 @@ public class DownloadsManager {
     }
 
     public void downloadBlobUri(DownloadJob job) {
-        if (!UrlUtils.isBlobUri(job.getUri()) || job.getInputStream() == null) {
-            Log.w(LOGTAG, "Failed to download Blob URI: " + job.getUri());
+        if (job.getInputStream() == null) {
+            Log.w(LOGTAG, "Failed to download Blob URI, missing input stream: " + job.getUri());
             return;
         }
 
         final File dir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-        if (dir == null || (dir.exists() && !dir.isDirectory())) {
+        if (dir == null) {
             Log.e(LOGTAG, "Error when saving " + job.getUri() + " : failed to get the Downloads directory");
             return;
         }
@@ -166,16 +166,16 @@ public class DownloadsManager {
                 extension = '.' + extension;
             }
             String name = file.getName();
-            int lastDot = name.lastIndexOf('.');
-            if (lastDot >= 0) {
-                name = name.substring(0, name.lastIndexOf('.'));
+            int lastDotIndex = name.lastIndexOf('.');
+            if (lastDotIndex >= 0) {
+                name = name.substring(0, lastDotIndex);
             }
             int currentIndex = 0;
-            int lastDash = name.lastIndexOf('-');
-            if (lastDash >= 0) {
+            int lastDashIndex = name.lastIndexOf('-');
+            if (lastDashIndex >= 0) {
                 try {
-                    name = name.substring(0, lastDash - 1);
-                    String index = name.substring(lastDash + 1);
+                    name = name.substring(0, lastDashIndex - 1);
+                    String index = name.substring(lastDashIndex + 1);
                     currentIndex = Integer.parseInt(index);
                 } catch (Exception e) {
                 }
