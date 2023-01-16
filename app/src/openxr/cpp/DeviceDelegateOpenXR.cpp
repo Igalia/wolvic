@@ -741,6 +741,7 @@ DeviceDelegateOpenXR::SupportsFramePrediction(FramePrediction aPrediction) const
 
 void
 DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
+  mShouldRender = false;
   if (!m.vrReady) {
     VRB_ERROR("OpenXR StartFrame called while not in VR mode");
     return;
@@ -764,8 +765,6 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   XrFrameBeginInfo frameBeginInfo{XR_TYPE_FRAME_BEGIN_INFO};
   CHECK_XRCMD(xrBeginFrame(m.session, &frameBeginInfo));
 
-  CHECK_MSG(frameState.shouldRender, "shouldRender==false bailout not implemented yet");
-
   m.framePrediction = aPrediction;
   if (aPrediction == FramePrediction::ONE_FRAME_AHEAD) {
     m.prevPredictedDisplayTime = m.predictedDisplayTime;
@@ -775,6 +774,10 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   } else {
     m.predictedDisplayTime = frameState.predictedDisplayTime;
   }
+
+  mShouldRender = frameState.shouldRender;
+  if (!frameState.shouldRender)
+    return;
 
   // Query head location
   XrSpaceLocation location {XR_TYPE_SPACE_LOCATION};
@@ -946,6 +949,11 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   auto canAddLayers = [&layers, maxLayers = m.systemProperties.graphicsProperties.maxLayerCount]() {
       return layers.size() < maxLayers;
   };
+
+  if (!mShouldRender) {
+      submitEndFrame();
+      return;
+  }
 
   // Add skybox layer
   if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
