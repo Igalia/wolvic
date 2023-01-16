@@ -942,8 +942,9 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       frameEndInfo.layers = layers.data();
       CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
   };
+
   auto canAddLayers = [&layers, maxLayers = m.systemProperties.graphicsProperties.maxLayerCount]() {
-      return layers.size() < maxLayers - 1;
+      return layers.size() < maxLayers;
   };
 
   // Add skybox layer
