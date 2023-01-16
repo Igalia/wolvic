@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSession;
 
+import java.io.InputStream;
 import java.util.Map;
 
 public class DownloadJob {
@@ -18,6 +19,7 @@ public class DownloadJob {
     private String mTitle;
     private String mDescription;
     private String mOutputPath;
+    private InputStream inputStream;
 
     public static DownloadJob create(@NonNull String uri) {
         DownloadJob job = new DownloadJob();
@@ -42,6 +44,12 @@ public class DownloadJob {
         }
         job.mTitle = job.mFilename;
         job.mDescription = job.mFilename;
+        return job;
+    }
+
+    public static DownloadJob fromUri(@NonNull String uri, Map<String, String> headers, InputStream inputStream) {
+        DownloadJob job = fromUri(uri, headers);
+        job.inputStream = inputStream;
         return job;
     }
 
@@ -131,5 +139,10 @@ public class DownloadJob {
     @Nullable
     public String getOutputPath() {
         return mOutputPath;
+    }
+
+    @Nullable
+    public InputStream getInputStream() {
+        return inputStream;
     }
 }

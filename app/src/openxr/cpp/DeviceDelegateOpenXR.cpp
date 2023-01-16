@@ -932,6 +932,20 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   std::vector<const XrCompositionLayerBaseHeader*>& layers = m.frameEndLayers;
   layers.clear();
 
+  // This limit is valid at least for Pico and Meta.
+  auto submitEndFrame = [&layers, displayTime, session = m.session]() {
+      static int i = 0;
+      XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
+      frameEndInfo.displayTime = displayTime;
+      frameEndInfo.environmentBlendMode = XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      frameEndInfo.layerCount = (uint32_t) layers.size();
+      frameEndInfo.layers = layers.data();
+      CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
+  };
+  auto canAddLayers = [&layers, maxLayers = m.systemProperties.graphicsProperties.maxLayerCount]() {
+      return layers.size() < maxLayers - 1;
+  };
+
   // Add skybox layer
   if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
     m.cubeLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
@@ -957,13 +971,18 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
 
   // Add back UI layers
   for (const OpenXRLayerPtr& layer: m.uiLayers) {
-    if (!layer->GetDrawInFront() && layer->IsDrawRequested()) {
+    if (!layer->GetDrawInFront() && layer->IsDrawRequested() && canAddLayers()) {
       layer->Update(m.layersSpace, predictedPose, XR_NULL_HANDLE);
-      for (uint32_t i = 0; i < layer->HeaderCount(); ++i) {
+      for (uint32_t i = 0; i < layer->HeaderCount() && canAddLayers(); ++i) {
         layers.push_back(layer->Header(i));
       }
       layer->ClearRequestDraw();
     }
+  }
+
+  if (!canAddLayers()) {
+      submitEndFrame();
+      return;
   }
 
   // Add main eye buffer layer
@@ -987,21 +1006,16 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
 
   // Add front UI layers
   for (const OpenXRLayerPtr& layer: m.uiLayers) {
-    if (layer->GetDrawInFront() && layer->IsDrawRequested()) {
+    if (layer->GetDrawInFront() && layer->IsDrawRequested() && canAddLayers()) {
       layer->Update(m.layersSpace, predictedPose, XR_NULL_HANDLE);
-      for (uint32_t i = 0; i < layer->HeaderCount(); ++i) {
+      for (uint32_t i = 0; i < layer->HeaderCount() && canAddLayers(); ++i) {
         layers.push_back(layer->Header(i));
       }
       layer->ClearRequestDraw();
     }
   }
 
-  XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
-  frameEndInfo.displayTime = displayTime;
-  frameEndInfo.environmentBlendMode = XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
-  frameEndInfo.layerCount = (uint32_t )layers.size();
-  frameEndInfo.layers = layers.data();
-  CHECK_XRCMD(xrEndFrame(m.session, &frameEndInfo));
+  submitEndFrame();
 }
 
 VRLayerQuadPtr

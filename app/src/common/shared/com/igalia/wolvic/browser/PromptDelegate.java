@@ -287,6 +287,24 @@ public class PromptDelegate implements
         return result;
     }
 
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onColorPrompt(@NonNull WSession session, @NonNull ColorPrompt prompt) {
+        // TODO implement color picker
+        final WResult<PromptResponse> result = WResult.create();
+        result.cancel();
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
+        // TODO implement date/time picker
+        final WResult<PromptResponse> result = WResult.create();
+        result.cancel();
+        return result;
+    }
+
     private Observer<List<SitePermission>> mPopUpSiteObserver = sites -> {
         mAllowedPopUpSites = sites;
     };
@@ -321,6 +339,15 @@ public class PromptDelegate implements
             }
         }
 
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onSharePrompt(@NonNull WSession session, @NonNull SharePrompt prompt) {
+        // TODO implement share request
+        final WResult<PromptResponse> result = WResult.create();
+        result.cancel();
         return result;
     }
 
@@ -472,6 +499,15 @@ public class PromptDelegate implements
         });
         mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onRepostConfirmPrompt(@NonNull WSession session, @NonNull RepostConfirmPrompt prompt) {
+        // TODO implement POST resubmission confirmation
+        final WResult<PromptResponse> result = WResult.create();
+        result.cancel();
         return result;
     }
 

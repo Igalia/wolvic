@@ -127,7 +127,7 @@ public class UrlUtils {
     }
 
     public static Boolean isBlobUri(@Nullable String aUri) {
-        return aUri != null && aUri.startsWith("blob");
+        return aUri != null && aUri.startsWith("blob:");
     }
 
     public static Boolean isBlankUri(@Nullable Context context, @Nullable String aUri) {

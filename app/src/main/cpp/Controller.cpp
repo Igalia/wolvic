@@ -75,6 +75,8 @@ Controller::operator=(const Controller& aController) {
   squeezeActionStartFrameId = aController.squeezeActionStartFrameId;
   squeezeActionStopFrameId = aController.squeezeActionStopFrameId;
   batteryLevel = aController.batteryLevel;
+  handMeshToggle = aController.handMeshToggle;
+  handJointTransforms = aController.handJointTransforms;
   return *this;
 }
 
@@ -121,6 +123,8 @@ Controller::Reset() {
   squeezeActionStartFrameId = 0;
   squeezeActionStopFrameId = 0;
   batteryLevel = -1;
+  handJointTransforms.clear();
+  handMeshToggle = nullptr;
 }
 
 vrb::Vector Controller::StartPoint() const {
