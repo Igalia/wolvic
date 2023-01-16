@@ -81,6 +81,7 @@ public:
   }
   virtual void StartFrame(const FramePrediction aPrediction = FramePrediction::NO_FRAME_AHEAD) = 0;
   virtual void BindEye(const device::Eye aWhich) = 0;
+  virtual bool ShouldRender() const { return mShouldRender; };
   virtual void EndFrame(const FrameEndMode aMode = FrameEndMode::APPLY) = 0;
   virtual bool IsInGazeMode() const { return false; };
   virtual int32_t GazeModeIndex() const { return -1; };
@@ -104,6 +105,7 @@ protected:
 
   virtual ~DeviceDelegate() {}
 
+  bool mShouldRender { false };
 private:
   VRB_NO_DEFAULTS(DeviceDelegate)
 };

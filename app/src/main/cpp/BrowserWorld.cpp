@@ -64,6 +64,17 @@
 #include "OVR_Platform.h"
 #endif
 
+// TODO: refactor some of the utils of OpenXRHelpers.h to another class as they aren't really
+// OpenXR helpers, but general purpouse utils
+#define STRINGIFY(x) #x
+#define FILE_AND_LINE __FILE__ ":" STRINGIFY(__LINE__)
+#define ASSERT(exp)                         \
+{                                           \
+  if (!(exp)) {                             \
+    throw std::logic_error(FILE_AND_LINE);  \
+  }                                         \
+}
+
 #define ASSERT_ON_RENDER_THREAD(X)                                          \
   if (m.context && !m.context->IsOnRenderThread()) {                        \
     VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
@@ -1559,6 +1570,9 @@ BrowserWorld::TickWorld() {
 
   m.SortWidgets();
   m.device->StartFrame();
+  if (!m.device->ShouldRender())
+    return;
+
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
   m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw));
   if (m.rootEnvironment) {
@@ -1575,6 +1589,7 @@ BrowserWorld::TickWorld() {
 
 void
 BrowserWorld::DrawWorld(device::Eye aEye) {
+  ASSERT(m.device->ShouldRender());
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
 
@@ -1656,6 +1671,9 @@ BrowserWorld::TickImmersive() {
       m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(),
               m.context->GetTimestamp());
   }
+  // DeviceDelegate::StartFrame() might have failed and then we should discard the frame.
+  aDiscardFrame = aDiscardFrame && !m.device->ShouldRender();
+
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
       if (textureWidth > 0 && textureHeight > 0) {
@@ -1689,12 +1707,15 @@ BrowserWorld::TickImmersive() {
 
 void
 BrowserWorld::DrawImmersive(device::Eye aEye) {
+  ASSERT(m.device->ShouldRender());
   m.device->BindEye(aEye);
   m.blitter->Draw(aEye);
 }
 
 void
 BrowserWorld::TickWebXRInterstitial() {
+  if (!m.device->ShouldRender())
+    return;
   m.rootWebXRInterstitial->SetTransform(m.device->GetReorientTransform());
   m.drawHandler = [=](device::Eye eye) {
       DrawWebXRInterstitial(eye);
@@ -1703,6 +1724,7 @@ BrowserWorld::TickWebXRInterstitial() {
 
 void
 BrowserWorld::DrawWebXRInterstitial(crow::device::Eye aEye) {
+  ASSERT(m.device->ShouldRender());
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
@@ -1718,6 +1740,9 @@ BrowserWorld::TickSplashAnimation() {
     return;
   }
   m.device->StartFrame();
+  if (!m.device->ShouldRender())
+    return;
+
   const bool animationFinished = m.splashAnimation->Update(m.device->GetHeadTransform());
   m.drawHandler = [=](device::Eye aEye) {
     DrawSplashAnimation(aEye);
@@ -1738,6 +1763,7 @@ BrowserWorld::TickSplashAnimation() {
 
 void
 BrowserWorld::DrawSplashAnimation(device::Eye aEye) {
+  ASSERT(m.device->ShouldRender());
   m.drawList->Reset();
   m.splashAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
 
