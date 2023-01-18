@@ -1,5 +1,6 @@
 #include "OpenXRInputSource.h"
 #include "OpenXRExtensions.h"
+#include <assert.h>
 #include <unordered_set>
 
 namespace crow {
