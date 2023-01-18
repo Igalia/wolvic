@@ -254,6 +254,11 @@ FileDoesNotExist (const std::string& aName) {
 std::string
 Skybox::ValidateCustomSkyboxAndFindFileExtension(const std::string& aBasePath) {
   for (const std::string& ext: sFileExt) {
+#if defined(PICOXR)
+     // FIXME: Pico does not support compressed textures yet.
+     if (ext == ".ktx")
+       continue;
+#endif
      int32_t fileCount = 0;
      for (const std::string& baseName: sBaseNameList) {
        const std::string file = aBasePath + "/" + baseName + ext;
