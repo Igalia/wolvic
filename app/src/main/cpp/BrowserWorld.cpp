@@ -1787,14 +1787,19 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     }
     return;
   }
+#if PICOXR
+  // Pico's OpenXR runtime does not support compressed textures at the moment. Use PNGs in the
+  // meantime.
+  const std::string extension = aExtension.empty() ? ".png" : aExtension;
+  GLenum glFormat = GL_SRGB8_ALPHA8;
+#else
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   GLenum glFormat = GL_RGBA8;
+#endif
+
   if (extension == ".ktx") {
 #if defined(OPENXR) && defined(OCULUSVR)
     glFormat =  GL_COMPRESSED_SRGB8_ETC2;
-#elif defined(PICOXR)
-    // FIXME: Pico does not support compressed textures yet.
-    glFormat = GL_RGBA8;
 #else
     glFormat =  GL_COMPRESSED_RGB8_ETC2;
 #endif
