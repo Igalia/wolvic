@@ -215,7 +215,7 @@ public class DownloadsManager {
 
         mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
                 true, UrlUtils.getMimeTypeFromUrl(file.getPath()), file.getPath(), readBytes, true,
-                Uri.parse(job.getUri()), null);
+                Uri.parse(job.getUri().replaceFirst("^blob:","")), null);
     }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {
