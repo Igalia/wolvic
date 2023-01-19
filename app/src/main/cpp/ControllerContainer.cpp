@@ -209,14 +209,18 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
         RenderStatePtr state = RenderState::Create(create);
         state->SetProgram(program);
-        vrb::Color handColor = vrb::Color(0.0f, 0.50f, 0.0f);
+        vrb::Color handColor = vrb::Color(0.5f, 0.5f, 0.5f);
         handColor.SetAlpha(1.0);
         state->SetMaterial(handColor, handColor,
                            Color(0.0f, 0.0f, 0.0f),
                            0.0f);
         state->SetLightsEnabled(false);
 
-        GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, 1.0);
+        float radius = 0.75;
+#if defined(PICOXR)
+        radius = 0.65;
+#endif
+        GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
         sphere->SetRenderState(state);
 
         for (uint32_t i = 0; i < jointTransforms.size(); i++) {
