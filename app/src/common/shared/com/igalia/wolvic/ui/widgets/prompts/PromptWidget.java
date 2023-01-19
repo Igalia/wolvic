@@ -75,8 +75,6 @@ public class PromptWidget extends UIDialog {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
     }
 
-
-
     @Override
     public void show(@ShowFlags int aShowFlags) {
         mLayout.measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),

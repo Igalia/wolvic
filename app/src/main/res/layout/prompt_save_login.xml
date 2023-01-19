@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="androidx.appcompat.widget.AppCompatToggleButton" />
-
         <variable
             name="login"
             type="mozilla.components.concept.storage.Login" />
