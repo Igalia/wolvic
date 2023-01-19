@@ -195,7 +195,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         return;
 
     Controller &controller = m.list[aControllerIndex];
-    if (!controller.beamParent)
+    if (!m.root)
         return;
 
     // Initialize hand joints if needed
@@ -204,7 +204,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
 
         CreationContextPtr create = m.context.lock();
         controller.handMeshToggle = Toggle::Create(create);
-        controller.beamParent->AddNode(controller.handMeshToggle);
+        m.root->AddNode(controller.handMeshToggle);
 
         ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
         RenderStatePtr state = RenderState::Create(create);
@@ -651,6 +651,7 @@ ControllerContainer::SetVisible(const bool aVisible) {
     for (int i = 0; i < m.list.size(); ++i) {
       if (m.list[i].enabled) {
         m.root->ToggleChild(*m.list[i].transform, true);
+        m.root->ToggleChild(*m.list[i].handMeshToggle, true);
       }
     }
   } else {
