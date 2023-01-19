@@ -38,11 +38,13 @@ struct VRVideo::State {
   vrb::TogglePtr rightEye;
   VRLayerPtr layer;
   device::EyeRect layerTextureBackup[2];
+  bool mUseSameLayerForBothEyesBackup;
   float mWorldWidthBackup;
   float mWorlHeightBackup;
   State()
     : mWorldWidthBackup(0)
     , mWorlHeightBackup(0)
+    , mUseSameLayerForBothEyesBackup(true)
   {
   }
 
@@ -97,9 +99,13 @@ struct VRVideo::State {
   void updateProjectionLayer() {
     switch (projection) {
       case VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE:
+#if defined(OCULUSVR) && !defined(OPENXR)
         window->GetLayer()->SetWorldSize(mWorldWidthBackup * 2.0f, mWorlHeightBackup);
         leftEye = createQuadProjectionLayer(device::Eye::Left, device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f));
         rightEye = createQuadProjectionLayer(device::Eye::Right, device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+#else
+        leftEye = createQuadProjectionLayer(device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f), device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+#endif
         break;
       case VRVideoProjection::VIDEO_PROJECTION_360:
         create360ProjectionLayer();
@@ -287,6 +293,7 @@ struct VRVideo::State {
     rightEye = create180LayerToggle(equirect);
   }
 
+#if defined(OCULUSVR) && !defined(OPENXR)
   vrb::TogglePtr createQuadProjectionLayer(device::Eye aEye, const device::EyeRect& aUVRect) {
     vrb::CreationContextPtr create = context.lock();
     VRLayerSurfacePtr windowLayer = window->GetLayer();
@@ -305,6 +312,25 @@ struct VRVideo::State {
 
     return result;
   }
+#else
+  vrb::TogglePtr createQuadProjectionLayer(const device::EyeRect& aLeftUVRect, const device::EyeRect& aRightUVRect) {
+    vrb::CreationContextPtr create = context.lock();
+    VRLayerSurfacePtr windowLayer = window->GetLayer();
+    windowLayer->SetTextureRect(device::Eye::Left, aLeftUVRect);
+    windowLayer->SetTextureRect(device::Eye::Right, aRightUVRect);
+    mUseSameLayerForBothEyesBackup = windowLayer->GetUseSameLayerForBothEyes();
+    windowLayer->SetUseSameLayerForBothEyes(false);
+    layer = windowLayer;
+
+    vrb::TransformPtr transform = vrb::Transform::Create(create);
+    transform->SetTransform(window->GetTransform());
+    transform->AddNode(VRLayerNode::Create(create, layer));
+    vrb::TogglePtr result = vrb::Toggle::Create(create);
+    result->AddNode(transform);
+
+    return result;
+  }
+#endif
 
   vrb::TogglePtr createQuadProjection(device::EyeRect aUVRect) {
     vrb::CreationContextPtr create = context.lock();
@@ -355,6 +381,7 @@ VRVideo::Exit() {
     windowLayer->SetTextureRect(device::Eye::Left, m.layerTextureBackup[0]);
     windowLayer->SetTextureRect(device::Eye::Right, m.layerTextureBackup[1]);
     windowLayer->SetWorldSize(m.mWorldWidthBackup, m.mWorlHeightBackup);
+    windowLayer->SetUseSameLayerForBothEyes(m.mUseSameLayerForBothEyesBackup);
   }
   if (m.layer && m.layer != windowLayer) {
     DeviceDelegatePtr device = m.deviceWeak.lock();
