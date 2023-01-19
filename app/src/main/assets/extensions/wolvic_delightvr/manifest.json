@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Reality Delight-VR WebCompat Enhancements",
+  "version": "1.0",
+  "description": "Fixes web-site compatibility quirks for Delight-VR video player when using Firefox Reality. See https://delight-vr.com/documentation/getting-started/#embed for example.",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
