@@ -9,6 +9,11 @@ namespace crow {
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
 
+// Distance threshold to consider that two hand joints touch
+// Used to detect pinch events between thumb-tip joint and the
+// rest of the finger tips.
+const float kPinchThreshold = 0.015;
+
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -511,6 +516,17 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     return mHasHandJoints && mHasAimState;
 }
 
+float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB)
+{
+    XrVector3f jointAPosXr = mHandJoints[jointA].pose.position;
+    vrb::Vector jointAPos = vrb::Vector(jointAPosXr.x, jointAPosXr.y, jointAPosXr.z);
+
+    XrVector3f jointBPosXr = mHandJoints[jointB].pose.position;
+    vrb::Vector jointBPos = vrb::Vector(jointBPosXr.x, jointBPosXr.y, jointBPosXr.z);
+
+    return vrb::Vector(jointAPos - jointBPos).Magnitude();
+}
+
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate)
 {
     if ((mAimState.status & XR_HAND_TRACKING_AIM_SYSTEM_GESTURE_BIT_FB) != 0) {
@@ -545,7 +561,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetCapabilityFlags(mIndex, flags);
 
     // Select action
-    bool indexPinching = (mAimState.status & XR_HAND_TRACKING_AIM_INDEX_PINCHING_BIT_FB) != 0;
+    bool indexPinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                  XR_HAND_JOINT_INDEX_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, indexPinching,
                             indexPinching, 1.0);
@@ -560,7 +577,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // Squeeze action
-    bool middlePinching = (mAimState.status & XR_HAND_TRACKING_AIM_MIDDLE_PINCHING_BIT_FB) != 0;
+    bool middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                  XR_HAND_JOINT_MIDDLE_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_SQUEEZE,
                             device::kImmersiveButtonSqueeze, middlePinching,
                             middlePinching, 1.0);
@@ -575,7 +593,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // Menu button
-    bool ringPinching = (mAimState.status & XR_HAND_TRACKING_AIM_RING_PINCHING_BIT_FB) != 0;
+    bool ringPinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                 XR_HAND_JOINT_RING_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, ringPinching,
                             ringPinching, 1.0);
 

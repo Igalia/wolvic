@@ -59,6 +59,7 @@ private:
     XrResult stopHapticFeedback(XrAction) const;
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(const XrFrameState&, XrSpace);
+    float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
