@@ -30,11 +30,12 @@ try {
     active: utils.GET.mozfxrpatch !== '0'
   };
 
-  // Note: By appending such a value as " BlackBerry" to `navigator.userAgent`, we trick the Delight-VR
-  // player's JavaScript code into detecting FxR as a phone instead of incorrectly as an "UnknownTablet".
+  // Initially FxR used to trick DelightVR filtering by pretending to be a phone by appending
+  // Blackberry to the UA. That however does not provide the proper VR video format. We can achieve
+  // the same now by pretending to be the OculusBrowser
   // See https://github.com/MozillaReality/FirefoxReality/issues/1212 for context.
   if (prefs.active) {
-    prefs.customUserAgent = utils.getEscapedStr(prefs.customUserAgent || `${navigator.userAgent} BlackBerry`);
+    prefs.customUserAgent = utils.getEscapedStr(prefs.customUserAgent || `${navigator.userAgent} OculusBrowser/24.4.0.22.60.426469926 VR`);
   }
 
   const log = (...args) => prefs.log && console.log(LOGTAG, ...args);
