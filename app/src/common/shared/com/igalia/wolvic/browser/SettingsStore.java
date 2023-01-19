@@ -458,7 +458,7 @@ public class SettingsStore {
     }
 
     public boolean getLayersEnabled() {
-        if (DeviceType.isOculusBuild() && !mDisableLayers) {
+        if ((DeviceType.isOculusBuild() || DeviceType.isPicoXR()) && !mDisableLayers) {
             Log.i(LOGTAG, "Layers are enabled");
             return true;
         }
@@ -763,7 +763,7 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public @Storage int getDownloadsSortingOrder() {
+    public @SortingContextMenuWidget.Order int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
     }
 

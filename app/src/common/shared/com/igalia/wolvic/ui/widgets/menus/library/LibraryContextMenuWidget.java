@@ -12,9 +12,13 @@ import com.igalia.wolvic.ui.widgets.menus.MenuWidget;
 import com.igalia.wolvic.utils.AnimationHelper;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Optional;
 
 public abstract class LibraryContextMenuWidget extends MenuWidget {
+
+    // Additional actions that may appear in the menu, depending on different conditions.
+    protected enum Action {OPEN_WINDOW, IS_BOOKMARKED, CAN_COPY}
 
     public static class LibraryContextMenuItem {
 
@@ -41,12 +45,12 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
     Optional<LibraryContextMenuCallback> mItemDelegate;
     LibraryContextMenuItem mItem;
 
-    public LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, boolean canOpenWindows, boolean isBookmarked) {
+    protected LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, EnumSet<Action> additionalActions) {
         super(aContext, R.layout.library_menu);
         initialize();
 
         mItem = item;
-        createMenuItems(canOpenWindows, isBookmarked);
+        createMenuItems(additionalActions);
     }
 
     private void initialize() {
@@ -100,10 +104,10 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
         mItemDelegate = Optional.ofNullable(delegate);;
     }
 
-    private void createMenuItems(boolean canOpenWindows, boolean isBookmarked) {
+    private void createMenuItems(@NonNull EnumSet<Action> additionalActions) {
         mItems = new ArrayList<>();
 
-        if (canOpenWindows) {
+        if (additionalActions.contains(Action.OPEN_WINDOW)) {
             mItems.add(new MenuItem(getContext().getString(
                     R.string.history_context_menu_new_window),
                     R.drawable.ic_icon_library_new_window,
@@ -115,7 +119,7 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
                 R.drawable.ic_icon_newtab,
                 () -> mItemDelegate.ifPresent((present -> mItemDelegate.get().onOpenInNewTabClick(mItem)))));
 
-        setupCustomMenuItems(canOpenWindows, isBookmarked);
+        setupCustomMenuItems(additionalActions);
 
         super.updateMenuItems(mItems);
 
@@ -123,6 +127,7 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
         mWidgetPlacement.height += mBorderWidth * 2;
     }
 
-    protected void setupCustomMenuItems(boolean canOpenWindows, boolean isBookmarked) {}
+    protected void setupCustomMenuItems(EnumSet<Action> additionalActions) {
+    }
 
 }

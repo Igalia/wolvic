@@ -327,6 +327,7 @@
     <string name="history_context_add_bookmarks">Engadir aos marcadores</string>
     <string name="history_context_remove_bookmarks">Eliminar dos marcadores</string>
     <string name="download_context_delete">Borrar</string>
+    <string name="download_context_copy_to_content_uri">Compartir con outras aplicacións</string>
     <string name="display_options_reset">Restablecer configuración de display</string>
     <string name="privacy_options_reset">Restablecer configuración de privacidade e seguridade</string>
     <string name="privacy_options_saved_logins_list_header">Inicios de sesión gardados:</string>
@@ -471,6 +472,13 @@
     <string name="download_status_paused">Pausada</string>
     <string name="download_status_unavailable">Non dispoñible</string>
     <string name="download_status_unknown_error">Erro descoñecido</string>
+    <string name="download_copy_to_content_uri_confirm_title">¿Copiar arquivo?</string>
+    <string name="download_copy_to_content_uri_confirm_body">Crearase unha copia do arquivo na carpeta de Descargas del sistema, onde poderá ser utilizada por outras aplicacións.\n\nDesexas continuar?</string>
+    <string name="download_copy_to_content_uri_success_title">Ficheiro copiado</string>
+    <string name="download_copy_to_content_uri_success_body">O ficheiro copiouse con éxito e está dispoñible nas Descargas do sistema.</string>
+    <string name="download_copy_to_content_uri_error_title">Erro durante a copia</string>
+    <string name="download_copy_to_content_uri_error_body">Produciuse un erro mentras se copiaba o arquivo.</string>
+    <string name="download_copy_to_content_uri_error_body_v1">Produciuse un erro mentras se copiaba %1$s</string>
     <string name="environment_download_permission_error_body">É necesario ter permiso de escritura no almacenamento externo para descargar a contorna.</string>
     <string name="environment_error_title">Erro na contorna</string>
     <string name="autofill_dialog_save_title">Gardar este inicio de sesión\?</string>

@@ -854,6 +854,7 @@ HandToString(ElbowModel::HandEnum hand) {
 
 void
 DeviceDelegateWaveVR::StartFrame(const FramePrediction aPrediction) {
+  mShouldRender = false;
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   if (!m.lastSubmitDiscarded) {
     m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
@@ -948,6 +949,7 @@ DeviceDelegateWaveVR::StartFrame(const FramePrediction aPrediction) {
       }
     }
   }
+  mShouldRender = true;
 }
 
 void

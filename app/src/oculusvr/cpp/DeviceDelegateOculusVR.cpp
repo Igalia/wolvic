@@ -904,6 +904,7 @@ DeviceDelegateOculusVR::SupportsFramePrediction(FramePrediction aPrediction) con
 
 void
 DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
+  mShouldRender = false;
   if (!m.ovr) {
     VRB_LOG("StartFrame called while not in VR mode");
     return;
@@ -972,6 +973,7 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
   }
 
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  mShouldRender = true;
 }
 
 void
