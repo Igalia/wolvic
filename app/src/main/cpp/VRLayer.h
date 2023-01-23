@@ -51,6 +51,7 @@ public:
   bool GetDrawInFront() const;
   std::string GetName() const;
   bool IsComposited() const;
+  bool GetUseSameLayerForBothEyes() const;
 
   bool ShouldDrawBefore(const VRLayer& aLayer);
   void SetInitialized(bool aInitialized);
@@ -67,6 +68,7 @@ public:
   void SetDrawInFront(bool aDrawInFront);
   void SetName(const std::string& aName);
   void SetComposited(bool aComposited);
+  void SetUseSameLayerForBothEyes(bool aUseSame);
   void NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback);
 protected:
   struct State;
