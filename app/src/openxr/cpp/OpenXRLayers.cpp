@@ -36,7 +36,8 @@ void
 OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerQuadPtr, XrCompositionLayerQuad>::Update(aSpace, aPose, aClearSwapChain);
 
-  for (int i = 0; i < xrLayers.size(); ++i) {
+  const uint numXRLayers = GetNumXRLayers();
+  for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
 #if PICOXR
     // Seems like Pico does not properly use the layerSpace.
@@ -76,7 +77,8 @@ void
 OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerSurface<VRLayerCylinderPtr, XrCompositionLayerCylinderKHR>::Update(aSpace, aPose, aClearSwapChain);
 
-  for (int i = 0; i < xrLayers.size(); ++i) {
+  const uint numXRLayers = GetNumXRLayers();
+  for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
 
     auto scale = layer->GetModelTransform(eye).GetScale();
@@ -154,11 +156,12 @@ void
 OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
   OpenXRLayerBase<VRLayerCubePtr, XrCompositionLayerCubeKHR>::Update(aSpace, aPose, aClearSwapChain);
 
-  for (auto& xrLayer: xrLayers) {
-    xrLayer.layerFlags = 0;
-    xrLayer.swapchain = swapchain->SwapChain();
-    xrLayer.imageArrayIndex = 0;
-    xrLayer.orientation = XrQuaternionf {0.0f, 0.0f, 0.0f, 1.0f};
+  const uint numXRLayers = GetNumXRLayers();
+  for (uint i = 0; i < numXRLayers; ++i) {
+    xrLayers[i].layerFlags = 0;
+    xrLayers[i].swapchain = swapchain->SwapChain();
+    xrLayers[i].imageArrayIndex = 0;
+    xrLayers[i].orientation = XrQuaternionf {0.0f, 0.0f, 0.0f, 1.0f};
   }
 }
 
@@ -206,7 +209,8 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
   }
   OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Update(aSpace, aPose, aClearSwapChain);
 
-  for (int i = 0; i < xrLayers.size(); ++i) {
+  const uint numXRLayers = GetNumXRLayers();
+  for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     // Map video orientation
     vrb::Matrix transform = XrPoseToMatrix(aPose).PostMultiply(layer->GetModelTransform(eye));

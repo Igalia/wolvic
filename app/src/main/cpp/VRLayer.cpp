@@ -30,6 +30,7 @@ struct VRLayer::State {
   std::function<void()> pendingEvent;
   std::string name;
   bool composited;
+  bool useSameLayerForBothEyes;
   State():
       initialized(false),
       priority(0),
@@ -39,7 +40,8 @@ struct VRLayer::State {
       composited(false),
       currentEye(device::Eye::Left),
       clearColor(0),
-      tintColor(1.0f, 1.0f, 1.0f, 1.0f)
+      tintColor(1.0f, 1.0f, 1.0f, 1.0f),
+      useSameLayerForBothEyes(true)
   {
     for (int i = 0; i < 2; ++i) {
       modelTransform[i] = vrb::Matrix::Identity();
@@ -113,6 +115,10 @@ VRLayer::GetName() const {
 
 bool VRLayer::IsComposited() const {
   return m.composited;
+}
+
+bool VRLayer::GetUseSameLayerForBothEyes() const {
+  return m.useSameLayerForBothEyes;
 }
 
 bool
@@ -212,6 +218,11 @@ VRLayer::SetName(const std::string &aName) {
 void
 VRLayer::SetComposited(bool aComposited) {
   m.composited = aComposited;
+}
+
+void
+VRLayer::SetUseSameLayerForBothEyes(bool aUseSame) {
+  m.useSameLayerForBothEyes = aUseSame;
 }
 
 void VRLayer::NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback) {

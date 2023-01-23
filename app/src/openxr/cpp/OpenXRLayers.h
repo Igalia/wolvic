@@ -83,9 +83,15 @@ public:
 
   virtual void
   Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override {
-    for (int i = 0; i < xrLayers.size(); ++i) {
+    const uint numXRLayers = GetNumXRLayers();
+    auto getEyeVisibility = [numXRLayers](uint i) {
+        if (numXRLayers == 1)
+          return XR_EYE_VISIBILITY_BOTH;
+        return i == 0 ? XR_EYE_VISIBILITY_LEFT : XR_EYE_VISIBILITY_RIGHT;
+    };
+    for (uint i = 0; i < numXRLayers; ++i) {
       xrLayers[i].layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-      xrLayers[i].eyeVisibility = XR_EYE_VISIBILITY_BOTH;
+      xrLayers[i].eyeVisibility = getEyeVisibility(i);
       xrLayers[i].space = aSpace;
       xrLayers[i].next = GetNextStructureInChain();
     }
@@ -95,6 +101,9 @@ public:
     return swapchain;
   }
 
+  // This method is meant to be used from the outside after properly initializing the layers.
+  // DO NOT use it internally, intead use GetNumXRLayers() which retrieves the information from
+  // the VRLayer.
   uint32_t HeaderCount() const override {
     // The first layer is used for both eyes by default.
     // Layers can override this behavior to support different settings per eye.
@@ -198,6 +207,10 @@ protected:
     }
 
     return info;
+  }
+
+  uint GetNumXRLayers() const {
+    return layer->GetUseSameLayerForBothEyes() ? 1 : xrLayers.size();
   }
 
 protected:
