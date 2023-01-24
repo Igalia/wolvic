@@ -191,6 +191,34 @@ namespace crow {
             },
     };
 
+    // Meta Quest Touch Pro: https://github.com/immersive-web/webxr-input-profiles/blob/main/packages/registry/profiles/meta/meta-quest-touch-pro.json
+    const OpenXRInputMapping MetaQuestTouchPro {
+            "/interaction_profiles/oculus/touch_controller",
+            "Meta Quest Pro",
+            IS_6DOF,
+            "vr_controller_metaquestpro_left.obj",
+            "vr_controller_metaquestpro_right.obj",
+            device::OculusQuest2,
+            std::vector<OpenXRInputProfile> { "meta-quest-touch-pro", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Thumbrest, kPathThumbrest, OpenXRButtonFlags::Touch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Menu, kPathMenu, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
     const OpenXRInputMapping Pico4 {
             "/interaction_profiles/pico/neo3_controller",
@@ -290,8 +318,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 6> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, Pico4, Hvr6DOF, Hvr3DOF, KHRSimple
+    const std::array<OpenXRInputMapping, 7> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Hvr6DOF, Hvr3DOF, KHRSimple
     };
 
 } // namespace crow
