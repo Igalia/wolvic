@@ -9,6 +9,11 @@ namespace crow {
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
 
+// Distance threshold to consider that two hand joints touch
+// Used to detect pinch events between thumb-tip joint and the
+// rest of the finger tips.
+const float kPinchThreshold = 0.015;
+
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -486,8 +491,12 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         return false;
 
     // @FIXME: We currently require XR_FB_hand_tracking_aim to show beam and pointer target
+    // Pico4 device doesn't advertise XR_FB_hand_tracking_aim but it still works and is
+    // needed to correctly position beam and pointer target.
+#if !defined(PICOXR)
     if (!OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME))
         return false;
+#endif
 
     mHasHandJoints = false;
 
@@ -511,6 +520,17 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     return mHasHandJoints && mHasAimState;
 }
 
+float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB)
+{
+    XrVector3f jointAPosXr = mHandJoints[jointA].pose.position;
+    vrb::Vector jointAPos = vrb::Vector(jointAPosXr.x, jointAPosXr.y, jointAPosXr.z);
+
+    XrVector3f jointBPosXr = mHandJoints[jointB].pose.position;
+    vrb::Vector jointBPos = vrb::Vector(jointBPosXr.x, jointBPosXr.y, jointBPosXr.z);
+
+    return vrb::Vector(jointAPos - jointBPos).Magnitude();
+}
+
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate)
 {
     if ((mAimState.status & XR_HAND_TRACKING_AIM_SYSTEM_GESTURE_BIT_FB) != 0) {
@@ -521,31 +541,61 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetEnabled(mIndex, true);
     delegate.SetModelVisible(mIndex, false);
 
-    XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
-    poseLocation.pose = mAimState.aimPose;
+    // Prepare and submit hand joint locations data for rendering
+    assert(mHasHandJoints);
+    std::vector<vrb::Matrix> jointTransforms;
+    jointTransforms.resize(mHandJoints.size());
+    for (int i = 0; i < mHandJoints.size(); i++) {
+        vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
+        if (mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+            float radius = mHandJoints[i].radius;
+            vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(radius, radius, radius));
+            transform.PostMultiplyInPlace(scale);
 
-    vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
-    if (renderMode == device::RenderMode::StandAlone)
-        pointerTransform.TranslateInPlace(kAverageHeight);
+            if (renderMode == device::RenderMode::StandAlone)
+                transform.TranslateInPlace(kAverageHeight);
+        } else {
+            // This effectively hides the joint.
+            transform.ScaleInPlace(vrb::Vector(0.0f, 0.0f, 0.0f));
+        }
 
-    // On Quest devices, hand pose returned by XR_FB_hand_tracking_aim appears rotated
-    // on the Z-axis relative to the corresponding pose of the controllers, and the
-    // rotation is different for each hand. So here correct the pose by an angle that
-    // was obtained empirically for each hand.
+        memcpy(&jointTransforms[i], &transform, sizeof(vrb::Matrix));
+    }
+    delegate.SetHandJointLocations(mIndex, jointTransforms);
+    delegate.SetHandVisible(mIndex, true);
+
+    // Resolve beam and pointer transform
+    vrb::Matrix pointerTransform = XrPoseToMatrix(mAimState.aimPose);
+
+    // Both on Quest and Pico4 devices, hand pose returned by XR_FB_hand_tracking_aim appears
+    // rotated relative to the corresponding pose of the controllers, and the rotation is
+    // different for each hand in the case of Quest. So here correct the transformation matrix
+    // by an angle that was obtained empirically.
+#if defined(OCULUSVR)
     float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3/2;
     auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
                                                   correctionAngle);
-    vrb::Matrix correctedTransform = pointerTransform.PostMultiply(correctionMatrix);
+    pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+#elif defined(PICOXR)
+    float correctionAngle = -M_PI_2;
+    pointerTransform
+        .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)
+        .PostMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0), correctionAngle)));
+#endif
 
-    delegate.SetTransform(mIndex, correctedTransform);
-    delegate.SetImmersiveBeamTransform(mIndex, correctedTransform);
+    if (renderMode == device::RenderMode::StandAlone)
+        pointerTransform.TranslateInPlace(kAverageHeight);
+
+    delegate.SetTransform(mIndex, pointerTransform);
+    delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
     delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
 
     device::CapabilityFlags flags = device::Orientation | device::Position | device::GripSpacePosition;
     delegate.SetCapabilityFlags(mIndex, flags);
 
     // Select action
-    bool indexPinching = (mAimState.status & XR_HAND_TRACKING_AIM_INDEX_PINCHING_BIT_FB) != 0;
+    bool indexPinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                  XR_HAND_JOINT_INDEX_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, indexPinching,
                             indexPinching, 1.0);
@@ -560,7 +610,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // Squeeze action
-    bool middlePinching = (mAimState.status & XR_HAND_TRACKING_AIM_MIDDLE_PINCHING_BIT_FB) != 0;
+    bool middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                  XR_HAND_JOINT_MIDDLE_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_SQUEEZE,
                             device::kImmersiveButtonSqueeze, middlePinching,
                             middlePinching, 1.0);
@@ -575,43 +626,10 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // Menu button
-    bool ringPinching = (mAimState.status & XR_HAND_TRACKING_AIM_RING_PINCHING_BIT_FB) != 0;
+    bool ringPinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                 XR_HAND_JOINT_RING_TIP_EXT) < kPinchThreshold;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, ringPinching,
                             ringPinching, 1.0);
-
-    // Prepare and submit hand joint locations data for rendering
-    assert(mHasHandJoints);
-    std::vector<vrb::Matrix> jointTransforms;
-    jointTransforms.resize(mHandJoints.size());
-#if defined(OCULUSVR)
-    const vrb::Vector handPosition{
-            -mAimState.aimPose.position.x,
-            -mAimState.aimPose.position.y,
-            -mAimState.aimPose.position.z,
-    };
-#endif
-    for (int i = 0; i < mHandJoints.size(); i++) {
-        vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
-        if (mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
-#if defined(OCULUSVR)
-            // On Quest devices we need to apply a correction to the joint location
-            // based on the position from the aim pose, otherwise the hand joints
-            // end up shifted from where the hand actually is. This is likely a bug
-            // in the SDK.
-            transform.TranslateInPlace(handPosition);
-#endif
-            float radius = mHandJoints[i].radius;
-            vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(radius, radius, radius));
-            transform.PostMultiplyInPlace(scale);
-        } else {
-            // This effectively hides the joint.
-            transform.ScaleInPlace(vrb::Vector(0.0f, 0.0f, 0.0f));
-        }
-
-        memcpy(&jointTransforms[i], &transform, sizeof(vrb::Matrix));
-    }
-    delegate.SetHandJointLocations(mIndex, jointTransforms);
-    delegate.SetHandVisible(mIndex, true);
 }
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, float offsetY, device::RenderMode renderMode, ControllerDelegate& delegate)
@@ -644,6 +662,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         return;
     }
 
+    delegate.SetHandVisible(mIndex, false);
+
     // Pose transforms.
     bool isPoseActive { false };
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
@@ -662,7 +682,6 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     delegate.SetEnabled(mIndex, true);
     delegate.SetModelVisible(mIndex, true);
-    delegate.SetHandVisible(mIndex, false);
 
     device::CapabilityFlags flags = device::Orientation;
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);

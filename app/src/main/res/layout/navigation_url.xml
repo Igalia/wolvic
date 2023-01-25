@@ -242,7 +242,7 @@
                     android:tint="@color/fog"
                     android:tooltipText="@string/hamburger_menu_save_web_app"
                     app:privateMode="@{viewmodel.isPrivateSession}"
-                    app:visibleGone="@{viewmodel.isWebApp &amp;&amp; !viewmodel.isFocused}" />
+                    app:visibleGone="@{viewmodel.isWebApp &amp;&amp; !(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}" />
 
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/bookmarkButton"

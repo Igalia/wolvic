@@ -114,9 +114,12 @@ class WebExtensionControllerImpl implements WWebExtensionController {
     @NonNull
     @Override
     public WResult<List<WebExtension>> list() {
-        return new ResultImpl<>(mController.list().map(list -> list.stream()
-                .map(ext -> new GeckoWebExtension(ext, mRuntime))
-                .collect(Collectors.toList())));
+        return new ResultImpl<>(mController.list().map(list -> (list != null) ?
+                list.stream()
+                        .filter(ext -> ext != null && ext.id != null)
+                        .map(ext -> new GeckoWebExtension(ext, mRuntime))
+                        .collect(Collectors.toList())
+                : null));
     }
 
     @NonNull
@@ -135,6 +138,8 @@ class WebExtensionControllerImpl implements WWebExtensionController {
     }
 
     private WResult<WebExtension> map(GeckoResult<org.mozilla.geckoview.WebExtension> ext) {
-        return new ResultImpl<>(ext.map(value -> new GeckoWebExtension(value, mRuntime)));
+        return new ResultImpl<>(ext.map(value ->
+                (value != null) ? new GeckoWebExtension(value, mRuntime) : null)
+        );
     }
 }

@@ -208,8 +208,10 @@ class WolvicWebExtensionRuntime(
             onError: (Throwable) -> Unit
     ) {
         runtime.webExtensionController.enable(extension, source.id).then({
-            webExtensionDelegate?.onEnabled(extension)
-            onSuccess(extension)
+            if (it != null) {
+                webExtensionDelegate?.onEnabled(it)
+                onSuccess(it)
+            }
             WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
@@ -227,8 +229,10 @@ class WolvicWebExtensionRuntime(
             onError: (Throwable) -> Unit
     ) {
         runtime.webExtensionController.disable(extension, source.id).then({
-            webExtensionDelegate?.onDisabled(extension)
-            onSuccess(extension)
+            if (it != null) {
+                webExtensionDelegate?.onDisabled(it)
+                onSuccess(it)
+            }
             WResult.create<Void>()
         }, { throwable ->
             onError(throwable)
