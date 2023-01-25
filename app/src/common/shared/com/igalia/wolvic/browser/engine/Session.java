@@ -53,9 +53,6 @@ import com.igalia.wolvic.utils.InternalPages;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -1363,20 +1360,12 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     @Override
-    public void onWebAppManifest(@NonNull WSession aSession, @NonNull JSONObject manifest) {
+    public void onWebAppManifest(@NonNull WSession aSession, @NonNull WebApp webAppManifest) {
         if (mState.mSession == aSession) {
-            try {
-                mState.mWebAppManifest = new WebApp(manifest);
-                Log.d(LOGTAG, "onWebAppManifest: received Web app manifest from " + mState.mUri);
-            } catch (IOException e) {
-                Log.w(LOGTAG, "onWebAppManifest: malformed Web app manifest: " + e.getMessage());
-                mState.mWebAppManifest = null;
-            }
-
-            // TODO update the stored manifest??
-
+            mState.mWebAppManifest = webAppManifest;
+            Log.d(LOGTAG, "onWebAppManifest: received Web app manifest from " + mState.mUri);
             for (WSession.ContentDelegate listener : mContentListeners) {
-                listener.onWebAppManifest(aSession, manifest);
+                listener.onWebAppManifest(aSession, webAppManifest);
             }
         }
     }
