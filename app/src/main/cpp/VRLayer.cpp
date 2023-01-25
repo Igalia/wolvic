@@ -335,7 +335,7 @@ VRLayerSurface::VRLayerSurface(State& aState, LayerType aLayerType): VRLayer(aSt
 }
 
 VRLayerSurface::~VRLayerSurface() {
-  if (m.surface) {
+  if (m.surface && VRBrowser::Env()) {
     VRBrowser::Env()->DeleteGlobalRef(m.surface);
   }
 }
