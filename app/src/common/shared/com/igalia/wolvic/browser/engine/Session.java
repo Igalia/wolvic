@@ -1140,7 +1140,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (aSession == mState.mSession) {
             String userAgentOverride = sUserAgentOverride.lookupOverride(uri);
 
-            Log.e(LOGTAG, "checking override: " + uri);
+            Log.d(LOGTAG, "User-Agent override: " + userAgentOverride);
 
             // Update the User-Agent according to the current settings, unless we are
             // in Desktop mode (which sets its own user agent). These settings define:
