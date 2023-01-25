@@ -245,6 +245,9 @@
     <!-- Language and voice settings -->
     <dimen name="language_options_height">380dp</dimen>
 
+    <!-- Display settings -->
+    <dimen name="developer_options_height">420dp</dimen>
+
     <!-- JS Prompt dialogs -->
     <item name="js_prompt_y_distance" format="float" type="dimen">1.2</item>
 

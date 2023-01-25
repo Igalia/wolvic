@@ -55,10 +55,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
         setCurvedDisplay(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f, false);
 
-        int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
-        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
-        setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
-
         int msaaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
@@ -123,10 +119,6 @@ class DisplayOptionsView extends SettingsView {
         return editing;
     }
 
-    private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
-        setUaMode(checkedId, true);
-    };
-
     private RadioGroupSetting.OnCheckedChangeListener mMSSAChangeListener = (radioGroup, checkedId, doApply) -> {
         setMSAAMode(checkedId, true);
     };
@@ -178,16 +170,12 @@ class DisplayOptionsView extends SettingsView {
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
 
-        if (!mBinding.uaRadio.getValueForId(mBinding.uaRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
-            setUaMode(mBinding.uaRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
-        }
         if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
-
 
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
@@ -225,14 +213,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.homepageEdit.setFirstText(newHomepage);
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
         mBinding.homepageEdit.setOnClickListener(mHomepageListener);
-    }
-
-    private void setUaMode(int checkId, boolean doApply) {
-        mBinding.uaRadio.setOnCheckedChangeListener(null);
-        mBinding.uaRadio.setChecked(checkId, doApply);
-        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
-
-        SettingsStore.getInstance(getContext()).setUaMode((Integer)mBinding.uaRadio.getValueForId(checkId));
     }
 
     private void setMSAAMode(int checkedId, boolean doApply) {

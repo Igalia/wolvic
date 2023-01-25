@@ -75,7 +75,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
-    private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Android 10; Mobile VR; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
+
+    private static final String WOLVIC_USER_AGENT_MOBILE = "Mozilla/5.0 (Android 10; Mobile; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
+    // This matches GeckoViewSettings.jsm
+    private static final String WOLVIC_USER_AGENT_VR = WOLVIC_USER_AGENT_MOBILE.replace("Mobile", "Mobile VR");
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
     private transient CopyOnWriteArrayList<WSession.ProgressDelegate> mProgressListeners;
@@ -1135,18 +1138,24 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         Log.d(LOGTAG, "onLoadRequest: " + uri);
 
         if (aSession == mState.mSession) {
-            Log.d(LOGTAG, "Testing for UA override");
-
             String userAgentOverride = sUserAgentOverride.lookupOverride(uri);
 
-            // Here we set a default user agent if no override was found, BUT
-            // only if UA Mode is not Desktop, because the UA override
-            // takes precedence over mode overrides so if we set it, it will
-            // invalidate desktop mode UA. For VR and Mobile modes we don't change
-            // the UA so they are not affected.
-            if (mState.mSettings.getUserAgentMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP &&
-                    userAgentOverride == null) {
-                userAgentOverride = DEFAULT_USER_AGENT;
+            Log.e(LOGTAG, "checking override: " + uri);
+
+            // Update the User-Agent according to the current settings, unless we are
+            // in Desktop mode (which sets its own user agent). These settings define:
+            //  - UA mode: "Mobile" or "Mobile VR"
+            //  - use Wolvic UA: report ourselves as "Firefox" (the GeckoView default) or "Wolvic"
+            int mode = mState.mSettings.getUserAgentMode();
+            if (mode != WSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                int defaultMode = SettingsStore.getInstance(mContext).getUaMode();
+                if (mode != defaultMode) {
+                    setUaMode(defaultMode);
+                    mode = defaultMode;
+                }
+                if (userAgentOverride == null && SettingsStore.getInstance(mContext).getUseWolvicUA()) {
+                    userAgentOverride = (mode == WSessionSettings.USER_AGENT_MODE_MOBILE) ? WOLVIC_USER_AGENT_MOBILE : WOLVIC_USER_AGENT_VR;
+                }
             }
 
             aSession.getSettings().setUserAgentOverride(userAgentOverride);

@@ -83,6 +83,7 @@ public class SettingsStore {
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
+    public final static boolean USE_WOLVIC_UA_DEFAULT = false;
     public final static int INPUT_MODE_DEFAULT = 1;
     public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
     public final static int WINDOW_WIDTH_DEFAULT = 800;
@@ -339,6 +340,17 @@ public class SettingsStore {
         }
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_user_agent_version), checkedMode);
+        editor.commit();
+    }
+
+    public boolean getUseWolvicUA() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_use_wolvic_ua), USE_WOLVIC_UA_DEFAULT);
+    }
+
+    public void setUseWolvicUA(boolean useWolvicUA) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_use_wolvic_ua), useWolvicUA);
         editor.commit();
     }
 

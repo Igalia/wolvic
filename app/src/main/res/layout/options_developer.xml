@@ -79,6 +79,20 @@
                     android:layout_height="wrap_content"
                     app:description="@string/allow_local_addon_switch" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/wolvic_user_agent_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_wolvic_user_agent" />
+
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/ua_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_ua_mode"
+                    app:options="@array/developer_options_ua_modes"
+                    app:values="@array/developer_options_ua_mode_values" />
+
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 

@@ -6,6 +6,7 @@
 package com.igalia.wolvic.ui.widgets.settings;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,8 +17,10 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsDeveloperBinding;
+import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 class DeveloperOptionsView extends SettingsView {
 
@@ -76,6 +79,13 @@ class DeveloperOptionsView extends SettingsView {
 
         mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
         setLocalAddon(SettingsStore.getInstance(getContext()).isLocalAddonAllowed(), false);
+
+        mBinding.wolvicUserAgentSwitch.setOnCheckedChangeListener(mUseWolvicUAListener);
+        setUseWolvicUA(SettingsStore.getInstance(getContext()).getUseWolvicUA(), false);
+
+        int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
+        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
+        setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
@@ -104,6 +114,13 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mLocalAddonListener = (compoundButton, value, doApply) -> {
         setLocalAddon(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mUseWolvicUAListener = (compoundButton, enabled, apply) ->
+            setUseWolvicUA(enabled, true);
+
+    private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
+        setUaMode(checkedId, true);
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -137,6 +154,14 @@ class DeveloperOptionsView extends SettingsView {
 
         if (mBinding.localAddonSwitch.isChecked() != SettingsStore.LOCAL_ADDON_ALLOWED) {
             setLocalAddon(SettingsStore.LOCAL_ADDON_ALLOWED, true);
+        }
+
+        if (mBinding.wolvicUserAgentSwitch.isChecked() != SettingsStore.USE_WOLVIC_UA_DEFAULT) {
+            setUseWolvicUA(SettingsStore.USE_WOLVIC_UA_DEFAULT, true);
+        }
+
+        if (!mBinding.uaRadio.getValueForId(mBinding.uaRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
+            setUaMode(mBinding.uaRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
         }
 
         if (restart) {
@@ -219,9 +244,33 @@ class DeveloperOptionsView extends SettingsView {
         }
     }
 
+    private void setUseWolvicUA(boolean value, boolean doApply) {
+        mBinding.wolvicUserAgentSwitch.setOnCheckedChangeListener(null);
+        mBinding.wolvicUserAgentSwitch.setValue(value, false);
+        mBinding.wolvicUserAgentSwitch.setOnCheckedChangeListener(mUseWolvicUAListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setUseWolvicUA(value);
+        }
+    }
+
+    private void setUaMode(int checkId, boolean doApply) {
+        mBinding.uaRadio.setOnCheckedChangeListener(null);
+        mBinding.uaRadio.setChecked(checkId, doApply);
+        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
+
+        SettingsStore.getInstance(getContext()).setUaMode((Integer) mBinding.uaRadio.getValueForId(checkId));
+    }
+
+    @Override
+    public Point getDimensions() {
+        return new Point(WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height));
+    }
+
     @Override
     protected SettingViewType getType() {
-        return SettingViewType.LANGUAGE_VOICE;
+        return SettingViewType.DEVELOPER;
     }
 
 }

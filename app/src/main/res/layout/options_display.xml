@@ -44,13 +44,11 @@
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_curved_display" />
 
-                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
-                    android:id="@+id/ua_radio"
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/autoplaySwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_ua_mode"
-                    app:options="@array/developer_options_ua_modes"
-                    app:values="@array/developer_options_ua_mode_values" />
+                    app:description="@string/security_options_autoplay" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/msaa_radio"
@@ -59,12 +57,6 @@
                     app:description="@string/developer_options_msaa"
                     app:options="@array/developer_options_msaa"
                     app:values="@array/developer_options_msaa_mode_values" />
-
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/autoplaySwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/security_options_autoplay" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
