@@ -5,7 +5,6 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.utils.StringUtils;
-import com.igalia.wolvic.utils.SystemUtils;
 
 import org.json.JSONObject;
 
@@ -25,11 +24,7 @@ import mozilla.components.concept.engine.manifest.WebAppManifestParser;
  * See https://www.w3.org/TR/appmanifest/ for reference.
  */
 public class WebApp {
-
-    protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
-
-    @NonNull
-    private String mIdentity;
+    @NonNull private String mIdentity;
     private WebAppManifest mManifest;
     private OptionalInt mHashCode = OptionalInt.empty();
 
@@ -45,7 +40,12 @@ public class WebApp {
             WebAppManifestParser.Result.Success successResult = (WebAppManifestParser.Result.Success) result;
             mManifest = successResult.getManifest();
         } else {
-            throw new IOException("Unable to parse the Web App manifest");
+            String reason = "unknown reason";
+            if (result instanceof WebAppManifestParser.Result.Failure) {
+                WebAppManifestParser.Result.Failure failure = (WebAppManifestParser.Result.Failure) result;
+                reason = failure.toString();
+            }
+            throw new IOException("Unable to parse the Web App manifest: " + reason);
         }
 
         // Algorithm for calculating Identity at https://www.w3.org/TR/appmanifest/#id-member

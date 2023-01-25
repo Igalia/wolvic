@@ -1,4 +1,6 @@
 package com.igalia.wolvic.browser.api.impl;
+
+import android.util.Log;
 import android.view.PointerIcon;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,8 @@ import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSlowScriptResponse;
 import com.igalia.wolvic.browser.api.WWebResponse;
+import com.igalia.wolvic.ui.adapters.WebApp;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import org.json.JSONObject;
 import org.mozilla.geckoview.GeckoResult;
@@ -15,6 +19,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.geckoview.WebResponse;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -23,6 +28,8 @@ import java.util.Objects;
 class ContentDelegateImpl implements GeckoSession.ContentDelegate {
     private WSession.ContentDelegate mDelegate;
     private WSession mSession;
+
+    protected static final String LOGTAG = SystemUtils.createLogtag(ContentDelegateImpl.class);
 
     public ContentDelegateImpl(WSession.ContentDelegate aDelegate, WSession aSession) {
         this.mDelegate = aDelegate;
@@ -162,7 +169,13 @@ class ContentDelegateImpl implements GeckoSession.ContentDelegate {
 
     @Override
     public void onWebAppManifest(@NonNull GeckoSession session, @NonNull JSONObject manifest) {
-        mDelegate.onWebAppManifest(mSession, manifest);
+        // We parse the manifest here to prevent errors later in case it is malformed.
+        try {
+            WebApp webAppManifest = new WebApp(manifest);
+            mDelegate.onWebAppManifest(mSession, webAppManifest);
+        } catch (IOException e) {
+            Log.w(LOGTAG, "Error when receiving Web App manifest: " + e.getMessage());
+        }
     }
 
     @Nullable

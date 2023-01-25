@@ -58,6 +58,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.downloads.DownloadJob;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
+import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
@@ -69,7 +70,6 @@ import com.igalia.wolvic.utils.UrlUtils;
 import com.igalia.wolvic.utils.ViewUtils;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -1830,7 +1830,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onWebAppManifest(@NonNull WSession session, @NonNull JSONObject manifest) {
+    public void onWebAppManifest(@NonNull WSession session, @NonNull WebApp webAppManifest) {
         mViewModel.setIsWebApp(true);
     }
 

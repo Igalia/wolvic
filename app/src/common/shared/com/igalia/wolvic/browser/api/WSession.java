@@ -19,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.annotation.UiThread;
 
-import org.json.JSONObject;
+import com.igalia.wolvic.ui.adapters.WebApp;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -285,13 +285,14 @@ public interface WSession {
          * <p>The various colors (theme_color, background_color, etc.) present in the manifest have been
          * transformed into #AARRGGBB format.
          *
-         * @param session The ISession that contains the Web App Manifest
-         * @param manifest A parsed and validated {@link JSONObject} containing the manifest contents.
+         * @param session  The ISession that contains the Web App Manifest
+         * @param manifest A parsed and validated {@link WebApp} representing the manifest contents.
          * @see <a href="https://www.w3.org/TR/appmanifest/">Web App Manifest specification</a>
          */
         @UiThread
         default void onWebAppManifest(
-                @NonNull final WSession session, @NonNull final JSONObject manifest) {}
+                @NonNull final WSession session, @NonNull final WebApp manifest) {
+        }
 
         /**
          * A script has exceeded its execution timeout value
