@@ -39,6 +39,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:fastScrollAlwaysVisible="false"
+            android:maxHeight="@dimen/prompt_content_max_height"
             app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +54,6 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
-                android:maxHeight="@dimen/prompt_content_max_height"
                 android:scrollbars="vertical"
                 android:textSize="18sp"
                 tools:text="Message" />
