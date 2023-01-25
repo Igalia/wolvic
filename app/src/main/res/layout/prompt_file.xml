@@ -46,49 +46,50 @@
         android:smoothScrollbar="true"
         app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginBottom="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bodyContainer">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="100" />
 
         <Button
             android:id="@+id/negativeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/prompt_button_background"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/dialog_regular_button_background"
             android:fontFamily="sans-serif"
+            android:minWidth="120dp"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:text="@string/cancel_button"
-            android:textAllCaps="true"
             android:textColor="@drawable/prompt_button_text_color"
-            android:textSize="10pt"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/positiveButton"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/positiveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/prompt_button_background"
-            android:backgroundTint="@color/cardview_dark_background"
+            android:background="@drawable/dialog_highlighted_button_background"
             android:fontFamily="sans-serif"
+            android:minWidth="120dp"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:text="@string/upload_button"
-            android:textAllCaps="true"
             android:textColor="@drawable/prompt_button_text_color"
-            android:textSize="10pt"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

@@ -18,7 +18,6 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:lines="1"
@@ -64,62 +63,62 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textMessage">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/authUsernameLabel"
+                    <TextView
+                        android:id="@+id/authUsernameLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="top|end"
+                        android:maxHeight="@dimen/prompt_content_max_height"
+                        android:scrollbars="vertical"
+                        android:text="@string/authentication_username"
+                        android:textAlignment="viewEnd"
+                        android:textSize="18sp" />
+
+                    <com.igalia.wolvic.ui.views.settings.SettingsEditText
+                        android:id="@+id/authUsername"
+                        style="@style/settingsEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        app:highlightedTextColor="@color/fog" />
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="top|end"
-                    android:maxHeight="@dimen/prompt_content_max_height"
-                    android:scrollbars="vertical"
-                    android:text="@string/authentication_username"
-                    android:textAlignment="viewEnd"
-                    android:textSize="18sp" />
+                    android:orientation="horizontal">
 
-                <com.igalia.wolvic.ui.views.settings.SettingsEditText
-                    android:id="@+id/authUsername"
-                    style="@style/settingsEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    app:highlightedTextColor="@color/fog" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/authPasswordLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="top|end"
+                        android:maxHeight="@dimen/prompt_content_max_height"
+                        android:scrollbars="vertical"
+                        android:text="@string/authentication_password"
+                        android:textAlignment="viewEnd"
+                        android:textSize="18sp" />
 
+                    <com.igalia.wolvic.ui.views.settings.SettingsEditText
+                        android:id="@+id/authPassword"
+                        style="@style/settingsEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:inputType="textPassword"
+                        app:highlightedTextColor="@color/fog" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/authPasswordLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="top|end"
-                    android:maxHeight="@dimen/prompt_content_max_height"
-                    android:scrollbars="vertical"
-                    android:text="@string/authentication_password"
-                    android:textAlignment="viewEnd"
-                    android:textSize="18sp" />
-
-                <com.igalia.wolvic.ui.views.settings.SettingsEditText
-                    android:id="@+id/authPassword"
-                    style="@style/settingsEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:inputType="textPassword"
-                    app:highlightedTextColor="@color/fog" />
-
-            </LinearLayout>
+                </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/switch_layout"
@@ -146,47 +145,46 @@
         </LinearLayout>
 
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/buttonsLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <Button
                 android:id="@+id/negativeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/prompt_button_background"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dialog_regular_button_background"
                 android:fontFamily="sans-serif"
-                android:minWidth="110dp"
+                android:minWidth="120dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:text="@string/cancel_button"
-                android:textAllCaps="true"
                 android:textColor="@drawable/prompt_button_text_color"
-                android:textSize="10pt"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/positiveButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/positiveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/prompt_button_background"
-                android:backgroundTint="@color/cardview_dark_background"
+                android:background="@drawable/dialog_highlighted_button_background"
                 android:fontFamily="sans-serif"
-                android:minWidth="110dp"
+                android:minWidth="120dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:text="@string/ok_button"
-                android:textAllCaps="true"
                 android:textColor="@drawable/prompt_button_text_color"
-                android:textSize="10pt"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
