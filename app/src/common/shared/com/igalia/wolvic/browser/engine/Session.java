@@ -1027,8 +1027,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         return true;
     }
 
-    public void setUaMode(int mode) {
+    public void setUaMode(int mode, boolean reload) {
+        // the UA mode value did not change
         if (!trySetUaMode(mode))
+            return;
+
+        // the value did change, but we don't need to force a reload
+        if (!reload)
             return;
 
         String overrideUri = mode == WSessionSettings.USER_AGENT_MODE_DESKTOP ? checkForMobileSite(mState.mUri) : null;
@@ -1749,7 +1754,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             }
         } else if (key.equals(mContext.getString(R.string.settings_key_user_agent_version))) {
             if (mState.mSettings.getUserAgentMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                setUaMode(SettingsStore.getInstance(mContext).getUaMode());
+                setUaMode(SettingsStore.getInstance(mContext).getUaMode(), false);
             }
         }
     }
