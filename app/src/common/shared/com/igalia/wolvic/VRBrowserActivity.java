@@ -98,8 +98,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -199,6 +203,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
     private FragmentController mFragmentController;
+    private Hashtable<Integer, WidgetPlacement> mPendingNativeWidgetUpdates = new Hashtable<Integer, WidgetPlacement>();
+    private Timer mPendingNativeWidgetUpdatesTimer = new Timer();
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1479,14 +1485,29 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         updateActiveDialog(aWidget);
     }
 
+    private void enqueueUpdateWidgetNativeCall(int handle, WidgetPlacement placement) {
+        mPendingNativeWidgetUpdates.put(handle, placement);
+        mPendingNativeWidgetUpdatesTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Set<Map.Entry<Integer, WidgetPlacement>> entrySet = mPendingNativeWidgetUpdates.entrySet();
+                for (Map.Entry<Integer, WidgetPlacement> entry : entrySet) {
+                    queueRunnable(() -> updateWidgetNative(entry.getKey(), entry.getValue()));
+                }
+                mPendingNativeWidgetUpdates.clear();
+            }
+        }, 250);
+    }
+
     @Override
     public void updateWidget(final Widget aWidget) {
         if (aWidget == null) {
             return;
         }
-        final int handle = aWidget.getHandle();
-        final WidgetPlacement clone = aWidget.getPlacement().clone();
-        queueRunnable(() -> updateWidgetNative(handle, clone));
+        // Enqueue widget update calls in order to batch updates on the same widget. If a widget
+        // updates several times in a short period of time, it's enough to call the native
+        // method just once. This effectively reduces the amount of XR layer creation/destruction.
+        enqueueUpdateWidgetNativeCall(aWidget.getHandle(), aWidget.getPlacement().clone());
 
         final int textureWidth = aWidget.getPlacement().textureWidth();
         final int textureHeight = aWidget.getPlacement().textureHeight();
