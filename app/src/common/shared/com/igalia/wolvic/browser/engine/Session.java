@@ -196,11 +196,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         mDrmStateStateListeners = new CopyOnWriteArrayList<>();
         mMedia = new Media();
 
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
         }
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
         mPrivatePage = InternalPages.createAboutPage(mContext, pageResources);
@@ -1142,20 +1141,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
             Log.d(LOGTAG, "User-Agent override: " + userAgentOverride);
 
-            // Update the User-Agent according to the current settings, unless we are
-            // in Desktop mode (which sets its own user agent). These settings define:
-            //  - UA mode: "Mobile" or "Mobile VR"
-            //  - use Wolvic UA: report ourselves as "Firefox" (the GeckoView default) or "Wolvic"
+            // Update the User-Agent according to the current UA settings,
+            // unless we are in Desktop mode (which uses its own User-Agent value).
             int mode = mState.mSettings.getUserAgentMode();
-            if (mode != WSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                int defaultMode = SettingsStore.getInstance(mContext).getUaMode();
-                if (mode != defaultMode) {
-                    setUaMode(defaultMode);
-                    mode = defaultMode;
-                }
-                if (userAgentOverride == null && SettingsStore.getInstance(mContext).getUseWolvicUA()) {
-                    userAgentOverride = (mode == WSessionSettings.USER_AGENT_MODE_MOBILE) ? WOLVIC_USER_AGENT_MOBILE : WOLVIC_USER_AGENT_VR;
-                }
+            if (mode != WSessionSettings.USER_AGENT_MODE_DESKTOP
+                    && userAgentOverride == null
+                    && SettingsStore.getInstance(mContext).getUseWolvicUA()) {
+                userAgentOverride = (mode == WSessionSettings.USER_AGENT_MODE_MOBILE) ? WOLVIC_USER_AGENT_MOBILE : WOLVIC_USER_AGENT_VR;
             }
 
             aSession.getSettings().setUserAgentOverride(userAgentOverride);
@@ -1747,12 +1739,17 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (mContext != null) {
-            if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
-                GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
-                if (data != null) {
-                    setRegion(data.getCountryCode());
-                }
+        if (mContext == null)
+            return;
+
+        if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
+            GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
+            if (data != null) {
+                setRegion(data.getCountryCode());
+            }
+        } else if (key.equals(mContext.getString(R.string.settings_key_user_agent_version))) {
+            if (mState.mSettings.getUserAgentMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                setUaMode(SettingsStore.getInstance(mContext).getUaMode());
             }
         }
     }
