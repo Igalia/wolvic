@@ -76,7 +76,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
-    private static final String WOLVIC_USER_AGENT_MOBILE = "Mozilla/5.0 (Android 10; Mobile; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME + " Firefox/105.0 OculusBrowser/25.3.0.4.30.438623098 VR Safari/537.36";
+    private static final String WOLVIC_USER_AGENT_MOBILE = "Mozilla/5.0 (Android 10; Mobile; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
     // This matches GeckoViewSettings.jsm
     private static final String WOLVIC_USER_AGENT_VR = WOLVIC_USER_AGENT_MOBILE.replace("Mobile", "Mobile VR");
 
