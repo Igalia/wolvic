@@ -184,6 +184,8 @@
     <string name="developer_options_msaa_4">4x</string>
     <string name="security_options_downloads_storage">Almacenamento por defecto para descargas</string>
     <string name="developer_options_wolvic_user_agent">Empregar o valor de \"User-Agent\" específico de Wolvic</string>
+    <string name="developer_options_wolvic_user_agent_warning_title">Atención</string>
+    <string name="developer_options_wolvic_user_agent_warning_body">Cambiar o valor por defecto de \"User-Agent\" é una functionalidade experimental que podería facer que algunhas páxinas Web non funcionasen correctamente.</string>
     <string name="developer_options_ua_mode">Modo de \"User-Agent\" por defecto</string>
     <string name="developer_options_ua_vr">VR</string>
     <string name="privacy_options_downloads_storage_internal">Interno</string>

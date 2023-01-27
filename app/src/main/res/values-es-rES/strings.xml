@@ -402,6 +402,10 @@
     <!-- This string is used to label a switch that allows the user to use
          a Wolvic-specific User-Agent value. -->
     <string name="developer_options_wolvic_user_agent">Emplear el valor de \"User-Agent\" específico de Wolvic</string>
+    <!-- This string is the title of a dialog explaining the risk of changing the default User-Agent. -->
+    <string name="developer_options_wolvic_user_agent_warning_title">Atención</string>
+    <!-- This string is the body of a dialog explaining the risk of changing the default User-Agent. -->
+    <string name="developer_options_wolvic_user_agent_warning_body">Cambiar el valor por defecto de \"User-Agent\" es una functionalidad experimental que podría hacer que algunas páginas Web no funcionasen correctamente.</string>
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">Modo de \"User-Agent\" por defecto</string>

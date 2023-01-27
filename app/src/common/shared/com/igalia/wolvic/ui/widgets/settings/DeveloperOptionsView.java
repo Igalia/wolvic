@@ -251,6 +251,11 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setUseWolvicUA(value);
+
+            if (value != SettingsStore.USE_WOLVIC_UA_DEFAULT) {
+                showAlert(getContext().getString(R.string.developer_options_wolvic_user_agent_warning_title),
+                        getContext().getString(R.string.developer_options_wolvic_user_agent_warning_body));
+            }
         }
     }
 
