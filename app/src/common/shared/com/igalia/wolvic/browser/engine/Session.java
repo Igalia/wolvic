@@ -72,7 +72,8 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
-    private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Android 10; Mobile VR; rv:105.0) Gecko/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
+    // FIXME: this is Gecko dependant and should not be implemented this way.
+    private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (Android 10; Mobile VR; rv:105.0) Gecko/105.0 Firefox/105.0 Wolvic/" + BuildConfig.VERSION_NAME;
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
     private transient CopyOnWriteArrayList<WSession.ProgressDelegate> mProgressListeners;
