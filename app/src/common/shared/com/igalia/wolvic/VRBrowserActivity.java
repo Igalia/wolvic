@@ -98,9 +98,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
@@ -159,6 +164,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
+    static final int UPDATE_NATIVE_WIDGETS_DELAY = 50; // milliseconds
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     ConcurrentHashMap<Integer, Widget> mWidgets;
@@ -199,6 +205,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
     private FragmentController mFragmentController;
+    private Hashtable<Integer, WidgetPlacement> mPendingNativeWidgetUpdates = new Hashtable<>();
+    private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
+    private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1479,14 +1488,28 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         updateActiveDialog(aWidget);
     }
 
+    private void enqueueUpdateWidgetNativeCall(int handle, WidgetPlacement placement) {
+        mPendingNativeWidgetUpdates.put(handle, placement);
+
+        if (mNativeWidgetUpdatesTask == null || mNativeWidgetUpdatesTask.isDone()) {
+            mNativeWidgetUpdatesTask = mPendingNativeWidgetUpdatesExecutor.schedule(() -> {
+                for (Map.Entry<Integer, WidgetPlacement> entry : mPendingNativeWidgetUpdates.entrySet()) {
+                    queueRunnable(() -> updateWidgetNative(entry.getKey(), entry.getValue()));
+                }
+                mPendingNativeWidgetUpdates.clear();
+            }, UPDATE_NATIVE_WIDGETS_DELAY, TimeUnit.MILLISECONDS);
+        }
+    }
+
     @Override
     public void updateWidget(final Widget aWidget) {
         if (aWidget == null) {
             return;
         }
-        final int handle = aWidget.getHandle();
-        final WidgetPlacement clone = aWidget.getPlacement().clone();
-        queueRunnable(() -> updateWidgetNative(handle, clone));
+        // Enqueue widget update calls in order to batch updates on the same widget. If a widget
+        // updates several times in a short period of time, it's enough to call the native
+        // method just once. This effectively reduces the amount of XR layer creation/destruction.
+        enqueueUpdateWidgetNativeCall(aWidget.getHandle(), aWidget.getPlacement().clone());
 
         final int textureWidth = aWidget.getPlacement().textureWidth();
         final int textureHeight = aWidget.getPlacement().textureHeight();
