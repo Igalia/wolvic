@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -35,6 +36,11 @@ public class SessionImpl implements WSession {
     private TextInputImpl mTextInput;
     private PanZoomControllerImpl mPanZoomController;
     private Method mGeckoLocationMethod;
+
+    // The difference between "Mobile" and "VR" matches GeckoViewSettings.jsm
+    private static final String WOLVIC_USER_AGENT_MOBILE = GeckoSession.getDefaultUserAgent() + " Wolvic/" + BuildConfig.VERSION_NAME;
+    private static final String WOLVIC_USER_AGENT_VR = WOLVIC_USER_AGENT_MOBILE.replace("Mobile", "Mobile VR");
+    private static final String WOLVIC_USER_AGENT_DESKTOP = "Mozilla/5.0 (X11; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0";
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         if (settings == null) {
@@ -123,6 +129,20 @@ public class SessionImpl implements WSession {
     @Override
     public WSessionSettings getSettings() {
         return mSettings;
+    }
+
+    @NonNull
+    @Override
+    public String getDefaultUserAgent(int mode) {
+        switch (mode) {
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP:
+                return WOLVIC_USER_AGENT_DESKTOP;
+            case WSessionSettings.USER_AGENT_MODE_VR:
+                return WOLVIC_USER_AGENT_VR;
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+            default:
+                return WOLVIC_USER_AGENT_MOBILE;
+        }
     }
 
     @Override

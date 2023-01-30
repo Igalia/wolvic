@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
@@ -53,8 +52,6 @@ import com.igalia.wolvic.utils.InternalPages;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
-import org.mozilla.geckoview.GeckoSession;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -74,10 +71,6 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
-
-    // The difference between "Mobile" and "VR" matches GeckoViewSettings.jsm
-    private static final String WOLVIC_USER_AGENT_MOBILE = GeckoSession.getDefaultUserAgent() + " Wolvic/" + BuildConfig.VERSION_NAME;
-    private static final String WOLVIC_USER_AGENT_VR = WOLVIC_USER_AGENT_MOBILE.replace("Mobile", "Mobile VR");
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
     private transient CopyOnWriteArrayList<WSession.ProgressDelegate> mProgressListeners;
@@ -1146,8 +1139,8 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             // Set the User-Agent according to the current UA settings
             // unless we are in Desktop mode, which uses its own User-Agent value.
             int mode = mState.mSettings.getUserAgentMode();
-            if (mode != WSessionSettings.USER_AGENT_MODE_DESKTOP && userAgentOverride == null) {
-                userAgentOverride = (mode == WSessionSettings.USER_AGENT_MODE_MOBILE) ? WOLVIC_USER_AGENT_MOBILE : WOLVIC_USER_AGENT_VR;
+            if (userAgentOverride == null) {
+                userAgentOverride = mState.mSession.getDefaultUserAgent(mode);
             }
 
             aSession.getSettings().setUserAgentOverride(userAgentOverride);
