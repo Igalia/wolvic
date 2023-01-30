@@ -198,6 +198,13 @@ public class SessionImpl implements WSession {
         return mSettings;
     }
 
+    @NonNull
+    @Override
+    public String getDefaultUserAgent(int mode) {
+        // TODO: implement
+        return "";
+    }
+
     @Override
     public void exitFullScreen() {
         if (mFullScreenCallback != null) {
