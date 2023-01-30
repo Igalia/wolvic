@@ -2569,6 +2569,16 @@ public interface WSession {
     @NonNull
     WSessionSettings getSettings();
 
+    /**
+     * Get the default user-agent for the given mode.
+     *
+     * @param mode {@link WSessionSettings#USER_AGENT_MODE_MOBILE},
+     *             {@link WSessionSettings#USER_AGENT_MODE_DESKTOP},
+     *             or {@link WSessionSettings#USER_AGENT_MODE_VR}.
+     */
+    @AnyThread
+    @NonNull
+    String getDefaultUserAgent(final int mode);
 
     /** Exits fullscreen mode */
     @AnyThread

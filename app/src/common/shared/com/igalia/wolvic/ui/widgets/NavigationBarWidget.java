@@ -1229,11 +1229,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 if (uaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
                     final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
                     mHamburgerMenu.setUAMode(defaultUaMode);
-                    mAttachedWindow.getSession().setUaMode(defaultUaMode);
+                    mAttachedWindow.getSession().setUaMode(defaultUaMode, true);
 
                 } else {
                     mHamburgerMenu.setUAMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
-                    mAttachedWindow.getSession().setUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
+                    mAttachedWindow.getSession().setUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP, true);
                 }
 
                 hideMenu();

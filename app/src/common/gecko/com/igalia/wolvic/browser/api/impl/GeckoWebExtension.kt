@@ -267,7 +267,7 @@ class GeckoWebExtension(
                 val activeSession: Session = SessionStore.get().activeSession;
                 val session: Session = SessionStore.get().createWebExtensionSession(false, activeSession.isPrivateMode);
                 session.setParentSession(activeSession)
-                session.uaMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+                session.setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP, true)
                 val geckoEngineSession = WolvicEngineSession(session)
                 ext.metaData?.optionsPageUrl?.let { optionsPageUrl ->
                     tabHandler.onNewTab(
