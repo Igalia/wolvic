@@ -38,7 +38,7 @@ class WolvicWebExtensionRuntime(
             val activeSession = SessionStore.get().activeSession
             val session: Session = SessionStore.get().createWebExtensionSession(activeSession.isPrivateMode);
             session.setParentSession(activeSession)
-            session.uaMode = WSessionSettings.USER_AGENT_MODE_DESKTOP
+            session.setUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP, true)
             val engineSession = WolvicEngineSession(session)
             (context as WidgetManagerDelegate).windows.onTabSelect(session)
             return webExtensionDelegate?.onToggleActionPopup(extension, engineSession, action)
