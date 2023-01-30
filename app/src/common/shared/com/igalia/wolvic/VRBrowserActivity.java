@@ -164,7 +164,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
-    static final int UPDATE_NATIVE_WIDGETS_DELAY = 250; // milliseconds
+    static final int UPDATE_NATIVE_WIDGETS_DELAY = 50; // milliseconds
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     ConcurrentHashMap<Integer, Widget> mWidgets;
