@@ -917,6 +917,9 @@ DeviceDelegateOpenXR::BindEye(const device::Eye aWhich) {
   VRB_GL_CHECK(glViewport(0, 0, m.boundSwapChain->Width(), m.boundSwapChain->Height()));
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+  for (const auto& layer: m.uiLayers)
+    layer->SetCurrentEye(aWhich);
 }
 
 void
