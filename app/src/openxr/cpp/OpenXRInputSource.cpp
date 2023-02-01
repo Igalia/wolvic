@@ -677,7 +677,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
       return;
     }
 
-    // Adjust to local is app is using stageSpace (e.g. HVR), otherwise offset will be 0.
+    // HVR: adjust to local if app is using stageSpace.
+    // Meta: adjust the position of the controllers which is not totally accurate.
     auto adjustPoseLocation = [&poseLocation](const vrb::Vector& offset) {
         poseLocation.pose.position.x += offset.x();
         poseLocation.pose.position.y += offset.y();
