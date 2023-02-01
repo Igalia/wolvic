@@ -65,7 +65,7 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
   return XR_SUCCESS;
 }
 
-XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, float offsetY, device::RenderMode renderMode, ControllerDelegate& delegate)
+XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
 {
   XrActiveActionSet activeActionSet {
     mActionSet->ActionSet(), XR_NULL_PATH
@@ -77,7 +77,7 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
   RETURN_IF_XR_FAILED(xrSyncActions(mSession, &syncInfo));
 
   for (auto& input : mInputSources) {
-    input->Update(frameState, baseSpace, head, offsetY, renderMode, delegate);
+    input->Update(frameState, baseSpace, head, offsets, renderMode, delegate);
   }
 
   return XR_SUCCESS;
