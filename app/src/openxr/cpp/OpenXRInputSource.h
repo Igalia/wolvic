@@ -97,7 +97,7 @@ public:
 
     XrResult SuggestBindings(SuggestedBindings&) const;
     void EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate);
-    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, float offsetY, device::RenderMode, ControllerDelegate& delegate);
+    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
