@@ -51,7 +51,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:background="@{item.themeColor}"
                 android:padding="1dp">
 
                 <ImageView
@@ -109,7 +108,6 @@
                 android:id="@+id/trash_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/ic_icon_trash"
                 android:drawableTint="@color/library_panel_icon_color"
