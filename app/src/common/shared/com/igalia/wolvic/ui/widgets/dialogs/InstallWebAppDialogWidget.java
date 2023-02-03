@@ -39,10 +39,12 @@ public class InstallWebAppDialogWidget extends PromptDialogWidget {
             return;
         }
 
-        if (StringUtils.isEmpty(mWebApp.getName())) {
-            setTitle(R.string.web_apps_dialog_title);
-        } else {
+        if (!StringUtils.isEmpty(mWebApp.getShortName())) {
             setTitle(getContext().getString(R.string.web_apps_dialog_title_parameter, mWebApp.getShortName()));
+        } else if (!StringUtils.isEmpty(mWebApp.getName())) {
+            setTitle(getContext().getString(R.string.web_apps_dialog_title_parameter, mWebApp.getName()));
+        } else {
+            setTitle(R.string.web_apps_dialog_title);
         }
 
         SessionStore.get().getBrowserIcons().loadIntoView(mBinding.icon,
