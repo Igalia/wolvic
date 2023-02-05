@@ -16,29 +16,11 @@ public class PanZoomCrontrollerImpl implements WPanZoomController {
 
     @Override
     public void onTouchEvent(@NonNull MotionEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display != null) {
-            display.dispatchTouchEvent(event);
-        }
+        // TODO
     }
 
     @Override
     public void onMotionEvent(@NonNull MotionEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display != null) {
-            display.dispatchGenericMotionEvent(event);
-        }
-    }
-
-    private @Nullable
-    BrowserDisplay getDisplay() {
-        if (mSession == null) {
-            return null;
-        }
-        DisplayImpl display = mSession.getDisplay();
-        if (display == null) {
-            return  null;
-        }
-        return display.getBrowserDisplay();
+       // TODO
     }
 }

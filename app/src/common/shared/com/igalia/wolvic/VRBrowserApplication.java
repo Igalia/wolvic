@@ -17,6 +17,8 @@ import com.igalia.wolvic.browser.LoginStorage;
 import com.igalia.wolvic.browser.Places;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.impl.RuntimeImpl;
+import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.db.AppDatabase;
 import com.igalia.wolvic.db.DataRepository;
@@ -78,6 +80,13 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mConnectivityManager.end();
         mDownloadsManager.end();
         mEnvironmentsManager.end();
+    }
+
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        ((RuntimeImpl) EngineProvider.INSTANCE.getOrCreateRuntime(base)).getContentShellController().initApplication(this);
     }
 
     @Override

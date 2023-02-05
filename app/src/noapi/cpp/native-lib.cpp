@@ -11,6 +11,15 @@
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 
+namespace content {
+  class WolvicContentMainDelegate;
+  class WebContents;
+
+  WolvicContentMainDelegate* GetWolvicContentMainDelegate();
+  WolvicContentMainDelegate* InitializeWolvicBrowserContext(WolvicContentMainDelegate* delegate);
+  jobject CreateWebContents(WolvicContentMainDelegate* delegate);
+}
+
 static crow::DeviceDelegateNoAPIPtr sDevice;
 
 using namespace crow;
@@ -99,6 +108,16 @@ JNI_METHOD(void, touchEvent)
 JNI_METHOD(void, controllerButtonPressed)
 (JNIEnv*, jobject, jboolean aDown) {
   sDevice->ControllerButtonPressed(aDown);
+}
+
+JNI_METHOD(void, initializeWolvicBrowserContext)
+(JNIEnv* aEnv, jobject) {
+  content::InitializeWolvicBrowserContext(content::GetWolvicContentMainDelegate());
+}
+
+JNI_METHOD(jobject, createWebContents)
+(JNIEnv* aEnv, jobject) {
+  return content::CreateWebContents(content::GetWolvicContentMainDelegate());
 }
 
 jint JNI_OnLoad(JavaVM*, void*) {

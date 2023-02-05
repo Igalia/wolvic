@@ -54,6 +54,7 @@ import com.igalia.wolvic.browser.PermissionDelegate;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.impl.RuntimeImpl;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -278,7 +279,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CrashReporterService.CRASH_ACTION);
         registerReceiver(mCrashReceiver, intentFilter, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name), null);
-
         mLastGesture = NoGesture;
         mWidgetUpdateListeners = new LinkedList<>();
         mPermissionListeners = new LinkedList<>();
@@ -293,6 +293,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onCreate(savedInstanceState);
 
         mWidgetContainer = new FrameLayout(this);
+        ((RuntimeImpl) runtime).getContentShellController().initActivity(this);
         runtime.setFragmentManager(mFragmentController.getSupportFragmentManager(), mWidgetContainer);
 
         mPermissionDelegate = new PermissionDelegate(this, this);

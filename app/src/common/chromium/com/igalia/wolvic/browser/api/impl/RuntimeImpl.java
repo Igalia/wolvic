@@ -3,12 +3,10 @@ package com.igalia.wolvic.browser.api.impl;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.view.View;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.igalia.wolvic.browser.api.WResult;
@@ -16,16 +14,12 @@ import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
 
-import org.chromium.weblayer.Browser;
-import org.chromium.weblayer.Tab;
-import org.chromium.weblayer.UnsupportedVersionException;
-import org.chromium.weblayer.WebLayer;
+import org.chromium.components.embedder_support.view.ContentViewRenderView;
+import org.chromium.content_public.browser.WebContents;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import kotlin.Lazy;
 import mozilla.components.concept.fetch.Client;
@@ -34,75 +28,51 @@ import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
 public class RuntimeImpl implements WRuntime {
     private Context mContext;
-    private WebLayer mWebLayer;
-    private WRuntimeSettings mRuntimeSettings;
-    private WebExtensionControllerImpl mWebExtensionController;
-    private ViewGroup mViewContainer;
+    private WRuntimeSettings mSettings;
+    private WWebExtensionController mWebExtensionController;
     private FragmentManager mFragmentManager;
-    private CopyOnWriteArrayList<BrowserDisplay> mPrivateDisplays = new CopyOnWriteArrayList<>();
-    private CopyOnWriteArrayList<BrowserDisplay> mDisplays = new CopyOnWriteArrayList<>();
+    private ViewGroup mViewContainer;
+    private ContentShellController mContentShellController;
+    private BrowserDisplay mBrowserDisplay;
 
-    public RuntimeImpl(@NonNull Context ctx, @NonNull WRuntimeSettings settings) {
-        mContext = ctx;
-        mRuntimeSettings = settings;
+    public RuntimeImpl(@NonNull Context context, @NonNull WRuntimeSettings settings) {
+        Log.e("WolvicLifecycle", "RuntimeImpl()");
+        mContentShellController = new ContentShellController();
+        mContext = context;
+        mSettings = settings;
         mWebExtensionController = new WebExtensionControllerImpl();
-
-        try {
-            mWebLayer = WebLayer.loadSync(mContext.getApplicationContext());
-        } catch (UnsupportedVersionException e) {
-            throw new RuntimeException("Failed to initialize WebLayer", e);
-        }
     }
 
-    Context getContext() {
-        return mContext;
+    public ContentShellController getContentShellController() {
+        return mContentShellController;
     }
 
-    private BrowserDisplay createBrowserDisplay(boolean incognito) {
-        assert mViewContainer != null;
-        assert mFragmentManager != null;
+    public BrowserDisplay createBrowserDisplay(WebContents webContents) {
+        ContentViewRenderView contentViewRenderView = new ContentViewRenderView(mContext);
+        contentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
+        contentViewRenderView.setCurrentWebContents(webContents);
 
-        String profileName = incognito ? null : "DefaultProfile";
-        Fragment fragment = WebLayer.createBrowserFragment(profileName);
-        BrowserDisplay display = new BrowserDisplay(mContext);
-        display.attach(mFragmentManager, mViewContainer, fragment);
-        return display;
+        mBrowserDisplay = new BrowserDisplay(mContext);
+
+        ContentShellFragment fragment = new ContentShellFragment();
+        fragment.setContentViewRenderView(contentViewRenderView);
+        mBrowserDisplay.attach(mFragmentManager, mViewContainer, fragment);
+        return mBrowserDisplay;
     }
 
-    public Tab createTab(boolean incognito) {
-        CopyOnWriteArrayList<BrowserDisplay> displays = incognito ? mPrivateDisplays : mDisplays;
-        if (displays.isEmpty()) {
-            displays.add(createBrowserDisplay(incognito));
-        }
-        return displays.get(0).getBrowser().createTab();
-    }
-
-    public BrowserDisplay acquireDisplay(boolean incognito) {
-        CopyOnWriteArrayList<BrowserDisplay> displays = incognito ? mPrivateDisplays : mDisplays;
-        Optional<BrowserDisplay> display = displays.stream().filter(BrowserDisplay::isAcquired).findFirst();
-        if (display.isPresent()) {
-            return display.get();
-        }
-
-        BrowserDisplay newDisplay = createBrowserDisplay(incognito);
-        displays.add(newDisplay);
-        return newDisplay;
-    }
-
-    public void releaseDisplay(@NonNull BrowserDisplay display) {
-        display.setAcquired(false);
+    public BrowserDisplay getBrowserDisplay() {
+        return mBrowserDisplay;
     }
 
     @Override
     public WRuntimeSettings getSettings() {
-        return mRuntimeSettings;
+        return mSettings;
     }
 
     @NonNull
     @Override
     public WResult<Void> clearData(long flags) {
-        // TODO: Implement
-        return WResult.fromValue(null);
+        return null;
     }
 
     @NonNull
@@ -114,7 +84,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public void setUpLoginPersistence(Lazy<LoginsStorage> storage) {
-        // TODO: Implement
+
     }
 
     @NonNull
@@ -125,7 +95,7 @@ public class RuntimeImpl implements WRuntime {
 
     @Override
     public void setExternalVRContext(long externalContext) {
-        // TODO: Implement
+
     }
 
     @Override
@@ -136,37 +106,33 @@ public class RuntimeImpl implements WRuntime {
 
     @Override
     public float getDensity() {
-        return mContext.getResources().getDisplayMetrics().density;
+        return 0;
     }
 
     @Override
     public void configurationChanged(@NonNull Configuration newConfig) {
-        // no op as WebLayer uses FragmentManager lifecycle.
+
     }
 
     @Override
     public void appendAppNotesToCrashReport(@NonNull String notes) {
-        // TODO: Implement
+
     }
 
     @NonNull
     @Override
     public WResult<String> sendCrashReport(@NonNull Context context, @NonNull File minidumpFile, @NonNull File extrasFile, @NonNull String appName) throws IOException, URISyntaxException {
-        // TODO: Implement correctly
-        return WResult.fromValue("");
+        return null;
     }
 
     @Override
     public Thread.UncaughtExceptionHandler createCrashHandler(Context appContext, Class<? extends Service> handlerService) {
-        // TODO: Implement correctly
-        return (t, e) -> e.printStackTrace();
+        return null;
     }
 
     @NonNull
     @Override
     public CrashReportIntent getCrashReportIntent() {
-        // TODO: Implement correctly
         return new CrashReportIntent("", "", "", "");
     }
 }
-

@@ -207,6 +207,10 @@ add_library(picoxr-lib SHARED IMPORTED)
 set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so)
 
+add_library(content-native SHARED IMPORTED)
+set_target_properties(content-native PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/../libs/native/libcontent_native.so)
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
@@ -214,6 +218,7 @@ set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
 target_link_libraries( # Specifies the target library.
                        native-lib
                        vrb
+                       content-native
 
                        # Link VR_SDK_LIB exported from gradle flavors
                        ${VR_SDK_LIB}
