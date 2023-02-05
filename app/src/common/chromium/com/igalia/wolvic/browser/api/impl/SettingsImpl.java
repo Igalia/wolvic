@@ -4,8 +4,6 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
-import org.chromium.weblayer.Tab;
-
 public class SettingsImpl implements WSessionSettings {
     @Nullable Tab mTab;
     boolean mPrivateMode;
@@ -22,8 +20,7 @@ public class SettingsImpl implements WSessionSettings {
         mPrivateMode = aPrivateMode;
     }
 
-
-    void setTab(Tab tab) {
+    public void setTab(Tab tab) {
         mTab = tab;
     }
 
@@ -54,10 +51,12 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public boolean getUsePrivateMode() {
-        if (mTab != null) {
-            return mTab.getBrowser().getProfile().isIncognito();
-        }
-        return mPrivateMode;
+        // TODO(voit):
+//        if (mTab != null) {
+//            return mTab.getBrowser().getProfile().isIncognito();
+//        }
+//        return mPrivateMode;
+        return false;
     }
 
     @Nullable
@@ -83,10 +82,10 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setUserAgentMode(int value) {
-        if (mTab != null) {
-            mTab.setDesktopUserAgentEnabled(value == WSessionSettings.USER_AGENT_MODE_DESKTOP);
-        }
-        mUserAgentMode = value;
+//        if (mTab != null) {
+//            mTab.setDesktopUserAgentEnabled(value == WSessionSettings.USER_AGENT_MODE_DESKTOP);
+//        }
+//        mUserAgentMode = value;
     }
 
     @Override
@@ -96,18 +95,19 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setViewportMode(int value) {
-        if (mTab != null) {
-            mTab.setDesktopUserAgentEnabled(value == WSessionSettings.VIEWPORT_MODE_DESKTOP);
-        }
-        mViewportMode = value;
+//        if (mTab != null) {
+//            mTab.setDesktopUserAgentEnabled(value == WSessionSettings.VIEWPORT_MODE_DESKTOP);
+//        }
+//        mViewportMode = value;
     }
 
     @Override
     public int getUserAgentMode() {
-        if (mTab != null) {
-            return mTab.isDesktopUserAgentEnabled() ? WSessionSettings.USER_AGENT_MODE_DESKTOP : WSessionSettings.USER_AGENT_MODE_VR;
-        }
-        return mUserAgentMode;
+//        if (mTab != null) {
+//            return mTab.isDesktopUserAgentEnabled() ? WSessionSettings.USER_AGENT_MODE_DESKTOP : WSessionSettings.USER_AGENT_MODE_VR;
+//        }
+//        return mUserAgentMode;
+        return WSessionSettings.USER_AGENT_MODE_MOBILE;
     }
 
     @Override

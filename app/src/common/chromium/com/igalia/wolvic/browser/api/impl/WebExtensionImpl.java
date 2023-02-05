@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import kotlin.coroutines.Continuation;
 import mozilla.components.concept.engine.EngineSession;
+import mozilla.components.concept.engine.Settings;
 import mozilla.components.concept.engine.webextension.ActionHandler;
 import mozilla.components.concept.engine.webextension.MessageHandler;
 import mozilla.components.concept.engine.webextension.Metadata;
@@ -93,7 +94,7 @@ public class WebExtensionImpl extends WebExtension {
     }
 
     @Override
-    public void registerTabHandler(@NonNull TabHandler tabHandler) {
+    public void registerTabHandler(@NonNull TabHandler tabHandler, @Nullable Settings settings) {
 
     }
 }
