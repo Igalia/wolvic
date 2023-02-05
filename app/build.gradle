@@ -155,6 +155,17 @@ android {
         jvmTarget = '1.8'
     }
 
+    // TODO(voit): Move to 'chromium' build variant
+    dexOptions {
+        javaMaxHeapSize "4G"
+    }
+
+    aaptOptions {
+        noCompress "dat"
+        noCompress "pak"
+        noCompress "bin"
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -587,6 +598,8 @@ dependencies {
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines
     implementation deps.kotlin.coroutines_jdk8
+    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     // SQLite helper to handle DBs from assets
     implementation deps.sqlite.sqlite

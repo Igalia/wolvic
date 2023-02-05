@@ -13,7 +13,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WTextInput;
 
 public class TextInputImpl implements WTextInput {
-    SessionImpl mSession;
+    WSession mSession;
     View mView;
     WSession.TextInputDelegate mDelegate;
 
@@ -46,47 +46,27 @@ public class TextInputImpl implements WTextInput {
 
     @Override
     public boolean onKeyPreIme(int keyCode, @NonNull KeyEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display == null) {
-            return false;
-        }
-        return display.onKeyPreIme(keyCode, event);
+        return false;
     }
 
     @Override
     public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display == null) {
-            return false;
-        }
-        return display.onKeyDown(keyCode, event);
+        return false;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display == null) {
-            return false;
-        }
-        return display.onKeyUp(keyCode, event);
+        return false;
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, @NonNull KeyEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display == null) {
-            return false;
-        }
-        return display.onKeyLongPress(keyCode, event);
+        return false;
     }
 
     @Override
     public boolean onKeyMultiple(int keyCode, int repeatCount, @NonNull KeyEvent event) {
-        @Nullable BrowserDisplay display = getDisplay();
-        if (display == null) {
-            return false;
-        }
-        return display.onKeyMultiple(keyCode, repeatCount, event);
+        return false;
     }
 
     @Override
@@ -99,16 +79,5 @@ public class TextInputImpl implements WTextInput {
     @Override
     public WSession.TextInputDelegate getDelegate() {
         return mDelegate;
-    }
-
-    private @Nullable BrowserDisplay getDisplay() {
-        if (mSession == null) {
-            return null;
-        }
-        DisplayImpl display = mSession.getDisplay();
-        if (display == null) {
-            return  null;
-        }
-        return display.getBrowserDisplay();
     }
 }
