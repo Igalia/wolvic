@@ -484,7 +484,7 @@
     <string name="settings_developer_options">Opções de Programador</string>
     <string name="security_options_login_sync">Sincronize logins com contas Firefox</string>
     <string name="restart_now_dialog_button">Reiniciar Agora</string>
-    <string name="keyboard_enter_label">ENTRAR</string>
+    <string name="keyboard_enter_label">ENTER</string>
     <string name="permission_notification">Permite %1$s enviar notificações\?</string>
     <string name="keyboard_space_label">espaço</string>
     <string name="settings_language_english_uk">Inglês (Reino Unido)</string>
@@ -701,4 +701,13 @@
     <string name="settings_language_spanish">Espanhol</string>
     <string name="settings_language_korean">Coreano</string>
     <string name="settings_language_italian">Italiano</string>
+    <string name="upload_button">Carregar</string>
+    <string name="web_apps_loading">A carregar Aplicações Web</string>
+    <string name="web_apps_dialog_title">Instalar Aplicações Web</string>
+    <string name="web_apps_dialog_title_parameter">Instalar %1$s</string>
+    <string name="web_apps_dialog_body">Pretende instalar a seguinte Aplicação Web\? Estará disponível de seguida na sua Biblioteca.</string>
+    <string name="web_apps_title">Aplicações Web</string>
+    <string name="addons_experimental_section_title">Experimental</string>
+    <string name="download_context_copy_to_content_uri">Partilhar com outras aplicações</string>
+    <string name="web_apps_empty">A sua lista de Aplicações Web está Vazia</string>
 </resources>
