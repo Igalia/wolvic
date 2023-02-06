@@ -473,7 +473,7 @@
     <string name="download_status_unavailable">Non dispoñible</string>
     <string name="download_status_unknown_error">Erro descoñecido</string>
     <string name="download_copy_to_content_uri_confirm_title">¿Copiar arquivo?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Crearase unha copia do arquivo na carpeta de Descargas del sistema, onde poderá ser utilizada por outras aplicacións.\n\nDesexas continuar?</string>
+    <string name="download_copy_to_content_uri_confirm_body">Crearase unha copia do arquivo na carpeta de Descargas del sistema, onde poderá ser utilizada por outras aplicacións.\n\n¿Desexas continuar?</string>
     <string name="download_copy_to_content_uri_success_title">Ficheiro copiado</string>
     <string name="download_copy_to_content_uri_success_body">O ficheiro copiouse con éxito e está dispoñible nas Descargas do sistema.</string>
     <string name="download_copy_to_content_uri_error_title">Erro durante a copia</string>
@@ -714,4 +714,22 @@
     <string name="notifications_title">Notificacións</string>
     <string name="notifications_empty">A túa lista de notificacións está baleira</string>
     <string name="notifications_loading">Cargando notificacións</string>
+    <string name="web_apps_empty">A túa lista de aplicacións web está baleira</string>
+    <string name="web_apps_loading">Cargando aplicacións web</string>
+    <string name="web_apps_dialog_title">Instalar aplicación web</string>
+    <string name="web_apps_dialog_title_parameter">Instalar %1$s</string>
+    <string name="web_apps_dialog_body">Queres instalar a seguinte aplicación Web\? Estará dispoñible na túa biblioteca.</string>
+    <string name="web_apps_dialog_install">Instalar</string>
+    <string name="web_apps_saved_notification">Aplicación web engadida!</string>
+    <string name="hamburger_menu_save_web_app">Gardar aplicación web…</string>
+    <string name="download_addon_install_confirm_install">Instalar</string>
+    <string name="download_addon_install_blocked_body">Permitir a instalación de engadidos locais nas Opcións de Desenvolvedor para proceder.</string>
+    <string name="web_apps_dialog_cancel">Cancelar</string>
+    <string name="addons_experimental_section_title">Experimental</string>
+    <string name="web_apps_title">Aplicacións Web</string>
+    <string name="download_addon_install_cancel">Cancelar</string>
+    <string name="web_apps_description">Preme o botón Gardar aplicación Web... cando esteas nunha páxina para engadila ás túas aplicacións web.</string>
+    <string name="download_addon_install">Instalar engadido</string>
+    <string name="download_addon_install_blocked">A instalación do engadido local foi bloqueada</string>
+    <string name="upload_button">Enviar</string>
 </resources>
