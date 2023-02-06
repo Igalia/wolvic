@@ -506,7 +506,7 @@
     <string name="fxa_account_options_syncing">Sincronizando...</string>
     <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
          history, bookmarks, passwords, etc. -->
-    <string name="fxa_account_options_sync_description">Elije qué sincronizar en tus dispositivos con Wolvic</string>
+    <string name="fxa_account_options_sync_description">Elige qué sincronizar en tus dispositivos usando Firefox Sync</string>
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Marcadores</string>
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
@@ -1557,14 +1557,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the download error dialog. -->
     <string name="download_copy_to_content_uri_success_title">Fichero copiado</string>
     <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_success_body">El fichero se copió con éxito y está disponible en las Descargas del sistema.</string>
+    <string name="download_copy_to_content_uri_success_body">El archivo se copió con éxito y está disponible en las Descargas del sistema.</string>
     <!-- This string is displayed in the title of the copy downloaded file error dialog. -->
     <string name="download_copy_to_content_uri_error_title">Error durante la copia</string>
     <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
     <string name="download_copy_to_content_uri_error_body">Se ha producido un error mientras se copiaba el archivo.</string>
     <!-- This string is displayed in the body of the copy downloaded file error dialog.
      '%1$s' will be replaced at runtime with the name of the downloaded file. -->
-    <string name="download_copy_to_content_uri_error_body_v1">An error occurred while copying %1$s</string>
+    <string name="download_copy_to_content_uri_error_body_v1">Ha sucedido un error mientras se copiaba %1$s</string>
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->
     <string name="environment_download_permission_error_body">Para descargar el entorno es necesario tener permiso de escritura en el almacenamiento externo.</string>
@@ -1733,4 +1733,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_title">Notificaciones</string>
     <string name="notifications_empty">Tu lista de notificaciones está vacía</string>
     <string name="notifications_loading">Cargando notificaciones</string>
+    <string name="web_apps_empty">Tu lista de aplicaciones web está vacía</string>
+    <string name="web_apps_dialog_title">Instalar aplicación web</string>
+    <string name="web_apps_dialog_title_parameter">Instalar %1$s</string>
+    <string name="web_apps_dialog_install">Instalar</string>
+    <string name="web_apps_dialog_cancel">Cancelar</string>
+    <string name="hamburger_menu_save_web_app">Guardar aplicación web…</string>
+    <string name="download_addon_install_cancel">Cancelar</string>
+    <string name="download_addon_install_confirm_install">Instalar</string>
+    <string name="download_addon_install_blocked_body">Permitir la instalación de complementos locales en las Opciones de Desarrollador para proceder.</string>
+    <string name="addons_experimental_section_title">Experimental</string>
+    <string name="download_addon_install_blocked">La instalación del complemento ha sido bloqueada</string>
+    <string name="upload_button">Enviar</string>
+    <string name="web_apps_title">Aplicaciones web</string>
+    <string name="web_apps_dialog_body">¿Quieres instalar la siguiente aplicación web\? Estará disponible en tu biblioteca.</string>
+    <string name="web_apps_description">Pulsa el botón Guardar aplicación web... cuando estés en una página para añadirla a tus aplicaciones web.</string>
+    <string name="web_apps_loading">Cargando aplicaciones web</string>
+    <string name="web_apps_saved_notification">Aplicación web añadida!</string>
+    <string name="download_addon_install">Instalar complemento</string>
 </resources>
