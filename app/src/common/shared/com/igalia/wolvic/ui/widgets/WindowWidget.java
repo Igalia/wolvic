@@ -672,6 +672,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             mSession.updateLastUse();
             mWidgetManager.getNavigationBar().addNavigationBarListener(mNavigationBarListener);
+            mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         } else {
             mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
@@ -1113,6 +1114,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             SessionStore.get().setActiveSession(mSession);
 
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
+            mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
             if (hidePanel) {
                 if (oldSession != null) {
@@ -1147,6 +1149,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.getTextInput().setView(this);
 
         mViewModel.setIsPrivateSession(aSession.getSettings().getUsePrivateMode());
+        mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         // Update the title bar media controls state
         boolean mediaAvailable = mSession.getActiveVideo() != null;
