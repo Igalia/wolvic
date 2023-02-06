@@ -1710,4 +1710,32 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
     <string name="notifications_title">通知</string>
     <string name="notifications_empty">您的通知列表是空的</string>
     <string name="notifications_loading">加载通知中</string>
+    <string name="web_apps_title">网络 应用程序</string>
+    <string name="web_apps_description">点击保存网络应用程序…按钮将网页添加到你的网络程序中。</string>
+    <string name="web_apps_empty">您的网络程序列表为空列表</string>
+    <string name="web_apps_dialog_title">安装网络应用程序</string>
+    <string name="web_apps_loading">网络应用程序加载中</string>
+    <string name="web_apps_dialog_install">安装</string>
+    <string name="web_apps_dialog_cancel">取消</string>
+    <string name="web_apps_saved_notification">网络应用程序添加成功！</string>
+    <string name="download_addon_install_confirm_install">安装</string>
+    <string name="download_addon_install_blocked">封锁安装本地插件</string>
+    <string name="download_copy_to_content_uri_confirm_title">复制文件？</string>
+    <string name="download_copy_to_content_uri_success_title">复制成功</string>
+    <string name="download_copy_to_content_uri_success_body">文件复制成功到系统下载文件夹。</string>
+    <string name="download_copy_to_content_uri_error_title">复制错误</string>
+    <string name="download_copy_to_content_uri_error_body_v1">复制%1$s出错</string>
+    <string name="upload_button">上载</string>
+    <string name="addons_experimental_section_title">试验的</string>
+    <string name="download_context_copy_to_content_uri">于其他程序共用</string>
+    <string name="web_apps_dialog_title_parameter">安装%1$s</string>
+    <string name="web_apps_dialog_body">您想安装以下网络应用程序吗？这些程序将在资源库中找到。</string>
+    <string name="hamburger_menu_save_web_app">保存网络应用程序…</string>
+    <string name="download_addon_install">安装插件</string>
+    <string name="download_addon_install_cancel">取消</string>
+    <string name="download_addon_install_blocked_body">要继续安装请在开发者选项中选择允许本地插件安装。</string>
+    <string name="download_copy_to_content_uri_confirm_body">这样会将此份文件复制到系统下载文件夹中以备其他程序调用。
+\n
+\n您要继续吗？</string>
+    <string name="download_copy_to_content_uri_error_body">复制下载文件出错。</string>
 </resources>
