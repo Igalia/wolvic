@@ -1,12 +1,9 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.content.Context;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.Surface;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -14,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.igalia.wolvic.browser.SettingsStore;
 
 public class BrowserDisplay extends FrameLayout {
@@ -39,6 +37,7 @@ public class BrowserDisplay extends FrameLayout {
         // Add the content_shell container to the activity content. Use default width & height for now.
         // It can be resized later in surfaceChanged.
         SettingsStore settings = SettingsStore.getInstance(getContext());
+        Log.e("WolvicLifecycle", "initial width=" + settings.getWindowWidth() + " height=" + settings.getWindowHeight());
         parentContainer.addView(this, new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
         this.addView(mFragmentContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -57,13 +56,6 @@ public class BrowserDisplay extends FrameLayout {
         // activity synchronously, so we can use all the functionality immediately. Otherwise we'd
         // have to wait until the commit is executed.
         transaction.commitNow();
-
-        // TODO: Set surface size and override fragment. Use ContentViewRenderView subclass to
-        // override the surface callbacks.
-    }
-
-    private void overrideFragmentSurface() {
-        // TODO: Implement
     }
 
     public boolean isAcquired() {
@@ -74,19 +66,5 @@ public class BrowserDisplay extends FrameLayout {
         mAcquired = value;
     }
 
-    public void surfaceChanged(@NonNull Surface surface, int width, int height, @NonNull Runnable firstCompositeCallback) {
-        // TODO: Implement
-    }
 
-    public void surfaceDestroyed() {
-        // TODO: Implement
-    }
-
-    private Point getDisplaySize() {
-        Point point = new Point();
-        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        display.getRealSize(point);
-        return point;
-    }
 }
