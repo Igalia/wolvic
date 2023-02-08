@@ -102,7 +102,7 @@
      when there are no exceptions. -->
     <string name="settings_privacy_policy_webxr_empty_description">WebXR을 사용하는 웹 사이트를 열면, 해당 사이트에서 WebXR을 차단할 수 있는 대화 상자를 열 수 있습니다.</string>
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
-    <string name="settings_privacy_policy_webxr_reset">가상 현실 기기에 접근이 허용 안 된 사이트들 초기화</string>
+    <string name="settings_privacy_policy_webxr_reset">VR 기기가 허용되지 않은 사이트들을 초기화합니다.</string>
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_title">향상된 추적 방지 기능에 대한 예외</string>
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
@@ -111,7 +111,7 @@
      when there are no exceptions. -->
     <string name="settings_privacy_policy_tracking_empty_description">웹 사이트가 사용자의 활동을 추적하도록 허용하면, 여기에 나타납니다.</string>
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
-    <string name="settings_privacy_policy_tracking_reset">향상된 추적 방지 기능에 대한 예외 초기화</string>
+    <string name="settings_privacy_policy_tracking_reset">향상된 추적 방지 기능에 대한 예외를 초기화합니다.</string>
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_login_exceptions_title">로그인 예외</string>
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
@@ -375,7 +375,7 @@
     <string name="developer_options_clear_cache">데이터 지우기</string>
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
-    <string name="developer_options_display_density">디스플레이 밀도</string>
+    <string name="developer_options_display_density">디스플레이 밀도:</string>
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -1018,7 +1018,7 @@
     <string name="privacy_options_saved_login_delete">삭제</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking"><![CDATA[향상된 추적 방지 기능. (<a href="%1$s">더 알아보기</a>)]]></string>
+    <string name="privacy_options_tracking">향상된 추적 방지 기능. (&lt;a href=%1$s&gt;더 알아보기&lt;/a&gt;)</string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">고급</string>
@@ -1109,7 +1109,7 @@
     <string name="drm_disabled_tooltip">DRM 허용 안 됨</string>
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
-    <string name="site_info_tooltip">사이트 정보 보기</string>
+    <string name="site_info_tooltip">사이트 정보 보기.</string>
     <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
          'Servo' refers to the Servo engine. -->
     <string name="servo_tooltip">Servo 엔진 사용</string>
@@ -1595,23 +1595,23 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">헤드셋: %1$s</string>
     <string name="settings_terms_service">서비스 약관</string>
-    <string name="settings_privacy_choose_search_engine_description">원하는 검색 엔진을 선택하세요.</string>
+    <string name="settings_privacy_choose_search_engine_description">선호하는 검색 엔진을 선택하세요.</string>
     <string name="settings_privacy_choose_search_engine_reset">검색 엔진 설정 초기화</string>
     <string name="external_open_uri_error_title">외부 앱 열기 실패</string>
     <string name="terms_service_subtitle_2">Wolvic 웹 기반 정보 서비스</string>
     <string name="privacy_policy_subtitle_1">기본 정보</string>
     <string name="settings_privacy_search_engine_title">검색 엔진</string>
-    <string name="hvr_enter_vr">VR모드 진입</string>
+    <string name="hvr_enter_vr">VR 모드 진입</string>
     <string name="privacy_policy_subtitle_2">데이터 보호</string>
     <string name="privacy_dialog_disagree">Wolvic 종료</string>
     <string name="privacy_policy_title">일반적인 개인정보 보호 정책</string>
-    <string name="voice_search_unsupported">사용자의 언어에서 음성 검색이 지원되지 않습니다.</string>
+    <string name="voice_search_unsupported">사용하시는 언어는 음성 검색이 지원되지 않습니다.</string>
     <string name="privacy_dialog_title">개인정보 보호</string>
     <string name="terms_service_section_1">Wolvic은 전 세계 수천 명의 커뮤니티에 의해 개발된 프리 소프트웨어이자 오픈 소스 소프트웨어입니다. 이와 관련해 귀하가 몇 가지 알아두어야 할 사항이 있습니다:
 \n
 \n\t• Wolvic은 Mozilla Public License 약관에 따라 제공됩니다. 이는 귀하가 Wolvic을 사용, 복제 및 배포가 가능하다는 의미입니다. 또한 귀하는 필요에 따라 Wolvic의 코드를 언제든지 수정할 수 있으며, Mozilla Public License에 의해 수정된 버전을 배포할 수 있는 권한이 있습니다.
 \n
-\n\t• 귀하는 Igalia 및 당사의 상표(Wolvic의 상표명 및 로고를 포함)와 관련하여 상표권이나 라이센스를 취득하지 않습니다.
+\n\t• 귀하는 Igalia 및 당사의 상표와 관련하여 상표권이나 라이센스를 취득할 수 없습니다. 이는 Wolvic의 상표명 및 로고 등 을 포함하되 이에 국한되지 않는다.
 \n
 \n\t• 귀하는 고유 재량에 따라 Crash Reporter와 같은 Wolvic의 특정 기능을 통해 Igalia에 피드백을 제출할 수 있습니다. 귀하가 피드백을 제출하는 경우, 해당 피드백을 사용하여 제품을 개선하고 Wolvic의 웹사이트에 익명화된 피드백을 게시, 배포할 수 있는 권한이 Igalia에 부여됩니다.
 \n
@@ -1628,10 +1628,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_dialog_agree">동의</string>
     <string name="external_open_uri_error_security_exception_body">%1$s에 대한 인텐트 실행 중 SecurityException 발생</string>
     <string name="external_open_uri_error_bad_uri_body">유효하지 않은 URI %1$s</string>
-    <string name="external_open_uri_error_no_activity_body">%1$s를 처리할 응용 프로그램을 찾을 수 없습니다</string>
+    <string name="external_open_uri_error_no_activity_body">%1$s을(를) 처리할 응용 프로그램을 찾을 수 없습니다</string>
     <string name="terms_service_title">서비스 약관</string>
-    <string name="privacy_dialog_message">Wolvic은 귀하의 개인정보를 중요하게 여깁니다. 브라우저를 실행하기 전, 서비스 약관과 개인정보 보호 정책에 동의해 주시기 바랍니다. Wolvic을 이용해주셔서 감사합니다!</string>
-    <string name="hvr_connect_glass_message">이 앱을 사용하기 위한 HUAWEI VR글래스를 연결하세요</string>
+    <string name="privacy_dialog_message">Wolvic은 귀하의 개인정보를 중요하게 여깁니다. 브라우저를 실행하기 위한 서비스 약관과 개인정보 보호 정책에 동의해 주시기 바랍니다. Wolvic을 이용해주셔서 감사합니다!</string>
+    <string name="hvr_connect_glass_message">이 앱을 사용하려면 화웨이 VR 글래스를 연결하세요</string>
     <string name="terms_service_section_2">Wolvic의 제공하는 일부 기능들은 웹 기반 정보 서비스(이하 \"서비스\")를 아래 설명된 조건에 따라 바이너리 형태의 Wolvic과 함께 사용합니다.
 \n
 \n\t• Igalia와 컨트리뷰터, 라이센서 및 파트너는 가장 정확하고 최신의 서비스를 제공하기 위해 노력하고 있습니다. 하지만 우리는 이 정보가 완전하며 오류가 없다고 보장할 수 없습니다. 예를 들어, 세이프 브라우징 서비스는 일부 위험한 사이트를 식별하지 못할 수 있으며 일부 안전한 사이트를 잘못 식별할 수 있습니다. 또 다른 예로, 위치 인식 서비스의 경우 서비스 제공 업체에서 반환하는 모든 위치는 추정치일 뿐이며, 우리 혹은 서비스 제공 업체 모두 제공된 위치의 정확성을 보장하지 않습니다.
@@ -1721,7 +1721,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_choose_language_voice_search_service_title">음성 검색 서비스</string>
     <string name="language_service_options_reset">음성 검색 서비스 설정 초기화</string>
     <string name="voice_service_metkai">MeetKai</string>
-    <string name="voice_service_huawei_asr">HUAWEI 자동 음성 인식</string>
+    <string name="voice_service_huawei_asr">화웨이 자동 음성 인식</string>
     <string name="permissions_dialog_remember_choice">이 결정을 기억함</string>
     <string name="settings_language_galician">갈리시아어</string>
     <string name="settings_language_portuguese_br">포르투갈어 (브라질)</string>
@@ -1742,5 +1742,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_copy_to_content_uri_success_body">파일이 시스템의 Downloads 폴더에 성공적으로 복사됐습니다.</string>
     <string name="download_copy_to_content_uri_error_title">복사 실패</string>
     <string name="download_copy_to_content_uri_error_body">다운로드한 파일을 복사하는 중 오류가 발생했습니다.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">%1$s을 복사하는 중 오류가 발생했습니다</string>
+    <string name="download_copy_to_content_uri_error_body_v1">%1$s을(를) 복사하는 중 오류가 발생했습니다</string>
 </resources>
