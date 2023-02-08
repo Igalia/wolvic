@@ -22,7 +22,7 @@ public class SessionImpl implements WSession {
     private final SettingsImpl mSettings;
     private WTextInput mTextInput;
     private WPanZoomController mPanZoomCrontroller;
-    private WDisplay mDisplay;
+    private DisplayImpl mDisplay;
     private RuntimeImpl mRuntime = null;
     public Tab mTab = null;
 
@@ -126,7 +126,7 @@ public class SessionImpl implements WSession {
     public WDisplay acquireDisplay() {
         Log.e("WolvicLifecycle", "acquire display called");
         WebContents webContents = mRuntime.getContentShellController().createWebContents();
-        mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(webContents), this);
+        mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(webContents), mRuntime.getRenderView(), this);
         return mDisplay;
     }
 
