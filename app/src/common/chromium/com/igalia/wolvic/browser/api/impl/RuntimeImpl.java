@@ -14,7 +14,7 @@ import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
 
-import org.chromium.components.embedder_support.view.ContentViewRenderView;
+import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.WebContents;
 
 import java.io.File;
@@ -34,6 +34,7 @@ public class RuntimeImpl implements WRuntime {
     private ViewGroup mViewContainer;
     private ContentShellController mContentShellController;
     private BrowserDisplay mBrowserDisplay;
+    private WolvicContentRenderView mContentViewRenderView;
 
     public RuntimeImpl(@NonNull Context context, @NonNull WRuntimeSettings settings) {
         Log.e("WolvicLifecycle", "RuntimeImpl()");
@@ -48,20 +49,24 @@ public class RuntimeImpl implements WRuntime {
     }
 
     public BrowserDisplay createBrowserDisplay(WebContents webContents) {
-        ContentViewRenderView contentViewRenderView = new ContentViewRenderView(mContext);
-        contentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
-        contentViewRenderView.setCurrentWebContents(webContents);
+        mContentViewRenderView = new WolvicContentRenderView(mContext);
+        mContentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
+        mContentViewRenderView.setCurrentWebContents(webContents);
 
         mBrowserDisplay = new BrowserDisplay(mContext);
 
         ContentShellFragment fragment = new ContentShellFragment();
-        fragment.setContentViewRenderView(contentViewRenderView);
+        fragment.setContentViewRenderView(mContentViewRenderView);
         mBrowserDisplay.attach(mFragmentManager, mViewContainer, fragment);
         return mBrowserDisplay;
     }
 
     public BrowserDisplay getBrowserDisplay() {
         return mBrowserDisplay;
+    }
+
+    public WolvicContentRenderView getRenderView() {
+        return mContentViewRenderView;
     }
 
     @Override
