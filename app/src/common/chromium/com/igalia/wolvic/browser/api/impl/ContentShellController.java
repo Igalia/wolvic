@@ -47,9 +47,7 @@ public class ContentShellController {
     }
 
     public WebContents createWebContents() {
-        // TODO: Create web contents here
-        return null;
-//        return ((VRBrowserActivity) mActivity).createWebContents();
+        return ((VRBrowserActivity) mActivity).createWebContents();
     }
 
     public void initActivity(Activity activity) {
@@ -76,17 +74,10 @@ public class ContentShellController {
 
     private void onBrowserStarted() {
         Log.e(TAG, "WolvicLifecycle browser started");
-        PostTask.runOrPostTask(UiThreadTaskTraits.DEFAULT, this::createWebContentsOnUIThread);
     }
 
     private void onBrowserStartFailed() {
         Log.e(TAG, "WolvicLifecycle browser start failed");
-    }
-
-    private void createWebContentsOnUIThread() {
-        Log.e(TAG, "WolvicLifecycle on UI thread");
-        ((VRBrowserActivity) mActivity).initializeWolvicBrowserContext();
-        Log.e(TAG, "WolvicLifecycle successfully created webcontents");
     }
 
     public WindowAndroid getWindowAndroid() {
