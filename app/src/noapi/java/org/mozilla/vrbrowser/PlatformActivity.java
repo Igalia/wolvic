@@ -13,11 +13,12 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import org.chromium.content_public.browser.WebContents;
 
 import androidx.annotation.Keep;
 
 import com.igalia.wolvic.utils.SystemUtils;
+
+import org.chromium.content_public.browser.WebContents;
 
 import java.util.ArrayList;
 
@@ -302,5 +303,4 @@ public class PlatformActivity extends Activity {
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void controllerButtonPressed(boolean aDown);
     public native WebContents createWebContents();
-    public native void initializeWolvicBrowserContext();
 }
