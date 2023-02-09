@@ -18,6 +18,7 @@ import com.igalia.wolvic.browser.api.WTextInput;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.WebContents;
 
 public class SessionImpl implements WSession {
@@ -138,7 +139,10 @@ public class SessionImpl implements WSession {
     public WDisplay acquireDisplay() {
         Log.e("WolvicLifecycle", "acquire display called");
         WebContents webContents = mRuntime.getContentShellController().createWebContents();
-        mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(webContents), mRuntime.getRenderView(), this);
+        BrowserDisplay display = mRuntime.createBrowserDisplay(webContents);
+        WolvicContentRenderView renderView = mRuntime.getRenderView();
+        mRuntime.getContentShellController().getWindowAndroid().setAnimationPlaceholderView(renderView);
+        mDisplay = new DisplayImpl(display, renderView, this);
         return mDisplay;
     }
 
