@@ -8,6 +8,7 @@ package com.igalia.wolvic;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -33,6 +34,8 @@ import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.EnvironmentsManager;
 import com.igalia.wolvic.utils.LocaleUtils;
 
+import org.chromium.base.ContextUtils;
+
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
     private SessionStore mSessionStore;
@@ -47,6 +50,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private EnvironmentsManager mEnvironmentsManager;
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
+    private boolean mIsBrowserProcess;
 
     protected void onActivityCreate(@NonNull Context activityContext) {
         onConfigurationChanged(activityContext.getResources().getConfiguration());
@@ -86,15 +90,20 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        ((RuntimeImpl) EngineProvider.INSTANCE.getOrCreateRuntime(base)).getContentShellController().initApplication(this);
+        mIsBrowserProcess = !ContextUtils.getProcessName().contains(":");
+        if (mIsBrowserProcess) {
+            ((RuntimeImpl) EngineProvider.INSTANCE.getOrCreateRuntime(base)).getContentShellController().initApplication(this);
+        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Context context = LocaleUtils.init(this);
-        Language language = LocaleUtils.getDisplayLanguage(context);
-        newConfig.setLocale(language.getLocale());
-        getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
+        if (mIsBrowserProcess) {
+            Context context = LocaleUtils.init(this);
+            Language language = LocaleUtils.getDisplayLanguage(context);
+            newConfig.setLocale(language.getLocale());
+            getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
+        }
         super.onConfigurationChanged(newConfig);
     }
 
