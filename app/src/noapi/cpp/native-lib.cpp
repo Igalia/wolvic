@@ -16,7 +16,7 @@ namespace content {
   class WebContents;
 
   WolvicContentMainDelegate* GetWolvicContentMainDelegate();
-  jobject CreateWebContents(WolvicContentMainDelegate* delegate);
+  jobject CreateWebContents(JNIEnv* env, WolvicContentMainDelegate* delegate);
 }
 
 static crow::DeviceDelegateNoAPIPtr sDevice;
@@ -111,7 +111,7 @@ JNI_METHOD(void, controllerButtonPressed)
 
 JNI_METHOD(jobject, createWebContents)
 (JNIEnv* aEnv, jobject) {
-  return content::CreateWebContents(content::GetWolvicContentMainDelegate());
+  return content::CreateWebContents(aEnv, content::GetWolvicContentMainDelegate());
 }
 
 jint JNI_OnLoad(JavaVM*, void*) {
