@@ -28,11 +28,6 @@ public class DisplayImpl implements WDisplay {
         mBrowserDisplay = browserDisplay;
         mRenderView = renderView;
         mSession = session;
-        overrideSurfaceCallbacks();
-    }
-
-    private void overrideSurfaceCallbacks() {
-
     }
 
     @Override
@@ -49,20 +44,15 @@ public class DisplayImpl implements WDisplay {
             // Dispatch onSurfaceCreated
             mRenderView.surfaceCreated(surface);
 
-
             // Dispatch onSurfaceChanged
             mRenderView.surfaceChanged(surface, width, height);
 
-            // Dispatch SurfaceRedrawNeededAsync
             postDelayed((Runnable) () -> {
-                try {
-//                    mMethodSurfaceRedrawNeededAsync.invoke(mContentViewRenderViewListener, mFirstCompositeRunnable);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
+                if (delegate != null) {
+                    delegate.onFirstComposite(mSession);
                 }
             }, 100);
-
-
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -79,8 +69,6 @@ public class DisplayImpl implements WDisplay {
             return;
         }
         try {
-            // Dispatch onSurfaceChanged
-            final boolean cacheBackBuffer = false;
             mRenderView.surfaceDestroyed();
         }
         catch (Exception ex) {
@@ -102,15 +90,4 @@ public class DisplayImpl implements WDisplay {
         // TODO: Implement
         return null;
     }
-
-    // TODO: Call onFirstComposite on surface change
-    private final Runnable mFirstCompositeRunnable = new Runnable() {
-        @Override
-        public void run() {
-            @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
-            if (delegate != null) {
-                delegate.onFirstComposite(mSession);
-            }
-        }
-    };
 }

@@ -111,7 +111,7 @@ public class RuntimeImpl implements WRuntime {
 
     @Override
     public float getDensity() {
-        return 0;
+        return mContext.getResources().getDisplayMetrics().density;
     }
 
     @Override
