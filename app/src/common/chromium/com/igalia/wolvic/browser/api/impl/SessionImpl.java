@@ -15,11 +15,23 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
+import com.igalia.wolvic.browser.engine.Session;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import org.chromium.content_public.browser.WebContents;
 
 public class SessionImpl implements WSession {
     private final SettingsImpl mSettings;
+    ContentDelegate mContentDelegate;
+    ProgressDelegate mProgressDelegate;
+    PermissionDelegate mPermissionDelegate;
+    NavigationDelegate mNavigationDelegate;
+    ScrollDelegate mScrollDelegate;
+    HistoryDelegate mHistoryDelegate;
+    WContentBlocking.Delegate mContentBlockingDelegate;
+    PromptDelegate mPromptDelegate;
+    SelectionActionDelegate mSelectionActionDelegate;
+    WMediaSession.Delegate mMediaSessionDelegate;
     private WTextInput mTextInput;
     private WPanZoomController mPanZoomCrontroller;
     private DisplayImpl mDisplay;
@@ -132,7 +144,6 @@ public class SessionImpl implements WSession {
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
-
     }
 
     @Override
@@ -179,13 +190,13 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setContentDelegate(@Nullable ContentDelegate delegate) {
-
+        mContentDelegate = delegate;
     }
 
     @Nullable
     @Override
     public ContentDelegate getContentDelegate() {
-        return null;
+        return mContentDelegate;
     }
 
     @Override
@@ -201,89 +212,89 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setProgressDelegate(@Nullable ProgressDelegate delegate) {
-
+        mProgressDelegate = delegate;
     }
 
     @Nullable
     @Override
     public ProgressDelegate getProgressDelegate() {
-        return null;
+        return mProgressDelegate;
     }
 
     @Override
     public void setNavigationDelegate(@Nullable NavigationDelegate delegate) {
-
+        mNavigationDelegate = delegate;
     }
 
     @Nullable
     @Override
     public NavigationDelegate getNavigationDelegate() {
-        return null;
+        return mNavigationDelegate;
     }
 
     @Override
     public void setScrollDelegate(@Nullable ScrollDelegate delegate) {
-
+        mScrollDelegate = delegate;
     }
 
     @Nullable
     @Override
     public ScrollDelegate getScrollDelegate() {
-        return null;
+        return mScrollDelegate;
     }
 
     @Override
     public void setHistoryDelegate(@Nullable HistoryDelegate delegate) {
-
+        mHistoryDelegate = delegate;
     }
 
     @Nullable
     @Override
     public HistoryDelegate getHistoryDelegate() {
-        return null;
+        return mHistoryDelegate;
     }
 
     @Override
     public void setContentBlockingDelegate(@Nullable WContentBlocking.Delegate delegate) {
-
+        mContentBlockingDelegate = delegate;
     }
 
     @Nullable
     @Override
     public WContentBlocking.Delegate getContentBlockingDelegate() {
-        return null;
+        return mContentBlockingDelegate;
     }
 
     @Override
     public void setPromptDelegate(@Nullable PromptDelegate delegate) {
-
+        mPromptDelegate = delegate;
     }
 
     @Nullable
     @Override
     public PromptDelegate getPromptDelegate() {
-        return null;
+        return mPromptDelegate;
     }
 
     @Override
     public void setSelectionActionDelegate(@Nullable SelectionActionDelegate delegate) {
-
-    }
-
-    @Override
-    public void setMediaSessionDelegate(@Nullable WMediaSession.Delegate delegate) {
-
-    }
-
-    @Nullable
-    @Override
-    public WMediaSession.Delegate getMediaSessionDelegate() {
-        return null;
+        mSelectionActionDelegate = delegate;
     }
 
     @Nullable
     @Override
     public SelectionActionDelegate getSelectionActionDelegate() {
-        return null;
+        return mSelectionActionDelegate;
+    }
+
+    @Override
+    public void setMediaSessionDelegate(@Nullable WMediaSession.Delegate delegate) {
+        mMediaSessionDelegate = delegate;
+    }
+
+    @Nullable
+    @Override
+    public WMediaSession.Delegate getMediaSessionDelegate() {
+        return mMediaSessionDelegate;
     }
 }
