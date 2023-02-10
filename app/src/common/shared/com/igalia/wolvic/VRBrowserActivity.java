@@ -278,8 +278,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         registerReceiver(mCrashReceiver, intentFilter, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name), null);
 
         mLastGesture = NoGesture;
-        super.onCreate(savedInstanceState);
-
         mWidgetUpdateListeners = new LinkedList<>();
         mPermissionListeners = new LinkedList<>();
         mFocusChangeListeners = new LinkedList<>();
@@ -288,10 +286,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
-
         mWidgets = new ConcurrentHashMap<>();
-        mWidgetContainer = new FrameLayout(this);
 
+        super.onCreate(savedInstanceState);
+
+        mWidgetContainer = new FrameLayout(this);
         runtime.setFragmentManager(mFragmentController.getSupportFragmentManager(), mWidgetContainer);
 
         mPermissionDelegate = new PermissionDelegate(this, this);

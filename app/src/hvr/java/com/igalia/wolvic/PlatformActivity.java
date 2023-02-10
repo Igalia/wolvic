@@ -46,7 +46,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public class PlatformActivity extends Activity implements SurfaceHolder.Callback {
+public abstract class PlatformActivity extends Activity implements SurfaceHolder.Callback, WidgetManagerDelegate {
     public static final String TAG = "PlatformActivity";
     private SurfaceView mView;
     private Context mContext = null;
@@ -54,6 +54,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
     private Dialog mActiveDialog;
     private SharedPreferences mPrefs;
     private BroadcastReceiver mHmsMessageBroadcastReceiver;
+    private Runnable mPhoneBackHandler = super::onBackPressed;
 
     static {
         Log.i(TAG, "LoadLibrary");
@@ -214,6 +215,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
             @Override
             public void onDisplayAdded(int displayId) {
                 // create the activity again, so the theme is set up properly
+                popBackHandler(mPhoneBackHandler);
                 recreate();
             }
 
@@ -229,6 +231,7 @@ public class PlatformActivity extends Activity implements SurfaceHolder.Callback
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setTheme(R.style.Theme_WolvicPhone);
         setContentView(R.layout.activity_main);
+        pushBackHandler(mPhoneBackHandler);
     }
 
     private void initializeVR() {
