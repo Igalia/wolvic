@@ -1751,4 +1751,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_loading">Cargando aplicaciones web</string>
     <string name="web_apps_saved_notification">Aplicación web añadida!</string>
     <string name="download_addon_install">Instalar complemento</string>
+    <string name="settings_language_portuguese">Portugués</string>
 </resources>

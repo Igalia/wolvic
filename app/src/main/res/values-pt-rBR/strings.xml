@@ -132,6 +132,7 @@
     <string name="settings_language_norwegian">Norueguês</string>
     <string name="settings_language_norwegian_bokmaal">Norueguês</string>
     <string name="settings_language_norwegian_nynorsk">Norueguês</string>
+    <string name="settings_language_portuguese">Português</string>
     <string name="settings_display">Monitor</string>
     <string name="settings_report_speech_data">Relatório de Dados de Fala</string>
     <string name="settings_send_your_feedback">Envie Seu Feedback</string>

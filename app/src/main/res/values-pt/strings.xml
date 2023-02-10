@@ -710,4 +710,5 @@
     <string name="addons_experimental_section_title">Experimental</string>
     <string name="download_context_copy_to_content_uri">Partilhar com outras aplicações</string>
     <string name="web_apps_empty">A sua lista de Aplicações Web está Vazia</string>
+    <string name="settings_language_portuguese">Português</string>
 </resources>

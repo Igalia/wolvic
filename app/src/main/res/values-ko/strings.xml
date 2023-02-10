@@ -281,6 +281,7 @@
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_dutch">네덜란드어</string>
+    <string name="settings_language_portuguese">포르투갈어</string>
     <!-- The string is used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_thai">태국어</string>

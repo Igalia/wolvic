@@ -1636,4 +1636,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_loading">Загрузка уведомлений</string>
     <string name="terms_service_title">Условия обслуживания</string>
     <string name="terms_service_section_2"></string>
+    <string name="settings_language_portuguese">Португальский</string>
 </resources>
