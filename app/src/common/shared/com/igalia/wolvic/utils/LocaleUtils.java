@@ -307,6 +307,8 @@ public class LocaleUtils {
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_finnish, locale)));
             locale = new Locale("gl", "ES");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_galician, locale)));
+            locale = new Locale("pt","PT");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_portuguese, locale)));
             locale = new Locale("pt","BR");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_portuguese_br, locale)));
         }};
