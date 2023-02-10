@@ -1738,4 +1738,5 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
 \n
 \n您要继续吗？</string>
     <string name="download_copy_to_content_uri_error_body">复制下载文件出错。</string>
+    <string name="settings_language_portuguese">西班牙语</string>
 </resources>

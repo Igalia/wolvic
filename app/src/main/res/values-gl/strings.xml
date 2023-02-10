@@ -732,4 +732,5 @@
     <string name="download_addon_install">Instalar engadido</string>
     <string name="download_addon_install_blocked">A instalación do engadido local foi bloqueada</string>
     <string name="upload_button">Enviar</string>
+    <string name="settings_language_portuguese">Portugués</string>
 </resources>

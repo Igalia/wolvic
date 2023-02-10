@@ -281,6 +281,9 @@
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_dutch">Hollandsk</string>
+    <string name="settings_language_galician">Galicisk</string>
+    <string name="settings_language_portuguese_br">Portugisisk (Brasilien)</string>
+    <string name="settings_language_portuguese">Portugisisk</string>
     <!-- The string is used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
     <string name="settings_language_thai">Thai</string>
@@ -1622,7 +1625,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="terms_service_subtitle_2">Wolvic Web-baserede Informationstjenester</string>
     <string name="terms_service_title">Servicevilkår</string>
     <string name="language_options_voice_search_service_title">Stemmesøgningstjeneste</string>
-    <string name="settings_language_galician">Galicisk</string>
     <string name="permissions_dialog_remember_choice">Husk denne beslutning</string>
     <string name="settings_language_portuguese_br">Portugisisk (Brasilien)</string>
     <string name="hamburger_menu_save_web_app">Gem webapp…</string>

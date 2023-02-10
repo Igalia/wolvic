@@ -1753,4 +1753,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_copy_to_content_uri_confirm_body">Une copie du fichier va être créée dans le répertoire Téléchargements du système, accessible par d\'autres applications.
 \n
 \nSouhaitez-vous continuer \?</string>
+    <string name="settings_language_portuguese">Portugais</string>
 </resources>
