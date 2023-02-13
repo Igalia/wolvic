@@ -702,6 +702,7 @@
     <string name="settings_language_korean">Coreano</string>
     <string name="settings_language_italian">Italiano</string>
     <string name="upload_button">Carregar</string>
+    <string name="upload_list_empty">Não há arquivos disponíveis para carregar</string>
     <string name="web_apps_loading">A carregar Aplicações Web</string>
     <string name="web_apps_dialog_title">Instalar Aplicações Web</string>
     <string name="web_apps_dialog_title_parameter">Instalar %1$s</string>

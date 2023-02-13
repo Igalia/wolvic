@@ -1,95 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/prompt_background"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/promptTitle"
+    <data>
+
+        <variable
+            name="isEmpty"
+            type="boolean" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:ellipsize="end"
-        android:gravity="center_horizontal"
-        android:lines="1"
-        android:maxLines="2"
-        android:minLines="1"
-        android:textColor="@color/fog"
-        android:textSize="@dimen/text_bigger_size"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Title" />
+        android:background="@drawable/prompt_background"
+        android:orientation="vertical">
 
-    <com.igalia.wolvic.ui.views.CustomRecyclerView
-        android:id="@+id/filesList"
-        style="@style/customRecyclerViewStyle"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_weight="100"
-        android:fadingEdgeLength="60dp"
-        android:maxHeight="@dimen/prompt_content_max_height"
-        android:minHeight="400dp"
-        android:overScrollMode="never"
-        android:requiresFadingEdge="vertical"
-        android:smoothScrollbar="true"
-        app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/buttonsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bodyContainer">
-
-
-        <Button
-            android:id="@+id/negativeButton"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/promptTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/dialog_regular_button_background"
-            android:fontFamily="sans-serif"
-            android:minWidth="120dp"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:text="@string/cancel_button"
-            android:textColor="@drawable/prompt_button_text_color"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/positiveButton"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/positiveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/dialog_highlighted_button_background"
-            android:fontFamily="sans-serif"
-            android:minWidth="120dp"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:text="@string/upload_button"
-            android:textColor="@drawable/prompt_button_text_color"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:lines="1"
+            android:maxLines="2"
+            android:minLines="1"
+            android:textColor="@color/fog"
+            android:textSize="@dimen/text_bigger_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Title" />
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="100"
+            android:gravity="center_vertical|center_horizontal"
+            android:maxHeight="@dimen/prompt_content_max_height"
+            android:minHeight="400dp"
+            android:orientation="vertical"
+            app:visibleGone="@{isEmpty}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/upload_list_empty"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
+            android:id="@+id/filesList"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="100"
+            android:fadingEdgeLength="60dp"
+            android:maxHeight="@dimen/prompt_content_max_height"
+            android:minHeight="400dp"
+            android:overScrollMode="never"
+            android:requiresFadingEdge="vertical"
+            android:smoothScrollbar="true"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:visibleGone="@{!isEmpty}" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bodyContainer">
+
+            <Button
+                android:id="@+id/negativeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
+                android:minWidth="120dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:text="@string/cancel_button"
+                android:textColor="@drawable/prompt_button_text_color"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/positiveButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/positiveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dialog_highlighted_button_background"
+                android:fontFamily="sans-serif"
+                android:minWidth="120dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:text="@string/upload_button"
+                android:textColor="@drawable/prompt_button_text_color"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</layout>

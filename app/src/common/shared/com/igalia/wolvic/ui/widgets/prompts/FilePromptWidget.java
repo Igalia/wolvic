@@ -4,20 +4,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.audio.AudioEngine;
+import com.igalia.wolvic.databinding.PromptFileBinding;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.ui.adapters.FileUploadAdapter;
 import com.igalia.wolvic.ui.adapters.FileUploadItem;
 import com.igalia.wolvic.ui.callbacks.FileUploadSelectionCallback;
-import com.igalia.wolvic.ui.views.CustomRecyclerView;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 import java.util.Collection;
@@ -32,9 +33,7 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
     }
 
     private AudioEngine mAudio;
-    private CustomRecyclerView mFilesList;
-    private Button mCloseButton;
-    private Button mUploadButton;
+    private PromptFileBinding mBinding;
     private FileUploadAdapter mFileUploadAdapter;
     private DownloadsManager mDownloadsManager;
 
@@ -57,25 +56,24 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
         mDownloadsManager = ((VRBrowserActivity) getContext()).getServicesProvider().getDownloadsManager();
         mAudio = AudioEngine.fromContext(aContext);
 
-        inflate(aContext, R.layout.prompt_file, this);
+        LayoutInflater inflater = LayoutInflater.from(aContext);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.prompt_file, this, true);
 
-        mLayout = findViewById(R.id.layout);
+        mLayout = mBinding.layout;
 
         mFileUploadAdapter = new FileUploadAdapter(mOnSelectionCallback);
-        mFilesList = findViewById(R.id.filesList);
-        mFilesList.setAdapter(mFileUploadAdapter);
-        mFilesList.setHasFixedSize(true);
-        mFilesList.setItemViewCacheSize(20);
-        mFilesList.setDrawingCacheEnabled(true);
-        mFilesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        mBinding.filesList.setAdapter(mFileUploadAdapter);
+        mBinding.filesList.setHasFixedSize(true);
+        mBinding.filesList.setItemViewCacheSize(20);
+        mBinding.filesList.setDrawingCacheEnabled(true);
+        mBinding.filesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         onDownloadsUpdate(mDownloadsManager.getDownloads());
 
         mTitle = findViewById(R.id.promptTitle);
         mMessage = findViewById(R.id.promptMessage);
 
-        mCloseButton = findViewById(R.id.negativeButton);
-        mCloseButton.setOnClickListener(view -> {
+        mBinding.negativeButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -84,8 +82,7 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
             hide(REMOVE_WIDGET);
         });
 
-        mUploadButton = findViewById(R.id.positiveButton);
-        mUploadButton.setOnClickListener(view -> {
+        mBinding.positiveButton.setOnClickListener(view -> {
             if (mPromptDelegate instanceof FilePromptDelegate) {
                 Collection<FileUploadItem> selectedItems = mFileUploadAdapter.getSelectedItems();
                 if (selectedItems.size() > 0) {
@@ -101,12 +98,12 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
             hide(REMOVE_WIDGET);
         });
         // hidden unless multiple selection is enabled
-        mUploadButton.setVisibility(GONE);
+        mBinding.positiveButton.setVisibility(GONE);
     }
 
     public void setIsMultipleSelection(boolean isMultipleSelection) {
         mFileUploadAdapter.setIsMultipleSelection(isMultipleSelection);
-        mUploadButton.setVisibility(isMultipleSelection ? VISIBLE : GONE);
+        mBinding.positiveButton.setVisibility(isMultipleSelection ? VISIBLE : GONE);
 
         onDownloadsUpdate(mDownloadsManager.getDownloads());
     }
@@ -117,12 +114,9 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
         onDownloadsUpdate(mDownloadsManager.getDownloads());
     }
 
-    private final FileUploadSelectionCallback mOnSelectionCallback = new FileUploadSelectionCallback() {
-        @Override
-        public void onSelection(@NonNull Uri[] uris) {
-            ((FilePromptDelegate) mPromptDelegate).confirm(uris);
-            hide(REMOVE_WIDGET);
-        }
+    private final FileUploadSelectionCallback mOnSelectionCallback = uris -> {
+        ((FilePromptDelegate) mPromptDelegate).confirm(uris);
+        hide(REMOVE_WIDGET);
     };
 
     @Override
@@ -161,15 +155,18 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
         List<FileUploadItem> fileItems = getFileItemsFromDownloads(downloads);
         mFileUploadAdapter.setFilesList(fileItems);
+        mBinding.setIsEmpty(mFileUploadAdapter.getItemCount() == 0);
     }
 
     public void onDownloadCompleted(@NonNull Download download) {
         List<FileUploadItem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
         mFileUploadAdapter.setFilesList(fileItems);
+        mBinding.setIsEmpty(mFileUploadAdapter.getItemCount() == 0);
     }
 
     public void onDownloadError(@NonNull String error, @NonNull String file) {
         List<FileUploadItem> fileItems = getFileItemsFromDownloads(mDownloadsManager.getDownloads());
         mFileUploadAdapter.setFilesList(fileItems);
+        mBinding.setIsEmpty(mFileUploadAdapter.getItemCount() == 0);
     }
 }

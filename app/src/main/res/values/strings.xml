@@ -920,6 +920,9 @@
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="upload_button">Upload</string>
 
+    <!-- This string is used when the list of files that can be uploaded is empty. -->
+    <string name="upload_list_empty">No files available for upload</string>
+
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Back</string>
 
