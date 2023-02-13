@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        flavour: [assembleOculusvrArm64World, assembleHvrArm64World, assemblePicoxrArm64World]
+        flavour: [assembleOculusvrArm64WorldGecko, assembleHvrArm64WorldGecko, assemblePicoxrArm64WorldGecko]
 
     steps:
       - name: Checkout Wolvic
