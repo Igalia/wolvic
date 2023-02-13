@@ -719,6 +719,7 @@
     <string name="download_copy_to_content_uri_error_body_v1">Ocorreu um erro ao copiar %1$s</string>
     <string name="download_addon_install_confirm_install">Instalar</string>
     <string name="upload_button">Carregar</string>
+    <string name="upload_list_empty">Não há arquivos disponíveis para carregar</string>
     <string name="web_apps_dialog_title_parameter">Instalar %1$s</string>
     <string name="web_apps_dialog_cancel">Cancelar</string>
     <string name="web_apps_dialog_install">Instalar</string>
