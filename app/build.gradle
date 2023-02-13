@@ -89,15 +89,19 @@ def getMKApiKey = { ->
     return ""
 }
 
-def getBackend = { ->
-    if (gradle.hasProperty("userProperties.backend")) {
-        def engine = gradle."userProperties.backend"
-        assert engine == "gecko" || engine == "chromium" || engine == "webkit"
-        return engine
+def isChromiumAvaiable = {
+    if (gradle.hasProperty("userProperties.chromium_aar")) {
+        return true
     }
-    return "gecko"
+    return false
 }
 
+def isWebKitAvaiable = {
+    if (gradle.hasProperty("userProperties.webkit_aar")) {
+        return true
+    }
+    return false
+}
 
 // Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
@@ -181,7 +185,7 @@ android {
         disable "ExtraTranslation"
     }
 
-    flavorDimensions "platform", "abi", "country"
+    flavorDimensions "platform", "abi", "country", "backend"
 
     productFlavors {
         // Supported platforms
@@ -325,12 +329,26 @@ android {
                 abiFilters "x86_64"
             }
         }
+
+        // Supported Backends
+        gecko {
+            dimension "backend"
+        }
+
+        chromium {
+            dimension "backend"
+        }
+
+        webkit {
+            dimension "backend"
+        }
     }
 
     variantFilter { variant ->
         def platform = variant.getFlavors().get(0).name
         def abi = variant.getFlavors().get(1).name
         def country = variant.getFlavors().get(2).name
+        def backend = variant.getFlavors().get(3).name
 
         // Create x86_64 variants only for noapi platform
         if (abi == 'x86_64')
@@ -339,15 +357,19 @@ android {
         // Create variants for China only for HVR platforms
         if (country == 'cn' && !platform.startsWith('hvr'))
             variant.setIgnore(true);
-    }
 
+        // Create variants for chromium/webkit, only when they are avialble
+        if (backend == 'chromium' && !isChromiumAvaiable())
+            variant.setIgnore(true);
+        if (backend == 'webkit' && !isWebKitAvaiable())
+            variant.setIgnore(true);
+    }
 
     sourceSets {
         main {
             java.srcDirs = [
                     'app',
                     'src/common/shared',
-                    'src/common/' + getBackend(),
                     'src/main/cpp/vrb/android/java'
             ]
         }
@@ -355,7 +377,6 @@ android {
         release {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/debug/AndroidManifest.xml"
                                                            : manifest.srcFile
-
         }
 
         oculusvr {
@@ -388,29 +409,29 @@ android {
             ]
         }
 
-        oculusvrArm64WorldDebug {
+        oculusvrArm64WorldGeckoDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrArm64WorldRelease {
+        oculusvrArm64WorldGeckoRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64WorldDebug {
+        oculusvrStoreArm64WorldGeckoDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64WorldRelease {
+        oculusvrStoreArm64WorldGeckoRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvr3dofStoreArm64WorldDebug {
+        oculusvr3dofStoreArm64WorldGeckoDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvr3dofStoreArm64WorldRelease {
+        oculusvr3dofStoreArm64WorldGeckoRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
@@ -475,6 +496,24 @@ android {
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
+            ]
+        }
+
+        gecko {
+            java.srcDirs = [
+                    'src/common/gecko'
+            ]
+        }
+
+        chromium {
+            java.srcDirs = [
+                    'src/common/chromium'
+            ]
+        }
+
+        webkit {
+            java.srcDirs = [
+                    'src/common/webkit'
             ]
         }
     }
@@ -587,23 +626,21 @@ dependencies {
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvrImplementation 'com.huawei.hms:push:6.5.0.300'
-}
 
-if (getBackend() == 'chromium') {
-    dependencies {
-        implementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
-        implementation 'androidx.fragment:fragment:1.4.1'
+    // gecko
+    def branch = "nightly" // "nightly" or "beta"
+    arm64Implementation deps.gecko_view."${branch}_arm64"
+    x86_64Implementation deps.gecko_view."${branch}_x86_64"
+
+    // chromium
+    if (isChromiumAvaiable()) {
+        chromiumImplementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
+        chromiumImplementation 'androidx.fragment:fragment:1.4.1'
     }
-} else if (getBackend() == 'webkit') {
-    dependencies {
-        implementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
-    }
-} else {
-    dependencies {
-        // "nightly" or "beta"
-        def branch = "nightly"
-        arm64Implementation deps.gecko_view."${branch}_arm64"
-        x86_64Implementation deps.gecko_view."${branch}_x86_64"
+
+    // webkit
+    if (isWebKitAvaiable()) {
+        webkitImplementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
     }
 }
 
