@@ -728,6 +728,7 @@ DeviceDelegateOpenXR::ProcessEvents() {
       }
       case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING:
         m.firstPose = std::nullopt;
+        VRB_DEBUG("OpenXR: reference space changed. User recentered the view?");
         break;
       default: {
         VRB_DEBUG("OpenXR ignoring event type %d", ev->type);
@@ -786,6 +787,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   XrSpaceLocation location {XR_TYPE_SPACE_LOCATION};
   CHECK_XRCMD(xrLocateSpace(m.viewSpace, m.localSpace, m.predictedDisplayTime, &location));
   m.predictedPose = location.pose;
+  bool reoriented = !m.firstPose;
   if (!m.firstPose && location.pose.position.y != 0.0) {
     m.firstPose = location.pose;
   }
@@ -894,6 +896,10 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     offsets.z() = 0.05;
 #endif
     m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, *m.controller);
+  }
+
+  if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
   }
 }
 
