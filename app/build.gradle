@@ -89,14 +89,14 @@ def getMKApiKey = { ->
     return ""
 }
 
-def isChromiumAvaiable = {
+def isChromiumAvailable = {
     if (gradle.hasProperty("userProperties.chromium_aar")) {
         return true
     }
     return false
 }
 
-def isWebKitAvaiable = {
+def isWebKitAvailable = {
     if (gradle.hasProperty("userProperties.webkit_aar")) {
         return true
     }
@@ -358,10 +358,10 @@ android {
         if (country == 'cn' && !platform.startsWith('hvr'))
             variant.setIgnore(true);
 
-        // Create variants for chromium/webkit, only when they are avialble
-        if (backend == 'chromium' && !isChromiumAvaiable())
+        // Create variants for chromium/webkit, only when they are available
+        if (backend == 'chromium' && !isChromiumAvailable())
             variant.setIgnore(true);
-        if (backend == 'webkit' && !isWebKitAvaiable())
+        if (backend == 'webkit' && !isWebKitAvailable())
             variant.setIgnore(true);
     }
 
@@ -633,13 +633,13 @@ dependencies {
     x86_64Implementation deps.gecko_view."${branch}_x86_64"
 
     // chromium
-    if (isChromiumAvaiable()) {
+    if (isChromiumAvailable()) {
         chromiumImplementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
         chromiumImplementation 'androidx.fragment:fragment:1.4.1'
     }
 
     // webkit
-    if (isWebKitAvaiable()) {
+    if (isWebKitAvailable()) {
         webkitImplementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
     }
 }
