@@ -1626,7 +1626,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="terms_service_title">Servicevilkår</string>
     <string name="language_options_voice_search_service_title">Stemmesøgningstjeneste</string>
     <string name="permissions_dialog_remember_choice">Husk denne beslutning</string>
-    <string name="settings_language_portuguese_br">Portugisisk (Brasilien)</string>
     <string name="hamburger_menu_save_web_app">Gem webapp…</string>
     <string name="web_apps_loading">Indlæsning af webapps</string>
     <string name="download_context_copy_to_content_uri">Del med andre apps</string>
