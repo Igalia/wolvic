@@ -1612,4 +1612,43 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_connect_glass_message">このアプリを使用するにはHUAWEI VR Glassを接続してください</string>
     <string name="privacy_dialog_message">Wolvic開発チームは皆様のプライバシーの重要性を認識しています。このブラウザーを実行するには、下記の利用規約及びプライバシーポリシーに同意してください。Wolvicをご利用くださいましてありがとうございます。</string>
     <string name="external_open_uri_error_no_activity_body">%1$sを扱えるアプリケーションが見つかりませんでした</string>
+    <string name="settings_language_portuguese_br">ポルトガル語（ブラジル）</string>
+    <string name="language_options_voice_search_service_title">音声検索サービス</string>
+    <string name="settings_language_choose_language_voice_search_service_title">音声検索サービス</string>
+    <string name="settings_language_choose_language_voice_search_service_description">音声検索に使用するサービスの優先順位を設定できます。</string>
+    <string name="settings_language_galician">ガリシア語</string>
+    <string name="download_context_copy_to_content_uri">他のアプリと共有する</string>
+    <string name="notifications_title">通知</string>
+    <string name="web_apps_empty">ウェブアプリリストが空です</string>
+    <string name="web_apps_loading">ウェブアプリを読み込んでいます</string>
+    <string name="web_apps_dialog_title_parameter">%1$sをインストール</string>
+    <string name="web_apps_dialog_title">ウェブアプリをインストール</string>
+    <string name="web_apps_dialog_cancel">キャンセル</string>
+    <string name="web_apps_saved_notification">ウェブアプリを追加しました</string>
+    <string name="download_addon_install_cancel">キャンセル</string>
+    <string name="download_addon_install_confirm_install">インストール</string>
+    <string name="download_addon_install_blocked">ローカルアドオンのインストールはブロックされています</string>
+    <string name="download_addon_install_blocked_body">開発者オプションにローカルアドオンのインストールを許可する。</string>
+    <string name="download_copy_to_content_uri_confirm_title">ファイルをコピーしますか？</string>
+    <string name="download_copy_to_content_uri_success_title">コピーが成功しました</string>
+    <string name="download_copy_to_content_uri_confirm_body">このファイルのコピーをシステムのダウンロードフォルダーに保存します。その場合、他のアプリにもアクセス可能になります。
+\n
+\n続けますか？</string>
+    <string name="download_copy_to_content_uri_success_body">コピーが成功しました、ファイルはシステムのダンロードフォルダーに保存しました。</string>
+    <string name="download_copy_to_content_uri_error_title">コピーエラー</string>
+    <string name="download_copy_to_content_uri_error_body">ダウンロードしたファイルのコピー中にエラーが発生しました。</string>
+    <string name="download_copy_to_content_uri_error_body_v1">%1$sをコピー中にエラーが発生しました</string>
+    <string name="voice_service_metkai"></string>
+    <string name="upload_button">アップロード</string>
+    <string name="addons_experimental_section_title">実験的</string>
+    <string name="notifications_loading">通知を読み込んでいます</string>
+    <string name="web_apps_title">ウェブアプリ</string>
+    <string name="notifications_empty">通知リストが空です</string>
+    <string name="web_apps_description">ウェブアプリを保存...ボタンをクリックすると、開いているページがウェブアプリに追加されます。</string>
+    <string name="web_apps_dialog_body">以下のウェブアプリをインストールしますか？ライブラリーに追加されます。</string>
+    <string name="web_apps_dialog_install">インストール</string>
+    <string name="language_service_options_reset">音声検索サービスの設定をリセットする</string>
+    <string name="hamburger_menu_save_web_app">ウェブアプリを保存…</string>
+    <string name="download_addon_install">アドオンをインストール</string>
+    <string name="permissions_dialog_remember_choice">この選択を保存する</string>
 </resources>
