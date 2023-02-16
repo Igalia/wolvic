@@ -629,8 +629,14 @@ dependencies {
 
     // gecko
     def branch = "nightly" // "nightly" or "beta"
-    arm64Implementation deps.gecko_view."${branch}_arm64"
-    x86_64Implementation deps.gecko_view."${branch}_x86_64"
+    android.applicationVariants.all { variant ->
+        def abi = variant.productFlavors.get(1).name
+        if (abi.toLowerCase().startsWith('x86_64')) {
+            geckoImplementation deps.gecko_view."${branch}_x86_64"
+        } else {
+            geckoImplementation deps.gecko_view."${branch}_arm64"
+        }
+    }
 
     // chromium
     if (isChromiumAvailable()) {
