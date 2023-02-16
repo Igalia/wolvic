@@ -899,6 +899,8 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   }
 
   if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
+      if (mReorientClient)
+          mReorientClient->OnReorient();
       m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
   }
 }

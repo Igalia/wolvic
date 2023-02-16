@@ -24,7 +24,7 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 class Widget;
 typedef std::shared_ptr<Widget> WidgetPtr;
 
-class BrowserWorld {
+class BrowserWorld : public DeviceDelegate::ReorientClient {
 public:
   static BrowserWorld& Instance();
   static void Destroy();
@@ -74,6 +74,7 @@ public:
   void SetIsServo(const bool aIsServo);
   void SetCPULevel(const device::CPULevel aLevel);
   JNIEnv* GetJNIEnv() const;
+  void OnReorient() override;
 #if HVR
   bool WasButtonAppPressed();
 #endif

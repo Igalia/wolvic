@@ -210,6 +210,7 @@ struct BrowserWorld::State {
   vrb::Matrix widgetsYaw;
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
+  bool reorientRequested = false;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && STORE_BUILD == 1
@@ -839,11 +840,13 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     delegate->SetGazeModeIndex(m.device->GazeModeIndex());
     m.device->SetClipPlanes(m.nearClip, m.farClip);
     m.device->SetControllerDelegate(delegate);
+    m.device->SetReorientClient(this);
     m.gestures = m.device->GetGestureDelegate();
   } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers->Reset();
     m.gestures = nullptr;
+    previousDevice->SetReorientClient(nullptr);
     previousDevice->ReleaseControllerDelegate();
   }
 }
@@ -1076,6 +1079,8 @@ BrowserWorld::StartFrame() {
     bool relayoutWidgets = false;
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
+    if (m.reorientRequested)
+      relayoutWidgets = std::exchange(m.reorientRequested, false);
     if (relayoutWidgets) {
       UpdateVisibleWidgets();
     }
@@ -1824,6 +1829,10 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
   }
+}
+
+void BrowserWorld::OnReorient() {
+  m.reorientRequested = true;
 }
 
 } // namespace crow
