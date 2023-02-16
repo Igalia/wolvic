@@ -180,7 +180,7 @@ struct Widget::State {
     auto setCylinderLayerTransformIfNeeded = [&](const vrb::Matrix& rotation) {
         if (!hasCylinderLayer)
           return;
-        cylinder->GetLayer()->SetRotation(uiYaw ? rotation.PostMultiply(*uiYaw) : rotation);
+        cylinder->GetLayer()->SetRotation(uiYaw ? rotation.PreMultiply(*uiYaw) : rotation);
     };
 
     if (x != 0.0f && placement->cylinderMapRadius > 0) {
