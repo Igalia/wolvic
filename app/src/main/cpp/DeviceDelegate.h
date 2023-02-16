@@ -100,12 +100,20 @@ public:
   virtual void OnControllersReady(const std::function<void()>& callback) {
     callback();
   }
+  class ReorientClient {
+  public:
+    virtual void OnReorient() = 0;
+    virtual ~ReorientClient() {};
+  };
+  void SetReorientClient(ReorientClient* client) { mReorientClient = client; }
+
 protected:
   DeviceDelegate() {}
 
   virtual ~DeviceDelegate() {}
 
   bool mShouldRender { false };
+  ReorientClient* mReorientClient { nullptr };
 private:
   VRB_NO_DEFAULTS(DeviceDelegate)
 };
