@@ -1,88 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/prompt_background">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/layoutAlertMessages"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/positiveButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@drawable/prompt_background">
+
         <TextView
             android:id="@+id/alertTitle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="7"
-            android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:lines="1"
-            android:maxLines="2"
-            android:minLines="1"
-            android:textColor="@color/fog"
-            android:textSize="@dimen/text_bigger_size"
+            android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/bodyContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
-        <com.igalia.wolvic.ui.views.CustomScrollView
-            android:id="@+id/bodyContainer"
-            style="@style/customScrollViewStyle"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/alertMessage"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:fastScrollAlwaysVisible="false"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="top|start"
             android:maxHeight="@dimen/prompt_content_max_height"
+            android:scrollbars="vertical"
+            android:textAlignment="viewStart"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/positiveButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/alertTitle">
+            app:layout_constraintTop_toBottomOf="@+id/alertTitle"
+            tools:text="Message" />
 
-            <TextView
-                android:id="@+id/alertMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center_horizontal"
-                android:scrollbars="vertical"
-                android:textSize="18sp"
-                tools:text="Message" />
-        </com.igalia.wolvic.ui.views.CustomScrollView>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/positiveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/dialog_highlighted_button_background"
-        android:fontFamily="sans-serif"
-        android:minWidth="120dp"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:text="@string/ok_button"
-        android:textColor="@drawable/prompt_button_text_color"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutAlertMessages"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/positiveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/prompt_button_background"
+            android:fontFamily="sans-serif"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:text="@string/ok_button"
+            android:textAllCaps="true"
+            android:textColor="@drawable/prompt_button_text_color"
+            android:textSize="10pt"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

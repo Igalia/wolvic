@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="androidx.appcompat.widget.AppCompatToggleButton" />
+        <import type="androidx.appcompat.widget.AppCompatToggleButton"/>
         <variable
             name="login"
             type="mozilla.components.concept.storage.Login" />
@@ -22,26 +22,26 @@
             android:id="@+id/titleContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true">
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
+                tools:text="http://mozilla.org"
                 android:text="@{login.origin}"
-                android:textColor="@color/fog"
-                android:textSize="@dimen/text_bigger_size"
                 android:textStyle="bold"
-                tools:text="http://mozilla.org" />
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_bigger_size" />
         </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_above="@id/buttonsLayout"
             android:layout_below="@id/titleContainer"
+            android:layout_above="@id/buttonsLayout"
             android:gravity="center_vertical"
             android:orientation="vertical">
             <LinearLayout
@@ -49,20 +49,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_login"
-                    android:tint="@color/concrete" />
+                    android:tint="@color/concrete"
+                    android:src="@drawable/ic_login"/>
                 <TextView
                     android:id="@+id/subtitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingMultiplier="1.25"
                     android:text="@string/autofill_dialog_save_title"
+                    android:lineSpacingMultiplier="1.25"
                     android:textAlignment="textStart"
                     android:textColor="@color/fog"
                     android:textSize="@dimen/text_medium_size" />
@@ -72,16 +72,16 @@
                 android:id="@+id/usernameContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginBottom="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:gravity="center_vertical">
                 <TextView
                     android:id="@+id/usernameTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
                     android:layout_weight="1"
                     android:text="@string/autofill_dialog_save_username_text"
-                    android:textAlignment="textStart"
                     android:textColor="@color/fog"
                     android:textSize="@dimen/text_medium_size" />
                 <TextView
@@ -90,17 +90,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="2"
-                    android:ellipsize="end"
-                    android:maxLines="1"
+                    tools:text="user@mozilla.org"
                     android:text="@{login.username}"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textAlignment="textStart"
                     android:textColor="@color/rhino"
-                    android:textSize="@dimen/text_medium_size"
                     android:textStyle="bold"
-                    tools:text="user@mozilla.org" />
+                    android:textSize="@dimen/text_medium_size" />
                 <View
                     android:layout_width="24dp"
-                    android:layout_height="24dp" />
+                    android:layout_height="24dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -108,15 +108,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
                 <TextView
                     android:id="@+id/passwordTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
                     android:layout_weight="1"
                     android:text="@string/autofill_dialog_save_password_text"
-                    android:textAlignment="textStart"
                     android:textColor="@color/fog"
                     android:textSize="@dimen/text_medium_size" />
                 <TextView
@@ -125,26 +125,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="2"
-                    android:ellipsize="end"
+                    android:text="@{login.password}"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:text="@{login.password}"
+                    android:ellipsize="end"
                     android:textAlignment="textStart"
                     android:textColor="@color/rhino"
-                    android:textSize="@dimen/text_medium_size"
-                    android:textStyle="bold" />
-
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_medium_size" />
                 <androidx.appcompat.widget.AppCompatToggleButton
                     android:id="@+id/password_toggle"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/password_toggle"
-                    android:backgroundTint="@color/concrete"
-                    android:checked="false"
                     android:gravity="center"
-                    android:textOff=""
-                    android:textOn="" />
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/concrete"
+                    android:background="@drawable/password_toggle"
+                    android:checked="false"
+                    android:textOn=""
+                    android:textOff=""/>
             </LinearLayout>
         </LinearLayout>
 
@@ -166,7 +165,7 @@
                 android:scaleType="fitCenter"
                 android:text="@string/autofill_dialog_never_save_button_text"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/saveButton"
@@ -178,7 +177,7 @@
                 android:scaleType="fitCenter"
                 android:text="@string/autofill_dialog_save_button_text"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </RelativeLayout>
     </RelativeLayout>
 </layout>

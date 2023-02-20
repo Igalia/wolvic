@@ -9,9 +9,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/prompt_background"
-        app:layout_constraintBottom_toTopOf="@+id/promptText"
-        app:layout_constraintTop_toTopOf="@+id/promptText">
+        android:background="@drawable/prompt_background">
 
         <TextView
             android:id="@+id/textTitle"
@@ -20,47 +18,32 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:lines="1"
-            android:maxLines="2"
-            android:minLines="1"
-            android:textColor="@color/fog"
-            android:textSize="@dimen/text_bigger_size"
+            android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
-        <com.igalia.wolvic.ui.views.CustomScrollView
-            android:id="@+id/bodyContainer"
-            style="@style/customScrollViewStyle"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:fastScrollAlwaysVisible="false"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="top|start"
+            android:maxHeight="@dimen/prompt_content_max_height"
+            android:scrollbars="vertical"
+            android:textAlignment="viewStart"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/promptText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textTitle">
-
-            <TextView
-                android:id="@+id/textMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:gravity="top|start"
-                android:maxHeight="@dimen/prompt_content_max_height"
-                android:scrollbars="vertical"
-                android:textAlignment="viewStart"
-                android:textSize="18sp"
-                tools:text="Message" />
-        </com.igalia.wolvic.ui.views.CustomScrollView>
-
+            app:layout_constraintTop_toBottomOf="@+id/textTitle"
+            tools:text="Message" />
 
         <com.igalia.wolvic.ui.views.settings.SettingsEditText
             android:id="@+id/promptText"
@@ -70,55 +53,51 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
             app:highlightedTextColor="@color/fog"
             app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bodyContainer" />
+            app:layout_constraintTop_toBottomOf="@+id/textMessage" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/buttonsLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/promptText">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <Button
                 android:id="@+id/negativeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/dialog_regular_button_background"
+                android:background="@drawable/prompt_button_background"
                 android:fontFamily="sans-serif"
-                android:minWidth="120dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:text="@string/cancel_button"
+                android:textAllCaps="true"
                 android:textColor="@drawable/prompt_button_text_color"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/positiveButton"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="10pt"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/positiveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/dialog_highlighted_button_background"
+                android:background="@drawable/prompt_button_background"
                 android:fontFamily="sans-serif"
-                android:minWidth="120dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:text="@string/ok_button"
+                android:textAllCaps="true"
                 android:textColor="@drawable/prompt_button_text_color"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textSize="10pt"
+                android:textStyle="bold" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

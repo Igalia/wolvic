@@ -31,74 +31,70 @@
             android:id="@+id/titleContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageContainer"
             android:layout_centerHorizontal="true"
+            android:layout_below="@+id/imageContainer"
             android:layout_marginBottom="10dp">
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:ellipsize="end"
                 android:gravity="center_horizontal"
-                android:lines="1"
+                tools:text="Title"
+                android:ellipsize="end"
                 android:maxLines="2"
                 android:minLines="1"
-                android:textColor="@color/fog"
-                android:textSize="@dimen/text_bigger_size"
                 android:textStyle="bold"
-                tools:text="Title" />
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_bigger_size" />
         </FrameLayout>
 
         <com.igalia.wolvic.ui.views.CustomScrollView
             android:id="@+id/bodyContainer"
             style="@style/customScrollViewStyle"
+            android:fastScrollAlwaysVisible="false"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/descriptionContainer"
-            android:layout_below="@+id/titleContainer"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:fastScrollAlwaysVisible="false">
-
+            android:layout_below="@+id/titleContainer"
+            android:layout_above="@+id/descriptionContainer"
+            android:layout_marginBottom="10dp">
             <TextView
                 android:id="@+id/body"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
+                tools:text="Body"
                 android:textColor="@color/fog"
-                android:textSize="@dimen/text_medium_size"
-                tools:text="Body" />
+                android:textSize="@dimen/text_medium_size" />
         </com.igalia.wolvic.ui.views.CustomScrollView>
 
         <FrameLayout
             android:id="@+id/descriptionContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/checkboxContainer"
             android:layout_centerHorizontal="true"
+            android:layout_above="@+id/checkboxContainer"
             android:layout_marginBottom="10dp">
-
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
+                tools:text="Description"
                 android:textColor="@color/rhino"
-                android:textSize="@dimen/text_smaller_size"
-                tools:text="Description" />
+                android:textSize="@dimen/text_smaller_size" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/checkboxContainer"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/buttonsLayout"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp">
-
+            android:layout_marginBottom="10dp"
+            android:layout_above="@+id/buttonsLayout">
             <CheckBox
                 android:id="@+id/checkbox"
                 style="@style/checkbox"
@@ -121,9 +117,9 @@
                 android:background="@drawable/dialog_regular_button_background"
                 android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
+                tools:text="Cancel"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"
-                tools:text="Cancel" />
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/rightButton"
@@ -133,9 +129,9 @@
                 android:background="@drawable/dialog_highlighted_button_background"
                 android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
+                tools:text="Accept"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"
-                tools:text="Accept" />
+                android:textStyle="bold"/>
         </RelativeLayout>
     </RelativeLayout>
 </layout>
