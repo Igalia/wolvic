@@ -168,6 +168,9 @@ struct DeviceDelegateOpenXR::State {
             extensions.push_back(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME);
         }
     }
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
+        extensions.push_back(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME);
+    }
 #ifdef OCULUSVR
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
       extensions.push_back(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME);
@@ -521,9 +524,17 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void UpdateClockLevels() {
-    // TODO
-  }
+      if (!OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME))
+          return;
 
+      if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal) {
+          CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
+          CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
+      } else {
+          CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_HIGH_EXT));
+          CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_HIGH_EXT));
+      }
+  }
 
   void Shutdown() {
     // Release swapChains
@@ -606,6 +617,8 @@ DeviceDelegateOpenXR::SetRenderMode(const device::RenderMode aMode) {
     XrSwapchainCreateInfo info = m.GetSwapChainCreateInfo();
     eyeSwapchain->InitFBO(render, m.session, info, m.GetFBOAttributes());
   }
+
+  m.UpdateClockLevels();
 
   // Reset reorient when exiting or entering immersive
   m.reorientMatrix = vrb::Matrix::Identity();
@@ -1235,6 +1248,8 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   if (m.equirectLayer) {
     m.equirectLayer->Init(m.javaContext->env, m.session, context);
   }
+
+  m.UpdateClockLevels();
 }
 
 void
