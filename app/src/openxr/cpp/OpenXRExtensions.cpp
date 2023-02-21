@@ -11,6 +11,8 @@ PFN_xrDestroyHandTrackerEXT OpenXRExtensions::sXrDestroyHandTrackerEXT = nullptr
 PFN_xrLocateHandJointsEXT OpenXRExtensions::sXrLocateHandJointsEXT = nullptr;
 PFN_xrGetHandMeshFB OpenXRExtensions::sXrGetHandMeshFB = nullptr;
 PFN_xrPerfSettingsSetPerformanceLevelEXT OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT = nullptr;
+PFN_xrEnumerateDisplayRefreshRatesFB OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB = nullptr;
+PFN_xrRequestDisplayRefreshRateFB OpenXRExtensions::sXrRequestDisplayRefreshRateFB = nullptr;
 
 void OpenXRExtensions::Initialize() {
     uint32_t extensionCount { 0 };
@@ -39,6 +41,13 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
   if (IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
       CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrPerfSettingsSetPerformanceLevelEXT",
                                         reinterpret_cast<PFN_xrVoidFunction*>(&sXrPerfSettingsSetPerformanceLevelEXT)));
+  }
+
+  if (IsExtensionSupported(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME)) {
+      CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrEnumerateDisplayRefreshRatesFB",
+                                        reinterpret_cast<PFN_xrVoidFunction*>(&sXrEnumerateDisplayRefreshRatesFB)));
+      CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrRequestDisplayRefreshRateFB",
+                                        reinterpret_cast<PFN_xrVoidFunction*>(&sXrRequestDisplayRefreshRateFB)));
   }
 
     if (IsExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME)) {
