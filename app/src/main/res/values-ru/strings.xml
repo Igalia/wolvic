@@ -1594,7 +1594,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Гарнитура: %1$s</string>
-    <string name="settings_terms_service">Условия обслуживания</string>
+    <string name="settings_terms_service">Правила пользования</string>
     <string name="voice_search_unsupported">Голосовой поиск не поддерживается для вашего языка.</string>
     <string name="settings_privacy_choose_search_engine_description">Выберите предпочитаемую поисковую систему.</string>
     <string name="privacy_dialog_disagree">Закрыть Wolvic</string>
@@ -1603,8 +1603,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_policy_subtitle_2">Защита данных</string>
     <string name="privacy_policy_subtitle_1">Основная информация</string>
     <string name="settings_language_choose_language_voice_search_service_description">Выберите предпочитаемый онлайн-сервис для голосового поиска.</string>
-    <string name="voice_search_server_error">Голосовой поиск в настоящее время недоступен.</string>
-    <string name="privacy_dialog_message">Ваша конфиденциальность важна для нас. Для того чтобы запустить браузер, пожалуйста, примите наши условия обслуживания и политику конфиденциальности. Спасибо за использование Wolvic!</string>
+    <string name="voice_search_server_error">Голосовой поиск сейчас недоступен.</string>
+    <string name="privacy_dialog_message">Ваша конфиденциальность важна для нас. Для того, чтобы запустить браузер, пожалуйста, примите наши правила пользования и политику конфиденциальности. Спасибо, что пользуетесь Wolvic!</string>
     <string name="settings_language_portuguese_br">Португальский (Бразилия)</string>
     <string name="notifications_title">Уведомления</string>
     <string name="external_open_uri_error_title">Ошибка запуска стороннего приложения</string>
@@ -1618,10 +1618,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t• Использование вашей персональной информации и данных, полученных в виде обратной связи, регулируется политикой конфиденциальности Wolvic.
 \n
-\n\t• Некоторые функции Wolvic используют сторонние информационные ресурсы. Мы не можем гарантировать, что они не содержат ошибок и на 100% точны. Более подробную информацию об этих ресурсах, а также как их отключить, вы можете узнать в условиях использования (ниже).</string>
+\n\t• Некоторые функции Wolvic используют сторонние информационные ресурсы. Мы не можем гарантировать, что они не содержат ошибок и на 100% точны. Более подробную информацию об этих ресурсах, а также как их отключить, вы можете узнать в правилах пользования (ниже).</string>
     <string name="hvr_enter_vr">Войти в VR</string>
     <string name="settings_privacy_search_engine_title">Поисковая система</string>
-    <string name="privacy_dialog_agree">Согласиться</string>
+    <string name="privacy_dialog_agree">Принять</string>
     <string name="external_open_uri_error_security_exception_body">SecurityException при вызове intent для %1$s</string>
     <string name="external_open_uri_error_no_activity_body">Не найдено приложение для обработки %1$s</string>
     <string name="settings_privacy_choose_search_engine_reset">Сбросить настройки поисковой системы</string>
@@ -1634,7 +1634,38 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_connect_glass_message">Подключите ваш HUAWEI VR Glass для использования этого приложения</string>
     <string name="notifications_empty">Список уведомлений пуст</string>
     <string name="notifications_loading">Загрузка уведомлений</string>
-    <string name="terms_service_title">Условия обслуживания</string>
-    <string name="terms_service_section_2"></string>
     <string name="settings_language_portuguese">Португальский</string>
+    <string name="terms_service_title">Правила пользования</string>
+    <string name="terms_service_section_2"/>
+    <string name="upload_button">Загрузить</string>
+    <string name="web_apps_dialog_cancel">Отмена</string>
+    <string name="web_apps_saved_notification">Веб-приложение добавлено!</string>
+    <string name="download_context_copy_to_content_uri">Дать доступ другим приложениям</string>
+    <string name="web_apps_dialog_body">Вы желаете установить это веб-приложение\? Оно будет доступно в Библиотеке.</string>
+    <string name="download_addon_install">Установить дополнение</string>
+    <string name="download_copy_to_content_uri_success_body">Файл успешно скопирован и доступен в системной папке «Загруки».</string>
+    <string name="download_addon_install_blocked_body">Чтобы продолжить, разрешите установку локальных дополнений в Настройках разработчика.</string>
+    <string name="permissions_dialog_remember_choice">Запомнить этот выбор</string>
+    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+    <string name="addons_experimental_section_title">Экспериментальное</string>
+    <string name="web_apps_title">Веб-приложения</string>
+    <string name="web_apps_description">Нажмите кнопку «Сохранить веб-приложение…» на странице, чтобы добавить его в ваши веб-приложения.</string>
+    <string name="web_apps_empty">Ваш список веб-приложений пуст</string>
+    <string name="web_apps_loading">Загрузка веб-приложений</string>
+    <string name="web_apps_dialog_title">Установка веб-приложения</string>
+    <string name="web_apps_dialog_title_parameter">Установка %1$s</string>
+    <string name="web_apps_dialog_install">Установить</string>
+    <string name="hamburger_menu_save_web_app">Сохранить веб-приложение…</string>
+    <string name="download_addon_install_cancel">Отмена</string>
+    <string name="download_addon_install_confirm_install">Установить</string>
+    <string name="download_addon_install_blocked">Установка локального дополнения заблокирована</string>
+    <string name="download_copy_to_content_uri_confirm_title">Копировать файл\?</string>
+    <string name="download_copy_to_content_uri_confirm_body">Будет создана копия этого файла в системной папке «Загрузки», где она будет доступна для других приложений.
+\n
+\nЖелаете продолжить\?</string>
+    <string name="download_copy_to_content_uri_success_title">Успешно скопировано</string>
+    <string name="download_copy_to_content_uri_error_title">Ошибка копирования</string>
+    <string name="download_copy_to_content_uri_error_body">При копировании загруженного файла возникла ошибка.</string>
+    <string name="download_copy_to_content_uri_error_body_v1">При копировании %1$s возникла ошибка</string>
+    <string name="voice_service_metkai">MeetKai</string>
 </resources>
