@@ -50,6 +50,7 @@ import com.igalia.wolvic.browser.api.WAllowOrDeny;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WWebResponse;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.Session;
@@ -196,6 +197,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 .get(String.valueOf(hashCode()), WindowViewModel.class);
         mViewModel.setIsPrivateSession(mSession.isPrivateMode());
         mViewModel.setUrl(mSession.getCurrentUri());
+        mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
@@ -670,6 +672,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             mSession.updateLastUse();
             mWidgetManager.getNavigationBar().addNavigationBarListener(mNavigationBarListener);
+            mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         } else {
             mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
@@ -1111,6 +1114,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             SessionStore.get().setActiveSession(mSession);
 
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
+            mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
             if (hidePanel) {
                 if (oldSession != null) {
@@ -1145,6 +1149,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.getTextInput().setView(this);
 
         mViewModel.setIsPrivateSession(aSession.getSettings().getUsePrivateMode());
+        mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         // Update the title bar media controls state
         boolean mediaAvailable = mSession.getActiveVideo() != null;
@@ -1893,6 +1898,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 return result;
             }
         }
+
+        mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         result.complete(WAllowOrDeny.ALLOW);
         return result;

@@ -5,6 +5,7 @@
         <attr name="navigationBarStyle" format="reference" />
         <attr name="uiButtonStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
+        <attr name="accentedNavigationBarButtonStyle" format="reference" />
         <attr name="fullScreenButtonStyle" format="reference" />
         <attr name="fullScreenFirstButtonStyle" format="reference" />
         <attr name="fullScreenLastButtonStyle" format="reference" />
@@ -65,6 +66,10 @@
     <style name="navigationBarButtonTheme" parent="uiButtonTheme">
         <item name="android:background">@drawable/main_button</item>
         <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="accentedNavigationBarButtonTheme" parent="navigationBarButtonTheme">
+        <item name="android:background">@drawable/main_button_accented</item>
     </style>
 
     <style name="fullScreenButtonTheme" parent="uiButtonTheme">
@@ -456,6 +461,7 @@
         <item name="honeycombButtonStyle">@style/honeycombButtonTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
+        <item name="accentedNavigationBarButtonStyle">@style/accentedNavigationBarButtonTheme</item>
         <item name="fullScreenButtonStyle">@style/fullScreenButtonTheme</item>
         <item name="fullScreenFirstButtonStyle">@style/fullScreenFirstButtonTheme</item>
         <item name="fullScreenLastButtonStyle">@style/fullScreenLastButtonTheme</item>

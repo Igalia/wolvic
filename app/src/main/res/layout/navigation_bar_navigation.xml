@@ -65,6 +65,17 @@
             android:layout_weight="100"
             android:orientation="horizontal"/>
 
+        <com.igalia.wolvic.ui.views.UIButton
+            android:id="@+id/desktopModeButton"
+            style="?attr/accentedNavigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:checked="true"
+            android:src="@drawable/ic_icon_ua_desktop"
+            android:tooltipText="@string/hamburger_menu_switch_to_desktop"
+            app:privateMode="@{viewmodel.isPrivateSession}"
+            app:visibleGone="@{viewmodel.isDesktopMode}" />
+
         <RelativeLayout
             android:layout_width="40dp"
             android:layout_height="40dp"

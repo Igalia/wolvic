@@ -39,6 +39,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isOnlyWindow;
     private MutableLiveData<ObservableBoolean> isFullscreen;
     private MutableLiveData<ObservableBoolean> isKioskMode;
+    private MutableLiveData<ObservableBoolean> isDesktopMode;
     private MediatorLiveData<ObservableBoolean> isTopBarVisible;
     private MutableLiveData<ObservableBoolean> isResizeMode;
     private MutableLiveData<ObservableBoolean> isPrivateSession;
@@ -90,6 +91,7 @@ public class WindowViewModel extends AndroidViewModel {
         isOnlyWindow = new MutableLiveData<>(new ObservableBoolean(false));
         isFullscreen = new MutableLiveData<>(new ObservableBoolean(false));
         isKioskMode = new MutableLiveData<>(new ObservableBoolean(false));
+        isDesktopMode = new MutableLiveData<>(new ObservableBoolean(false));
         isResizeMode = new MutableLiveData<>(new ObservableBoolean(false));
         isPrivateSession = new MutableLiveData<>(new ObservableBoolean(false));
 
@@ -477,6 +479,15 @@ public class WindowViewModel extends AndroidViewModel {
         } else {
             this.isKioskMode.postValue(new ObservableBoolean(isKioskMode));
         }
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsDesktopMode() {
+        return isDesktopMode;
+    }
+
+    public void setIsDesktopMode(boolean isDesktopMode) {
+        this.isDesktopMode.postValue(new ObservableBoolean(isDesktopMode));
     }
 
     @NonNull

@@ -270,6 +270,20 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
+        mBinding.navigationBarNavigation.desktopModeButton.setOnClickListener(view -> {
+            final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
+            if (mHamburgerMenu != null) {
+                mHamburgerMenu.setUAMode(defaultUaMode);
+            }
+            if (mAttachedWindow.getSession() != null) {
+                mAttachedWindow.getSession().setUaMode(defaultUaMode, true);
+            }
+
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+        });
+
         mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
 
