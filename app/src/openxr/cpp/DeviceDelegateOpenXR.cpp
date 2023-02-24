@@ -100,6 +100,7 @@ struct DeviceDelegateOpenXR::State {
   std::optional<XrPosef> firstPose;
   bool mHandTrackingSupported = false;
   std::vector<float> refreshRates;
+  bool reorientRequested { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -803,6 +804,7 @@ DeviceDelegateOpenXR::ProcessEvents() {
       }
       case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING:
         m.firstPose = std::nullopt;
+        m.reorientRequested = true;
         VRB_DEBUG("OpenXR: reference space changed. User recentered the view?");
         break;
       default: {
@@ -862,7 +864,6 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   XrSpaceLocation location {XR_TYPE_SPACE_LOCATION};
   CHECK_XRCMD(xrLocateSpace(m.viewSpace, m.localSpace, m.predictedDisplayTime, &location));
   m.predictedPose = location.pose;
-  bool reoriented = !m.firstPose;
   if (!m.firstPose && location.pose.position.y != 0.0) {
     m.firstPose = location.pose;
   }
@@ -973,10 +974,11 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, *m.controller);
   }
 
-  if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
+  if (m.reorientRequested && m.renderMode == device::RenderMode::StandAlone) {
       if (mReorientClient)
           mReorientClient->OnReorient();
       m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+      m.reorientRequested = false;
   }
 }
 
