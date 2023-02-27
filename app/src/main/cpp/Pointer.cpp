@@ -172,7 +172,13 @@ Pointer::SetTransform(const vrb::Matrix& aTransform) {
 void
 Pointer::SetScale(const vrb::Vector& aHitPoint, const vrb::Matrix& aHeadTransform) {
   const float scale = (aHitPoint - aHeadTransform.MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
-  m.pointerScale->SetTransform(vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(scale, scale, scale)));
+  if (m.layer) {
+    float size = kOuterRadius *  2.0f * scale;
+    m.layer->SetWorldSize(size, size);
+  } else {
+    m.pointerScale->SetTransform(vrb::Matrix::Identity().ScaleInPlace(
+              vrb::Vector(scale, scale, 1.0)));
+  }
 }
 
 void
