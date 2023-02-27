@@ -33,7 +33,7 @@ void OnEnterWebXR();
 void OnExitWebXR(const std::function<void()>& aCallback);
 void OnDismissWebXRInterstitial();
 void OnWebXRRenderStateChange(const bool aRendering);
-void RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback);
+void RenderPointerLayer(jobject aSurface, const int32_t color, const std::function<void()>& aFirstCompositeCallback);
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();

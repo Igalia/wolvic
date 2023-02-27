@@ -1249,7 +1249,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void renderPointerLayer(final Surface aSurface, final long aNativeCallback) {
+    void renderPointerLayer(final Surface aSurface, int color, final long aNativeCallback) {
         runOnUiThread(() -> {
             try {
                 Canvas canvas = aSurface.lockHardwareCanvas();
@@ -1257,7 +1257,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 Paint paint = new Paint();
                 paint.setAntiAlias(true);
                 paint.setDither(true);
-                paint.setColor(Color.WHITE);
+                paint.setColor(color);
                 paint.setStyle(Paint.Style.FILL);
                 final float x = canvas.getWidth() * 0.5f;
                 final float y = canvas.getHeight() * 0.5f;
