@@ -39,7 +39,7 @@ const char* const kOnDismissWebXRInterstitialSignature = "()V";
 const char* const kOnWebXRRenderStateChangeName = "onWebXRRenderStateChange";
 const char* const kOnWebXRRenderStateChangeSignature = "(Z)V";
 const char* const kRenderPointerLayerName = "renderPointerLayer";
-const char* const kRenderPointerLayerSignature = "(Landroid/view/Surface;J)V";
+const char* const kRenderPointerLayerSignature = "(Landroid/view/Surface;IJ)V";
 const char* const kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 const char* const kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 const char* const kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
@@ -300,13 +300,13 @@ void VRBrowser::OnWebXRRenderStateChange(const bool aRendering) {
 }
 
 void
-VRBrowser::RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback) {
+VRBrowser::RenderPointerLayer(jobject aSurface, const int32_t color, const std::function<void()>& aFirstCompositeCallback) {
   if (!ValidateMethodID(sEnv, sActivity, sRenderPointerLayer, __FUNCTION__)) { return; }
   jlong callback = 0;
   if (aFirstCompositeCallback) {
     callback = reinterpret_cast<jlong>(new std::function<void()>(aFirstCompositeCallback));
   }
-  sEnv->CallVoidMethod(sActivity, sRenderPointerLayer, aSurface, callback);
+  sEnv->CallVoidMethod(sActivity, sRenderPointerLayer, aSurface, color, callback);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
