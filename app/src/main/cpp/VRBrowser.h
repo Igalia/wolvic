@@ -46,6 +46,7 @@ void OnAppLink(const std::string& aJSON);
 void DisableLayers();
 void AppendAppNotesToCrashLog(const std::string& aNotes);
 void UpdateControllerBatteryLevels(const jint aLeftBatteryLevel, const jint aRightBatteryLevel);
+void OnAppFocusChanged(const bool aIsFocused);
 } // namespace VRBrowser;
 
 } // namespace crow

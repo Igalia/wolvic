@@ -64,6 +64,8 @@ const char* const kAppendAppNotesToCrashReport = "appendAppNotesToCrashReport";
 const char* const kAppendAppNotesToCrashReportSignature = "(Ljava/lang/String;)V";
 const char* const kUpdateControllerBatteryLevelsName = "updateControllerBatteryLevels";
 const char* const kUpdateControllerBatteryLevelsSignature = "(II)V";
+const char* const kOnAppFocusChangedName = "onAppFocusChanged";
+const char* const kOnAppFocusChangedSignature = "(Z)V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -95,6 +97,7 @@ jmethodID sOnAppLink = nullptr;
 jmethodID sDisableLayers = nullptr;
 jmethodID sAppendAppNotesToCrashReport = nullptr;
 jmethodID sUpdateControllerBatteryLevels = nullptr;
+jmethodID sOnAppFocusChanged = nullptr;
 }
 
 namespace crow {
@@ -141,6 +144,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sDisableLayers = FindJNIMethodID(sEnv, sBrowserClass, kDisableLayers, kDisableLayersSignature);
   sAppendAppNotesToCrashReport = FindJNIMethodID(sEnv, sBrowserClass, kAppendAppNotesToCrashReport, kAppendAppNotesToCrashReportSignature);
   sUpdateControllerBatteryLevels = FindJNIMethodID(sEnv, sBrowserClass, kUpdateControllerBatteryLevelsName, kUpdateControllerBatteryLevelsSignature);
+  sOnAppFocusChanged = FindJNIMethodID(sEnv, sBrowserClass, kOnAppFocusChangedName, kOnAppFocusChangedSignature);
 }
 
 JNIEnv * VRBrowser::Env()
@@ -170,6 +174,7 @@ VRBrowser::ShutdownJava() {
   sHandleMoveEnd = nullptr;
   sHandleBack = nullptr;
   sRegisterExternalContext = nullptr;
+  sOnAppFocusChanged = nullptr;
   sOnEnterWebXR = nullptr;
   sOnExitWebXR = nullptr;
   sOnDismissWebXRInterstitial = nullptr;
@@ -421,5 +426,11 @@ VRBrowser::UpdateControllerBatteryLevels(const jint aLeftBatteryLevel, const jin
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
+void
+VRBrowser::OnAppFocusChanged(const bool aIsFocused) {
+  if (!ValidateMethodID(sEnv, sActivity, sOnAppFocusChanged, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sOnAppFocusChanged, (jboolean) aIsFocused);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
 
 } // namespace crow

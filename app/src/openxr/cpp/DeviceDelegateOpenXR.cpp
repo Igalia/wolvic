@@ -503,7 +503,7 @@ struct DeviceDelegateOpenXR::State {
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
     VRB_LOG("OpenXR XrEventDataSessionStateChanged: state %s->%s session=%p time=%ld",
         to_string(sessionState), to_string(event.state), event.session, event.time);
-    sessionState = event.state;
+    auto previousSessionState = std::exchange(sessionState, event.state);
 
     if (event.session != XR_NULL_HANDLE && session != XR_NULL_HANDLE) {
       CHECK(session == event.session);
@@ -517,10 +517,14 @@ struct DeviceDelegateOpenXR::State {
       }
       case XR_SESSION_STATE_VISIBLE: {
         VRB_LOG("XR_SESSION_STATE_VISIBLE");
+        if (previousSessionState == XR_SESSION_STATE_FOCUSED)
+            VRBrowser::OnAppFocusChanged(false);
         break;
       }
       case XR_SESSION_STATE_FOCUSED: {
         VRB_LOG("XR_SESSION_STATE_FOCUSED");
+        CHECK(previousSessionState == XR_SESSION_STATE_VISIBLE);
+          VRBrowser::OnAppFocusChanged(true);
         break;
       }
       case XR_SESSION_STATE_SYNCHRONIZED: {
