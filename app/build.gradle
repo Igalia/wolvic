@@ -278,6 +278,7 @@ android {
 
         hvr {
             dimension "platform"
+            targetSdkVersion build_versions.target_sdk_hvr
             externalNativeBuild {
                 cmake {
                     cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
