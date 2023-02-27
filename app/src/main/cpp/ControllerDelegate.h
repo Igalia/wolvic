@@ -19,6 +19,8 @@ namespace crow {
 class ControllerDelegate;
 typedef std::shared_ptr<ControllerDelegate> ControllerDelegatePtr;
 
+enum class ControllerMode { None, Device, Hand };
+
 class ControllerDelegate {
 public:
   enum Button {
@@ -42,7 +44,6 @@ public:
   virtual uint32_t GetControllerCount() = 0;
   virtual void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) = 0;
   virtual void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) = 0;
-  virtual void SetModelVisible(const int32_t aControllerIndex, const bool aVisible) = 0;
   virtual void SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) = 0;
   virtual void SetTargetRayMode(const int32_t aControllerIndex, device::TargetRayMode aMode) = 0;
   virtual void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) = 0;
@@ -66,8 +67,9 @@ public:
   virtual void SetVisible(const bool aVisible) = 0;
   virtual void SetGazeModeIndex(const int32_t aControllerIndex) = 0;
   virtual void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms) = 0;
-  virtual void SetHandVisible(const int32_t aControllerIndex, bool aVisible = true) = 0;
   virtual void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) = 0;
+  virtual void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) = 0;
+  virtual void SetPinchFactor(const int32_t aControllerIndex, float aFactor = 1.0f) = 0;
 protected:
   ControllerDelegate() {}
 private:

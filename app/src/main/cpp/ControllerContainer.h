@@ -44,7 +44,6 @@ public:
   void DestroyController(const int32_t aControllerIndex) override;
   void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) override;
   void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
-  void SetModelVisible(const int32_t aControllerIndex, const bool aVisible) override;
   void SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) override;
   void SetTargetRayMode(const int32_t aControllerIndex, device::TargetRayMode aMode) override;
   void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) override;
@@ -69,8 +68,9 @@ public:
   void SetVisible(const bool aVisible) override;
   void SetGazeModeIndex(const int32_t aControllerIndex) override;
   void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms) override;
-  void SetHandVisible(const int32_t aControllerIndex, bool aVisible = true) override;
   void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) override;
+  void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) override;
+  void SetPinchFactor(const int32_t aControllerIndex, float aFactor = 1.0f) override;
   void SetFrameId(const uint64_t aFrameId);
 protected:
   struct State;
