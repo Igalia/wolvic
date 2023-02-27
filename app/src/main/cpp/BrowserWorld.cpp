@@ -94,6 +94,11 @@ const int GestureSwipeRight = 1;
 const float kScrollFactor = 20.0f; // Just picked what fell right.
 const double kHoverRate = 1.0 / 10.0;
 
+// 'azure' color, for active pinch gesture while on hand mode
+const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
+// How big is the pointer target while in hand-tracking mode
+const float kPointerPinchSize = 5.0;
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -508,12 +513,29 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         vrb::Matrix localRotation = vrb::Matrix::Rotation(hitNormal);
         vrb::Matrix reorient = rootTransparent->GetTransform();
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
-        controller.pointer->SetScale(hitPoint, device->GetHeadTransform());
+
+        const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
+        if (controller.mode == ControllerMode::Device) {
+          controller.pointer->SetScale(scale);
+          controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
+        } else {
+          controller.pointer->SetScale(scale + kPointerPinchSize - controller.pinchFactor * kPointerPinchSize);
+          if (controller.pinchFactor >= 1.0f)
+            controller.pointer->SetPointerColor(kPointerColorSelected);
+          else
+            controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
+        }
       }
     }
 
+    if (controller.handMeshToggle)
+      controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
+
     if (controller.beamToggle)
-      controller.beamToggle->ToggleAll(controller.hasAim);
+      controller.beamToggle->ToggleAll(controller.mode == ControllerMode::Device && controller.hasAim);
+
+    if (controller.modelToggle)
+      controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
     if (controller.focused && movingWidget && movingWidget->IsMoving(controller.index)) {
       if (!pressed && wasPressed) {

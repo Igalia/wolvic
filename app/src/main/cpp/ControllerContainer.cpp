@@ -240,14 +240,18 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     }
 }
 
-void ControllerContainer::SetHandVisible(const int32_t aControllerIndex, bool aVisible)
+void ControllerContainer::SetMode(const int32_t aControllerIndex, ControllerMode aMode)
 {
-    if (!m.Contains(aControllerIndex)) {
-        return;
-    }
-    Controller &controller = m.list[aControllerIndex];
-    if (controller.handMeshToggle)
-        controller.handMeshToggle->ToggleAll(aVisible);
+  if (!m.Contains(aControllerIndex))
+    return;
+  m.list[aControllerIndex].mode = aMode;
+}
+
+void ControllerContainer::SetPinchFactor(const int32_t aControllerIndex, float aFactor)
+{
+  if (!m.Contains(aControllerIndex))
+    return;
+  m.list[aControllerIndex].pinchFactor = aFactor;
 }
 
 void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEnabled) {
@@ -398,17 +402,9 @@ ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnab
   m.list[aControllerIndex].enabled = aEnabled;
   if (!aEnabled) {
     m.list[aControllerIndex].focused = false;
+    SetMode(aControllerIndex, ControllerMode::None);
   }
   m.SetVisible(m.list[aControllerIndex], aEnabled);
-}
-
-void
-ControllerContainer::SetModelVisible(const int32_t aControllerIndex, const bool aVisible) {
-    if (!m.Contains(aControllerIndex))
-        return;
-
-    assert(m.list[aControllerIndex].modelToggle != nullptr);
-    m.list[aControllerIndex].modelToggle->ToggleAll(aVisible);
 }
 
 void

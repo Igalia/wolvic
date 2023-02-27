@@ -24,6 +24,7 @@ struct Controller {
   int32_t index;
   bool enabled;
   bool focused;
+  ControllerMode mode = ControllerMode::None;
   uint32_t widget;
   float pointerX;
   float pointerY;
@@ -45,6 +46,7 @@ struct Controller {
   vrb::TogglePtr handMeshToggle;
   std::vector<vrb::TransformPtr> handJointTransforms;
   bool hasAim;
+  float pinchFactor;
   vrb::TransformPtr beamParent;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;
