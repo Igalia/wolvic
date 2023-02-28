@@ -146,7 +146,7 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
                 filter(download -> download.getStatus() == Download.SUCCESSFUL).
                 map(download -> new FileUploadItem(
                         download.getFilename(),
-                        Uri.parse(download.getOutputFileUri()),
+                        download.getOutputFileUri(),
                         download.getMediaType(),
                         download.getSizeBytes())).
                 collect(Collectors.toList());

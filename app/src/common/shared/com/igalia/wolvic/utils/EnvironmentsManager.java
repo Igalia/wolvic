@@ -191,7 +191,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
             });
             String zipOutputPath = EnvironmentUtils.getEnvPath(mContext, env.getValue());
             if (zipOutputPath != null) {
-                unzip.start(download.getOutputFilePath(), zipOutputPath);
+                unzip.start(download.getOutputFile().getPath(), zipOutputPath);
             }
         }
     }
