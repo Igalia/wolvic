@@ -16,6 +16,7 @@ import com.igalia.wolvic.browser.api.WWebExtensionController;
 
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.WebContents;
+import org.chromium.ui.base.ViewAndroidDelegate;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class RuntimeImpl implements WRuntime {
     private ContentShellController mContentShellController;
     private BrowserDisplay mBrowserDisplay;
     private WolvicContentRenderView mContentViewRenderView;
+    private WebContents mCurrentWebContents;
 
     public RuntimeImpl(@NonNull Context context, @NonNull WRuntimeSettings settings) {
         Log.e("WolvicLifecycle", "RuntimeImpl()");
@@ -48,16 +50,26 @@ public class RuntimeImpl implements WRuntime {
         return mContentShellController;
     }
 
-    public BrowserDisplay createBrowserDisplay(WebContents webContents) {
+    public BrowserDisplay createBrowserDisplay() {
         mContentViewRenderView = new WolvicContentRenderView(mContext);
         mContentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
-        mContentViewRenderView.setCurrentWebContents(webContents);
+
+        WebContents webContents = getContentShellController().createWebContents();
+        webContents.initialize(
+                "", ViewAndroidDelegate.createBasicDelegate(mViewContainer), null,
+                mContentShellController.getWindowAndroid(), WebContents.createDefaultInternalsHolder());
+
+        getContentShellController().getWindowAndroid().setAnimationPlaceholderView(mContentViewRenderView);
+        mCurrentWebContents = webContents;
 
         mBrowserDisplay = new BrowserDisplay(mContext);
 
         ContentShellFragment fragment = new ContentShellFragment();
         fragment.setContentViewRenderView(mContentViewRenderView);
         mBrowserDisplay.attach(mFragmentManager, mViewContainer, fragment);
+
+        mContentViewRenderView.setCurrentWebContents(webContents);
+        webContents.onShow();
         return mBrowserDisplay;
     }
 
@@ -139,5 +151,10 @@ public class RuntimeImpl implements WRuntime {
     @Override
     public CrashReportIntent getCrashReportIntent() {
         return new CrashReportIntent("", "", "", "");
+    }
+
+    public WebContents GetCurrentWebContents() {
+        assert mCurrentWebContents != null;
+        return mCurrentWebContents;
     }
 }
