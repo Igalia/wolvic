@@ -157,7 +157,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                                     LocalExtension.install(
                                             SessionStore.get().getWebExtensionRuntime(),
                                             UUID.randomUUID().toString(),
-                                            item.getOutputFileUri(),
+                                            item.getOutputFileUriAsString(),
                                             ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
                                     );
                                 }
@@ -171,7 +171,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                     );
                 }
             } else {
-                SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());
+                SessionStore.get().getActiveSession().loadUri(item.getOutputFileUriAsString());
 
                 WindowWidget window = mWidgetManager.getFocusedWindow();
                 window.hidePanel();
@@ -253,7 +253,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                     view,
                     new DownloadsContextMenuWidget(getContext(),
                             new DownloadsContextMenuWidget.DownloadsContextMenuItem(
-                                    item.getOutputFileUri(),
+                                    item.getOutputFileUriAsString(),
                                     item.getTitle(),
                                     item.getId()),
                             mWidgetManager.canOpenNewWindow(),

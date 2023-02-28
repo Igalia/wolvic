@@ -68,12 +68,12 @@ public class DownloadsManager {
         mExecutor = new ScheduledThreadPoolExecutor(1);
     }
 
-    public  void init() {
+    public void init() {
         mContext.registerReceiver(mDownloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         List<Download> downloads = getDownloads();
         downloads.forEach(download -> {
-            if (mDownloadManager != null &&
-                    !new File(UrlUtils.stripProtocol(download.getOutputFileUri())).exists()) {
+            File downloadedFile = download.getOutputFile();
+            if (mDownloadManager != null && (downloadedFile == null || !downloadedFile.exists())) {
                 mDownloadManager.remove(download.getId());
             }
         });
@@ -222,9 +222,9 @@ public class DownloadsManager {
         Download download = getDownload(downloadId);
         if (download != null) {
             if (!deleteFiles) {
-                File file = new File(UrlUtils.stripProtocol(download.getOutputFileUri()));
-                if (file.exists()) {
-                    File newFile = new File(UrlUtils.stripProtocol(download.getOutputFileUri().concat(".bak")));
+                File file = download.getOutputFile();
+                if (file != null && file.exists()) {
+                    File newFile = new File(file.getAbsolutePath().concat(".bak"));
                     file.renameTo(newFile);
                     if (mDownloadManager != null) {
                         mDownloadManager.remove(downloadId);
@@ -370,12 +370,12 @@ public class DownloadsManager {
         contentValues.put(MediaStore.Downloads.DOWNLOAD_URI, download.getUri());
 
         String mimeFromExtension = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(download.getOutputFilePath());
+        String extension = MimeTypeMap.getFileExtensionFromUrl(download.getOutputFileUriAsString());
         if (extension != null) {
             mimeFromExtension = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
 
-        File downloadedFile = new File(download.getOutputFilePath());
+        File downloadedFile = download.getOutputFile();
         Uri downloadedFileUri = Uri.fromFile(downloadedFile);
         String mimeFromFile = contentResolver.getType(downloadedFileUri);
 
