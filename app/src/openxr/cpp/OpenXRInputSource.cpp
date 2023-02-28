@@ -2,6 +2,7 @@
 #include "OpenXRExtensions.h"
 #include <assert.h>
 #include <unordered_set>
+#include "SystemUtils.h"
 
 namespace crow {
 

@@ -16,6 +16,7 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRExtensions.h"
 #include <array>
+#include "SystemUtils.h"
 
 
 namespace crow {
