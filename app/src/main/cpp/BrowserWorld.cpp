@@ -65,6 +65,12 @@
 #include "OVR_Platform.h"
 #endif
 
+#define ASSERT_ON_RENDER_THREAD(X)                                          \
+  if (m.context && !m.context->IsOnRenderThread()) {                        \
+    VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
+    return X;                                                               \
+  }
+
 #define INJECT_SKYBOX_PATH "skybox"
 
 using namespace vrb;
