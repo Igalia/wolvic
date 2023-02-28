@@ -8,7 +8,9 @@
 #include <openxr/openxr_reflection.h>
 #include "vrb/Matrix.h"
 
+#include <algorithm>
 #include <string>
+#include <sstream>
 
 namespace crow {
 
@@ -146,6 +148,34 @@ inline XrPosef MatrixToXrPose(const vrb::Matrix& aMatrix) {
     result.orientation = XrQuaternionf{-q.x(), -q.y(), -q.z(), q.w()};
     result.position = XrVector3f{p.x(), p.y(), p.z()};
     return result;
+}
+
+#define ANDROID_OS_BUILD_ID "ro.build.id"
+
+inline const char* GetBuildIdString(char* out) {
+    __system_property_get(ANDROID_OS_BUILD_ID, out);
+    return out;
+}
+
+inline void ParseVersionString(const std::string& aString, int result[], int resultSize) {
+    std::istringstream stringStream(aString);
+    // Read the first number
+    stringStream >> result[0];
+    for(int i = 1; i < resultSize; i++) {
+        // Skip period
+        stringStream.get();
+        // Read the next number
+        stringStream >> result[i];
+    }
+}
+
+// This function compares two strings containing semantic versions in the MAJOR.MINOR.PATCH format.
+// It will return true if str1 is a lower version than str2, and false if it is the same or higher.
+inline bool CompareSemanticVersionStrings(const std::string& str1, const std::string& str2) {
+    int parsedStr1[3]{}, parsedStr2[3]{};
+    ParseVersionString(str1, parsedStr1, 3);
+    ParseVersionString(str2, parsedStr2, 3);
+    return std::lexicographical_compare(parsedStr1, parsedStr1 + 3, parsedStr2, parsedStr2 + 3);
 }
 
 }  // namespace crow

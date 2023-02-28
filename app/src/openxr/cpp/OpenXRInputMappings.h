@@ -222,7 +222,7 @@ namespace crow {
     // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
     const OpenXRInputMapping Pico4 {
             "/interaction_profiles/pico/neo3_controller",
-            "Pico: PICO HMD",
+            "PICO 4",
             IS_6DOF,
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
