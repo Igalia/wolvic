@@ -46,13 +46,6 @@ public class DisplayImpl implements WDisplay {
 
             // Dispatch onSurfaceChanged
             mRenderView.surfaceChanged(surface, width, height);
-
-            postDelayed((Runnable) () -> {
-                @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
-                if (delegate != null) {
-                    delegate.onFirstComposite(mSession);
-                }
-            }, 100);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -88,6 +81,6 @@ public class DisplayImpl implements WDisplay {
     @Override
     public WResult<Bitmap> capturePixelsWithAspectPreservingSize(int width) {
         // TODO: Implement
-        return null;
+        return new ResultImpl<>();
     }
 }

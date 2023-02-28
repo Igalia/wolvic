@@ -38,6 +38,7 @@ public class SessionImpl implements WSession {
     private DisplayImpl mDisplay;
     private RuntimeImpl mRuntime = null;
     public Tab mTab = null;
+    private TabWebContentsObserver mTabWebContentsObserver;
 
     public SessionImpl(WSessionSettings settings) {
         Log.e("WolvicLifecycle", "SessionImpl()");
@@ -48,6 +49,14 @@ public class SessionImpl implements WSession {
         // TODO: Init controllers
         mTextInput = new TextInputImpl(this);
         mPanZoomCrontroller = new PanZoomCrontrollerImpl(this);
+    }
+
+    private void registerCallbacks() {
+        mTabWebContentsObserver = new TabWebContentsObserver(mRuntime.GetCurrentWebContents(), this);
+    }
+
+    private void unRegisterCallbacks() {
+        mTabWebContentsObserver = null;
     }
 
     @Override
@@ -138,16 +147,14 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         Log.e("WolvicLifecycle", "acquire display called");
-        WebContents webContents = mRuntime.getContentShellController().createWebContents();
-        BrowserDisplay display = mRuntime.createBrowserDisplay(webContents);
-        WolvicContentRenderView renderView = mRuntime.getRenderView();
-        mRuntime.getContentShellController().getWindowAndroid().setAnimationPlaceholderView(renderView);
-        mDisplay = new DisplayImpl(display, renderView, this);
+        mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(), mRuntime.getRenderView(), this);
+        registerCallbacks();
         return mDisplay;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
+        unRegisterCallbacks();
     }
 
     @Override
