@@ -2,6 +2,7 @@
 #include "OpenXRExtensions.h"
 #include <assert.h>
 #include <unordered_set>
+#include "SystemUtils.h"
 
 namespace crow {
 
@@ -58,7 +59,18 @@ XrResult OpenXRInputSource::Initialize()
 
     // Filter mappings
     for (auto& mapping: OpenXRInputMappings) {
-      if (mapping.systemFilter && strcmp(mapping.systemFilter, mSystemProperties.systemName) != 0) {
+      const char* systemFilter = mapping.systemFilter;
+#if defined(PICOXR)
+      // Pico versions before 5.4.0 use a different system id.
+      if (mapping.controllerType == device::PicoXR) {
+          char buildId[128] = {0};
+          if (CompareSemanticVersionStrings(GetBuildIdString(buildId), "5.4.0")) {
+              // System version is < 5.4.0
+              systemFilter = "Pico: PICO HMD";
+          }
+      }
+#endif
+      if (systemFilter && strcmp(systemFilter, mSystemProperties.systemName) != 0) {
         continue;
       }
       bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;

@@ -8,8 +8,6 @@
 #include <openxr/openxr_reflection.h>
 #include "vrb/Matrix.h"
 
-#include <string>
-
 namespace crow {
 
 #if defined(HVR)
