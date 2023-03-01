@@ -77,6 +77,7 @@ Controller::operator=(const Controller& aController) {
   batteryLevel = aController.batteryLevel;
   handMeshToggle = aController.handMeshToggle;
   handJointTransforms = aController.handJointTransforms;
+  hasAim = aController.hasAim;
   return *this;
 }
 
@@ -125,6 +126,7 @@ Controller::Reset() {
   batteryLevel = -1;
   handJointTransforms.clear();
   handMeshToggle = nullptr;
+  hasAim = true;
 }
 
 vrb::Vector Controller::StartPoint() const {

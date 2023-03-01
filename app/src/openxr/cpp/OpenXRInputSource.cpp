@@ -511,6 +511,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
 #endif
 
     mHasHandJoints = false;
+    mHasAimState = false;
 
     // Update hand locations
     XrHandJointsLocateInfoEXT locateInfo { XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
@@ -529,7 +530,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     mHasHandJoints = jointLocations.isActive;
     mHasAimState = (mAimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB) != 0;
 
-    return mHasHandJoints && mHasAimState;
+    return mHasHandJoints;
 }
 
 float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB)
@@ -545,11 +546,6 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
 
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate)
 {
-    if ((mAimState.status & XR_HAND_TRACKING_AIM_SYSTEM_GESTURE_BIT_FB) != 0) {
-        delegate.SetEnabled(mIndex, false);
-        return;
-    }
-
     delegate.SetEnabled(mIndex, true);
     delegate.SetModelVisible(mIndex, false);
 
@@ -575,6 +571,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
     delegate.SetHandJointLocations(mIndex, jointTransforms);
     delegate.SetHandVisible(mIndex, true);
+    delegate.SetAimEnabled(mIndex, mHasAimState);
+
+    // Rest of the logic below requires having Aim info
+    if (!mHasAimState)
+        return;
 
     // Resolve beam and pointer transform
     vrb::Matrix pointerTransform = XrPoseToMatrix(mAimState.aimPose);
@@ -700,6 +701,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     delegate.SetEnabled(mIndex, true);
     delegate.SetModelVisible(mIndex, true);
+    delegate.SetAimEnabled(mIndex, true);
 
     device::CapabilityFlags flags = device::Orientation;
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);

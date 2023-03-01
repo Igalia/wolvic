@@ -250,6 +250,12 @@ void ControllerContainer::SetHandVisible(const int32_t aControllerIndex, bool aV
         controller.handMeshToggle->ToggleAll(aVisible);
 }
 
+void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEnabled) {
+    if (!m.Contains(aControllerIndex))
+        return;
+    m.list[aControllerIndex].hasAim = aEnabled;
+}
+
 void
 ControllerContainer::Reset() {
   for (Controller& controller: m.list) {

@@ -70,6 +70,7 @@ public:
   void SetGazeModeIndex(const int32_t aControllerIndex) override;
   void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms) override;
   void SetHandVisible(const int32_t aControllerIndex, bool aVisible = true) override;
+  void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) override;
   void SetFrameId(const uint64_t aFrameId);
 protected:
   struct State;
