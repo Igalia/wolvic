@@ -19,7 +19,7 @@
 #include "WidgetMover.h"
 #include "WidgetResizer.h"
 #include "WidgetPlacement.h"
-#include "GeneralUtils.h"
+#include "Assertions.h"
 #include "Cylinder.h"
 #include "Quad.h"
 #include "VRBrowser.h"

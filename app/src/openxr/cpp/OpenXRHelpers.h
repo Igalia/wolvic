@@ -2,7 +2,7 @@
 
 #include <EGL/egl.h>
 #include "jni.h"
-#include "GeneralUtils.h"
+#include "Assertions.h"
 #include <openxr/openxr.h>
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
