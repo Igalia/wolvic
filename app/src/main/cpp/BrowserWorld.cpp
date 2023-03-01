@@ -501,9 +501,9 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     }
 
     if (controller.pointer) {
-      controller.pointer->SetVisible(hitWidget.get() != nullptr);
+      controller.pointer->SetVisible(hitWidget.get() != nullptr && controller.hasAim);
       controller.pointer->SetHitWidget(hitWidget);
-      if (hitWidget) {
+      if (hitWidget && controller.hasAim) {
         vrb::Matrix translation = vrb::Matrix::Translation(hitPoint);
         vrb::Matrix localRotation = vrb::Matrix::Rotation(hitNormal);
         vrb::Matrix reorient = rootTransparent->GetTransform();
@@ -511,6 +511,9 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointer->SetScale(hitPoint, device->GetHeadTransform());
       }
     }
+
+    if (controller.beamToggle)
+      controller.beamToggle->ToggleAll(controller.hasAim);
 
     if (controller.focused && movingWidget && movingWidget->IsMoving(controller.index)) {
       if (!pressed && wasPressed) {
