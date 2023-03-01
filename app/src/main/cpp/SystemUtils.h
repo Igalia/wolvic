@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <sys/system_properties.h>
 
 namespace crow {
 
