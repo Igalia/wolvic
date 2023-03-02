@@ -513,10 +513,13 @@ dependencies {
     implementation deps.lifecycle.viewmodel
     implementation deps.lifecycle.java8
     implementation deps.lifecycle.process
-    implementation deps.support.cardview
-    implementation deps.support.app_compat
-    implementation deps.support.vector_drawable
     implementation deps.support.annotations
+    implementation deps.support.app_compat
+    implementation deps.support.recyclerview
+    implementation deps.support.cardview
+    implementation deps.support.design
+    implementation deps.support.vector_drawable
+    implementation deps.support.viewpager2
     implementation deps.constraint_layout
     implementation deps.gson
     implementation deps.room.runtime
@@ -622,11 +625,6 @@ if (findProject(':wavesdk')) {
         wavevrImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
         wavevrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
     }
-}
-
-dependencies {
-    implementation "com.google.android.material:material:$versions.support"
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
 
 if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
