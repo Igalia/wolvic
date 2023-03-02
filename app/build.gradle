@@ -103,7 +103,7 @@ ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 
 android {
-    compileSdkVersion build_versions.target_sdk
+    compileSdkVersion build_versions.compile_sdk
     defaultConfig {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
