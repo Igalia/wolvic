@@ -348,6 +348,7 @@
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
         <item name="android:src">@drawable/ic_icon_tray_help_v2</item>
+        <item name="android:scaleType">fitXY</item>
         <item name="android:background">@drawable/setting_help_button_background</item>
         <item name="tintColorList">@drawable/main_button_icon_color</item>
         <item name="android:padding">3dp</item>
@@ -451,7 +452,7 @@
         <item name="android:breakStrategy">high_quality</item>
     </style>
 
-    <style name="FxR.Dark" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    <style name="FxR.Dark" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>

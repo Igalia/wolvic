@@ -195,7 +195,7 @@
                     android:src="@drawable/ic_icon_library"
                     app:clipDrawable="@drawable/ic_icon_library_clip"
                     app:activeMode="@{viewmodel.isLibraryVisible}"/>
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_margin="2dp"

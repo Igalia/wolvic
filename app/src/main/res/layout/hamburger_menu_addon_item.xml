@@ -48,7 +48,7 @@
             android:focusable="false"
             android:text="@{item.title}"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/badge"
             android:layout_width="36dp"
             android:layout_height="36dp"
