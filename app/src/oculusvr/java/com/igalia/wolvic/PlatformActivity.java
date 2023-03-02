@@ -15,6 +15,8 @@ import android.view.WindowManager;
 
 import com.igalia.wolvic.utils.SystemUtils;
 
+import org.chromium.content_public.browser.WebContents;
+
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
@@ -96,4 +98,5 @@ public class PlatformActivity extends NativeActivity {
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
+    public native WebContents createWebContents();
 }
