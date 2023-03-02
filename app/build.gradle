@@ -155,11 +155,6 @@ android {
         jvmTarget = '1.8'
     }
 
-    // TODO(voit): Move to 'chromium' build variant
-    dexOptions {
-        javaMaxHeapSize "4G"
-    }
-
     aaptOptions {
         noCompress "dat"
         noCompress "pak"
@@ -348,6 +343,12 @@ android {
 
         chromium {
             dimension "backend"
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-DCHROMIUM"
+                    arguments "-DCHROMIUM=ON"
+                }
+            }
         }
 
         webkit {
@@ -445,6 +446,33 @@ android {
         oculusvr3dofStoreArm64WorldGeckoRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvrArm64WorldChromiumDebug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvrArm64WorldChromiumRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                                                           : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvrStoreArm64WorldChromiumDebug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvrStoreArm64WorldChromiumRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                                                           : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvr3dofStoreArm64WorldChromiumDebug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvr3dofStoreArm64WorldChromiumRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                                                           : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
         wavevr {
@@ -598,8 +626,6 @@ dependencies {
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines
     implementation deps.kotlin.coroutines_jdk8
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     // SQLite helper to handle DBs from assets
     implementation deps.sqlite.sqlite
@@ -656,6 +682,8 @@ dependencies {
     if (isChromiumAvailable()) {
         chromiumImplementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
         chromiumImplementation 'androidx.fragment:fragment:1.4.1'
+        chromiumImplementation 'androidx.work:work-runtime:2.7.1'
+        chromiumImplementation 'androidx.work:work-runtime-ktx:2.7.1'
     }
 
     // webkit

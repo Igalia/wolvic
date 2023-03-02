@@ -33,6 +33,16 @@
   JNIEXPORT return_type JNICALL              \
     Java_com_igalia_wolvic_PlatformActivity_##method_name
 
+#if defined(CHROMIUM)
+namespace content {
+  class WolvicContentMainDelegate;
+  class WebContents;
+
+  WolvicContentMainDelegate* GetWolvicContentMainDelegate();
+  jobject CreateWebContents(JNIEnv* env, WolvicContentMainDelegate* delegate);
+}
+#endif
+
 using namespace crow;
 
 #if defined(OPENXR)
@@ -265,6 +275,13 @@ JNI_METHOD(jboolean, platformExit)
   }
   return (jboolean) false;
 }
+
+#if defined(CHROMIUM)
+JNI_METHOD(jobject, createWebContents)
+(JNIEnv* aEnv, jobject) {
+  return content::CreateWebContents(aEnv, content::GetWolvicContentMainDelegate());
+}
+#endif
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {
   if (sAppContext) {

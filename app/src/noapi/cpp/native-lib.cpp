@@ -11,6 +11,7 @@
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 
+#if defined(CHROMIUM)
 namespace content {
   class WolvicContentMainDelegate;
   class WebContents;
@@ -18,6 +19,7 @@ namespace content {
   WolvicContentMainDelegate* GetWolvicContentMainDelegate();
   jobject CreateWebContents(JNIEnv* env, WolvicContentMainDelegate* delegate);
 }
+#endif
 
 static crow::DeviceDelegateNoAPIPtr sDevice;
 
@@ -109,10 +111,12 @@ JNI_METHOD(void, controllerButtonPressed)
   sDevice->ControllerButtonPressed(aDown);
 }
 
+#if defined(CHROMIUM)
 JNI_METHOD(jobject, createWebContents)
 (JNIEnv* aEnv, jobject) {
   return content::CreateWebContents(aEnv, content::GetWolvicContentMainDelegate());
 }
+#endif
 
 jint JNI_OnLoad(JavaVM*, void*) {
   return JNI_VERSION_1_6;
