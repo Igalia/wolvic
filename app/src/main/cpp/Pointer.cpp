@@ -142,7 +142,8 @@ Pointer::Load(const DeviceDelegatePtr& aDevice) {
     layer->SetWorldSize(size, size);
     layer->SetSurfaceChangedDelegate([](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
        auto& quad = static_cast<const VRLayerQuad&>(aLayer);
-       if (aChange == VRLayer::SurfaceChange::Create) {
+       if (aChange == VRLayer::SurfaceChange::Create ||
+           aChange == VRLayer::SurfaceChange::Invalidate) {
            auto pointerColor = quad.GetTintColor();
            // @FIXME: Move this to vrb::Color::toAndroidColor() eventually.
            int32_t color = ((int32_t) 0xFF << 24) |
@@ -188,7 +189,7 @@ Pointer::SetPointerColor(const vrb::Color& aColor) {
   m.pointerColor = aColor;
   if (m.layer) {
     m.layer->SetTintColor(aColor);
-    m.layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, NULL);
+    m.layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Invalidate, NULL);
   } if (m.geometry) {
     m.geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
   }
