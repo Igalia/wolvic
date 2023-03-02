@@ -32,7 +32,8 @@ public:
 
   enum class SurfaceChange {
     Create,
-    Destroy
+    Destroy,
+    Invalidate,
   };
   typedef std::function<void(const VRLayer& aLayer,
                              SurfaceChange aChange,
