@@ -2,6 +2,7 @@
 
 #include <EGL/egl.h>
 #include "jni.h"
+#include "Assertions.h"
 #include <openxr/openxr.h>
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
@@ -40,10 +41,6 @@ inline std::string GetXrVersionString(XrVersion ver) {
     return Fmt("%d.%d.%d", XR_VERSION_MAJOR(ver), XR_VERSION_MINOR(ver), XR_VERSION_PATCH(ver));
 }
 
-#define CHK_STRINGIFY(x) #x
-#define TOSTRING(x) CHK_STRINGIFY(x)
-#define FILE_AND_LINE __FILE__ ":" TOSTRING(__LINE__)
-
 // Macro to generate stringify functions for OpenXR enumerations based data provided in openxr_reflection.h
 // clang-format off
 #define ENUM_CASE_STR(name, val) case name: return #name;
@@ -74,20 +71,6 @@ MAKE_TO_STRING_FUNC(XrFormFactor);
     throw std::logic_error(failureMessage);
 }
 
-#define THROW(msg) Throw(msg, nullptr, FILE_AND_LINE);
-#define CHECK(exp)                                      \
-    {                                                   \
-        if (!(exp)) {                                   \
-            Throw("Check failed", #exp, FILE_AND_LINE); \
-        }                                               \
-    }
-#define CHECK_MSG(exp, msg)                  \
-    {                                        \
-        if (!(exp)) {                        \
-            Throw(msg, #exp, FILE_AND_LINE); \
-        }                                    \
-    }
-
 [[noreturn]] inline void ThrowXrResult(XrResult res, const char* originator = nullptr, const char* sourceLocation = nullptr) {
     Throw(Fmt("XrResult failure [%s]", to_string(res)), originator, sourceLocation);
 }
@@ -108,10 +91,7 @@ inline XrResult MessageXrResult(XrResult res, const char* originator = nullptr, 
     return res;
 }
 
-#define THROW_XR(xr, cmd) ThrowXrResult(xr, #cmd, FILE_AND_LINE);
 #define CHECK_XRCMD(cmd) CheckXrResult(cmd, #cmd, FILE_AND_LINE);
-#define CHECK_XRRESULT(res, cmdStr) CheckXrResult(res, cmdStr, FILE_AND_LINE);
-#define XRCMD(cmd) MessageXrResult(cmd, #cmd, FILE_AND_LINE);
 
 #define RETURN_IF_XR_FAILED(cmd, ...)                                                                            \
     {                                                                                                            \

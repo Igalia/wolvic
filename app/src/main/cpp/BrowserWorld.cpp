@@ -19,6 +19,7 @@
 #include "WidgetMover.h"
 #include "WidgetResizer.h"
 #include "WidgetPlacement.h"
+#include "Assertions.h"
 #include "Cylinder.h"
 #include "Quad.h"
 #include "VRBrowser.h"
@@ -64,23 +65,11 @@
 #include "OVR_Platform.h"
 #endif
 
-// TODO: refactor some of the utils of OpenXRHelpers.h to another class as they aren't really
-// OpenXR helpers, but general purpouse utils
-#define STRINGIFY(x) #x
-#define FILE_AND_LINE __FILE__ ":" STRINGIFY(__LINE__)
-#define ASSERT(exp)                         \
-{                                           \
-  if (!(exp)) {                             \
-    throw std::logic_error(FILE_AND_LINE);  \
-  }                                         \
-}
-
 #define ASSERT_ON_RENDER_THREAD(X)                                          \
   if (m.context && !m.context->IsOnRenderThread()) {                        \
     VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
     return X;                                                               \
   }
-
 
 #define INJECT_SKYBOX_PATH "skybox"
 
