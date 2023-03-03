@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 
 import androidx.annotation.IntDef;
 import androidx.databinding.DataBindingUtil;
@@ -9,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.WebxrInterstitialControllerBinding;
+import com.igalia.wolvic.utils.DeviceType;
 
 public class WebXRInterstitialController extends UIWidget {
     private WebxrInterstitialControllerBinding mBinding;
@@ -59,7 +61,14 @@ public class WebXRInterstitialController extends UIWidget {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         mBinding = DataBindingUtil.inflate(inflater, R.layout.webxr_interstitial_controller, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
-        mBinding.setModel(aModel);
+        if (aModel == DeviceType.OculusGo) {
+            mBinding.setModel(DeviceType.OculusGo);
+        } else {
+            mBinding.setModel(DeviceType.OculusQuest);
+            int resource_id = aModel == DeviceType.MetaQuestPro ? R.drawable.controller_quest_pro_left : R.drawable.controller_quest_left;
+            ((ImageView) findViewById(R.id.left_controller)).setImageResource(resource_id);
+            ((ImageView) findViewById(R.id.right_controller)).setImageResource(resource_id);
+        }
         mBinding.setHand(aHand);
         mBinding.executePendingBindings();
         updatePlacement();

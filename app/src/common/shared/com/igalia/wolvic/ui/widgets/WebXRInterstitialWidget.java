@@ -90,9 +90,9 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         int deviceType = DeviceType.getType();
         if (deviceType == DeviceType.OculusGo) {
             addController(DeviceType.OculusGo, WebXRInterstitialController.HAND_NONE);
-        } else if (deviceType == DeviceType.OculusQuest || deviceType == DeviceType.OculusQuest2) {
-            addController(DeviceType.OculusQuest, WebXRInterstitialController.HAND_LEFT);
-            addController(DeviceType.OculusQuest, WebXRInterstitialController.HAND_RIGHT);
+        } else if (deviceType == DeviceType.OculusQuest || deviceType == DeviceType.OculusQuest2 || deviceType == DeviceType.MetaQuestPro) {
+            addController(deviceType, WebXRInterstitialController.HAND_LEFT);
+            addController(deviceType, WebXRInterstitialController.HAND_RIGHT);
         } else if (deviceType == DeviceType.PicoNeo2) {
             addController(DeviceType.PicoNeo2, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.PicoNeo2, WebXRInterstitialController.HAND_RIGHT);

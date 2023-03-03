@@ -28,12 +28,12 @@
             android:layout_height="130dp"
             >
             <ImageView
+                android:id="@+id/left_controller"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/controller_quest_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -60,13 +60,13 @@
 
         <!-- Oculus Quest Left Right Controller -->
         <ImageView
+            android:id="@+id/right_controller"
             app:visibleGone="@{model == DeviceType.OculusQuest &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
             tools:visibility="gone"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="fitCenter"
             android:scaleX="-1"
-            android:src="@drawable/controller_quest_left"
 
             tools:ignore="RtlHardcoded" />
 
