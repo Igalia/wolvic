@@ -1,5 +1,5 @@
-#ifndef GENERALUTILS_H
-#define GENERALUTILS_H
+#ifndef ASSERTIONS_H
+#define ASSERTIONS_H
 
 // MACROS to define to-string and logging function utils
 #define STRINGIFY(x) #x
@@ -27,4 +27,4 @@
   }                                         \
 }
 
-#endif //GENERALUTILS_H
+#endif // ASSERTIONS_H
