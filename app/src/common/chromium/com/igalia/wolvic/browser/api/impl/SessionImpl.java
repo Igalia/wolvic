@@ -1,6 +1,9 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import static android.util.Patterns.WEB_URL;
+
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,8 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
+import org.chromium.content_public.browser.LoadUrlParams;
+import org.chromium.content_public.browser.NavigationController;
 import org.chromium.content_public.browser.WebContents;
 
 public class SessionImpl implements WSession {
@@ -39,6 +44,9 @@ public class SessionImpl implements WSession {
     private RuntimeImpl mRuntime = null;
     public Tab mTab = null;
     private TabWebContentsObserver mTabWebContentsObserver;
+    private NavigationController mNavigationController = null;
+    private boolean mIsDisplayAcquired = false;
+    private String mInitialUri = null;
 
     public SessionImpl(WSessionSettings settings) {
         Log.e("WolvicLifecycle", "SessionImpl()");
@@ -61,7 +69,47 @@ public class SessionImpl implements WSession {
 
     @Override
     public void loadUri(@NonNull String uri, int flags) {
+        if (!mIsDisplayAcquired) {
+            mInitialUri = uri;
+            return;
+        }
 
+        LoadUrlParams params = new LoadUrlParams(getUriFromString(uri).toString());
+        mNavigationController.loadUrl(params);
+    }
+
+    private Uri getUriFromString(@NonNull String str) {
+        // WEB_URL doesn't match port numbers. Special case "localhost:" to aid
+        // testing where a port is remapped.
+        // Use WEB_URL first to ensure this matches urls such as 'https.'
+        if (WEB_URL.matcher(str).matches() || str.startsWith("http://localhost:")) {
+            // WEB_URL matches relative urls (relative meaning no scheme), but this branch is only
+            // interested in absolute urls. Fall through if no scheme is supplied.
+            Uri uri = Uri.parse(str);
+            if (!uri.isRelative()) return uri;
+        }
+
+        if (str.startsWith("www.") || !str.contains(":")) {
+            String url = "http://" + str;
+            if (WEB_URL.matcher(url).matches()) {
+                return Uri.parse(url);
+            }
+        }
+
+        if (str.startsWith("chrome://")) return Uri.parse(str);
+
+        return Uri.parse("https://google.com/search")
+                .buildUpon()
+                .appendQueryParameter("q", str)
+                .build();
+    }
+
+    private void loadInitialUri() {
+        if (mInitialUri == null) {
+            return;
+        }
+        loadUri(mInitialUri);
+        mInitialUri = null;
     }
 
     @Override
@@ -71,7 +119,7 @@ public class SessionImpl implements WSession {
 
     @Override
     public void reload(int flags) {
-
+        mNavigationController.reload(true);
     }
 
     @Override
@@ -107,12 +155,12 @@ public class SessionImpl implements WSession {
 
     @Override
     public void goBack(boolean userInteraction) {
-
+        mNavigationController.goBack();
     }
 
     @Override
     public void goForward(boolean userInteraction) {
-
+        mNavigationController.goForward();
     }
 
     @Override
@@ -147,8 +195,15 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         Log.e("WolvicLifecycle", "acquire display called");
-        mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(), mRuntime.getRenderView(), this);
+        WebContents webContents = mRuntime.getContentShellController().createWebContents();
+        BrowserDisplay display = mRuntime.createBrowserDisplay(webContents);
+        WolvicContentRenderView renderView = mRuntime.getRenderView();
+        mRuntime.getContentShellController().getWindowAndroid().setAnimationPlaceholderView(renderView);
+        mDisplay = new DisplayImpl(display, renderView, this);
+        mNavigationController = webContents.getNavigationController();
+        mIsDisplayAcquired = true;
         registerCallbacks();
+        loadInitialUri();
         return mDisplay;
     }
 
