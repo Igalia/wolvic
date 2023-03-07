@@ -83,16 +83,10 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         ctx->mEgl->MakeCurrent();
         VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
         VRB_GL_CHECK(glEnable(GL_CULL_FACE));
-        BrowserWorld::Instance().InitializeGL();
       } else {
         ctx->mEgl->UpdateNativeWindow(aApp->window);
         ctx->mEgl->MakeCurrent();
       }
-
-      if (!BrowserWorld::Instance().IsPaused() && !ctx->mDevice->IsInVRMode()) {
-        ctx->mDevice->EnterVR(*ctx->mEgl);
-      }
-
       break;
 
     // The existing ANativeWindow needs to be terminated.  Upon receiving this command,
@@ -108,18 +102,12 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     case APP_CMD_PAUSE:
       VRB_LOG("APP_CMD_PAUSE");
       BrowserWorld::Instance().Pause();
-      if (ctx->mDevice->IsInVRMode()) {
-        ctx->mDevice->LeaveVR();
-      }
       break;
 
     // The app's activity has been resumed.
     case APP_CMD_RESUME:
       VRB_LOG("APP_CMD_RESUME");
       BrowserWorld::Instance().Resume();
-      if (!ctx->mDevice->IsInVRMode() && ctx->mEgl && ctx->mEgl->IsSurfaceReady() ) {
-         ctx->mDevice->EnterVR(*ctx->mEgl);
-      }
       break;
 
     // the app's activity is being destroyed,
@@ -144,6 +132,11 @@ android_main(android_app *aAppState) {
   // Attach JNI thread
   JNIEnv *jniEnv;
   (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, nullptr);
+
+  // Set up activity & SurfaceView life cycle callbacks
+  aAppState->userData = sAppContext.get();
+  aAppState->onAppCmd = CommandCallback;
+
 
   if (!sAppContext) {
     sAppContext = std::make_shared<AppContext>();
@@ -184,30 +177,29 @@ android_main(android_app *aAppState) {
   BrowserWorld::Instance().InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
   jniEnv->DeleteLocalRef(assetManager);
 
-  // Set up activity & SurfaceView life cycle callbacks
-  aAppState->userData = sAppContext.get();
-  aAppState->onAppCmd = CommandCallback;
+  auto MaybeInitGLAndEnterVR = [aAppState]() {
+    if (!aAppState->window || !sAppContext->mEgl || BrowserWorld::Instance().IsGLInitialized())
+      return;
 
-#ifdef PICOXR
-  if (!sAppContext->mEgl && aAppState->window) {
-    // Work around APP_CMD_INIT_WINDOW and APP_CMD_RESUME callback not
-    // firing on Pico 4 when starting the app
-    CommandCallback(aAppState, APP_CMD_INIT_WINDOW);
-    CommandCallback(aAppState, APP_CMD_RESUME);
-  }
-#endif
+    BrowserWorld::Instance().InitializeGL();
+    sAppContext->mDevice->EnterVR(*sAppContext->mEgl);
+  };
+  // If 0 returns immediately without blocking. If negative, waits indefinitely for events.
+  auto computeALooperTimeout = [aAppState]() {
+      return BrowserWorld::Instance().IsPaused() && !sAppContext->mDevice->IsInVRMode() && aAppState->destroyRequested == 0 ? -1 : 0;
+  };
+
+  // EnterVR if the APP_CMD_INIT_WINDOW has been already received. Can be triggered in OpenXR
+  // backend just by creating the XrInstance when the DeviceDelegate is created
+  MaybeInitGLAndEnterVR();
 
   // Main render loop
   while (true) {
     int events;
     android_poll_source *pSource;
 
-    // Loop until all events are read
-    // If the activity is paused use a blocking call to read events.
-    while (ALooper_pollAll(BrowserWorld::Instance().IsPaused() ? -1 : 0,
-                           nullptr,
-                           &events,
-                           (void **) &pSource) >= 0) {
+    // Loop until all events are read. If the activity is paused use a blocking call to read events.
+    while (ALooper_pollAll(computeALooperTimeout(), nullptr, &events, (void **) &pSource) >= 0) {
       // Process event.
       if (pSource) {
         pSource->process(aAppState, pSource);
@@ -228,6 +220,8 @@ android_main(android_app *aAppState) {
         return;
       }
     }
+    MaybeInitGLAndEnterVR();
+
     if (sAppContext->mEgl) {
       sAppContext->mEgl->MakeCurrent();
     }

@@ -1010,6 +1010,11 @@ BrowserWorld::ShutdownGL() {
   m.glInitialized = false;
 }
 
+bool
+BrowserWorld::IsGLInitialized() const {
+  return m.glInitialized;
+}
+
 #if defined(OCULUSVR) && STORE_BUILD == 1
 void
 BrowserWorld::ProcessOVRPlatformEvents() {
