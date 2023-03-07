@@ -35,6 +35,7 @@ public:
   bool IsPaused() const;
   void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
+  bool IsGLInitialized() const;
   void ShutdownJava();
   void ShutdownGL();
   void Draw(){
