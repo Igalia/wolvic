@@ -69,6 +69,7 @@ import com.igalia.wolvic.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
@@ -120,6 +121,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     public int mDomainHoverDeviceId = -1;
     public int mAutoCompleteHoverDeviceId = -1;
     public int mControlHoverDeviceId = -1;
+
+    private AtomicBoolean mShouldIgnoreUpdateSelection = new AtomicBoolean(false);
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
@@ -815,6 +818,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 String beforeText = getTextBeforeCursor(connection);
                 String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
                 if (newBeforeText != null) {
+                    // Chromium processes asynchronously each InputConnection API below, causing the
+                    // issue of changing the cursor position back and forth, so this flag will
+                    // ignore the first notification of `updateSelection` to prevent this.
+                    mShouldIgnoreUpdateSelection.set(true);
+
                     // Replace whole before text
                     connection.deleteSurroundingText(beforeText.length(), 0);
                     connection.commitText(newBeforeText, 1);
@@ -1050,18 +1058,18 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             }
             mComposingText += text;
         } else if (mCurrentKeyboard.usesTextOverride()) {
-            String beforeText = getTextBeforeCursor(mInputConnection);
-            final String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> {
+                String beforeText = getTextBeforeCursor(mInputConnection);
+                String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
                 if (newBeforeText != null) {
+                    mShouldIgnoreUpdateSelection.set(true);
                     connection.deleteSurroundingText(beforeText.length(), 0);
                     connection.commitText(newBeforeText, 1);
                 } else {
                     connection.commitText(text, 1);
                 }
             });
-
         } else {
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> connection.commitText(text, 1));
@@ -1147,11 +1155,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 });
             }
         } else {
-            String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
-            String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
-            final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(beforeText);
-            setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
-            mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
+            postInputCommand(() -> {
+                final String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
+                final String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
+                postUICommand(() -> {
+                    final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(beforeText);
+                    setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
+                    mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
+                });
+            });
         }
 
         updateSpecialKeyLabels();
@@ -1308,7 +1320,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void updateSelection(@NonNull WSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
-        if (mFocusedView != mAttachedWindow || mInputConnection == null) {
+        if (mFocusedView != mAttachedWindow || mInputConnection == null || mShouldIgnoreUpdateSelection.get()) {
+            mShouldIgnoreUpdateSelection.set(false);
             return;
         }
 
