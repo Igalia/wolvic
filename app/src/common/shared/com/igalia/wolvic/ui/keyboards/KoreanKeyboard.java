@@ -125,6 +125,15 @@ public class KoreanKeyboard extends BaseKeyboard {
             return false;
         }
 
+        String getCombinedConsonant(String aSuffix) {
+            for (String values : COMBINED_CONSONANTS) {
+                if (values.indexOf(aSuffix) == 0) {
+                    return values;
+                }
+            }
+            return "";
+        }
+
         String getHangul() {
             if (isVowel()) {
                 return VOWELS.substring(vowelIndex, vowelIndex + 1);
@@ -262,14 +271,30 @@ public class KoreanKeyboard extends BaseKeyboard {
             result = StringUtils.removeLastCharacter(aTextBeforeCursor);
             before.tailIndex = after.tailIndex;
             result += before.getHangul();
-        } else if (before.isCompleteHangul() && after.isVowel() && INITIALS.contains(getTail(before.tailIndex))) {
-            // Split Hangul when vowel is added after a complete Hangul.
-            // Example: ㅂㅏㅂ  will produce 밥. Another ㅏ will produce 바바 instead of 밥ㅏ
-            result = StringUtils.removeLastCharacter(aTextBeforeCursor);
-            after.initialIndex = INITIALS.indexOf(getTail(before.tailIndex));
-            before.tailIndex = -1;
-            result += before.getHangul();
-            result += after.getHangul();
+        } else if(before.isCompleteHangul() && after.isVowel()) {
+            String tail = getTail(before.tailIndex);
+            if (INITIALS.contains(tail)) {
+                // Split Hangul when vowel is added after a complete Hangul.
+                // Example: ㅂㅏㅂ  will produce 밥. Another ㅏ will produce 바바 instead of 밥ㅏ
+                result = StringUtils.removeLastCharacter(aTextBeforeCursor);
+                after.initialIndex = INITIALS.indexOf(tail);
+                before.tailIndex = -1;
+                result += before.getHangul();
+                result += after.getHangul();
+            } else {
+                String combinedConsonant = before.getCombinedConsonant(tail);
+                if (!combinedConsonant.isEmpty()) {
+                    assert combinedConsonant.length() == 3;
+
+                    // Split Hangul when vowel is added after a complete Hangul.
+                    // Example: ㅇㅏㄴㅎ will produce 않. Another ㅏ will produce 안하 instead of 않ㅏ
+                    result = StringUtils.removeLastCharacter(aTextBeforeCursor);
+                    after.initialIndex = INITIALS.indexOf(combinedConsonant.charAt(2));
+                    before.tailIndex = TAILS.indexOf(combinedConsonant.charAt(1));
+                    result += before.getHangul();
+                    result += after.getHangul();
+                }
+            }
         }
 
         return result;
