@@ -18,8 +18,6 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
-import com.igalia.wolvic.browser.engine.Session;
-import com.igalia.wolvic.utils.SystemUtils;
 
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.LoadUrlParams;
@@ -194,12 +192,14 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public WDisplay acquireDisplay() {
-        Log.e("WolvicLifecycle", "acquire display called");
-        WebContents webContents = mRuntime.getContentShellController().createWebContents();
-        BrowserDisplay display = mRuntime.createBrowserDisplay(webContents);
-        WolvicContentRenderView renderView = mRuntime.getRenderView();
-        mRuntime.getContentShellController().getWindowAndroid().setAnimationPlaceholderView(renderView);
-        mDisplay = new DisplayImpl(display, renderView, this);
+        ContentShellController controller = mRuntime.getContentShellController();
+        WebContents webContents = controller.createWebContents();
+        WolvicContentRenderView renderView = new WolvicContentRenderView(mRuntime.getContext());
+        renderView.onNativeLibraryLoaded(controller.getWindowAndroid());
+        renderView.setCurrentWebContents(webContents);
+        mRuntime.addViewToBrowserContainer(renderView);
+        controller.getWindowAndroid().setAnimationPlaceholderView(renderView);
+        mDisplay = new DisplayImpl(renderView, this);
         mNavigationController = webContents.getNavigationController();
         mIsDisplayAcquired = true;
         registerCallbacks();

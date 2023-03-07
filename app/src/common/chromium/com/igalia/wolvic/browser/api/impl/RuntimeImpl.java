@@ -4,19 +4,17 @@ import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
-
-import org.chromium.components.embedder_support.view.WolvicContentRenderView;
-import org.chromium.content_public.browser.WebContents;
-import org.chromium.ui.base.ViewAndroidDelegate;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,12 +29,8 @@ public class RuntimeImpl implements WRuntime {
     private Context mContext;
     private WRuntimeSettings mSettings;
     private WWebExtensionController mWebExtensionController;
-    private FragmentManager mFragmentManager;
     private ViewGroup mViewContainer;
     private ContentShellController mContentShellController;
-    private BrowserDisplay mBrowserDisplay;
-    private WolvicContentRenderView mContentViewRenderView;
-    private WebContents mCurrentWebContents;
 
     public RuntimeImpl(@NonNull Context context, @NonNull WRuntimeSettings settings) {
         Log.e("WolvicLifecycle", "RuntimeImpl()");
@@ -46,39 +40,19 @@ public class RuntimeImpl implements WRuntime {
         mWebExtensionController = new WebExtensionControllerImpl();
     }
 
+    public Context getContext() {
+        return mContext;
+    }
+
     public ContentShellController getContentShellController() {
         return mContentShellController;
     }
 
-    public BrowserDisplay createBrowserDisplay() {
-        mContentViewRenderView = new WolvicContentRenderView(mContext);
-        mContentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
-
-        WebContents webContents = getContentShellController().createWebContents();
-        webContents.initialize(
-                "", ViewAndroidDelegate.createBasicDelegate(mViewContainer), null,
-                mContentShellController.getWindowAndroid(), WebContents.createDefaultInternalsHolder());
-
-        getContentShellController().getWindowAndroid().setAnimationPlaceholderView(mContentViewRenderView);
-        mCurrentWebContents = webContents;
-
-        mBrowserDisplay = new BrowserDisplay(mContext);
-
-        ContentShellFragment fragment = new ContentShellFragment();
-        fragment.setContentViewRenderView(mContentViewRenderView);
-        mBrowserDisplay.attach(mFragmentManager, mViewContainer, fragment);
-
-        mContentViewRenderView.setCurrentWebContents(webContents);
-        webContents.onShow();
-        return mBrowserDisplay;
-    }
-
-    public BrowserDisplay getBrowserDisplay() {
-        return mBrowserDisplay;
-    }
-
-    public WolvicContentRenderView getRenderView() {
-        return mContentViewRenderView;
+    public void addViewToBrowserContainer(View view) {
+        SettingsStore settings = SettingsStore.getInstance(mContext);
+        // using the default window size here, it will updated later in onSurfaceChanged()
+        mViewContainer.addView(view,
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
     }
 
     @Override
@@ -117,7 +91,6 @@ public class RuntimeImpl implements WRuntime {
 
     @Override
     public void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container) {
-        mFragmentManager = fragmentManager;
         mViewContainer = container;
     }
 

@@ -18,14 +18,12 @@ import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import java.lang.reflect.Field;
 
 public class DisplayImpl implements WDisplay {
-    @NonNull private final BrowserDisplay mBrowserDisplay;
     @NonNull SessionImpl mSession;
     private int mWidth = 1;
     private Surface mSurface;
     private WolvicContentRenderView mRenderView;
 
-    public DisplayImpl(@NonNull BrowserDisplay browserDisplay, WolvicContentRenderView renderView, @NonNull SessionImpl session) {
-        mBrowserDisplay = browserDisplay;
+    public DisplayImpl(WolvicContentRenderView renderView, @NonNull SessionImpl session) {
         mRenderView = renderView;
         mSession = session;
     }
