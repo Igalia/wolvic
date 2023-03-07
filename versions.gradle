@@ -104,7 +104,7 @@ deps.openwnn = "jp.co.omronsoft.openwnn:openwnn:$versions.openwnn"
 
 def support = [:]
 support.annotations = "androidx.annotation:annotation:1.6.0"
-support.app_compat = "androidx.appcompat:appcompat:1.6.1"
+support.app_compat = "androidx.appcompat:appcompat:1.4.2"
 support.recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
 support.cardview = "androidx.cardview:cardview:1.0.0"
 support.design = "com.google.android.material:material:1.6.1"
@@ -183,7 +183,7 @@ ext.deps = deps
 def build_versions = [:]
 build_versions.min_sdk = 24
 build_versions.min_sdk_wave = 25
-build_versions.compile_sdk = 33
+build_versions.compile_sdk = 31
 build_versions.target_sdk = 31
 build_versions.target_sdk_hvr = 30
 build_versions.target_sdk_wave = 31
