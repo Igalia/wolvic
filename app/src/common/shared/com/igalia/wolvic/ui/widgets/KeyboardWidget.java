@@ -790,20 +790,20 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleBackspace() {
         final InputConnection connection = mInputConnection;
-        if (mComposingText.length() > 0) {
-            CharSequence selectedText = mInputConnection.getSelectedText(0);
-            if (selectedText != null && selectedText.length() > 0) {
-                // Clean composing text if selected when backspace is clicked
-                mComposingText = "";
-            } else {
-                mComposingText = mComposingText.substring(0, mComposingText.length() - 1);
-                mComposingText = mComposingText.trim();
-            }
-            updateCandidates();
-            return;
-        }
-
         postInputCommand(() -> {
+            if (mComposingText.length() > 0) {
+                CharSequence selectedText = connection.getSelectedText(0);
+                if (selectedText != null && selectedText.length() > 0) {
+                    // Clean composing text if selected when backspace is clicked
+                    mComposingText = "";
+                } else {
+                    mComposingText = mComposingText.substring(0, mComposingText.length() - 1);
+                    mComposingText = mComposingText.trim();
+                }
+                postUICommand(KeyboardWidget.this::updateCandidates);
+                return;
+            }
+
             CharSequence selectedText = connection.getSelectedText(0);
             if (selectedText != null && selectedText.length() > 0) {
                 // Delete the selected text
@@ -1041,19 +1041,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
 
         final String text = aText;
+        final InputConnection connection = mInputConnection;
         if (mCurrentKeyboard.usesComposingText()) {
-            CharSequence seq = mInputConnection.getSelectedText(0);
-            String selected = seq != null ? seq.toString() : "";
-            if (selected.length() > 0 && StringUtils.removeSpaces(selected).contains(mComposingText)) {
-                // Clean composing text if the text is selected.
-                mComposingText = "";
-            }
-            mComposingText += text;
-        } else if (mCurrentKeyboard.usesTextOverride()) {
-            String beforeText = getTextBeforeCursor(mInputConnection);
-            final String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
-            final InputConnection connection = mInputConnection;
             postInputCommand(() -> {
+                CharSequence seq = connection.getSelectedText(0);
+                String selected = seq != null ? seq.toString() : "";
+                if (selected.length() > 0 && StringUtils.removeSpaces(selected).contains(mComposingText)) {
+                    // Clean composing text if the text is selected.
+                    mComposingText = "";
+                }
+                mComposingText += text;
+            });
+        } else if (mCurrentKeyboard.usesTextOverride()) {
+            postInputCommand(() -> {
+                String beforeText = getTextBeforeCursor(connection);
+                String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
                 if (newBeforeText != null) {
                     connection.deleteSurroundingText(beforeText.length(), 0);
                     connection.commitText(newBeforeText, 1);
@@ -1061,9 +1063,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     connection.commitText(text, 1);
                 }
             });
-
         } else {
-            final InputConnection connection = mInputConnection;
             postInputCommand(() -> connection.commitText(text, 1));
         }
 
@@ -1147,11 +1147,16 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 });
             }
         } else {
-            String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
-            String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
-            final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(beforeText);
-            setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
-            mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
+            final InputConnection connection = mInputConnection;
+            postInputCommand(() -> {
+                final String fullText = connection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
+                final String beforeText = connection.getTextBeforeCursor(fullText.length(),0).toString();
+                postUICommand(() -> {
+                    final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(beforeText);
+                    setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
+                    mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
+                });
+            });
         }
 
         updateSpecialKeyLabels();
