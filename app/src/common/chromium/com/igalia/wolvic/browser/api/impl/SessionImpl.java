@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -20,6 +21,9 @@ import com.igalia.wolvic.browser.api.WTextInput;
 import org.chromium.base.ApplicationStatus;
 import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
+import org.chromium.components.url_formatter.UrlFormatter;
+import org.chromium.content_public.browser.LoadUrlParams;
+import org.chromium.content_public.browser.NavigationController;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.ActivityWindowAndroid;
 import org.chromium.ui.base.IntentRequestTracker;
@@ -46,6 +50,9 @@ public class SessionImpl implements WSession {
     private TabWebContentsObserver mTabWebContentsObserver;
     private WolvicContentRenderView mContentViewRenderView;
     private ContentView mCurrentContentView;
+    private NavigationController mNavigationController = null;
+    private boolean mIsDisplayAcquired = false;
+    private String mInitialUri = null;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
@@ -98,7 +105,24 @@ public class SessionImpl implements WSession {
 
     @Override
     public void loadUri(@NonNull String uri, int flags) {
-        // TODO: Implement
+        // if loadUri() is called before the display has been acquired, save the uri and load it
+        // later
+        if (!mIsDisplayAcquired) {
+            mInitialUri = uri;
+            return;
+        }
+
+        LoadUrlParams params = new LoadUrlParams(UrlFormatter.fixupUrl(uri).getPossiblyInvalidSpec());
+        mNavigationController.loadUrl(params);
+    }
+
+    private void loadInitialUri() {
+        if (mInitialUri == null) {
+            // if no initial uri has been provided, load the homepage
+            mInitialUri = SettingsStore.getInstance(mRuntime.getContext()).getHomepage();
+        }
+        loadUri(mInitialUri);
+        mInitialUri = null;
     }
 
     @Override
@@ -108,7 +132,7 @@ public class SessionImpl implements WSession {
 
     @Override
     public void reload(int flags) {
-        // TODO: Implement
+        mNavigationController.reload(true);
     }
 
     @Override
@@ -144,12 +168,12 @@ public class SessionImpl implements WSession {
 
     @Override
     public void goBack(boolean userInteraction) {
-        // TODO: Implement
+        mNavigationController.goBack();
     }
 
     @Override
     public void goForward(boolean userInteraction) {
-        // TODO: Implement
+        mNavigationController.goForward();
     }
 
     @Override
@@ -187,6 +211,9 @@ public class SessionImpl implements WSession {
         mDisplay = new DisplayImpl(createBrowserDisplay(), this, mContentViewRenderView);
         registerCallbacks();
         getTextInput().setView(getContentView());
+        mNavigationController = getCurrentWebContents().getNavigationController();
+        mIsDisplayAcquired = true;
+        loadInitialUri();
         return mDisplay;
     }
 
