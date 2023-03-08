@@ -394,6 +394,7 @@
     <string name="security_options_permission_camera">Câmera</string>
     <string name="security_options_permission_microphone">Microfone</string>
     <string name="security_options_permission_location">Localização</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic só pode aceder à sua localização aproximada. Pode modificar isto nas configurações do sistema.</string>
     <string name="security_options_block_pup_up_windows">Bloquear janelas Pop-Up</string>
     <string name="security_options_block_pup_up_settings">Avançado</string>
     <string name="security_options_webxr_settings">Avançado</string>

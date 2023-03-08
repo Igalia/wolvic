@@ -180,6 +180,25 @@
                     app:description="@string/security_options_permission_microphone" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/notificationsPermissionSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:visibility="gone"
+                    app:description="@string/security_options_permission_notifications"
+                    app:off_text="@string/permission_reject"
+                    app:on_text="@string/permission_allow" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/storagePermissionSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:description="@string/security_options_permission_storage"
+                    app:off_text="@string/permission_reject"
+                    app:on_text="@string/permission_allow" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/locationPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -188,24 +207,31 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_location" />
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/notificationsPermissionSwitch"
+                <LinearLayout
+                    android:id="@+id/locationPermissionWarning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:visibility="gone"
-                    app:on_text="@string/permission_allow"
-                    app:off_text="@string/permission_reject"
-                    app:description="@string/security_options_permission_notifications" />
+                    android:layout_marginStart="60dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="40dp"
+                    android:visibility="gone">
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/storagePermissionSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    app:on_text="@string/permission_allow"
-                    app:off_text="@string/permission_reject"
-                    app:description="@string/security_options_permission_storage" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_error_circle" />
+
+                    <TextView
+                        style="@style/settingsDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/security_options_permission_fine_location_warning" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/dataCollectionTitle"

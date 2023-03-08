@@ -87,20 +87,31 @@ class PrivacyOptionsView extends SettingsView {
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
         mPermissionButtons = new ArrayList<>();
-        mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
         mPermissionButtons.add(Pair.create(findViewById(R.id.microphonePermissionSwitch), Manifest.permission.RECORD_AUDIO));
-        mPermissionButtons.add(Pair.create(findViewById(R.id.locationPermissionSwitch), Manifest.permission.ACCESS_FINE_LOCATION));
         mPermissionButtons.add(Pair.create(findViewById(R.id.storagePermissionSwitch), Manifest.permission.WRITE_EXTERNAL_STORAGE));
 
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild() || DeviceType.isPicoVR()) {
             findViewById(R.id.cameraPermissionSwitch).setVisibility(View.GONE);
-        }
-        if (DeviceType.isOculusBuild()) {
-            findViewById(R.id.locationPermissionSwitch).setVisibility(View.GONE);
+        } else {
+            mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
         }
 
-        for (Pair<SwitchSetting, String> button: mPermissionButtons) {
-            button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
+        if (DeviceType.isOculusBuild()) {
+            findViewById(R.id.locationPermissionSwitch).setVisibility(View.GONE);
+        } else {
+            mPermissionButtons.add(Pair.create(findViewById(R.id.locationPermissionSwitch), Manifest.permission.ACCESS_FINE_LOCATION));
+        }
+
+        for (Pair<SwitchSetting, String> button : mPermissionButtons) {
+            if (button.second.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                boolean hasCoarseLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION);
+                boolean hasFineLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION);
+                button.first.setChecked(hasFineLocation);
+                View locationWarning = findViewById(R.id.locationPermissionWarning);
+                locationWarning.setVisibility((hasCoarseLocation && !hasFineLocation) ? VISIBLE : GONE);
+            } else {
+                button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
+            }
             button.first.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
                     togglePermission(button.first, button.second));
         }

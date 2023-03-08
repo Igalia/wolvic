@@ -224,6 +224,7 @@
     <string name="security_options_permissions_title">Permisos (Permitir a %1$s acceder a)</string>
     <string name="security_options_permissions_reject_message">Este permiso só se pode desactivar nos permisos do sistema</string>
     <string name="security_options_permission_location">Localización</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic só pode acceder á tua ubicación aproximada. Podes cambiar isto nos axustes do sistema.</string>
     <string name="security_options_permission_storage">Almacenamento</string>
     <string name="security_options_permission_camera_and_microphone">Cámara e micrófono</string>
     <string name="security_options_block_pup_up_windows">Bloquear xanelas pop-up</string>

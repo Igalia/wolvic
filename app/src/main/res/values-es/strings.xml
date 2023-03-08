@@ -767,6 +767,10 @@
          geographic location, if the device supports determination of geographic location. -->
     <string name="security_options_permission_location">Ubicación</string>
 
+    <!-- This string describes the situation when the coarse location permission has been granted,
+         but the fine location permission has not. -->
+    <string name="security_options_permission_fine_location_warning">Wolvic sólo puede acceder a tu ubicación aproximada. Puedes cambiar esto en los ajustes del sistema.</string>
+
     <!-- This string labels the button that displays or enables the application to post system-wide
          notifications. -->
     <string name="security_options_permission_notifications">Notificaciones</string>
