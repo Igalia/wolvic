@@ -101,6 +101,7 @@ struct DeviceDelegateOpenXR::State {
   bool mHandTrackingSupported = false;
   std::vector<float> refreshRates;
   bool reorientRequested { false };
+  bool passthroughSupported { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -231,12 +232,23 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &handTrackingProperties;
     }
 
+    // If passthrough extension is present, query whether the runtime actually supports it
+    XrSystemPassthroughPropertiesFB passthroughProperties{ XR_TYPE_SYSTEM_PASSTHROUGH_PROPERTIES_FB};
+    passthroughProperties.supportsPassthrough = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
+        passthroughProperties.next = systemProperties.next;
+        systemProperties.next = &passthroughProperties;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
 
     mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
+
+    passthroughSupported = passthroughProperties.supportsPassthrough;
+    VRB_LOG("OpenXR runtime %s passthrough", passthroughSupported ? "does support" : "doesn't support");
 
     InitializeDeviceType();
   }
