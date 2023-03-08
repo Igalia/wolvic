@@ -8,6 +8,8 @@
     <uses-feature android:name="oculus.software.handtracking" android:required="false" />
     <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
 
+    <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
+
     <!-- Not needed in Android 10 (API >= 29) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
