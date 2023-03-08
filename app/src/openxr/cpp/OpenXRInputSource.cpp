@@ -13,7 +13,7 @@ const float kClickThreshold = 0.91f;
 // Distance threshold to consider that two hand joints touch
 // Used to detect pinch events between thumb-tip joint and the
 // rest of the finger tips.
-const float kPinchThreshold = 0.015;
+const float kPinchThreshold = 0.019;
 
 // These two are used to measure a pinch factor between [0,1]
 // between the thumb and the index fingertips, where 0 is no
