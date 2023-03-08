@@ -431,6 +431,8 @@ struct DeviceDelegateOculusVR::State {
         continue;
       }
 
+      controller->SetMode(controllerState.index, ControllerMode::Device);
+
       device::CapabilityFlags flags = 0;
       if (controllerState.capabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking) {
         auto &orientation = tracking.HeadPose.Pose.Orientation;
