@@ -14,6 +14,10 @@ PFN_xrGetHandMeshFB OpenXRExtensions::sXrGetHandMeshFB = nullptr;
 PFN_xrPerfSettingsSetPerformanceLevelEXT OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT = nullptr;
 PFN_xrEnumerateDisplayRefreshRatesFB OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB = nullptr;
 PFN_xrRequestDisplayRefreshRateFB OpenXRExtensions::sXrRequestDisplayRefreshRateFB = nullptr;
+PFN_xrCreatePassthroughFB OpenXRExtensions::sXrCreatePassthroughFB = nullptr;
+PFN_xrDestroyPassthroughFB OpenXRExtensions::sXrDestroyPassthroughFB = nullptr;
+PFN_xrCreatePassthroughLayerFB OpenXRExtensions::sXrCreatePassthroughLayerFB = nullptr;
+PFN_xrDestroyPassthroughLayerFB OpenXRExtensions::sXrDestroyPassthroughLayerFB = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -77,6 +81,17 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
             CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrGetHandMeshFB",
                                             reinterpret_cast<PFN_xrVoidFunction *>(&sXrGetHandMeshFB)));
         }
+    }
+
+    if (IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreatePassthroughFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreatePassthroughFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrDestroyPassthroughFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyPassthroughFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreatePassthroughLayerFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreatePassthroughLayerFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrDestroyPassthroughLayerFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyPassthroughLayerFB)));
     }
 }
 

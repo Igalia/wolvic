@@ -29,6 +29,11 @@ namespace crow {
     static PFN_xrPerfSettingsSetPerformanceLevelEXT sXrPerfSettingsSetPerformanceLevelEXT;
     static PFN_xrEnumerateDisplayRefreshRatesFB sXrEnumerateDisplayRefreshRatesFB;
     static PFN_xrRequestDisplayRefreshRateFB sXrRequestDisplayRefreshRateFB;
+
+    static PFN_xrCreatePassthroughFB sXrCreatePassthroughFB;
+    static PFN_xrDestroyPassthroughFB sXrDestroyPassthroughFB;
+    static PFN_xrCreatePassthroughLayerFB sXrCreatePassthroughLayerFB;
+    static PFN_xrDestroyPassthroughLayerFB sXrDestroyPassthroughLayerFB;
   private:
      static std::unordered_set<std::string> sSupportedExtensions;
      static std::unordered_set<std::string> sSupportedApiLayers;
