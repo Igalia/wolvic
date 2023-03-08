@@ -87,6 +87,9 @@ struct ControllerContainer::State {
     if (controller.pointer && !aVisible) {
       controller.pointer->SetVisible(false);
     }
+    if (controller.handMeshToggle) {
+      root->ToggleChild(*controller.handMeshToggle, aVisible);
+    }
   }
 };
 
