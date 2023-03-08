@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.WebxrInterstitialControllerBinding;
+import com.igalia.wolvic.utils.DeviceType;
 
 public class WebXRInterstitialController extends UIWidget {
     private WebxrInterstitialControllerBinding mBinding;
