@@ -288,9 +288,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     private void dumpState(VideoAvailabilityListener aListener) {
-        mState.mMediaElements.forEach(element -> {
-            aListener.onVideoAvailabilityChanged(element,true);
-        });
+        Media activeMedia = getActiveVideo();
+        if (activeMedia != null)
+            aListener.onVideoAvailabilityChanged(activeMedia,true);
     }
 
     private void dumpState(WebXRStateChangedListener aListener) {
@@ -752,10 +752,6 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     public boolean isSecure() {
         return mState.mSecurityInformation != null && mState.mSecurityInformation.isSecure;
-    }
-
-    public boolean isVideoAvailable() {
-        return mState.mMediaElements != null && mState.mMediaElements.size() > 0;
     }
 
     public boolean isFirstContentfulPaint() {
