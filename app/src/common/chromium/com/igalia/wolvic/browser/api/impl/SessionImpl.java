@@ -1,8 +1,8 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Matrix;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +18,7 @@ import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
 
 import org.chromium.base.ApplicationStatus;
+import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.ActivityWindowAndroid;
@@ -44,7 +45,7 @@ public class SessionImpl implements WSession {
     private IntentRequestTracker mIntentRequestTracker;
     private TabWebContentsObserver mTabWebContentsObserver;
     private WolvicContentRenderView mContentViewRenderView;
-    private WebContents mCurrentWebContents;
+    private ContentView mCurrentContentView;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
@@ -67,11 +68,14 @@ public class SessionImpl implements WSession {
         mContentViewRenderView.onNativeLibraryLoaded(mWindowAndroid);
 
         WebContents webContents = mRuntime.createWebContents();
+        ContentView cv = ContentView.createContentView(
+                activity, null /* eventOffsetHandler */, webContents);
         webContents.initialize(
-                "", ViewAndroidDelegate.createBasicDelegate(mRuntime.getViewContainer()), null,
+                "", ViewAndroidDelegate.createBasicDelegate(cv), cv,
                 mWindowAndroid, WebContents.createDefaultInternalsHolder());
+        mCurrentContentView = cv;
+
         mWindowAndroid.setAnimationPlaceholderView(mContentViewRenderView);
-        mCurrentWebContents = webContents;
 
         BrowserDisplay browserDisplay = new BrowserDisplay(mRuntime.getContext());
 
@@ -85,7 +89,7 @@ public class SessionImpl implements WSession {
     }
 
     private void registerCallbacks() {
-        mTabWebContentsObserver = new TabWebContentsObserver(mCurrentWebContents, this);
+        mTabWebContentsObserver = new TabWebContentsObserver(getCurrentWebContents(), this);
     }
 
     private void unRegisterCallbacks() {
@@ -182,6 +186,7 @@ public class SessionImpl implements WSession {
         assert mDisplay == null;
         mDisplay = new DisplayImpl(createBrowserDisplay(), this, mContentViewRenderView);
         registerCallbacks();
+        getTextInput().setView(getContentView());
         return mDisplay;
     }
 
@@ -190,6 +195,7 @@ public class SessionImpl implements WSession {
         assert mDisplay != null;
         unRegisterCallbacks();
         mDisplay = null;
+        getTextInput().setView(null);
     }
 
     @Override
@@ -352,6 +358,16 @@ public class SessionImpl implements WSession {
     @Override
     public SelectionActionDelegate getSelectionActionDelegate() {
         return mSelectionActionDelegate;
+    }
+
+    @NonNull
+    public WebContents getCurrentWebContents() {
+        return mContentViewRenderView.getCurrentWebContents();
+    }
+
+    @NonNull
+    public ViewGroup getContentView() {
+        return mCurrentContentView;
     }
 
 }
