@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.view.Surface;
 
+import androidx.annotation.Nullable;
+
+import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.WindowAndroid;
 
 public class WolvicContentRenderView extends ContentViewRenderView {
@@ -42,4 +45,7 @@ public class WolvicContentRenderView extends ContentViewRenderView {
         ContentViewRenderViewJni.get().surfaceDestroyed(
                 mNativeContentViewRenderView, this);
     }
+
+    @Nullable
+    public WebContents getCurrentWebContents() { return mWebContents; }
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.igalia.wolvic.browser.api.WResult;
@@ -14,6 +15,7 @@ import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
 
+import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.ViewAndroidDelegate;
@@ -36,7 +38,8 @@ public class RuntimeImpl implements WRuntime {
     private ContentShellController mContentShellController;
     private BrowserDisplay mBrowserDisplay;
     private WolvicContentRenderView mContentViewRenderView;
-    private WebContents mCurrentWebContents;
+
+    private ContentView mCurrentContentView;
 
     public RuntimeImpl(@NonNull Context context, @NonNull WRuntimeSettings settings) {
         Log.e("WolvicLifecycle", "RuntimeImpl()");
@@ -55,12 +58,14 @@ public class RuntimeImpl implements WRuntime {
         mContentViewRenderView.onNativeLibraryLoaded(mContentShellController.getWindowAndroid());
 
         WebContents webContents = getContentShellController().createWebContents();
+        ContentView cv = ContentView.createContentView(
+                mContext, null /* eventOffsetHandler */, webContents);
         webContents.initialize(
-                "", ViewAndroidDelegate.createBasicDelegate(mViewContainer), null,
+                "", ViewAndroidDelegate.createBasicDelegate(cv), cv,
                 mContentShellController.getWindowAndroid(), WebContents.createDefaultInternalsHolder());
+        mCurrentContentView = cv;
 
         getContentShellController().getWindowAndroid().setAnimationPlaceholderView(mContentViewRenderView);
-        mCurrentWebContents = webContents;
 
         mBrowserDisplay = new BrowserDisplay(mContext);
 
@@ -153,8 +158,6 @@ public class RuntimeImpl implements WRuntime {
         return new CrashReportIntent("", "", "", "");
     }
 
-    public WebContents GetCurrentWebContents() {
-        assert mCurrentWebContents != null;
-        return mCurrentWebContents;
-    }
+    @Nullable
+    public ViewGroup getContentView() { return mCurrentContentView; }
 }

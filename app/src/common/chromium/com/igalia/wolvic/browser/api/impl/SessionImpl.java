@@ -2,6 +2,7 @@ package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.Matrix;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,7 +53,7 @@ public class SessionImpl implements WSession {
     }
 
     private void registerCallbacks() {
-        mTabWebContentsObserver = new TabWebContentsObserver(mRuntime.GetCurrentWebContents(), this);
+        mTabWebContentsObserver = new TabWebContentsObserver(getCurrentWebContents(), this);
     }
 
     private void unRegisterCallbacks() {
@@ -149,12 +150,14 @@ public class SessionImpl implements WSession {
         Log.e("WolvicLifecycle", "acquire display called");
         mDisplay = new DisplayImpl(mRuntime.createBrowserDisplay(), mRuntime.getRenderView(), this);
         registerCallbacks();
+        getTextInput().setView(getContentView());
         return mDisplay;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
         unRegisterCallbacks();
+        getTextInput().setView(null);
     }
 
     @Override
@@ -307,5 +310,15 @@ public class SessionImpl implements WSession {
     @Override
     public WMediaSession.Delegate getMediaSessionDelegate() {
         return mMediaSessionDelegate;
+    }
+
+    @NonNull
+    public WebContents getCurrentWebContents() {
+        return mRuntime.getRenderView().getCurrentWebContents();
+    }
+
+    @NonNull
+    public ViewGroup getContentView() {
+        return mRuntime.getContentView();
     }
 }
