@@ -55,7 +55,6 @@ public class SessionState {
     public transient WSession mSession;
     public transient WDisplay mDisplay;
     public SessionSettings mSettings;
-    public transient ArrayList<Media> mMediaElements = new ArrayList<>();
     public transient @WebXRState int mWebXRState = WEBXR_UNUSED;
     public transient @PopupState int mPopUpState = POPUP_UNUSED;
     public transient @DrmState int mDrmState = DRM_UNUSED;

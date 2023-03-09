@@ -544,7 +544,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public boolean isVideoAvailable() {
         for (WindowWidget window: getCurrentWindows()) {
-            if (window.getSession().isVideoAvailable()) {
+            if (window.getSession().getActiveVideo() != null) {
                 return true;
             }
         }
