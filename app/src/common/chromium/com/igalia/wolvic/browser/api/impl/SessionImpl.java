@@ -5,6 +5,7 @@ import static android.util.Patterns.WEB_URL;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,7 @@ public class SessionImpl implements WSession {
     }
 
     private void registerCallbacks() {
-        mTabWebContentsObserver = new TabWebContentsObserver(mRuntime.GetCurrentWebContents(), this);
+        mTabWebContentsObserver = new TabWebContentsObserver(getCurrentWebContents(), this);
     }
 
     private void unRegisterCallbacks() {
@@ -194,6 +195,9 @@ public class SessionImpl implements WSession {
     public WDisplay acquireDisplay() {
         ContentShellController controller = mRuntime.getContentShellController();
         WebContents webContents = controller.createWebContents();
+        ContentView cv = ContentView.createContentView(
+                mContext, null /* eventOffsetHandler */, webContents);
+        mCurrentContentView = cv;
         WolvicContentRenderView renderView = new WolvicContentRenderView(mRuntime.getContext());
         renderView.onNativeLibraryLoaded(controller.getWindowAndroid());
         renderView.setCurrentWebContents(webContents);
@@ -204,12 +208,14 @@ public class SessionImpl implements WSession {
         mIsDisplayAcquired = true;
         registerCallbacks();
         loadInitialUri();
+        getTextInput().setView(getContentView());
         return mDisplay;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
         unRegisterCallbacks();
+        getTextInput().setView(null);
     }
 
     @Override
@@ -362,5 +368,15 @@ public class SessionImpl implements WSession {
     @Override
     public WMediaSession.Delegate getMediaSessionDelegate() {
         return mMediaSessionDelegate;
+    }
+
+    @NonNull
+    public WebContents getCurrentWebContents() {
+        return mRuntime.getRenderView().getCurrentWebContents();
+    }
+
+    @NonNull
+    public ViewGroup getContentView() {
+        return mCurrentContentView;
     }
 }

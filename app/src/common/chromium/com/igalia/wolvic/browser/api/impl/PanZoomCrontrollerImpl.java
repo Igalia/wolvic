@@ -1,9 +1,9 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WPanZoomController;
 
@@ -16,11 +16,16 @@ public class PanZoomCrontrollerImpl implements WPanZoomController {
 
     @Override
     public void onTouchEvent(@NonNull MotionEvent event) {
-        // TODO
+        getContentView().dispatchTouchEvent(event);
     }
 
     @Override
     public void onMotionEvent(@NonNull MotionEvent event) {
-       // TODO
+        getContentView().dispatchGenericMotionEvent(event);
+    }
+
+    private ViewGroup getContentView() {
+        assert mSession != null;
+        return mSession.getContentView();
     }
 }
