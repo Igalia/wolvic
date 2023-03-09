@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
 
@@ -83,24 +82,35 @@ class PrivacyOptionsView extends SettingsView {
             SessionStore.get().clearCache(WRuntime.ClearFlags.ALL_CACHES);
         });
 
-        TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
-        permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
+        mBinding.permissionsTitle.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
         mPermissionButtons = new ArrayList<>();
-        mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
-        mPermissionButtons.add(Pair.create(findViewById(R.id.microphonePermissionSwitch), Manifest.permission.RECORD_AUDIO));
-        mPermissionButtons.add(Pair.create(findViewById(R.id.locationPermissionSwitch), Manifest.permission.ACCESS_FINE_LOCATION));
-        mPermissionButtons.add(Pair.create(findViewById(R.id.storagePermissionSwitch), Manifest.permission.WRITE_EXTERNAL_STORAGE));
+        mPermissionButtons.add(Pair.create(mBinding.microphonePermissionSwitch, Manifest.permission.RECORD_AUDIO));
+        mPermissionButtons.add(Pair.create(mBinding.storagePermissionSwitch, Manifest.permission.WRITE_EXTERNAL_STORAGE));
 
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild() || DeviceType.isPicoVR()) {
-            findViewById(R.id.cameraPermissionSwitch).setVisibility(View.GONE);
-        }
-        if (DeviceType.isOculusBuild()) {
-            findViewById(R.id.locationPermissionSwitch).setVisibility(View.GONE);
+            mBinding.cameraPermissionSwitch.setVisibility(View.GONE);
+        } else {
+            mPermissionButtons.add(Pair.create(mBinding.cameraPermissionSwitch, Manifest.permission.CAMERA));
         }
 
-        for (Pair<SwitchSetting, String> button: mPermissionButtons) {
-            button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
+        if (DeviceType.isOculusBuild()) {
+            mBinding.locationPermissionSwitch.setVisibility(View.GONE);
+        } else {
+            mPermissionButtons.add(Pair.create(mBinding.locationPermissionSwitch, Manifest.permission.ACCESS_FINE_LOCATION));
+
+            // Display a warning message if approximate location is available but precise location is not.
+            boolean hasCoarseLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION);
+            boolean hasFineLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION);
+            mBinding.locationPermissionWarning.setVisibility((hasCoarseLocation && !hasFineLocation) ? VISIBLE : GONE);
+        }
+
+        for (Pair<SwitchSetting, String> button : mPermissionButtons) {
+            if (button.second.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                button.first.setChecked(mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION));
+            } else {
+                button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
+            }
             button.first.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
                     togglePermission(button.first, button.second));
         }
