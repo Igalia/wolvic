@@ -41,7 +41,7 @@ public class DownloadJob {
         if (headers != null) {
             // TODO: We may want to create our own Content-Disposition parser, instead of relying on Android.
             String contentDisposition = Uri.decode(headers.get("content-disposition"));
-            job.mFilename =  Uri.decode(URLUtil.guessFileName(uri, contentDisposition, headers.get("content/type")));
+            job.mFilename = URLUtil.guessFileName(uri, contentDisposition, headers.get("content/type"));
         } else {
             job.mFilename = URLUtil.guessFileName(uri, null, null);
         }
