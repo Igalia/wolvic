@@ -300,6 +300,19 @@ namespace crow {
       },
   };
 
+  const OpenXRInputMapping LynxR1 {
+      "/interaction_profiles/khr/simple_controller",
+      "Monado: ",
+      IS_6DOF,
+      "vr_controller_oculusgo.obj",
+      "vr_controller_oculusgo.obj",
+      device::LynxR1,
+      std::vector<OpenXRInputProfile> { "generic-button" },
+      std::vector<OpenXRButton> {
+          { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+      },
+    };
+
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
@@ -318,8 +331,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 7> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Hvr6DOF, Hvr3DOF, KHRSimple
+    const std::array<OpenXRInputMapping, 8> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Hvr6DOF, Hvr3DOF, LynxR1, KHRSimple
     };
 
 } // namespace crow

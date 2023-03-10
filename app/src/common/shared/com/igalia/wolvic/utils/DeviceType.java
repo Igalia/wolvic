@@ -8,7 +8,7 @@ import com.igalia.wolvic.BuildConfig;
 
 public class DeviceType {
     // These values need to match those in Device.h
-    @IntDef(value = {Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3, OculusQuest2, HVR3DoF, HVR6DoF, PicoXR, MetaQuestPro})
+    @IntDef(value = {Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3, OculusQuest2, HVR3DoF, HVR6DoF, PicoXR, MetaQuestPro, LynxR1})
     public @interface Type {}
     public static final int Unknown = 0;
     public static final int OculusGo = 1;
@@ -23,6 +23,7 @@ public class DeviceType {
     public static final int HVR6DoF = 11;
     public static final int PicoXR = 12;
     public static final int MetaQuestPro = 13;
+    public static final int LynxR1 = 14;
 
     private static @Type int mType = Unknown;
 
@@ -58,6 +59,9 @@ public class DeviceType {
             case PicoXR:
                 name = "Pico XR";
                 break;
+            case LynxR1:
+                name = "Lynx-R1";
+                break;
             default:
                 name = "Unknown Type";
         }
@@ -92,6 +96,10 @@ public class DeviceType {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("picoxr");
     }
 
+    public static boolean isLynx() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("lynx");
+    }
+
     public static String getDeviceTypeId() {
         String type = BuildConfig.FLAVOR_platform;
         if (DeviceType.isOculusBuild()) {
@@ -102,6 +110,8 @@ public class DeviceType {
             type = "picoxr";
         } else if (DeviceType.isWaveBuild()) {
             type = "wavevrStore";
+        } else if (DeviceType.isLynx()) {
+            type = "lynx";
         }
 
         return type;

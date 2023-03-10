@@ -25,6 +25,10 @@ void OpenXRExtensions::Initialize() {
     for (auto& extension: extensions) {
         sSupportedExtensions.insert(extension.extensionName);
     }
+#ifdef LYNX
+    // Lynx incorrectly advertises this extension as supported but in reality it does not work.
+    sSupportedExtensions.erase(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME);
+#endif
 }
 
 void OpenXRExtensions::LoadExtensions(XrInstance instance) {

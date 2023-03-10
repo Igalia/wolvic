@@ -144,7 +144,6 @@ android {
 
     project.archivesBaseName = "Wolvic"
 
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -174,10 +173,6 @@ android {
         cmake {
             path "CMakeLists.txt"
         }
-    }
-
-    dataBinding {
-        enabled = true
     }
 
     lintOptions {
@@ -275,6 +270,16 @@ android {
                 cmake {
                     cppFlags " -DPICOXR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
                     arguments "-DVR_SDK_LIB=picoxr-lib", "-DPICOXR=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
+        lynx {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DLYNX -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DLYNX=ON", "-DOPENXR=ON"
                 }
             }
         }
@@ -493,6 +498,10 @@ android {
             ]
         }
 
+        lynx {
+            manifest.srcFile "src/lynx/AndroidManifest.xml"
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -528,6 +537,8 @@ android {
 
     buildFeatures {
         viewBinding true
+        prefab true // enable prefab support for various SDK AAR
+        dataBinding true
     }
 }
 
@@ -633,6 +644,9 @@ dependencies {
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvrImplementation 'com.huawei.hms:push:6.5.0.300'
+
+    // Lynx
+    lynxImplementation fileTree(dir: "${project.rootDir}/third_party/lynx", include: ['*.aar'])
 
     // gecko
     def branch = "nightly" // "nightly" or "beta"
