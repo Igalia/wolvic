@@ -510,14 +510,6 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
 
-    // @FIXME: We currently require XR_FB_hand_tracking_aim to show beam and pointer target
-    // Pico4 device doesn't advertise XR_FB_hand_tracking_aim but it still works and is
-    // needed to correctly position beam and pointer target.
-#if !defined(PICOXR)
-    if (!OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME))
-        return false;
-#endif
-
     mHasHandJoints = false;
     mHasAimState = false;
 
