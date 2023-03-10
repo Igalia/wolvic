@@ -1,6 +1,7 @@
 package com.igalia.wolvic.downloads;
 
 import android.webkit.URLUtil;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,7 +39,9 @@ public class DownloadJob {
         job.mUri = uri;
         job.mContentLength = 0;
         if (headers != null) {
-            job.mFilename = URLUtil.guessFileName(uri, headers.get("content-disposition"), headers.get("content/type"));
+            // TODO: We may want to create our own Content-Disposition parser, instead of relying on Android.
+            String contentDisposition = Uri.decode(headers.get("content-disposition"));
+            job.mFilename = URLUtil.guessFileName(uri, contentDisposition, headers.get("content/type"));
         } else {
             job.mFilename = URLUtil.guessFileName(uri, null, null);
         }
