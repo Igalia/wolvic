@@ -15,7 +15,8 @@ jobs:
         flavour: [
           assembleOculusvrArm64WorldGecko,
           assembleHvrArm64WorldGecko,
-          assemblePicoxrArm64WorldGecko
+          assemblePicoxrArm64WorldGecko,
+          assembleLynxArm64WorldGecko
         ]
 
     steps:

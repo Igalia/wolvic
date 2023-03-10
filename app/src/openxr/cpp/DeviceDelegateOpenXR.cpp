@@ -120,6 +120,8 @@ struct DeviceDelegateOpenXR::State {
       deviceType = IsPositionTrackingSupported() ? device::HVR6DoF : device::HVR3DoF;
 #elif PICOXR
       deviceType = device::PicoXR;
+#elif LYNX
+      deviceType = device::LynxR1;
 #endif
       VRB_LOG("Initializing device %s from vendor %d. Device type %d", systemProperties.systemName, systemProperties.vendorId, deviceType);
   }
@@ -132,8 +134,7 @@ struct DeviceDelegateOpenXR::State {
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
 
-#if defined(OCULUSVR) || defined(PICOXR)
-    // Adhoc loader required for OpenXR on Oculus and Pico
+#if defined(OCULUSVR) || defined(PICOXR) || defined(LYNX)
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
     CHECK_XRCMD(xrGetInstanceProcAddr(nullptr, "xrInitializeLoaderKHR", reinterpret_cast<PFN_xrVoidFunction*>(&initializeLoaderKHR)));
     XrLoaderInitInfoAndroidKHR loaderData;
@@ -480,7 +481,7 @@ struct DeviceDelegateOpenXR::State {
 #elif PICOXR
       return Pico4.path;
 #else
-      return nullptr;
+      return KHRSimple.path;
 #endif
   }
 
