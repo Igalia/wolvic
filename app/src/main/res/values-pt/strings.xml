@@ -712,4 +712,23 @@
     <string name="download_context_copy_to_content_uri">Partilhar com outras aplicações</string>
     <string name="web_apps_empty">A sua lista de Aplicações Web está Vazia</string>
     <string name="settings_language_portuguese">Português</string>
+    <string name="web_apps_dialog_cancel">Cancelar</string>
+    <string name="download_addon_install">Instalar complemento</string>
+    <string name="download_addon_install_cancel">Cancelar</string>
+    <string name="web_apps_description">Clique no botão Gravar app Web... quando estiver numa página para adicioná-lo às suas apps Web.</string>
+    <string name="web_apps_dialog_install">Instalar</string>
+    <string name="web_apps_saved_notification">App Web adicionado!</string>
+    <string name="hamburger_menu_save_web_app">Gravar app Web…</string>
+    <string name="download_addon_install_confirm_install">Instalar</string>
+    <string name="download_addon_install_blocked">Instalação de complemento local bloqueada</string>
+    <string name="download_addon_install_blocked_body">Permita a instalação de Complemento local nas Opções do Programador para continuar.</string>
+    <string name="download_copy_to_content_uri_confirm_title">Copiar ficheiro\?</string>
+    <string name="download_copy_to_content_uri_confirm_body">Isso criará uma cópia desse ficheiro na pasta do sistema Downloads, onde ele pode ser acessado por outras apps.
+\n
+\nDeseja continuar\?</string>
+    <string name="download_copy_to_content_uri_success_title">Copiado com sucesso</string>
+    <string name="download_copy_to_content_uri_success_body">Este ficheiro foi copiado com sucesso e está disponível na pasta Downloads.</string>
+    <string name="download_copy_to_content_uri_error_title">Erro de cópia</string>
+    <string name="download_copy_to_content_uri_error_body">Ocorreu um erro ao copiar o ficheiro descarregado.</string>
+    <string name="download_copy_to_content_uri_error_body_v1">Ocorreu um erro ao copiar %1$s</string>
 </resources>
