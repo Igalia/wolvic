@@ -5,7 +5,6 @@ plugins {
 apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 // Apply AGConnect plugin only for Hvr builds
@@ -108,7 +107,7 @@ ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 
 android {
-    compileSdkVersion build_versions.target_sdk
+    compileSdkVersion build_versions.compile_sdk
     defaultConfig {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
@@ -509,6 +508,10 @@ android {
     aaptOptions {
         noCompress 'ja'
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 configurations {
@@ -532,10 +535,13 @@ dependencies {
     implementation deps.lifecycle.viewmodel
     implementation deps.lifecycle.java8
     implementation deps.lifecycle.process
-    implementation deps.support.cardview
-    implementation deps.support.app_compat
-    implementation deps.support.vector_drawable
     implementation deps.support.annotations
+    implementation deps.support.app_compat
+    implementation deps.support.recyclerview
+    implementation deps.support.cardview
+    implementation deps.support.design
+    implementation deps.support.vector_drawable
+    implementation deps.support.viewpager2
     implementation deps.constraint_layout
     implementation deps.gson
     implementation deps.room.runtime
@@ -650,11 +656,6 @@ if (findProject(':wavesdk')) {
         wavevrImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
         wavevrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
     }
-}
-
-dependencies {
-    implementation "com.google.android.material:material:$versions.support"
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
 
 if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {

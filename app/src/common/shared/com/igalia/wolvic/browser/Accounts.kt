@@ -331,6 +331,7 @@ class Accounts constructor(val context: Context) {
             SyncEngine.History -> {
                 TelemetryService.FxA.historySyncStatus(value)
             }
+            else -> {}
         }
 
         syncStorage.setStatus(engine, value)
