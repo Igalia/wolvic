@@ -12,11 +12,11 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import androidx.annotation.IdRes;
-import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.material.button.MaterialButton;
 import com.igalia.wolvic.R;
 
-public class UITextButton extends AppCompatButton implements CustomUIButton {
+public class UITextButton extends MaterialButton implements CustomUIButton {
 
     private enum State {
         NORMAL,

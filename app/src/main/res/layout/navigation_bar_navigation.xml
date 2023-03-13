@@ -90,7 +90,7 @@
                 android:src="@drawable/ic_whats_new"
                 android:tooltipText="@string/whats_new_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="6dp"
                 android:layout_height="6dp"
                 android:layout_marginTop="12dp"

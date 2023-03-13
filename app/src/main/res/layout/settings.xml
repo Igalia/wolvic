@@ -206,7 +206,7 @@
                                 app:honeycombButtonIcon="@drawable/ic_whats_new"
                                 app:honeycombButtonText="@string/settings_whats_new"
                                 app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:layout_width="6dp"
                                 android:layout_height="6dp"
                                 android:layout_marginTop="48dp"
