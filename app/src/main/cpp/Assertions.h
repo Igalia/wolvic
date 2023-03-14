@@ -1,9 +1,9 @@
-#ifndef ASSERTIONS_H
-#define ASSERTIONS_H
+#pragma once
 
 // MACROS to define to-string and logging function utils
 #define STRINGIFY(x) #x
-#define FILE_AND_LINE __FILE__ ":" STRINGIFY(__LINE__)
+#define FILE_AND_LINE_INTERNAL(LINE) __FILE__ ":" STRINGIFY(LINE)
+#define FILE_AND_LINE FILE_AND_LINE_INTERNAL(__LINE__)
 
 #define THROW(msg) Throw(msg, nullptr, FILE_AND_LINE);
 
@@ -26,5 +26,3 @@
     throw std::logic_error(FILE_AND_LINE);  \
   }                                         \
 }
-
-#endif // ASSERTIONS_H
