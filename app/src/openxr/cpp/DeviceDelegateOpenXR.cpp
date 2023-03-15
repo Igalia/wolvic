@@ -605,8 +605,24 @@ struct DeviceDelegateOpenXR::State {
 
   void Shutdown() {
     // Release swapChains
-    for (OpenXRSwapChainPtr swapChain: eyeSwapChains) {
-      swapChain->Destroy();
+    if (!eyeSwapChains.empty()) {
+        eyeSwapChains.clear();
+    }
+
+    // Release Layers
+    if (!uiLayers.empty()) {
+        VRB_DEBUG("OpenXR Destroying Ui Layers vector");
+        uiLayers.clear();
+    }
+
+    if (cubeLayer != XR_NULL_HANDLE) {
+      cubeLayer->Destroy();
+      cubeLayer = XR_NULL_HANDLE;
+    }
+
+    if (equirectLayer != XR_NULL_HANDLE) {
+      equirectLayer->Destroy();
+      equirectLayer = XR_NULL_HANDLE;
     }
 
     // Release spaces
@@ -640,7 +656,8 @@ struct DeviceDelegateOpenXR::State {
 
     // Shutdown OpenXR instance
     if (instance) {
-      CHECK_XRCMD(xrDestroyInstance(instance));
+        VRB_DEBUG("OpenXR destroy the XRInstance");
+        CHECK_XRCMD(xrDestroyInstance(instance));
       instance = XR_NULL_HANDLE;
     }
 
@@ -1253,7 +1270,6 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   }
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aLayer) {
-      m.uiLayers[i]->Destroy();
       m.uiLayers.erase(m.uiLayers.begin() + i);
       return;
     }
