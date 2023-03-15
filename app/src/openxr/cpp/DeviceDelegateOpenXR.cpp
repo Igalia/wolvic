@@ -611,7 +611,6 @@ struct DeviceDelegateOpenXR::State {
 
     // Release Layers
     if (!uiLayers.empty()) {
-        VRB_DEBUG("OpenXR Destroying Ui Layers vector");
         uiLayers.clear();
     }
 
