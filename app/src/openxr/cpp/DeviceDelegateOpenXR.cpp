@@ -605,8 +605,23 @@ struct DeviceDelegateOpenXR::State {
 
   void Shutdown() {
     // Release swapChains
-    for (OpenXRSwapChainPtr swapChain: eyeSwapChains) {
-      swapChain->Destroy();
+    if (!eyeSwapChains.empty()) {
+        eyeSwapChains.clear();
+    }
+
+    // Release Layers
+    if (!uiLayers.empty()) {
+        uiLayers.clear();
+    }
+
+    if (cubeLayer != XR_NULL_HANDLE) {
+      cubeLayer->Destroy();
+      cubeLayer = XR_NULL_HANDLE;
+    }
+
+    if (equirectLayer != XR_NULL_HANDLE) {
+      equirectLayer->Destroy();
+      equirectLayer = XR_NULL_HANDLE;
     }
 
     // Release spaces
@@ -1253,7 +1268,6 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   }
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aLayer) {
-      m.uiLayers[i]->Destroy();
       m.uiLayers.erase(m.uiLayers.begin() + i);
       return;
     }

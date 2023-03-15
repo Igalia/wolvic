@@ -179,7 +179,7 @@ public:
   }
 
 protected:
-  virtual ~OpenXRLayerBase() {}
+  virtual ~OpenXRLayerBase() { Destroy(); }
   XrSwapchainCreateInfo GetSwapChainCreateInfo(VRLayerSurface::SurfaceType aSurfaceType, uint32_t width, uint32_t height) {
     XrSwapchainCreateInfo info{XR_TYPE_SWAPCHAIN_CREATE_INFO};
     info.width = width;
