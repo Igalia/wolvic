@@ -656,8 +656,7 @@ struct DeviceDelegateOpenXR::State {
 
     // Shutdown OpenXR instance
     if (instance) {
-        VRB_DEBUG("OpenXR destroy the XRInstance");
-        CHECK_XRCMD(xrDestroyInstance(instance));
+      CHECK_XRCMD(xrDestroyInstance(instance));
       instance = XR_NULL_HANDLE;
     }
 
