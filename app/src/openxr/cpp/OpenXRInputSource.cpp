@@ -134,6 +134,14 @@ XrResult OpenXRInputSource::Initialize()
         RETURN_IF_XR_FAILED(OpenXRExtensions::sXrCreateHandTrackerEXT(mSession, &handTrackerInfo,
                                                                       &mHandTracker));
 
+#if defined(PICOXR)
+        // Pico's runtime does not advertise it but it does work.
+        mSupportsFBHandTrackingAim = true;
+#else
+        mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
+#endif
+        VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
+
         if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME) &&
                 OpenXRExtensions::sXrGetHandMeshFB != XR_NULL_HANDLE) {
             XrHandTrackingMeshFB mesh = { XR_TYPE_HAND_TRACKING_MESH_FB };
@@ -510,25 +518,29 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
 
-    mHasHandJoints = false;
-    mHasAimState = false;
-
     // Update hand locations
     XrHandJointsLocateInfoEXT locateInfo { XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
     locateInfo.baseSpace = localSpace;
     locateInfo.time = frameState.predictedDisplayTime;
 
-    mAimState.status = 0;
-    mAimState.next = XR_NULL_HANDLE;
-
+    XrHandTrackingAimStateFB aimState { XR_TYPE_HAND_TRACKING_AIM_STATE_FB, XR_NULL_HANDLE, 0  };
     XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
     jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
     jointLocations.jointLocations = mHandJoints.data();
-    jointLocations.next = &mAimState;
+    jointLocations.next = &aimState;
 
     CHECK_XRCMD(OpenXRExtensions::sXrLocateHandJointsEXT(mHandTracker, &locateInfo, &jointLocations));
     mHasHandJoints = jointLocations.isActive;
-    mHasAimState = (mAimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB) != 0;
+    if (mSupportsFBHandTrackingAim) {
+        mHasAimState = aimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB;
+        if (mHasAimState)
+            mHandAimPose = aimState.aimPose;
+    } else {
+        auto aimJoint = jointLocations.jointLocations[XR_HAND_JOINT_PALM_EXT];
+        mHasAimState = aimJoint.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT;
+        if (mHasAimState)
+            mHandAimPose = aimJoint.pose;
+    }
 
     return mHasHandJoints;
 }
@@ -577,7 +589,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         return;
 
     // Resolve beam and pointer transform
-    vrb::Matrix pointerTransform = XrPoseToMatrix(mAimState.aimPose);
+    vrb::Matrix pointerTransform = XrPoseToMatrix(mHandAimPose);
 
     // Both on Quest and Pico4 devices, hand pose returned by XR_FB_hand_tracking_aim appears
     // rotated relative to the corresponding pose of the controllers, and the rotation is
@@ -593,6 +605,9 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     pointerTransform
         .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)
         .PostMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0), correctionAngle)));
+#elif defined(LYNX)
+    auto vector = mHandeness == OpenXRHandFlags::Left ? vrb::Vector(0.0, 0.5, 1.0) : vrb::Vector(-0.5, 0.0, 1.0);
+    pointerTransform.PostMultiplyInPlace(vrb::Matrix::Rotation(vector, M_PI_2));
 #endif
 
     if (renderMode == device::RenderMode::StandAlone)

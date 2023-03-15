@@ -86,8 +86,9 @@ private:
     XrHandTrackerEXT mHandTracker { XR_NULL_HANDLE };
     std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> mHandJoints;
     bool mHasHandJoints { false };
-    XrHandTrackingAimStateFB mAimState { XR_TYPE_HAND_TRACKING_AIM_STATE_FB };
     bool mHasAimState { false };
+    XrPosef mHandAimPose;
+    bool mSupportsFBHandTrackingAim { false };
     OpenXRHandMesh mHandMesh;
     bool mHasHandMesh { false };
 
