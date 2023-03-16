@@ -61,7 +61,7 @@
 #include <fstream>
 #include <unordered_map>
 
-#if defined(OCULUSVR) && STORE_BUILD == 1
+#if defined(OCULUSVR) && defined(STORE_BUILD)
 #include "OVR_Platform.h"
 #endif
 
@@ -207,7 +207,7 @@ struct BrowserWorld::State {
   bool reorientRequested = false;
 #if HVR
   bool wasButtonAppPressed = false;
-#elif defined(OCULUSVR) && STORE_BUILD == 1
+#elif defined(OCULUSVR) && defined(STORE_BUILD)
   bool isApplicationEntitled = false;
 #endif
 
@@ -1015,7 +1015,7 @@ BrowserWorld::IsGLInitialized() const {
   return m.glInitialized;
 }
 
-#if defined(OCULUSVR) && STORE_BUILD == 1
+#if defined(OCULUSVR) && defined(STORE_BUILD)
 void
 BrowserWorld::ProcessOVRPlatformEvents() {
   if (m.isApplicationEntitled)
@@ -1077,7 +1077,7 @@ BrowserWorld::StartFrame() {
     }
   }
 
-#if defined(OCULUSVR) && STORE_BUILD == 1
+#if defined(OCULUSVR) && defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
 #endif
   m.device->ProcessEvents();
