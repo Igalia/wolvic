@@ -179,7 +179,7 @@ android {
         disable "ExtraTranslation"
     }
 
-    flavorDimensions "platform", "abi", "country", "backend"
+    flavorDimensions "platform", "abi", "country", "backend", "store"
 
     productFlavors {
         // Supported platforms
@@ -188,17 +188,6 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags "-DOCULUSVR" + getOpenXRFlags()
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
-                }
-            }
-            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
-        }
-
-        oculusvrStore {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags "-DOCULUSVR -DSTORE_BUILD" + getOpenXRFlags()
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
                 }
             }
@@ -337,6 +326,30 @@ android {
         webkit {
             dimension "backend"
         }
+
+        // Stores flavor
+        generic {
+            dimension "store"
+        }
+
+        appLab {
+            dimension "store"
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-DSTORE_BUILD"
+                }
+            }
+        }
+
+        metaStore {
+            dimension "store"
+            applicationIdSuffix ".metastore"
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-DSTORE_BUILD"
+                }
+            }
+        }
     }
 
     variantFilter { variant ->
@@ -344,6 +357,7 @@ android {
         def abi = variant.getFlavors().get(1).name
         def country = variant.getFlavors().get(2).name
         def backend = variant.getFlavors().get(3).name
+        def store = variant.getFlavors().get(4).name
 
         // Create x86_64 variants only for noapi platform
         if (abi == 'x86_64')
@@ -357,6 +371,10 @@ android {
         if (backend == 'chromium' && !isChromiumAvailable())
             variant.setIgnore(true);
         if (backend == 'webkit' && !isWebKitAvailable())
+            variant.setIgnore(true);
+
+        // MetaStore and AppLab only apply to oculusvr builds.
+        if ((store == 'metaStore' || store == "appLab") && !platform.startsWith('oculusvr'))
             variant.setIgnore(true);
     }
 
@@ -380,32 +398,29 @@ android {
             ]
         }
 
-        oculusvrStore {
-            java.srcDirs = [
-                    'src/oculusvr/java'
-            ]
-            assets.srcDirs = [
-                    'src/oculusvr/assets'
-            ]
-            res.srcDirs = [
-                    'src/oculusvr/res'
-            ]
-        }
-
-        oculusvrArm64WorldGeckoDebug {
+        oculusvrArm64WorldGeckoGenericDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrArm64WorldGeckoRelease {
+        oculusvrArm64WorldGeckoGenericRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64WorldGeckoDebug {
+        oculusvrArm64WorldGeckoAppLabDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
 
-        oculusvrStoreArm64WorldGeckoRelease {
+        oculusvrArm64WorldGeckoAppLabRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                    : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvrArm64WorldGeckoMetaStoreDebug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvrArm64WorldGeckoMetaStoreRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
