@@ -81,6 +81,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.DeprecatedVersionDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.LegalDocumentDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
@@ -334,9 +335,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         checkForCrash();
 
         // Show the launch dialogs, if needed.
-        if (!showTermsServiceDialogIfNeeded()) {
-            if (!showPrivacyDialogIfNeeded()) {
-                showWhatsNewDialogIfNeeded();
+        if (!showDeprecatedVersionDialogIfNeeded()) {
+            if (!showTermsServiceDialogIfNeeded()) {
+                if (!showPrivacyDialogIfNeeded()) {
+                    showWhatsNewDialogIfNeeded();
+                }
             }
         }
 
@@ -426,6 +429,44 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     WRuntime.CrashReportIntent getCrashReportIntent() {
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
+    }
+
+    // A dialog to inform users that Wolvic is now available in the Oculus store.
+    // Returns true if the dialog was shown, false otherwise.
+    private boolean showDeprecatedVersionDialogIfNeeded() {
+        if (!DeviceType.isOculusBuild())
+            return false;
+
+        DeprecatedVersionDialogWidget deprecatedVersionDialog = new DeprecatedVersionDialogWidget(this);
+
+        deprecatedVersionDialog.setDelegate(response -> {
+            // true if the user wants to open the App Store, false if the dialog is just dismissed
+            switch (response) {
+                case DeprecatedVersionDialogWidget.OPEN_STORE:
+                    Intent storeIntent = getPackageManager().getLaunchIntentForPackage("com.oculus.vrshell");
+                    storeIntent.setAction(Intent.ACTION_VIEW);
+                    storeIntent.setData(Uri.parse("systemux://store"));
+                    storeIntent.putExtra("uri", "/item/5917120145021341");
+
+                    Log.w(LOGTAG, "Start app store activity.");
+                    startActivity(storeIntent);
+                    break;
+
+                case DeprecatedVersionDialogWidget.SHOW_INFO:
+                    mWindows.openNewTabAfterRestore(getString(R.string.deprecated_version_dialog_info_url), Windows.OPEN_IN_FOREGROUND);
+
+                default:
+                    // continue the usual flow
+                    if (!showTermsServiceDialogIfNeeded()) {
+                        if (!showPrivacyDialogIfNeeded()) {
+                            showWhatsNewDialogIfNeeded();
+                        }
+                    }
+            }
+        });
+        deprecatedVersionDialog.attachToWindow(mWindows.getFocusedWindow());
+        deprecatedVersionDialog.show(UIWidget.REQUEST_FOCUS);
+        return true;
     }
 
     // Returns true if the dialog was shown, false otherwise.
