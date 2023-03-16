@@ -13,9 +13,10 @@ jobs:
     strategy:
       matrix:
         flavour: [
-          assembleOculusvrArm64WorldGecko,
-          assembleHvrArm64WorldGecko,
-          assemblePicoxrArm64WorldGecko
+          assembleOculusvrArm64WorldGeckoGeneric,
+          assembleOculusvrArm64WorldGeckoMetaStore,
+          assembleHvrArm64WorldGeckoGeneric,
+          assemblePicoxrArm64WorldGeckoGeneric,
         ]
 
     steps:
