@@ -20,7 +20,7 @@
 #include "DeviceDelegateOculusVR.h"
 #endif
 
-#if defined(OCULUSVR) && STORE_BUILD == 1
+#if defined(OCULUSVR) && defined(STORE_BUILD)
 #include "OVR_Platform.h"
 #define META_APP_ID "4812663595466206"
 #endif
@@ -153,7 +153,7 @@ android_main(android_app *aAppState) {
   sAppContext->mJavaContext.vm = aAppState->activity->vm;
   sAppContext->mJavaContext.activity = aAppState->activity->clazz;
 
-#if defined(OCULUSVR) && STORE_BUILD == 1
+#if defined(OCULUSVR) && defined(STORE_BUILD)
   if (!ovr_IsPlatformInitialized()) {
       auto result = ovr_PlatformInitializeAndroidAsynchronous(META_APP_ID, sAppContext->mJavaContext.activity, jniEnv);
       if (result == invalidRequestID) {
