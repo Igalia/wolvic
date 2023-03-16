@@ -205,17 +205,6 @@ android {
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
-        oculusvr3dofStore {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags "-DOCULUSVR -DSTORE_BUILD=1" + getOpenXRFlags()
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
-                }
-            }
-            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.CAMERA" ]
-        }
-
         wavevr {
             minSdkVersion build_versions.min_sdk_wave
             targetSdkVersion build_versions.target_sdk_wave
@@ -403,18 +392,6 @@ android {
             ]
         }
 
-        oculusvr3dofStore {
-            java.srcDirs = [
-                    'src/oculusvr/java'
-            ]
-            assets.srcDirs = [
-                    'src/oculusvr/assets'
-            ]
-            res.srcDirs = [
-                    'src/oculusvr/res'
-            ]
-        }
-
         oculusvrArm64WorldGeckoDebug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
@@ -429,15 +406,6 @@ android {
         }
 
         oculusvrStoreArm64WorldGeckoRelease {
-            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
-                    : "src/oculusvrArmRelease/AndroidManifest.xml"
-        }
-
-        oculusvr3dofStoreArm64WorldGeckoDebug {
-            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
-        }
-
-        oculusvr3dofStoreArm64WorldGeckoRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
