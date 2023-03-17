@@ -20,10 +20,12 @@ import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
 
+import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.NavigationController;
 import org.chromium.content_public.browser.WebContents;
+import org.chromium.ui.base.ViewAndroidDelegate;
 
 public class SessionImpl implements WSession {
     private final SettingsImpl mSettings;
@@ -45,7 +47,9 @@ public class SessionImpl implements WSession {
     private TabWebContentsObserver mTabWebContentsObserver;
     private NavigationController mNavigationController = null;
     private boolean mIsDisplayAcquired = false;
-    private String mInitialUri = null;
+    private String mInitialUri = "https://webglsamples.org/aquarium/aquarium.html";
+    private WebContents mCurrentWebContents;
+    private ContentView mCurrentContentView;
 
     public SessionImpl(WSessionSettings settings) {
         Log.e("WolvicLifecycle", "SessionImpl()");
@@ -59,7 +63,7 @@ public class SessionImpl implements WSession {
     }
 
     private void registerCallbacks() {
-        mTabWebContentsObserver = new TabWebContentsObserver(getCurrentWebContents(), this);
+        mTabWebContentsObserver = new TabWebContentsObserver(mCurrentWebContents, this);
     }
 
     private void unRegisterCallbacks() {
@@ -194,17 +198,20 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         ContentShellController controller = mRuntime.getContentShellController();
-        WebContents webContents = controller.createWebContents();
+        mCurrentWebContents = controller.createWebContents();
         ContentView cv = ContentView.createContentView(
-                mContext, null /* eventOffsetHandler */, webContents);
+                mRuntime.getContext(), null /* eventOffsetHandler */, mCurrentWebContents);
         mCurrentContentView = cv;
+        mCurrentWebContents.initialize(
+                "", ViewAndroidDelegate.createBasicDelegate(cv), cv,
+                controller.getWindowAndroid(), WebContents.createDefaultInternalsHolder());
         WolvicContentRenderView renderView = new WolvicContentRenderView(mRuntime.getContext());
         renderView.onNativeLibraryLoaded(controller.getWindowAndroid());
-        renderView.setCurrentWebContents(webContents);
+        renderView.setCurrentWebContents(mCurrentWebContents);
         mRuntime.addViewToBrowserContainer(renderView);
         controller.getWindowAndroid().setAnimationPlaceholderView(renderView);
         mDisplay = new DisplayImpl(renderView, this);
-        mNavigationController = webContents.getNavigationController();
+        mNavigationController = mCurrentWebContents.getNavigationController();
         mIsDisplayAcquired = true;
         registerCallbacks();
         loadInitialUri();
@@ -372,7 +379,7 @@ public class SessionImpl implements WSession {
 
     @NonNull
     public WebContents getCurrentWebContents() {
-        return mRuntime.getRenderView().getCurrentWebContents();
+        return mCurrentWebContents;
     }
 
     @NonNull

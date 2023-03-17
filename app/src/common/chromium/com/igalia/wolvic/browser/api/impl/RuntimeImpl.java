@@ -37,7 +37,6 @@ public class RuntimeImpl implements WRuntime {
     private WWebExtensionController mWebExtensionController;
     private ViewGroup mViewContainer;
     private ContentShellController mContentShellController;
-    private BrowserDisplay mBrowserDisplay;
     private WolvicContentRenderView mContentViewRenderView;
 
     private ContentView mCurrentContentView;
@@ -136,6 +135,7 @@ public class RuntimeImpl implements WRuntime {
         return new CrashReportIntent("", "", "", "");
     }
 
-    @Nullable
-    public ViewGroup getContentView() { return mCurrentContentView; }
+    public ViewGroup getViewContainer() {
+        return mViewContainer;
+    }
 }
