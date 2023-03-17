@@ -1,16 +1,14 @@
-# Wolvic VR Browser
+# Wolvic XR Browser
 
-The goal of the Wolvic project is to create a full-featured browser exclusively for *standalone* AR and VR headsets.
+The goal of the Wolvic project is to create a full-featured browser exclusively AR and VR headsets.
 
-You can find us in [wolvic.com](https://www.wolvic.com), Twitter [@wolvicxr](https://twitter.com/wolvicxr), and at [info@wolvic.com](mailto:info@wolvic.com).
+You can find us in [wolvic.com](https://www.wolvic.com), Mastodon [@WolvicXR](https://floss.social/@WolvicXR), Twitter [@wolvicxr](https://twitter.com/wolvicxr), and at [info@wolvic.com](mailto:info@wolvic.com).
 
 Want to learn more about Wolvic? Read our [FAQ](https://wolvic.com/en/faq)!
 
 ## Locale support
 
-Wolvic supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
-
-For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see the [localization wiki page](https://github.com/MozillaReality/FirefoxReality/wiki/Localization).
+For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see our [localization wiki page](https://github.com/Igalia/wolvic/wiki/Localization).
 
 ## Setup instructions
 
