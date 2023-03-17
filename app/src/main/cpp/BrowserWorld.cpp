@@ -14,6 +14,7 @@
 #include "GeckoSurfaceTexture.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
+#include "SystemUtils.h"
 #include "Pointer.h"
 #include "Widget.h"
 #include "WidgetMover.h"
@@ -1815,22 +1816,19 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     }
     return;
   }
-#if PICOXR
-  // Pico's OpenXR runtime does not support compressed textures at the moment. Use PNGs in the
-  // meantime.
-  const std::string extension = aExtension.empty() ? ".png" : aExtension;
-  GLenum glFormat = GL_SRGB8_ALPHA8;
+#if defined(PICOXR)
+  // Pico versions before 5.4.0 don't support compressed textures.
+  char buildId[128] = {0};
+  bool requiresPng = CompareSemanticVersionStrings(GetBuildIdString(buildId), "5.4.0");
+  const std::string extension = aExtension.empty() ? (requiresPng ? ".png" : ".ktx") : aExtension;
 #else
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
+#endif
   GLenum glFormat = GL_RGBA8;
-#endif
-
   if (extension == ".ktx") {
-#if defined(OPENXR) && defined(OCULUSVR)
-    glFormat =  GL_COMPRESSED_SRGB8_ETC2;
-#else
-    glFormat =  GL_COMPRESSED_RGB8_ETC2;
-#endif
+    glFormat = GL_COMPRESSED_SRGB8_ETC2;
+  } else if (extension == ".png") {
+    glFormat = GL_SRGB8_ALPHA8;
   }
   const int32_t size = 1024;
   if (m.skybox) {
