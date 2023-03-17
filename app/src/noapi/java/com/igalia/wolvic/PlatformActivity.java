@@ -41,6 +41,11 @@ public class PlatformActivity extends Activity {
         return false;
     }
 
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
+    }
+
     private GLSurfaceView mView;
     private TextView mFrameRate;
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();

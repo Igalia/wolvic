@@ -34,6 +34,11 @@ public class PlatformActivity extends VRActivity {
         return true;
     }
 
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
+    }
+
     public PlatformActivity() {}
 
     @Override

@@ -71,6 +71,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         return true;
     }
 
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
+    }
+
     private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

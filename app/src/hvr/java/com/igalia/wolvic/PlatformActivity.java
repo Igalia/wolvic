@@ -72,6 +72,11 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
         return nativeIsPositionTrackingSupported();
     }
 
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
+    }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {

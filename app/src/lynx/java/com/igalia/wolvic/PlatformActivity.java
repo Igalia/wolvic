@@ -29,6 +29,11 @@ public class PlatformActivity extends NativeActivity {
         return true;
     }
 
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
+    }
+
     @Override
     public void onBackPressed() {
         queueRunnable(new Runnable() {

@@ -443,13 +443,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // true if the user wants to open the App Store, false if the dialog is just dismissed
             switch (response) {
                 case DeprecatedVersionDialogWidget.OPEN_STORE:
-                    Intent storeIntent = getPackageManager().getLaunchIntentForPackage("com.oculus.vrshell");
-                    storeIntent.setAction(Intent.ACTION_VIEW);
-                    storeIntent.setData(Uri.parse("systemux://store"));
-                    storeIntent.putExtra("uri", "/item/5917120145021341");
-
-                    Log.w(LOGTAG, "Start app store activity.");
-                    startActivity(storeIntent);
+                    Intent storeIntent = getStoreIntent();
+                    if (storeIntent != null) {
+                        Log.w(LOGTAG, "Start app store activity.");
+                        startActivity(storeIntent);
+                    } else {
+                        Log.e(LOGTAG, "Unsupported: can not start app store activity.");
+                    }
                     break;
 
                 case DeprecatedVersionDialogWidget.SHOW_INFO:
