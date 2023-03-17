@@ -20,9 +20,11 @@
 #include "DeviceDelegateOculusVR.h"
 #endif
 
+#define STR(x) #x
+#define TO_STRING(x) STR(x)
+
 #if defined(OCULUSVR) && defined(STORE_BUILD)
 #include "OVR_Platform.h"
-#define META_APP_ID "4812663595466206"
 #endif
 
 #include <android/looper.h>
@@ -155,7 +157,8 @@ android_main(android_app *aAppState) {
 
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   if (!ovr_IsPlatformInitialized()) {
-      auto result = ovr_PlatformInitializeAndroidAsynchronous(META_APP_ID, sAppContext->mJavaContext.activity, jniEnv);
+      VRB_LOG("Performing entitlement with appId %s", TO_STRING(META_APP_ID));
+      auto result = ovr_PlatformInitializeAndroidAsynchronous(TO_STRING(META_APP_ID), sAppContext->mJavaContext.activity, jniEnv);
       if (result == invalidRequestID) {
           // Initialization failed which means either the oculus service isn’t on the machine or they’ve hacked their DLL.
           VRB_ERROR("ovr_PlatformInitializeAndroidAsynchronous failed: %d", (int32_t) result);
