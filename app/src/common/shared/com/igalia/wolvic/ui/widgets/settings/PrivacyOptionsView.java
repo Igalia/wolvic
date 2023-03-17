@@ -86,7 +86,6 @@ class PrivacyOptionsView extends SettingsView {
 
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(mBinding.microphonePermissionSwitch, Manifest.permission.RECORD_AUDIO));
-        mPermissionButtons.add(Pair.create(mBinding.storagePermissionSwitch, Manifest.permission.WRITE_EXTERNAL_STORAGE));
 
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild() || DeviceType.isPicoVR()) {
             mBinding.cameraPermissionSwitch.setVisibility(View.GONE);
@@ -95,8 +94,10 @@ class PrivacyOptionsView extends SettingsView {
         }
 
         if (DeviceType.isOculusBuild()) {
+            mBinding.storagePermissionSwitch.setVisibility(View.GONE);
             mBinding.locationPermissionSwitch.setVisibility(View.GONE);
         } else {
+            mPermissionButtons.add(Pair.create(mBinding.storagePermissionSwitch, Manifest.permission.WRITE_EXTERNAL_STORAGE));
             mPermissionButtons.add(Pair.create(mBinding.locationPermissionSwitch, Manifest.permission.ACCESS_FINE_LOCATION));
 
             // Display a warning message if approximate location is available but precise location is not.
