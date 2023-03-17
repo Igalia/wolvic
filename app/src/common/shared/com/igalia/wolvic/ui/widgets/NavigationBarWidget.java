@@ -1240,6 +1240,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
 
             @Override
+            public void onPassthrough() {
+                mWidgetManager.togglePassthrough();
+
+                hideMenu();
+            }
+
+            @Override
             public void onSwitchMode() {
                 int uaMode = mAttachedWindow.getSession().getUaMode();
                 if (uaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {

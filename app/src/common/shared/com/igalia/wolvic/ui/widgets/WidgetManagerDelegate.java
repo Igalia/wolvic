@@ -84,6 +84,8 @@ public interface WidgetManagerDelegate {
     void updatePointerColor();
     void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
     void hideVRVideo();
+    void togglePassthrough();
+    boolean isPassthroughSupported();
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     float getCylinderDensity();

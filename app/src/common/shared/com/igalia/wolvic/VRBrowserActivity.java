@@ -1814,6 +1814,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void togglePassthrough() {
+        queueRunnable(() -> togglePassthroughNative());
+    }
+
+    @Override
+    public boolean isPassthroughSupported() {
+        return DeviceType.isOculusBuild() || DeviceType.isPicoXR();
+    }
+
+    @Override
     public void recenterUIYaw(@YawTarget int aTarget) {
         queueRunnable(() -> recenterUIYawNative(aTarget));
     }
@@ -1912,6 +1922,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void updatePointerColorNative();
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
+    private native void togglePassthroughNative();
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
