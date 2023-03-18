@@ -5,7 +5,7 @@
     <string name="multi_e10s_switch">Ativar \"Multi-e10s\"</string>
     <string name="developer_options_edit">Editar</string>
     <string name="developer_options_msaa_4">4x</string>
-    <string name="security_options_downloads_storage">Armazenamento Padrão de Downloads</string>
+    <string name="security_options_downloads_storage">Armazenamento Padrão de Descargas</string>
     <string name="privacy_options_tracking_etp_description">Equilibrado para proteção e desempenho. As páginas serão carregadas normalmente.</string>
     <string name="developer_options_env_cave">Caverna</string>
     <string name="fxa_account_options_history_sync">Histórico</string>
@@ -108,8 +108,8 @@
     <string name="settings_tooltip">Configurações</string>
     <string name="open_history_tooltip">Abrir histórico</string>
     <string name="close_history_tooltip">Fechar histórico</string>
-    <string name="open_downloads_tooltip">Abrir downloads</string>
-    <string name="close_downloads_tooltip">Fechar downloads</string>
+    <string name="open_downloads_tooltip">Abrir Descargas</string>
+    <string name="close_downloads_tooltip">Fechar Descargas</string>
     <string name="close_library_tooltip">Fechar biblioteca</string>
     <string name="private_browsing_body">&lt;p&gt;Quando navega numa janela privada, %1$s &lt;strong&gt;não salva&lt;/strong&gt;:&lt;/p&gt; &lt;ul class=two-column&gt; &lt;li&gt;páginas visitadas&lt;/li&gt; &lt;li&gt;pesquisa &lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;ficheiros temporários&lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Navegação privada &lt;strong&gt;não o torna anônimo&lt;/strong&gt; na Internet. O seu empregador ou provedor de serviços de Internet ainda pode saber qual página visita.&lt;/p&gt; &lt;p class=about-info&gt;Saiba mais sobre &lt;a id=learnMore&gt;Navegação privada&lt;/a&gt;.&lt;/p&gt;</string>
     <string name="authentication_username">Nome de utilizador:</string>
@@ -152,7 +152,7 @@
     <string name="download_open_file_unsupported_title">Tipo de ficheiro não suportado</string>
     <string name="download_open_file_unsupported_open">Abrir</string>
     <string name="download_open_file_error_title">Erro</string>
-    <string name="download_confirm_title">Gostaria de decarregar este ficheiro\?</string>
+    <string name="download_confirm_title">Gostaria de descarregar este ficheiro\?</string>
     <string name="download_confirm_download">Descarregar</string>
     <string name="download_delete_file_confirm_body">Tem certeza que deseja apagar este ficheiro\?</string>
     <string name="download_delete_file_confirm_checkbox">Também apagar o ficheiro do disco</string>
@@ -161,7 +161,7 @@
     <string name="download_delete_all_confirm_checkbox">Também apagar os ficheiros do disco</string>
     <string name="download_delete_confirm_cancel">Cancelar</string>
     <string name="download_delete_confirm_delete">Excluir</string>
-    <string name="download_error_title_v1">Erro de download</string>
+    <string name="download_error_title_v1">Erro de descarga</string>
     <string name="download_status_paused">Pausado</string>
     <string name="download_status_pending">Pendente</string>
     <string name="download_status_unknown_error">Erro desconhecido</string>
@@ -243,12 +243,12 @@
     <string name="hardware_acceleration_switch">Ativar Aceleração de Hardware de UI</string>
     <string name="developer_options_clear_cache">Apagar os Dados</string>
     <string name="bookmarks_desktop_menu_title">Menu de favoritos</string>
-    <string name="download_error_protocol">Apenas downloads http/https são suportados</string>
+    <string name="download_error_protocol">Apenas descargas por http/https são suportados</string>
     <string name="downloads_sort_download_size_asc">Menor</string>
     <string name="addons_description">Descrição do Add-ons</string>
     <string name="addons_homepage_title">Página Inicial</string>
     <string name="addons_details_permissions">Permissões</string>
-    <string name="addons_download_error_dialog_title">Um erro aconteceu no download. Por favor, tente novamente.</string>
+    <string name="addons_download_error_dialog_title">Um erro aconteceu na descarga. Por favor, tente novamente.</string>
     <string name="addons_permissions_learn_more">Saiba mais sobre permissões</string>
     <string name="language_options_voice_search_language_title">Idioma de pesquisa por voz:</string>
     <string name="forward_tooltip">Avançar</string>
@@ -327,7 +327,7 @@
     <string name="permission_microphone">Permite %1$s utilizar o seu microfone\?</string>
     <string name="settings_telemetry">Telemetria</string>
     <string name="new_window_tooltip">Abra uma nova janela</string>
-    <string name="url_downloads_title">Downloads</string>
+    <string name="url_downloads_title">Descargas</string>
     <string name="hamburger_menu_addons">Addons</string>
     <string name="voice_samples_collect_dialog_allow">Permitir</string>
     <string name="url_bookmarks_title">Favoritos</string>
@@ -642,12 +642,12 @@
     <string name="video_controls_exit">Sair</string>
     <string name="history_empty">O seu histórico está vazio</string>
     <string name="history_loading">Carregando Histórico</string>
-    <string name="downloads_title">Downloads</string>
-    <string name="downloads_loading">Carregando Downloads</string>
+    <string name="downloads_title">Descargas</string>
+    <string name="downloads_loading">A carregar Descargas</string>
     <string name="downloads_sort_download_date_asc">Mais antigo</string>
     <string name="addons_details_settings">Configurações</string>
     <string name="addons_install_dialog_add">Adicionar</string>
-    <string name="addons_downloading_dialog_title">Decarregando e verificando Add-on…</string>
+    <string name="addons_downloading_dialog_title">A descarregar e verificar Add-on…</string>
     <string name="addons_download_error_dialog_ok">Ok</string>
     <string name="tracking_allowed_tooltip">Proteção de rastreamento ativada</string>
     <string name="download_status_unavailable">Indisponível</string>
