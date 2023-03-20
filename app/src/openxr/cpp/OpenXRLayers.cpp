@@ -240,4 +240,36 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
   }
 }
 
+// OpenXRLayerPassthrough;
+
+OpenXRLayerPassthroughPtr
+OpenXRLayerPassthrough::Create(const VRLayerPassthroughPtr& aLayer) {
+  // @FIXME: Consider making this method an actual constructor. Same for similar methods in
+  //         the other layers above.
+  auto result = std::make_shared<crow::OpenXRLayerPassthrough>();
+  result->vrLayer = aLayer;
+
+  return result;
+}
+
+void
+OpenXRLayerPassthrough::Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext, const XrPassthroughFB& passthroughInstance) {
+  XrPassthroughLayerCreateInfoFB layerCreateInfo = {
+    .type = XR_TYPE_PASSTHROUGH_LAYER_CREATE_INFO_FB,
+    .passthrough = passthroughInstance,
+    .flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB,
+    .purpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB
+  };
+  CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughLayerFB(session, &layerCreateInfo, &xrLayer));
+}
+
+void
+OpenXRLayerPassthrough::Destroy() {
+  if (xrLayer == XR_NULL_HANDLE)
+    return;
+
+  CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughLayerFB (xrLayer));
+  xrLayer = XR_NULL_HANDLE;
+}
+
 }

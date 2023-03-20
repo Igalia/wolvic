@@ -27,7 +27,8 @@ public:
     QUAD,
     CUBEMAP,
     EQUIRECTANGULAR,
-    PROJECTION
+    PROJECTION,
+    PASSTHROUGH
   };
 
   enum class SurfaceChange {
@@ -211,6 +212,21 @@ private:
   State& m;
   VRB_NO_DEFAULTS(VRLayerEquirect)
 };
+
+class VRLayerPassthrough;
+typedef std::shared_ptr<VRLayerPassthrough> VRLayerPassthroughPtr;
+
+class VRLayerPassthrough: public VRLayer {
+  public:
+    static VRLayerPassthroughPtr Create();
+  protected:
+    struct State;
+    VRLayerPassthrough(State& aState);
+    virtual ~VRLayerPassthrough() = default;
+  private:
+    State& m;
+    VRB_NO_DEFAULTS(VRLayerPassthrough)
+  };
 
 } // namespace crow
 
