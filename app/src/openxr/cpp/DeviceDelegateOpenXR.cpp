@@ -122,6 +122,8 @@ struct DeviceDelegateOpenXR::State {
       deviceType = device::PicoXR;
 #elif LYNX
       deviceType = device::LynxR1;
+#elif SPACES
+      deviceType = device::LenovoA3;
 #endif
       VRB_LOG("Initializing device %s from vendor %d. Device type %d", systemProperties.systemName, systemProperties.vendorId, deviceType);
   }
@@ -134,7 +136,7 @@ struct DeviceDelegateOpenXR::State {
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
 
-#if defined(OCULUSVR) || defined(PICOXR) || defined(LYNX)
+#if defined(OCULUSVR) || defined(PICOXR) || defined(LYNX) || defined(SPACES)
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
     CHECK_XRCMD(xrGetInstanceProcAddr(nullptr, "xrInitializeLoaderKHR", reinterpret_cast<PFN_xrVoidFunction*>(&initializeLoaderKHR)));
     XrLoaderInitInfoAndroidKHR loaderData;

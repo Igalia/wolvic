@@ -17,7 +17,8 @@ jobs:
           assembleOculusvrArm64WorldGeckoMetaStore,
           assembleHvrArm64WorldGeckoGeneric,
           assemblePicoxrArm64WorldGeckoGeneric,
-          assembleLynxArm64WorldGeckoGeneric
+          assembleLynxArm64WorldGeckoGeneric,
+          assembleSpacesArm64WorldGeckoGeneric
         ]
 
     steps:

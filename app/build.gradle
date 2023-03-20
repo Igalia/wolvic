@@ -263,6 +263,18 @@ android {
             }
         }
 
+        spaces {
+            dimension "platform"
+            minSdkVersion build_versions.min_sdk_spaces
+            targetSdkVersion build_versions.target_sdk_spaces
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DSPACES=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         hvr {
             dimension "platform"
             targetSdkVersion build_versions.target_sdk_hvr
@@ -486,6 +498,10 @@ android {
             manifest.srcFile "src/lynx/AndroidManifest.xml"
         }
 
+        spaces {
+            manifest.srcFile "src/spaces/AndroidManifest.xml"
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -631,6 +647,9 @@ dependencies {
 
     // Lynx
     lynxImplementation fileTree(dir: "${project.rootDir}/third_party/lynx", include: ['*.aar'])
+
+    // Snapdragon Spaces
+    spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
 
     // gecko
     def branch = "nightly" // "nightly" or "beta"
