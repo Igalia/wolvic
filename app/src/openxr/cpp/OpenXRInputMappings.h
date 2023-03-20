@@ -245,7 +245,33 @@ namespace crow {
                     { kPathHaptic, OpenXRHandFlags::Both },
             },
     };
-    
+
+    const OpenXRInputMapping Pico4E {
+            "/interaction_profiles/pico/neo3_controller",
+            "PICO 4 Enterprise",
+            IS_6DOF,
+            "vr_controller_pico4_left.obj",
+            "vr_controller_pico4_right.obj",
+            device::PicoXR,
+            std::vector<OpenXRInputProfile> { "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     // HVR 3DOF: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-trigger-touchpad.json
     const OpenXRInputMapping Hvr3DOF {
             "/interaction_profiles/huawei/controller",
@@ -331,8 +357,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 8> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Hvr6DOF, Hvr3DOF, LynxR1, KHRSimple
+    const std::array<OpenXRInputMapping, 9> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, KHRSimple
     };
 
 } // namespace crow
