@@ -102,6 +102,8 @@ struct DeviceDelegateOpenXR::State {
   std::vector<float> refreshRates;
   bool reorientRequested { false };
   bool passthroughSupported { false };
+  XrPassthroughFB passthrough { XR_NULL_HANDLE };
+  OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -643,6 +645,17 @@ struct DeviceDelegateOpenXR::State {
       equirectLayer = XR_NULL_HANDLE;
     }
 
+    if (passthroughLayer != nullptr) {
+        passthroughLayer->Destroy();
+        passthroughLayer = nullptr;
+    }
+
+    // Release passthrough handle
+    if (passthrough != XR_NULL_HANDLE) {
+      CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughFB (passthrough));
+      passthrough = XR_NULL_HANDLE;
+    }
+
     // Release spaces
     if (viewSpace != XR_NULL_HANDLE) {
       CHECK_XRCMD(xrDestroySpace(viewSpace));
@@ -690,6 +703,17 @@ struct DeviceDelegateOpenXR::State {
           controllersReadyCallback();
           controllersReadyCallback = nullptr;
       }
+  }
+
+  void InitializePassthrough() {
+    if (!passthroughSupported || session == XR_NULL_HANDLE)
+      return;
+
+    assert(OpenXRExtensions::sXrCreatePassthroughFB != nullptr && passthrough == XR_NULL_HANDLE);
+
+    XrPassthroughCreateInfoFB passthroughCreateInfo = {XR_TYPE_PASSTHROUGH_CREATE_INFO_FB};
+    passthroughCreateInfo.flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB;
+    CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughFB(session, &passthroughCreateInfo, &passthrough));
   }
 };
 
@@ -1273,6 +1297,24 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
   return result;
 }
 
+VRLayerPassthroughPtr
+DeviceDelegateOpenXR::CreateLayerPassthrough() {
+  if (!m.layersEnabled || !m.passthroughSupported || !m.passthrough) {
+    return nullptr;
+  }
+
+  VRLayerPassthroughPtr result = VRLayerPassthrough::Create();
+  if (m.passthroughLayer != nullptr) {
+    m.passthroughLayer->Destroy();
+  }
+  m.passthroughLayer = OpenXRLayerPassthrough::Create(result);
+  if (m.session != XR_NULL_HANDLE) {
+    vrb::RenderContextPtr context = m.context.lock();
+    m.passthroughLayer->Init(m.javaContext->env, m.session, context, m.passthrough);
+  }
+  return result;
+}
+
 void
 DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   if (m.cubeLayer && m.cubeLayer->layer == aLayer) {
@@ -1283,6 +1325,11 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   if (m.equirectLayer && m.equirectLayer->layer == aLayer) {
     m.equirectLayer->Destroy();
     m.equirectLayer = nullptr;
+    return;
+  }
+  if (m.passthroughLayer && m.passthroughLayer->vrLayer == aLayer) {
+    m.passthroughLayer->Destroy();
+    m.passthroughLayer = nullptr;
     return;
   }
   for (int i = 0; i < m.uiLayers.size(); ++i) {
@@ -1327,6 +1374,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   m.InitializeViews();
   m.InitializeImmersiveDisplay();
   m.InitializeRefreshRates();
+  m.InitializePassthrough();
 #if OCULUSVR
   // See InitialiceDeviceType(). We overwrite the system name so that we load the proper input
   // mapping for the Quest Pro, as it incorrectly advertises itself as "Oculus Quest2"

@@ -56,6 +56,7 @@ public:
   VRLayerCylinderPtr CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) override;
   VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
+  VRLayerPassthroughPtr CreateLayerPassthrough() override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();

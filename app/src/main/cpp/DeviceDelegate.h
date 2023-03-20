@@ -94,6 +94,7 @@ public:
   virtual VRLayerProjectionPtr CreateLayerProjection(VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
   virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) { return nullptr; }
   virtual VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) { return nullptr; }
+  virtual VRLayerPassthroughPtr CreateLayerPassthrough() { return nullptr; }
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};
   virtual bool IsControllerLightEnabled() const { return true; }
   virtual vrb::LoadTask GetControllerModelTask(int32_t index) { return nullptr; } ;

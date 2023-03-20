@@ -415,4 +415,22 @@ public:
   bool IsDrawRequested() const override;
 };
 
+
+class OpenXRLayerPassthrough;
+
+typedef std::shared_ptr<OpenXRLayerPassthrough> OpenXRLayerPassthroughPtr;
+
+class OpenXRLayerPassthrough {
+  public:
+    VRLayerPassthroughPtr vrLayer;
+    XrPassthroughLayerFB xrLayer;
+
+    static OpenXRLayerPassthroughPtr
+    Create(const VRLayerPassthroughPtr& aLayer);
+    void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext, const XrPassthroughFB& passthroughInstance);
+    void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) {};
+    void Destroy();
+    bool IsDrawRequested() { return vrLayer->IsDrawRequested(); };
+};
+
 }

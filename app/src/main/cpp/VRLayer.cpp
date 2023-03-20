@@ -558,5 +558,17 @@ VRLayerEquirect::VRLayerEquirect(State& aState): VRLayer(aState, LayerType::EQUI
 
 VRLayerEquirect::~VRLayerEquirect() {}
 
+// Layer Passthrough
+
+struct VRLayerPassthrough::State: public VRLayer::State {
+  State() {}
+};
+
+VRLayerPassthrough::VRLayerPassthrough(State &aState): VRLayer(aState, LayerType::PASSTHROUGH), m(aState) {}
+
+VRLayerPassthroughPtr
+VRLayerPassthrough::Create() {
+  return std::make_shared<vrb::ConcreteClass<VRLayerPassthrough, VRLayerPassthrough::State>>();
+}
 
 } // namespace crow
