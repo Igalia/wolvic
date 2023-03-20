@@ -131,6 +131,11 @@ if(OPENXR)
                 ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
                 ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
+    elseif (SPACES)
+        include_directories(
+                ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
+                ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
+        )
     endif ()
     target_sources(
             native-lib
@@ -213,6 +218,16 @@ set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so)
 
 if (LYNX)
+    find_package(loader REQUIRED CONFIG)
+    target_link_libraries(native-lib loader::openxr_loader)
+endif()
+
+if (SPACES)
+    find_package(qxrclients REQUIRED CONFIG)
+    target_link_libraries(native-lib qxrclients::qxrcoreclient)
+    target_link_libraries(native-lib qxrclients::qxrcamclient)
+    target_link_libraries(native-lib qxrclients::qxrsplitclient)
+
     find_package(loader REQUIRED CONFIG)
     target_link_libraries(native-lib loader::openxr_loader)
 endif()

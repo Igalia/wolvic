@@ -45,6 +45,7 @@ const DeviceType HVR6DoF = 11;
 const DeviceType PicoXR = 12;
 const DeviceType MetaQuestPro = 13;
 const DeviceType LynxR1 = 14;
+const DeviceType LenovoA3 = 15;
 
 enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
 
