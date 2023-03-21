@@ -136,7 +136,7 @@ struct DeviceDelegateOpenXR::State {
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
 
-#if defined(OCULUSVR) || defined(PICOXR) || defined(LYNX) || defined(SPACES)
+#ifndef HVR
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
     CHECK_XRCMD(xrGetInstanceProcAddr(nullptr, "xrInitializeLoaderKHR", reinterpret_cast<PFN_xrVoidFunction*>(&initializeLoaderKHR)));
     XrLoaderInitInfoAndroidKHR loaderData;
