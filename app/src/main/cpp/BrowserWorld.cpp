@@ -276,8 +276,9 @@ BrowserWorld::State::CheckBackButton() {
           continue;
       }
 
-      if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
-          (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
+        (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
+        (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
           SimulateBack();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
@@ -418,7 +419,9 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.pointer->Load(device);
     }
 
-    if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
+      (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
+      (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
       SimulateBack();
     }
 
@@ -432,9 +435,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       const bool focusRequested =
           (pressed && !wasPressed) ||
               ((controller.buttonState & ControllerDelegate::BUTTON_A) && (controller.lastButtonState & ControllerDelegate::BUTTON_A) == 0) ||
-              ((controller.buttonState & ControllerDelegate::BUTTON_B) && (controller.lastButtonState & ControllerDelegate::BUTTON_B) == 0) ||
-              ((controller.buttonState & ControllerDelegate::BUTTON_X) && (controller.lastButtonState & ControllerDelegate::BUTTON_X) == 0) ||
-              ((controller.buttonState & ControllerDelegate::BUTTON_Y) && (controller.lastButtonState & ControllerDelegate::BUTTON_Y) == 0);
+              ((controller.buttonState & ControllerDelegate::BUTTON_X) && (controller.lastButtonState & ControllerDelegate::BUTTON_X) == 0);
       if (focusRequested) {
         ChangeControllerFocus(controller);
       }
