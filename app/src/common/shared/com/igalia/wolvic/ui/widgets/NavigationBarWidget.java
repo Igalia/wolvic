@@ -330,17 +330,19 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 enterVRVideo(mAutoSelectedProjection);
                 return;
             }
-            boolean wasVisible = mProjectionMenu.isVisible();
+            boolean wasVisible = mProjectionMenu != null ? mProjectionMenu.isVisible() : false;
             closeFloatingMenus();
 
-            mProjectionMenu.mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
+            if (mProjectionMenu != null) {
+                mProjectionMenu.mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
 
-            if (!wasVisible) {
-                mProjectionMenu.show(REQUEST_FOCUS);
-            }
+                if (!wasVisible) {
+                    mProjectionMenu.show(REQUEST_FOCUS);
+                }
 
-            if (!mProjectionMenu.isVisible()) {
-                view.requestFocusFromTouch();
+                if (!mProjectionMenu.isVisible()) {
+                    view.requestFocusFromTouch();
+                }
             }
         });
 
