@@ -1,19 +1,10 @@
 package com.igalia.wolvic.browser.api.impl;
 
-import static android.util.Patterns.WEB_URL;
-
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.icu.number.UnlocalizedNumberFormatter;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -23,17 +14,9 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
-import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-
-import org.chromium.weblayer.CaptureScreenShotCallback;
-import org.chromium.weblayer.NavigateParams;
-import org.chromium.weblayer.Tab;
-
-import java.util.logging.Handler;
 
 public class SessionImpl implements WSession {
     RuntimeImpl mRuntime;
-    Tab mTab;
     SettingsImpl mSettings;
     ContentDelegate mContentDelegate;
     ProgressDelegate mProgressDelegate;
@@ -48,24 +31,10 @@ public class SessionImpl implements WSession {
     DisplayImpl mDisplay;
     TextInputImpl mTextInput;
     PanZoomCrontrollerImpl mPanZoomCrontroller;
-    NavigationCallbackImpl mNavigationCallback;
-    TabCallbackImpl mTabCallback;
-    FullScreenCallbackImpl mFullScreenCallback;
-    NewTabCallbackImpl mNewTabCallback;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
         init();
-    }
-
-
-    public SessionImpl(@NonNull RuntimeImpl runtime, @NonNull Tab tab) {
-        mRuntime = runtime;
-        mTab = tab;
-        mSettings = new SettingsImpl(mTab.getBrowser().getProfile().isIncognito());
-        mSettings.setTab(tab);
-        init();
-        registerCallbacks();
     }
 
     private void init() {
@@ -73,118 +42,68 @@ public class SessionImpl implements WSession {
         mPanZoomCrontroller = new PanZoomCrontrollerImpl(this);
     }
 
-    @Nullable DisplayImpl getDisplay() {
-        return mDisplay;
-    }
 
-    @Nullable RuntimeImpl getRuntime() {
-        return mRuntime;
     }
 
     @Override
     public void loadUri(@NonNull String uri, int flags) {
-        assertSessionOpened();
-        NavigateParams.Builder params = new NavigateParams.Builder()
-                .disableIntentProcessing()
-                .setShouldReplaceCurrentEntry((flags & WSession.LOAD_FLAGS_REPLACE_HISTORY) != 0);
-        if (isAutoplayEnabled()) {
-            params.enableAutoPlay();
-        }
-
-        mTab.getNavigationController().navigate(getUriFromString(uri), params.build());
+        // TODO: Implement
     }
 
     @Override
-    public void loadData(@NonNull byte[] bytes, String mimeType) {
-        assertSessionOpened();
-
-        NavigateParams.Builder params = new NavigateParams.Builder()
-                .disableIntentProcessing();
-
-        String dataUri = String.format("data:%s;base64,%s",
-                mimeType != null ? mimeType : "", Base64.encodeToString(bytes, Base64.NO_WRAP));
-
-        mTab.getNavigationController().navigate(Uri.parse(dataUri), params.build());
+    public void loadData(@NonNull byte[] data, String mymeType) {
+        // TODO: Implement
     }
 
     @Override
     public void reload(int flags) {
-        assertSessionOpened();
-        mTab.getNavigationController().reload();
+        // TODO: Implement
     }
 
     @Override
     public void stop() {
-        assertSessionOpened();
-        mTab.getNavigationController().stop();
+        // TODO: Implement
     }
 
     @Override
     public void setActive(boolean active) {
-        assertSessionOpened();
-        // No op. Browser active tab is set in acquireDisplay.
+        // TODO: Implement
     }
 
     @Override
     public void setFocused(boolean focused) {
-        assertSessionOpened();
+        // TODO: Implement
     }
 
     @Override
     public void open(@NonNull WRuntime runtime) {
-        assert mTab == null;
         mRuntime = (RuntimeImpl) runtime;
-        mTab = mRuntime.createTab(mSettings.getUsePrivateMode());
-        registerCallbacks();
-    }
-
-    private void registerCallbacks() {
-        mSettings.setTab(mTab);
-        mNavigationCallback = new NavigationCallbackImpl(this);
-        mTabCallback = new TabCallbackImpl(this);
-        mFullScreenCallback = new FullScreenCallbackImpl(this);
-
-        mTab.getNavigationController().registerNavigationCallback(mNavigationCallback);
-        mTab.registerTabCallback(mTabCallback);
-        mTab.setFullscreenCallback(mFullScreenCallback);
-        mTab.setNewTabCallback(mNewTabCallback);
     }
 
     @Override
     public boolean isOpen() {
-        return mTab != null;
+        // TODO: Implement
+        return false;
     }
 
     @Override
     public void close() {
-        assertSessionOpened();
-
-        mTab.getNavigationController().unregisterNavigationCallback(mNavigationCallback);
-        mTab.unregisterTabCallback(mTabCallback);
-        mTab.setFullscreenCallback(null);
-        mTab.setNewTabCallback(null);
-
-        mTab.getBrowser().destroyTab(mTab);
-        mTab = null;
-        mNavigationCallback = null;
-        mTabCallback = null;
-        mFullScreenCallback = null;
-        mNewTabCallback = null;
+        // TODO: Implement
     }
 
     @Override
     public void goBack(boolean userInteraction) {
-        mTab.getNavigationController().goBack();
+        // TODO: Implement
     }
 
     @Override
     public void goForward(boolean userInteraction) {
-        mTab.getNavigationController().goForward();
+        // TODO: Implement
     }
 
     @Override
     public void gotoHistoryIndex(int index) {
-        mTab.getNavigationController().goToIndex(index);
+        // TODO: Implement
     }
 
     @Override
@@ -207,26 +126,21 @@ public class SessionImpl implements WSession {
 
     @Override
     public void exitFullScreen() {
-        if (mFullScreenCallback != null) {
-            mFullScreenCallback.exitFullscreen();
-        }
+        // TODO: implement
     }
 
     @NonNull
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        assert mTab != null;
-        mDisplay = new DisplayImpl(mRuntime.acquireDisplay(mSettings.getUsePrivateMode()), this);
-        mDisplay.getBrowserDisplay().getBrowser().addTab(mTab);
-        mDisplay.getBrowserDisplay().getBrowser().setActiveTab(mTab);
+        // TODO: implement correctly
         return mDisplay;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
         assert mDisplay != null;
-        mRuntime.releaseDisplay(mDisplay.getBrowserDisplay());
+        // TODO: implement correctly
         mDisplay = null;
     }
 
@@ -392,37 +306,4 @@ public class SessionImpl implements WSession {
         return mSelectionActionDelegate;
     }
 
-    private void assertSessionOpened() {
-        assert mTab != null;
-    }
-
-    private boolean isAutoplayEnabled() {
-        return SettingsStore.getInstance(mRuntime.getContext()).isAutoplayEnabled();
-    }
-
-    private Uri getUriFromString(@NonNull String str) {
-        // WEB_URL doesn't match port numbers. Special case "localhost:" to aid
-        // testing where a port is remapped.
-        // Use WEB_URL first to ensure this matches urls such as 'https.'
-        if (WEB_URL.matcher(str).matches() || str.startsWith("http://localhost:")) {
-            // WEB_URL matches relative urls (relative meaning no scheme), but this branch is only
-            // interested in absolute urls. Fall through if no scheme is supplied.
-            Uri uri = Uri.parse(str);
-            if (!uri.isRelative()) return uri;
-        }
-
-        if (str.startsWith("www.") || str.indexOf(":") == -1) {
-            String url = "http://" + str;
-            if (WEB_URL.matcher(url).matches()) {
-                return Uri.parse(url);
-            }
-        }
-
-        if (str.startsWith("chrome://")) return Uri.parse(str);
-
-        return Uri.parse("https://google.com/search")
-                .buildUpon()
-                .appendQueryParameter("q", str)
-                .build();
-    }
 }
