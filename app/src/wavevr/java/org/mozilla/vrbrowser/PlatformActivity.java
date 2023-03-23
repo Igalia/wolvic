@@ -8,11 +8,11 @@ package com.igalia.wolvic;
 import com.htc.vr.sdk.VRActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
-import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends VRActivity {
