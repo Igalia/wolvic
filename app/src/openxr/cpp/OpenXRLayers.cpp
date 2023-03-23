@@ -232,14 +232,12 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     xrLayers[i].scale.y = scale.y();
     xrLayers[i].bias.x = translation.x();
     xrLayers[i].bias.y = translation.y();
+
+#ifdef OCULUSVR
+    if (mLayerImageLayout != XR_NULL_HANDLE)
+      PushNextXrStructureInChain((XrBaseInStructure&)xrLayers[i], (XrBaseInStructure&)*mLayerImageLayout);
+#endif
   }
 }
-
-#if OCULUSVR
-const void*
-OpenXRLayerEquirect::GetNextStructureInChain() const {
-    return this->nextStructureInChain;
-}
-#endif
 
 }
