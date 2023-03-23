@@ -88,11 +88,24 @@ public:
           return XR_EYE_VISIBILITY_BOTH;
         return i == 0 ? XR_EYE_VISIBILITY_LEFT : XR_EYE_VISIBILITY_RIGHT;
     };
+
+    if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE) {
+        vrb::Color tintColor = layer->GetTintColor();
+        if (!IsComposited() && (layer->GetClearColor().Alpha() > 0.0f)) {
+            tintColor = layer->GetClearColor();
+            tintColor.SetRGBA(tintColor.Red(), tintColor.Green(), tintColor.Blue(), tintColor.Alpha());
+        }
+        mCompositionLayerColorScaleBiasStruct.colorScale = {tintColor.Red(), tintColor.Green(), tintColor.Blue(), tintColor.Alpha()};
+    }
+
     for (uint i = 0; i < numXRLayers; ++i) {
       xrLayers[i].layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
       xrLayers[i].eyeVisibility = getEyeVisibility(i);
       xrLayers[i].space = aSpace;
       xrLayers[i].next = XR_NULL_HANDLE;
+
+      if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE)
+        PushNextXrStructureInChain((XrBaseInStructure&)xrLayers[i], (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
     }
   }
 
@@ -220,6 +233,12 @@ protected:
     newBaseInStructure.next = baseInStructure.next;
     baseInStructure.next = &newBaseInStructure;
   }
+
+  XrCompositionLayerColorScaleBiasKHR mCompositionLayerColorScaleBiasStruct {
+    .type = XR_TYPE_COMPOSITION_LAYER_COLOR_SCALE_BIAS_KHR,
+    .next = XR_NULL_HANDLE,
+  };
+  XrBaseInStructure* mCompositionLayerColorScaleBias { OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_COLOR_SCALE_BIAS_EXTENSION_NAME) ? (XrBaseInStructure*)&mCompositionLayerColorScaleBiasStruct : XR_NULL_HANDLE };
 
 #if OCULUSVR \
   // Oculus OpenXR backend flips layers vertically.
