@@ -752,6 +752,16 @@ struct DeviceDelegateOpenXR::State {
       passthroughErrorState = true;
     }
   }
+
+  bool CanEnablePassthrough() {
+    if (!passthroughSupported || passthrough == XR_NULL_HANDLE || passthroughErrorState)
+      return false;
+
+    if (passthroughLayer == nullptr || passthroughLayer->xrLayer == XR_NULL_HANDLE)
+      return false;
+
+    return true;
+  }
 };
 
 DeviceDelegateOpenXRPtr
@@ -1155,8 +1165,16 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       return;
   }
 
-  // Add skybox layer
-  if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
+  // Add skybox or passthrough layer
+  if (m.passthroughLayer != nullptr && m.passthroughLayer->IsDrawRequested() && m.CanEnablePassthrough()) {
+    XrCompositionLayerPassthroughFB passthroughCompLayer = {
+      .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
+      .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
+      .space = XR_NULL_HANDLE,
+      .layerHandle = m.passthroughLayer->xrLayer,
+    };
+    layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
+  } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
     m.cubeLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
     for (uint32_t i = 0; i < m.cubeLayer->HeaderCount(); ++i) {
       layers.push_back(m.cubeLayer->Header(i));
