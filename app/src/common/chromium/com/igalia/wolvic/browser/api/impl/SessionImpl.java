@@ -1,5 +1,7 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Matrix;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,12 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
+
+import org.chromium.base.ApplicationStatus;
+import org.chromium.components.embedder_support.view.WolvicContentRenderView;
+import org.chromium.content_public.browser.WebContents;
+import org.chromium.ui.base.ActivityWindowAndroid;
+import org.chromium.ui.base.IntentRequestTracker;
 
 public class SessionImpl implements WSession {
     RuntimeImpl mRuntime;
@@ -31,6 +39,10 @@ public class SessionImpl implements WSession {
     DisplayImpl mDisplay;
     TextInputImpl mTextInput;
     PanZoomCrontrollerImpl mPanZoomCrontroller;
+    private ActivityWindowAndroid mWindowAndroid;
+    private IntentRequestTracker mIntentRequestTracker;
+    private WolvicContentRenderView mContentViewRenderView;
+    private WebContents mCurrentWebContents;
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
@@ -42,7 +54,23 @@ public class SessionImpl implements WSession {
         mPanZoomCrontroller = new PanZoomCrontrollerImpl(this);
     }
 
+    // TODO: Consider refactoring this method to move more appropriate place.
+    private BrowserDisplay createBrowserDisplay(WebContents webContents) {
+        Activity activity = ApplicationStatus.getLastTrackedFocusedActivity();
 
+        mIntentRequestTracker = IntentRequestTracker.createFromActivity(activity);
+        mWindowAndroid = new ActivityWindowAndroid(activity, false, mIntentRequestTracker);
+
+        mContentViewRenderView = new WolvicContentRenderView(mRuntime.getContext());
+        mContentViewRenderView.onNativeLibraryLoaded(mWindowAndroid);
+        mContentViewRenderView.setCurrentWebContents(webContents);
+
+        BrowserDisplay browserDisplay = new BrowserDisplay(mRuntime.getContext());
+
+        ContentShellFragment fragment = new ContentShellFragment();
+        fragment.setContentViewRenderView(mContentViewRenderView);
+        browserDisplay.attach(mRuntime.getFragmentManager(), mRuntime.getViewContainer(), fragment);
+        return browserDisplay;
     }
 
     @Override
@@ -133,7 +161,10 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        // TODO: implement correctly
+        mCurrentWebContents = mRuntime.createWebContents();
+        BrowserDisplay display = createBrowserDisplay(mCurrentWebContents);
+        mWindowAndroid.setAnimationPlaceholderView(mContentViewRenderView);
+        mDisplay = new DisplayImpl(display, this, mContentViewRenderView);
         return mDisplay;
     }
 

@@ -521,6 +521,13 @@ android {
 
     aaptOptions {
         noCompress 'ja'
+        // TODO: This statement should be moved under 'chromium' dimension or removed. So far, these
+        // options are affected to every variants when`isChromiumAvailable()` is true.
+        if (isChromiumAvailable()) {
+            noCompress 'dat'
+            noCompress 'bin'
+            noCompress 'pak'
+        }
     }
 
     buildFeatures {

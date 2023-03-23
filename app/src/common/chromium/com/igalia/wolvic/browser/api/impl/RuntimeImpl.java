@@ -1,9 +1,10 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.app.Application;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.view.View;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,17 +14,35 @@ import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import kotlin.Lazy;
+
 import mozilla.components.concept.fetch.Client;
 import mozilla.components.concept.storage.LoginsStorage;
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
+import org.chromium.base.ApplicationStatus;
+import org.chromium.base.CommandLine;
+import org.chromium.base.ContextUtils;
+import org.chromium.base.PathUtils;
+import org.chromium.base.library_loader.LibraryLoader;
+import org.chromium.base.library_loader.LibraryProcessType;
+import org.chromium.content_public.browser.BrowserStartupController;
+import org.chromium.content_public.browser.DeviceUtils;
+import org.chromium.content_public.browser.WebContents;
+import org.chromium.ui.base.ResourceBundle;
+import org.chromium.wolvic.TabJni;
+
 public class RuntimeImpl implements WRuntime {
+    static String LOGTAG = SystemUtils.createLogtag(RuntimeImpl.class);
+
+    private static final String PRIVATE_DATA_DIRECTORY_SUFFIX = "content_shell";
+
     private Context mContext;
     private WRuntimeSettings mRuntimeSettings;
     private WebExtensionControllerImpl mWebExtensionController;
@@ -35,10 +54,51 @@ public class RuntimeImpl implements WRuntime {
         mRuntimeSettings = settings;
         mWebExtensionController = new WebExtensionControllerImpl();
 
+        initBrowserProcess(ctx);
     }
 
-    Context getContext() {
+    @NonNull
+    public Context getContext() {
         return mContext;
+    }
+
+    private void initBrowserProcess(Context context) {
+        assert isBrowserProcess() == true;
+
+        ContextUtils.initApplicationContext(context);
+        ResourceBundle.setNoAvailableLocalePaks();
+        // Native libraries for child processes are loaded in its implementations in content.
+        LibraryLoader.getInstance().setLibraryProcessType(LibraryProcessType.PROCESS_BROWSER);
+
+        PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX);
+        // Initialize with the application context to monitor the activity status.
+        ApplicationStatus.initialize((Application) context.getApplicationContext());
+
+        CommandLine.init(new String[] {});
+        DeviceUtils.addDeviceSpecificUserAgentSwitch();
+        LibraryLoader.getInstance().ensureInitialized();
+
+        BrowserStartupController.getInstance().startBrowserProcessesAsync(
+                LibraryProcessType.PROCESS_BROWSER, true /* startGpuProcess */, false /* startMinimalBrowser */,
+                new BrowserStartupController.StartupCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.i(LOGTAG, "The browser process started!");
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        Log.e(LOGTAG, "Failed to start the browser process");
+                    }
+                });
+    }
+
+    private static boolean isBrowserProcess() {
+        return !ContextUtils.getProcessName().contains(":");
+    }
+
+    public WebContents createWebContents() {
+        return TabJni.get().createWebContents();
     }
 
     @Override
@@ -116,5 +176,14 @@ public class RuntimeImpl implements WRuntime {
         // TODO: Implement correctly
         return new CrashReportIntent("", "", "", "");
     }
-}
 
+    @NonNull
+    public ViewGroup getViewContainer() {
+        return mViewContainer;
+    }
+
+    @NonNull
+    public FragmentManager getFragmentManager() {
+        return mFragmentManager;
+    }
+}
