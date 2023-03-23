@@ -205,6 +205,7 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
+  VRLayerPassthroughPtr layerPassthrough;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1076,6 +1077,23 @@ BrowserWorld::StartFrame() {
       m.loader->InitializeGL();
     }
   }
+
+  // @FIXME: Make this a state variable and toggle it with the menu item
+  //         Also replace the #if below with a proper SupportsPassthrough()
+  //         method based on build type.
+  bool passthroughEnabled = false;
+
+#if defined(OCULUSVR)
+  if (passthroughEnabled) {
+    // Lazily create Passthrough layer
+    if (!m.layerPassthrough) {
+      m.layerPassthrough = m.device->CreateLayerPassthrough();
+    }
+    m.layerPassthrough->RequestDraw();
+  } else if (m.layerPassthrough) {
+    m.layerPassthrough->ClearRequestDraw();
+  }
+#endif
 
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
