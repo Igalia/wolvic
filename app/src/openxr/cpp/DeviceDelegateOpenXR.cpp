@@ -104,6 +104,7 @@ struct DeviceDelegateOpenXR::State {
   bool passthroughSupported { false };
   XrPassthroughFB passthrough { XR_NULL_HANDLE };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
+  bool passthroughErrorState { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -711,9 +712,45 @@ struct DeviceDelegateOpenXR::State {
 
     assert(OpenXRExtensions::sXrCreatePassthroughFB != nullptr && passthrough == XR_NULL_HANDLE);
 
-    XrPassthroughCreateInfoFB passthroughCreateInfo = {XR_TYPE_PASSTHROUGH_CREATE_INFO_FB};
-    passthroughCreateInfo.flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB;
+    XrPassthroughCreateInfoFB passthroughCreateInfo = {
+      .type = XR_TYPE_PASSTHROUGH_CREATE_INFO_FB,
+      .flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB,
+    };
     CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughFB(session, &passthroughCreateInfo, &passthrough));
+  }
+
+  void HandlePassthroughEvent(const XrEventDataPassthroughStateChangedFB& event) {
+    XrPassthroughStateChangedFlagsFB passthroughState = event.flags;
+    passthroughErrorState = false;
+
+    if ((passthroughState & XR_PASSTHROUGH_STATE_CHANGED_REINIT_REQUIRED_BIT_FB) ||
+        (passthroughState & XR_PASSTHROUGH_STATE_CHANGED_NON_RECOVERABLE_ERROR_BIT_FB)) {
+      // Destroy and re-create passthrough instance and layer
+      if (passthroughLayer->xrLayer != XR_NULL_HANDLE) {
+        passthroughLayer->Destroy();
+        passthroughLayer->xrLayer = XR_NULL_HANDLE;
+      }
+      if (passthrough != XR_NULL_HANDLE) {
+        CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughFB (passthrough));
+        passthrough = XR_NULL_HANDLE;
+      }
+      passthroughErrorState = true;
+    }
+
+    if (passthroughState & XR_PASSTHROUGH_STATE_CHANGED_REINIT_REQUIRED_BIT_FB) {
+      InitializePassthrough();
+
+      if (passthrough != XR_NULL_HANDLE) {
+          vrb::RenderContextPtr ctx = context.lock();
+          passthroughLayer->Init(javaContext->env, session, ctx, passthrough);
+      }
+      passthroughErrorState = false;
+    } else if ((passthroughState & XR_PASSTHROUGH_STATE_CHANGED_RESTORED_ERROR_BIT_FB)) {
+      passthroughErrorState = false;
+    } else {
+      // XR_PASSTHROUGH_STATE_CHANGED_RECOVERABLE_ERROR_BIT_FB
+      passthroughErrorState = true;
+    }
   }
 };
 
@@ -870,6 +907,12 @@ DeviceDelegateOpenXR::ProcessEvents() {
         m.reorientRequested = true;
         VRB_DEBUG("OpenXR: reference space changed. User recentered the view?");
         break;
+      case XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB: {
+        const auto &event =
+                *reinterpret_cast<const XrEventDataPassthroughStateChangedFB *>(ev);
+        m.HandlePassthroughEvent(event);
+        break;
+      }
       default: {
         VRB_DEBUG("OpenXR ignoring event type %d", ev->type);
         break;
