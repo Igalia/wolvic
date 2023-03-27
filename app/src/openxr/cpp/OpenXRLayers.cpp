@@ -212,9 +212,7 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
   const uint numXRLayers = GetNumXRLayers();
   for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    // Map video orientation
-    vrb::Matrix transform = XrPoseToMatrix(aPose).PostMultiply(layer->GetModelTransform(eye));
-    xrLayers[i].pose =  XrPoseIdentity(); //MatrixToXrPose(transform);
+    xrLayers[i].pose =  XrPoseIdentity();
 
     // Map surface and rect
     device::EyeRect rect = layer->GetTextureRect(eye);
