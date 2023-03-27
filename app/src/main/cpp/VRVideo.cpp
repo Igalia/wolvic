@@ -260,6 +260,23 @@ struct VRVideo::State {
     leftEye = create180LayerToggle(equirect);
   }
 
+#ifdef OPENXR
+  void create180LRProjectionLayer() {
+    vrb::CreationContextPtr create = context.lock();
+    DeviceDelegatePtr device = deviceWeak.lock();
+    VRLayerEquirectPtr equirect = device->CreateLayerEquirect(window->GetLayer());
+    layer = equirect;
+
+    equirect->SetTextureRect(device::Eye::Left, device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f));
+    equirect->SetTextureRect(device::Eye::Right, device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+    auto UVtransform = vrb::Matrix::Identity().Scale(vrb::Vector(2.0f, 1.0f, 1.0f)).Translate(vrb::Vector(-0.5, 0.0, 0.0));
+    equirect->SetUVTransform(device::Eye::Left, UVtransform);
+    equirect->SetUVTransform(device::Eye::Right, UVtransform);
+    equirect->SetUseSameLayerForBothEyes(false);
+
+    leftEye = create180LayerToggle(equirect);
+  }
+#elif OCULUSVR
   void create180LRProjectionLayer() {
     vrb::CreationContextPtr create = context.lock();
     DeviceDelegatePtr device = deviceWeak.lock();
@@ -273,6 +290,7 @@ struct VRVideo::State {
     leftEye = create180LayerToggle(equirect);
     rightEye = create180LayerToggle(equirect);
   }
+#endif
 
   void create180TBProjectionLayer() {
     vrb::CreationContextPtr create = context.lock();
