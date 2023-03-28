@@ -73,6 +73,10 @@ class YoutubeExtension {
         this.retry("overrideQuality", () => this.overrideQuality());
     }
 
+    isAudio(text) {
+        return text.includes('audio') || text.includes('sound');
+    }
+
     is360(text) {
         return text.includes('360');
     }
@@ -82,7 +86,7 @@ class YoutubeExtension {
             document.querySelector(YT_SELECTORS.embedTitle),
             document.querySelector(YT_SELECTORS.description)
         ];
-        return targets.some((node) => node && this.is360(node.textContent));
+        return targets.some((node) => node && this.is360(node.textContent) && !this.isAudio(node.textContent));
     }
 
     isStereo(text) {
@@ -95,7 +99,7 @@ class YoutubeExtension {
             document.querySelector(YT_SELECTORS.embedTitle),
             document.querySelector(YT_SELECTORS.description)
         ];
-        return targets.some((node) => node && this.isStereo(node.textContent));
+        return targets.some((node) => node && this.isStereo(node.textContent) && !this.isAudio(node.textContent));
     }
 
     isSBS(text) {
@@ -107,7 +111,7 @@ class YoutubeExtension {
             document.querySelector(YT_SELECTORS.embedTitle),
             document.querySelector(YT_SELECTORS.description)
         ];
-        return targets.some((node) => node && this.isSBS(node.textContent));
+        return targets.some((node) => node && this.isSBS(node.textContent) && !this.isAudio(node.textContent));
     }
 
     // Automatically select a video projection if needed
@@ -132,7 +136,7 @@ class YoutubeExtension {
         }
 
         if (projection !== null) {
-            qs.set('mozVideoProjection', projection);
+            qs.set(VIDEO_PROJECTION_PARAM, projection);
             this.updateURL(qs);
             this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
