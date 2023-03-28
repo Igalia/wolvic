@@ -33,25 +33,28 @@
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/moveWindowLeftButton"
                 style="@style/uiButtonTheme"
-                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private_first : @drawable/fullscreen_button_first}"
+                android:background="@drawable/fullscreen_button_first"
                 android:src="@drawable/ic_icon_window_left"
                 android:enabled="@{viewmodel.placement != WindowPlacement.LEFT}"
-                app:privateMode="@{viewmodel.isPrivateSession}"/>
+                app:privateMode="@{viewmodel.isPrivateSession}"
+                app:privateModeBackground="@drawable/fullscreen_button_private_first" />
 
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/closeWindowButton"
                 style="@style/uiButtonTheme"
-                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private : @drawable/fullscreen_button}"
+                android:background="@drawable/fullscreen_button"
                 android:src="@drawable/ic_icon_window_exit"
-                app:privateMode="@{viewmodel.isPrivateSession}"/>
+                app:privateMode="@{viewmodel.isPrivateSession}"
+                app:privateModeBackground="@drawable/fullscreen_button_private" />
 
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/moveWindowRightButton"
                 style="@style/uiButtonTheme"
-                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private_last : @drawable/fullscreen_button_last}"
+                android:background="@drawable/fullscreen_button_last"
                 android:src="@drawable/ic_icon_window_right"
                 android:enabled="@{viewmodel.placement != WindowPlacement.RIGHT}"
-                app:privateMode="@{viewmodel.isPrivateSession}"/>
+                app:privateMode="@{viewmodel.isPrivateSession}"
+                app:privateModeBackground="@drawable/fullscreen_button_private_last" />
         </LinearLayout>
 
         <com.igalia.wolvic.ui.views.UITextButton
