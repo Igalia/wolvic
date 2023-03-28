@@ -427,15 +427,16 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
 
     const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
-                         controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+                         controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD ||
+                         controller.buttonState & ControllerDelegate::BUTTON_A ||
+                         controller.buttonState & ControllerDelegate::BUTTON_X;
     const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
-                            controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
+                            controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD ||
+                            controller.lastButtonState & ControllerDelegate::BUTTON_A ||
+                            controller.lastButtonState & ControllerDelegate::BUTTON_X;;
 
     if (!controller.focused) {
-      const bool focusRequested =
-          (pressed && !wasPressed) ||
-              ((controller.buttonState & ControllerDelegate::BUTTON_A) && (controller.lastButtonState & ControllerDelegate::BUTTON_A) == 0) ||
-              ((controller.buttonState & ControllerDelegate::BUTTON_X) && (controller.lastButtonState & ControllerDelegate::BUTTON_X) == 0);
+      const bool focusRequested = pressed && !wasPressed;
       if (focusRequested) {
         ChangeControllerFocus(controller);
       }
