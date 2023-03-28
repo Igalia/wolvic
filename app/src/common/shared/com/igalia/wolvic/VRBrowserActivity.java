@@ -210,6 +210,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
+    private boolean mIsPassthroughEnabled = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1695,6 +1696,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public boolean isPassthroughEnabled() {
+        return mIsPassthroughEnabled;
+    }
+
+    @Override
     public void pushBackHandler(@NonNull Runnable aRunnable) {
         mBackHandlers.addLast(aRunnable);
     }
@@ -1815,12 +1821,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void togglePassthrough() {
+        mIsPassthroughEnabled = !mIsPassthroughEnabled;
         queueRunnable(() -> togglePassthroughNative());
     }
 
     @Override
     public boolean isPassthroughSupported() {
-        return DeviceType.isOculusBuild() || DeviceType.isPicoXR();
+        return DeviceType.isOculusBuild();
     }
 
     @Override

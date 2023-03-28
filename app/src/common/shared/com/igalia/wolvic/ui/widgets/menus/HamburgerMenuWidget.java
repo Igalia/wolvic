@@ -289,7 +289,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                         return null;
                     })
                     .withTitle(getContext().getString(R.string.hamburger_menu_toggle_passthrough))
-                    .withIcon(R.drawable.ic_icon_passthrough)
+                    .withIcon(mWidgetManager.isPassthroughEnabled() ? R.drawable.ic_icon_passthrough : R.drawable.ic_icon_passthrough_off)
                     .build());
         }
 
