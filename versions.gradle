@@ -180,6 +180,8 @@ deps.robolectric = "org.robolectric:robolectric:$versions.robolectric"
 
 deps.jna = "net.java.dev.jna:jna:$versions.jna"
 
+deps.colorpicker = "com.github.skydoves:colorpickerpreference:2.0.6"
+
 ext.deps = deps
 
 def build_versions = [:]
