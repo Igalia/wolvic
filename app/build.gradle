@@ -250,6 +250,11 @@ android {
                     arguments "-DVR_SDK_LIB=picoxr-lib", "-DPICOXR=ON", "-DOPENXR=ON"
                 }
             }
+            aaptOptions {
+                // Exclude unsupported skybox textures from Pico builds. Unfortunately, ignoreAssetsPattern
+                // only supports a very basic syntax and we have to list each individual file name.
+                ignoreAssetsPattern "posx.ktx:posy.ktx:posz.ktx:negx.ktx:negy.ktx:negz.ktx:posx_srgb.ktx:posy_srgb.ktx:posz_srgb.ktx:negx_srgb.ktx:negy_srgb.ktx:negz_srgb.ktx"
+            }
         }
 
         lynx {
