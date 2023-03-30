@@ -125,6 +125,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private ArrayList<NavigationListener> mNavigationListeners;
     private TrackingProtectionStore mTrackingDelegate;
     private WidgetPlacement mBeforeFullscreenPlacement;
+    private boolean mIsPassthroughEnabled = false;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -1241,9 +1242,15 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             @Override
             public void onPassthrough() {
+                mIsPassthroughEnabled = !mIsPassthroughEnabled;
                 mWidgetManager.togglePassthrough();
 
                 hideMenu();
+            }
+
+            @Override
+            public boolean isPassthroughEnabled() {
+                return mIsPassthroughEnabled;
             }
 
             @Override

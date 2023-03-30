@@ -86,7 +86,6 @@ public interface WidgetManagerDelegate {
     void hideVRVideo();
     void togglePassthrough();
     boolean isPassthroughSupported();
-    boolean isPassthroughEnabled();
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     float getCylinderDensity();

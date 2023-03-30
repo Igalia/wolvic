@@ -210,7 +210,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
-    private boolean mIsPassthroughEnabled = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1696,11 +1695,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public boolean isPassthroughEnabled() {
-        return mIsPassthroughEnabled;
-    }
-
-    @Override
     public void pushBackHandler(@NonNull Runnable aRunnable) {
         mBackHandlers.addLast(aRunnable);
     }
@@ -1820,10 +1814,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void togglePassthrough() {
-        mIsPassthroughEnabled = !mIsPassthroughEnabled;
-        queueRunnable(() -> togglePassthroughNative());
-    }
+    public void togglePassthrough() { queueRunnable(() -> togglePassthroughNative()); }
 
     @Override
     public boolean isPassthroughSupported() {
