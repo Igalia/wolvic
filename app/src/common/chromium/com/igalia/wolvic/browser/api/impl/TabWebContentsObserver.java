@@ -76,5 +76,4 @@ public class TabWebContentsObserver extends WebContentsObserver {
             delegate.onFirstContentfulPaint(mSession);
         }
     }
-
 }
