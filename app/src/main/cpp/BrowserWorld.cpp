@@ -206,6 +206,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   VRLayerPassthroughPtr layerPassthrough;
+  bool passthroughEnabled = false;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1080,13 +1081,7 @@ BrowserWorld::StartFrame() {
     }
   }
 
-  // @FIXME: Make this a state variable and toggle it with the menu item
-  //         Also replace the #if below with a proper SupportsPassthrough()
-  //         method based on build type.
-  bool passthroughEnabled = false;
-
-#if defined(OCULUSVR)
-  if (passthroughEnabled) {
+  if (m.passthroughEnabled) {
     // Lazily create Passthrough layer
     if (!m.layerPassthrough) {
       m.layerPassthrough = m.device->CreateLayerPassthrough();
@@ -1095,7 +1090,6 @@ BrowserWorld::StartFrame() {
   } else if (m.layerPassthrough) {
     m.layerPassthrough->ClearRequestDraw();
   }
-#endif
 
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
@@ -1160,6 +1154,12 @@ BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
   ASSERT_ON_RENDER_THREAD();
   VRB_LOG("Got temp path: %s", aPath.c_str());
   m.context->GetDataCache()->SetCachePath(aPath);
+}
+
+void
+BrowserWorld::TogglePassthrough() {
+  ASSERT_ON_RENDER_THREAD();
+  m.passthroughEnabled = !m.passthroughEnabled;
 }
 
 void
@@ -1948,6 +1948,11 @@ JNI_METHOD(void, setTemporaryFilePath)
   std::string path = nativeString;
   aEnv->ReleaseStringUTFChars(aPath, nativeString);
   crow::BrowserWorld::Instance().SetTemporaryFilePath(path);
+}
+
+JNI_METHOD(void, togglePassthroughNative)
+(JNIEnv*, jobject) {
+  crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
 JNI_METHOD(void, exitImmersiveNative)

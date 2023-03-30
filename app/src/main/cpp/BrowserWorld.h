@@ -47,6 +47,7 @@ public:
   void StartFrame();
   void Draw(device::Eye aEye);
   void EndFrame();
+  void TogglePassthrough();
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
   void UpdatePointerColor();
