@@ -97,10 +97,6 @@ public class RuntimeImpl implements WRuntime {
         return !ContextUtils.getProcessName().contains(":");
     }
 
-    public WebContents createWebContents() {
-        return TabJni.get().createWebContents();
-    }
-
     @Override
     public WRuntimeSettings getSettings() {
         return mRuntimeSettings;
