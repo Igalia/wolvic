@@ -12,12 +12,10 @@ import org.chromium.content_public.browser.WebContentsObserver;
 import org.chromium.url.GURL;
 
 public class TabWebContentsObserver extends WebContentsObserver {
-    private @NonNull WebContents mWebContents;
     private @NonNull SessionImpl mSession;
 
     public TabWebContentsObserver(WebContents webContents, @NonNull SessionImpl session) {
         super(webContents);
-        mWebContents = webContents;
         mSession = session;
     }
 
@@ -56,8 +54,12 @@ public class TabWebContentsObserver extends WebContentsObserver {
     private void dispatchCanGoBackOrForward() {
         @Nullable WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate != null) {
-            delegate.onCanGoBack(mSession, mWebContents.getNavigationController().canGoBack());
-            delegate.onCanGoForward(mSession, mWebContents.getNavigationController().canGoForward());
+            WebContents webContents = mWebContents.get();
+            if (webContents == null)
+                return;
+
+            delegate.onCanGoBack(mSession, webContents.getNavigationController().canGoBack());
+            delegate.onCanGoForward(mSession, webContents.getNavigationController().canGoForward());
         }
     }
 
