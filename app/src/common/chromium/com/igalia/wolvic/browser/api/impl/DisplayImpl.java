@@ -70,6 +70,6 @@ public class DisplayImpl implements WDisplay {
     @Override
     public WResult<Bitmap> capturePixelsWithAspectPreservingSize(int width) {
         // TODO: Implement
-        return null;
+        return new ResultImpl<>();
     }
 }
