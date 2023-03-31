@@ -432,10 +432,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
     }
 
-    // A dialog to inform users that Wolvic is now available in the Oculus store.
+    // A dialog to tell App Lab users to download Wolvic from the Meta store.
     // Returns true if the dialog was shown, false otherwise.
     private void showDeprecatedVersionDialogIfNeeded() {
-        if (!DeviceType.isOculusBuild())
+        // Only show this dialog to users running the App Lab version of Wolvic.
+        if (!DeviceType.getStoreType().equals(DeviceType.StoreType.META_APP_LAB))
             return;
 
         DeprecatedVersionDialogWidget deprecatedVersionDialog = new DeprecatedVersionDialogWidget(this);
