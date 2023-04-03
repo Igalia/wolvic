@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import androidx.lifecycle.Observer;
 
 import com.igalia.wolvic.R;
@@ -28,6 +29,7 @@ import com.igalia.wolvic.ui.widgets.prompts.AlertPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.AuthPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ChoicePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ConfirmPromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.DateTimePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.FilePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.PromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SaveLoginPromptWidget;
@@ -153,7 +155,6 @@ public class PromptDelegate implements
     @Override
     public WResult<PromptResponse> onAlertPrompt(@NonNull WSession session, @NonNull AlertPrompt alertPrompt) {
         final WResult<PromptResponse> result = WResult.create();
-
         mPrompt = new AlertPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
@@ -289,7 +290,7 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public WResult<PromptResponse> onColorPrompt(@NonNull WSession session, @NonNull ColorPrompt prompt) {
+    public WResult<PromptResponse> onColorPrompt(@NotNull WSession session, @NonNull ColorPrompt prompt) {
         // TODO implement color picker
         final WResult<PromptResponse> result = WResult.create();
         result.cancel();
@@ -299,7 +300,9 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
-        // TODO implement date/time picker
+        mPrompt = new DateTimePromptWidget(mContext);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mAttachedWindow.getHandle();
         final WResult<PromptResponse> result = WResult.create();
         result.cancel();
         return result;

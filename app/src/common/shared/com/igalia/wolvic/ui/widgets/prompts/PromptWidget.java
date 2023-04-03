@@ -18,7 +18,8 @@ import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
  */
 public class PromptWidget extends UIDialog {
 
-    public interface PromptDelegate {
+    public interface
+    PromptDelegate {
         void dismiss();
     }
 
