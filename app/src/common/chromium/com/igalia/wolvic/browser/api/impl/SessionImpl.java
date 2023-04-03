@@ -40,7 +40,7 @@ public class SessionImpl implements WSession {
     WMediaSession.Delegate mMediaSessionDelegate;
     DisplayImpl mDisplay;
     TextInputImpl mTextInput;
-    PanZoomCrontrollerImpl mPanZoomCrontroller;
+    PanZoomControllerImpl mPanZoomController;
     private ActivityWindowAndroid mWindowAndroid;
     private IntentRequestTracker mIntentRequestTracker;
     private TabWebContentsObserver mTabWebContentsObserver;
@@ -54,7 +54,7 @@ public class SessionImpl implements WSession {
 
     private void init() {
         mTextInput = new TextInputImpl(this);
-        mPanZoomCrontroller = new PanZoomCrontrollerImpl(this);
+        mPanZoomController = new PanZoomControllerImpl(this);
     }
 
     // TODO: Consider refactoring this method to move more appropriate place.
@@ -237,7 +237,7 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public WPanZoomController getPanZoomController() {
-        return mPanZoomCrontroller;
+        return mPanZoomController;
     }
 
     @Override
