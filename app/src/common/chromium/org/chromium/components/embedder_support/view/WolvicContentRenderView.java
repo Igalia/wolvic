@@ -31,6 +31,7 @@ public class WolvicContentRenderView extends ContentViewRenderView {
                     .onPhysicalBackingSizeChanged(
                             mNativeContentViewRenderView, this, mWebContents, width, height);
         }
+        setViewSize(width, height);
     }
 
     public void surfaceCreated(Surface surface) {
@@ -41,5 +42,9 @@ public class WolvicContentRenderView extends ContentViewRenderView {
     public void surfaceDestroyed() {
         assert mNativeContentViewRenderView != 0;
         ContentViewRenderViewJni.get().surfaceDestroyed(mNativeContentViewRenderView, this);
+    }
+
+    private void setViewSize(int width, int height) {
+        setLayoutParams(new LayoutParams(width, height));
     }
 }
