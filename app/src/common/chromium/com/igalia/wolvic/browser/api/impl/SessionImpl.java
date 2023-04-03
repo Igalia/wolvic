@@ -60,16 +60,6 @@ public class SessionImpl implements WSession {
         mPanZoomController = new PanZoomControllerImpl(this);
     }
 
-    // TODO: Consider refactoring this method to move more appropriate place.
-    private BrowserDisplay createBrowserDisplay() {
-        BrowserDisplay browserDisplay = new BrowserDisplay(mRuntime.getContext());
-
-        ContentShellFragment fragment = new ContentShellFragment();
-        fragment.setContentViewRenderView(mTab.getView());
-        browserDisplay.attach(mRuntime.getFragmentManager(), mRuntime.getViewContainer(), fragment);
-        return browserDisplay;
-    }
-
     @Override
     public void loadUri(@NonNull String uri, int flags) {
         if (!isOpen()) {
@@ -167,7 +157,8 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        mDisplay = new DisplayImpl(createBrowserDisplay(), this, mTab.getView());
+        mDisplay = new DisplayImpl(this, mTab.getView());
+        mRuntime.addViewToBrowserContainer(mTab.getView());
         getTextInput().setView(getContentView());
         return mDisplay;
     }

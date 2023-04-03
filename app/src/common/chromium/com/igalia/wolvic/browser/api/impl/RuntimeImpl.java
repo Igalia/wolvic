@@ -4,11 +4,13 @@ import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
@@ -43,6 +45,13 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     public Context getContext() {
         return mContext;
+    }
+
+    public void addViewToBrowserContainer(View view) {
+        SettingsStore settings = SettingsStore.getInstance(mContext);
+        // using the default window size here, it will be updated later in onSurfaceChanged()
+        mViewContainer.addView(view,
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
     }
 
     @Override

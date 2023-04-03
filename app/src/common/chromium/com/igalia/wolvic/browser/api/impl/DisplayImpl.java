@@ -14,14 +14,12 @@ import org.chromium.components.embedder_support.view.WolvicContentRenderView;
 import org.chromium.content_public.browser.RenderFrameHost;
 
 public class DisplayImpl implements WDisplay {
-    @NonNull BrowserDisplay mDisplay;
     @NonNull SessionImpl mSession;
     private int mWidth = 1;
     private Surface mSurface;
     private WolvicContentRenderView mRenderView;
 
-    public DisplayImpl(@NonNull BrowserDisplay display, @NonNull SessionImpl session, WolvicContentRenderView renderView) {
-        mDisplay = display;
+    public DisplayImpl(@NonNull SessionImpl session, WolvicContentRenderView renderView) {
         mSession = session;
         mRenderView = renderView;
     }
