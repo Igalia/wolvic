@@ -23,7 +23,9 @@ git clone git@github.com:Igalia/wolvic.git
 cd wolvic
 ```
 *Initialize and update the Git submodules.*
+
 This will include the vrb submodule.
+
 ```bash
 git submodule init
 git submodule update
