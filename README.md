@@ -22,7 +22,12 @@ For more info on localization, how it works in the Wolvic XR project, and how to
 git clone git@github.com:Igalia/wolvic.git
 cd wolvic
 ```
-
+*Initialize and update the Git submodules.*
+This will include the vrb submodule.
+```bash
+git submodule init
+git submodule update
+```
 *Clone the third-party repo.*
 
 If you're developing for the Oculus, Huawei, Pico, or VIVE, you need to clone the repo with third-party SDK files.
