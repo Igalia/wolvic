@@ -607,6 +607,10 @@ dependencies {
     // DiskLRUCache used to cache snapshots
     implementation deps.disklrucache.disklrucache
 
+    // Required for targeting S+
+    implementation deps.work.runtime
+    implementation deps.work.runtime_ktx
+
     // Testing
     androidTestImplementation deps.atsl.runner
     androidTestImplementation deps.espresso.core
