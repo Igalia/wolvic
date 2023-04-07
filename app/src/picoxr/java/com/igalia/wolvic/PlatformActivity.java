@@ -6,11 +6,8 @@
 package com.igalia.wolvic;
 
 import android.app.NativeActivity;
+import android.content.Intent;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.WindowManager;
-
-import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {
 
@@ -27,6 +24,11 @@ public class PlatformActivity extends NativeActivity {
     public static boolean isPositionTrackingSupported() {
         // Dummy implementation.
         return true;
+    }
+
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
     }
 
     @Override
