@@ -672,7 +672,7 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 androidComponents {
     onVariants(selector().all(), { variant ->
         // HVR packages for China must use different applicationIds.
-        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn(Release|Debug)/
+        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn\p{Alnum}+(Release|Debug)/
         if (hvrChinaBuildPattern.matcher(variant.name).matches())
             variant.applicationId = variant.applicationId.get().replace('com.igalia','com.cn.igalia')
     })
