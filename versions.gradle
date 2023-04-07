@@ -51,7 +51,7 @@ versions.kotlin_coroutines = "1.3.9"
 versions.snakeyaml = "1.24"
 versions.gson = "2.8.5"
 versions.robolectric = "4.2.1"
-versions.work = "2.2.0"
+versions.work = "2.7.0"
 versions.jna = "5.9.0"
 versions.wavevr = "3.99.41"
 ext.versions = versions
@@ -115,6 +115,8 @@ support.vector_drawable = "androidx.vectordrawable:vectordrawable:$versions.supp
 deps.support = support
 
 def work = [:]
+work.runtime = "androidx.work:work-runtime:$versions.work"
+work.runtime_ktx = "androidx.work:work-runtime-ktx:$versions.work"
 work.testing = "androidx.work:work-testing:$versions.work"
 deps.work = work
 
