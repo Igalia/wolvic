@@ -2020,6 +2020,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Start Browsing</string>
 
+    <string name="deprecated_version_dialog_title">Recommended update</string>
+    <string name="deprecated_version_dialog_body">You are currently running an \"App Lab\" development version of Wolvic.
+        \n\nPlease install the newest version of Wolvic from the Oculus Store.
+        \n\nIMPORTANT: unless you use Firefox Sync, the new Wolvic app will not have your bookmarks and tabs.</string>
+    <string name="deprecated_version_dialog_info_button">Learn more…</string>
+    <string name="deprecated_version_dialog_info_url" translatable="false">https://wolvic.com/support/firefox-sync/</string>
+    <string name="deprecated_version_dialog_store_button">Install…</string>
 
     <!-- This string is displayed in the title of the slow script dialog. -->
     <string name="slow_script_dialog_title">Slow script</string>
@@ -2044,7 +2051,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="popup_dialog_button_on">On</string>
 
     <!-- This string is displayed in the off button of the quick Popup blocking dialog when it's in disabled state. It's accessed from the Popup icon in the URL bar. -->
-    <string name="popup_dialog_button_off">Off</string>
+    <string name="popup_dialog_button_off">Off</string>https://wolvic.com/support/firefox-sync/
 
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the status of the setting.

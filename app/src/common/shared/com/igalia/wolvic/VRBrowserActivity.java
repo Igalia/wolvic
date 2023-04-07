@@ -81,6 +81,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.DeprecatedVersionDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.LegalDocumentDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
@@ -340,6 +341,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         }
 
+        // Show the deprecated version dialog, if needed.
+        showDeprecatedVersionDialogIfNeeded();
+
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
     }
 
@@ -426,6 +430,39 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     WRuntime.CrashReportIntent getCrashReportIntent() {
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
+    }
+
+    // A dialog to tell App Lab users to download Wolvic from the Meta store.
+    // Returns true if the dialog was shown, false otherwise.
+    private void showDeprecatedVersionDialogIfNeeded() {
+        // Only show this dialog to users running the App Lab version of Wolvic.
+        if (!DeviceType.getStoreType().equals(DeviceType.StoreType.META_APP_LAB))
+            return;
+
+        DeprecatedVersionDialogWidget deprecatedVersionDialog = new DeprecatedVersionDialogWidget(this);
+
+        deprecatedVersionDialog.setDelegate(response -> {
+            switch (response) {
+                case DeprecatedVersionDialogWidget.OPEN_STORE:
+                    Intent storeIntent = getStoreIntent();
+                    if (storeIntent != null) {
+                        Log.w(LOGTAG, "Start app store activity.");
+                        startActivity(storeIntent);
+                    } else {
+                        Log.e(LOGTAG, "Unsupported: can not start app store activity.");
+                    }
+                    break;
+
+                case DeprecatedVersionDialogWidget.SHOW_INFO:
+                    mWindows.openNewTabAfterRestore(getString(R.string.deprecated_version_dialog_info_url), Windows.OPEN_IN_FOREGROUND);
+                    break;
+
+                case DeprecatedVersionDialogWidget.DISMISS:
+                    // no action
+            }
+        });
+        deprecatedVersionDialog.attachToWindow(mWindows.getFocusedWindow());
+        deprecatedVersionDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     // Returns true if the dialog was shown, false otherwise.

@@ -6,6 +6,7 @@
 package com.igalia.wolvic;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,11 @@ public class PlatformActivity extends Activity {
     public static boolean isPositionTrackingSupported() {
         // Dummy implementation.
         return false;
+    }
+
+    protected Intent getStoreIntent() {
+        // Dummy implementation.
+        return null;
     }
 
     private GLSurfaceView mView;
