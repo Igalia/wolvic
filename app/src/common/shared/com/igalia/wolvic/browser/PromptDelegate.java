@@ -290,7 +290,7 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public WResult<PromptResponse> onColorPrompt(@NotNull WSession session, @NonNull ColorPrompt prompt) {
+    public WResult<PromptResponse> onColorPrompt(@NonNull WSession session, @NonNull ColorPrompt prompt) {
         // TODO implement color picker
         final WResult<PromptResponse> result = WResult.create();
         result.cancel();
@@ -300,11 +300,24 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
+        final WResult<PromptResponse> result = WResult.create();
         mPrompt = new DateTimePromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-        mAttachedWindow.getHandle();
-        final WResult<PromptResponse> result = WResult.create();
-        result.cancel();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.setTitle(prompt.title());
+        mPrompt.setPromptDelegate(new DateTimePromptWidget.DateTimePromptDelegate() {
+            @Override
+            public void confirm(@NonNull final String color) {
+                result.complete(prompt.confirm(color));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
         return result;
     }
 
