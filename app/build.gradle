@@ -254,7 +254,6 @@ android {
 
         lynx {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_lynx
             externalNativeBuild {
                 cmake {
                     cppFlags " -DLYNX -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -266,7 +265,6 @@ android {
         spaces {
             dimension "platform"
             minSdkVersion build_versions.min_sdk_spaces
-            targetSdkVersion build_versions.target_sdk_spaces
             externalNativeBuild {
                 cmake {
                     cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -277,7 +275,6 @@ android {
 
         hvr {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_hvr
             externalNativeBuild {
                 cmake {
                     cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
