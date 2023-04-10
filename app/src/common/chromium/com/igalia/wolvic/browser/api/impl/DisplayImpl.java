@@ -4,12 +4,14 @@ import android.graphics.Bitmap;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
 import org.chromium.components.embedder_support.view.WolvicContentRenderView;
+import org.chromium.content_public.browser.RenderFrameHost;
 
 public class DisplayImpl implements WDisplay {
     @NonNull BrowserDisplay mDisplay;
@@ -27,7 +29,7 @@ public class DisplayImpl implements WDisplay {
     @Override
     public void surfaceChanged(@NonNull Surface surface, int width, int height) {
         mWidth = width;
-        if (mSurface == null) {
+        if (mSurface != surface) {
             // Dispatch onSurfaceCreated
             mRenderView.surfaceCreated(surface);
         }
@@ -39,6 +41,16 @@ public class DisplayImpl implements WDisplay {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+
+        RenderFrameHost frameHost = mRenderView.getCurrentWebContents().getMainFrame();
+        frameHost.insertVisualStateCallback(updated -> {
+            if (updated) {
+                @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
+                if (delegate != null) {
+                    delegate.onFirstComposite(mSession);
+                }
+            }
+        });
     }
 
     @Override
