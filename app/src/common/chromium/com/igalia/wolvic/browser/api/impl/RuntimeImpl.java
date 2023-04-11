@@ -25,9 +25,6 @@ import mozilla.components.concept.fetch.Client;
 import mozilla.components.concept.storage.LoginsStorage;
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
-import org.chromium.content_public.browser.WebContents;
-import org.chromium.wolvic.TabJni;
-
 public class RuntimeImpl implements WRuntime {
     private BrowserInitializer mBrowserInitializer;
     private Context mContext;
@@ -46,10 +43,6 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     public Context getContext() {
         return mContext;
-    }
-
-    public WebContents createWebContents() {
-        return TabJni.get().createWebContents();
     }
 
     @Override
@@ -136,5 +129,10 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     public FragmentManager getFragmentManager() {
         return mFragmentManager;
+    }
+
+    @NonNull
+    public BrowserInitializer getBrowserInitializer() {
+        return mBrowserInitializer;
     }
 }

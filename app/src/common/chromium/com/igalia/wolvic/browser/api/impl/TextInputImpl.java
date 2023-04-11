@@ -94,7 +94,7 @@ public class TextInputImpl implements WTextInput {
     @NonNull
     @Override
     public Handler getHandler(@NonNull Handler defHandler) {
-        ImeAdapter imeAdapter = ImeAdapter.fromWebContents(mSession.getCurrentWebContents());
+        ImeAdapter imeAdapter = getImeAdapter();
         if (imeAdapter == null) return defHandler;
 
         InputConnection ic = imeAdapter.getActiveInputConnection();
@@ -116,7 +116,7 @@ public class TextInputImpl implements WTextInput {
         if (contentView == null || contentView != view) return;
 
         mView = view;
-        ImeAdapter imeAdapter = ImeAdapter.fromWebContents(mSession.getCurrentWebContents());
+        ImeAdapter imeAdapter = getImeAdapter();
         if (imeAdapter == null) return;
         imeAdapter.setInputMethodManagerWrapper(mInputMethodManagerWrapper);
     }
@@ -124,7 +124,7 @@ public class TextInputImpl implements WTextInput {
     @Nullable
     @Override
     public InputConnection onCreateInputConnection(@NonNull EditorInfo attrs) {
-        return ImeAdapter.fromWebContents(mSession.getCurrentWebContents()).onCreateInputConnection(attrs);
+        return getImeAdapter().onCreateInputConnection(attrs);
     }
 
     @Override
@@ -171,5 +171,9 @@ public class TextInputImpl implements WTextInput {
     @Override
     public WSession.TextInputDelegate getDelegate() {
         return mDelegate;
+    }
+
+    private ImeAdapter getImeAdapter() {
+        return mSession.getTab() != null ? mSession.getTab().getImeAdapter() : null;
     }
 }
