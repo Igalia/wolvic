@@ -42,7 +42,7 @@ public class DisplayImpl implements WDisplay {
             throw new RuntimeException(ex);
         }
 
-        RenderFrameHost frameHost = mRenderView.getCurrentWebContents().getMainFrame();
+        RenderFrameHost frameHost = mSession.getTab().getWebContents().getMainFrame();
         frameHost.insertVisualStateCallback(updated -> {
             if (updated) {
                 @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();

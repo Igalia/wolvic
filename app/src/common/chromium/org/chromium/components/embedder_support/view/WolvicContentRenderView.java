@@ -42,7 +42,4 @@ public class WolvicContentRenderView extends ContentViewRenderView {
         assert mNativeContentViewRenderView != 0;
         ContentViewRenderViewJni.get().surfaceDestroyed(mNativeContentViewRenderView, this);
     }
-
-    @Nullable
-    public WebContents getCurrentWebContents() { return mWebContents; }
 }
