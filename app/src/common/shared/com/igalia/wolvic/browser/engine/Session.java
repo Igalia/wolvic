@@ -1547,11 +1547,11 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     @Nullable
     @Override
-    public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession aSession, @NonNull DateTimePrompt dateTimePrompt) {
+    public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession aSession, @NonNull DatePrompt datePrompt) {
         if (mState.mSession == aSession && mPromptDelegate != null) {
-            return mPromptDelegate.onDateTimePrompt(aSession, dateTimePrompt);
+            return mPromptDelegate.onDateTimePrompt(aSession, datePrompt);
         }
-        return WResult.fromValue(dateTimePrompt.dismiss());
+        return WResult.fromValue(datePrompt.dismiss());
     }
 
     @Nullable

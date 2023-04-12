@@ -29,12 +29,13 @@ import com.igalia.wolvic.ui.widgets.prompts.AlertPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.AuthPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ChoicePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ConfirmPromptWidget;
-import com.igalia.wolvic.ui.widgets.prompts.DateTimePromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.DatePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.FilePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.PromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SaveLoginPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SelectLoginPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.TextPromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.TimePromptWidget;
 import com.igalia.wolvic.ui.widgets.settings.SettingsView;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
@@ -299,14 +300,38 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
+    public WResult<PromptResponse> onDatePrompt(@NonNull WSession session, @NonNull DatePrompt prompt) {
         final WResult<PromptResponse> result = WResult.create();
-        mPrompt = new DateTimePromptWidget(mContext);
+        mPrompt = new DatePromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
         mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(prompt.title());
-        mPrompt.setPromptDelegate(new DateTimePromptWidget.DateTimePromptDelegate() {
+        mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
+            @Override
+            public void confirm(@NonNull final String color) {
+                result.complete(prompt.confirm(color));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public WResult<PromptResponse> onTimePrompt(@NonNull WSession session, @NonNull DatePrompt prompt) {
+        final WResult<PromptResponse> result = WResult.create();
+        mPrompt = new TimePromptWidget(mContext);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.setTitle(prompt.title());
+        mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
             @Override
             public void confirm(@NonNull final String color) {
                 result.complete(prompt.confirm(color));

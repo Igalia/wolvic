@@ -132,8 +132,8 @@ class PromptDelegateImpl implements GeckoSession.PromptDelegate {
         }
     }
 
-    private static abstract class DateTimePromptImpl extends BasePromptImpl<DateTimePrompt> implements WSession.PromptDelegate.DateTimePrompt {
-        public DateTimePromptImpl(DateTimePrompt geckoPrompt) {
+    private static abstract class DatePromptImpl extends BasePromptImpl<DateTimePrompt> implements WSession.PromptDelegate.DatePrompt {
+        public DatePromptImpl(DateTimePrompt geckoPrompt) {
             super(geckoPrompt);
         }
     }
@@ -470,7 +470,7 @@ class PromptDelegateImpl implements GeckoSession.PromptDelegate {
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onDateTimePrompt(@NonNull GeckoSession session, @NonNull DateTimePrompt prompt) {
-        return map(mDelegate.onDateTimePrompt(mSession, new DateTimePromptImpl(prompt) {
+        return map(mDelegate.onDateTimePrompt(mSession, new DatePromptImpl(prompt) {
             @Override
             public int type() {
                 switch (mGeckoPrompt.type) {
