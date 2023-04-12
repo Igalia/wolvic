@@ -10,38 +10,23 @@ import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
-import org.chromium.components.embedder_support.view.WolvicContentRenderView;
-import org.chromium.content_public.browser.RenderFrameHost;
+import org.chromium.wolvic.TabCompositorView;
 
 public class DisplayImpl implements WDisplay {
     @NonNull SessionImpl mSession;
     private int mWidth = 1;
-    private Surface mSurface;
-    private WolvicContentRenderView mRenderView;
+    private TabCompositorView mTabCompositorView;
 
-    public DisplayImpl(@NonNull SessionImpl session, WolvicContentRenderView renderView) {
+    public DisplayImpl(@NonNull SessionImpl session,  @NonNull TabCompositorView TabCompositorView) {
         mSession = session;
-        mRenderView = renderView;
+        mTabCompositorView = TabCompositorView;
     }
 
     @Override
     public void surfaceChanged(@NonNull Surface surface, int width, int height) {
         mWidth = width;
-        if (mSurface != surface) {
-            // Dispatch onSurfaceCreated
-            mRenderView.surfaceCreated(surface);
-        }
-        mSurface = surface;
-
-        try {
-            // Dispatch onSurfaceChanged
-            mRenderView.surfaceChanged(surface, width, height);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
-        RenderFrameHost frameHost = mSession.getTab().getWebContents().getMainFrame();
-        frameHost.insertVisualStateCallback(updated -> {
+        mTabCompositorView.surfaceChanged(surface, width, height);
+        mTabCompositorView.insertVisualStateCallback(updated -> {
             if (updated) {
                 @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
                 if (delegate != null) {
@@ -58,16 +43,7 @@ public class DisplayImpl implements WDisplay {
 
     @Override
     public void surfaceDestroyed() {
-        if (mSurface == null) {
-            return;
-        }
-        try {
-            mRenderView.surfaceDestroyed();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            mSurface = null;
-        }
+        mTabCompositorView.surfaceDestroyed();
     }
 
     @NonNull

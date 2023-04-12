@@ -156,8 +156,8 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        mDisplay = new DisplayImpl(this, mTab.getView());
-        mRuntime.addViewToBrowserContainer(mTab.getView());
+        mDisplay = new DisplayImpl(this, mTab.getCompositorView());
+        mRuntime.addViewToBrowserContainer(mTab.getCompositorView());
         getTextInput().setView(getContentView());
         return mDisplay;
     }
