@@ -420,9 +420,10 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.pointer->Load(device);
     }
 
-    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
-      (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
-      (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
+    if (controller.mode == ControllerMode::Device &&
+        ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
+         (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
+         (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y)))) {
       SimulateBack();
     }
 
