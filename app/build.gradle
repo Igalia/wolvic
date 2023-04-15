@@ -388,6 +388,11 @@ android {
         // MetaStore and AppLab only apply to oculusvr builds.
         if ((store == 'metaStore' || store == "appLab") && !platform.startsWith('oculusvr'))
             variant.setIgnore(true);
+        
+        // Throw an error if a store flavor is built with openxr=false
+        if (store == 'generic' && !project.hasProperty('openxr') || project.getProperty('openxr') == false) {
+            throw new GradleException('Cannot build a store flavor with openxr=false')
+        }
     }
 
     sourceSets {
