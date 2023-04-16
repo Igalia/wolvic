@@ -15,8 +15,7 @@ import com.igalia.wolvic.audio.AudioEngine;
 
 
 public class TimePromptWidget extends PromptWidget implements TimePickerDialog.OnTimeSetListener {
-    // TODO() RUN THIS TIME PROMPT AND THE DATEPROMPT.
-// TODO() FIX THE BACKEND CODE TO RECOGNISE WHEN TO CALL WHICH PROMPT.
+    // TODO() FIX THE BACKEND CODE TO RECOGNISE WHEN TO CALL WHICH PROMPT.
     //TODO() Run this and setup logs to check where the file crashes, if it crashes.
     private AudioEngine mAudio;
     private Button mCancelButton, mOkButton;
@@ -50,7 +49,7 @@ public class TimePromptWidget extends PromptWidget implements TimePickerDialog.O
         Log.d("HARI2", currentHour.toString());
 
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
-        Log.d("HARI3", currentMinute.toString());
+        Log.d("HARI3", timePicker.toString());
         //Sets the time.
         TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
                 new TimePickerDialog.OnTimeSetListener() {
@@ -62,8 +61,6 @@ public class TimePromptWidget extends PromptWidget implements TimePickerDialog.O
                         Log.d("HARI5", String.valueOf(hour));
                         currentMinute[0] = minute;
                         Log.d("HARI55", String.valueOf(minute));
-
-
                     }
                 }, currentHour[0], currentMinute[0], false);
         Log.d("HARI6", String.valueOf(timePickerDialog));
@@ -152,13 +149,9 @@ public class TimePromptWidget extends PromptWidget implements TimePickerDialog.O
 
     @Override
     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-
+        //Needed()??
+        Log.d("HARI15","inside on time set");
     }
-
-//    @Override
-//    public void onTimeSet(TimePicker timePicker, int i, int i1) {
-//
-//    }
 
     public interface TimePromptDelegate extends PromptDelegate {
         void confirm(@NonNull final String time);
