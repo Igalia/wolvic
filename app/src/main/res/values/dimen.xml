@@ -1,6 +1,6 @@
 <resources>
     <!-- World -->
-    <dimen name="world_width">800px</dimen>
+    <dimen name="world_width">1000px</dimen>
 
     <!-- Browser window -->
     <item name="window_world_width" format="float" type="dimen">4.0</item>
