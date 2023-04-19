@@ -652,6 +652,9 @@ dependencies {
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
+         resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-common:1.4.10','org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2', 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2', 'androidx.annotation:annotation:1.1.0'
+         }
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
             def abi = getName().toLowerCase().contains('x86_64') ? 'x86_64' : 'arm64'
             def candidate = "geckoview-${branch}-${abi}"
