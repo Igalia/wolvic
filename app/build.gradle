@@ -385,6 +385,7 @@ android {
         // MetaStore and AppLab only apply to oculusvr builds.
         if ((store == 'metaStore' || store == "appLab") && !platform.startsWith('oculusvr'))
             variant.setIgnore(true);
+        
     }
 
     sourceSets {
@@ -686,6 +687,12 @@ if (findProject(':wavesdk')) {
 
 if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
     throw new GradleException("geckoViewLocal{Arm,X86} are deprecated: use geckoViewLocalTopsrcdir and geckoViewLocalTopobjdir")
+}
+
+if(gradle.hasProperty("userProperties.openxr") && !gradle.startParameter.taskNames.isEmpty()){
+    if (!(gradle.startParameter.taskNames.any { it.contains("Generic") }) && gradle."userProperties.openxr" == "false") {
+        throw new GradleException('Cannot build a store flavor with openxr=false ')
+    }
 }
 
 if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
