@@ -294,7 +294,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onCreate(savedInstanceState);
 
         mWidgetContainer = new FrameLayout(this);
-        runtime.setFragmentManager(mFragmentController.getSupportFragmentManager(), mWidgetContainer);
+        runtime.setContainerView(mWidgetContainer);
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 

@@ -3,19 +3,16 @@ package com.igalia.wolvic.browser.api.impl;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
-import com.igalia.wolvic.utils.SystemUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +29,7 @@ public class RuntimeImpl implements WRuntime {
     private Context mContext;
     private WRuntimeSettings mRuntimeSettings;
     private WebExtensionControllerImpl mWebExtensionController;
-    private ViewGroup mViewContainer;
-    private FragmentManager mFragmentManager;
+    private ViewGroup mContainerView;
 
     public RuntimeImpl(@NonNull Context ctx, @NonNull WRuntimeSettings settings) {
         mContext = ctx;
@@ -50,7 +46,7 @@ public class RuntimeImpl implements WRuntime {
     public void addViewToBrowserContainer(View view) {
         SettingsStore settings = SettingsStore.getInstance(mContext);
         // using the default window size here, it will be updated later in onSurfaceChanged()
-        mViewContainer.addView(view,
+        mContainerView.addView(view,
                 new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
     }
 
@@ -90,9 +86,8 @@ public class RuntimeImpl implements WRuntime {
     }
 
     @Override
-    public void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container) {
-        mFragmentManager = fragmentManager;
-        mViewContainer = container;
+    public void setContainerView(@NonNull ViewGroup containerView) {
+        mContainerView = containerView;
     }
 
     @Override
@@ -131,13 +126,8 @@ public class RuntimeImpl implements WRuntime {
     }
 
     @NonNull
-    public ViewGroup getViewContainer() {
-        return mViewContainer;
-    }
-
-    @NonNull
-    public FragmentManager getFragmentManager() {
-        return mFragmentManager;
+    public ViewGroup getContainerView() {
+        return mContainerView;
     }
 
     @NonNull

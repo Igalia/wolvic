@@ -11,7 +11,6 @@ import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.fragment.app.FragmentManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -144,11 +143,10 @@ public interface WRuntime {
      */
     void setExternalVRContext(long externalContext);
 
-    /*
-     * Sets the fragment manager. Some engines need it to add sessions/tabs into a view to display them.
+    /**
+     * Sets the container view. Some engines attach sessions/tabs to it in order to display them.
      */
-    void setFragmentManager(@NonNull FragmentManager fragmentManager, @NonNull ViewGroup container);
-
+    void setContainerView(@NonNull ViewGroup containerView);
 
     /*
      * Returns the view density (devicePixelRatio) that should be used to display browser engine session.
