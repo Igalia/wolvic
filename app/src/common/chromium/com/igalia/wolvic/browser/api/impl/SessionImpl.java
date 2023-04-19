@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -42,7 +41,7 @@ public class SessionImpl implements WSession {
         public void onReady() {
             assert mTab == null;
             mTab = new TabImpl(
-                    mRuntime.getViewContainer().getContext(), SessionImpl.this);
+                    mRuntime.getContainerView().getContext(), SessionImpl.this);
             if (mInitialUri != null) {
                 mTab.loadUrl(mInitialUri);
                 mInitialUri = null;
