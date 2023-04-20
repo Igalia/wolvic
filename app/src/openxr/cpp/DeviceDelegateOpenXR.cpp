@@ -42,6 +42,7 @@
 #include "OpenXRInputMappings.h"
 #include "OpenXRExtensions.h"
 #include "OpenXRLayers.h"
+#include "OpenXRPassthroughStrategy.h"
 
 namespace crow {
 
@@ -105,6 +106,7 @@ struct DeviceDelegateOpenXR::State {
   XrPassthroughFB passthrough { XR_NULL_HANDLE };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
   bool passthroughErrorState { false };
+  PassthroughStrategyPtr passthroughStrategy;
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -139,6 +141,14 @@ struct DeviceDelegateOpenXR::State {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
+
+#if defined(OCULUSVR)
+    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
+#elif defined(LYNX) || defined(SPACES)
+    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
+#else
+    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNone>();
+#endif
 
 #ifndef HVR
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
@@ -1130,11 +1140,11 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   layers.clear();
 
   // This limit is valid at least for Pico and Meta.
-  auto submitEndFrame = [&layers, displayTime, session = m.session]() {
+  auto submitEndFrame = [&layers, displayTime, session = m.session, isPassthroughEnabled = mIsPassthroughEnabled, passthroughStrategy = m.passthroughStrategy.get()]() {
       static int i = 0;
       XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
       frameEndInfo.displayTime = displayTime;
-      frameEndInfo.environmentBlendMode = XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      frameEndInfo.environmentBlendMode = isPassthroughEnabled ? passthroughStrategy->environmentBlendModeForPassthrough() : XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
       CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
@@ -1150,15 +1160,17 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   }
 
   // Add skybox or passthrough layer
-  if (m.passthroughLayer != nullptr && m.passthroughLayer->IsDrawRequested() && m.CanEnablePassthrough()) {
-    XrCompositionLayerPassthroughFB passthroughCompLayer = {
-      .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
-      .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
-      .space = XR_NULL_HANDLE,
-      .layerHandle = m.passthroughLayer->xrLayer,
-    };
-    layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
-    m.passthroughLayer->ClearRequestDraw();
+  if (mIsPassthroughEnabled) {
+      if (m.passthroughLayer != nullptr && m.passthroughLayer->IsDrawRequested() && m.CanEnablePassthrough()) {
+          XrCompositionLayerPassthroughFB passthroughCompLayer = {
+                  .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
+                  .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
+                  .space = XR_NULL_HANDLE,
+                  .layerHandle = m.passthroughLayer->xrLayer,
+          };
+          layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
+          m.passthroughLayer->ClearRequestDraw();
+      }
   } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
     m.cubeLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
     for (uint32_t i = 0; i < m.cubeLayer->HeaderCount(); ++i) {
@@ -1345,6 +1357,7 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
 
 VRLayerPassthroughPtr
 DeviceDelegateOpenXR::CreateLayerPassthrough() {
+  assert(m.passthroughStrategy);
   if (!m.layersEnabled || !m.passthroughSupported || !m.passthrough) {
     return nullptr;
   }
@@ -1359,6 +1372,12 @@ DeviceDelegateOpenXR::CreateLayerPassthrough() {
     m.passthroughLayer->Init(m.javaContext->env, m.session, context);
   }
   return result;
+}
+
+bool
+DeviceDelegateOpenXR::usesPassthroughCompositorLayer() const {
+  assert(m.passthroughStrategy);
+  return m.passthroughStrategy->usesCompositorLayer();
 }
 
 void

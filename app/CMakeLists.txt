@@ -147,6 +147,7 @@ if(OPENXR)
             src/openxr/cpp/OpenXRInputSource.cpp
             src/openxr/cpp/OpenXRActionSet.cpp
             src/openxr/cpp/OpenXRExtensions.cpp
+            src/openxr/cpp/OpenXRPassthroughStrategy.cpp
     )
 
 elseif(OCULUSVR)
