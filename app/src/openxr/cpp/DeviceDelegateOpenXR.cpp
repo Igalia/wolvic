@@ -102,10 +102,7 @@ struct DeviceDelegateOpenXR::State {
   bool mHandTrackingSupported = false;
   std::vector<float> refreshRates;
   bool reorientRequested { false };
-  bool passthroughSupported { false };
-  XrPassthroughFB passthrough { XR_NULL_HANDLE };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
-  bool passthroughErrorState { false };
   PassthroughStrategyPtr passthroughStrategy;
 
   bool IsPositionTrackingSupported() {
@@ -141,14 +138,6 @@ struct DeviceDelegateOpenXR::State {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
     }
     layersEnabled = VRBrowser::AreLayersEnabled();
-
-#if defined(OCULUSVR)
-    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
-#elif defined(LYNX) || defined(SPACES)
-    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
-#else
-    passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNone>();
-#endif
 
 #ifndef HVR
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
@@ -259,9 +248,17 @@ struct DeviceDelegateOpenXR::State {
 
     mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
+    VRB_LOG("OpenXR runtime %s FB passthrough extension", passthroughProperties.supportsPassthrough ? "does support" : "doesn't support");
 
-    passthroughSupported = passthroughProperties.supportsPassthrough;
-    VRB_LOG("OpenXR runtime %s passthrough", passthroughSupported ? "does support" : "doesn't support");
+    if (passthroughProperties.supportsPassthrough) {
+        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
+    } else {
+#if defined(LYNX) || defined(SPACES)
+        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
+#else
+        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
+#endif
+    }
 
     InitializeDeviceType();
   }
@@ -646,12 +643,6 @@ struct DeviceDelegateOpenXR::State {
         passthroughLayer = nullptr;
     }
 
-    // Release passthrough handle
-    if (passthrough != XR_NULL_HANDLE) {
-      CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughFB (passthrough));
-      passthrough = XR_NULL_HANDLE;
-    }
-
     // Release spaces
     if (viewSpace != XR_NULL_HANDLE) {
       CHECK_XRCMD(xrDestroySpace(viewSpace));
@@ -675,6 +666,12 @@ struct DeviceDelegateOpenXR::State {
 
     // Release input
     input = nullptr;
+
+    if (passthroughStrategy) {
+        // Explicitly destroy it before releasing session and instance as the strategy might
+        // have derived object handles (like the FB extension one)
+        passthroughStrategy = nullptr;
+    }
 
     if (session) {
       CHECK_XRCMD(xrDestroySession(session));
@@ -701,57 +698,8 @@ struct DeviceDelegateOpenXR::State {
       }
   }
 
-  void InitializePassthrough() {
-    if (!passthroughSupported || session == XR_NULL_HANDLE)
-      return;
-
-    assert(OpenXRExtensions::sXrCreatePassthroughFB != nullptr && passthrough == XR_NULL_HANDLE);
-
-    XrPassthroughCreateInfoFB passthroughCreateInfo = {
-      .type = XR_TYPE_PASSTHROUGH_CREATE_INFO_FB,
-      .flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB,
-    };
-    CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughFB(session, &passthroughCreateInfo, &passthrough));
-  }
-
-  void HandlePassthroughEvent(const XrEventDataPassthroughStateChangedFB& event) {
-    XrPassthroughStateChangedFlagsFB passthroughState = event.flags;
-    passthroughErrorState = false;
-
-    if ((passthroughState & XR_PASSTHROUGH_STATE_CHANGED_REINIT_REQUIRED_BIT_FB) ||
-        (passthroughState & XR_PASSTHROUGH_STATE_CHANGED_NON_RECOVERABLE_ERROR_BIT_FB)) {
-      // Destroy and re-create passthrough instance and layer
-      if (passthroughLayer->xrLayer != XR_NULL_HANDLE) {
-        passthroughLayer->Destroy();
-        passthroughLayer->xrLayer = XR_NULL_HANDLE;
-      }
-      if (passthrough != XR_NULL_HANDLE) {
-        CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughFB (passthrough));
-        passthrough = XR_NULL_HANDLE;
-      }
-      passthroughErrorState = true;
-    }
-
-    if (passthroughState & XR_PASSTHROUGH_STATE_CHANGED_REINIT_REQUIRED_BIT_FB) {
-      InitializePassthrough();
-      if (passthrough != XR_NULL_HANDLE) {
-          vrb::RenderContextPtr ctx = context.lock();
-          passthroughLayer->Init(javaContext->env, session, ctx);
-      }
-      passthroughErrorState = false;
-    } else if ((passthroughState & XR_PASSTHROUGH_STATE_CHANGED_RESTORED_ERROR_BIT_FB)) {
-      passthroughErrorState = false;
-    } else {
-      // XR_PASSTHROUGH_STATE_CHANGED_RECOVERABLE_ERROR_BIT_FB
-      passthroughErrorState = true;
-    }
-  }
-
-  bool CanEnablePassthrough() {
-    if (!passthroughSupported || passthrough == XR_NULL_HANDLE || passthroughErrorState)
-      return false;
-
-    if (passthroughLayer == nullptr || passthroughLayer->xrLayer == XR_NULL_HANDLE)
+  bool IsPassthroughLayerReady() {
+    if (!passthroughStrategy->isReady() || passthroughLayer == nullptr || passthroughLayer->xrLayer == XR_NULL_HANDLE)
       return false;
 
     return true;
@@ -912,9 +860,18 @@ DeviceDelegateOpenXR::ProcessEvents() {
         VRB_DEBUG("OpenXR: reference space changed. User recentered the view?");
         break;
       case XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB: {
-        const auto &event =
-                *reinterpret_cast<const XrEventDataPassthroughStateChangedFB *>(ev);
-        m.HandlePassthroughEvent(event);
+        auto result = m.passthroughStrategy->handleEvent(*ev);
+        if (result == OpenXRPassthroughStrategy::HandleEventResult::NonRecoverableError) {
+            if (m.passthroughLayer->xrLayer != XR_NULL_HANDLE) {
+                m.passthroughLayer->Destroy();
+                m.passthroughLayer->xrLayer = XR_NULL_HANDLE;
+            }
+        } else if (result == OpenXRPassthroughStrategy::HandleEventResult::NeedsReinit) {
+            // TODO: return a bool with the initialization result?
+            m.passthroughStrategy->initializePassthrough(m.session);
+            vrb::RenderContextPtr ctx = m.context.lock();
+            m.passthroughLayer->Init(m.javaContext->env, m.session, ctx);
+        }
         break;
       }
       default: {
@@ -1161,7 +1118,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
 
   // Add skybox or passthrough layer
   if (mIsPassthroughEnabled) {
-      if (m.passthroughLayer != nullptr && m.passthroughLayer->IsDrawRequested() && m.CanEnablePassthrough()) {
+      if (m.passthroughLayer && m.passthroughLayer->IsDrawRequested() && m.IsPassthroughLayerReady()) {
           XrCompositionLayerPassthroughFB passthroughCompLayer = {
                   .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
                   .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
@@ -1358,19 +1315,20 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
 VRLayerPassthroughPtr
 DeviceDelegateOpenXR::CreateLayerPassthrough() {
   assert(m.passthroughStrategy);
-  if (!m.layersEnabled || !m.passthroughSupported || !m.passthrough) {
+  if (!m.layersEnabled || !m.passthroughStrategy->usesCompositorLayer()) {
     return nullptr;
   }
 
-  VRLayerPassthroughPtr result = VRLayerPassthrough::Create();
   if (m.passthroughLayer != nullptr) {
     m.passthroughLayer->Destroy();
   }
-  m.passthroughLayer = OpenXRLayerPassthrough::Create(result, m.passthrough);
-  if (m.session != XR_NULL_HANDLE) {
-    vrb::RenderContextPtr context = m.context.lock();
-    m.passthroughLayer->Init(m.javaContext->env, m.session, context);
-  }
+  VRLayerPassthroughPtr result = VRLayerPassthrough::Create();
+  m.passthroughLayer = m.passthroughStrategy->createLayerIfSupported(result);
+  assert(m.passthroughLayer);
+
+  assert(m.session != XR_NULL_HANDLE);
+  vrb::RenderContextPtr context = m.context.lock();
+  m.passthroughLayer->Init(m.javaContext->env, m.session, context);
   return result;
 }
 
@@ -1440,7 +1398,9 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   m.InitializeViews();
   m.InitializeImmersiveDisplay();
   m.InitializeRefreshRates();
-  m.InitializePassthrough();
+
+  m.passthroughStrategy->initializePassthrough(m.session);
+
 #if OCULUSVR
   // See InitialiceDeviceType(). We overwrite the system name so that we load the proper input
   // mapping for the Quest Pro, as it incorrectly advertises itself as "Oculus Quest2"
