@@ -103,7 +103,7 @@ deps.app_services = app_services
 deps.openwnn = "jp.co.omronsoft.openwnn:openwnn:$versions.openwnn"
 
 def support = [:]
-support.annotations = "androidx.annotation:annotation:1.6.0"
+support.annotations = "androidx.annotation:annotation:1.1.0"
 support.app_compat = "androidx.appcompat:appcompat:1.4.2"
 support.recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
 support.cardview = "androidx.cardview:cardview:1.0.0"
