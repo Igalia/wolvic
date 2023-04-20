@@ -93,12 +93,16 @@ public:
     }
 
     for (uint i = 0; i < numXRLayers; ++i) {
-      xrLayers[i].layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-      xrLayers[i].space = aSpace;
-      xrLayers[i].next = XR_NULL_HANDLE;
+      // We have to explicitly cast to XrCompositionLayerBaseHeader because the
+      // XrCompositionLayerPassthroughFB structure used "flags" instead of "layerFlags". It's still
+      // a XrCompositionLayerBaseHeader though because the structs are binary compatible.
+      XrCompositionLayerBaseHeader* xrLayer = (XrCompositionLayerBaseHeader*) &xrLayers[i];
+      xrLayer->layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+      xrLayer->space = aSpace;
+      xrLayer->next = XR_NULL_HANDLE;
 
       if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE)
-        PushNextXrStructureInChain((XrBaseInStructure&)xrLayers[i], (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
+        PushNextXrStructureInChain((XrBaseInStructure&)xrLayer, (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
     }
   }
 
@@ -412,20 +416,20 @@ public:
 
 
 class OpenXRLayerPassthrough;
-
 typedef std::shared_ptr<OpenXRLayerPassthrough> OpenXRLayerPassthroughPtr;
 
-class OpenXRLayerPassthrough {
+class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB> {
   public:
-    VRLayerPassthroughPtr vrLayer;
     XrPassthroughLayerFB xrLayer;
 
     static OpenXRLayerPassthroughPtr
-    Create(const VRLayerPassthroughPtr& aLayer);
-    void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext, const XrPassthroughFB& passthroughInstance);
-    void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) {};
-    void Destroy();
-    bool IsDrawRequested() { return vrLayer->IsDrawRequested(); };
+    Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
+    void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
+    void Destroy() override;
+    bool IsDrawRequested() const override { return layer->IsDrawRequested(); };
+
+private:
+    XrPassthroughFB mPassthroughInstance;
 };
 
 }
