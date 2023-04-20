@@ -207,7 +207,6 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   VRLayerPassthroughPtr layerPassthrough;
-  bool passthroughEnabled = false;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1151,8 +1150,8 @@ BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
 void
 BrowserWorld::TogglePassthrough() {
   ASSERT_ON_RENDER_THREAD();
-  m.passthroughEnabled = !m.passthroughEnabled;
-  if (m.passthroughEnabled && !m.layerPassthrough) {
+  m.device->TogglePassthroughEnabled();
+  if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
     m.layerPassthrough = m.device->CreateLayerPassthrough();
     m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
   }
@@ -1599,7 +1598,6 @@ BrowserWorld::Create() {
 
 BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
 
-
 void
 BrowserWorld::TickWorld() {
   m.externalVR->SetCompositorEnabled(true);
@@ -1638,12 +1636,14 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
   m.device->BindEye(aEye);
 
   // Draw skybox or passthrough layer.
-  m.drawList->Reset();
-  if (m.passthroughEnabled)
-    m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
-  else
-    m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
-  m.drawList->Draw(*camera);
+  if (!m.device->IsPassthroughEnabled() || m.device->usesPassthroughCompositorLayer()) {
+    m.drawList->Reset();
+    if (m.device->IsPassthroughEnabled())
+      m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
+    else
+      m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*camera);
+  }
 
   // Draw environment if available
   if (m.layerEnvironment) {
