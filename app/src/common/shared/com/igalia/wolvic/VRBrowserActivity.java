@@ -1855,7 +1855,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public boolean isPassthroughSupported() {
-        return DeviceType.isOculusBuild();
+        return DeviceType.isOculusBuild() || DeviceType.isLynx();
     }
 
     @Override
