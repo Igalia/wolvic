@@ -656,8 +656,16 @@ dependencies {
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
-         resolutionStrategy {
-            force 'org.jetbrains.kotlin:kotlin-stdlib:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10', 'org.jetbrains.kotlin:kotlin-stdlib-common:1.4.10','org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2', 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2', 'androidx.annotation:annotation:1.1.0'
+        // TODO(jfernandez): Instead of solving the conflicts this way, we would need to determine which packages
+        // are the culprit and define their dependencies so that we can let gradle to resolve them automatically.
+        // See https://docs.gradle.org/current/userguide/dependency_resolution.html for details.
+         resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin') {
+                details.useVersion '1.4.10'
+            } else if (details.requested.group == 'org.jetbrains.kotlinx'
+                    && details.requested.name.contains('coroutines')) {
+                details.useVersion '1.4.2'
+            }
          }
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
             def abi = getName().toLowerCase().contains('x86_64') ? 'x86_64' : 'arm64'
