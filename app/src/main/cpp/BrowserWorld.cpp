@@ -165,6 +165,7 @@ struct BrowserWorld::State {
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
+  GroupPtr rootPassthroughParent;
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
   TransformPtr rootWebXRInterstitial;
@@ -225,6 +226,7 @@ struct BrowserWorld::State {
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
+    rootPassthroughParent = Group::Create(create);
     rootWebXRInterstitial = Transform::Create(create);
     //rootOpaque->AddLight(light);
     //rootTransparent->AddLight(light);
@@ -1081,16 +1083,6 @@ BrowserWorld::StartFrame() {
     }
   }
 
-  if (m.passthroughEnabled) {
-    // Lazily create Passthrough layer
-    if (!m.layerPassthrough) {
-      m.layerPassthrough = m.device->CreateLayerPassthrough();
-    }
-    m.layerPassthrough->RequestDraw();
-  } else if (m.layerPassthrough) {
-    m.layerPassthrough->ClearRequestDraw();
-  }
-
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
 #endif
@@ -1160,6 +1152,10 @@ void
 BrowserWorld::TogglePassthrough() {
   ASSERT_ON_RENDER_THREAD();
   m.passthroughEnabled = !m.passthroughEnabled;
+  if (m.passthroughEnabled && !m.layerPassthrough) {
+    m.layerPassthrough = m.device->CreateLayerPassthrough();
+    m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+  }
 }
 
 void
@@ -1641,9 +1637,12 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
 
-  // Draw skybox
+  // Draw skybox or passthrough layer.
   m.drawList->Reset();
-  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+  if (m.passthroughEnabled)
+    m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
+  else
+    m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*camera);
 
   // Draw environment if available

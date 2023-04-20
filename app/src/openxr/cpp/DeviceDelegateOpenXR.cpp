@@ -724,10 +724,9 @@ struct DeviceDelegateOpenXR::State {
 
     if (passthroughState & XR_PASSTHROUGH_STATE_CHANGED_REINIT_REQUIRED_BIT_FB) {
       InitializePassthrough();
-
       if (passthrough != XR_NULL_HANDLE) {
           vrb::RenderContextPtr ctx = context.lock();
-          passthroughLayer->Init(javaContext->env, session, ctx, passthrough);
+          passthroughLayer->Init(javaContext->env, session, ctx);
       }
       passthroughErrorState = false;
     } else if ((passthroughState & XR_PASSTHROUGH_STATE_CHANGED_RESTORED_ERROR_BIT_FB)) {
@@ -1159,6 +1158,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       .layerHandle = m.passthroughLayer->xrLayer,
     };
     layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
+    m.passthroughLayer->ClearRequestDraw();
   } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
     m.cubeLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
     for (uint32_t i = 0; i < m.cubeLayer->HeaderCount(); ++i) {
@@ -1353,10 +1353,10 @@ DeviceDelegateOpenXR::CreateLayerPassthrough() {
   if (m.passthroughLayer != nullptr) {
     m.passthroughLayer->Destroy();
   }
-  m.passthroughLayer = OpenXRLayerPassthrough::Create(result);
+  m.passthroughLayer = OpenXRLayerPassthrough::Create(result, m.passthrough);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
-    m.passthroughLayer->Init(m.javaContext->env, m.session, context, m.passthrough);
+    m.passthroughLayer->Init(m.javaContext->env, m.session, context);
   }
   return result;
 }
@@ -1373,7 +1373,7 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
     m.equirectLayer = nullptr;
     return;
   }
-  if (m.passthroughLayer && m.passthroughLayer->vrLayer == aLayer) {
+  if (m.passthroughLayer && m.passthroughLayer->layer == aLayer) {
     m.passthroughLayer->Destroy();
     m.passthroughLayer = nullptr;
     return;
