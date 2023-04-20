@@ -39,6 +39,7 @@ OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
   const uint numXRLayers = GetNumXRLayers();
   for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
+    xrLayers[i].eyeVisibility = GetEyeVisibility(i);
 #if PICOXR
     // Seems like Pico does not properly use the layerSpace.
     xrLayers[i].pose =  MatrixToXrPose(layer->GetModelTransform(eye).Translate(-kAverageHeight));
@@ -87,6 +88,7 @@ OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
     // Seems like Pico does not properly use the layerSpace.
     model = model.Translate(-kAverageHeight);
 #endif
+    xrLayers[i].eyeVisibility = GetEyeVisibility(i);
     xrLayers[i].pose.position = MatrixToXrPose(model).position;
     xrLayers[i].pose.orientation = MatrixToXrPose(layer->GetRotation()).orientation;
 
@@ -159,6 +161,7 @@ OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClear
   const uint numXRLayers = GetNumXRLayers();
   for (uint i = 0; i < numXRLayers; ++i) {
     xrLayers[i].layerFlags = 0;
+    xrLayers[i].eyeVisibility = GetEyeVisibility(i);
     xrLayers[i].swapchain = swapchain->SwapChain();
     xrLayers[i].imageArrayIndex = 0;
     xrLayers[i].orientation = XrQuaternionf {0.0f, 0.0f, 0.0f, 1.0f};
@@ -213,7 +216,7 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
   for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
     xrLayers[i].pose =  XrPoseIdentity();
-
+    xrLayers[i].eyeVisibility = GetEyeVisibility(i);
     // Map surface and rect
     device::EyeRect rect = layer->GetTextureRect(eye);
     xrLayers[i].subImage.swapchain = swapchain->SwapChain();

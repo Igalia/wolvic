@@ -83,12 +83,6 @@ public:
   virtual void
   Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override {
     const uint numXRLayers = GetNumXRLayers();
-    auto getEyeVisibility = [numXRLayers](uint i) {
-        if (numXRLayers == 1)
-          return XR_EYE_VISIBILITY_BOTH;
-        return i == 0 ? XR_EYE_VISIBILITY_LEFT : XR_EYE_VISIBILITY_RIGHT;
-    };
-
     if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE) {
         vrb::Color tintColor = layer->GetTintColor();
         if (!IsComposited() && (layer->GetClearColor().Alpha() > 0.0f)) {
@@ -100,7 +94,6 @@ public:
 
     for (uint i = 0; i < numXRLayers; ++i) {
       xrLayers[i].layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-      xrLayers[i].eyeVisibility = getEyeVisibility(i);
       xrLayers[i].space = aSpace;
       xrLayers[i].next = XR_NULL_HANDLE;
 
@@ -113,16 +106,12 @@ public:
     return swapchain;
   }
 
-  // This method is meant to be used from the outside after properly initializing the layers.
-  // DO NOT use it internally, intead use GetNumXRLayers() which retrieves the information from
-  // the VRLayer.
+  // This method was based on the eyeVisibility attribute that most XrCompositionLayers have. However
+  // that is not the case for all of them (like XrCompositionLayerPassthroughFB). We can only assume
+  // here that we have a XrCompositionLayerBaseHeader. That's why we use GetNumXRLayers() now as
+  // it does not depend on OpenXR structures but our own data.
   uint32_t HeaderCount() const override {
-    // The first layer is used for both eyes by default.
-    // Layers can override this behavior to support different settings per eye.
-    if (xrLayers[0].eyeVisibility == XR_EYE_VISIBILITY_BOTH) {
-      return 1;
-    }
-    return 2;
+    return GetNumXRLayers();
   }
 
   const XrCompositionLayerBaseHeader* Header(uint32_t aIndex) const override {
@@ -228,6 +217,12 @@ protected:
   uint GetNumXRLayers() const {
     return layer->GetUseSameLayerForBothEyes() ? 1 : xrLayers.size();
   }
+
+  XrEyeVisibility GetEyeVisibility(int32_t eyeIndex) {
+    if (GetNumXRLayers() == 1)
+      return XR_EYE_VISIBILITY_BOTH;
+    return eyeIndex == 0 ? XR_EYE_VISIBILITY_LEFT : XR_EYE_VISIBILITY_RIGHT;
+  };
 
   void PushNextXrStructureInChain(XrBaseInStructure& baseInStructure, XrBaseInStructure& newBaseInStructure) {
     newBaseInStructure.next = baseInStructure.next;
