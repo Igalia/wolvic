@@ -110,6 +110,7 @@ public:
   bool IsPassthroughEnabled() const { return mIsPassthroughEnabled; }
   void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
   virtual bool usesPassthroughCompositorLayer() const { return false; }
+  virtual int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) { return -1; };
 
 protected:
   DeviceDelegate() {}

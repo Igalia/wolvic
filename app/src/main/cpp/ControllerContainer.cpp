@@ -6,6 +6,7 @@
 #include "ControllerContainer.h"
 #include "Controller.h"
 #include "Pointer.h"
+#include "Quad.h"
 #include "DeviceUtils.h"
 
 #include "vrb/ConcreteClass.h"
@@ -18,6 +19,7 @@
 #include "vrb/Program.h"
 #include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
+#include "vrb/TextureGL.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
@@ -206,6 +208,33 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         controller.handJointTransforms.resize(jointTransforms.size());
 
         CreationContextPtr create = m.context.lock();
+
+        // Initialize left hand action button, which for now triggers back navigation.
+        // Note that Quest's runtime already shows the hamburger menu button when left
+        // hand is facing head.
+#if !defined(OCULUSVR)
+        if (controller.leftHanded) {
+            TextureGLPtr texture = create->LoadTexture("menu.png");
+            assert(texture);
+            texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+            const float iconWidth = 0.03f;
+            const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
+
+            QuadPtr icon = Quad::Create(create, iconWidth, iconWidth / aspect, nullptr);
+            icon->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+            icon->UpdateProgram("");
+
+            controller.handActionButtonToggle = Toggle::Create(create);
+            controller.handActionButtonTransform = Transform::Create(create);
+            controller.handActionButtonToggle->AddNode(controller.handActionButtonTransform);
+            controller.handActionButtonTransform->AddNode(icon->GetRoot());
+            controller.handActionButtonToggle->ToggleAll(false);
+            m.root->AddNode(controller.handActionButtonToggle);
+        }
+#endif
+
         controller.handMeshToggle = Toggle::Create(create);
         m.root->AddNode(controller.handMeshToggle);
 
@@ -261,6 +290,14 @@ void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEn
     if (!m.Contains(aControllerIndex))
         return;
     m.list[aControllerIndex].hasAim = aEnabled;
+}
+
+void ControllerContainer::SetLeftHandActionEnabled(const int32_t aControllerIndex, bool aEnabled) {
+    if (!m.Contains(aControllerIndex))
+        return;
+    m.list[aControllerIndex].leftHandActionEnabled = aEnabled;
+    if (m.list[aControllerIndex].handActionButtonToggle)
+        m.list[aControllerIndex].handActionButtonToggle->ToggleAll(aEnabled);
 }
 
 void

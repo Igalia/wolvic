@@ -531,6 +531,31 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
+    if (controller.leftHandActionEnabled && controller.handActionButtonTransform != nullptr) {
+      // Layout the button between the thumb and index fingertips
+      const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
+      const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
+      vrb::Matrix indexTipMatrix = controller.handJointTransforms[indexTipIndex]->GetTransform();
+      vrb::Matrix thumbTipMatrix = controller.handJointTransforms[thumbTipIndex]->GetTransform();
+      vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
+      vrb::Vector position = indexTipMatrix.GetTranslation() - center;
+
+      vrb::Matrix iconMatrix = vrb::Matrix::Identity();
+
+      // Scale the button down as the pinch gesture is closing
+      float scale = 1.0 - controller.pinchFactor * 0.5f;
+      // Make the button disappear if pinch is closed
+      scale = scale <= 0.5f ? 0.0f : scale;
+      iconMatrix.ScaleInPlace(vrb::Vector(scale, scale, scale));
+
+      // Adjust the orientation of the button to always face the head
+      vrb::Matrix headMatrix = device->GetHeadTransform();
+      headMatrix = headMatrix.TranslateInPlace(-headMatrix.GetTranslation());
+      iconMatrix = headMatrix.PostMultiply(iconMatrix).Translate(position);
+
+      controller.handActionButtonTransform->SetTransform(iconMatrix);
+    }
+
     if (controller.focused && movingWidget && movingWidget->IsMoving(controller.index)) {
       if (!pressed && wasPressed) {
         movingWidget->EndMoving();

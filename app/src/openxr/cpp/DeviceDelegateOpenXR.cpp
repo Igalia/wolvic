@@ -1371,6 +1371,38 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   }
 }
 
+int32_t DeviceDelegateOpenXR::GetHandTrackingJointIndex(const HandTrackingJoints aJoint) {
+  switch (aJoint) {
+    case HandTrackingJoints::Palm: return XR_HAND_JOINT_PALM_EXT;
+    case HandTrackingJoints::Wrist: return XR_HAND_JOINT_WRIST_EXT;
+    case HandTrackingJoints::ThumbMetacarpal: return XR_HAND_JOINT_THUMB_METACARPAL_EXT;
+    case HandTrackingJoints::ThumbProximal: return XR_HAND_JOINT_THUMB_PROXIMAL_EXT;
+    case HandTrackingJoints::ThumbDistal: return XR_HAND_JOINT_THUMB_DISTAL_EXT;
+    case HandTrackingJoints::ThumbTip: return XR_HAND_JOINT_THUMB_TIP_EXT;
+    case HandTrackingJoints::IndexMetacarpal: return XR_HAND_JOINT_INDEX_METACARPAL_EXT;
+    case HandTrackingJoints::IndexProximal: return XR_HAND_JOINT_INDEX_PROXIMAL_EXT;
+    case HandTrackingJoints::IndexIntermediate: return XR_HAND_JOINT_INDEX_INTERMEDIATE_EXT;
+    case HandTrackingJoints::IndexDistal: return XR_HAND_JOINT_INDEX_DISTAL_EXT;
+    case HandTrackingJoints::IndexTip: return XR_HAND_JOINT_INDEX_TIP_EXT;
+    case HandTrackingJoints::MiddleMetacarpal: return XR_HAND_JOINT_MIDDLE_METACARPAL_EXT;
+    case HandTrackingJoints::MiddleProximal: return XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT;
+    case HandTrackingJoints::MiddleIntermediate: return XR_HAND_JOINT_MIDDLE_INTERMEDIATE_EXT;
+    case HandTrackingJoints::MiddleDistal: return XR_HAND_JOINT_MIDDLE_DISTAL_EXT;
+    case HandTrackingJoints::MiddleTip: return XR_HAND_JOINT_MIDDLE_TIP_EXT;
+    case HandTrackingJoints::RingMetacarpal: return XR_HAND_JOINT_RING_METACARPAL_EXT;
+    case HandTrackingJoints::RingProximal: return XR_HAND_JOINT_RING_PROXIMAL_EXT;
+    case HandTrackingJoints::RingIntermediate: return XR_HAND_JOINT_RING_INTERMEDIATE_EXT;
+    case HandTrackingJoints::RingDistal: return XR_HAND_JOINT_RING_DISTAL_EXT;
+    case HandTrackingJoints::RingTip: return XR_HAND_JOINT_RING_TIP_EXT;
+    case HandTrackingJoints::LittleMetacarpal: return XR_HAND_JOINT_LITTLE_METACARPAL_EXT;
+    case HandTrackingJoints::LittleProximal: return XR_HAND_JOINT_LITTLE_PROXIMAL_EXT;
+    case HandTrackingJoints::LittleIntermediate: return XR_HAND_JOINT_LITTLE_INTERMEDIATE_EXT;
+    case HandTrackingJoints::LittleDistal: return XR_HAND_JOINT_LITTLE_DISTAL_EXT;
+    case HandTrackingJoints::LittleTip: return XR_HAND_JOINT_LITTLE_TIP_EXT;
+  }
+  return -1;
+}
+
 void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Reset reorientation after Enter VR
