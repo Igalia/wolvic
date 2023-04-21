@@ -59,6 +59,7 @@ public:
   VRLayerPassthroughPtr CreateLayerPassthrough() override;
   bool usesPassthroughCompositorLayer() const override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
+  int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);

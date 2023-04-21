@@ -78,6 +78,9 @@ Controller::operator=(const Controller& aController) {
   handMeshToggle = aController.handMeshToggle;
   handJointTransforms = aController.handJointTransforms;
   hasAim = aController.hasAim;
+  leftHandActionEnabled = aController.leftHandActionEnabled;
+  handActionButtonToggle = aController.handActionButtonToggle;
+  handActionButtonTransform = aController.handActionButtonTransform;
   return *this;
 }
 
@@ -127,6 +130,9 @@ Controller::Reset() {
   handJointTransforms.clear();
   handMeshToggle = nullptr;
   hasAim = true;
+  leftHandActionEnabled = false;
+  handActionButtonToggle = nullptr;
+  handActionButtonTransform = nullptr;
 }
 
 vrb::Vector Controller::StartPoint() const {

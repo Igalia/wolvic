@@ -23,6 +23,12 @@ const float kPinchThreshold = 0.019;
 const float kPinchStart = 0.055;
 const float kPinchRange = kPinchStart - kPinchThreshold;
 
+// This threshold specifies the minimum size of the normalized vector
+// resulting from the sum of the head and the left palm
+// pose. It is used to detect when palm is facing the head, and enabled
+// the left hand action gesture.
+const float kPalmHeadRotationZThreshold = 0.5;
+
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -571,7 +577,7 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
     return vrb::Vector(jointAPos - jointBPos).Magnitude();
 }
 
-void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate)
+void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate)
 {
     // Prepare and submit hand joint locations data for rendering
     assert(mHasHandJoints);
@@ -584,10 +590,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         positionIsValid = shouldConsiderPoseAsValid(mHandJoints[i].pose);
 #endif
         if (positionIsValid) {
-            float radius = mHandJoints[i].radius;
-            vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(radius, radius, radius));
-            transform.PostMultiplyInPlace(scale);
-
             if (renderMode == device::RenderMode::StandAlone)
                 transform.TranslateInPlace(kAverageHeight);
         } else {
@@ -595,13 +597,71 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
             transform.ScaleInPlace(vrb::Vector(0.0f, 0.0f, 0.0f));
         }
 
-        memcpy(&jointTransforms[i], &transform, sizeof(vrb::Matrix));
+        jointTransforms[i] = transform;
+    }
+
+    // Check whether palm of left hand is facing the head, to show navigate-back button
+    bool leftPalmFacesHead = false;
+    if (mHandeness == OpenXRHandFlags::Left) {
+#if defined(OCULUSVR)
+        if (mHandJoints[XR_HAND_JOINT_PALM_EXT].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT)
+            leftPalmFacesHead = !mHasAimState;
+#else
+        int palmJointIndex = XR_HAND_JOINT_PALM_EXT;
+#if defined(PICOXR)
+        // Pico runtime doesn't provide palm joint info, so we use the wrist instead.
+        palmJointIndex = XR_HAND_JOINT_WRIST_EXT;
+#endif
+        if (mHandJoints[palmJointIndex].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+            vrb::Vector vector = vrb::Vector(0.0f, 0.0f, 1.0f);
+            vrb::Matrix palmMatrix = jointTransforms[palmJointIndex];
+            vrb::Matrix headPalmMatrix = head.Inverse().PostMultiply(palmMatrix);
+            vrb::Vector diffVector = headPalmMatrix.MultiplyPosition(vector).Normalize();
+            leftPalmFacesHead = diffVector.z() >= kPalmHeadRotationZThreshold;
+        }
+#endif
+    }
+
+    // Scale joints according to their radius (for rendering)
+    for (int i = 0; i < mHandJoints.size(); i++) {
+        if (mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+            float radius = mHandJoints[i].radius;
+            vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(
+                    vrb::Vector(radius, radius, radius));
+            jointTransforms[i].PostMultiplyInPlace(scale);
+        }
     }
 
     delegate.SetHandJointLocations(mIndex, jointTransforms);
     delegate.SetAimEnabled(mIndex, mHasAimState);
+    delegate.SetLeftHandActionEnabled(mIndex, leftPalmFacesHead);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
+
+    // Select action
+    const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                               XR_HAND_JOINT_INDEX_TIP_EXT);
+    const double pinchFactor = 1.0 - std::clamp((indexThumbDistance - kPinchThreshold)/kPinchRange, 0.0, 1.0);
+    delegate.SetPinchFactor(mIndex, pinchFactor);
+
+    bool indexPinching = indexThumbDistance < kPinchThreshold;
+
+    if (leftPalmFacesHead) {
+        delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
+    } else {
+        delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
+                                device::kImmersiveButtonTrigger, indexPinching,
+                                indexPinching, 1.0);
+
+        if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
+            selectActionStarted = indexPinching;
+            if (selectActionStarted) {
+                delegate.SetSelectActionStart(mIndex);
+            } else {
+                delegate.SetSelectActionStop(mIndex);
+            }
+        }
+    }
 
     // Rest of the logic below requires having Aim info
     if (!mHasAimState)
@@ -638,26 +698,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     device::CapabilityFlags flags = device::Orientation | device::Position | device::GripSpacePosition;
     delegate.SetCapabilityFlags(mIndex, flags);
-
-    // Select action
-    const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
-                                                              XR_HAND_JOINT_INDEX_TIP_EXT);
-    const double pinchFactor = 1.0 - std::clamp((indexThumbDistance - kPinchThreshold)/kPinchRange, 0.0, 1.0);
-    delegate.SetPinchFactor(mIndex, pinchFactor);
-
-    bool indexPinching = indexThumbDistance < kPinchThreshold;
-    delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
-                            device::kImmersiveButtonTrigger, indexPinching,
-                            indexPinching, 1.0);
-
-    if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
-        selectActionStarted = indexPinching;
-        if (selectActionStarted) {
-            delegate.SetSelectActionStart(mIndex);
-        } else {
-            delegate.SetSelectActionStop(mIndex);
-        }
-    }
 
     // Squeeze action
     bool middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
@@ -702,7 +742,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     // If hand tracking is active, use it to emulate the controller.
     if (GetHandTrackingInfo(frameState, localSpace)) {
-        EmulateControllerFromHand(renderMode, delegate);
+        EmulateControllerFromHand(renderMode, head, delegate);
         return;
     }
 
