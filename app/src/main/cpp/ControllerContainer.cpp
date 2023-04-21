@@ -6,6 +6,7 @@
 #include "ControllerContainer.h"
 #include "Controller.h"
 #include "Pointer.h"
+#include "Quad.h"
 #include "DeviceUtils.h"
 
 #include "vrb/ConcreteClass.h"
@@ -18,6 +19,7 @@
 #include "vrb/Program.h"
 #include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
+#include "vrb/TextureGL.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
@@ -233,6 +235,31 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
 
             controller.handMeshToggle->AddNode(transform);
         }
+
+#if !defined(OCULUSVR)
+        // Initialize left hand action button, which for now triggers back navigation
+        if (controller.leftHanded) {
+            TextureGLPtr texture = create->LoadTexture("menu.png");
+            assert(texture);
+            texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            // texture->Bind();
+
+            const float width = 1.75f;
+            const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
+
+            QuadPtr icon = Quad::Create(create, width, width / aspect, nullptr);
+            icon->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+            icon->UpdateProgram("");
+
+            controller.handActionButtonToggle = Toggle::Create(create);
+            controller.handActionButtonTransform = Transform::Create(create);
+            controller.handActionButtonToggle->AddNode(controller.handActionButtonTransform);
+            controller.handActionButtonTransform->AddNode(icon->GetRoot());
+            controller.handActionButtonToggle->ToggleAll(false);
+            m.root->AddNode(controller.handActionButtonToggle);
+        }
+#endif
     }
 
     assert(jointTransforms.size() == controller.handJointTransforms.size());
@@ -261,6 +288,14 @@ void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEn
     if (!m.Contains(aControllerIndex))
         return;
     m.list[aControllerIndex].hasAim = aEnabled;
+}
+
+void ControllerContainer::SetLeftHandActionEnabled(const int32_t aControllerIndex, bool aEnabled) {
+    if (!m.Contains(aControllerIndex))
+        return;
+    m.list[aControllerIndex].leftHandActionEnabled = aEnabled;
+    if (m.list[aControllerIndex].handActionButtonToggle)
+        m.list[aControllerIndex].handActionButtonToggle->ToggleAll(aEnabled);
 }
 
 void

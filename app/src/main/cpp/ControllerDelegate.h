@@ -68,6 +68,7 @@ public:
   virtual void SetGazeModeIndex(const int32_t aControllerIndex) = 0;
   virtual void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms) = 0;
   virtual void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) = 0;
+  virtual void SetLeftHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) = 0;
   virtual void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) = 0;
   virtual void SetPinchFactor(const int32_t aControllerIndex, float aFactor = 1.0f) = 0;
 protected:

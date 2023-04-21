@@ -531,6 +531,15 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
+    if (controller.leftHandActionEnabled && controller.handActionButtonTransform != nullptr) {
+      vrb::Matrix matrix = controller.handJointTransforms[10]->GetTransform();
+      float scale = 1.0 - controller.pinchFactor * 0.5f;
+      matrix.ScaleInPlace(vrb::Vector(scale, scale, scale));
+      matrix.TranslateInPlace(vrb::Vector(-0.015f, 0.015f, 0.0f));
+      matrix = matrix.PostMultiply(device->GetHeadTransform());
+      controller.handActionButtonTransform->SetTransform(matrix);
+    }
+
     if (controller.focused && movingWidget && movingWidget->IsMoving(controller.index)) {
       if (!pressed && wasPressed) {
         movingWidget->EndMoving();
