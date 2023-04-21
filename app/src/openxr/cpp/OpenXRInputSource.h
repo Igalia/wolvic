@@ -96,7 +96,7 @@ public:
     ~OpenXRInputSource();
 
     XrResult SuggestBindings(SuggestedBindings&) const;
-    void EmulateControllerFromHand(device::RenderMode renderMode, ControllerDelegate& delegate);
+    void EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate);
     void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
     std::string ControllerModelName() const;

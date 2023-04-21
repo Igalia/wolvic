@@ -106,6 +106,7 @@ public:
     virtual ~ReorientClient() {};
   };
   void SetReorientClient(ReorientClient* client) { mReorientClient = client; }
+  virtual int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) { return -1; };
 
 protected:
   DeviceDelegate() {}
