@@ -61,7 +61,9 @@ public class BrowserInitializer {
 
         CommandLine.init(new String[] {});
         DeviceUtils.addDeviceSpecificUserAgentSwitch();
-        LibraryLoader.getInstance().ensureInitialized();
+        // TODO(voit): This leads to a crash on startup after chromium update but it might not be
+        //  needed at all
+        // LibraryLoader.getInstance().ensureInitialized();
 
         BrowserStartupController.getInstance().startBrowserProcessesAsync(
                 LibraryProcessType.PROCESS_BROWSER, true /* startGpuProcess */, false /* startMinimalBrowser */,
