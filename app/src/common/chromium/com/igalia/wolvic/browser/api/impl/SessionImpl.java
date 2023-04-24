@@ -149,7 +149,7 @@ public class SessionImpl implements WSession {
 
     @Override
     public void exitFullScreen() {
-        // TODO: implement
+        getTab().exitFullScreen();
     }
 
     @NonNull
@@ -213,7 +213,6 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setContentDelegate(@Nullable ContentDelegate delegate) {
-        // TODO: Implement bridge
         mContentDelegate = delegate;
     }
 
@@ -315,7 +314,6 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setMediaSessionDelegate(@Nullable WMediaSession.Delegate delegate) {
-        // TODO: Implement bridge
         mMediaSessionDelegate = delegate;
     }
 
