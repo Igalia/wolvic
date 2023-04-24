@@ -142,7 +142,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         }
 
         Uri uri = Uri.parse(aURL);
-        if (uri == null) {
+        if (uri == null || uri.isOpaque()) {
             return VIDEO_PROJECTION_NONE;
         }
 
