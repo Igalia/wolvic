@@ -78,4 +78,9 @@ public class TabWebContentsObserver extends WebContentsObserver {
             delegate.onFirstContentfulPaint(mSession);
         }
     }
+
+    @Override
+    public void hasEffectivelyFullscreenVideoChange(boolean isFullscreen) {
+        mSession.getTab().onMediaFullscreen(isFullscreen);
+    }
 }
