@@ -28,6 +28,7 @@ import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.prompts.AlertPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.AuthPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ChoicePromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.ColorPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ConfirmPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.DatePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.FilePromptWidget;
@@ -292,9 +293,26 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onColorPrompt(@NonNull WSession session, @NonNull ColorPrompt prompt) {
-        // TODO implement color picker
         final WResult<PromptResponse> result = WResult.create();
-        result.cancel();
+
+        mPrompt = new ColorPromptWidget(mContext);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.setTitle(prompt.title());
+        mPrompt.setPromptDelegate(new ColorPromptWidget.ColorPromptDelegate() {
+            @Override
+            public void confirm(@NonNull final String color) {
+                result.complete(prompt.confirm(color));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
+
         return result;
     }
 

@@ -254,7 +254,6 @@ android {
 
         lynx {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_lynx
             externalNativeBuild {
                 cmake {
                     cppFlags " -DLYNX -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -266,7 +265,6 @@ android {
         spaces {
             dimension "platform"
             minSdkVersion build_versions.min_sdk_spaces
-            targetSdkVersion build_versions.target_sdk_spaces
             externalNativeBuild {
                 cmake {
                     cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -277,7 +275,6 @@ android {
 
         hvr {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_hvr
             externalNativeBuild {
                 cmake {
                     cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -607,6 +604,14 @@ dependencies {
     // DiskLRUCache used to cache snapshots
     implementation deps.disklrucache.disklrucache
 
+    // Color picker library
+    implementation deps.colorpicker
+
+    // Required for targeting S+
+    implementation deps.work.runtime
+    implementation deps.work.runtime_ktx
+
+
     // Testing
     androidTestImplementation deps.atsl.runner
     androidTestImplementation deps.espresso.core
@@ -651,6 +656,17 @@ dependencies {
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
+        // TODO(jfernandez): Instead of solving the conflicts this way, we would need to determine which packages
+        // are the culprit and define their dependencies so that we can let gradle to resolve them automatically.
+        // See https://docs.gradle.org/current/userguide/dependency_resolution.html for details.
+         resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin') {
+                details.useVersion '1.4.10'
+            } else if (details.requested.group == 'org.jetbrains.kotlinx'
+                    && details.requested.name.contains('coroutines')) {
+                details.useVersion '1.4.2'
+            }
+         }
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
             def abi = getName().toLowerCase().contains('x86_64') ? 'x86_64' : 'arm64'
             def candidate = "geckoview-${branch}-${abi}"
@@ -698,7 +714,7 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 androidComponents {
     onVariants(selector().all(), { variant ->
         // HVR packages for China must use different applicationIds.
-        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn(Release|Debug)/
+        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn\p{Alnum}+(Release|Debug)/
         if (hvrChinaBuildPattern.matcher(variant.name).matches())
             variant.applicationId = variant.applicationId.get().replace('com.igalia','com.cn.igalia')
     })

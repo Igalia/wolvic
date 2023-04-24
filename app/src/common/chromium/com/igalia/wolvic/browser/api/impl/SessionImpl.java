@@ -1,8 +1,7 @@
 package com.igalia.wolvic.browser.api.impl;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Matrix;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,12 +15,6 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
-
-import org.chromium.base.ApplicationStatus;
-import org.chromium.components.embedder_support.view.WolvicContentRenderView;
-import org.chromium.content_public.browser.WebContents;
-import org.chromium.ui.base.ActivityWindowAndroid;
-import org.chromium.ui.base.IntentRequestTracker;
 
 public class SessionImpl implements WSession {
     RuntimeImpl mRuntime;
@@ -38,11 +31,23 @@ public class SessionImpl implements WSession {
     WMediaSession.Delegate mMediaSessionDelegate;
     DisplayImpl mDisplay;
     TextInputImpl mTextInput;
-    PanZoomCrontrollerImpl mPanZoomCrontroller;
-    private ActivityWindowAndroid mWindowAndroid;
-    private IntentRequestTracker mIntentRequestTracker;
-    private WolvicContentRenderView mContentViewRenderView;
-    private WebContents mCurrentWebContents;
+    PanZoomControllerImpl mPanZoomController;
+    private String mInitialUri;
+    private TabImpl mTab;
+    private ReadyCallback mReadyCallback = new ReadyCallback();
+
+    private class ReadyCallback implements BrowserInitializer.Callback {
+        @Override
+        public void onReady() {
+            assert mTab == null;
+            mTab = new TabImpl(
+                    mRuntime.getContainerView().getContext(), SessionImpl.this);
+            if (mInitialUri != null) {
+                mTab.loadUrl(mInitialUri);
+                mInitialUri = null;
+            }
+        }
+    }
 
     public SessionImpl(@Nullable WSessionSettings settings) {
         mSettings = settings != null ? (SettingsImpl) settings : new SettingsImpl(false);
@@ -51,31 +56,17 @@ public class SessionImpl implements WSession {
 
     private void init() {
         mTextInput = new TextInputImpl(this);
-        mPanZoomCrontroller = new PanZoomCrontrollerImpl(this);
-    }
-
-    // TODO: Consider refactoring this method to move more appropriate place.
-    private BrowserDisplay createBrowserDisplay(WebContents webContents) {
-        Activity activity = ApplicationStatus.getLastTrackedFocusedActivity();
-
-        mIntentRequestTracker = IntentRequestTracker.createFromActivity(activity);
-        mWindowAndroid = new ActivityWindowAndroid(activity, false, mIntentRequestTracker);
-
-        mContentViewRenderView = new WolvicContentRenderView(mRuntime.getContext());
-        mContentViewRenderView.onNativeLibraryLoaded(mWindowAndroid);
-        mContentViewRenderView.setCurrentWebContents(webContents);
-
-        BrowserDisplay browserDisplay = new BrowserDisplay(mRuntime.getContext());
-
-        ContentShellFragment fragment = new ContentShellFragment();
-        fragment.setContentViewRenderView(mContentViewRenderView);
-        browserDisplay.attach(mRuntime.getFragmentManager(), mRuntime.getViewContainer(), fragment);
-        return browserDisplay;
+        mPanZoomController = new PanZoomControllerImpl(this);
     }
 
     @Override
     public void loadUri(@NonNull String uri, int flags) {
-        // TODO: Implement
+        if (!isOpen()) {
+            // If the session isn't open yet, save the uri and load when the session is ready.
+            mInitialUri = uri;
+        } else {
+            mTab.loadUrl(uri);
+        }
     }
 
     @Override
@@ -85,7 +76,8 @@ public class SessionImpl implements WSession {
 
     @Override
     public void reload(int flags) {
-        // TODO: Implement
+        if (isOpen())
+            mTab.reload();
     }
 
     @Override
@@ -106,27 +98,30 @@ public class SessionImpl implements WSession {
     @Override
     public void open(@NonNull WRuntime runtime) {
         mRuntime = (RuntimeImpl) runtime;
+        mRuntime.getBrowserInitializer().registerCallback(mReadyCallback);
     }
 
     @Override
     public boolean isOpen() {
-        // TODO: Implement
-        return false;
+        return mTab != null ? true : false;
     }
 
     @Override
     public void close() {
-        // TODO: Implement
+        mRuntime.getBrowserInitializer().unregisterCallback(mReadyCallback);
+        mTab = null;
     }
 
     @Override
     public void goBack(boolean userInteraction) {
-        // TODO: Implement
+        if (isOpen())
+            mTab.goBack();
     }
 
     @Override
     public void goForward(boolean userInteraction) {
-        // TODO: Implement
+        if (isOpen())
+            mTab.goForward();
     }
 
     @Override
@@ -161,18 +156,17 @@ public class SessionImpl implements WSession {
     @Override
     public WDisplay acquireDisplay() {
         assert mDisplay == null;
-        mCurrentWebContents = mRuntime.createWebContents();
-        BrowserDisplay display = createBrowserDisplay(mCurrentWebContents);
-        mWindowAndroid.setAnimationPlaceholderView(mContentViewRenderView);
-        mDisplay = new DisplayImpl(display, this, mContentViewRenderView);
+        mDisplay = new DisplayImpl(this, mTab.getCompositorView());
+        mRuntime.addViewToBrowserContainer(mTab.getCompositorView());
+        getTextInput().setView(getContentView());
         return mDisplay;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
         assert mDisplay != null;
-        // TODO: implement correctly
         mDisplay = null;
+        getTextInput().setView(null);
     }
 
     @Override
@@ -214,7 +208,7 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public WPanZoomController getPanZoomController() {
-        return mPanZoomCrontroller;
+        return mPanZoomController;
     }
 
     @Override
@@ -337,4 +331,11 @@ public class SessionImpl implements WSession {
         return mSelectionActionDelegate;
     }
 
+    public TabImpl getTab() {
+        return mTab;
+    }
+
+    public ViewGroup getContentView() {
+        return mTab != null ? mTab.getContentView() : null;
+    }
 }

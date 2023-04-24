@@ -165,6 +165,7 @@ struct BrowserWorld::State {
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
+  GroupPtr rootPassthroughParent;
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
   TransformPtr rootWebXRInterstitial;
@@ -224,6 +225,7 @@ struct BrowserWorld::State {
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
+    rootPassthroughParent = Group::Create(create);
     rootWebXRInterstitial = Transform::Create(create);
     //rootOpaque->AddLight(light);
     //rootTransparent->AddLight(light);
@@ -1080,23 +1082,6 @@ BrowserWorld::StartFrame() {
     }
   }
 
-  // @FIXME: Make this a state variable and toggle it with the menu item
-  //         Also replace the #if below with a proper SupportsPassthrough()
-  //         method based on build type.
-  bool passthroughEnabled = false;
-
-#if defined(OCULUSVR)
-  if (passthroughEnabled) {
-    // Lazily create Passthrough layer
-    if (!m.layerPassthrough) {
-      m.layerPassthrough = m.device->CreateLayerPassthrough();
-    }
-    m.layerPassthrough->RequestDraw();
-  } else if (m.layerPassthrough) {
-    m.layerPassthrough->ClearRequestDraw();
-  }
-#endif
-
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
 #endif
@@ -1160,6 +1145,16 @@ BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
   ASSERT_ON_RENDER_THREAD();
   VRB_LOG("Got temp path: %s", aPath.c_str());
   m.context->GetDataCache()->SetCachePath(aPath);
+}
+
+void
+BrowserWorld::TogglePassthrough() {
+  ASSERT_ON_RENDER_THREAD();
+  m.device->TogglePassthroughEnabled();
+  if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
+    m.layerPassthrough = m.device->CreateLayerPassthrough();
+    m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+  }
 }
 
 void
@@ -1603,7 +1598,6 @@ BrowserWorld::Create() {
 
 BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
 
-
 void
 BrowserWorld::TickWorld() {
   m.externalVR->SetCompositorEnabled(true);
@@ -1641,10 +1635,15 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
 
-  // Draw skybox
-  m.drawList->Reset();
-  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
-  m.drawList->Draw(*camera);
+  // Draw skybox or passthrough layer.
+  if (!m.device->IsPassthroughEnabled() || m.device->usesPassthroughCompositorLayer()) {
+    m.drawList->Reset();
+    if (m.device->IsPassthroughEnabled())
+      m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
+    else
+      m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*camera);
+  }
 
   // Draw environment if available
   if (m.layerEnvironment) {
@@ -1948,6 +1947,11 @@ JNI_METHOD(void, setTemporaryFilePath)
   std::string path = nativeString;
   aEnv->ReleaseStringUTFChars(aPath, nativeString);
   crow::BrowserWorld::Instance().SetTemporaryFilePath(path);
+}
+
+JNI_METHOD(void, togglePassthroughNative)
+(JNIEnv*, jobject) {
+  crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
 JNI_METHOD(void, exitImmersiveNative)

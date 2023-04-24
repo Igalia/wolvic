@@ -7,6 +7,8 @@ package com.igalia.wolvic;
 
 import android.Manifest;
 import android.app.NativeActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -32,6 +34,14 @@ public class PlatformActivity extends NativeActivity {
     public static boolean isPositionTrackingSupported() {
         // Dummy implementation.
         return true;
+    }
+
+    protected Intent getStoreIntent() {
+        Intent intent = getPackageManager().getLaunchIntentForPackage("com.oculus.vrshell");
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("systemux://store"));
+        intent.putExtra("uri", "/item/5917120145021341");
+        return intent;
     }
 
     @Override

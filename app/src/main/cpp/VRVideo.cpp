@@ -276,7 +276,7 @@ struct VRVideo::State {
 
     leftEye = create180LayerToggle(equirect);
   }
-#elif OCULUSVR
+#else
   void create180LRProjectionLayer() {
     vrb::CreationContextPtr create = context.lock();
     DeviceDelegatePtr device = deviceWeak.lock();

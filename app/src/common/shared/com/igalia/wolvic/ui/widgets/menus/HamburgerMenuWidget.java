@@ -47,6 +47,8 @@ public class HamburgerMenuWidget extends UIWidget implements
         void onSwitchMode();
         void onAddons();
         void onSaveWebApp();
+        void onPassthrough();
+        boolean isPassthroughEnabled();
     }
 
     public static final int SWITCH_ITEM_ID = 0;
@@ -277,6 +279,20 @@ public class HamburgerMenuWidget extends UIWidget implements
             break;
         }
         mItems.add(item);
+
+        if (mWidgetManager != null && mWidgetManager.isPassthroughSupported()) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onPassthrough();
+                        }
+                        return null;
+                    })
+                    .withTitle(getContext().getString(R.string.hamburger_menu_toggle_passthrough))
+                    .withIcon(mDelegate != null && mDelegate.isPassthroughEnabled() ? R.drawable.baseline_visibility_24 : R.drawable.baseline_visibility_off_24)
+                    .build());
+        }
 
         mAdapter.setItems(mItems);
         mAdapter.notifyDataSetChanged();

@@ -147,6 +147,7 @@ if(OPENXR)
             src/openxr/cpp/OpenXRInputSource.cpp
             src/openxr/cpp/OpenXRActionSet.cpp
             src/openxr/cpp/OpenXRExtensions.cpp
+            src/openxr/cpp/OpenXRPassthroughStrategy.cpp
     )
 
 elseif(OCULUSVR)
@@ -223,11 +224,6 @@ if (LYNX)
 endif()
 
 if (SPACES)
-    find_package(qxrclients REQUIRED CONFIG)
-    target_link_libraries(native-lib qxrclients::qxrcoreclient)
-    target_link_libraries(native-lib qxrclients::qxrcamclient)
-    target_link_libraries(native-lib qxrclients::qxrsplitclient)
-
     find_package(loader REQUIRED CONFIG)
     target_link_libraries(native-lib loader::openxr_loader)
 endif()

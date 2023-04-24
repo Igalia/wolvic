@@ -107,6 +107,9 @@ public:
     virtual ~ReorientClient() {};
   };
   void SetReorientClient(ReorientClient* client) { mReorientClient = client; }
+  bool IsPassthroughEnabled() const { return mIsPassthroughEnabled; }
+  void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
+  virtual bool usesPassthroughCompositorLayer() const { return false; }
 
 protected:
   DeviceDelegate() {}
@@ -115,6 +118,7 @@ protected:
 
   bool mShouldRender { false };
   ReorientClient* mReorientClient { nullptr };
+  bool mIsPassthroughEnabled { false };
 private:
   VRB_NO_DEFAULTS(DeviceDelegate)
 };

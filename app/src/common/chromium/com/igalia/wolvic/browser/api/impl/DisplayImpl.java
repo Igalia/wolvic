@@ -4,41 +4,36 @@ import android.graphics.Bitmap;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
-import org.chromium.components.embedder_support.view.WolvicContentRenderView;
+import org.chromium.wolvic.TabCompositorView;
 
 public class DisplayImpl implements WDisplay {
-    @NonNull BrowserDisplay mDisplay;
     @NonNull SessionImpl mSession;
     private int mWidth = 1;
-    private Surface mSurface;
-    private WolvicContentRenderView mRenderView;
+    private TabCompositorView mTabCompositorView;
 
-    public DisplayImpl(@NonNull BrowserDisplay display, @NonNull SessionImpl session, WolvicContentRenderView renderView) {
-        mDisplay = display;
+    public DisplayImpl(@NonNull SessionImpl session,  @NonNull TabCompositorView TabCompositorView) {
         mSession = session;
-        mRenderView = renderView;
+        mTabCompositorView = TabCompositorView;
     }
 
     @Override
     public void surfaceChanged(@NonNull Surface surface, int width, int height) {
         mWidth = width;
-        if (mSurface == null) {
-            // Dispatch onSurfaceCreated
-            mRenderView.surfaceCreated(surface);
-        }
-        mSurface = surface;
-
-        try {
-            // Dispatch onSurfaceChanged
-            mRenderView.surfaceChanged(surface, width, height);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        mTabCompositorView.surfaceChanged(surface, width, height);
+        mTabCompositorView.insertVisualStateCallback(updated -> {
+            if (updated) {
+                @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
+                if (delegate != null) {
+                    delegate.onFirstComposite(mSession);
+                }
+            }
+        });
     }
 
     @Override
@@ -48,16 +43,7 @@ public class DisplayImpl implements WDisplay {
 
     @Override
     public void surfaceDestroyed() {
-        if (mSurface == null) {
-            return;
-        }
-        try {
-            mRenderView.surfaceDestroyed();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            mSurface = null;
-        }
+        mTabCompositorView.surfaceDestroyed();
     }
 
     @NonNull
@@ -70,6 +56,6 @@ public class DisplayImpl implements WDisplay {
     @Override
     public WResult<Bitmap> capturePixelsWithAspectPreservingSize(int width) {
         // TODO: Implement
-        return null;
+        return new ResultImpl<>();
     }
 }
