@@ -630,8 +630,9 @@ dependencies {
         // are the culprit and define their dependencies so that we can let gradle to resolve them automatically.
         // See https://docs.gradle.org/current/userguide/dependency_resolution.html for details.
          resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'org.jetbrains.kotlin') {
-                details.useVersion '1.4.10'
+            if (details.requested.group == 'org.jetbrains.kotlin'
+                    && details.requested.name.contains('kotlin-stdlib')) {
+                details.useVersion '1.4.10';
             } else if (details.requested.group == 'org.jetbrains.kotlinx'
                     && details.requested.name.contains('coroutines')) {
                 details.useVersion '1.4.2'
