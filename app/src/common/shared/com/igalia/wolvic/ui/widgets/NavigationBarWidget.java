@@ -668,11 +668,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     public void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {
         if (isKioskMode) {
             mTrayViewModel.setShouldBeVisible(false);
-            hide(KEEP_WIDGET);
         } else {
             mTrayViewModel.setShouldBeVisible(true);
-            show(KEEP_FOCUS);
         }
+        updateUI();
+        mSettingsViewModel.refresh();
     }
 
     @Override
@@ -823,7 +823,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
         AnimationHelper.fadeOut(mBinding.navigationBarMenu.resizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
         mWidgetManager.popBackHandler(mResizeBackHandler);
-        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() || !mAttachedWindow.isKioskMode());
+        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() && !mAttachedWindow.isKioskMode());
         closeFloatingMenus();
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {

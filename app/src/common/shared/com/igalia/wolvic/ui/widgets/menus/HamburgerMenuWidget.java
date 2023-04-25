@@ -178,20 +178,25 @@ public class HamburgerMenuWidget extends UIWidget implements
     private void updateItems() {
         mItems = new ArrayList<>();
 
-        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-        HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
-        (menuItem) -> {
-            if (mDelegate != null) {
-                mDelegate.onAddons();
-            }
-            return null;
-        }).build());
+        // In kiosk mode, only resize and passthrough are available.
+        boolean isKioskMode = mWidgetManager.getFocusedWindow().isKioskMode();
+
+        if (!isKioskMode) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onAddons();
+                        }
+                        return null;
+                    }).build());
+        }
 
         final Session activeSession = SessionStore.get().getActiveSession();
         String url = activeSession.getCurrentUri();
         boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
         final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
-        if (tab != null && showAddons) {
+        if (tab != null && showAddons && !isKioskMode) {
             final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
             extensions.forEach((extension) -> {
                 if (!extension.getAllowedInPrivateBrowsing() && activeSession.isPrivateMode()) {
@@ -226,8 +231,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                 .withIcon(R.drawable.ic_icon_resize)
                 .build());
 
-        // TODO this is hard to discover, consider adding a button in the URL bar instead
-        if (activeSession.getWebAppManifest() != null) {
+        if (!isKioskMode && activeSession.getWebAppManifest() != null) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
                     (menuItem) -> {
@@ -241,7 +245,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                     .build());
         }
 
-        if (mSendTabEnabled) {
+        if (!isKioskMode && mSendTabEnabled) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
                     (menuItem) -> {
@@ -255,30 +259,32 @@ public class HamburgerMenuWidget extends UIWidget implements
                     .build());
         }
 
-        HamburgerMenuAdapter.MenuItem item = new HamburgerMenuAdapter.MenuItem.Builder(
-                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                (menuItem) -> {
-                    if (mDelegate != null) {
-                        mDelegate.onSwitchMode();
-                    }
-                    return null;
-                })
-                .withId(SWITCH_ITEM_ID)
-                .withTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop))
-                .build();
-        switch (mCurrentUAMode) {
-            case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
-                item.setIcon(R.drawable.ic_icon_ua_desktop);
-            }
-            break;
+        if (!isKioskMode) {
+            HamburgerMenuAdapter.MenuItem item = new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onSwitchMode();
+                        }
+                        return null;
+                    })
+                    .withId(SWITCH_ITEM_ID)
+                    .withTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop))
+                    .build();
+            switch (mCurrentUAMode) {
+                case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
+                    item.setIcon(R.drawable.ic_icon_ua_desktop);
+                }
+                break;
 
-            case WSessionSettings.USER_AGENT_MODE_MOBILE:
-            case WSessionSettings.USER_AGENT_MODE_VR: {
-                item.setIcon(R.drawable.ic_icon_ua_default);
+                case WSessionSettings.USER_AGENT_MODE_MOBILE:
+                case WSessionSettings.USER_AGENT_MODE_VR: {
+                    item.setIcon(R.drawable.ic_icon_ua_default);
+                }
+                break;
             }
-            break;
+            mItems.add(item);
         }
-        mItems.add(item);
 
         if (mWidgetManager != null && mWidgetManager.isPassthroughSupported()) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
