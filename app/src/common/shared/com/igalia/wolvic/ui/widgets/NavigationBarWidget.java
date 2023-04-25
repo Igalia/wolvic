@@ -290,6 +290,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             showMenu();
 
+            updateKioskModeFlipper();
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -1472,5 +1474,26 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         float x = offsetViewBounds.left + (offsetViewBounds.right - offsetViewBounds.left) * 0.5f;
         mQuickPermissionWidget.getPlacement().parentAnchorX = x / getWidth();
         mQuickPermissionWidget.show(REQUEST_FOCUS);
+    }
+
+    private long kioskModeFlipperTimer;
+    private int kioskModeFlipperCounter;
+
+    private void updateKioskModeFlipper() {
+        if (!mViewModel.getIsKioskMode().getValue().get()) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (now - kioskModeFlipperTimer < 3000) {
+            kioskModeFlipperCounter++;
+        } else {
+            kioskModeFlipperTimer = now;
+            kioskModeFlipperCounter = 1;
+        }
+
+        if (kioskModeFlipperCounter >= 7) {
+            mViewModel.setIsKioskMode(false);
+        }
     }
 }
