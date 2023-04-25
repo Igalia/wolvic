@@ -1634,6 +1634,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
+        // We don't show the menu in kiosk mode
+        if (isKioskMode()) {
+            return;
+        }
+
         mContextMenu = new ContextMenuWidget(getContext());
         mContextMenu.mWidgetPlacement.parentHandle = getHandle();
         mContextMenu.setDismissCallback(this::hideContextMenus);
