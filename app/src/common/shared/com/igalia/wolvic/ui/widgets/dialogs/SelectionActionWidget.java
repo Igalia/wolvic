@@ -152,7 +152,9 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
                     WSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
         }
 
-        if (mSelectionText != null && !mSelectionText.trim().isEmpty()) {
+        // Contextual search is disabled in kiosk mode.
+        if (!mWidgetManager.getWindows().getFocusedWindow().isKioskMode() &&
+                mSelectionText != null && !mSelectionText.trim().isEmpty()) {
             buttons.add(createButton(
                     getContext().getString(
                             R.string.context_menu_web_search,
