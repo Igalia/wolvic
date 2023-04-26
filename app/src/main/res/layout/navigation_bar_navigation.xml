@@ -21,18 +21,18 @@
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/backButton"
             style="?attr/navigationBarButtonStyle"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:src="@drawable/ic_icon_back"
             android:tint="@color/midnight"
             android:tooltipText="@string/back_tooltip"
             android:enabled="@{viewmodel.canGoBack}"
-            app:privateMode="@{viewmodel.isPrivateSession}"/>
+            app:privateMode="@{viewmodel.isPrivateSession}" />
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/forwardButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:src="@drawable/ic_icon_forward"
             android:tooltipText="@string/forward_tooltip"
             android:enabled="@{viewmodel.canGoForward}"
@@ -42,7 +42,7 @@
             android:id="@+id/reloadButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:src="@{viewmodel.isLoading ? @drawable/ic_icon_exit : @drawable/ic_icon_reload}"
             android:tooltipText="@{viewmodel.isLoading ? @string/stop_tooltip : @string/refresh_tooltip}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
@@ -51,7 +51,7 @@
             android:id="@+id/homeButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:src="@drawable/ic_icon_home"
             android:tooltipText="@string/home_tooltip"
             app:privateMode="@{viewmodel.isPrivateSession}"
@@ -79,7 +79,7 @@
             android:id="@+id/desktopModeButton"
             style="?attr/accentedNavigationBarButtonStyle"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:checked="true"
             android:src="@drawable/ic_icon_ua_desktop"
             android:tooltipText="@string/hamburger_menu_switch_to_desktop"
@@ -89,7 +89,7 @@
         <RelativeLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:layout_marginStart="10dp"
             android:scaleType="fitCenter"
             android:layout_gravity="center_vertical"
@@ -116,7 +116,7 @@
             android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:src="@drawable/ic_icon_hamburger_menu"
             android:tooltipText="@string/hamburger_menu_tooltip"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
