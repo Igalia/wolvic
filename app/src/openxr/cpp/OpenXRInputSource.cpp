@@ -155,6 +155,9 @@ XrResult OpenXRInputSource::Initialize()
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
         VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
+
+        if (!mSupportsFBHandTrackingAim)
+            mOneEuroFilterPosition = std::make_unique<OneEuroFilterVector>(0.25,0.1 ,1);
     }
 
     return XR_SUCCESS;
@@ -544,8 +547,10 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
             };
 
             auto pos = vrb::Vector(mHandAimPose.position.x, mHandAimPose.position.y, mHandAimPose.position.z);
+            float* filteredPos = mOneEuroFilterPosition->filter(frameState.predictedDisplayTime, pos.Data());
+
             auto shoulder = head.MultiplyDirection({mHandeness == Right ? 0.15f : -0.15f,-0.25,0});
-            auto q = lookAt(pos, shoulder);
+            auto q = lookAt({filteredPos[0], filteredPos[1], filteredPos[2]}, shoulder);
             mHandAimPose.orientation = { q.x(), q.y(), q.z(), q.w() };
         }
     }
