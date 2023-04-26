@@ -1638,9 +1638,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_copy_to_content_uri_error_title">コピーエラー</string>
     <string name="download_copy_to_content_uri_error_body">ダウンロードしたファイルのコピー中にエラーが発生しました。</string>
     <string name="download_copy_to_content_uri_error_body_v1">%1$sをコピー中にエラーが発生しました</string>
-    <string name="voice_service_metkai"></string>
+    <string name="voice_service_metkai"/>
     <string name="upload_button">アップロード</string>
-    <string name="upload_list_empty">プロードできるファイルがありません</string>
+    <string name="upload_list_empty">アップロードできるファイルがありません</string>
     <string name="addons_experimental_section_title">実験的</string>
     <string name="notifications_loading">通知を読み込んでいます</string>
     <string name="web_apps_title">ウェブアプリ</string>
@@ -1652,4 +1652,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_save_web_app">ウェブアプリを保存…</string>
     <string name="download_addon_install">アドオンをインストール</string>
     <string name="permissions_dialog_remember_choice">この選択を保存する</string>
+    <string name="hamburger_menu_toggle_passthrough">パススルー</string>
+    <string name="settings_language_portuguese">ポルトガル語</string>
 </resources>
