@@ -1,6 +1,14 @@
 {
   "1.3.3": {
-    "whatsNewUrl": "https://wolvic.com/blog/release_1.3.3"
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.3.3",
+    "environments": [
+      {
+        "value": "wolvic_winter",
+        "title": "Wolvic Winter",
+        "thumbnail": "https://igalia.github.io/envs/thumbnail.jpg",
+        "payload": "https://igalia.github.io/envs/wolvic_winter/wolvic_winter.zip"
+      }
+    ]
   },
   "1.3.2": {
     "whatsNewUrl": "https://wolvic.com/blog/release_1.3.2"
