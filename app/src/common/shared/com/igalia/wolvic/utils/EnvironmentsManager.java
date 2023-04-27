@@ -114,6 +114,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
     private void downloadEnvironment(@NonNull String envId) {
         final Environment environment = EnvironmentUtils.getExternalEnvironmentById(mContext, envId);
+        final String payload = EnvironmentUtils.getEnvironmentPayload(environment);
         if (environment != null) {
             // Check if the env is being downloaded
             boolean isDownloading = mDownloadManager.getDownloads().stream()
@@ -121,12 +122,12 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
                             item.getStatus() == DownloadManager.STATUS_RUNNING &&
                                     item.getStatus() == DownloadManager.STATUS_PAUSED &&
                                     item.getStatus() == DownloadManager.STATUS_PENDING &&
-                                    item.getUri().equals(environment.getPayload()))
+                                    item.getUri().equals(payload))
                     .findFirst().orElse(null) != null;
 
             if (!isDownloading) {
                 // If the env is not being downloaded, start downloading it
-                DownloadJob job = DownloadJob.create(environment.getPayload());
+                DownloadJob job = DownloadJob.create(payload);
                 mDownloadManager.startDownload(job);
             }
         }

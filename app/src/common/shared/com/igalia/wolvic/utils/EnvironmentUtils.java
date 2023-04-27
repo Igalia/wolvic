@@ -215,6 +215,21 @@ public class EnvironmentUtils {
     }
 
     /**
+     * Returns the URL to the environment's payload, with the SRGB suffix for the devices requiring this
+     * compressed texture format.
+     * @param env An Environment data structure
+     * @return The appropriated URL to the environment's payload .
+     */
+    @Nullable
+    public static String getEnvironmentPayload(Environment env) {
+        String payload = env.getPayload();
+        if (!DeviceType.isOculusBuild())
+            return payload;
+        int at = payload.lastIndexOf(".");
+        return payload.substring(0, at) + "_srgb" + payload.substring(at);
+    }
+
+    /**
      * Retuns the external environment based for a given environment id. It returns the environment
      * for the current version if the environment exists, otherwise it returns the environment with that id
      * for the most recent previous version.
@@ -289,7 +304,7 @@ public class EnvironmentUtils {
                 RemoteProperties versionProperties = properties.get(versionName);
                 if (versionProperties != null && versionProperties.getEnvironments() != null) {
                     return Arrays.stream(versionProperties.getEnvironments())
-                            .filter(environment -> payloadUrl.equals(environment.getPayload()))
+                            .filter(environment -> payloadUrl.equals(getEnvironmentPayload(environment)))
                             .findFirst()
                             .orElse(null);
                 }
@@ -303,7 +318,7 @@ public class EnvironmentUtils {
                 RemoteProperties props = properties.get(key);
                 if (props != null && props.getEnvironments() != null) {
                     return Arrays.stream(props.getEnvironments())
-                            .filter(environment -> payloadUrl.equals(environment.getPayload()))
+                            .filter(environment -> payloadUrl.equals(getEnvironmentPayload(environment)))
                             .findFirst()
                             .orElse(null);
                 }
