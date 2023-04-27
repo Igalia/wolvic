@@ -976,6 +976,9 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
           m.immersiveDisplay->SetSittingToStandingTransform(
                   vrb::Matrix::Translation(kAverageHeight));
       }
+#elif LYNX
+      // Stage space coordinates are wrong. As an example the returned Y value is 0.008.
+      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight * 0.7));
 #endif
     }
 
