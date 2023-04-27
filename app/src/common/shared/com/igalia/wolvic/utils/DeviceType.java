@@ -92,10 +92,6 @@ public class DeviceType {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("hvr");
     }
 
-    public static boolean isPicoVR() {
-        return BuildConfig.FLAVOR_platform.toLowerCase().contains("picovr");
-    }
-
     public static boolean isPicoXR() {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("picoxr");
     }
@@ -112,8 +108,6 @@ public class DeviceType {
         String type = BuildConfig.FLAVOR_platform;
         if (DeviceType.isOculusBuild()) {
             type = "oculusvr";
-        } else if (DeviceType.isPicoVR()) {
-            type = "picovr";
         } else if (DeviceType.isPicoXR()) {
             type = "picoxr";
         } else if (DeviceType.isWaveBuild()) {
