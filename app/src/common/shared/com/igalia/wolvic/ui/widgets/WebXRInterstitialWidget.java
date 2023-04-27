@@ -56,9 +56,6 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         setIsHardwareAccelerationEnabled(false);
 
         mSpinnerAnimation = (AnimatedVectorDrawable) mBinding.webxrSpinner.getDrawable();
-        if (DeviceType.isPicoVR()) {
-            ViewUtils.forceAnimationOnUI(mSpinnerAnimation);
-        }
         mWidgetManager.addWebXRListener(this);
 
     }

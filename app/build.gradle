@@ -221,27 +221,6 @@ android {
             }
         }
 
-        picovr {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -DPICOVR"
-                    arguments "-DPICOVR=ON"
-                }
-            }
-            applicationIdSuffix ".internal"
-        }
-
-        picovrStore {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -DPICOVR"
-                    arguments "-DPICOVR=ON"
-                }
-            }
-        }
-
         picoxr {
             dimension "platform"
             externalNativeBuild {
@@ -432,27 +411,6 @@ android {
             manifest.srcFile "src/wavevr/AndroidManifest.xml"
         }
 
-        picovr {
-            java.srcDirs = [
-                    'src/picovr/java'
-            ]
-            jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
-        }
-
-        picovrStore {
-            java.srcDirs = [
-                    'src/picovr/java'
-            ]
-            assets.srcDirs = [
-                    'src/picovr/assets'
-            ]
-            res.srcDirs = [
-                    'src/picovr/res'
-            ]
-            jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
-            manifest.srcFile "src/picovr/AndroidManifest.xml"
-        }
-
         hvr {
             java.srcDirs = [
                     'src/hvr/java'
@@ -632,10 +590,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation 'net.lingala.zip4j:zip4j:1.3.2'
     implementation 'org.apache.commons:commons-math3:3.6.1'
-
-    // Pico
-    picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
-    picovrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])

@@ -61,7 +61,6 @@ You can build for different devices:
 - **`oculusvr`**: Oculus Quest
 - **`hvr`**: Huawei VR Glasses
 - **`wavevr`**: VIVE Focus
-- **`picovr`**: Pico Neo
 - **`picoxr`**: Pico 4 and (untested) Pico Neo 3
 - **`lynx`**: Lynx R1
 - **`spaces`**: Lenovo A3
