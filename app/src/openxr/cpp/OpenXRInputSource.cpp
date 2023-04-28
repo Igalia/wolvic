@@ -674,12 +674,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
             delegate.SetSqueezeActionStop(mIndex);
         }
     }
-
-    // Menu button
-    bool ringPinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
-                                                 XR_HAND_JOINT_RING_TIP_EXT) < kPinchThreshold;
-    delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, ringPinching,
-                            ringPinching, 1.0);
 }
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
