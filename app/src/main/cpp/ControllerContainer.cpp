@@ -236,19 +236,20 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
             controller.handMeshToggle->AddNode(transform);
         }
 
+        // Initialize left hand action button, which for now triggers back navigation.
+        // Note that Quest's runtime already shows the hamburger menu button when left
+        // hand is facing head.
 #if !defined(OCULUSVR)
-        // Initialize left hand action button, which for now triggers back navigation
         if (controller.leftHanded) {
             TextureGLPtr texture = create->LoadTexture("menu.png");
             assert(texture);
             texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            // texture->Bind();
 
-            const float width = 1.75f;
+            const float iconWidth = 1.75f;
             const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
 
-            QuadPtr icon = Quad::Create(create, width, width / aspect, nullptr);
+            QuadPtr icon = Quad::Create(create, iconWidth, iconWidth / aspect, nullptr);
             icon->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
             icon->UpdateProgram("");
 

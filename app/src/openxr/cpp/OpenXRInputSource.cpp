@@ -588,9 +588,14 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         if (mHandJoints[XR_HAND_JOINT_PALM_EXT].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT)
             leftPalmFacesHead = !mHasAimState;
 #else
-        if (mHandJoints[XR_HAND_JOINT_WRIST_EXT].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+        int palmJointIndex = XR_HAND_JOINT_PALM_EXT;
+#if defined(PICOXR)
+        // Pico runtime doesn't provide palm joint info, so we use the wrist instead.
+        palmJointIndex = XR_HAND_JOINT_WRIST_EXT;
+#endif
+        if (mHandJoints[palmJointIndex].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
             vrb::Vector vector = vrb::Vector(0.0f, 0.0f, 1.0f);
-            vrb::Matrix palmMatrix = jointTransforms[XR_HAND_JOINT_WRIST_EXT];
+            vrb::Matrix palmMatrix = jointTransforms[palmJointIndex];
             vrb::Matrix headPalmMatrix = head.Inverse().PostMultiply(palmMatrix);
             vrb::Vector diffVector = headPalmMatrix.MultiplyPosition(vector).Normalize();
             leftPalmFacesHead = diffVector.z() >= kPalmHeadRotationZThreshold;
