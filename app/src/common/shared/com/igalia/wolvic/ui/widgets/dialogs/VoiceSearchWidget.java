@@ -92,9 +92,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mWidgetManager.addPermissionListener(this);
 
         mSearchingAnimation = (AnimatedVectorDrawable) mBinding.voiceSearchAnimationSearching.getDrawable();
-        if (DeviceType.isPicoVR()) {
-            ViewUtils.forceAnimationOnUI(mSearchingAnimation);
-        }
 
         mApplication.registerActivityLifecycleCallbacks(this);
     }

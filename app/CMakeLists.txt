@@ -54,14 +54,6 @@ target_sources(
     src/wavevr/cpp/native-lib.cpp
     src/wavevr/cpp/DeviceDelegateWaveVR.cpp
     )
-elseif(PICOVR)
-target_sources(
-        native-lib
-        PUBLIC
-        src/picovr/cpp/native-lib.cpp
-        src/picovr/cpp/DeviceDelegatePicoVR.cpp
-        src/picovr/cpp/VRBrowserPico.cpp
-)
 elseif(NOAPI)
 target_sources(
     native-lib

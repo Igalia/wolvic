@@ -90,8 +90,7 @@
                     android:id="@+id/drmContentPlaybackSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/security_options_drm_content_v1"
-                    visibleGone="@{!DeviceType.picoVR}"/>
+                    app:description="@string/security_options_drm_content_v1"/>
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/restoreTabsSwitch"
