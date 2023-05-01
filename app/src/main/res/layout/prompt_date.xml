@@ -22,7 +22,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Date Time Dialog" />
+            tools:text="Date Dialog" />
         <DatePicker
             android:id="@+id/date_picker"
             android:layout_width="match_parent"
@@ -41,8 +41,7 @@
             android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="">
+            app:layout_constraintEnd_toEndOf="parent">
 
 
             <Button

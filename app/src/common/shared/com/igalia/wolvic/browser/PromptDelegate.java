@@ -318,48 +318,42 @@ public class PromptDelegate implements
 
     @Nullable
     @Override
-    public WResult<PromptResponse> onDatePrompt(@NonNull WSession session, @NonNull DatePrompt prompt) {
+    public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
         final WResult<PromptResponse> result = WResult.create();
-        mPrompt = new DatePromptWidget(mContext);
-        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-        mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(prompt.title());
-        mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
-            @Override
-            public void confirm(@NonNull final String color) {
-                result.complete(prompt.confirm(color));
-            }
-
-            @Override
-            public void dismiss() {
-                result.complete(prompt.dismiss());
-            }
-        });
-        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public WResult<PromptResponse> onTimePrompt(@NonNull WSession session, @NonNull DatePrompt prompt) {
-        final WResult<PromptResponse> result = WResult.create();
-        mPrompt = new TimePromptWidget(mContext);
-        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-        mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-        mPrompt.setTitle(prompt.title());
-        mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
-            @Override
-            public void confirm(@NonNull final String color) {
-                result.complete(prompt.confirm(color));
-            }
-
-            @Override
-            public void dismiss() {
-                result.complete(prompt.dismiss());
-            }
-        });
+        if(prompt.type()== DateTimePrompt.Type.TIME){
+            mPrompt = new TimePromptWidget(mContext);
+            mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mPrompt.getPlacement().parentAnchorY = 0.0f;
+            mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+            mPrompt.setTitle(prompt.title());
+            mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
+                @Override
+                public void confirm(@NonNull final String dateTime) {
+                    result.complete(prompt.confirm(dateTime));
+                }
+                @Override
+                public void dismiss() {
+                    result.complete(prompt.dismiss());
+                }
+            });
+        }
+        else{
+            mPrompt = new DatePromptWidget(mContext);
+            mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mPrompt.getPlacement().parentAnchorY = 0.0f;
+            mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+            mPrompt.setTitle(prompt.title());
+            mPrompt.setPromptDelegate(new DatePromptWidget.DatePromptDelegate() {
+                @Override
+                public void confirm(@NonNull final String dateTime) {
+                    result.complete(prompt.confirm(dateTime));
+                }
+                @Override
+                public void dismiss() {
+                    result.complete(prompt.dismiss());
+                }
+            });
+        }
         mPrompt.show(UIWidget.REQUEST_FOCUS, true);
         return result;
     }

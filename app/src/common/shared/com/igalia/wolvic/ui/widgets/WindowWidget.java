@@ -149,9 +149,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
         default void onBorderChanged(@NonNull WindowWidget aWindow) {}
 
-        @Nullable
-        WResult<WSession.PromptDelegate.PromptResponse> onTimePrompt(@NonNull WSession session, @NonNull WSession.PromptDelegate.DatePrompt prompt);
-
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
         default void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {}
         default void onMediaFullScreen(@NonNull final WMediaSession mediaSession, boolean aFullScreen) {}

@@ -132,7 +132,7 @@ class PromptDelegateImpl implements GeckoSession.PromptDelegate {
         }
     }
 
-    private static abstract class DatePromptImpl extends BasePromptImpl<DateTimePrompt> implements WSession.PromptDelegate.DatePrompt {
+    private static abstract class DatePromptImpl extends BasePromptImpl<DateTimePrompt> implements WSession.PromptDelegate.DateTimePrompt {
         public DatePromptImpl(DateTimePrompt geckoPrompt) {
             super(geckoPrompt);
         }
@@ -474,15 +474,15 @@ class PromptDelegateImpl implements GeckoSession.PromptDelegate {
             @Override
             public int type() {
                 switch (mGeckoPrompt.type) {
-                    case DateTimePrompt.Type.DATE:
+                    case GeckoSession.PromptDelegate.DateTimePrompt.Type.DATE:
                         return Type.DATE;
-                    case DateTimePrompt.Type.DATETIME_LOCAL:
+                    case GeckoSession.PromptDelegate.DateTimePrompt.Type.DATETIME_LOCAL:
                         return Type.DATETIME_LOCAL;
-                    case DateTimePrompt.Type.MONTH:
+                    case GeckoSession.PromptDelegate.DateTimePrompt.Type.MONTH:
                         return Type.MONTH;
-                    case DateTimePrompt.Type.TIME:
+                    case GeckoSession.PromptDelegate.DateTimePrompt.Type.TIME:
                         return Type.TIME;
-                    case DateTimePrompt.Type.WEEK:
+                    case GeckoSession.PromptDelegate.DateTimePrompt.Type.WEEK:
                         return Type.WEEK;
                 }
 
