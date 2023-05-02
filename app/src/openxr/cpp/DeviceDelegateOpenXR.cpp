@@ -246,6 +246,9 @@ struct DeviceDelegateOpenXR::State {
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
 
+    if (systemProperties.graphicsProperties.maxLayerCount == 0)
+        VRB_ERROR("OpenXR runtime reports 0 layers. There must be at least 1");
+
     mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
     VRB_LOG("OpenXR runtime %s FB passthrough extension", passthroughProperties.supportsPassthrough ? "does support" : "doesn't support");
@@ -1111,7 +1114,8 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   };
 
   auto canAddLayers = [&layers, maxLayers = m.systemProperties.graphicsProperties.maxLayerCount]() {
-      return layers.size() < maxLayers;
+      // Some runtimes incorrectly report 0 as maxLayerCount like Spaces.
+      return layers.size() < std::max(1u, maxLayers);
   };
 
   if (!mShouldRender) {
