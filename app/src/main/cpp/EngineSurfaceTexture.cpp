@@ -26,9 +26,17 @@ jmethodID sReleaseTexImage;
 jmethodID sIncrementUse;
 jmethodID sDecrementUse;
 
+#ifdef GECKO
 const char* kClassName = "org/mozilla/gecko/gfx/GeckoSurfaceTexture";
+#else
+const char* kClassName = "";
+#endif
 const char* kLookupName = "lookup";
+#ifdef GECKO
 const char* kLookupSignature = "(J)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
+#else
+const char* kLookupSignature = "";
+#endif
 const char* kAttachToGLContextName = "attachToGLContext";
 const char* kAttachToGLContextSignature = "(JI)V";
 const char* kIsAttachedToGLContextName = "isAttachedToGLContext";

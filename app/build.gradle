@@ -305,10 +305,22 @@ android {
         // Supported Backends
         gecko {
             dimension "backend"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DGECKO"
+                    arguments "-DGECKO=ON"
+                }
+            }
         }
 
         chromium {
             dimension "backend"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DCHROMIUM"
+                    arguments "-DCHROMIUM=ON"
+                }
+            }
         }
 
         webkit {
