@@ -1209,7 +1209,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
                 } else {
                     mWidgetManager.setControllersVisible(true);
-                    AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
                     AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
                 }
             }
