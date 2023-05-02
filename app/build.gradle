@@ -243,7 +243,7 @@ android {
 
         spaces {
             dimension "platform"
-            minSdkVersion build_versions.min_sdk_spaces
+            targetSdkVersion build_versions.target_sdk_spaces
             externalNativeBuild {
                 cmake {
                     cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
