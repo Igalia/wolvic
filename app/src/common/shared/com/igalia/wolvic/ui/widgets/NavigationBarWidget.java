@@ -666,11 +666,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
     @Override
     public void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {
-        if (isKioskMode) {
-            mTrayViewModel.setShouldBeVisible(false);
-        } else {
-            mTrayViewModel.setShouldBeVisible(true);
-        }
+        mTrayViewModel.setShouldBeVisible(!isKioskMode);
         updateUI();
         mSettingsViewModel.refresh();
     }

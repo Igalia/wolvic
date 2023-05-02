@@ -179,9 +179,7 @@ public class HamburgerMenuWidget extends UIWidget implements
         mItems = new ArrayList<>();
 
         // In kiosk mode, only resize and passthrough are available.
-        boolean isKioskMode = mWidgetManager.getFocusedWindow().isKioskMode();
-
-        if (!isKioskMode) {
+        if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
                     (menuItem) -> {
@@ -190,76 +188,62 @@ public class HamburgerMenuWidget extends UIWidget implements
                         }
                         return null;
                     }).build());
-        }
 
-        final Session activeSession = SessionStore.get().getActiveSession();
-        String url = activeSession.getCurrentUri();
-        boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
-        final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
-        if (tab != null && showAddons && !isKioskMode) {
-            final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
-            extensions.forEach((extension) -> {
-                if (!extension.getAllowedInPrivateBrowsing() && activeSession.isPrivateMode()) {
-                    return;
-                }
-
-                final WebExtensionState tabExtensionState = tab.getExtensionState().get(extension.getId());
-                if (extension.getBrowserAction() != null) {
-                    addOrUpdateAddonMenuItem(
-                            extension,
-                            extension.getBrowserAction(),
-                            tabExtensionState != null ? tabExtensionState.getBrowserAction() : null);
-                }
-                if (extension.getPageAction() != null) {
-                    addOrUpdateAddonMenuItem(
-                            extension,
-                            extension.getPageAction(),
-                            tabExtensionState != null ? tabExtensionState.getPageAction() : null);
-                }
-            });
-        }
-
-        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                (menuItem) -> {
-                    if (mDelegate != null) {
-                        mDelegate.onResize();
+            final Session activeSession = SessionStore.get().getActiveSession();
+            String url = activeSession.getCurrentUri();
+            boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
+            final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
+            if (tab != null && showAddons) {
+                final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
+                extensions.forEach((extension) -> {
+                    if (!extension.getAllowedInPrivateBrowsing() && activeSession.isPrivateMode()) {
+                        return;
                     }
-                    return null;
-                })
-                .withTitle(getContext().getString(R.string.hamburger_menu_resize))
-                .withIcon(R.drawable.ic_icon_resize)
-                .build());
 
-        if (!isKioskMode && activeSession.getWebAppManifest() != null) {
-            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                    (menuItem) -> {
-                        if (mDelegate != null) {
-                            mDelegate.onSaveWebApp();
-                        }
-                        return null;
-                    })
-                    .withTitle(getContext().getString(R.string.hamburger_menu_save_web_app))
-                    .withIcon(R.drawable.ic_web_app_registration)
-                    .build());
-        }
+                    final WebExtensionState tabExtensionState = tab.getExtensionState().get(extension.getId());
+                    if (extension.getBrowserAction() != null) {
+                        addOrUpdateAddonMenuItem(
+                                extension,
+                                extension.getBrowserAction(),
+                                tabExtensionState != null ? tabExtensionState.getBrowserAction() : null);
+                    }
+                    if (extension.getPageAction() != null) {
+                        addOrUpdateAddonMenuItem(
+                                extension,
+                                extension.getPageAction(),
+                                tabExtensionState != null ? tabExtensionState.getPageAction() : null);
+                    }
+                });
+            }
 
-        if (!isKioskMode && mSendTabEnabled) {
-            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                    (menuItem) -> {
-                        if (mDelegate != null) {
-                            mDelegate.onSendTab();
-                        }
-                        return null;
-                    })
-                    .withTitle(getContext().getString(R.string.hamburger_menu_send_tab))
-                    .withIcon(R.drawable.ic_icon_tabs_sendtodevice)
-                    .build());
-        }
+            if (activeSession.getWebAppManifest() != null) {
+                mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                        HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                        (menuItem) -> {
+                            if (mDelegate != null) {
+                                mDelegate.onSaveWebApp();
+                            }
+                            return null;
+                        })
+                        .withTitle(getContext().getString(R.string.hamburger_menu_save_web_app))
+                        .withIcon(R.drawable.ic_web_app_registration)
+                        .build());
+            }
 
-        if (!isKioskMode) {
+            if (mSendTabEnabled) {
+                mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                        HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                        (menuItem) -> {
+                            if (mDelegate != null) {
+                                mDelegate.onSendTab();
+                            }
+                            return null;
+                        })
+                        .withTitle(getContext().getString(R.string.hamburger_menu_send_tab))
+                        .withIcon(R.drawable.ic_icon_tabs_sendtodevice)
+                        .build());
+            }
+
             HamburgerMenuAdapter.MenuItem item = new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
                     (menuItem) -> {
@@ -285,6 +269,18 @@ public class HamburgerMenuWidget extends UIWidget implements
             }
             mItems.add(item);
         }
+
+        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                (menuItem) -> {
+                    if (mDelegate != null) {
+                        mDelegate.onResize();
+                    }
+                    return null;
+                })
+                .withTitle(getContext().getString(R.string.hamburger_menu_resize))
+                .withIcon(R.drawable.ic_icon_resize)
+                .build());
 
         if (mWidgetManager != null && mWidgetManager.isPassthroughSupported()) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
