@@ -5,7 +5,7 @@
 
 #include <vrb/include/vrb/ConcreteClass.h>
 #include <vrb/include/vrb/GLError.h>
-#include "GeckoSurfaceTexture.h"
+#include "EngineSurfaceTexture.h"
 #include "JNIUtil.h"
 
 #include "vrb/ClassLoaderAndroid.h"
@@ -16,7 +16,7 @@ namespace {
 vrb::ClassLoaderAndroidPtr sClassLoader;
 JNIEnv* sEnv;
 jobject sActivity;
-jclass sGeckoSurfaceTextureClass;
+jclass sEngineSurfaceTextureClass;
 jmethodID sLookup;
 jmethodID sAttachToGLContext;
 jmethodID sIsAttachedToGLContext;
@@ -48,7 +48,7 @@ const char* kDecrementUseSignature = "()V";
 
 namespace crow {
 
-struct GeckoSurfaceTexture::State {
+struct EngineSurfaceTexture::State {
   jobject surface;
   GLuint texture;
   State()
@@ -67,7 +67,7 @@ struct GeckoSurfaceTexture::State {
 };
 
 void
-GeckoSurfaceTexture::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
+EngineSurfaceTexture::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   if (aEnv == sEnv) {
     return;
   }
@@ -82,20 +82,20 @@ GeckoSurfaceTexture::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   if (!foundClass) {
     return;
   }
-  sGeckoSurfaceTextureClass = (jclass)sEnv->NewGlobalRef(foundClass);
+  sEngineSurfaceTextureClass = (jclass)sEnv->NewGlobalRef(foundClass);
   sEnv->DeleteLocalRef(foundClass);
-  sLookup = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kLookupName, kLookupSignature, /*aIsStatic*/ true);
-  sAttachToGLContext = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kAttachToGLContextName, kAttachToGLContextSignature);
-  sIsAttachedToGLContext = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kIsAttachedToGLContextName, kIsAttachedToGLContextSignature);
-  sDetachFromGLContext = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kDetachFromGLContextName, kDetachFromGLContextSignature);
-  sUpdateTexImage = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kUpdateTexImageName, kUpdateTexImageSignature);
-  sReleaseTexImage = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kReleaseTexImageName, kReleaseTexImageSignature);
-  sIncrementUse = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kIncrementUseName, kIncrementUseSignature);
-  sDecrementUse = FindJNIMethodID(sEnv, sGeckoSurfaceTextureClass, kDecrementUseName, kDecrementUseSignature);
+  sLookup = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kLookupName, kLookupSignature, /*aIsStatic*/ true);
+  sAttachToGLContext = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kAttachToGLContextName, kAttachToGLContextSignature);
+  sIsAttachedToGLContext = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kIsAttachedToGLContextName, kIsAttachedToGLContextSignature);
+  sDetachFromGLContext = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kDetachFromGLContextName, kDetachFromGLContextSignature);
+  sUpdateTexImage = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kUpdateTexImageName, kUpdateTexImageSignature);
+  sReleaseTexImage = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kReleaseTexImageName, kReleaseTexImageSignature);
+  sIncrementUse = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kIncrementUseName, kIncrementUseSignature);
+  sDecrementUse = FindJNIMethodID(sEnv, sEngineSurfaceTextureClass, kDecrementUseName, kDecrementUseSignature);
 }
 
 void
-GeckoSurfaceTexture::ShutdownJava() {
+EngineSurfaceTexture::ShutdownJava() {
   if (sEnv) {
     if (sClassLoader) {
       sClassLoader->Shutdown();
@@ -105,9 +105,9 @@ GeckoSurfaceTexture::ShutdownJava() {
       sEnv->DeleteGlobalRef(sActivity);
       sActivity = nullptr;
     }
-    if (sGeckoSurfaceTextureClass) {
-      sEnv->DeleteGlobalRef(sGeckoSurfaceTextureClass);
-      sGeckoSurfaceTextureClass = nullptr;
+    if (sEngineSurfaceTextureClass) {
+      sEnv->DeleteGlobalRef(sEngineSurfaceTextureClass);
+      sEngineSurfaceTextureClass = nullptr;
     }
     sLookup = nullptr;
     sAttachToGLContext = nullptr;
@@ -119,23 +119,23 @@ GeckoSurfaceTexture::ShutdownJava() {
   }
 }
 
-GeckoSurfaceTexturePtr
-GeckoSurfaceTexture::Create(const int32_t aHandle) {
-  GeckoSurfaceTexturePtr result;
+EngineSurfaceTexturePtr
+EngineSurfaceTexture::Create(const int32_t aHandle) {
+  EngineSurfaceTexturePtr result;
   if (!sEnv) {
-    VRB_ERROR("Unable to create GeckoSurfaceTexture. Java not initialized?");
+    VRB_ERROR("Unable to create EngineSurfaceTexture. Java not initialized?");
     return result;
   }
   if (!sLookup) {
-    VRB_ERROR("GeckoSurfaceTexture.lookup method missing");
+    VRB_ERROR("EngineSurfaceTexture.lookup method missing");
     return result;
   }
-  jobject surface = sEnv->CallStaticObjectMethod(sGeckoSurfaceTextureClass, sLookup, aHandle);
+  jobject surface = sEnv->CallStaticObjectMethod(sEngineSurfaceTextureClass, sLookup, aHandle);
   if (!surface) {
-    VRB_ERROR("Unable to find GeckoSurfaceTexture with handle: %d", aHandle);
+    VRB_ERROR("Unable to find EngineSurfaceTexture with handle: %d", aHandle);
     return result;
   }
-  result = std::make_shared<vrb::ConcreteClass<GeckoSurfaceTexture, GeckoSurfaceTexture::State> >();
+  result = std::make_shared < vrb::ConcreteClass < EngineSurfaceTexture, EngineSurfaceTexture::State > > ();
   result->m.surface = sEnv->NewGlobalRef(surface);
   sEnv->DeleteLocalRef(surface);
   result->IncrementUse();
@@ -143,12 +143,12 @@ GeckoSurfaceTexture::Create(const int32_t aHandle) {
 }
 
 GLuint
-GeckoSurfaceTexture::GetTextureName() {
+EngineSurfaceTexture::GetTextureName() {
   return m.texture;
 }
 
 void
-GeckoSurfaceTexture::AttachToGLContext(EGLContext aContext) {
+EngineSurfaceTexture::AttachToGLContext(EGLContext aContext) {
   if (!ValidateMethodID(sEnv, m.surface, sAttachToGLContext, __FUNCTION__)) { return; }
   if (m.texture == 0) {
     VRB_GL_CHECK(glGenTextures(1, &(m.texture)));
@@ -163,7 +163,7 @@ GeckoSurfaceTexture::AttachToGLContext(EGLContext aContext) {
 }
 
 bool
-GeckoSurfaceTexture::IsAttachedToGLContext(EGLContext aContext) const {
+EngineSurfaceTexture::IsAttachedToGLContext(EGLContext aContext) const {
   if (!ValidateMethodID(sEnv, m.surface, sIsAttachedToGLContext, __FUNCTION__)) { return false; }
   bool result = sEnv->CallBooleanMethod(m.surface, sIsAttachedToGLContext, (jlong)aContext);
   CheckJNIException(sEnv, __FUNCTION__);
@@ -171,44 +171,44 @@ GeckoSurfaceTexture::IsAttachedToGLContext(EGLContext aContext) const {
 }
 
 void
-GeckoSurfaceTexture::DetachFromGLContext() {
+EngineSurfaceTexture::DetachFromGLContext() {
   if (!ValidateMethodID(sEnv, m.surface, sDetachFromGLContext, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(m.surface, sDetachFromGLContext);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
 void
-GeckoSurfaceTexture::UpdateTexImage() {
+EngineSurfaceTexture::UpdateTexImage() {
   if (!ValidateMethodID(sEnv, m.surface, sUpdateTexImage, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(m.surface, sUpdateTexImage);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
 void
-GeckoSurfaceTexture::ReleaseTexImage() {
+EngineSurfaceTexture::ReleaseTexImage() {
   if (!ValidateMethodID(sEnv, m.surface, sReleaseTexImage, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(m.surface, sReleaseTexImage);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
 void
-GeckoSurfaceTexture::IncrementUse() {
+EngineSurfaceTexture::IncrementUse() {
   if (!ValidateMethodID(sEnv, m.surface, sIncrementUse, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(m.surface, sIncrementUse);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
 void
-GeckoSurfaceTexture::DecrementUse() {
+EngineSurfaceTexture::DecrementUse() {
   if (!ValidateMethodID(sEnv, m.surface, sDecrementUse, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(m.surface, sDecrementUse);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
-GeckoSurfaceTexture::GeckoSurfaceTexture(State& aState) : m(aState) {}
-GeckoSurfaceTexture::~GeckoSurfaceTexture() {
+EngineSurfaceTexture::EngineSurfaceTexture(State& aState) : m(aState) {}
+EngineSurfaceTexture::~EngineSurfaceTexture() {
   if (m.surface) {
-    VRB_LOG("Destroy GeckoSurfaceTexture");
+    VRB_LOG("Destroy EngineSurfaceTexture");
     ReleaseTexImage();
     if (IsAttachedToGLContext(eglGetCurrentContext())) {
       DetachFromGLContext();

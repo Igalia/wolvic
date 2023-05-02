@@ -28,9 +28,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/FadeAnimation.cpp
              src/main/cpp/Quad.cpp
+             src/main/cpp/EngineSurfaceTexture.cpp
              src/main/cpp/ExternalBlitter.cpp
              src/main/cpp/ExternalVR.cpp
-             src/main/cpp/GeckoSurfaceTexture.cpp
              src/main/cpp/GestureDelegate.cpp
              src/main/cpp/JNIUtil.cpp
              src/main/cpp/Pointer.cpp

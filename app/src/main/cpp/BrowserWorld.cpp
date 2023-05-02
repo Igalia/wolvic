@@ -9,9 +9,9 @@
 #include "FadeAnimation.h"
 #include "Device.h"
 #include "DeviceDelegate.h"
+#include "EngineSurfaceTexture.h"
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
-#include "GeckoSurfaceTexture.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Pointer.h"
@@ -913,7 +913,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   }
 
   VRBrowser::InitializeJava(m.env, m.activity);
-  GeckoSurfaceTexture::InitializeJava(m.env, m.activity);
+  EngineSurfaceTexture::InitializeJava(m.env, m.activity);
   m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   VRBrowser::SetDeviceType(m.device->GetDeviceType());
 
@@ -990,7 +990,7 @@ void
 BrowserWorld::ShutdownJava() {
   ASSERT_ON_RENDER_THREAD();
   VRB_LOG("BrowserWorld::ShutdownJava");
-  GeckoSurfaceTexture::ShutdownJava();
+  EngineSurfaceTexture::ShutdownJava();
   VRBrowser::ShutdownJava();
   if (m.env) {
     m.env->DeleteGlobalRef(m.activity);

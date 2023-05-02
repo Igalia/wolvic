@@ -3,8 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef VRBROWSER_GECKOSURFACETEXTURE_H
-#define VRBROWSER_GECKOSURFACETEXTURE_H
+#pragma once
 
 #include "vrb/gl.h"
 #include "vrb/MacroUtils.h"
@@ -15,14 +14,14 @@
 
 namespace crow {
 
-class GeckoSurfaceTexture;
-typedef std::shared_ptr<GeckoSurfaceTexture> GeckoSurfaceTexturePtr;
+class EngineSurfaceTexture;
+typedef std::shared_ptr<EngineSurfaceTexture> EngineSurfaceTexturePtr;
 
-class GeckoSurfaceTexture {
+class EngineSurfaceTexture {
 public:
   static void InitializeJava(JNIEnv* aEnv, jobject aActivity);
   static void ShutdownJava();
-  static GeckoSurfaceTexturePtr Create(const int32_t aHandle);
+  static EngineSurfaceTexturePtr Create(const int32_t aHandle);
   GLuint GetTextureName();
   void AttachToGLContext(EGLContext aContext);
   bool IsAttachedToGLContext(EGLContext aContext) const;
@@ -34,15 +33,13 @@ public:
 
 protected:
   struct State;
-  GeckoSurfaceTexture(State& aState);
-  ~GeckoSurfaceTexture();
+  EngineSurfaceTexture(State& aState);
+  ~EngineSurfaceTexture();
 
 private:
   State& m;
-  GeckoSurfaceTexture() = delete;
-  VRB_NO_DEFAULTS(GeckoSurfaceTexture)
+  EngineSurfaceTexture() = delete;
+  VRB_NO_DEFAULTS(EngineSurfaceTexture)
 };
 
 }
-
-#endif //VRBROWSER_GECKOSURFACETEXTURE_H
