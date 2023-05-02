@@ -17,6 +17,13 @@ public class AnimationHelper {
     public static final long FADE_ANIMATION_DURATION = 150;
     
     public static void fadeIn(View aView, long delay, final Runnable aCallback) {
+        if (aView.getVisibility() == View.VISIBLE && aView.getAlpha() == 1) {
+            if (aCallback != null) {
+                aCallback.run();
+            }
+            return;
+        }
+
         aView.setVisibility(View.VISIBLE);
         Animation animation = new AlphaAnimation(0, 1);
         animation.setInterpolator(new DecelerateInterpolator());
@@ -46,6 +53,13 @@ public class AnimationHelper {
     }
 
     public static void fadeOut(final View aView, long delay, final Runnable aCallback) {
+        if (aView.getVisibility() == View.GONE) {
+            if (aCallback != null) {
+                aCallback.run();
+            }
+            return;
+        }
+
         aView.setVisibility(View.VISIBLE);
         Animation animation = new AlphaAnimation(1, 0);
         animation.setInterpolator(new AccelerateInterpolator());
