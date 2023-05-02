@@ -644,6 +644,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
+    // Workaround for a bug in YouTube, which is not providing the media playback events
+    // that we need to recognize when a video is playing and obtain its characteristics.
+    private boolean needsYoutubeVideoWorkaround() {
+        if (getSession().getFullScreenVideo() != null) {
+            return false;
+        }
+        String host = Uri.parse(getSession().getCurrentUri()).getHost();
+        return host != null && (host.equals("youtube.com") || host.endsWith(".youtube.com"));
+    }
+
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
@@ -654,8 +664,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 // 1. The website is not providing media playback information (YouTube bug).
                 // 2. The video is not active yet -> wait for onVideoAvailabilityChanged
                 // 3. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                String host = Uri.parse(getSession().getCurrentUri()).getHost();
-                if (host != null && (host.equals("youtube.com") || host.endsWith(".youtube.com"))) {
+                if (needsYoutubeVideoWorkaround()) {
                     Log.w(LOGTAG, "onFullScreen: workaround for immersive YouTube videos");
                     onEnterFullScreen(aWindow);
                 } else {
@@ -862,6 +871,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mProjectionMenu.setSelectedProjection(aProjection);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
+        this.setVisible(false);
 
         mFullScreenMedia = getSession().getFullScreenVideo();
         // This should not happen, but Gecko does not notify about fullscreen changes in media if
@@ -871,11 +881,20 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         // mFullScreenMedia may still be null at this point
 
-        this.setVisible(false);
-        boolean hasValidFullscreenSizes = mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0;
-        // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
-        int mediaWidth = hasValidFullscreenSizes ? (int) mFullScreenMedia.getWidth() : mAttachedWindow.getWindowWidth();
-        int mediaHeight = hasValidFullscreenSizes ? (int) mFullScreenMedia.getHeight() : mAttachedWindow.getWindowHeight();
+        int mediaWidth;
+        int mediaHeight;
+        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
+            mediaWidth = (int) mFullScreenMedia.getWidth();
+            mediaHeight = (int) mFullScreenMedia.getHeight();
+        } else if (needsYoutubeVideoWorkaround()) {
+            // Default to the size of a 4K video, which is our preferred video quality on YouTube.
+            mediaWidth = 3840;
+            mediaHeight = 2160;
+        } else {
+            // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
+            mediaWidth = mAttachedWindow.getWindowWidth();
+            mediaHeight = mAttachedWindow.getWindowHeight();
+        }
         final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
                 aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
         mAttachedWindow.enableVRVideoMode(mediaWidth, mediaHeight, resetBorder);
