@@ -514,6 +514,14 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
+#ifdef SPACES
+bool shouldConsiderPoseAsValid(const XrPosef& pose) {
+    // A bug in spaces leaves the locationFlags always empty. The best we can do is to check that
+    // all positions are not 0.0 (which is what the runtime returns when they aren't tracked).
+    return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
+}
+#endif
+
 bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
@@ -542,6 +550,9 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     } else {
         auto aimJoint = jointLocations.jointLocations[XR_HAND_JOINT_PALM_EXT];
         mHasAimState = aimJoint.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT;
+#if defined(SPACES)
+        mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
+#endif
         if (mHasAimState)
             mHandAimPose = aimJoint.pose;
     }
@@ -568,7 +579,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     jointTransforms.resize(mHandJoints.size());
     for (int i = 0; i < mHandJoints.size(); i++) {
         vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
-        if (mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+        bool positionIsValid = mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+#if defined(SPACES)
+        positionIsValid = shouldConsiderPoseAsValid(mHandJoints[i].pose);
+#endif
+        if (positionIsValid) {
             float radius = mHandJoints[i].radius;
             vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(radius, radius, radius));
             transform.PostMultiplyInPlace(scale);
