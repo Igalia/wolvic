@@ -645,13 +645,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     // Workaround for a bug in YouTube, which is not providing the media playback events
-    // that we need to recognize when a video is playing and obtain its characteristics.
+    // that we need to recognize when a video is playing and obtain its metadata.
     private boolean needsYoutubeVideoWorkaround() {
         if (getSession().getFullScreenVideo() != null) {
             return false;
         }
         String host = Uri.parse(getSession().getCurrentUri()).getHost();
-        return host != null && (host.equals("youtube.com") || host.endsWith(".youtube.com"));
+        return host != null && (host.contains(".youtube.com") || host.contains(".youtube-nocookie.com"));
     }
 
     @Override
@@ -879,7 +879,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         if (mFullScreenMedia == null)
             mFullScreenMedia = getSession().getActiveVideo();
 
-        // mFullScreenMedia may still be null at this point
+        // mFullScreenMedia may still be null at this point.
+        // For example, this can happen if the page does not provide the media playback events
+        // that we use to recognize when a video is playing and obtain its metadata.
 
         int mediaWidth;
         int mediaHeight;
