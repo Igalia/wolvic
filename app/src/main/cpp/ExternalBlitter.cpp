@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "ExternalBlitter.h"
-#include "GeckoSurfaceTexture.h"
+#include "EngineSurfaceTexture.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/private/ResourceGLState.h"
 #include "vrb/gl.h"
@@ -57,10 +57,10 @@ struct ExternalBlitter::State : public vrb::ResourceGL::State {
   GLint aUV;
   GLint uTexture0;
   device::EyeRect eyes[device::EyeCount];
-  GeckoSurfaceTexturePtr surface;
+  EngineSurfaceTexturePtr surface;
   GLfloat leftUV[8];
   GLfloat rightUV[8];
-  std::map<const int32_t, GeckoSurfaceTexturePtr> surfaceMap;
+  std::map<const int32_t, EngineSurfaceTexturePtr> surfaceMap;
   State()
       : vertexShader(0)
       , fragmentShader(0)
@@ -81,18 +81,18 @@ ExternalBlitter::Create(vrb::CreationContextPtr& aContext) {
 void
 ExternalBlitter::StartFrame(const int32_t aSurfaceHandle, const device::EyeRect& aLeftEye,
                             const device::EyeRect& aRightEye) {
-  std::map<const int32_t, GeckoSurfaceTexturePtr>::iterator iter = m.surfaceMap.find(aSurfaceHandle);
+  std::map<const int32_t, EngineSurfaceTexturePtr>::iterator iter = m.surfaceMap.find(aSurfaceHandle);
 
   if (iter == m.surfaceMap.end()) {
-    VRB_LOG("Creating GeckoSurfaceTexture for handle: %d", aSurfaceHandle);
-    m.surface = GeckoSurfaceTexture::Create(aSurfaceHandle);
+    VRB_LOG("Creating EngineSurfaceTexture for handle: %d", aSurfaceHandle);
+    m.surface = EngineSurfaceTexture::Create(aSurfaceHandle);
     m.surfaceMap[aSurfaceHandle] = m.surface;
   } else {
     m.surface = iter->second;
   }
 
   if (!m.surface) {
-    VRB_ERROR("Failed to find GeckoSurfaceTexture for handle: %d", aSurfaceHandle);
+    VRB_ERROR("Failed to find EngineSurfaceTexture for handle: %d", aSurfaceHandle);
     return;
   }
 
@@ -154,12 +154,12 @@ ExternalBlitter::StopPresenting() {
 
 void
 ExternalBlitter::CancelFrame(const int32_t aSurfaceHandle) {
-  GeckoSurfaceTexturePtr surface;
+  EngineSurfaceTexturePtr surface;
   auto iter = m.surfaceMap.find(aSurfaceHandle);
   if (iter != m.surfaceMap.end()) {
     surface = iter->second;
   } else {
-    surface = GeckoSurfaceTexture::Create(aSurfaceHandle);
+    surface = EngineSurfaceTexture::Create(aSurfaceHandle);
     m.surfaceMap[aSurfaceHandle] = surface;
   }
 
