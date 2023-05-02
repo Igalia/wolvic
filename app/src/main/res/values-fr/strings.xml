@@ -1758,4 +1758,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nSouhaitez-vous continuer \?</string>
     <string name="settings_language_portuguese">Portugais</string>
+    <string name="deprecated_version_dialog_title">Mise à jour recommandée</string>
+    <string name="deprecated_version_dialog_info_button">En savoir plus…</string>
+    <string name="deprecated_version_dialog_store_button">Installer…</string>
 </resources>
