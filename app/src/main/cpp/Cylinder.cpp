@@ -29,7 +29,8 @@ namespace crow {
 // It should match the values defined in WindowWidget.
 // 800px is the default window size for a 4m world size.
 // TODO: For now, this value remains the same even if the default window size changes
-//       because otherwise the default windows are not correctly mapped on the cylinder.
+//       to ensure that three windows at the default size cover 180° of the cylinder
+//       (which is not the case if we increase this value).
 float Cylinder::kWorldDensityRatio =  800.0f / 4.0f;
 
 struct Cylinder::State {

@@ -1496,8 +1496,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
-        final float defaultWidthWorld = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        final float maxWidthWorld = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWidthWorld/SettingsStore.WINDOW_WIDTH_DEFAULT);
+        final float defaultWorldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        final float maxWidthWorld = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWorldWidth/SettingsStore.WINDOW_WIDTH_DEFAULT);
         float targetWidth;
 
         if (aScale < DEFAULT_SCALE) {
@@ -1508,13 +1508,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             targetWidth = (float) Math.sqrt(targetArea * aAspect);
         } else if (aScale == DEFAULT_SCALE) {
             // Default window size.
-            targetWidth = defaultWidthWorld;
+            targetWidth = defaultWorldWidth;
         } else if (aScale >= MAX_SCALE) {
             // Maximum window size.
             targetWidth = maxWidthWorld;
         } else {
             // Proportional between the default and maximum sizes.
-            targetWidth = defaultWidthWorld + (maxWidthWorld - defaultWidthWorld) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
+            targetWidth = defaultWorldWidth + (maxWidthWorld - defaultWorldWidth) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
         }
 
         float targetHeight = targetWidth / aAspect;
