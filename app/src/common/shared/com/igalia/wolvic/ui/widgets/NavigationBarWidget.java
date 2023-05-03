@@ -823,7 +823,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
         AnimationHelper.fadeOut(mBinding.navigationBarMenu.resizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
         mWidgetManager.popBackHandler(mResizeBackHandler);
-        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() && !mAttachedWindow.isKioskMode());
+        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() || !mAttachedWindow.isKioskMode());
         closeFloatingMenus();
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {
@@ -909,7 +909,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.disableVRVideoMode();
         mAttachedWindow.setVisible(true);
         mMediaControlsWidget.setVisible(false);
-        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() && !mAttachedWindow.isKioskMode());
+        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() || !mAttachedWindow.isKioskMode());
 
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
