@@ -24,6 +24,8 @@ import mozilla.components.concept.fetch.Client;
 import mozilla.components.concept.storage.LoginsStorage;
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
+import org.chromium.wolvic.VRManager;
+
 public class RuntimeImpl implements WRuntime {
     private BrowserInitializer mBrowserInitializer;
     private Context mContext;
@@ -82,7 +84,7 @@ public class RuntimeImpl implements WRuntime {
 
     @Override
     public void setExternalVRContext(long externalContext) {
-        // TODO: Implement
+        VRManager.setExternalContext(externalContext);
     }
 
     @Override
