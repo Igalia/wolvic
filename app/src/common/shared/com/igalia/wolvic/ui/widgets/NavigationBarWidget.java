@@ -646,6 +646,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
     // Workaround for a bug in YouTube, which is not providing the media playback events
     // that we need to recognize when a video is playing and obtain its metadata.
+    // Related Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1827583
     private boolean needsYoutubeVideoWorkaround() {
         if (getSession().getFullScreenVideo() != null) {
             return false;
