@@ -29,13 +29,13 @@ jmethodID sDecrementUse;
 #ifdef GECKO
 const char* kClassName = "org/mozilla/gecko/gfx/GeckoSurfaceTexture";
 #else
-const char* kClassName = "";
+const char* kClassName = "org/chromium/wolvic/WVRSurfaceTexture";
 #endif
 const char* kLookupName = "lookup";
 #ifdef GECKO
 const char* kLookupSignature = "(J)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
 #else
-const char* kLookupSignature = "";
+const char* kLookupSignature = "(J)Lorg/chromium/wolvic/WVRSurfaceTexture;";
 #endif
 const char* kAttachToGLContextName = "attachToGLContext";
 const char* kAttachToGLContextSignature = "(JI)V";
