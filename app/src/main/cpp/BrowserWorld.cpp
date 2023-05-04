@@ -526,7 +526,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
 
     if (controller.beamToggle)
-      controller.beamToggle->ToggleAll(controller.mode == ControllerMode::Device && controller.hasAim);
+      controller.beamToggle->ToggleAll(controller.hasAim);
+
 
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
