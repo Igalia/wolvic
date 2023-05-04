@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -70,6 +71,7 @@ import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.RemoteProperties;
+import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -82,6 +84,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
         TrayListener, WindowWidget.WindowListener {
+
+    protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
 
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
@@ -351,6 +355,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
+            if (mBrightnessWidget == null) {
+                return;
+            }
+
             boolean wasVisible = mBrightnessWidget.isVisible();
             closeFloatingMenus();
 
@@ -615,7 +623,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             exitResizeMode(ResizeAction.KEEP_SIZE);
         }
         AtomicBoolean autoEnter = new AtomicBoolean(false);
-        mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+        if (getSession().getFullScreenVideo() == null) {
+            mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
+            autoEnter.set(false);
+        } else {
+            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+        }
+
         if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
             mViewModel.setAutoEnteredVRVideo(true);
             postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
@@ -627,30 +641,47 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
+    // Workaround for a bug in YouTube, which is not providing the media playback events
+    // that we need to recognize when a video is playing and obtain its metadata.
+    // Related Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1827583
+    private boolean needsYoutubeVideoWorkaround() {
+        if (getSession().getFullScreenVideo() != null) {
+            return false;
+        }
+        String host = Uri.parse(getSession().getCurrentUri()).getHost();
+        return host != null && (host.contains(".youtube.com") || host.contains(".youtube-nocookie.com"));
+    }
+
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
             if (getSession().getFullScreenVideo() != null) {
                 onEnterFullScreen(aWindow);
             } else {
-                // No active fullscreen video. There might be two reasons for that:
-                // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
-                // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-                    @Override
-                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                        assert getSession().getActiveVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                    @Override
-                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                        assert getSession().getFullScreenVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                });
+                // No active fullscreen video. There might be three reasons for that:
+                // 1. The website is not providing media playback information (YouTube bug).
+                // 2. The video is not active yet -> wait for onVideoAvailabilityChanged
+                // 3. The video is active but not in fullscreen -> wait for onMediaFullscreen
+                if (needsYoutubeVideoWorkaround()) {
+                    Log.w(LOGTAG, "onFullScreen: workaround for immersive YouTube videos");
+                    onEnterFullScreen(aWindow);
+                } else {
+                    mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
+                        @Override
+                        public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                            WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
+                            assert getSession().getActiveVideo() != null;
+                            onEnterFullScreen(aWindow);
+                            mAttachedWindow.removeWindowListener(this);
+                        }
+                        @Override
+                        public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+                            assert getSession().getFullScreenVideo() != null;
+                            onEnterFullScreen(aWindow);
+                            mAttachedWindow.removeWindowListener(this);
+                        }
+                    });
+                }
             }
         } else {
             mWidgetPlacement = mBeforeFullscreenPlacement;
@@ -838,26 +869,41 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mProjectionMenu.setSelectedProjection(aProjection);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
+        this.setVisible(false);
 
         mFullScreenMedia = getSession().getFullScreenVideo();
         // This should not happen, but Gecko does not notify about fullscreen changes in media if
         // the web content is already in fullscreen state.
         if (mFullScreenMedia == null)
             mFullScreenMedia = getSession().getActiveVideo();
-        assert mFullScreenMedia != null;
 
-        this.setVisible(false);
-        boolean hasValidFullscreenSizes = mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0;
-        // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
-        int mediaWidth = hasValidFullscreenSizes ? (int) mFullScreenMedia.getWidth() : mAttachedWindow.getWindowWidth();
-        int mediaHeight = hasValidFullscreenSizes ? (int) mFullScreenMedia.getHeight() : mAttachedWindow.getWindowHeight();
+        // mFullScreenMedia may still be null at this point.
+        // For example, this can happen if the page does not provide the media playback events
+        // that we use to recognize when a video is playing and obtain its metadata.
+
+        int mediaWidth;
+        int mediaHeight;
+        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
+            mediaWidth = (int) mFullScreenMedia.getWidth();
+            mediaHeight = (int) mFullScreenMedia.getHeight();
+        } else if (needsYoutubeVideoWorkaround()) {
+            // Default to the size of a 4K video, which is our preferred video quality on YouTube.
+            mediaWidth = 3840;
+            mediaHeight = 2160;
+        } else {
+            // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
+            mediaWidth = mAttachedWindow.getWindowWidth();
+            mediaHeight = mAttachedWindow.getWindowHeight();
+        }
         final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
                 aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
         mAttachedWindow.enableVRVideoMode(mediaWidth, mediaHeight, resetBorder);
         // Handle video resize while in VR video playback
-        mFullScreenMedia.setResizeDelegate((width, height) -> {
-            mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
-        });
+        if (mFullScreenMedia != null) {
+            mFullScreenMedia.setResizeDelegate((width, height) -> {
+                mAttachedWindow.enableVRVideoMode(width, height, resetBorder);
+            });
+        }
 
         mAttachedWindow.setVisible(false);
 
