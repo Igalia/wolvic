@@ -147,49 +147,6 @@ XrResult OpenXRInputSource::Initialize()
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
         VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
-
-        if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME) &&
-                OpenXRExtensions::sXrGetHandMeshFB != XR_NULL_HANDLE) {
-            XrHandTrackingMeshFB mesh = { XR_TYPE_HAND_TRACKING_MESH_FB };
-            // Figure out sizes first
-            mesh.jointCapacityInput = 0;
-            mesh.vertexCapacityInput = 0;
-            mesh.indexCapacityInput = 0;
-            CHECK_XRCMD(OpenXRExtensions::sXrGetHandMeshFB(mHandTracker, &mesh));
-            mesh.jointCapacityInput = mesh.jointCountOutput;
-            mesh.vertexCapacityInput = mesh.vertexCountOutput;
-            mesh.indexCapacityInput = mesh.indexCountOutput;
-
-            // Skeleton
-            mHandMesh.jointCount = mesh.jointCountOutput;
-            mHandMesh.jointPoses.resize(mesh.jointCountOutput);
-            mHandMesh.jointParents.resize(mesh.jointCountOutput);
-            mHandMesh.jointRadii.resize(mesh.jointCountOutput);
-            mesh.jointBindPoses = mHandMesh.jointPoses.data();
-            mesh.jointParents = mHandMesh.jointParents.data();
-            mesh.jointRadii = mHandMesh.jointRadii.data();
-            // Vertex
-            mHandMesh.vertexCount = mesh.vertexCountOutput;
-            mHandMesh.vertexPositions.resize(mesh.vertexCountOutput);
-            mHandMesh.vertexNormals.resize(mesh.vertexCountOutput);
-            mHandMesh.vertexUVs.resize(mesh.vertexCountOutput);
-            mHandMesh.vertexBlendIndices.resize(mesh.vertexCountOutput);
-            mHandMesh.vertexBlendWeights.resize(mesh.vertexCountOutput);
-            mesh.vertexPositions = mHandMesh.vertexPositions.data();
-            mesh.vertexNormals = mHandMesh.vertexNormals.data();
-            mesh.vertexUVs = mHandMesh.vertexUVs.data();
-            mesh.vertexBlendIndices = mHandMesh.vertexBlendIndices.data();
-            mesh.vertexBlendWeights = mHandMesh.vertexBlendWeights.data();
-            // Index
-            mHandMesh.indexCount = mesh.indexCountOutput;
-            mHandMesh.indices.resize(mesh.indexCountOutput);
-            mesh.indices = mHandMesh.indices.data();
-
-            // Now get the actual mesh
-            RETURN_IF_XR_FAILED(OpenXRExtensions::sXrGetHandMeshFB(mHandTracker, &mesh));
-            mHasHandMesh = true;
-            VRB_LOG("xrGetHandMeshFB: %u, %u, %u", mHandMesh.jointCount, mHandMesh.vertexCount, mHandMesh.indexCount);
-        }
     }
 
     return XR_SUCCESS;

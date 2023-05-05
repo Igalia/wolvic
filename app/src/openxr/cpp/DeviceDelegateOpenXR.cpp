@@ -173,9 +173,6 @@ struct DeviceDelegateOpenXR::State {
         if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME)) {
             extensions.push_back(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
         }
-        if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME)) {
-            extensions.push_back(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME);
-        }
     }
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
         extensions.push_back(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME);
