@@ -24,7 +24,6 @@ namespace crow {
     static PFN_xrCreateHandTrackerEXT sXrCreateHandTrackerEXT;
     static PFN_xrDestroyHandTrackerEXT sXrDestroyHandTrackerEXT;
     static PFN_xrLocateHandJointsEXT sXrLocateHandJointsEXT;
-    static PFN_xrGetHandMeshFB sXrGetHandMeshFB;
 
     static PFN_xrPerfSettingsSetPerformanceLevelEXT sXrPerfSettingsSetPerformanceLevelEXT;
     static PFN_xrEnumerateDisplayRefreshRatesFB sXrEnumerateDisplayRefreshRatesFB;

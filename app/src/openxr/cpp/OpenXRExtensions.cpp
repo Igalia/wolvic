@@ -10,7 +10,6 @@ PFN_xrCreateSwapchainAndroidSurfaceKHR OpenXRExtensions::sXrCreateSwapchainAndro
 PFN_xrCreateHandTrackerEXT OpenXRExtensions::sXrCreateHandTrackerEXT = nullptr;
 PFN_xrDestroyHandTrackerEXT OpenXRExtensions::sXrDestroyHandTrackerEXT = nullptr;
 PFN_xrLocateHandJointsEXT OpenXRExtensions::sXrLocateHandJointsEXT = nullptr;
-PFN_xrGetHandMeshFB OpenXRExtensions::sXrGetHandMeshFB = nullptr;
 PFN_xrPerfSettingsSetPerformanceLevelEXT OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT = nullptr;
 PFN_xrEnumerateDisplayRefreshRatesFB OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB = nullptr;
 PFN_xrRequestDisplayRefreshRateFB OpenXRExtensions::sXrRequestDisplayRefreshRateFB = nullptr;
@@ -77,10 +76,6 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyHandTrackerEXT)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLocateHandJointsEXT",
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrLocateHandJointsEXT)));
-        if (IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME)) {
-            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrGetHandMeshFB",
-                                            reinterpret_cast<PFN_xrVoidFunction *>(&sXrGetHandMeshFB)));
-        }
     }
 
     if (IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
