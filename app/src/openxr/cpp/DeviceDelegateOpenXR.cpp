@@ -256,8 +256,10 @@ struct DeviceDelegateOpenXR::State {
     if (passthroughProperties.supportsPassthrough) {
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
     } else {
-#if defined(LYNX) || defined(SPACES)
+#if defined(LYNX)
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
+#elif defined(SPACES)
+        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNoSkybox>();
 #else
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
 #endif

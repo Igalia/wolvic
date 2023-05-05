@@ -48,4 +48,10 @@ private:
 XrEnvironmentBlendMode environmentBlendModeForPassthrough() const override { return XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND; };
 };
 
+// This strategy is intended for runtimes that show a transparent environment when the skybox layer is not rendered.
+class OpenXRPassthroughStrategyNoSkybox : public OpenXRPassthroughStrategy {
+private:
+XrEnvironmentBlendMode environmentBlendModeForPassthrough() const override { return XR_ENVIRONMENT_BLEND_MODE_OPAQUE; };
+};
+
 } // namespace crow
