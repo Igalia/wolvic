@@ -1,3 +1,7 @@
 [submodule "app/src/main/cpp/vrb"]
 	path = app/src/main/cpp/vrb
 	url = https://github.com/igalia/vrb.git
+[submodule "app/src/main/cpp/tinygltf"]
+	path = app/src/main/cpp/tinygltf
+	url = https://github.com/Igalia/tinygltf.git
+	branch = igalia.com/wolvic

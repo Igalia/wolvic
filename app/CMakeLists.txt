@@ -220,6 +220,16 @@ if (SPACES)
     target_link_libraries(native-lib loader::openxr_loader)
 endif()
 
+
+# Add dependency on tinygltf library, which is used to load hand models
+# from .glb assets. Since it is only a single C++ source and header,
+# we include them as native-lib's own build sources.
+add_definitions(-DTINYGLTF_ANDROID_LOAD_FROM_ASSETS)
+target_sources(native-lib PUBLIC
+    ${CMAKE_SOURCE_DIR}/../app/src/main/cpp/tinygltf/tiny_gltf.cc)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/../app/src/main/cpp/tinygltf)
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
