@@ -102,7 +102,7 @@ public:
       xrLayer->next = XR_NULL_HANDLE;
 
       if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE)
-        PushNextXrStructureInChain((XrBaseInStructure&)xrLayer, (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
+        PushNextXrStructureInChain((XrBaseInStructure&)*xrLayer, (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
     }
   }
 
