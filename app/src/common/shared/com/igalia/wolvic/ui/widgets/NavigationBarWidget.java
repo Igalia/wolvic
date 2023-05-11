@@ -70,6 +70,7 @@ import com.igalia.wolvic.ui.widgets.menus.HamburgerMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
@@ -192,6 +193,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
+        
+        if (DeviceType.isSnapdragonSpaces()) {
+            mIsPassthroughEnabled = true;
+            mWidgetManager.togglePassthrough();
+        }
     }
 
     private void updateUI() {
