@@ -281,6 +281,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
+        mBinding.navigationBarNavigation.userFeedbackButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            mWidgetManager.openNewTabForeground(getResources().getString(R.string.feedback_link));
+        });
+
         mBinding.navigationBarNavigation.desktopModeButton.setOnClickListener(view -> {
             final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
             if (mHamburgerMenu != null) {

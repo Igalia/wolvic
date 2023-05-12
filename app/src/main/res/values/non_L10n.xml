@@ -213,6 +213,7 @@
 
     <!-- Settings Survey link -->
     <string name="survey_link" translatable="false">https://github.com/Igalia/wolvic/issues/</string>
+    <string name="feedback_link" translatable="false">https://wolvic.com/en/report_an_issue.html</string>
 
     <!-- Phone UI links -->
     <string name="hvr_learn_more_url" translatable="false">https://consumer.huawei.com/cn/wearables/vr-glass/</string>

@@ -76,6 +76,17 @@
             app:visibleGone="@{viewmodel.isKioskMode}" />
 
         <com.igalia.wolvic.ui.views.UIButton
+            android:id="@+id/userFeedbackButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="0"
+            android:checked="true"
+            android:src="@drawable/baseline_contact_support_24"
+            android:tooltipText="@string/user_feedback_tooltip"
+            app:privateMode="@{viewmodel.isPrivateSession}"
+            app:visibleGone="@{!viewmodel.isKioskMode}" />
+
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/desktopModeButton"
             style="?attr/accentedNavigationBarButtonStyle"
             android:layout_marginStart="10dp"
