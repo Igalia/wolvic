@@ -591,7 +591,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     jointTransforms.resize(mHandJoints.size());
     for (int i = 0; i < mHandJoints.size(); i++) {
         vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
-        bool positionIsValid = mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+        bool positionIsValid = IsHandJointPositionValid((XrHandJointEXT) i);
 #if defined(SPACES)
         positionIsValid = shouldConsiderPoseAsValid(mHandJoints[i].pose);
 #endif
@@ -610,15 +610,15 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     bool leftPalmFacesHead = false;
     if (mHandeness == OpenXRHandFlags::Left) {
 #if defined(OCULUSVR)
-        if (mHandJoints[XR_HAND_JOINT_PALM_EXT].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT)
+        if (IsHandJointPositionValid(XR_HAND_JOINT_PALM_EXT))
             leftPalmFacesHead = !mHasAimState;
 #else
-        int palmJointIndex = XR_HAND_JOINT_PALM_EXT;
+        XrHandJointEXT palmJointIndex = XR_HAND_JOINT_PALM_EXT;
 #if defined(PICOXR)
         // Pico runtime doesn't provide palm joint info, so we use the wrist instead.
         palmJointIndex = XR_HAND_JOINT_WRIST_EXT;
 #endif
-        if (mHandJoints[palmJointIndex].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+        if (IsHandJointPositionValid(palmJointIndex)) {
             vrb::Vector vector = vrb::Vector(0.0f, 0.0f, 1.0f);
             vrb::Matrix palmMatrix = jointTransforms[palmJointIndex];
             vrb::Matrix headPalmMatrix = head.Inverse().PostMultiply(palmMatrix);
@@ -630,7 +630,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     // Scale joints according to their radius (for rendering)
     for (int i = 0; i < mHandJoints.size(); i++) {
-        if (mHandJoints[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
+        if (IsHandJointPositionValid((XrHandJointEXT) i)) {
             float radius = mHandJoints[i].radius;
             vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(
                     vrb::Vector(radius, radius, radius));
