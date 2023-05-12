@@ -211,6 +211,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
+    private boolean mIsPassthroughEnabled = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -535,6 +536,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Log.e(LOGTAG, "Failed to start Tray clock");
         } else {
             mTray.start(this);
+        }
+        // TODO: Too early for runtimes using the passthrough layer.
+        if (DeviceType.isSnapdragonSpaces()) {
+            togglePassthrough();
         }
     }
 
@@ -1851,8 +1856,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void togglePassthrough() { queueRunnable(() -> togglePassthroughNative()); }
+    public void togglePassthrough() {
+        mIsPassthroughEnabled = !mIsPassthroughEnabled;
+        queueRunnable(() -> togglePassthroughNative());
+    }
 
+    @Override
+    public boolean isPassthroughEnabled() {
+        return mIsPassthroughEnabled;
+    }
     @Override
     public boolean isPassthroughSupported() {
         return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces();
