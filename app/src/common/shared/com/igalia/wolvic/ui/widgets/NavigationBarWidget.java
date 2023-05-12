@@ -130,7 +130,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private ArrayList<NavigationListener> mNavigationListeners;
     private TrackingProtectionStore mTrackingDelegate;
     private WidgetPlacement mBeforeFullscreenPlacement;
-    private boolean mIsPassthroughEnabled = false;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -193,11 +192,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
-        
-        if (DeviceType.isSnapdragonSpaces()) {
-            mIsPassthroughEnabled = true;
-            mWidgetManager.togglePassthrough();
-        }
     }
 
     private void updateUI() {
@@ -1292,7 +1286,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             @Override
             public void onPassthrough() {
-                mIsPassthroughEnabled = !mIsPassthroughEnabled;
                 mWidgetManager.togglePassthrough();
 
                 hideMenu();
@@ -1300,7 +1293,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             @Override
             public boolean isPassthroughEnabled() {
-                return mIsPassthroughEnabled;
+                return mWidgetManager.isPassthroughEnabled();
             }
 
             @Override
