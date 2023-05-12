@@ -60,6 +60,7 @@ private:
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(const XrFrameState&, XrSpace);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
+    bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };

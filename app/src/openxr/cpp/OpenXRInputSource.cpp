@@ -577,6 +577,12 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
     return vrb::Vector(jointAPos - jointBPos).Magnitude();
 }
 
+bool OpenXRInputSource::IsHandJointPositionValid(const enum XrHandJointEXT aJoint) {
+    if (aJoint >= mHandJoints.size())
+        return false;
+    return (mHandJoints[aJoint].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0;
+}
+
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate)
 {
     // Prepare and submit hand joint locations data for rendering
@@ -639,20 +645,22 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetEnabled(mIndex, true);
 
     // Select action
-    const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
-                                                               XR_HAND_JOINT_INDEX_TIP_EXT);
-    const double pinchFactor = 1.0 - std::clamp((indexThumbDistance - kPinchThreshold)/kPinchRange, 0.0, 1.0);
+    bool indexPinching = false;
+    double pinchFactor = 0.0f;
+    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
+        IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT)) {
+        const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                                   XR_HAND_JOINT_INDEX_TIP_EXT);
+        pinchFactor = 1.0 - std::clamp((indexThumbDistance - kPinchThreshold) / kPinchRange, 0.0, 1.0);
+        indexPinching = indexThumbDistance < kPinchThreshold;
+    }
     delegate.SetPinchFactor(mIndex, pinchFactor);
-
-    bool indexPinching = indexThumbDistance < kPinchThreshold;
-
+    delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
+                            device::kImmersiveButtonTrigger, indexPinching && !leftPalmFacesHead,
+                            indexPinching && !leftPalmFacesHead, 1.0);
     if (leftPalmFacesHead) {
         delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
     } else {
-        delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
-                                device::kImmersiveButtonTrigger, indexPinching,
-                                indexPinching, 1.0);
-
         if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
             selectActionStarted = indexPinching;
             if (selectActionStarted) {
@@ -700,8 +708,12 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetCapabilityFlags(mIndex, flags);
 
     // Squeeze action
-    bool middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
+    bool middlePinching = false;
+    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
+        IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_TIP_EXT)) {
+        middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
                                                   XR_HAND_JOINT_MIDDLE_TIP_EXT) < kPinchThreshold;
+    }
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_SQUEEZE,
                             device::kImmersiveButtonSqueeze, middlePinching,
                             middlePinching, 1.0);
