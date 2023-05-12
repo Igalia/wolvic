@@ -22,7 +22,7 @@ public class TabImpl extends Tab {
 
     private void registerCallbacks(@NonNull SessionImpl session) {
         mTabMediaSessionObserver = new TabMediaSessionObserver(mWebContents, session);
-        mTabWebContentsDelegate = new TabWebContentsDelegate(session);
+        mTabWebContentsDelegate = new TabWebContentsDelegate(session, mWebContents);
         setWebContentsDelegate(mWebContents, mTabWebContentsDelegate);
 
         mWebContentsObserver = new TabWebContentsObserver(mWebContents, session);

@@ -7,15 +7,19 @@ import com.igalia.wolvic.browser.api.WSession;
 
 import org.chromium.blink.mojom.DisplayMode;
 import org.chromium.components.embedder_support.delegate.WebContentsDelegateAndroid;
+import org.chromium.content_public.browser.InvalidateTypes;
 import org.chromium.content_public.browser.WebContents;
+import org.chromium.url.GURL;
 
 public class TabWebContentsDelegate extends WebContentsDelegateAndroid {
     private @NonNull SessionImpl mSession;
+    private @NonNull final WebContents mWebContents;
 
     private boolean mIsFullscreen;
 
-    public TabWebContentsDelegate(@NonNull SessionImpl session) {
+    public TabWebContentsDelegate(@NonNull SessionImpl session, WebContents webContents) {
         mSession = session;
+        mWebContents = webContents;
     }
 
    @Override
@@ -54,5 +58,23 @@ public class TabWebContentsDelegate extends WebContentsDelegateAndroid {
     @Override
     public int getDisplayMode() {
         return !mIsFullscreen ? DisplayMode.BROWSER : DisplayMode.FULLSCREEN;
+    }
+
+    @Override
+    public void navigationStateChanged(int flags) {
+        if ((flags & InvalidateTypes.TITLE) != 0) {
+            WSession.ContentDelegate delegate = mSession.getContentDelegate();
+            if (delegate != null) {
+                delegate.onTitleChange(mSession, mWebContents.getTitle());
+            }
+        }
+    }
+
+    @Override
+    public void onUpdateUrl(GURL url) {
+        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
+        if (delegate != null) {
+            delegate.onLocationChange(mSession, mWebContents.getVisibleUrl().getSpec());
+        }
     }
 }
