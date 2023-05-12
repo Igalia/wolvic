@@ -445,6 +445,10 @@
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">What’s New</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the User Feedback' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="user_feedback_tooltip">Share ideas and feedback</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Restart Required</string>
