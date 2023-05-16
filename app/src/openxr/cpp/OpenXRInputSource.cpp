@@ -23,11 +23,11 @@ const float kPinchThreshold = 0.019;
 const float kPinchStart = 0.055;
 const float kPinchRange = kPinchStart - kPinchThreshold;
 
-// This threshold specifies the minimum size of the normalized vector
-// resulting from the sum of the head and the left palm
-// pose. It is used to detect when palm is facing the head, and enabled
-// the left hand action gesture.
-const float kPalmHeadRotationZThreshold = 0.5;
+// This threshold is used to detect when palm is facing the head,
+// and enable the left hand action gesture. The higher the threshold
+// the more aligned objects should be to be considered facing each other.
+// 0.7 is generally accepted as good for objects facing each other.
+const float kPalmHeadThreshold = 0.7;
 
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
@@ -619,11 +619,17 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         palmJointIndex = XR_HAND_JOINT_WRIST_EXT;
 #endif
         if (IsHandJointPositionValid(palmJointIndex)) {
-            vrb::Vector vector = vrb::Vector(0.0f, 0.0f, 1.0f);
             vrb::Matrix palmMatrix = jointTransforms[palmJointIndex];
-            vrb::Matrix headPalmMatrix = head.Inverse().PostMultiply(palmMatrix);
-            vrb::Vector diffVector = headPalmMatrix.MultiplyPosition(vector).Normalize();
-            leftPalmFacesHead = diffVector.z() >= kPalmHeadRotationZThreshold;
+            // For the hand we take the Y axis because that corresponds to head's Z axis when
+            // the hand is in upright position facing head (the gesture we want to detect).
+#ifdef PICOXR
+            // Y-Z Axis are inverted in Pico
+            auto vectorPalm = palmMatrix.MultiplyDirection({0, 0, -1});
+#else
+            auto vectorPalm = palmMatrix.MultiplyDirection({0, 1, 0});
+#endif
+            auto vectorHead = head.MultiplyDirection({0, 0, -1});
+            leftPalmFacesHead = vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
         }
 #endif
     }
