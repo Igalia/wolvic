@@ -52,6 +52,11 @@ class DisplayOptionsView extends SettingsView {
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         // Options
+
+        // TODO experimental controls to change the distance of the windows
+        mBinding.increaseDistance.setOnClickListener(v -> mWidgetManager.getWindows().increaseWindowDistance());
+        mBinding.decreaseDistance.setOnClickListener(v -> mWidgetManager.getWindows().decreaseWindowDistance());
+
         mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
         setCurvedDisplay(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f, false);
 

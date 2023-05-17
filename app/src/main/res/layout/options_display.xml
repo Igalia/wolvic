@@ -38,6 +38,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- TODO experimental controls to change the distance of the windows -->
+
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/increase_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="Increase"
+                    app:description="Increase window distance" />
+
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/decrease_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="Decrease"
+                    app:description="Decrease window distance" />
+
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/curved_display_switch"
                     android:layout_width="match_parent"

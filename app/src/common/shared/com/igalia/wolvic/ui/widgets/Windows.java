@@ -543,7 +543,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public boolean isVideoAvailable() {
-        for (WindowWidget window: getCurrentWindows()) {
+        for (WindowWidget window : getCurrentWindows()) {
             if (window.getSession().getActiveVideo() != null) {
                 return true;
             }
@@ -552,9 +552,39 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return false;
     }
 
+    public void increaseWindowDistance() {
+        updateWindowDistance(true);
+    }
+
+    public void decreaseWindowDistance() {
+        updateWindowDistance(false);
+    }
+
+    private void updateWindowDistance(boolean increase) {
+        ArrayList<WindowWidget> windows = new ArrayList<>(mRegularWindows);
+        windows.addAll(mPrivateWindows);
+        for (WindowWidget window : windows) {
+            WidgetPlacement placement = window.getPlacement();
+            float oldValue;
+            float newValue;
+            if (window.getWindowPlacement() == WindowPlacement.FRONT) {
+                oldValue = WidgetPlacement.metersFromUnit(placement.translationZ);
+                placement.translationZ = placement.translationZ + (increase ? 1 : -1) * WidgetPlacement.unitFromMeters(0.1f);
+                newValue = WidgetPlacement.metersFromUnit(placement.translationZ);
+            } else {
+                oldValue = placement.cylinderMapRadius;
+                newValue = placement.cylinderMapRadius + (increase ? 1 : -1) * 0.1f;
+                placement.cylinderMapRadius = newValue;
+            }
+
+            Log.e(LOGTAG, (increase ? "increase" : "decrease") + " window distance: " + oldValue + " -> " + newValue);
+            window.updateWidget();
+        }
+    }
+
     public void enterImmersiveMode() {
         if (!isInPrivateMode()) {
-            for (WindowWidget window: mRegularWindows) {
+            for (WindowWidget window : mRegularWindows) {
                 if (window != mFocusedWindow) {
                     window.onPause();
                 }
