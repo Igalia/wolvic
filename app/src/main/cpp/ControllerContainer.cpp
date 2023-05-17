@@ -194,7 +194,7 @@ ControllerContainer::InitializeBeam() {
   }
 }
 
-void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms)
+void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, const std::vector<vrb::Matrix>& jointTransforms)
 {
     if (!m.Contains(aControllerIndex))
         return;

@@ -101,7 +101,7 @@ public:
   virtual bool IsVisible() const = 0;
   virtual void SetVisible(const bool aVisible) = 0;
   virtual void SetGazeModeIndex(const int32_t aControllerIndex) = 0;
-  virtual void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix>& jointTransforms) = 0;
+  virtual void SetHandJointLocations(const int32_t aControllerIndex, const std::vector<vrb::Matrix>& jointTransforms) = 0;
   virtual void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) = 0;
   virtual void SetLeftHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) = 0;
   virtual void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) = 0;
