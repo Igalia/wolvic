@@ -45,6 +45,8 @@ struct Controller {
   vrb::TogglePtr modelToggle;
   vrb::TogglePtr handMeshToggle;
   std::vector<vrb::TransformPtr> handJointTransforms;
+  std::unique_ptr<ControllerDelegate::HandMesh> handMesh;
+  std::vector<vrb::Matrix>meshJointTransforms;
   bool hasAim;
   bool leftHandActionEnabled;
   vrb::TogglePtr handActionButtonToggle;

@@ -77,6 +77,8 @@ Controller::operator=(const Controller& aController) {
   batteryLevel = aController.batteryLevel;
   handMeshToggle = aController.handMeshToggle;
   handJointTransforms = aController.handJointTransforms;
+  if (aController.handMesh)
+    handMesh = std::make_unique<ControllerDelegate::HandMesh>(*aController.handMesh);
   hasAim = aController.hasAim;
   leftHandActionEnabled = aController.leftHandActionEnabled;
   handActionButtonToggle = aController.handActionButtonToggle;
@@ -129,7 +131,9 @@ Controller::Reset() {
   batteryLevel = -1;
   handJointTransforms.clear();
   handMeshToggle = nullptr;
+  handMesh = nullptr;
   hasAim = true;
+  meshJointTransforms.clear();
   leftHandActionEnabled = false;
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;
