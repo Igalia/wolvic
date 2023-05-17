@@ -248,10 +248,10 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         state->SetProgram(program);
         vrb::Color handColor = vrb::Color(0.5f, 0.5f, 0.5f);
         handColor.SetAlpha(1.0);
-        state->SetMaterial(handColor, handColor,
-                           Color(0.0f, 0.0f, 0.0f),
-                           0.0f);
-        state->SetLightsEnabled(false);
+        state->SetMaterial(handColor, Color(0.5f, 0.5f, 0.5f),
+                           Color(0.5f, 0.5f, 0.5f),
+                           0.75f);
+        state->SetLightsEnabled(true);
 
         float radius = 0.65;
         GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
