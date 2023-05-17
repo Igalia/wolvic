@@ -8,6 +8,7 @@
 #include "Pointer.h"
 #include "Quad.h"
 #include "DeviceUtils.h"
+#include "tiny_gltf.h"
 
 #include "vrb/ConcreteClass.h"
 #include "vrb/Color.h"
@@ -203,37 +204,41 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     if (!m.root)
         return;
 
+    CreationContextPtr create = m.context.lock();
+
+    // Initialize left hand action button, which for now triggers back navigation.
+    // Note that Quest's runtime already shows the hamburger menu button when left
+    // hand is facing head.
+#if !defined(OCULUSVR)
+    if (controller.leftHanded && controller.handActionButtonToggle == nullptr) {
+        TextureGLPtr texture = create->LoadTexture("menu.png");
+        assert(texture);
+        texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        const float iconWidth = 0.03f;
+        const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
+
+        QuadPtr icon = Quad::Create(create, iconWidth, iconWidth / aspect, nullptr);
+        icon->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+        icon->UpdateProgram("");
+
+        controller.handActionButtonToggle = Toggle::Create(create);
+        controller.handActionButtonTransform = Transform::Create(create);
+        controller.handActionButtonToggle->AddNode(controller.handActionButtonTransform);
+        controller.handActionButtonTransform->AddNode(icon->GetRoot());
+        controller.handActionButtonToggle->ToggleAll(false);
+        m.root->AddNode(controller.handActionButtonToggle);
+    }
+#endif
+
+    // Due to unstable or inaccurate hand-tracking data, hand mesh models
+    // are not enabled on Pico devices. We are drawing a sphere for each joint
+    // instead.
+#if defined(PICOXR)
     // Initialize hand joints if needed
     if (controller.handJointTransforms.size() == 0) {
         controller.handJointTransforms.resize(jointTransforms.size());
-
-        CreationContextPtr create = m.context.lock();
-
-        // Initialize left hand action button, which for now triggers back navigation.
-        // Note that Quest's runtime already shows the hamburger menu button when left
-        // hand is facing head.
-#if !defined(OCULUSVR)
-        if (controller.leftHanded) {
-            TextureGLPtr texture = create->LoadTexture("menu.png");
-            assert(texture);
-            texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-            const float iconWidth = 0.03f;
-            const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
-
-            QuadPtr icon = Quad::Create(create, iconWidth, iconWidth / aspect, nullptr);
-            icon->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
-            icon->UpdateProgram("");
-
-            controller.handActionButtonToggle = Toggle::Create(create);
-            controller.handActionButtonTransform = Transform::Create(create);
-            controller.handActionButtonToggle->AddNode(controller.handActionButtonTransform);
-            controller.handActionButtonTransform->AddNode(icon->GetRoot());
-            controller.handActionButtonToggle->ToggleAll(false);
-            m.root->AddNode(controller.handActionButtonToggle);
-        }
-#endif
 
         controller.handMeshToggle = Toggle::Create(create);
         m.root->AddNode(controller.handMeshToggle);
@@ -248,10 +253,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
                            0.0f);
         state->SetLightsEnabled(false);
 
-        float radius = 0.75;
-#if defined(PICOXR)
-        radius = 0.65;
-#endif
+        float radius = 0.65;
         GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
         sphere->SetRenderState(state);
 
@@ -270,6 +272,24 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         assert(controller.handJointTransforms[i]);
         controller.handJointTransforms[i]->SetTransform(transform);
     }
+#else
+    std::vector<vrb::Matrix> tmpJointTransforms = jointTransforms;
+    // We ignore the first matrix, corresponding to the palm, because the
+    // models we are currently using don't include a palm joint.
+    tmpJointTransforms.erase(tmpJointTransforms.begin());
+
+    if (controller.meshJointTransforms.size() == 0)
+        controller.meshJointTransforms.resize(tmpJointTransforms.size());
+    assert(controller.meshJointTransforms.size() == tmpJointTransforms.size());
+
+    // The hand model we are currently using for the left hand has the
+    // bind matrices of the joints in reverse order with respect to that
+    // of the XR_EXT_hand_tracking extension, hence we correct it here
+    // before assigning.
+    for (int i = 0, j = tmpJointTransforms.size() - 1; i < tmpJointTransforms.size(); i++, j--) {
+        controller.meshJointTransforms[i] = tmpJointTransforms[controller.leftHanded ? j : i];
+    }
+#endif
 }
 
 void ControllerContainer::SetMode(const int32_t aControllerIndex, ControllerMode aMode)
@@ -316,6 +336,131 @@ ControllerContainer::GetControllers() {
 const std::vector<Controller>&
 ControllerContainer::GetControllers() const {
   return m.list;
+}
+
+template <typename GenericVector>
+static bool loadHandMeshAttribute(tinygltf::Model& model,
+                                  int accessorIndex, int expectedType, int expectedComponentType,
+                                  size_t typeByteSize, int numComponents,
+                                  std::vector<GenericVector>& vector) {
+  auto& accessor = model.accessors[accessorIndex];
+
+  if (accessor.type != expectedType || accessor.componentType != expectedComponentType)
+    return false;
+  if (accessor.bufferView >= model.bufferViews.size())
+    return false;
+  auto& bufferView = model.bufferViews[accessor.bufferView];
+  if (bufferView.buffer >= model.buffers.size())
+    return false;
+  auto& buffer = model.buffers[bufferView.buffer];
+
+  vector.resize(accessor.count);
+  memcpy(vector.data(), buffer.data.data() + bufferView.byteOffset + accessor.byteOffset,
+         accessor.count * typeByteSize * numComponents);
+
+  return true;
+}
+
+bool ControllerContainer::LoadHandMeshFromAssets(Controller& aController) {
+  aController.handMesh = nullptr;
+  ControllerDelegate::HandMesh handMesh;
+
+  tinygltf::TinyGLTF modelLoader;
+  tinygltf::Model model;
+  std::string err;
+  std::string warn;
+  if (!modelLoader.LoadBinaryFromFile(&model, &err, &warn,
+                                      aController.leftHanded ? "hand-model-left.glb" : "hand-model-right.glb")) {
+    VRB_ERROR("Error loading hand mesh asset: %s", err.c_str());
+    return false;
+  }
+  if (!warn.empty())
+    VRB_WARN("%s", warn.c_str());
+
+  if (model.meshes.size() == 0)
+    return false;
+  // Assume the first mesh
+  auto& mesh = model.meshes[0];
+
+  if (mesh.primitives.size() == 0)
+    return false;
+  // Assume the first primitive of the mesh
+  auto& primitive = mesh.primitives[0];
+
+  // Load indices
+  if (primitive.indices < 0 || primitive.indices >= model.accessors.size())
+    return false;
+  if (!loadHandMeshAttribute(model, primitive.indices,
+                             TINYGLTF_TYPE_SCALAR, TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT,
+                             sizeof(uint16_t), 1, handMesh.indices)) {
+    return false;
+  }
+  handMesh.indexCount = handMesh.indices.size();
+
+  // Load vertex attributes
+  for (auto& attr: primitive.attributes) {
+    if (attr.second >= model.accessors.size())
+      return false;
+
+    bool loadedOk = true;
+
+    if (attr.first == "POSITION") {
+      loadedOk = loadHandMeshAttribute(model, attr.second,
+                                       TINYGLTF_TYPE_VEC3, TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                       sizeof(float), 3, handMesh.positions);
+    } else if (attr.first == "NORMAL") {
+      loadedOk = loadHandMeshAttribute(model, attr.second,
+                                       TINYGLTF_TYPE_VEC3, TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                       sizeof(float), 3, handMesh.normals);
+    } else if (attr.first == "JOINTS_0") {
+      // For joint indices the helper is not used because we can't copy the buffer
+      // directly.
+      auto& accessor = model.accessors[attr.second];
+      if (accessor.bufferView >= model.bufferViews.size())
+        return false;
+      auto& bufferView = model.bufferViews[accessor.bufferView];
+      if (bufferView.buffer >= model.buffers.size())
+        return false;
+      auto& buffer = model.buffers[bufferView.buffer];
+      if (accessor.type != TINYGLTF_TYPE_VEC4 || accessor.componentType != TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE)
+        return false;
+      if (bufferView.byteLength != accessor.count * sizeof(uint8_t) * 4)
+        return false;
+      handMesh.jointIndices.resize(accessor.count);
+      for (int i = 0; i < accessor.count; i++) {
+        unsigned char* ptr = buffer.data.data() + bufferView.byteOffset + accessor.byteOffset + i * 4;
+        handMesh.jointIndices[i].x = ptr[0];
+        handMesh.jointIndices[i].y = ptr[1];
+        handMesh.jointIndices[i].z = ptr[2];
+        handMesh.jointIndices[i].w = ptr[3];
+      }
+    } else if (attr.first == "WEIGHTS_0") {
+      loadedOk = loadHandMeshAttribute(model, attr.second,
+                                       TINYGLTF_TYPE_VEC4, TINYGLTF_COMPONENT_TYPE_FLOAT,
+                                       sizeof(float), 4, handMesh.jointWeights);
+    }
+
+    if (!loadedOk)
+      return false;
+  }
+  handMesh.vertexCount = handMesh.positions.size();
+
+  // Load joints' inverse bind matrices
+  if (model.skins.size() == 0)
+    return false;
+  auto& skin = model.skins[0];
+  if (skin.inverseBindMatrices >= model.accessors.size())
+    return false;
+  if (!loadHandMeshAttribute(model, skin.inverseBindMatrices,
+                            TINYGLTF_TYPE_MAT4, TINYGLTF_COMPONENT_TYPE_FLOAT,
+                            sizeof(vrb::Matrix), 1, handMesh.jointTransforms)) {
+    return false;
+  }
+  handMesh.jointCount = handMesh.jointTransforms.size();
+
+  aController.handMesh = std::make_unique<ControllerDelegate::HandMesh>(handMesh);
+
+  return true;
 }
 
 // crow::ControllerDelegate interface

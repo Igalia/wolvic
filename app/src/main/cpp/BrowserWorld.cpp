@@ -12,6 +12,7 @@
 #include "EngineSurfaceTexture.h"
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
+#include "HandModels.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Pointer.h"
@@ -55,7 +56,9 @@
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
+#include "tiny_gltf.h"
 
+#include <android/asset_manager_jni.h>
 #include <array>
 #include <functional>
 #include <fstream>
@@ -207,6 +210,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   VRLayerPassthroughPtr layerPassthrough;
+  HandModelsPtr handModelsRenderer = nullptr;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -236,6 +240,7 @@ struct BrowserWorld::State {
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
+    handModelsRenderer = HandModels::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
     wasInGazeMode = false;
@@ -522,12 +527,22 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
 
+    // We don't use hand models for Pico because the runtime is giving us
+    // incorrect data on some joints; instead, a sphere is drawn for each joint.
+#if !defined(PICOXR)
+    // Lazy-load hand models
+    if (controller.mode == ControllerMode::Hand && !controller.handMesh) {
+      if (controllers->LoadHandMeshFromAssets(controller)) {
+        handModelsRenderer->UpdateHandModel(controller);
+      }
+    }
+#else
     if (controller.handMeshToggle)
       controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
+#endif
 
     if (controller.beamToggle)
       controller.beamToggle->ToggleAll(controller.hasAim);
-
 
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
@@ -536,8 +551,19 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       // Layout the button between the thumb and index fingertips
       const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
       const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
-      vrb::Matrix indexTipMatrix = controller.handJointTransforms[indexTipIndex]->GetTransform();
-      vrb::Matrix thumbTipMatrix = controller.handJointTransforms[thumbTipIndex]->GetTransform();
+      vrb::Matrix indexTipMatrix;
+      vrb::Matrix thumbTipMatrix;
+      if (controller.handMesh) {
+        assert(controller.meshJointTransforms.size() > 0);
+        // We substract 1 from the index because we removed the palm joint (index 0) to match
+        // the joints in our hand mesh.
+        indexTipMatrix = controller.meshJointTransforms[indexTipIndex - 1];
+        thumbTipMatrix = controller.meshJointTransforms[thumbTipIndex - 1];
+      } else {
+        assert(controller.handJointTransforms.size() > 0);
+        indexTipMatrix = controller.handJointTransforms[indexTipIndex]->GetTransform();
+        thumbTipMatrix = controller.handJointTransforms[thumbTipIndex]->GetTransform();
+      }
       vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
       vrb::Vector position = indexTipMatrix.GetTranslation() - center;
 
@@ -942,6 +968,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   EngineSurfaceTexture::InitializeJava(m.env, m.activity);
   m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   VRBrowser::SetDeviceType(m.device->GetDeviceType());
+
+  tinygltf::asset_manager = AAssetManager_fromJava(m.env, aAssetManager);
 
   if (!m.modelsLoaded) {
     m.device->OnControllersReady([this](){
@@ -1694,6 +1722,12 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
     m.drawList->Reset();
     m.vrVideo->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
     m.drawList->Draw(*camera);
+  }
+
+  // Draw hand models
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (controller.enabled && controller.mode == ControllerMode::Hand && controller.handMesh)
+      m.handModelsRenderer->Draw(*camera, controller);
   }
 
   // Draw controllers

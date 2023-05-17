@@ -34,6 +34,7 @@ public:
   void Reset();
   std::vector<Controller>& GetControllers();
   const std::vector<Controller>& GetControllers() const;
+  bool LoadHandMeshFromAssets(Controller& aController);
   // crow::ControllerDelegate interface
   uint32_t GetControllerCount() override;
   void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) override;
