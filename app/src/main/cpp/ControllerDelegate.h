@@ -8,11 +8,14 @@
 
 #include "vrb/MacroUtils.h"
 #include "vrb/Forward.h"
+#include "vrb/Quaternion.h"
+#include "vrb/Vector.h"
 #include "Device.h"
 #include "GestureDelegate.h"
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace crow {
 
@@ -32,6 +35,13 @@ enum class HandTrackingJoints {
   RingMetacarpal, RingProximal, RingIntermediate, RingDistal, RingTip,
   LittleMetacarpal, LittleProximal, LittleIntermediate, LittleDistal, LittleTip };
 
+struct Vector4s {
+  uint16_t x;
+  uint16_t y;
+  uint16_t z;
+  uint16_t w;
+};
+
 class ControllerDelegate {
 public:
   enum Button {
@@ -44,6 +54,20 @@ public:
     BUTTON_X         = 1u << 6u,
     BUTTON_Y         = 1u << 7u,
     BUTTON_OTHERS    = 1u << 8u,  // Other buttons only for the immersive mode.
+  };
+
+  struct HandMesh {
+    uint32_t jointCount;
+    std::vector<vrb::Matrix> jointTransforms;
+
+    uint32_t vertexCount;
+    std::vector<vrb::Vector> positions;
+    std::vector<vrb::Vector> normals;
+    std::vector<Vector4s> jointIndices;
+    std::vector<vrb::Quaternion> jointWeights;
+
+    uint32_t indexCount;
+    std::vector<uint16_t> indices;
   };
 
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) = 0;
