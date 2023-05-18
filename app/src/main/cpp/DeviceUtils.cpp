@@ -90,12 +90,21 @@ vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context
 
     for (int r = 0; r < rings; r++) {
         for (int s = 0; s < sectors; s++) {
-            indices.push_back(r * sectors + s);
-            indices.push_back(r * sectors + (s+1));
-            indices.push_back((r+1) * sectors + (s+1));
-            indices.push_back((r+1) * sectors + s);
-            geometry->AddFace(indices, indices, indices);
-            indices.clear();
+            if (r != 0) {
+                indices.push_back(r * sectors + s);
+                indices.push_back((r + 1) * sectors + s);
+                indices.push_back(r * sectors + (s + 1));
+                geometry->AddFace(indices, indices, indices);
+                indices.clear();
+            }
+
+            if (r != rings - 1) {
+                indices.push_back(r * sectors + (s + 1));
+                indices.push_back((r + 1) * sectors + s);
+                indices.push_back((r + 1) * sectors + (s + 1));
+                geometry->AddFace(indices, indices, indices);
+                indices.clear();
+            }
         }
     }
 
