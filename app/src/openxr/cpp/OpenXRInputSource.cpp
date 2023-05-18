@@ -615,25 +615,33 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     // Check whether palm of left hand is facing the head, to show navigate-back button
     bool leftPalmFacesHead = false;
-    if (mHandeness == OpenXRHandFlags::Left) {
-#if defined(OCULUSVR)
-        if (IsHandJointPositionValid(XR_HAND_JOINT_PALM_EXT))
-            leftPalmFacesHead = !mHasAimState;
-#else
-        if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM)) {
+    // This is not really needed. It's just an optimization for devices taking over the control of
+    // hands when facing head. In those cases we don't need to do all the matrix computations,
+    // we can just safely assume that the palm is facing the head when there is no aim.
+    bool systemTakesOverWhenHandsFacingHead = false;
+#if defined(OCULUS)
+    systemTakesOverWhenHandsFacingHead = true;
+#endif
+    if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM)) {
+        bool palmFacesHead = false;
+        if (mSupportsFBHandTrackingAim || systemTakesOverWhenHandsFacingHead) {
+            // With the FB aim extension we stop getting aim state precisely when hands face head.
+            palmFacesHead = !mHasAimState;
+        } else {
             vrb::Matrix palmMatrix = jointTransforms[HAND_JOINT_FOR_AIM];
             // For the hand we take the Y axis because that corresponds to head's Z axis when
             // the hand is in upright position facing head (the gesture we want to detect).
 #ifdef PICOXR
-            // Y-Z Axis are inverted in Pico
+            // Axis are inverted in Pico
             auto vectorPalm = palmMatrix.MultiplyDirection({0, 0, -1});
 #else
             auto vectorPalm = palmMatrix.MultiplyDirection({0, 1, 0});
 #endif
             auto vectorHead = head.MultiplyDirection({0, 0, -1});
-            leftPalmFacesHead = vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
+            palmFacesHead = vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
+            mHasAimState = mHasAimState && !palmFacesHead;
         }
-#endif
+        leftPalmFacesHead = mHandeness == Left && palmFacesHead;
     }
 
     // Scale joints according to their radius (for rendering)
