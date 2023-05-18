@@ -4,6 +4,13 @@
 #include <unordered_set>
 #include "SystemUtils.h"
 
+#if defined(PICOXR)
+    // Pico runtime doesn't provide palm joint info :( so we use the wrist instead.
+#define HAND_JOINT_FOR_AIM XR_HAND_JOINT_WRIST_EXT
+#else
+#define HAND_JOINT_FOR_AIM XR_HAND_JOINT_PALM_EXT
+#endif
+
 namespace crow {
 
 // Threshold to consider a trigger value as a click
@@ -511,7 +518,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         if (mHasAimState)
             mHandAimPose = aimState.aimPose;
     } else {
-        auto aimJoint = jointLocations.jointLocations[XR_HAND_JOINT_PALM_EXT];
+        auto aimJoint = jointLocations.jointLocations[HAND_JOINT_FOR_AIM];
         mHasAimState = aimJoint.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT;
 #if defined(SPACES)
         mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
@@ -570,13 +577,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         if (IsHandJointPositionValid(XR_HAND_JOINT_PALM_EXT))
             leftPalmFacesHead = !mHasAimState;
 #else
-        XrHandJointEXT palmJointIndex = XR_HAND_JOINT_PALM_EXT;
-#if defined(PICOXR)
-        // Pico runtime doesn't provide palm joint info, so we use the wrist instead.
-        palmJointIndex = XR_HAND_JOINT_WRIST_EXT;
-#endif
-        if (IsHandJointPositionValid(palmJointIndex)) {
-            vrb::Matrix palmMatrix = jointTransforms[palmJointIndex];
+        if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM)) {
+            vrb::Matrix palmMatrix = jointTransforms[HAND_JOINT_FOR_AIM];
             // For the hand we take the Y axis because that corresponds to head's Z axis when
             // the hand is in upright position facing head (the gesture we want to detect).
 #ifdef PICOXR
