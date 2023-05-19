@@ -661,12 +661,13 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         indexPinching = indexThumbDistance < kPinchThreshold;
     }
     delegate.SetPinchFactor(mIndex, pinchFactor);
+    bool triggerButtonPressed = indexPinching && !leftPalmFacesHead && mHasAimState;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
-                            device::kImmersiveButtonTrigger, indexPinching && !leftPalmFacesHead,
-                            indexPinching && !leftPalmFacesHead, 1.0);
+                            device::kImmersiveButtonTrigger, triggerButtonPressed,
+                            triggerButtonPressed, 1.0);
     if (leftPalmFacesHead) {
         delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
-    } else {
+    } else if (mHasAimState) {
         if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
             selectActionStarted = indexPinching;
             if (selectActionStarted) {
