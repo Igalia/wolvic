@@ -619,8 +619,13 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Select action
     bool indexPinching = false;
     double pinchFactor = 0.0f;
+#ifdef SPACES
+    if (shouldConsiderPoseAsValid(mHandJoints[XR_HAND_JOINT_THUMB_TIP_EXT].pose) &&
+        shouldConsiderPoseAsValid(mHandJoints[XR_HAND_JOINT_INDEX_TIP_EXT].pose)) {
+#else
     if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
         IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT)) {
+#endif
         const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
                                                                    XR_HAND_JOINT_INDEX_TIP_EXT);
 
