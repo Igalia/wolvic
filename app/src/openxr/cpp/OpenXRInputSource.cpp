@@ -492,7 +492,7 @@ bool shouldConsiderPoseAsValid(const XrPosef& pose) {
 }
 #endif
 
-bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace) {
+bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
 
@@ -523,8 +523,65 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
 #if defined(SPACES)
         mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
 #endif
-        if (mHasAimState)
-            mHandAimPose = aimJoint.pose;
+        if (mHasAimState) {
+            auto computeAimRay = [handeness=mHandeness](const XrPosef& aimPose, const vrb::Matrix& head) -> XrPosef {
+                auto headPosition = head.GetTranslation();
+                // Menton to top of head: https://upload.wikimedia.org/wikipedia/commons/0/06/AvgHeadSizes.png
+                const float averageHeadHeight = 0.247;
+                // There is one head height from center of the body to the shoulder on average. Use
+                // 3/4 of that size as it gives slightly better results in the practice.
+                auto shoulderTranslation = handeness == Left ? -averageHeadHeight : averageHeadHeight;
+                // TODO: this is a very primitive estimation of the shoulder position, improve that
+                // using other data (heads and aim positions, etc).
+                auto shoulderPosition = vrb::Vector(shoulderTranslation * 3 / 4, -averageHeadHeight, headPosition.z());
+
+                const auto aimQuat = vrb::Quaternion(aimPose.orientation.x, aimPose.orientation.y, aimPose.orientation.z, aimPose.orientation.w);
+                const auto aimQuatConjugate = aimQuat.Conjugate();
+                const auto aimXAxis = ((aimQuatConjugate * vrb::Quaternion(1, 0, 0, 0)) * aimQuat).Normalize();
+                const auto aimYAxis = ((aimQuatConjugate * vrb::Quaternion(0, 1, 0, 0)) * aimQuat).Normalize();
+                const auto aimZAxis = ((aimQuatConjugate * vrb::Quaternion(0, 0, 1, 0)) * aimQuat).Normalize();
+
+                // Compute the aim direction.
+                const auto aimPosition = vrb::Vector(aimPose.position.x, aimPose.position.y, aimPose.position.z);
+                auto direction = (aimPosition - shoulderPosition).Normalize();
+
+                // Computes the rotation matrix from one vector to another
+                // https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
+                auto rotateAlign = [](vrb::Vector v1, vrb::Vector v2) {
+                    vrb::Vector axis = v1.Cross(v2);
+
+                    const float cosA = v1.Dot(v2);
+                    const float k = 1.0f / (1.0f + cosA);
+
+                    return vrb::Matrix((axis.x() * axis.x() * k) + cosA,(axis.y() * axis.x() * k) - axis.z(), (axis.z() * axis.x() * k) + axis.y(), 0,
+                                       (axis.x() * axis.y() * k) + axis.z(),(axis.y() * axis.y() * k) + cosA,(axis.z() * axis.y() * k) - axis.x(), 0,
+                                       (axis.x() * axis.z() * k) - axis.y(),(axis.y() * axis.z() * k) + axis.x(),(axis.z() * axis.z() * k) + cosA, 0,
+                                       0, 0, 0, 1);
+                };
+
+                // Now that we have a new direction, we first compute the matrix describing the rotation
+                // from the original aim from the joint to our new computed aim. Then we compute the
+                // other two axis by applying the same rotation to the other 2 axis from the original aim pose.
+                direction.z()=-direction.z();
+                const auto aimZAxisVector = vrb::Vector(aimZAxis.x(), aimZAxis.y(), aimZAxis.z());
+                const auto alignRotationMatrix = rotateAlign(direction, aimZAxisVector);
+                const auto aimYAxisVector = vrb::Vector(aimYAxis.x(), aimYAxis.y(), aimYAxis.z());
+                const auto aimXAxisVector = vrb::Vector(aimXAxis.x(), aimXAxis.y(), aimXAxis.z());
+                const auto up = alignRotationMatrix.MultiplyDirection(aimYAxisVector);
+                const auto right = alignRotationMatrix.MultiplyDirection(aimXAxisVector);
+
+                const vrb::Matrix rotationMatrix = vrb::Matrix(right.x(), up.x(), direction.x(), 0,
+                                              right.y(), up.y(), direction.y(), 0,
+                                              right.z(), up.z(), direction.z(), 0,
+                                              0, 0, 0, 1);
+                const vrb::Quaternion rotationQuaternion = vrb::Quaternion(rotationMatrix).Inverse();
+
+                return {.orientation = { rotationQuaternion.x(), rotationQuaternion.y(), rotationQuaternion.z(), rotationQuaternion.w() },
+                        .position = { aimPosition.x(), aimPosition.y(), aimPosition.z()} };
+            };
+
+            mHandAimPose = computeAimRay(aimJoint.pose, head);
+        }
     }
 
     return mHasHandJoints;
@@ -661,10 +718,12 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // different for each hand in the case of Quest. So here correct the transformation matrix
     // by an angle that was obtained empirically.
 #if defined(OCULUSVR)
-    float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3/2;
-    auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
-                                                  correctionAngle);
-    pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+    if (mSupportsFBHandTrackingAim) {
+        float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3 / 2;
+        auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
+                                                      correctionAngle);
+        pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+    }
 #elif defined(PICOXR)
     float correctionAngle = -M_PI_2;
     pointerTransform
@@ -731,7 +790,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     }
 
     // If hand tracking is active, use it to emulate the controller.
-    if (GetHandTrackingInfo(frameState, localSpace)) {
+    if (GetHandTrackingInfo(frameState, localSpace, head)) {
         EmulateControllerFromHand(renderMode, head, delegate);
         return;
     }
