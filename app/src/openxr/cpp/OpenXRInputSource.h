@@ -70,7 +70,7 @@ private:
     std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> mHandJoints;
     bool mHasHandJoints { false };
     bool mHasAimState { false };
-    XrPosef mHandAimPose;
+    vrb::Matrix mHandAimTransform;
     bool mSupportsFBHandTrackingAim { false };
 
 public:

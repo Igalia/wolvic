@@ -516,7 +516,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     if (mSupportsFBHandTrackingAim) {
         mHasAimState = aimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB;
         if (mHasAimState)
-            mHandAimPose = aimState.aimPose;
+            mHandAimTransform = XrPoseToMatrix(aimState.aimPose);
     } else {
         auto aimJoint = jointLocations.jointLocations[HAND_JOINT_FOR_AIM];
         mHasAimState = aimJoint.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT;
@@ -524,7 +524,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
 #endif
         if (mHasAimState) {
-            auto computeAimRay = [handeness=mHandeness](const XrPosef& aimPose, const vrb::Matrix& head) -> XrPosef {
+            auto computeAimRay = [handeness=mHandeness](const XrPosef& aimPose, const vrb::Matrix& head) {
                 auto headPosition = head.GetTranslation();
                 // Menton to top of head: https://upload.wikimedia.org/wikipedia/commons/0/06/AvgHeadSizes.png
                 const float averageHeadHeight = 0.247;
@@ -570,17 +570,13 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
                 const auto up = alignRotationMatrix.MultiplyDirection(aimYAxisVector);
                 const auto right = alignRotationMatrix.MultiplyDirection(aimXAxisVector);
 
-                const vrb::Matrix rotationMatrix = vrb::Matrix(right.x(), up.x(), direction.x(), 0,
-                                              right.y(), up.y(), direction.y(), 0,
-                                              right.z(), up.z(), direction.z(), 0,
-                                              0, 0, 0, 1);
-                const vrb::Quaternion rotationQuaternion = vrb::Quaternion(rotationMatrix).Inverse();
-
-                return {.orientation = { rotationQuaternion.x(), rotationQuaternion.y(), rotationQuaternion.z(), rotationQuaternion.w() },
-                        .position = { aimPosition.x(), aimPosition.y(), aimPosition.z()} };
+                return vrb::Matrix(right.x(), up.x(), direction.x(), 0,
+                                   right.y(), up.y(), direction.y(), 0,
+                                   right.z(), up.z(), direction.z(), 0,
+                                   aimPosition.x(), aimPosition.y(), aimPosition.z(), 1);
             };
 
-            mHandAimPose = computeAimRay(aimJoint.pose, head);
+            mHandAimTransform = computeAimRay(aimJoint.pose, head);
         }
     }
 
@@ -711,7 +707,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         return;
 
     // Resolve beam and pointer transform
-    vrb::Matrix pointerTransform = XrPoseToMatrix(mHandAimPose);
+    vrb::Matrix pointerTransform = mHandAimTransform;
 
     // Both on Quest and Pico4 devices, hand pose returned by XR_FB_hand_tracking_aim appears
     // rotated relative to the corresponding pose of the controllers, and the rotation is
