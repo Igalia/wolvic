@@ -243,6 +243,7 @@ android {
 
         spaces {
             dimension "platform"
+            minSdkVersion build_versions.min_sdk_spaces
             targetSdkVersion build_versions.target_sdk_spaces
             externalNativeBuild {
                 cmake {
@@ -617,6 +618,9 @@ dependencies {
 
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
+    spacesImplementation deps.navigation.fragment
+    spacesImplementation deps.navigation.ui
+    spacesImplementation 'androidx.databinding:viewbinding:7.1.2'
 
     // gecko
     def branch = "nightly" // "nightly" or "beta"
