@@ -154,6 +154,9 @@ XrResult OpenXRInputSource::Initialize()
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
         VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
+
+        if (!mSupportsFBHandTrackingAim)
+            mOneEuroFilterPosition = std::make_unique<OneEuroFilterVector>(0.25,0.1 ,1);
     }
 
     return XR_SUCCESS;
@@ -524,7 +527,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
 #endif
         if (mHasAimState) {
-            auto computeAimRay = [handeness=mHandeness](const XrPosef& aimPose, const vrb::Matrix& head) {
+            auto computeAimRay = [positionFilter = mOneEuroFilterPosition.get(), handeness=mHandeness, &frameState](const XrPosef& aimPose, const vrb::Matrix& head) {
                 auto headPosition = head.GetTranslation();
                 // Menton to top of head: https://upload.wikimedia.org/wikipedia/commons/0/06/AvgHeadSizes.png
                 const float averageHeadHeight = 0.247;
@@ -543,7 +546,9 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
 
                 // Compute the aim direction.
                 const auto aimPosition = vrb::Vector(aimPose.position.x, aimPose.position.y, aimPose.position.z);
-                auto direction = (aimPosition - shoulderPosition).Normalize();
+                float* filteredAimPositionRaw = positionFilter->filter(frameState.predictedDisplayTime, aimPosition.Data());
+                vrb::Vector filteredAimPosition(filteredAimPositionRaw[0], filteredAimPositionRaw[1], filteredAimPositionRaw[2]);
+                auto direction = (filteredAimPosition - shoulderPosition).Normalize();
 
                 // Computes the rotation matrix from one vector to another
                 // https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
