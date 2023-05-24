@@ -116,6 +116,9 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
             } else {
                 addController(DeviceType.HVR3DoF, WebXRInterstitialController.HAND_NONE);
             }
+        } else if (deviceType == DeviceType.LenovoVRX) {
+            addController(DeviceType.LenovoVRX, WebXRInterstitialController.HAND_LEFT);
+            addController(DeviceType.LenovoVRX, WebXRInterstitialController.HAND_RIGHT);
         }
         for (UIWidget controller: mControllers) {
             controller.getPlacement().parentHandle = getHandle();

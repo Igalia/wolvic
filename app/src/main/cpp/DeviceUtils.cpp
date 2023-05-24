@@ -125,6 +125,7 @@ device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
         deviceNamesMap.emplace("kirin9000", is6DoF ? device::HVR6DoF : device::HVR3DoF);
         deviceNamesMap.emplace("motorola edge 30 pro", device::LenovoA3);
         deviceNamesMap.emplace("Quest Pro", device::MetaQuestPro);
+        deviceNamesMap.emplace("VRX", device::LenovoVRX);
     }
 
     auto device = deviceNamesMap.find(model);
