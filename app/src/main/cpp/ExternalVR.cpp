@@ -231,6 +231,8 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::ViveFocus:
       result = mozilla::gfx::VRControllerType::HTCViveFocus;
       break;
+    // FIXME: Gecko does not support VRX. Controllers look similar to ViveFocusPlus
+    case device::LenovoVRX:
     case device::ViveFocusPlus:
       result = mozilla::gfx::VRControllerType::HTCViveFocusPlus;
       break;

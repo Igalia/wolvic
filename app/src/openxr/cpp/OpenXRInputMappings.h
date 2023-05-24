@@ -330,6 +330,32 @@ namespace crow {
       },
     };
 
+    const OpenXRInputMapping LenovoVRX {
+            "/interaction_profiles/oculus/touch_controller",
+            IS_6DOF,
+            "vr_controller_vrx_left.obj",
+            "vr_controller_vrx_right.obj",
+            device::LenovoVRX,
+            std::vector<OpenXRInputProfile> { "oculus-touch-v3", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Thumbrest, kPathThumbrest, OpenXRButtonFlags::Touch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Menu, kPathMenu, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
@@ -347,8 +373,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 9> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, KHRSimple
+    const std::array<OpenXRInputMapping, 10> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, LenovoVRX, KHRSimple
     };
 
 } // namespace crow
