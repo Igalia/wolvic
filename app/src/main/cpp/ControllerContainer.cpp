@@ -187,6 +187,13 @@ ControllerContainer::InitializeBeam() {
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
+  index.clear();
+  index.push_back(1);
+  index.push_back(2);
+  index.push_back(3);
+  index.push_back(4);
+  geometry->AddFace(index, uvIndex, index);
+
   m.beamModel = std::move(geometry);
   for (Controller& controller: m.list) {
     if (controller.beamParent) {
