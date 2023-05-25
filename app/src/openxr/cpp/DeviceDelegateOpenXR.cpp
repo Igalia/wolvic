@@ -111,26 +111,6 @@ struct DeviceDelegateOpenXR::State {
       return systemProperties.trackingProperties.positionTracking == XR_TRUE;
   }
 
-  // This might require more sophisticated code to properly detect specific hardware. That was
-  // easy to do with propietary SDKs but it's a bit more difficult with OpenXR.
-  void InitializeDeviceType() {
-#if OCULUSVR
-      // FIXME: this is fragile. Meta Quest Pro incorrectly advertises itself as "Oculus Quest2"
-      // so the only way we have to properly identify it is by checking extensions that are not
-      // supported in Quest2 but available for Quest Pro.
-      deviceType = OpenXRExtensions::IsExtensionSupported("XR_META_local_dimming") ? device::MetaQuestPro : device::OculusQuest2;
-#elif HVR
-      deviceType = IsPositionTrackingSupported() ? device::HVR6DoF : device::HVR3DoF;
-#elif PICOXR
-      deviceType = device::PicoXR;
-#elif LYNX
-      deviceType = device::LynxR1;
-#elif SPACES
-      deviceType = device::LenovoA3;
-#endif
-      VRB_LOG("Initializing device %s from vendor %d. Device type %d", systemProperties.systemName, systemProperties.vendorId, deviceType);
-  }
-
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
     elbow = ElbowModel::Create();
@@ -262,7 +242,7 @@ struct DeviceDelegateOpenXR::State {
 #endif
     }
 
-    InitializeDeviceType();
+    deviceType = DeviceUtils::GetDeviceTypeFromSystem(IsPositionTrackingSupported());
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -1439,12 +1419,6 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.passthroughStrategy->initializePassthrough(m.session);
 
-#if OCULUSVR
-  // See InitialiceDeviceType(). We overwrite the system name so that we load the proper input
-  // mapping for the Quest Pro, as it incorrectly advertises itself as "Oculus Quest2"
-  if (m.deviceType == device::MetaQuestPro)
-      strcpy(m.systemProperties.systemName, "Meta Quest Pro");
-#endif
   m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
   ProcessEvents();
   if (m.controllersReadyCallback && m.input && m.input->AreControllersReady()) {

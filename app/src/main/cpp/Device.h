@@ -6,7 +6,9 @@
 #ifndef VRBROWSER_DEVICE_H
 #define VRBROWSER_DEVICE_H
 
+#include <map>
 #include <stdint.h>
+#include "SystemUtils.h"
 
 namespace crow {
 namespace device {
