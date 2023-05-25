@@ -120,7 +120,6 @@ namespace crow {
 
     struct OpenXRInputMapping {
         const char* const path { nullptr };
-        const char* const systemFilter {nullptr };
         DoF systemDoF;
         const char* const leftControllerModel { nullptr };
         const char* const rightControllerModel { nullptr };
@@ -138,7 +137,6 @@ namespace crow {
     // Oculus Touch v2:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v2.json
     const OpenXRInputMapping OculusTouch {
         "/interaction_profiles/oculus/touch_controller",
-        "Oculus Quest",
         IS_6DOF,
         "vr_controller_oculusquest_left.obj",
         "vr_controller_oculusquest_right.obj",
@@ -166,7 +164,6 @@ namespace crow {
     // Oculus Touch v3:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v3.json
     const OpenXRInputMapping OculusTouch2 {
             "/interaction_profiles/oculus/touch_controller",
-            "Oculus Quest2",
             IS_6DOF,
             "vr_controller_oculusquest2_left.obj",
             "vr_controller_oculusquest2_right.obj",
@@ -194,11 +191,10 @@ namespace crow {
     // Meta Quest Touch Pro: https://github.com/immersive-web/webxr-input-profiles/blob/main/packages/registry/profiles/meta/meta-quest-touch-pro.json
     const OpenXRInputMapping MetaQuestTouchPro {
             "/interaction_profiles/oculus/touch_controller",
-            "Meta Quest Pro",
             IS_6DOF,
             "vr_controller_metaquestpro_left.obj",
             "vr_controller_metaquestpro_right.obj",
-            device::OculusQuest2,
+            device::MetaQuestPro,
             std::vector<OpenXRInputProfile> { "meta-quest-touch-pro", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
@@ -222,7 +218,6 @@ namespace crow {
     // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
     const OpenXRInputMapping Pico4 {
             "/interaction_profiles/pico/neo3_controller",
-            "PICO 4",
             IS_6DOF,
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
@@ -248,7 +243,6 @@ namespace crow {
 
     const OpenXRInputMapping Pico4E {
             "/interaction_profiles/pico/neo3_controller",
-            "PICO 4 Enterprise",
             IS_6DOF,
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
@@ -275,11 +269,10 @@ namespace crow {
     // HVR 3DOF: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-trigger-touchpad.json
     const OpenXRInputMapping Hvr3DOF {
             "/interaction_profiles/huawei/controller",
-            "Haliday: G3HMD by Huawei",
             IS_3DOF,
             nullptr,
             "vr_controller_focus.obj",
-            device::ViveFocus,
+            device::HVR3DoF,
             std::vector<OpenXRInputProfile> { "generic-trigger-touchpad" },
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
@@ -296,11 +289,10 @@ namespace crow {
 
   const OpenXRInputMapping Hvr6DOF {
       "/interaction_profiles/huawei/6dof_controller",
-      "Haliday: G3HMD by Huawei",
       IS_6DOF,
       "hvr_6dof_left.obj",
       "hvr_6dof_right.obj",
-      device::OculusQuest,
+      device::HVR6DoF,
       std::vector<OpenXRInputProfile> { "oculus-touch-v3", "oculus-touch-v2", "oculus-touch", "generic-trigger-squeeze-thumbstick" },
       std::vector<OpenXRButton> {
           { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
@@ -328,7 +320,6 @@ namespace crow {
 
   const OpenXRInputMapping LynxR1 {
       "/interaction_profiles/khr/simple_controller",
-      "Monado: ",
       IS_6DOF,
       "vr_controller_oculusgo.obj",
       "vr_controller_oculusgo.obj",
@@ -342,11 +333,10 @@ namespace crow {
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
-            nullptr,
             IS_3DOF,
             "vr_controller_oculusgo.obj",
             "vr_controller_oculusgo.obj",
-            device::OculusGo,
+            device::UnknownType,
             std::vector<OpenXRInputProfile> { "generic-button" },
             std::vector<OpenXRButton> {
                     { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::Click, OpenXRHandFlags::Both },
