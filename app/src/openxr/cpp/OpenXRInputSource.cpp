@@ -684,26 +684,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     device::CapabilityFlags flags = device::Orientation | device::Position | device::GripSpacePosition;
     delegate.SetCapabilityFlags(mIndex, flags);
-
-    // Squeeze action
-    bool middlePinching = false;
-    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
-        IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_TIP_EXT)) {
-        middlePinching = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
-                                                  XR_HAND_JOINT_MIDDLE_TIP_EXT) < kPinchThreshold;
-    }
-    delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_SQUEEZE,
-                            device::kImmersiveButtonSqueeze, middlePinching,
-                            middlePinching, 1.0);
-
-    if (renderMode == device::RenderMode::Immersive && middlePinching != squeezeActionStarted) {
-        squeezeActionStarted = middlePinching;
-        if (squeezeActionStarted) {
-            delegate.SetSqueezeActionStart(mIndex);
-        } else {
-            delegate.SetSqueezeActionStop(mIndex);
-        }
-    }
 }
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
