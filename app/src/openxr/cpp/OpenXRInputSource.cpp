@@ -84,24 +84,14 @@ XrResult OpenXRInputSource::Initialize()
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_VIBRATION_OUTPUT, "haptic", OpenXRHandFlags::Both, mHapticAction));
 
     // Filter mappings
+    bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
+    auto systemDoF = systemIs6DoF ? DoF::IS_6DOF : DoF::IS_3DOF;
+    auto deviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
     for (auto& mapping: OpenXRInputMappings) {
-      const char* systemFilter = mapping.systemFilter;
-#if defined(PICOXR)
-      // Pico versions before 5.4.0 use a different system id.
-      if (mapping.controllerType == device::PicoXR) {
-          char buildId[128] = {0};
-          if (CompareSemanticVersionStrings(GetBuildIdString(buildId), "5.4.0")) {
-              // System version is < 5.4.0
-              systemFilter = "Pico: PICO HMD";
-          }
-      }
-#endif
-      if (systemFilter && strcmp(systemFilter, mSystemProperties.systemName) != 0) {
+      if (deviceType != mapping.controllerType)
         continue;
-      }
-      bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
-      bool mappingIs6DoF = mapping.systemDoF == DoF::IS_6DOF;
-      if (mappingIs6DoF != systemIs6DoF)
+
+      if (systemDoF != mapping.systemDoF)
           continue;
       mMappings.push_back(mapping);
     }

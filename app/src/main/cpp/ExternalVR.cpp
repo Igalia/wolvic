@@ -226,6 +226,8 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
       // FIXME: GeckoView does not support Quest Pro yet. Pretend to be the Quest2
       result = mozilla::gfx::VRControllerType::OculusTouch3;
           break;
+    case device::HVR3DoF:
+    case device::HVR6DoF:
     case device::ViveFocus:
       result = mozilla::gfx::VRControllerType::HTCViveFocus;
       break;
