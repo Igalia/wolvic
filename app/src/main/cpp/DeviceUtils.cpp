@@ -12,6 +12,8 @@
 
 namespace crow {
 
+std::unordered_map<std::string, device::DeviceType> DeviceUtils::deviceNamesMap;
+
 vrb::Matrix
 DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
   const float kPitchUpThreshold = 0.2f;
@@ -109,6 +111,28 @@ vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context
     }
 
     return std::move(geometry);
+}
+
+device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
+    char model[128];
+    int length = PopulateDeviceModelString(model);
+
+    if (deviceNamesMap.empty()) {
+        deviceNamesMap.emplace("Quest 2", device::OculusQuest2);
+        // So far no need to differentiate between Pico4 and Pico4E
+        deviceNamesMap.emplace("A8110", device::PicoXR);
+        deviceNamesMap.emplace("Lynx-R1", device::LynxR1);
+        deviceNamesMap.emplace("kirin9000", is6DoF ? device::HVR6DoF : device::HVR3DoF);
+        deviceNamesMap.emplace("motorola edge 30 pro", device::LenovoA3);
+        deviceNamesMap.emplace("Quest Pro", device::MetaQuestPro);
+    }
+
+    auto device = deviceNamesMap.find(model);
+    if (device == deviceNamesMap.end()) {
+        VRB_WARN("Device %s is not supported", model);
+        return device::UnknownType;
+    }
+    return device->second;
 }
 
 }
