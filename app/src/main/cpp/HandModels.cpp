@@ -47,7 +47,7 @@ struct Material {
 };
 
 const Light u_lights = Light(
-  vec3(1.0f, -1.0f, 0.0f),
+  vec3(1.0, -1.0, 0.0),
   vec4(0.25, 0.25, 0.25, 1.0),
   vec4(0.25, 0.25, 0.25, 1.0),
   vec4(0.4, 0.4, 0.4, 1.0)
@@ -57,28 +57,28 @@ const Material u_material = Material(
   vec4(0.5, 0.5, 0.5, 1.0),
   vec4(0.5, 0.5, 0.5, 1.0),
   vec4(0.5, 0.5, 0.5, 1.0),
-  0.75f
+  0.75
 );
 
 vec4 calculate_light(vec4 norm, Light light, Material material) {
-  vec4 result = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-  vec4 direction = -normalize(u_view * vec4(light.direction.xyz, 0.0f));
+  vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
+  vec4 direction = -normalize(u_view * vec4(light.direction.xyz, 0.0));
   vec4 hvec;
   float ndotl;
   float ndoth;
   result += light.ambient * material.ambient;
-  ndotl = max(0.0f, dot(norm, direction));
+  ndotl = max(0.0, dot(norm, direction));
   result += (ndotl * light.diffuse * material.diffuse);
-  hvec = normalize(direction + vec4(0.0f, 0.0f, 1.0f, 0.0f));
+  hvec = normalize(direction + vec4(0.0, 0.0, 1.0, 0.0));
   ndoth = dot(norm, hvec);
-  if (ndoth > 0.0f) {
+  if (ndoth > 0.0) {
     result += (pow(ndoth, material.specularExponent) * material.specular * light.specular);
   }
   return result;
 }
 
 void main(void) {
-  vec4 pos = vec4(a_position, 1.0f);
+  vec4 pos = vec4(a_position, 1.0);
   vec4 localPos1 = u_jointMatrices[int(a_jointIndices.x)] * pos;
   vec4 localPos2 = u_jointMatrices[int(a_jointIndices.y)] * pos;
   vec4 localPos3 = u_jointMatrices[int(a_jointIndices.z)] * pos;
@@ -89,7 +89,7 @@ void main(void) {
                 + localPos4 * a_jointWeights.w;
   gl_Position = u_perspective * u_view * u_model * localPos;
 
-  vec4 normal = vec4(a_normal, 0.0f);
+  vec4 normal = vec4(a_normal, 0.0);
   vec4 localNorm1 = u_jointMatrices[int(a_jointIndices.x)] * normal;
   vec4 localNorm2 = u_jointMatrices[int(a_jointIndices.y)] * normal;
   vec4 localNorm3 = u_jointMatrices[int(a_jointIndices.z)] * normal;
@@ -110,7 +110,7 @@ precision mediump float;
 varying vec4 v_color;
 
 void main() {
-  gl_FragColor = vec4(v_color.xyz, 1.0f);
+  gl_FragColor = vec4(v_color.xyz, 1.0);
 }
 )SHADER";
 
