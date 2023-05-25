@@ -529,7 +529,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
     // We don't use hand models for Pico because the runtime is giving us
     // incorrect data on some joints; instead, a sphere is drawn for each joint.
-#if !defined(PICOXR)
+#if !defined(PICOXR) && !defined(SPACES)
     // Lazy-load hand models
     if (controller.mode == ControllerMode::Hand && !controller.handMesh) {
       if (controllers->LoadHandMeshFromAssets(controller)) {
