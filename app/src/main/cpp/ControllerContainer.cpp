@@ -235,7 +235,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     // Due to unstable or inaccurate hand-tracking data, hand mesh models
     // are not enabled on Pico devices. We are drawing a sphere for each joint
     // instead.
-#if defined(PICOXR)
+#if defined(PICOXR) || defined(SPACES)
     // Initialize hand joints if needed
     if (controller.handJointTransforms.size() == 0) {
         controller.handJointTransforms.resize(jointTransforms.size());

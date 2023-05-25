@@ -604,7 +604,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Scale joints according to their radius (for rendering). This is only
     // relevant for devices where we are using spheres to render the hands
     // instead of a proper hand model.
-#if defined(PICOXR)
+#if defined(PICOXR) || defined(SPACES)
     for (int i = 0; i < mHandJoints.size(); i++) {
         if (IsHandJointPositionValid((XrHandJointEXT) i)) {
             float radius = mHandJoints[i].radius;
