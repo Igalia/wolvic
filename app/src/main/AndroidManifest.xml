@@ -38,12 +38,20 @@
             android:exported="true"
             android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
             android:windowSoftInputMode="stateAlwaysHidden">
+            <!-- Declares Wolvic as a browser app -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="https" />
+                <data android:scheme="http" />
+            </intent-filter>
+            <!-- Used for the special wolvic:// links -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
                 <data
                     android:scheme="wolvic"
                     android:host="com.igalia.wolvic" />
