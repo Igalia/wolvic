@@ -43,6 +43,7 @@ object EngineProvider {
             builder.screenSizeOverride(settingsStore.maxWindowWidth, settingsStore.maxWindowHeight)
             builder.inputAutoZoomEnabled(false)
             builder.doubleTapZoomingEnabled(false)
+            builder.forceUserScalableEnabled(false)
             builder.debugLogging(settingsStore.isDebugLoggingEnabled)
             builder.consoleOutput(settingsStore.isDebugLoggingEnabled)
             builder.loginAutofillEnabled(settingsStore.isAutoFillEnabled)
