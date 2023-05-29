@@ -88,7 +88,7 @@ XrResult OpenXRInputSource::Initialize()
     auto systemDoF = systemIs6DoF ? DoF::IS_6DOF : DoF::IS_3DOF;
     auto deviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
     for (auto& mapping: OpenXRInputMappings) {
-      if (deviceType != mapping.controllerType)
+      if (deviceType != mapping.controllerType && mapping.controllerType != device::UnknownType)
         continue;
 
       if (systemDoF != mapping.systemDoF)
