@@ -72,6 +72,7 @@ private:
     bool mHasAimState { false };
     XrPosef mHandAimPose;
     bool mSupportsFBHandTrackingAim { false };
+    double mSmoothIndexThumbDistance { 0 };
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
