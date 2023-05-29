@@ -37,6 +37,10 @@ const float kPinchRange = kPinchStart - kPinchThreshold;
 // 0.7 is generally accepted as good for objects facing each other.
 const float kPalmHeadThreshold = 0.7;
 
+// We apply a exponential smoothing filter to the measured distance between index and thumb so we
+// avoid erroneous click and release events. This constant is the smoothing factor of said filter.
+const double kSmoothFactor = 0.5;
+
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -619,8 +623,15 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT)) {
         const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
                                                                    XR_HAND_JOINT_INDEX_TIP_EXT);
-        pinchFactor = 1.0 - std::clamp((indexThumbDistance - kPinchThreshold) / kPinchRange, 0.0, 1.0);
-        indexPinching = indexThumbDistance < kPinchThreshold;
+
+        // Apply a smoothing filter to reduce the number of phantom events.
+        mSmoothIndexThumbDistance =
+                kSmoothFactor * indexThumbDistance + (1 - kSmoothFactor) * mSmoothIndexThumbDistance;
+
+        pinchFactor = 1.0 -
+                      std::clamp((mSmoothIndexThumbDistance - kPinchThreshold) / kPinchRange, 0.0,
+                                 1.0);
+        indexPinching = mSmoothIndexThumbDistance < kPinchThreshold;
     }
     delegate.SetPinchFactor(mIndex, pinchFactor);
     bool triggerButtonPressed = indexPinching && !leftPalmFacesHead && mHasAimState;
