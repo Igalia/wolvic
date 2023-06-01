@@ -681,7 +681,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   bool IsPassthroughLayerReady() {
-    if (!passthroughStrategy->isReady() || passthroughLayer == nullptr || passthroughLayer->xrLayer == XR_NULL_HANDLE)
+    if (!passthroughStrategy->isReady() || passthroughLayer == nullptr || !passthroughLayer->IsValid())
       return false;
 
     return true;
@@ -844,10 +844,8 @@ DeviceDelegateOpenXR::ProcessEvents() {
       case XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB: {
         auto result = m.passthroughStrategy->handleEvent(*ev);
         if (result == OpenXRPassthroughStrategy::HandleEventResult::NonRecoverableError) {
-            if (m.passthroughLayer->xrLayer != XR_NULL_HANDLE) {
+            if (m.passthroughLayer->IsValid())
                 m.passthroughLayer->Destroy();
-                m.passthroughLayer->xrLayer = XR_NULL_HANDLE;
-            }
         } else if (result == OpenXRPassthroughStrategy::HandleEventResult::NeedsReinit) {
             // TODO: return a bool with the initialization result?
             m.passthroughStrategy->initializePassthrough(m.session);
@@ -1105,13 +1103,8 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   // Add skybox or passthrough layer
   if (mIsPassthroughEnabled) {
       if (m.passthroughLayer && m.passthroughLayer->IsDrawRequested() && m.IsPassthroughLayerReady()) {
-          XrCompositionLayerPassthroughFB passthroughCompLayer = {
-                  .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
-                  .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
-                  .space = XR_NULL_HANDLE,
-                  .layerHandle = m.passthroughLayer->xrLayer,
-          };
-          layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
+          m.passthroughLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
+          layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&m.passthroughLayer->xrCompositionLayer));
           m.passthroughLayer->ClearRequestDraw();
       }
   } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
