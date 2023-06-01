@@ -260,17 +260,29 @@ OpenXRLayerPassthrough::Init(JNIEnv *aEnv, XrSession session, vrb::RenderContext
     .flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB,
     .purpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB
   };
-  CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughLayerFB(session, &layerCreateInfo, &xrLayer));
+  CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughLayerFB(session, &layerCreateInfo, &mPassthroughLayerHandle));
   OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Init(aEnv, session, aContext);
 }
 
 void
+OpenXRLayerPassthrough::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) {
+  xrCompositionLayer = {
+          .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
+          .next = XR_NULL_HANDLE,
+          .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
+          .space = XR_NULL_HANDLE,
+          .layerHandle = mPassthroughLayerHandle,
+  };
+  OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Update(aSpace, aPose, aClearSwapChain);
+}
+
+void
 OpenXRLayerPassthrough::Destroy() {
-  if (xrLayer == XR_NULL_HANDLE)
+  if (mPassthroughLayerHandle == XR_NULL_HANDLE)
     return;
 
-  CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughLayerFB (xrLayer));
-  xrLayer = XR_NULL_HANDLE;
+  CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughLayerFB(mPassthroughLayerHandle));
+  mPassthroughLayerHandle = XR_NULL_HANDLE;
   OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Destroy();
 }
 
