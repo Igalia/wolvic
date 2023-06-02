@@ -164,13 +164,17 @@ class PromptDelegateImpl {
             Choice choice = new Choice(item, position[0], isSelected);
             if (item.isGroupHeader()) {
                 ArrayList<Choice> choices = new ArrayList<>();
-                while (items.size() > position[0]+1) {
-                    SelectPopupItem child = items.get(position[0]+1);
-                    if (child.isGroupHeader())
+                int nextPosition = position[0]+1;
+                while (items.size() > nextPosition) {
+                    SelectPopupItem childItem = items.get(nextPosition);
+                    if (childItem.isGroupHeader())
                         break;
 
-                    position[0] += 1;
-                    choices.add(createChoice(items, position, selected, selectedIndex));
+                    position[0] = nextPosition;
+                    Choice child = createChoice(items, position, selected, selectedIndex);
+                    assert child != null;
+                    choices.add(child);
+                    nextPosition = position[0]+1;
                 }
                 choice.choices = choices.toArray(new Choice[choices.size()]);
             }
@@ -186,7 +190,9 @@ class PromptDelegateImpl {
                 int[] position = new int[]{0};
                 int[] selectedIndex = new int[]{0};
                 while (position[0] < items.size()) {
-                    choices.add(createChoice(items, position, selected, selectedIndex));
+                    Choice child = createChoice(items, position, selected, selectedIndex);
+                    assert child != null;
+                    choices.add(child);
                     position[0]++;
                 }
                 this.choices = choices.toArray(new Choice[choices.size()]);
@@ -196,6 +202,15 @@ class PromptDelegateImpl {
             type = multiple ? WSession.PromptDelegate.ChoicePrompt.Type.MULTIPLE :
                     WSession.PromptDelegate.ChoicePrompt.Type.SINGLE;
             mSelectionChangedCallback = selectionChangedCallback;
+        }
+
+        private <T> boolean isValidArgument(T[] selectedChoices) {
+            if ((WSession.PromptDelegate.ChoicePrompt.Type.MENU == type ||
+                    WSession.PromptDelegate.ChoicePrompt.Type.SINGLE == type)
+                    && (selectedChoices == null || selectedChoices.length != 1)) {
+                throw new IllegalArgumentException();
+            }
+            return true;
         }
 
         @NonNull
@@ -221,10 +236,8 @@ class PromptDelegateImpl {
         @Override
         @NonNull
         public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String[] selectedIds) {
-            if ((WSession.PromptDelegate.ChoicePrompt.Type.MENU == type ||
-                    WSession.PromptDelegate.ChoicePrompt.Type.SINGLE == type)
-                    && (selectedIds == null || selectedIds.length != 1)) {
-                throw new IllegalArgumentException();
+            if (!isValidArgument(selectedIds)) {
+                return confirm((int[]) null);
             }
 
             int length = 0;
@@ -253,13 +266,7 @@ class PromptDelegateImpl {
         @NonNull
         public WSession.PromptDelegate.PromptResponse confirm(
                 @NonNull final WSession.PromptDelegate.ChoicePrompt.Choice[] selectedChoices) {
-            if ((WSession.PromptDelegate.ChoicePrompt.Type.MENU == type ||
-                    WSession.PromptDelegate.ChoicePrompt.Type.SINGLE == type)
-                    && (selectedChoices == null || selectedChoices.length != 1)) {
-                throw new IllegalArgumentException();
-            }
-
-            if (selectedChoices == null) {
+            if (!isValidArgument(selectedChoices)) {
                 return confirm((int[]) null);
             }
 
