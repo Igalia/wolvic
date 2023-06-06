@@ -87,6 +87,12 @@ XrResult OpenXRInputSource::Initialize()
     bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
     auto systemDoF = systemIs6DoF ? DoF::IS_6DOF : DoF::IS_3DOF;
     auto deviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
+    // Add a workaround for Monado not reporting properly device capabilities
+    // https://gitlab.freedesktop.org/monado/monado/-/issues/265
+    if (deviceType == device::LenovoVRX) {
+        systemIs6DoF = true;
+        systemDoF = DoF::IS_6DOF;
+    }
     for (auto& mapping: OpenXRInputMappings) {
       if (deviceType != mapping.controllerType && mapping.controllerType != device::UnknownType)
         continue;
