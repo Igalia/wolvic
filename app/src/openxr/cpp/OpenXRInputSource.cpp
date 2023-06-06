@@ -503,8 +503,10 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     CHECK_XRCMD(OpenXRExtensions::sXrLocateHandJointsEXT(mHandTracker, &locateInfo, &jointLocations));
     mHasHandJoints = jointLocations.isActive;
 #if defined(SPACES)
-    // Bug in Spaces runtime, isActive returns always false
-    mHasHandJoints = true;
+    // Bug in Spaces runtime, isActive returns always false, force it to true for the A3.
+    // https://gitlab.freedesktop.org/monado/monado/-/issues/263
+    if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoA3)
+        mHasHandJoints = true;
 #endif
     if (mSupportsFBHandTrackingAim) {
         mHasAimState = aimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB;
