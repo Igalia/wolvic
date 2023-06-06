@@ -26,7 +26,7 @@ public class SessionImpl implements WSession {
     ScrollDelegate mScrollDelegate;
     HistoryDelegate mHistoryDelegate;
     WContentBlocking.Delegate mContentBlockingDelegate;
-    PromptDelegate mPromptDelegate;
+    PromptDelegateImpl mPromptDelegate;
     SelectionActionDelegate mSelectionActionDelegate;
     WMediaSession.Delegate mMediaSessionDelegate;
     DisplayImpl mDisplay;
@@ -158,6 +158,7 @@ public class SessionImpl implements WSession {
         assert mDisplay == null;
         mDisplay = new DisplayImpl(this, mTab.getCompositorView());
         mRuntime.addViewToBrowserContainer(mTab.getCompositorView());
+        mRuntime.addViewToBrowserContainer(getContentView());
         getTextInput().setView(getContentView());
         return mDisplay;
     }
@@ -296,14 +297,16 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setPromptDelegate(@Nullable PromptDelegate delegate) {
-        // TODO: Implement bridge
-        mPromptDelegate = delegate;
+        if (getPromptDelegate() == delegate) {
+            return;
+        }
+        mPromptDelegate = new PromptDelegateImpl(delegate, this);
     }
 
     @Nullable
     @Override
     public PromptDelegate getPromptDelegate() {
-        return mPromptDelegate;
+        return mPromptDelegate == null ? null : mPromptDelegate.getDelegate();
     }
 
     @Override
