@@ -236,7 +236,10 @@ struct DeviceDelegateOpenXR::State {
 #if defined(LYNX)
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
 #elif defined(SPACES)
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNoSkybox>();
+        if (deviceType == device::LenovoA3)
+            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNoSkybox>();
+        else
+            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
 #else
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
 #endif
