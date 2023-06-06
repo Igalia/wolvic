@@ -485,14 +485,6 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
-#ifdef SPACES
-bool shouldConsiderPoseAsValid(const XrPosef& pose) {
-    // A bug in spaces leaves the locationFlags always empty. The best we can do is to check that
-    // all positions are not 0.0 (which is what the runtime returns when they aren't tracked).
-    return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
-}
-#endif
-
 bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
@@ -520,10 +512,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
             mHandAimPose = aimState.aimPose;
     } else {
         auto aimJoint = jointLocations.jointLocations[HAND_JOINT_FOR_AIM];
-        mHasAimState = aimJoint.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT;
-#if defined(SPACES)
-        mHasAimState = shouldConsiderPoseAsValid(aimJoint.pose);
-#endif
+        mHasAimState = IsHandJointPositionValid(HAND_JOINT_FOR_AIM);
         if (mHasAimState)
             mHandAimPose = aimJoint.pose;
     }
@@ -545,6 +534,13 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
 bool OpenXRInputSource::IsHandJointPositionValid(const enum XrHandJointEXT aJoint) {
     if (aJoint >= mHandJoints.size())
         return false;
+#if SPACES
+    // A bug in spaces leaves the locationFlags always empty. The best we can do is to check that
+    // all positions are not 0.0 (which is what the runtime returns when they aren't tracked).
+    // https://gitlab.freedesktop.org/monado/monado/-/issues/264
+    auto pose = mHandJoints[aJoint].pose;
+    return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
+#endif
     return (mHandJoints[aJoint].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0;
 }
 
@@ -557,9 +553,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     for (int i = 0; i < mHandJoints.size(); i++) {
         vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
         bool positionIsValid = IsHandJointPositionValid((XrHandJointEXT) i);
-#if defined(SPACES)
-        positionIsValid = shouldConsiderPoseAsValid(mHandJoints[i].pose);
-#endif
         if (positionIsValid) {
             if (renderMode == device::RenderMode::StandAlone)
                 transform.TranslateInPlace(kAverageHeight);
@@ -625,13 +618,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Select action
     bool indexPinching = false;
     double pinchFactor = 0.0f;
-#ifdef SPACES
-    if (shouldConsiderPoseAsValid(mHandJoints[XR_HAND_JOINT_THUMB_TIP_EXT].pose) &&
-        shouldConsiderPoseAsValid(mHandJoints[XR_HAND_JOINT_INDEX_TIP_EXT].pose)) {
-#else
     if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
         IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT)) {
-#endif
         const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
                                                                    XR_HAND_JOINT_INDEX_TIP_EXT);
 
