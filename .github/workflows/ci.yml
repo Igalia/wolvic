@@ -18,7 +18,8 @@ jobs:
           assembleHvrArm64GeckoAppInChina,
           assemblePicoxrArm64GeckoGeneric,
           assembleLynxArm64GeckoGeneric,
-          assembleSpacesArm64GeckoGeneric
+          assembleSpacesArm64GeckoGeneric,
+          assembleAospX86_64GeckoGeneric
         ]
 
     steps:

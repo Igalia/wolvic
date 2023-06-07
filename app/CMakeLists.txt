@@ -212,6 +212,19 @@ if (LYNX OR SPACES)
     target_link_libraries(native-lib loader::openxr_loader)
 endif()
 
+if (AOSP)
+    # Each module in an Android project can link to only one CMake or ndk-build script file. Given
+    # that we already have the native-lib, we need to add other the OpenXR loaded CMake project
+    #to the top level CMakeLists.txt file, i.e., this one.
+    set(lib_src_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK)
+    set(lib_build_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/build)
+    file(MAKE_DIRECTORY ${lib_build_DIR})
+
+    add_subdirectory(${lib_src_DIR} ${lib_build_DIR})
+
+    target_link_libraries(native-lib openxr_loader)
+endif()
+
 # Add dependency on tinygltf library, which is used to load hand models
 # from .glb assets. Since it is only a single C++ source and header,
 # we include them as native-lib's own build sources.

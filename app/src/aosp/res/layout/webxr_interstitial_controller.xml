@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="com.igalia.wolvic.utils.DeviceType"/>
+        <import type="com.igalia.wolvic.ui.widgets.WebXRInterstitialController"/>
+        <variable
+            name="model"
+            type="int" />
+        <variable
+            name="hand"
+            type="int" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+    </FrameLayout>
+</layout>

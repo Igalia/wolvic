@@ -252,6 +252,16 @@ android {
             }
         }
 
+        aosp {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DAOSP -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DAOSP=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         hvr {
             dimension "platform"
             externalNativeBuild {
@@ -355,9 +365,9 @@ android {
         def backend = variant.getFlavors().get(2).name
         def store = variant.getFlavors().get(3).name
 
-        // Create x86_64 variants only for noapi platform
+        // Create x86_64 variants only for noapi and aosp platforms
         if (abi == 'x86_64')
-            variant.setIgnore(platform != 'noapi');
+            variant.setIgnore(platform != 'noapi' && platform !='aosp');
 
         // Create variants for China only for HVR platforms
         if (store == 'appInChina' && !platform.startsWith('hvr'))
@@ -437,6 +447,10 @@ android {
 
         spaces {
             manifest.srcFile "src/spaces/AndroidManifest.xml"
+        }
+
+        aosp {
+            manifest.srcFile "src/aosp/AndroidManifest.xml"
         }
 
         noapi {
