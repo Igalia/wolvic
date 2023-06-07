@@ -203,6 +203,31 @@ if (LYNX OR SPACES)
     target_link_libraries(native-lib loader::openxr_loader)
 endif()
 
+if (AOSP)
+    # Each module in an Android project can link to only one CMake or ndk-build script file. Given
+    # that we already have the native-lib, we need to add other the OpenXR loaded CMake project
+    #to the top level CMakeLists.txt file, i.e., this one.
+    set(lib_src_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK)
+    set(lib_build_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/build)
+    file(MAKE_DIRECTORY ${lib_build_DIR})
+
+    # We use the ExternalProject utility just to patch OpenXR-SDK, we don't use it for anything else
+    # TODO: unapply the patch. As we don't use it for building we cannot currently use _Add_Step
+    # to specify a cleanup step depending on the build step.
+    include(ExternalProject)
+    ExternalProject_Add(EXTOpenXRLoader
+            SOURCE_DIR ${lib_src_DIR}
+            BINARY_DIR ${lib_build_DIR}
+            PATCH_COMMAND git reset --hard && git apply ${CMAKE_SOURCE_DIR}/../third_party/patches/0001-Fix-some-missing-field-initializer-warnings.patch
+            STEP_TARGETS patch
+            EXCLUDE_FROM_ALL TRUE
+            )
+
+    add_subdirectory(${lib_src_DIR} ${lib_build_DIR})
+    add_dependencies(openxr_loader EXTOpenXRLoader-patch)
+    target_link_libraries(native-lib openxr_loader)
+endif()
+
 # Add dependency on tinygltf library, which is used to load hand models
 # from .glb assets. Since it is only a single C++ source and header,
 # we include them as native-lib's own build sources.
