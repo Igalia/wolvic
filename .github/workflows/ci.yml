@@ -18,7 +18,8 @@ jobs:
           assembleHvrArm64GeckoAppInChina,
           assemblePicoxrArm64GeckoGeneric,
           assembleLynxArm64GeckoGeneric,
-          assembleSpacesArm64GeckoGeneric
+          assembleSpacesArm64GeckoGeneric,
+          assembleAospX86_64GeckoGeneric
         ]
 
     steps:
@@ -37,6 +38,7 @@ jobs:
           ref: ${{ env.third_party_sha }}
           repository: Igalia/wolvic-third-parties
           token: ${{ secrets.THIRD_PARTY_PAT }}
+          submodules: 'true'
           path: 'third_party'
 
       - name: Set up JDK 11
