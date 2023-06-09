@@ -5,29 +5,27 @@
 
 #pragma once
 
-#include "vrb/ResourceGL.h"
-#include "ExternalVR.h"
+#include "Controller.h"
+#include "vrb/Camera.h"
 
 namespace crow {
 
 class HandModels;
 typedef std::shared_ptr<HandModels> HandModelsPtr;
 
-class HandModels : protected vrb::ResourceGL {
+class HandModels {
+protected:
+    struct State;
 public:
   static HandModelsPtr Create(vrb::CreationContextPtr& aContext);
   void Draw(const vrb::Camera& aCamera, const Controller& aController);
-  void UpdateHandModel(const Controller& aController);
-protected:
-  struct State;
   HandModels(State& aState, vrb::CreationContextPtr& aContext);
-  ~HandModels() = default;
-  void InitializeGL() override;
-  void ShutdownGL() override;
+  ~HandModels();
 private:
   State& m;
-  HandModels() = delete;
-  VRB_NO_DEFAULTS(HandModels)
+  void InitializeGL();
+  void ShutdownGL();
+  void UpdateHandModel(const Controller& aController);
 };
 
 } // namespace crow
