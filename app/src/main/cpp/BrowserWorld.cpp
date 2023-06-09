@@ -240,7 +240,6 @@ struct BrowserWorld::State {
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
-    handModelsRenderer = HandModels::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
     wasInGazeMode = false;
@@ -532,9 +531,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 #if !defined(PICOXR) && !defined(SPACES)
     // Lazy-load hand models
     if (controller.mode == ControllerMode::Hand && !controller.handMesh) {
-      if (controllers->LoadHandMeshFromAssets(controller)) {
-        handModelsRenderer->UpdateHandModel(controller);
-      }
+      controllers->LoadHandMeshFromAssets(controller);
     }
 #else
     if (controller.handMeshToggle)
@@ -1726,8 +1723,11 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
 
   // Draw hand models
   for (Controller& controller: m.controllers->GetControllers()) {
-    if (controller.enabled && controller.mode == ControllerMode::Hand && controller.handMesh)
+    if (controller.enabled && controller.mode == ControllerMode::Hand && controller.handMesh) {
+      if (!m.handModelsRenderer)
+        m.handModelsRenderer = HandModels::Create(m.create);
       m.handModelsRenderer->Draw(*camera, controller);
+    }
   }
 
   // Draw controllers

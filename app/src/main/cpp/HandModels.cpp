@@ -4,9 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "HandModels.h"
-#include "vrb/Camera.h"
 #include "vrb/ConcreteClass.h"
-#include "vrb/private/ResourceGLState.h"
+#include "vrb/Camera.h"
 #include "vrb/gl.h"
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
@@ -133,7 +132,7 @@ struct HandGLState {
   GLuint iboIndices;
 };
 
-struct HandModels::State : public vrb::ResourceGL::State {
+struct HandModels::State {
   GLuint vertexShader { 0 };
   GLuint fragmentShader { 0 };
   GLuint program { 0 };
@@ -150,18 +149,25 @@ struct HandModels::State : public vrb::ResourceGL::State {
 
 HandModelsPtr
 HandModels::Create(vrb::CreationContextPtr& aContext) {
-  return std::make_shared<vrb::ConcreteClass<HandModels, HandModels::State> >(aContext);
+  auto instance = std::make_shared<vrb::ConcreteClass<HandModels, HandModels::State> >(aContext);
+  instance->InitializeGL();
+  return instance;
 }
 
 void
 HandModels::Draw(const vrb::Camera& aCamera, const Controller& aController) {
   assert(aController.handMesh != nullptr);
 
+  // Set up this controller if it hasn't been done yet
+  if (aController.index >= m.handGLState.size())
+    m.handGLState.resize(aController.index + 1);
+
+  const HandGLState& state = m.handGLState.at(aController.index);
+  if (state.indexCount == 0)
+    UpdateHandModel(aController);
+
   assert(m.program);
   VRB_GL_CHECK(glUseProgram(m.program));
-
-  assert(aController.index < m.handGLState.size());
-  const HandGLState& state = m.handGLState.at(aController.index);
 
   const GLboolean enabled = glIsEnabled(GL_DEPTH_TEST);
   if (!enabled)
@@ -269,8 +275,7 @@ HandModels::UpdateHandModel(const Controller& aController) {
 }
 
 HandModels::HandModels(State& aState, vrb::CreationContextPtr& aContext)
-    : vrb::ResourceGL(aState, aContext)
-    , m(aState)
+    : m(aState)
 {}
 
 void
@@ -319,6 +324,10 @@ HandModels::ShutdownGL() {
     VRB_GL_CHECK(glDeleteShader(m.fragmentShader));
     m.fragmentShader = 0;
   }
+}
+
+HandModels::~HandModels() {
+  ShutdownGL();
 }
 
 } // namespace crow
