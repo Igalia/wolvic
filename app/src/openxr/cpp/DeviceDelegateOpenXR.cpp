@@ -105,6 +105,8 @@ struct DeviceDelegateOpenXR::State {
   bool reorientRequested { false };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
   PassthroughStrategyPtr passthroughStrategy;
+  XrEnvironmentBlendMode defaultBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
+  XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -204,6 +206,8 @@ struct DeviceDelegateOpenXR::State {
     CHECK_XRCMD(xrGetSystem(instance, &systemInfo, &system));
     CHECK_MSG(system != XR_NULL_SYSTEM_ID, "Failed to initialize XRSystem");
 
+    deviceType = DeviceUtils::GetDeviceTypeFromSystem(IsPositionTrackingSupported());
+
     // If hand tracking extension is present, query whether the runtime actually supports it
     XrSystemHandTrackingPropertiesEXT handTrackingProperties{XR_TYPE_SYSTEM_HAND_TRACKING_PROPERTIES_EXT};
     handTrackingProperties.supportsHandTracking = XR_FALSE;
@@ -231,22 +235,16 @@ struct DeviceDelegateOpenXR::State {
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
     VRB_LOG("OpenXR runtime %s FB passthrough extension", passthroughProperties.supportsPassthrough ? "does support" : "doesn't support");
 
+    InitializeBlendModes();
     if (passthroughProperties.supportsPassthrough) {
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
     } else {
-#if defined(LYNX)
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
-#elif defined(SPACES)
-        if (deviceType == device::LenovoA3)
-            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNoSkybox>();
-        else
+        CHECK(passthroughBlendMode != XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM);
+        if (passthroughBlendMode == XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND)
             passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
-#else
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
-#endif
+        else
+            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
     }
-
-    deviceType = DeviceUtils::GetDeviceTypeFromSystem(IsPositionTrackingSupported());
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -306,6 +304,35 @@ struct DeviceDelegateOpenXR::State {
       eyeSwapChains.push_back(swapChain);
     }
     VRB_DEBUG("OpenXR available views: %d", (int)eyeSwapChains.size());
+  }
+
+  void InitializeBlendModes() {
+      CHECK(instance != XR_NULL_HANDLE);
+      CHECK(system != 0);
+
+      uint32_t count;
+      XrViewConfigurationType viewConfigurationType = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+      CHECK_XRCMD(xrEnumerateEnvironmentBlendModes(instance, system, viewConfigurationType, 0, &count, nullptr));
+      CHECK(count > 0);
+
+      std::vector<XrEnvironmentBlendMode> blendModes(count);
+      CHECK_XRCMD(xrEnumerateEnvironmentBlendModes(instance, system, viewConfigurationType, count, &count, blendModes.data()));
+      VRB_LOG("OpenXR: %d supported blend mode%c", count, count > 1 ? 's' : ' ');
+      for (const auto& blendMode : blendModes)
+          VRB_LOG("\t%s", to_string(blendMode));
+
+      auto blendMode = XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      const auto supportsOpaqueBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      blendMode = XR_ENVIRONMENT_BLEND_MODE_ADDITIVE;
+      const auto supportsAdditiveBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      blendMode = XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND;
+      const auto supportsAlphaBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      CHECK(supportsOpaqueBlendMode || supportsAdditiveBlendMode || supportsAlphaBlendMode);
+
+      passthroughBlendMode = supportsAdditiveBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ADDITIVE : (supportsAlphaBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND : XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
+      defaultBlendMode = supportsOpaqueBlendMode ? XR_ENVIRONMENT_BLEND_MODE_OPAQUE : passthroughBlendMode;
+      VRB_LOG("OpenXR: selected default blend mode %s", to_string(defaultBlendMode));
+      VRB_LOG("OpenXR: selected passthrough blend mode %s", to_string(passthroughBlendMode));
   }
 
   void InitializeImmersiveDisplay() {
@@ -1084,11 +1111,11 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   layers.clear();
 
   // This limit is valid at least for Pico and Meta.
-  auto submitEndFrame = [&layers, displayTime, session = m.session, isPassthroughEnabled = mIsPassthroughEnabled, passthroughStrategy = m.passthroughStrategy.get()]() {
+  auto submitEndFrame = [&layers, displayTime, session = m.session, blendMode = mIsPassthroughEnabled ? m.passthroughBlendMode : m.defaultBlendMode]() {
       static int i = 0;
       XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
       frameEndInfo.displayTime = displayTime;
-      frameEndInfo.environmentBlendMode = isPassthroughEnabled ? passthroughStrategy->environmentBlendModeForPassthrough() : XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      frameEndInfo.environmentBlendMode = blendMode;
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
       CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
