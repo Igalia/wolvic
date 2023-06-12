@@ -537,10 +537,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else {
             mTray.start(this);
         }
-        // TODO: Too early for runtimes using the passthrough layer.
-        if (DeviceType.isSnapdragonSpaces()) {
-            togglePassthrough();
-        }
     }
 
     @Override
@@ -1357,7 +1353,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
-        runOnUiThread(() -> DeviceType.setType(aType));
+        runOnUiThread(() -> {
+            DeviceType.setType(aType);
+            if (aType == DeviceType.LenovoA3) {
+                togglePassthrough();
+            }
+        });
     }
 
     @Keep
