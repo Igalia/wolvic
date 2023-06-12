@@ -11,6 +11,7 @@
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 #include "vrb/ShaderUtil.h"
+#include <assert.h>
 
 #define XR_EXT_HAND_TRACKING_NUM_JOINTS 26
 

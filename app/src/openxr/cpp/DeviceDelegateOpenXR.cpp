@@ -24,6 +24,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <assert.h>
 #include <cstdlib>
 #include <unistd.h>
 #include <sstream>
