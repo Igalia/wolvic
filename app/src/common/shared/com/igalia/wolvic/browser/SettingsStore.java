@@ -85,11 +85,11 @@ public class SettingsStore {
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
     public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
-    public final static int WINDOW_WIDTH_DEFAULT = 1000;
-    public final static int WINDOW_HEIGHT_DEFAULT = 600;
+    public final static int WINDOW_WIDTH_DEFAULT = 1024;
+    public final static int WINDOW_HEIGHT_DEFAULT = 576;
     public final static int DISPLAY_DPI_DEFAULT = 96;
-    public final static int MAX_WINDOW_WIDTH_DEFAULT = 1400;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 840;
+    public final static int MAX_WINDOW_WIDTH_DEFAULT = 1440;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 810;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
