@@ -3,6 +3,7 @@
 #include <vrb/Logger.h>
 #include "OpenXRExtensions.h"
 #include "OpenXRHelpers.h"
+#include <assert.h>
 
 namespace crow {
 
