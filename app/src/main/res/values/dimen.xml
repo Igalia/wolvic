@@ -128,7 +128,7 @@
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">204dp</dimen>
     <dimen name="tray_height">66dp</dimen>
-    <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
+    <item name="tray_tooltip_density" format="float" type="dimen">3.0</item>
     <dimen name="tray_tooltip_padding_h">20dp</dimen>
     <dimen name="tray_tooltip_padding_v">10dp</dimen>
     <dimen name="tray_tooltip_text_size">22sp</dimen>
@@ -230,7 +230,7 @@
     <dimen name="tooltip_default_padding_h">25dp</dimen>
     <dimen name="tooltip_default_padding_v">15dp</dimen>
     <dimen name="tooltip_default_text_size">24sp</dimen>
-    <item name="tooltip_default_density" format="float" type="dimen">3.0</item>
+    <item name="tooltip_default_density" format="float" type="dimen">2.0</item>
 
     <!-- General 2nd level settings dimensions -->
     <dimen name="settings_dialog_width">600dp</dimen>
