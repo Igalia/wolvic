@@ -356,6 +356,26 @@ namespace crow {
             },
     };
 
+    const OpenXRInputMapping MagicLeap2 {
+            "/interaction_profiles/ml/ml2_controller",
+            IS_6DOF,
+            "",
+            "",
+            device::MagicLeap2,
+            std::vector<OpenXRInputProfile> { "magicleap-one", "generic-trigger-squeeze-touchpad" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ClickValue, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Menu, kPathMenu, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true },
+                    { OpenXRButtonType::Trackpad, kPathTrackpad, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Trackpad, "input/trackpad/force",  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
@@ -373,8 +393,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 10> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, LenovoVRX, KHRSimple
+    const std::array<OpenXRInputMapping, 11> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, LenovoVRX, MagicLeap2, KHRSimple
     };
 
 } // namespace crow
