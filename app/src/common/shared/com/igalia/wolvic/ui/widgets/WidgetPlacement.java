@@ -27,6 +27,13 @@ public class WidgetPlacement {
     public static final int SCENE_ROOT_OPAQUE = 1;
     public static final int SCENE_WEBXR_INTERSTITIAL = 2;
 
+    @IntDef(value = { GRAVITY_DEFAULT, GRAVITY_CENTER_X, GRAVITY_CENTER_Y, GRAVITY_CENTER })
+    public @interface ParentAnchorGravity {}
+    public static final int GRAVITY_DEFAULT = 0x0000;
+    public static final int GRAVITY_CENTER_X = 0x0001;
+    public static final int GRAVITY_CENTER_Y = 0x0002;
+    public static final int GRAVITY_CENTER = GRAVITY_CENTER_X | GRAVITY_CENTER_Y;
+
     private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
         density = aContext.getResources().getDisplayMetrics().density;
@@ -51,6 +58,7 @@ public class WidgetPlacement {
     public int parentHandle = -1;
     public float parentAnchorX = 0.5f;
     public float parentAnchorY = 0.5f;
+    public @ParentAnchorGravity int parentAnchorGravity = GRAVITY_DEFAULT;
     public boolean visible = true;
     public @Scene int scene = SCENE_ROOT_TRANSPARENT;
     public boolean showPointer = true;
@@ -97,6 +105,7 @@ public class WidgetPlacement {
         this.parentHandle = w.parentHandle;
         this.parentAnchorX = w.parentAnchorX;
         this.parentAnchorY = w.parentAnchorY;
+        this.parentAnchorGravity = w.parentAnchorGravity;
         this.visible = w.visible;
         this.scene = w.scene;
         this.showPointer = w.showPointer;

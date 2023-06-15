@@ -1942,6 +1942,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setCenterWindows(boolean isCenterWindows) {
+        if (mWindows != null) {
+            mWindows.setCenterWindows(isCenterWindows);
+            updateVisibleWidgets();
+        }
+    }
+
+    @Override
     public float getCylinderDensity() {
         return mCurrentCylinderDensity;
     }

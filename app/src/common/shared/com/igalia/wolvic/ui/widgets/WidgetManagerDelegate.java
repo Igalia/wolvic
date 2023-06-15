@@ -91,6 +91,7 @@ public interface WidgetManagerDelegate {
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     void setCylinderDensityForce(float aDensity);
+    void setCenterWindows(boolean isCenterWindows);
     float getCylinderDensity();
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);

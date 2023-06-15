@@ -134,6 +134,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private WindowPlacement mPrivateWindowPlacement;
     private boolean mStoredCurvedMode = false;
     private boolean mForcedCurvedMode = false;
+    private boolean mCenterWindows;
     private boolean mIsPaused = false;
     private TabsWidget mTabsWidget;
     private Accounts mAccounts;
@@ -190,6 +191,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mPrivateWindowPlacement = WindowPlacement.FRONT;
 
         mStoredCurvedMode = SettingsStore.getInstance(mContext).getCylinderDensity() > 0.0f;
+        mCenterWindows = SettingsStore.getInstance(mContext).isCenterWindows();
 
         mAccounts = mWidgetManager.getServicesProvider().getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
@@ -861,10 +863,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition) {
-        placeWindow(aWindow, aPosition, mStoredCurvedMode || mForcedCurvedMode);
+        placeWindow(aWindow, aPosition, mStoredCurvedMode || mForcedCurvedMode, mCenterWindows);
     }
 
-    private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition, boolean curvedMode) {
+    private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition, boolean curvedMode, boolean centerWindow) {
         WidgetPlacement placement = aWindow.getPlacement();
         aWindow.setWindowPlacement(aPosition);
         switch (aPosition) {
@@ -877,6 +879,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.rotationAxisZ = 0;
                 placement.translationX = 0.0f;
                 placement.translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.window_world_y);
+                if (centerWindow) {
+                    // center the window vertically relative to its default position
+                    placement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - placement.height) / 2.0f;
+                }
                 placement.translationZ = WidgetPlacement.unitFromMeters(mContext, R.dimen.window_world_z);
                 break;
             case LEFT:
@@ -884,6 +890,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.anchorY = 0.0f;
                 placement.parentAnchorX = 0.0f;
                 placement.parentAnchorY = 0.0f;
+                placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -902,6 +909,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.anchorY = 0.0f;
                 placement.parentAnchorX = 1.0f;
                 placement.parentAnchorY = 0.0f;
+                placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -927,7 +935,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             boolean curved = forcedCurvedMode || storedCurvedMode;
 
             for (WindowWidget window : getCurrentWindows()) {
-                placeWindow(window, window.getWindowPlacement(), curved);
+                placeWindow(window, window.getWindowPlacement(), curved, mCenterWindows);
             }
             updateViews();
             mWidgetManager.setCylinderDensity(curved ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : density);
@@ -938,11 +946,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
             boolean curved = mStoredCurvedMode || mForcedCurvedMode;
             for (WindowWidget window : getCurrentWindows()) {
-                placeWindow(window, window.getWindowPlacement(), curved);
+                placeWindow(window, window.getWindowPlacement(), curved, mCenterWindows);
             }
             updateViews();
             mWidgetManager.setCylinderDensity(curved ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : density);
         }
+    }
+
+    public void setCenterWindows(boolean isCenterWindows) {
+        mCenterWindows = isCenterWindows;
+        for (WindowWidget window : getCurrentWindows()) {
+            placeWindow(window, window.getWindowPlacement());
+        }
+        updateViews();
     }
 
     public int getWindowsCount() {
@@ -1284,7 +1300,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             boolean fullscreenCurved = SettingsStore.getInstance(mContext).isCurvedModeEnabled() && (mStoredCurvedMode || mForcedCurvedMode);
             aWindow.getPlacement().cylinder = fullscreenCurved;
             setFullScreenSize(aWindow);
-            placeWindow(aWindow, WindowPlacement.FRONT, fullscreenCurved);
+            placeWindow(aWindow, WindowPlacement.FRONT, fullscreenCurved, false);
             focusWindow(aWindow);
             for (WindowWidget win: getCurrentWindows()) {
                 setWindowVisible(win, win == mFullscreenWindow);
