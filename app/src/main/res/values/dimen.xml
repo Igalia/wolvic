@@ -5,11 +5,14 @@
     <!-- Browser window -->
     <item name="window_world_width" format="float" type="dimen">4.0</item>
     <item name="window_world_y" format="float" type="dimen">0.35</item>
-    <item name="window_world_z" format="float" type="dimen">-4.2</item>
     <item name="multi_window_angle" format="float" type="dimen">60.0</item>
     <dimen name="multi_window_padding">10dp</dimen>
     <item name="browser_children_z_distance" format="float" type="dimen">1.5</item>
     <item name="window_fullscreen_min_scale" format="float" type="dimen">1.75</item>
+
+    <!-- Minimum and maximum values for the window's Z translation -->
+    <item name="window_world_z_min" format="float" type="dimen">-4.2</item>
+    <item name="window_world_z_max" format="float" type="dimen">-5.2</item>
 
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">720dp</dimen>

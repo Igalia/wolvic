@@ -432,6 +432,10 @@
      and is used to enable or disable curved display. -->
     <string name="developer_options_curved_display">Enable Curved Display</string>
 
+    <!-- This string labels an On/Off switch in the 'Display' dialog
+     and is used to align the windows vertically to the bottom or the center. -->
+    <string name="developer_options_center_windows">Center Windows Vertically</string>
+
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
@@ -443,6 +447,10 @@
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use sound effects when interacting with app. -->
     <string name="display_options_sound_effect">Use Sound Effects</string>
+
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize the windows distance. -->
+    <string name="display_options_windows_distance">Windows Distance</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->

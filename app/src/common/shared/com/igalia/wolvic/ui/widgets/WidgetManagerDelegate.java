@@ -64,6 +64,7 @@ public interface WidgetManagerDelegate {
     void addWidget(Widget aWidget);
     void updateWidget(Widget aWidget);
     void removeWidget(Widget aWidget);
+    void updateWidgetsPlacementTranslationZ();
     void updateVisibleWidgets();
     void recreateWidgetSurface(Widget aWidget);
     void startWidgetResize(Widget aWidget, float maxWidth, float maxHeight, float minWidth, float minHeight);
@@ -91,6 +92,7 @@ public interface WidgetManagerDelegate {
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     void setCylinderDensityForce(float aDensity);
+    void setCenterWindows(boolean isCenterWindows);
     float getCylinderDensity();
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);

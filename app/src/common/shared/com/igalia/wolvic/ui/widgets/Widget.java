@@ -39,4 +39,5 @@ public interface Widget {
     default void attachToWindow(@NonNull WindowWidget window) {}
     int getBorderWidth();
     default boolean supportsMultipleInputDevices() { return false; }
+    void updatePlacementTranslationZ();
 }

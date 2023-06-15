@@ -31,6 +31,7 @@ struct WidgetPlacement {
   float rotation;
   int32_t parentHandle;
   vrb::Vector parentAnchor;
+  int32_t parentAnchorGravity;
   float density;
   float worldWidth;
   bool visible;
@@ -57,6 +58,11 @@ struct WidgetPlacement {
   static const float kWorldDPIRatio;
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
   static WidgetPlacementPtr Create(const WidgetPlacement& aPlacement);
+
+  static const int kParentAnchorGravityDefault = 0x0000;
+  static const int kParentAnchorGravityCenterX = 0x0001;
+  static const int kParentAnchorGravityCenterY = 0x0002;
+  static const int kParentAnchorGravityCenter = kParentAnchorGravityCenterX | kParentAnchorGravityCenterY;
 private:
   WidgetPlacement() = default;
   WidgetPlacement(const WidgetPlacement&) = default;

@@ -1657,6 +1657,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void updateWidgetsPlacementTranslationZ() {
+        for (Widget widget: mWidgets.values()) {
+            widget.getPlacement().updateCylinderMapRadius();
+            widget.updatePlacementTranslationZ();
+        }
+    }
+
+    @Override
     public void updateVisibleWidgets() {
         queueRunnable(this::updateVisibleWidgetsNative);
     }
@@ -1934,6 +1942,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
             mWindows.updateCurvedMode(false);
+        }
+    }
+
+    @Override
+    public void setCenterWindows(boolean isCenterWindows) {
+        if (mWindows != null) {
+            mWindows.setCenterWindows(isCenterWindows);
+            updateVisibleWidgets();
         }
     }
 
