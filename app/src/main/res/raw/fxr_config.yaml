@@ -22,4 +22,4 @@ prefs:
   # GPU process in Android broke WebXR. https://bugzilla.mozilla.org/show_bug.cgi?id=1771854
   layers.gpu-process.enabled: false
   # disable zoom gestures
-  apz.allow_zooming: false
+  apz.one_touch_pinch: false
