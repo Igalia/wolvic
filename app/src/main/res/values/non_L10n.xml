@@ -20,6 +20,7 @@
     <string name="settings_key_speech_data_collection_reviewed" translatable="false">settings_key_speech_data_collection_accept</string>
     <string name="settings_key_user_agent_version" translatable="false">settings_user_agent_version_v2</string>
     <string name="settings_key_input_mode" translatable="false">settings_touch_mode</string>
+    <string name="settings_key_center_windows" translatable="false">settings_center_windows</string>
     <string name="settings_key_display_density" translatable="false">settings_display_density</string>
     <string name="settings_key_display_dpi" translatable="false">settings_display_dpi</string>
     <string name="settings_key_device_name" translatable="false">settings_device_name</string>

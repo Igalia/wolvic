@@ -477,6 +477,10 @@
      and is used to enable or disable curved display. -->
     <string name="developer_options_curved_display">Enable Curved Display</string>
 
+    <!-- This string labels an On/Off switch in the 'Display' dialog
+     and is used to align the windows vertically to the bottom or the center. -->
+    <string name="developer_options_center_windows">Center Windows Vertically</string>
+
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
