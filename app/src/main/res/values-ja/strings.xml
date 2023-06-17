@@ -1638,7 +1638,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_copy_to_content_uri_error_title">コピーエラー</string>
     <string name="download_copy_to_content_uri_error_body">ダウンロードしたファイルのコピー中にエラーが発生しました。</string>
     <string name="download_copy_to_content_uri_error_body_v1">%1$sをコピー中にエラーが発生しました</string>
-    <string name="voice_service_metkai"/>
+    <string name="voice_service_metkai">MeetKai</string>
     <string name="upload_button">アップロード</string>
     <string name="upload_list_empty">アップロードできるファイルがありません</string>
     <string name="addons_experimental_section_title">実験的</string>
@@ -1654,4 +1654,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permissions_dialog_remember_choice">この選択を保存する</string>
     <string name="hamburger_menu_toggle_passthrough">パススルー</string>
     <string name="settings_language_portuguese">ポルトガル語</string>
+    <string name="security_options_permission_fine_location_warning">Wolvicはおおよその位置情報のアクセスに限られています。この設定はシステム設定で変更できます。</string>
+    <string name="deprecated_version_dialog_title">推奨アップデート</string>
+    <string name="deprecated_version_dialog_body">現在「App Lab」開発版のWolvicをご利用されています。
+\n
+\nOculus Storeから最新版のWolvicをインストールしてください。
+\n
+\n重要：Firefox Syncを利用していない場合、最新版のWolvicにブックマークとタブは同期されません。</string>
+    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+    <string name="deprecated_version_dialog_info_button">詳細情報…</string>
+    <string name="deprecated_version_dialog_store_button">インストール…</string>
 </resources>
