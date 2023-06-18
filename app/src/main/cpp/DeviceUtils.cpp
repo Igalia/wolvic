@@ -118,6 +118,7 @@ device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
     int length = PopulateDeviceModelString(model);
 
     if (deviceNamesMap.empty()) {
+        deviceNamesMap.emplace("Quest", device::OculusQuest);
         deviceNamesMap.emplace("Quest 2", device::OculusQuest2);
         // So far no need to differentiate between Pico4 and Pico4E
         deviceNamesMap.emplace("A8110", device::PicoXR);
