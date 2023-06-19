@@ -179,7 +179,7 @@ android {
         disable "ExtraTranslation"
     }
 
-    flavorDimensions "platform", "abi", "country", "backend", "store"
+    flavorDimensions "platform", "abi", "backend", "store"
 
     productFlavors {
         // Supported platforms
@@ -265,16 +265,7 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
-        }
-
-        cn {
-            dimension "country"
-            buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
-            buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "true"
-        }
-
-        world {
-            dimension "country"
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         }
 
         noapi {
@@ -350,21 +341,26 @@ android {
                 }
             }
         }
+
+        appInChina {
+            applicationId "com.cn.igalia.wolvic"
+            dimension "store"
+            buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
+        }
     }
 
     variantFilter { variant ->
         def platform = variant.getFlavors().get(0).name
         def abi = variant.getFlavors().get(1).name
-        def country = variant.getFlavors().get(2).name
-        def backend = variant.getFlavors().get(3).name
-        def store = variant.getFlavors().get(4).name
+        def backend = variant.getFlavors().get(2).name
+        def store = variant.getFlavors().get(3).name
 
         // Create x86_64 variants only for noapi platform
         if (abi == 'x86_64')
             variant.setIgnore(platform != 'noapi');
 
         // Create variants for China only for HVR platforms
-        if (country == 'cn' && !platform.startsWith('hvr'))
+        if (store == 'appInChina' && !platform.startsWith('hvr'))
             variant.setIgnore(true);
 
         // Create variants for chromium/webkit, only when they are available
@@ -685,15 +681,6 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
 }
 
-androidComponents {
-    onVariants(selector().all(), { variant ->
-        // HVR packages for China must use different applicationIds.
-        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn\p{Alnum}+(Release|Debug)/
-        if (hvrChinaBuildPattern.matcher(variant.name).matches())
-            variant.applicationId = variant.applicationId.get().replace('com.igalia','com.cn.igalia')
-    })
-}
-
 // -------------------------------------------------------------------------------------------------
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
@@ -710,15 +697,10 @@ android.applicationVariants.all { variant ->
         println("X_X")
     }
 
-    def platform = variant.productFlavors.get(0).name
-    def country = variant.productFlavors.get(2).name
-
     // HVR packages for mainland china must only use HVR speech recognition system.
-    // HVR packages for overseas should have 2D phone UI enabled.
-    if (platform.toLowerCase().startsWith('hvr')) {
-        if (country != 'cn')
-            variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
-        else
-            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
+    def platform = variant.productFlavors.get(0).name
+    def store = variant.productFlavors.get(3).name
+    if (platform.toLowerCase().startsWith('hvr') && store == "appInChina") {
+        variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
     }
 }

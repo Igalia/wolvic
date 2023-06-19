@@ -13,12 +13,12 @@ jobs:
     strategy:
       matrix:
         flavour: [
-          assembleOculusvrArm64WorldGeckoGeneric,
-          assembleOculusvrArm64WorldGeckoMetaStore,
-          assembleHvrArm64WorldGeckoGeneric,
-          assemblePicoxrArm64WorldGeckoGeneric,
-          assembleLynxArm64WorldGeckoGeneric,
-          assembleSpacesArm64WorldGeckoGeneric
+          assembleOculusvrArm64GeckoMetaStore,
+          assembleHvrArm64GeckoGeneric,
+          assembleHvrArm64GeckoAppInChina,
+          assemblePicoxrArm64GeckoGeneric,
+          assembleLynxArm64GeckoGeneric,
+          assembleSpacesArm64GeckoGeneric
         ]
 
     steps:
