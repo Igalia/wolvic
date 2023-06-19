@@ -664,10 +664,12 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // different for each hand in the case of Quest. So here correct the transformation matrix
     // by an angle that was obtained empirically.
 #if defined(OCULUSVR)
-    float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3/2;
-    auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
-                                                  correctionAngle);
-    pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+    if (mSupportsFBHandTrackingAim) {
+        float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3 / 2;
+        auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
+                                                      correctionAngle);
+        pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+    }
 #elif defined(PICOXR)
     float correctionAngle = -M_PI_2;
     pointerTransform
