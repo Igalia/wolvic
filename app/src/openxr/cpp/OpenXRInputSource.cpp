@@ -485,7 +485,7 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
-bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace) {
+bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
 
@@ -513,10 +513,41 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         if (mHasAimState)
             mHandAimPose = aimState.aimPose;
     } else {
-        auto aimJoint = jointLocations.jointLocations[HAND_JOINT_FOR_AIM];
-        mHasAimState = IsHandJointPositionValid(HAND_JOINT_FOR_AIM);
-        if (mHasAimState)
-            mHandAimPose = aimJoint.pose;
+        mHasAimState = IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT);
+        if (mHasAimState) {
+            mHandAimPose = jointLocations.jointLocations[XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT].pose;
+
+            auto lookAt = [](const vrb::Vector& sourcePoint, const vrb::Vector& destPoint) -> vrb::Quaternion {
+                const float EPSILON = 0.000001f;
+                vrb::Vector worldForward = { 0, 0, 1 };
+                vrb::Vector forwardVector = (destPoint - sourcePoint).Normalize();
+                float dot = worldForward.Dot(forwardVector);
+
+                // Vectors pointing to opposite directions -> 180 turn around up direction.
+                if (abs(dot - (-1.0f)) < EPSILON) {
+                    return {0, 1, 0, M_PI };
+                }
+                // Vectors pointing in the same direction -> identity quaternion (no rotation)
+                if (abs(dot - (1.0f)) < EPSILON) {
+                    return {0, 0, 0, 1 };
+                }
+
+                auto quaternionFromAxisAndAngle = [](const vrb::Vector& axis, float angle) -> vrb::Quaternion {
+                    float halfAngle = angle * .5f;
+                    float s = sin(halfAngle);
+                    return { axis.x() * s, axis.y() * s, axis.z() * s, cos(halfAngle) };
+                };
+
+                float rotationAngle = acos(dot);
+                auto rotationAxis = worldForward.Cross(forwardVector);
+                return quaternionFromAxisAndAngle(rotationAxis.Normalize(), rotationAngle);
+            };
+
+            auto pos = vrb::Vector(mHandAimPose.position.x, mHandAimPose.position.y, mHandAimPose.position.z);
+            auto shoulder = head.MultiplyDirection({mHandeness == Right ? 0.15f : -0.15f,-0.25,0});
+            auto q = lookAt(pos, shoulder);
+            mHandAimPose.orientation = { q.x(), q.y(), q.z(), q.w() };
+        }
     }
 
     return mHasHandJoints;
@@ -716,7 +747,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     }
 
     // If hand tracking is active, use it to emulate the controller.
-    if (GetHandTrackingInfo(frameState, localSpace)) {
+    if (GetHandTrackingInfo(frameState, localSpace, head)) {
         EmulateControllerFromHand(renderMode, head, delegate);
         return;
     }

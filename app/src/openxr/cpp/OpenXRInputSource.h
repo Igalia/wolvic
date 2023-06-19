@@ -40,7 +40,7 @@ private:
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
     XrResult stopHapticFeedback(XrAction) const;
     void UpdateHaptics(ControllerDelegate&);
-    bool GetHandTrackingInfo(const XrFrameState&, XrSpace);
+    bool GetHandTrackingInfo(const XrFrameState&, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
     bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint);
 
