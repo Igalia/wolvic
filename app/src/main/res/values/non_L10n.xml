@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Wolvic VR Browser</string>
+    <string name="app_name" translatable="false">Wolvic</string>
     <string name="bug_report_url" translatable="false">github.com/Igalia/wolvic/issues</string>
     <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
     <string name="homepage_url" translatable="false">https://wolvic.com/start</string>
