@@ -28,4 +28,5 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete "${rootDir}/third_party/wavesdk/build"
 }

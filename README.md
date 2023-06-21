@@ -83,7 +83,6 @@ Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/
 ```bash
 mkdir -p third_party/wavesdk
 cp /path/to/the/sdk/2.0.32/SDK/libs/wvr_client.aar third_party/wavesdk
-cp ./extra/wavesdk/build.gradle ./third_party/wavesdk
 ```
 
 Make certain to set the build flavor to `wavevrDebug` in Android Studio before building the project.
