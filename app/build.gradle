@@ -656,7 +656,8 @@ if (findProject(':servo')) {
     }
 }
 
-if (findProject(':wavesdk')) {
+List taskNames = gradle.getStartParameter().getTaskNames();
+if (taskNames.size() > 0 && taskNames.get(0).contains("Wavevr") && findProject(':wavesdk')) {
     dependencies {
         wavevrImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
         wavevrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
