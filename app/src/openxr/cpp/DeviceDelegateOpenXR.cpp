@@ -1490,6 +1490,7 @@ DeviceDelegateOpenXR::IsInVRMode() const {
 
 bool
 DeviceDelegateOpenXR::ExitApp() {
+  xrRequestExitSession(m.session);
   return true;
 }
 

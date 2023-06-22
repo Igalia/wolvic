@@ -197,7 +197,7 @@ android_main(android_app *aAppState) {
   MaybeInitGLAndEnterVR();
 
   // Main render loop
-  while (true) {
+  while (aAppState->destroyRequested == 0) {
     int events;
     android_poll_source *pSource;
 
@@ -207,22 +207,17 @@ android_main(android_app *aAppState) {
       if (pSource) {
         pSource->process(aAppState, pSource);
       }
-
-      // Check if we are exiting.
-      if (aAppState->destroyRequested != 0) {
-        sAppContext->mEgl->MakeCurrent();
-        sAppContext->mQueue->ProcessRunnables();
-        sAppContext->mDevice->OnDestroy();
-        BrowserWorld::Instance().ShutdownGL();
-        BrowserWorld::Instance().ShutdownJava();
-        BrowserWorld::Destroy();
-        sAppContext->mEgl->Destroy();
-        sAppContext->mEgl.reset();
-        sAppContext->mDevice.reset();
-        aAppState->activity->vm->DetachCurrentThread();
-        return;
-      }
     }
+#if defined(OPENXR)
+    // OpenXR requires to wait for the XR_SESSION_STATE_READY to start presenting
+    // We need to call ProcessEvents to make sure we receive the event.
+    sAppContext->mDevice->ProcessEvents();
+    if (sAppContext->mDevice->ShouldExitRenderLoop()) {
+      ANativeActivity_finish(aAppState->activity);
+      continue;
+    }
+#endif
+
     MaybeInitGLAndEnterVR();
 
     if (sAppContext->mEgl) {
@@ -233,17 +228,20 @@ android_main(android_app *aAppState) {
     if (!BrowserWorld::Instance().IsPaused() && sAppContext->mDevice->IsInVRMode()) {
       BrowserWorld::Instance().Draw();
     }
-#if defined(OPENXR)
-    else {
-      // OpenXR requires to wait for the XR_SESSION_STATE_READY to start presenting
-      // We need to call ProcessEvents to make sure we receive the event.
-      sAppContext->mDevice->ProcessEvents();
-      if (sAppContext->mDevice->ShouldExitRenderLoop()) {
-        return;
-      }
-    }
-#endif
   }
+
+  sAppContext->mEgl->MakeCurrent();
+  sAppContext->mQueue->ProcessRunnables();
+  sAppContext->mDevice->OnDestroy();
+  BrowserWorld::Instance().ShutdownGL();
+  BrowserWorld::Instance().ShutdownJava();
+  BrowserWorld::Destroy();
+  sAppContext->mEgl->Destroy();
+  sAppContext->mEgl.reset();
+  sAppContext->mDevice.reset();
+
+  aAppState->activity->vm->DetachCurrentThread();
+  VRB_LOG("Exiting native thread");
 }
 
 JNI_METHOD(void, queueRunnable)
