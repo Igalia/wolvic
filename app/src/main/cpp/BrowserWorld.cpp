@@ -1133,10 +1133,12 @@ BrowserWorld::StartFrame() {
     }
   }
 
-#if defined(OCULUSVR) && defined(STORE_BUILD)
+#if defined(OCULUSVR)
+#if defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
 #endif
   m.device->ProcessEvents();
+#endif
   m.context->Update();
   m.externalVR->PullBrowserState();
   m.externalVR->SetHapticState(m.controllers);
