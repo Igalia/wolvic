@@ -706,9 +706,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     pointerTransform
         .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)
         .PostMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0), correctionAngle)));
-#elif defined(LYNX)
-    auto vector = mHandeness == OpenXRHandFlags::Left ? vrb::Vector(0.0, 0.5, 1.0) : vrb::Vector(-0.5, 0.0, 1.0);
-    pointerTransform.PostMultiplyInPlace(vrb::Matrix::Rotation(vector, M_PI_2));
 #endif
 
     if (renderMode == device::RenderMode::StandAlone)
