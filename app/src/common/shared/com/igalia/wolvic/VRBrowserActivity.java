@@ -926,22 +926,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         if (!mWindows.handleBack()) {
-            if (DeviceType.isHVRBuild()) {
-                mWindows.getFocusedWindow().showConfirmPrompt(
-                        getString(R.string.app_name),
-                        getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
-                        new String[]{
-                                getString(R.string.exit_confirm_dialog_button_cancel),
-                                getString(R.string.exit_confirm_dialog_button_quit),
-                        }, (index, isChecked) -> {
-                            if (index == PromptDialogWidget.POSITIVE) {
-                                VRBrowserActivity.super.onBackPressed();
-                            }
-                        });
+            mWindows.getFocusedWindow().showConfirmPrompt(
+                    getString(R.string.app_name),
+                    getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
+                    new String[]{
+                            getString(R.string.exit_confirm_dialog_button_cancel),
+                            getString(R.string.exit_confirm_dialog_button_quit),
+                    }, (index, isChecked) -> {
+                        if (index == PromptDialogWidget.POSITIVE) {
+                            VRBrowserActivity.super.onBackPressed();
+                            finishAndRemoveTask();
+                        }
+                    });
 
-            } else {
-                super.onBackPressed();
-            }
         }
     }
 
