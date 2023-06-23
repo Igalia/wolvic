@@ -522,7 +522,7 @@ dependencies {
     implementation deps.lifecycle.viewmodel
     implementation deps.lifecycle.java8
     implementation deps.lifecycle.process
-    implementation deps.openwnn
+    implementation 'jp.co.omronsoft.openwnn:openwnn:1.3.7'
     implementation deps.support.annotations
     implementation deps.support.app_compat
     implementation deps.support.recyclerview
