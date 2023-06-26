@@ -745,17 +745,23 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
       CHECK_XRCMD(CreateActionSpace(mPointerAction, mPointerSpace));
     }
 
-    // If hand tracking is active, use it to emulate the controller.
-    if (GetHandTrackingInfo(frameState, localSpace, head)) {
-        EmulateControllerFromHand(renderMode, head, delegate);
-        return;
-    }
-
     // Pose transforms.
     bool isPoseActive { false };
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
     if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, localSpace, frameState, isPoseActive, poseLocation))) {
         delegate.SetEnabled(mIndex, false);
+        return;
+    }
+
+#if defined(PICOXR)
+    // Pico does continuously track the controllers even when left alone. That's why we return
+    // always true so that we always check hand tracking just in case.
+    bool isControllerUnavailable = true;
+#else
+    bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
+#endif
+    if (isControllerUnavailable && GetHandTrackingInfo(frameState, localSpace, head)) {
+        EmulateControllerFromHand(renderMode, head, delegate);
         return;
     }
 
