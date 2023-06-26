@@ -507,12 +507,6 @@ configurations {
     x86Implementation
 }
 
-repositories {
-    flatDir {
-        dirs 'aars'
-    }
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
