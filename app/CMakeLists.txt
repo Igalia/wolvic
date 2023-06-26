@@ -87,12 +87,14 @@ endif()
 
 if(OPENXR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DXR_USE_PLATFORM_ANDROID -DXR_USE_GRAPHICS_API_OPENGL_ES")
+    include_directories(
+            ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
+            ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
+    )
     if (OCULUSVR)
         include_directories(
-            ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
             ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
             ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Include
-            ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
@@ -100,10 +102,6 @@ if(OPENXR)
                 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
                 )
     elseif (HVR)
-        include_directories(
-                ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
-                ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
-        )
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/../third_party/hvr/${ANDROID_ABI}/libxr_loader.so
@@ -111,19 +109,12 @@ if(OPENXR)
                 )
     elseif (PICOXR)
         include_directories(
-            ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
             ${CMAKE_SOURCE_DIR}/../third_party/picoxr/include
-            ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
         add_custom_command(TARGET native-lib POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
-        )
-    else ()
-        include_directories(
-                ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
-                ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
         )
     endif ()
     target_sources(
