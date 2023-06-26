@@ -515,7 +515,6 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation deps.openwnn
 
     // Common
     implementation deps.lifecycle.runtime
@@ -648,6 +647,9 @@ dependencies {
     if (isWebKitAvailable()) {
         webkitImplementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
     }
+
+    // libwnn
+    implementation fileTree(dir: "${project.rootDir}/libs/openwnn/", include: ['*.aar'])
 }
 
 if (findProject(':servo')) {
