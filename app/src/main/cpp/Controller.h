@@ -48,7 +48,7 @@ struct Controller {
   std::unique_ptr<ControllerDelegate::HandMesh> handMesh;
   std::vector<vrb::Matrix>meshJointTransforms;
   bool hasAim;
-  bool leftHandActionEnabled;
+  bool handActionEnabled;
   vrb::TogglePtr handActionButtonToggle;
   vrb::TransformPtr handActionButtonTransform;
   float pinchFactor;

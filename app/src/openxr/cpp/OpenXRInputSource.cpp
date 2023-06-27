@@ -602,8 +602,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         jointTransforms[i] = transform;
     }
 
-    // Check whether palm of left hand is facing the head, to show navigate-back button
-    bool leftPalmFacesHead = false;
     // This is not really needed. It's just an optimization for devices taking over the control of
     // hands when facing head. In those cases we don't need to do all the matrix computations,
     // we can just safely assume that the palm is facing the head when there is no aim.
@@ -611,8 +609,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 #if defined(OCULUS)
     systemTakesOverWhenHandsFacingHead = true;
 #endif
+    bool palmFacesHead = false;
     if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM)) {
-        bool palmFacesHead = false;
         if (mSupportsFBHandTrackingAim || systemTakesOverWhenHandsFacingHead) {
             // With the FB aim extension we stop getting aim state precisely when hands face head.
             palmFacesHead = !mHasAimState;
@@ -630,7 +628,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
             palmFacesHead = vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
             mHasAimState = mHasAimState && !palmFacesHead;
         }
-        leftPalmFacesHead = mHandeness == Left && palmFacesHead;
     }
 
     // Scale joints according to their radius (for rendering). This is only
@@ -649,7 +646,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     delegate.SetHandJointLocations(mIndex, jointTransforms);
     delegate.SetAimEnabled(mIndex, mHasAimState);
-    delegate.SetLeftHandActionEnabled(mIndex, leftPalmFacesHead);
+    delegate.SetHandActionEnabled(mIndex, palmFacesHead);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
 
@@ -671,11 +668,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         indexPinching = mSmoothIndexThumbDistance < kPinchThreshold;
     }
     delegate.SetPinchFactor(mIndex, pinchFactor);
-    bool triggerButtonPressed = indexPinching && !leftPalmFacesHead && mHasAimState;
+    bool triggerButtonPressed = indexPinching && !palmFacesHead && mHasAimState;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, triggerButtonPressed,
                             triggerButtonPressed, 1.0);
-    if (leftPalmFacesHead) {
+    if (palmFacesHead && !systemTakesOverWhenHandsFacingHead) {
         delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
     } else if (mHasAimState) {
         if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
