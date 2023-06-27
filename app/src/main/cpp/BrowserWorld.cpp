@@ -428,7 +428,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
       (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
       (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
-      SimulateBack();
+      if (controller.handActionEnabled && !controller.leftHanded) {
+          VRBrowser::HandleAppExit();
+      } else {
+          SimulateBack();
+      }
     }
 
 

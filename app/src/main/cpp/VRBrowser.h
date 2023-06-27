@@ -28,6 +28,7 @@ void HandleGesture(jint aType);
 void HandleResize(jint aWidgetHandle, jfloat aWorldWidth, jfloat aWorldHeight);
 void HandleMoveEnd(jint aWidgetHandle, jfloat aX, jfloat aY, jfloat aZ, jfloat aRotation);
 void HandleBack();
+void HandleAppExit();
 void RegisterExternalContext(jlong aContext);
 void OnEnterWebXR();
 void OnExitWebXR(const std::function<void()>& aCallback);
