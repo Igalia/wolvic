@@ -544,7 +544,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
-    if (controller.leftHandActionEnabled && controller.handActionButtonTransform != nullptr) {
+    if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
       // Layout the button between the thumb and index fingertips
       const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
       const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
