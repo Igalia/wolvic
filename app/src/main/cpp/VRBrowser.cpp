@@ -28,6 +28,8 @@ const char* const kHandleMoveEndName = "handleMoveEnd";
 const char* const kHandleMoveEndSignature = "(IFFFF)V";
 const char* const kHandleBackEventName = "handleBack";
 const char* const kHandleBackEventSignature = "()V";
+const char* const kHandleAppExitEventName = "handleAppExit";
+const char* const kHandleAppExitEventSignature = "()V";
 const char* const kRegisterExternalContextName = "registerExternalContext";
 const char* const kRegisterExternalContextSignature = "(J)V";
 const char* const kOnEnterWebXRName = "onEnterWebXR";
@@ -79,6 +81,7 @@ jmethodID sHandleGesture = nullptr;
 jmethodID sHandleResize = nullptr;
 jmethodID sHandleMoveEnd = nullptr;
 jmethodID sHandleBack = nullptr;
+jmethodID sHandleAppExit = nullptr;
 jmethodID sRegisterExternalContext = nullptr;
 jmethodID sOnEnterWebXR = nullptr;
 jmethodID sOnExitWebXR = nullptr;
@@ -126,6 +129,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandleResize = FindJNIMethodID(sEnv, sBrowserClass, kHandleResizeName, kHandleResizeSignature);
   sHandleMoveEnd = FindJNIMethodID(sEnv, sBrowserClass, kHandleMoveEndName, kHandleMoveEndSignature);
   sHandleBack = FindJNIMethodID(sEnv, sBrowserClass, kHandleBackEventName, kHandleBackEventSignature);
+  sHandleAppExit = FindJNIMethodID(sEnv, sBrowserClass, kHandleAppExitEventName, kHandleAppExitEventSignature);
   sRegisterExternalContext = FindJNIMethodID(sEnv, sBrowserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sOnEnterWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnEnterWebXRName, kOnEnterWebXRSignature);
   sOnExitWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnExitWebXRName, kOnExitWebXRSignature);
@@ -173,6 +177,7 @@ VRBrowser::ShutdownJava() {
   sHandleResize = nullptr;
   sHandleMoveEnd = nullptr;
   sHandleBack = nullptr;
+  sHandleAppExit = nullptr;
   sRegisterExternalContext = nullptr;
   sOnAppFocusChanged = nullptr;
   sOnEnterWebXR = nullptr;
@@ -259,6 +264,13 @@ void
 VRBrowser::HandleBack() {
   if (!ValidateMethodID(sEnv, sActivity, sHandleBack, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sHandleBack);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::HandleAppExit() {
+  if (!ValidateMethodID(sEnv, sActivity, sHandleAppExit, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHandleAppExit);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
