@@ -131,8 +131,8 @@ public class Media implements WMediaSession.Delegate {
     }
 
     public void skipAd() {
-        if (canSkipAd()) {
-            skipAd();
+        if (canSkipAd() && mMediaSession != null) {
+            mMediaSession.skipAd();
         }
     }
 
