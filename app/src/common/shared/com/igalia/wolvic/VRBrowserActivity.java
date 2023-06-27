@@ -914,6 +914,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    private void showAppExitDialog() {
+        mWindows.getFocusedWindow().showConfirmPrompt(
+            getString(R.string.app_name),
+            getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
+                new String[]{
+                        getString(R.string.exit_confirm_dialog_button_cancel),
+                        getString(R.string.exit_confirm_dialog_button_quit),
+                }, (index, isChecked) -> {
+                    if (index == PromptDialogWidget.POSITIVE) {
+                        VRBrowserActivity.super.onBackPressed();
+                        finishAndRemoveTask();
+                    }
+                });
+    }
 
     @Override
     public void onBackPressed() {
@@ -926,19 +940,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         if (!mWindows.handleBack()) {
-            mWindows.getFocusedWindow().showConfirmPrompt(
-                    getString(R.string.app_name),
-                    getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
-                    new String[]{
-                            getString(R.string.exit_confirm_dialog_button_cancel),
-                            getString(R.string.exit_confirm_dialog_button_quit),
-                    }, (index, isChecked) -> {
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            VRBrowserActivity.super.onBackPressed();
-                            finishAndRemoveTask();
-                        }
-                    });
-
+            showAppExitDialog();
         }
     }
 
@@ -1151,6 +1153,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
             dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+        });
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    @Keep
+    void handleAppExit() {
+        runOnUiThread(() -> {
+            showAppExitDialog();
         });
     }
 
