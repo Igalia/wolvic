@@ -80,7 +80,7 @@ Controller::operator=(const Controller& aController) {
   if (aController.handMesh)
     handMesh = std::make_unique<ControllerDelegate::HandMesh>(*aController.handMesh);
   hasAim = aController.hasAim;
-  leftHandActionEnabled = aController.leftHandActionEnabled;
+  handActionEnabled = aController.handActionEnabled;
   handActionButtonToggle = aController.handActionButtonToggle;
   handActionButtonTransform = aController.handActionButtonTransform;
   return *this;
@@ -134,7 +134,7 @@ Controller::Reset() {
   handMesh = nullptr;
   hasAim = true;
   meshJointTransforms.clear();
-  leftHandActionEnabled = false;
+  handActionEnabled = false;
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;
 }

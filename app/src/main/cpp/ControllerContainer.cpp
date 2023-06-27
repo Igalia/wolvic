@@ -213,12 +213,13 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
 
     CreationContextPtr create = m.context.lock();
 
-    // Initialize left hand action button, which for now triggers back navigation.
+    // Initialize left and right hands action button, which for now triggers back navigation
+    // and exit app respectively.
     // Note that Quest's runtime already shows the hamburger menu button when left
-    // hand is facing head.
+    // hand is facing head and the system menu for the right hand gesture.
 #if !defined(OCULUSVR)
-    if (controller.leftHanded && controller.handActionButtonToggle == nullptr) {
-        TextureGLPtr texture = create->LoadTexture("menu.png");
+    if (controller.handActionButtonToggle == nullptr) {
+        TextureGLPtr texture = create->LoadTexture(controller.leftHanded ? "menu.png" : "exit.png") ;
         assert(texture);
         texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -319,10 +320,10 @@ void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEn
     m.list[aControllerIndex].hasAim = aEnabled;
 }
 
-void ControllerContainer::SetLeftHandActionEnabled(const int32_t aControllerIndex, bool aEnabled) {
+void ControllerContainer::SetHandActionEnabled(const int32_t aControllerIndex, bool aEnabled) {
     if (!m.Contains(aControllerIndex))
         return;
-    m.list[aControllerIndex].leftHandActionEnabled = aEnabled;
+    m.list[aControllerIndex].handActionEnabled = aEnabled;
     if (m.list[aControllerIndex].handActionButtonToggle)
         m.list[aControllerIndex].handActionButtonToggle->ToggleAll(aEnabled);
 }
