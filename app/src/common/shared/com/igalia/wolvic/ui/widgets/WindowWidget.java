@@ -18,6 +18,7 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -1589,18 +1590,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void startDownload(@NonNull DownloadJob downloadJob, boolean showConfirmDialog) {
         if (showConfirmDialog) {
-            mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                    R.drawable.ic_icon_downloads,
-                    getResources().getString(R.string.download_confirm_title),
-                    downloadJob.getFilename(),
-                    new String[]{
+            // As of O, the prefixes are used in their standard meanings in the SI system, so kB = 1000 bytes, MB = 1,000,000 bytes, etc.
+            // In Build.VERSION_CODES.N and earlier, powers of 1024 are used instead, with KB = 1024 bytes, MB = 1,048,576 bytes, etc.
+            String fileSize = downloadJob.getContentLength() > 0 ? "<br>" + Formatter.formatFileSize(getContext(), downloadJob.getContentLength()) : "";
+            mWidgetManager.getFocusedWindow().showConfirmPrompt(new PromptData.Builder()
+                    .withIconRes(R.drawable.ic_icon_downloads)
+                    .withTitle(getResources().getString(R.string.download_confirm_title))
+                    .withBody(downloadJob.getFilename() + fileSize)
+                    .withBodyGravity(Gravity.START)
+                    .withBtnMsg(new String[]{
                             getResources().getString(R.string.download_confirm_cancel),
-                            getResources().getString(R.string.download_confirm_download)},
-                    (index, isChecked) -> {
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            mDownloadsManager.startDownload(downloadJob);
-                        }
-                    }
+                            getResources().getString(R.string.download_confirm_download)})
+                    .withCallback((index, isChecked) -> {
+                            if (index == PromptDialogWidget.POSITIVE) {
+                                mDownloadsManager.startDownload(downloadJob);
+                            }
+                        })
+                    .build()
             );
         } else {
             mDownloadsManager.startDownload(downloadJob);
