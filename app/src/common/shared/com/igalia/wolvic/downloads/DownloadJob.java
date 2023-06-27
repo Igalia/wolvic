@@ -34,6 +34,14 @@ public class DownloadJob {
         return job;
     }
 
+    private static long guessFileSize(@Nullable String contentLength) {
+        try {
+            return Long.parseLong(contentLength);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
     public static DownloadJob fromUri(@NonNull String uri, Map<String, String> headers) {
         DownloadJob job = new DownloadJob();
         job.mUri = uri;
@@ -42,6 +50,7 @@ public class DownloadJob {
             // TODO: We may want to create our own Content-Disposition parser, instead of relying on Android.
             String contentDisposition = Uri.decode(headers.get("content-disposition"));
             job.mFilename = URLUtil.guessFileName(uri, contentDisposition, headers.get("content/type"));
+            job.mContentLength = guessFileSize(headers.get("content-length"));
         } else {
             job.mFilename = URLUtil.guessFileName(uri, null, null);
         }
