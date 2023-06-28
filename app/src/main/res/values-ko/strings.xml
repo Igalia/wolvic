@@ -437,7 +437,7 @@
      https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
     <string name="developer_options_foveated_app">Foveation Level (앱)</string>
     <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
-    <string name="developer_options_foveated_webvr">Foveation Level (WebVR)</string>
+    <string name="developer_options_foveated_webvr">포비에이션 레벨 (WebVR)</string>
     <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
     <string name="developer_options_foveated_disabled">비활성화됨</string>
     <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
@@ -1685,7 +1685,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_policy_subtitle_3">준거법 및 원어</string>
     <string name="privacy_policy_section_3">이 개인 정보 정책은 스페인 법률의 적용을 받습니다. 이 응용 프로그램의 개인 정보 정책 언어는 스페인어 입니다. 이러한 이유로, 스페인어로 된 원본 버전과 다른 언어로 번역된 버전 간에 발생하는 차이는 https://wolvic.com/es/legal/privacy/ 에서 찾을 수 있는 스페인어 버전이 우선적인 것으로 고려됩니다.</string>
     <string name="privacy_policy_section_2">IGALIA는 개인 데이터 보호에 관한 법률 조항: 2016년 4월 27일 유럽 의회 및 이사회의 규정(EU) 2016/679 - 자연인의 개인 데이터 처리 및 해당 데이터의 자유로운 이동에 관한 보호와 95/46/EC(일반 데이터 보호 규정)의 폐지와 데이터 보호와 디지털 권리 보장에 관한 12월 5일자 유기법 3/2018 (LOPDGDD)을 준수하기 위해 최선을 다하고 있습니다.
-\n
 \nIGALIA는 사용자를 식별할 수 있는 방식으로 개인 데이터를 수집하지 않습니다. 그러므로 직간접적으로 IGALIA에 신원을 공개하거나 개인 데이터를 제공하지 않고도 이 응용 프로그램을 사용하고 가상 현실 환경을 참조하고 탐색할 수 있습니다. 따라서 IGALIA는 WOLVIC에 입력된 어떤 데이터에 관해서도 법률상의 책임을 지지 않습니다.
 \nIGALIA가 이 응용 프로그램의 사용을 위해 획득하는 유일한 데이터 및 정보는 사용자에게 개별적으로 연결되지 않으며 다음과 같습니다.
 \n
@@ -1746,7 +1745,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_copy_to_content_uri_error_body_v1">%1$s을(를) 복사하는 중 오류가 발생했습니다</string>
     <string name="web_apps_title">웹 앱</string>
     <string name="web_apps_description">웹 앱에 추가할 페이지에 있을 때 웹 앱 저장... 버튼을 클릭하세요.</string>
-    <string name="web_apps_empty">웹 앱 목록이 비어 있습니다.</string>
+    <string name="web_apps_empty">웹 앱 목록이 비어 있습니다</string>
     <string name="hamburger_menu_save_web_app">웹 앱 저장…</string>
     <string name="upload_button">업로드</string>
     <string name="web_apps_dialog_cancel">취소</string>
@@ -1757,15 +1756,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_dialog_title">웹 앱 설치</string>
     <string name="web_apps_dialog_title_parameter">%1$s 설치</string>
     <string name="web_apps_dialog_install">설치</string>
-    <string name="hamburger_menu_toggle_passthrough">통과</string>
+    <string name="hamburger_menu_toggle_passthrough">패스스루</string>
     <string name="deprecated_version_dialog_title">권장 업데이트</string>
     <string name="security_options_permission_fine_location_warning">울빅은 당신의 대략적인 위치만 알 수 있습니다. 이는 시스템 설정에서 변경할 수 있습니다.</string>
     <string name="deprecated_version_dialog_body">현재 울빅의 개발 버전인 \"App Lab\"을 실행하고 있습니다.
 \n
 \n오큘러스 스토어에서 최신 버전의 울빅을 설치하세요.
 \n
-\n중요: Firefox 동기화를 사용하지 않는한, 새로운 울빅 앱에는 북마크와 탭이 없습니다.</string>
-    <string name="upload_list_empty">업로드 할 수 있는 파일 없음</string>
+\n중요: Firefox 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
+    <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
     <string name="deprecated_version_dialog_info_button">자세히 알아보기…</string>
     <string name="deprecated_version_dialog_store_button">설치…</string>
 </resources>
