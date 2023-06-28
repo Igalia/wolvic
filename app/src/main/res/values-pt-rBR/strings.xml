@@ -738,4 +738,5 @@
     <string name="download_copy_to_content_uri_error_title">Erro de cópia</string>
     <string name="web_apps_dialog_body">Deseja instalar o seguinte Aplicativo Web\? Ele estará disponível na Biblioteca.</string>
     <string name="hamburger_menu_save_web_app">Salvar aplicativo Web…</string>
+    <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
 </resources>
