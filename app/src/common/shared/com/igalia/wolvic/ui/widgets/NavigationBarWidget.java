@@ -277,7 +277,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.navigationBarNavigation.userFeedbackButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            mWidgetManager.openNewTabForeground(getResources().getString(R.string.feedback_link));
+            mWidgetManager.openNewTabForeground(getResources().getString(R.string.feedback_link, BuildConfig.VERSION_NAME, DeviceType.getType()));
         });
 
         mBinding.navigationBarNavigation.desktopModeButton.setOnClickListener(view -> {
