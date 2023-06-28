@@ -1,4 +1,15 @@
 {
+  "1.5.1": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.5.1"
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      }
+    ]
+  },
   "1.5": {
     "whatsNewUrl": "https://wolvic.com/blog/release_1.5"
   },
