@@ -92,6 +92,7 @@ android_components.feature_webcompat_reporter = "org.mozilla.components:feature-
 android_components.feature_addons = "org.mozilla.components:feature-addons:$versions.android_components"
 android_components.support_test = "org.mozilla.components:support-test:$versions.android_components"
 android_components.support_test_appservices = "org.mozilla.components:support-test-appservices:$versions.android_components"
+android_components.preference = "androidx.preference:preference:1.2.0"
 deps.android_components = android_components
 
 def app_services = [:]
