@@ -23,8 +23,8 @@ import java.util.concurrent.TimeoutException
  * GeckoView ([GeckoWebExecutor]) based implementation of [Client].
  */
 class GeckoViewFetchClient(
-    context: Context,
-    private val maxReadTimeOut: Pair<Long, TimeUnit> = Pair(MAX_READ_TIMEOUT_MINUTES, TimeUnit.MINUTES)
+        val context: Context,
+        private val maxReadTimeOut: Pair<Long, TimeUnit> = Pair(MAX_READ_TIMEOUT_MINUTES, TimeUnit.MINUTES)
 ) : Client() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
