@@ -149,6 +149,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -565,6 +571,7 @@ dependencies {
     implementation deps.android_components.feature_webcompat_reporter
     implementation deps.android_components.feature_addons
     implementation deps.android_components.glean
+    implementation deps.android_components.preference
     implementation deps.app_services.rustlog
 
     // Kotlin dependency
