@@ -3,10 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.igalia.wolvic.browser.adapter
 
 import com.igalia.wolvic.browser.components.WolvicEngineSession
 import com.igalia.wolvic.browser.engine.Session
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
@@ -96,7 +99,7 @@ class ComponentsAdapter private constructor(
     }
 
     fun getSessionStateForSession(session: Session?): SessionState? {
-        return store.state.tabs.firstOrNull() {
+        return store.state.tabs.firstOrNull {
             it.id == session?.id
         }
     }
