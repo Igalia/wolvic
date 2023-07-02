@@ -17,7 +17,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;

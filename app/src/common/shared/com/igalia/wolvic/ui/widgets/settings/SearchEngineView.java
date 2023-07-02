@@ -3,7 +3,7 @@ package com.igalia.wolvic.ui.widgets.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
