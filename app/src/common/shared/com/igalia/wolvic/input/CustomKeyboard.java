@@ -91,6 +91,7 @@ public class CustomKeyboard extends Keyboard {
             getKeys().add(key);
             Object keysObj = getFieldObject(mRows[rowIndex], "mKeys");
             if (keysObj != null && getFieldObject(mRows[rowIndex], "mKeys") instanceof ArrayList) {
+                @SuppressWarnings("unchecked")
                 ArrayList<Key> mKeys = (ArrayList<Key>) keysObj;
                 if (mKeys != null) {
                     mKeys.add(key);

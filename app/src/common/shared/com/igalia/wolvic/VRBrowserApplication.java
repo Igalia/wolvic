@@ -85,6 +85,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         Context context = LocaleUtils.init(this);
         Language language = LocaleUtils.getDisplayLanguage(context);
         newConfig.setLocale(language.getLocale());
+        // TODO: Deprecated updateConfiguration(Configuration,DisplayMetrics),
+        //  see https://github.com/Igalia/wolvic/issues/797
         getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
         super.onConfigurationChanged(newConfig);
     }

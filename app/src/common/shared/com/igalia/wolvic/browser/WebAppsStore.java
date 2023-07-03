@@ -124,6 +124,7 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
     }
 
     private void notifyListeners() {
+        @SuppressWarnings("unchecked")
         List<WebAppsListener> listenersCopy = new ArrayList(mListeners);
         List<WebApp> webAppsCopy = new ArrayList<>(mWebApps.values());
         Handler handler = new Handler(Looper.getMainLooper());

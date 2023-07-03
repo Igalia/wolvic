@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+// TODO: Deprecated AsyncTask, see https://github.com/Igalia/wolvic/issues/801
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CancellationSignal;

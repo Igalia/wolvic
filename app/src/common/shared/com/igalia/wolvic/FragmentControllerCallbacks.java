@@ -61,16 +61,6 @@ public class FragmentControllerCallbacks extends FragmentHostCallback {
     }
 
     @Override
-    public void onStartIntentSenderFromFragment(@NonNull Fragment fragment, IntentSender intent, int requestCode, @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, @Nullable Bundle options) throws IntentSender.SendIntentException {
-        super.onStartIntentSenderFromFragment(fragment, intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
-    }
-
-    @Override
-    public void onRequestPermissionsFromFragment(@NonNull Fragment fragment, @NonNull String[] permissions, int requestCode) {
-        super.onRequestPermissionsFromFragment(fragment, permissions, requestCode);
-    }
-
-    @Override
     public boolean onShouldShowRequestPermissionRationale(@NonNull String permission) {
         return super.onShouldShowRequestPermissionRationale(permission);
     }

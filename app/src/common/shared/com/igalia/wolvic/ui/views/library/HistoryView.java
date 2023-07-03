@@ -9,6 +9,7 @@ import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,8 +123,11 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         mBinding.historyList.addOnScrollListener(mScrollListener);
         mBinding.historyList.setHasFixedSize(true);
         mBinding.historyList.setItemViewCacheSize(20);
-        mBinding.historyList.setDrawingCacheEnabled(true);
-        mBinding.historyList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.historyList.setDrawingCacheEnabled(true);
+            mBinding.historyList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         mViewModel.setIsLoading(true);
 

@@ -85,6 +85,7 @@ public class OffscreenDisplay {
             Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
 
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
+            // TODO: Deprecated getMetrics(DisplayMetrics), see https://github.com/Igalia/wolvic/issues/799
             defaultDisplay.getMetrics(mDefaultMetrics);
 
             mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews Overlay", mWidth, mHeight,
@@ -124,6 +125,8 @@ public class OffscreenDisplay {
             try {
                 getWindow()
                         .getDecorView()
+                        // TODO: Deprecated setSystemUiVisibility(int) and related flags,
+                        //  see https://github.com/Igalia/wolvic/issues/800
                         .setSystemUiVisibility(
                                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

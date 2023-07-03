@@ -102,8 +102,11 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         mBinding.downloadsList.addOnScrollListener(mScrollListener);
         mBinding.downloadsList.setHasFixedSize(true);
         mBinding.downloadsList.setItemViewCacheSize(20);
-        mBinding.downloadsList.setDrawingCacheEnabled(true);
-        mBinding.downloadsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.downloadsList.setDrawingCacheEnabled(true);
+            mBinding.downloadsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         mViewModel.setIsEmpty(true);
         mViewModel.setIsLoading(true);

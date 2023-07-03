@@ -80,13 +80,14 @@ public class PlatformActivity extends NativeActivity {
     }
 
     protected void setFullScreen() {
+        // TODO: Deprecated setSystemUiVisibility(int) and related flags,
+        //  see https://github.com/Igalia/wolvic/issues/800
         int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
     }

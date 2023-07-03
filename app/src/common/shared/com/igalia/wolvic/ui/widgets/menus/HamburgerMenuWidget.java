@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets.menus;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -87,8 +88,11 @@ public class HamburgerMenuWidget extends UIWidget implements
         binding.list.addOnScrollListener(mScrollListener);
         binding.list.setHasFixedSize(true);
         binding.list.setItemViewCacheSize(20);
-        binding.list.setDrawingCacheEnabled(true);
-        binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            binding.list.setDrawingCacheEnabled(true);
+            binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         updateItems();
     }

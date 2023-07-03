@@ -424,6 +424,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends UIWidget> T getChild(int aChildId) {
         return (T) mChildren.get(aChildId);
     }

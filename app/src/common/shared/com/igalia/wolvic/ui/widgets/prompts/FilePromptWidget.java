@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.widgets.prompts;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,8 +66,11 @@ public class FilePromptWidget extends PromptWidget implements DownloadsManager.D
         mBinding.filesList.setAdapter(mFileUploadAdapter);
         mBinding.filesList.setHasFixedSize(true);
         mBinding.filesList.setItemViewCacheSize(20);
-        mBinding.filesList.setDrawingCacheEnabled(true);
-        mBinding.filesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.filesList.setDrawingCacheEnabled(true);
+            mBinding.filesList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         onDownloadsUpdate(mDownloadsManager.getDownloads());
 
