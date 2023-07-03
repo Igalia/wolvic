@@ -89,14 +89,14 @@ def getMKApiKey = { ->
 }
 
 def isChromiumAvailable = {
-    if (gradle.hasProperty("userProperties.chromium_aar")) {
+    if (gradle.hasProperty("localProperties.chromium_aar")) {
         return true
     }
     return false
 }
 
 def isWebKitAvailable = {
-    if (gradle.hasProperty("userProperties.webkit_aar")) {
+    if (gradle.hasProperty("localProperties.webkit_aar")) {
         return true
     }
     return false
@@ -647,13 +647,13 @@ dependencies {
 
     // chromium
     if (isChromiumAvailable()) {
-        chromiumImplementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
+        chromiumImplementation fileTree(dir: gradle."localProperties.chromium_aar", include: ['*.aar'])
         chromiumImplementation 'androidx.fragment:fragment:1.4.1'
     }
 
     // webkit
     if (isWebKitAvailable()) {
-        webkitImplementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
+        webkitImplementation fileTree(dir: gradle."localProperties.webkit_aar", include: ['*.aar'])
     }
 
     // openwnn (bundled because it is not published outside of JCenter, which is deprecated)
