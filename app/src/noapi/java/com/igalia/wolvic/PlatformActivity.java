@@ -199,6 +199,8 @@ public class PlatformActivity extends Activity {
     }
 
     void setImmersiveSticky() {
+        // TODO: Deprecated setSystemUiVisibility(int) and related flags,
+        //  see https://github.com/Igalia/wolvic/issues/800
         getWindow()
                 .getDecorView()
                 .setSystemUiVisibility(

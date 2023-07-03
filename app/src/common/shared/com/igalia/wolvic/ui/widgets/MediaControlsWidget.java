@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
     private Rect mOffsetViewBounds;
     private VideoProjectionMenuWidget mProjectionMenu;
     static long VOLUME_SLIDER_CHECK_DELAY = 1000;
-    private Handler mVolumeCtrlHandler = new Handler();
+    private Handler mVolumeCtrlHandler = new Handler(Looper.getMainLooper());
     private boolean mHideVolumeSlider = false;
     private Runnable mVolumeCtrlRunnable;
 

@@ -9,6 +9,7 @@ import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,8 +116,11 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         mBinding.bookmarksList.addOnScrollListener(mScrollListener);
         mBinding.bookmarksList.setHasFixedSize(true);
         mBinding.bookmarksList.setItemViewCacheSize(20);
-        mBinding.bookmarksList.setDrawingCacheEnabled(true);
-        mBinding.bookmarksList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.bookmarksList.setDrawingCacheEnabled(true);
+            mBinding.bookmarksList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         mLayoutManager = (CustomLinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
 

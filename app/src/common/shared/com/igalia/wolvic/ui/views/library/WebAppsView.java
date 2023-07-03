@@ -7,6 +7,7 @@ package com.igalia.wolvic.ui.views.library;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -80,8 +81,11 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
         mBinding.webAppsList.addOnScrollListener(mScrollListener);
         mBinding.webAppsList.setHasFixedSize(true);
         mBinding.webAppsList.setItemViewCacheSize(20);
-        mBinding.webAppsList.setDrawingCacheEnabled(true);
-        mBinding.webAppsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.webAppsList.setDrawingCacheEnabled(true);
+            mBinding.webAppsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         mViewModel.setIsNarrow(false);
         mViewModel.setIsLoading(true);

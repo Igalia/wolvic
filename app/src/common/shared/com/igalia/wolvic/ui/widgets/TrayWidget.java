@@ -818,10 +818,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private void updateWifi() {
+        // TODO: Deprecated getConnectionInfo(), see https://github.com/Igalia/wolvic/issues/802
         if ((mTrayViewModel.getWifiConnected().getValue() != null) && mTrayViewModel.getWifiConnected().getValue().get()) {
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                // TODO: Deprecated calculateSignalLevel(int, int), see https://github.com/Igalia/wolvic/issues/802
                 int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
                 if (level != mLastWifiLevel) {
                     if (updateWifiIcon(level)) {

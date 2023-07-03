@@ -176,7 +176,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     FrameLayout mWidgetContainer;
     int mLastGesture;
     SwipeRunnable mLastRunnable;
-    Handler mHandler = new Handler();
+    Handler mHandler = new Handler(Looper.getMainLooper());
     Runnable mAudioUpdateRunnable;
     Windows mWindows;
     RootWidget mRootWidget;
@@ -246,7 +246,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(), 0));
+        mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(Looper.getMainLooper()), 0));
         mFragmentController.attachHost(null);
         mFragmentController.dispatchActivityCreated();
 
@@ -677,6 +677,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void onConfigurationChanged(Configuration newConfig) {
         Language language = LocaleUtils.getDisplayLanguage(this);
         newConfig.setLocale(language.getLocale());
+        // TODO: Deprecated updateConfiguration(Configuration,DisplayMetrics),
+        //  see https://github.com/Igalia/wolvic/issues/797
         getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
 
         LocaleUtils.update(this, language);

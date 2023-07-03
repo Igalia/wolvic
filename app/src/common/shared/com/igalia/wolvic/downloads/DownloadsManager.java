@@ -9,6 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -129,7 +132,9 @@ public class DownloadsManager {
         request.setDescription(job.getDescription());
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setVisibleInDownloadsUi(false);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            request.setVisibleInDownloadsUi(false);
+        }
 
         if (job.getOutputPath() == null) {
             try {
@@ -213,6 +218,7 @@ public class DownloadsManager {
         }
         Log.i(LOGTAG, "Saved " + job.getUri() + " to " + file.getName() + " (" + readBytes + " bytes)");
 
+        // TODO: Deprecated addCompletedDownload(...), see https://github.com/Igalia/wolvic/issues/798
         mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
                 true, UrlUtils.getMimeTypeFromUrl(file.getPath()), file.getPath(), readBytes, true,
                 Uri.parse(job.getUri().replaceFirst("^blob:","")), null);

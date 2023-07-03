@@ -131,6 +131,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         binding.thumbnail.setImageBitmap(bitmap);
                 }
         );
+        // TODO: Deprecated AsyncTask, see https://github.com/Igalia/wolvic/issues/801
         task.execute();
 
         boolean isSelected = mSelectedItems.contains(item);

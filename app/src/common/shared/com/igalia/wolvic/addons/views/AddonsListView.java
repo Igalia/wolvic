@@ -3,6 +3,7 @@ package com.igalia.wolvic.addons.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -77,8 +78,11 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         mBinding.addonsList.addOnScrollListener(mScrollListener);
         mBinding.addonsList.setHasFixedSize(true);
         mBinding.addonsList.setItemViewCacheSize(20);
-        mBinding.addonsList.setDrawingCacheEnabled(true);
-        mBinding.addonsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            mBinding.addonsList.setDrawingCacheEnabled(true);
+            mBinding.addonsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         mViewModel.setIsLoading(true);
     }

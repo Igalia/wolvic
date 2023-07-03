@@ -79,7 +79,7 @@ public class FadingFrameLayout extends FrameLayout {
             mPaint.setShader(gradient);
         }
 
-        int count = canvas.saveLayer(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), null, Canvas.ALL_SAVE_FLAG);
+        int count = canvas.saveLayer(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), null);
         super.dispatchDraw(canvas);
 
         if (isHorizontalFadingEdgeEnabled() && getHorizontalFadingEdgeLength() > 0) {

@@ -169,6 +169,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     binding.thumbnail.setImageBitmap(bitmap);
                             }
                     );
+                    // TODO: Deprecated AsyncTask, see https://github.com/Igalia/wolvic/issues/801
                     task.execute();
                 }
                 break;
