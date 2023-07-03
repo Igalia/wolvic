@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,7 +59,7 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
 
     private void initialize() {
         inflate(getContext(), R.layout.media_controls_seek_bar, this);
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
         mSeekBar = findViewById(R.id.mediaSeekBar);
         mLeftText = findViewById(R.id.mediaSeekLeftLabel);
         mRightText = findViewById(R.id.mediaSeekRightLabel);

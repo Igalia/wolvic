@@ -244,11 +244,13 @@ class RuntimeSettingsImpl extends WRuntimeSettings {
 
         @Override
         public int getCookieLifetime() {
+            // TODO: Deprecated cookieLifetime, this feature is not available anymore.
             return ContentBlockingDelegateImpl.fromGeckoCookieLifetime(mRuntime.getSettings().getContentBlocking().getCookieLifetime());
         }
 
         @Override
         public void setCookieLifetime(int cookieLifetime) {
+            // TODO: Deprecated cookieLifetime, this feature is not available anymore.
             mRuntime.getSettings().getContentBlocking().setCookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(cookieLifetime));
         }
 

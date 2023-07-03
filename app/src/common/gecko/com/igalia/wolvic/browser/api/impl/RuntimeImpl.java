@@ -49,6 +49,7 @@ public class RuntimeImpl implements WRuntime {
                         .enhancedTrackingProtectionLevel(ContentBlockingDelegateImpl.toGeckoEtpLevel(settings.getContentBlocking().getEnhancedTrackingProtectionLevel()))
                         .cookieBehavior(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getContentBlocking().getCookieBehavior()))
                         .cookieBehaviorPrivateMode(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getContentBlocking().getCookieBehaviorPrivate()))
+                        // TODO: Deprecated cookieLifetime, this feature is not available anymore.
                         .cookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(settings.getContentBlocking().getCookieLifetime()))
                         .safeBrowsing(ContentBlockingDelegateImpl.toGeckoSafeBrowsing(settings.getContentBlocking().getSafeBrowsing()))
                         .build())

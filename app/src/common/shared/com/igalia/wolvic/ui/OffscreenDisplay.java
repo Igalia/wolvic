@@ -85,6 +85,9 @@ public class OffscreenDisplay {
             Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
 
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
+            // TODO: getRealMetrics(DisplayMetrics) in Display has been deprecated.
+            //  Use WindowMetrics#getBounds() to get the dimensions of the application window.
+            //  Use WindowMetrics#getDensity() to get the density of the application window.
             defaultDisplay.getMetrics(mDefaultMetrics);
 
             mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews Overlay", mWidth, mHeight,
@@ -124,6 +127,8 @@ public class OffscreenDisplay {
             try {
                 getWindow()
                         .getDecorView()
+                        // TODO: These flags and setSystemUiVisibility method have been deprecated
+                        //  https://developer.android.com/reference/android/view/View
                         .setSystemUiVisibility(
                                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

@@ -264,8 +264,8 @@ public class TabsWidget extends UIDialog {
                             aSender.attachToSession(latestTabs.get(0), mBitmapCache);
                             return;
                         }
-                        mTabs.remove(holder.getAdapterPosition() - 1);
-                        mAdapter.notifyItemRemoved(holder.getAdapterPosition());
+                        mTabs.remove(holder.getBindingAdapterPosition() - 1);
+                        mAdapter.notifyItemRemoved(holder.getBindingAdapterPosition());
                         updateTabCounter();
 
                     } else {

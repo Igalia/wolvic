@@ -115,6 +115,19 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         mBinding.bookmarksList.addOnScrollListener(mScrollListener);
         mBinding.bookmarksList.setHasFixedSize(true);
         mBinding.bookmarksList.setItemViewCacheSize(20);
+        // TODO: This method was deprecated in API level 28.
+        //  The view drawing cache was largely made obsolete with the introduction of
+        //  hardware-accelerated rendering in API 11. With hardware-acceleration, intermediate
+        //  cache layers are largely unnecessary and can easily result in a net loss in performance
+        //  due to the cost of creating and updating the layer. In the rare cases where caching
+        //  layers are useful, such as for alpha animations,
+        //  setLayerType(int, android.graphics.Paint) handles this with hardware rendering.
+        //  For software-rendered snapshots of a small part of the View hierarchy or individual
+        //  Views it is recommended to create a Canvas from either a Bitmap or Picture and call
+        //  draw(android.graphics.Canvas) on the View. However these software-rendered usages are
+        //  discouraged and have compatibility issues with hardware-only rendering features such
+        //  as Config.HARDWARE bitmaps, real-time shadows, and outline clipping. For screenshots of
+        //  the UI for feedback reports or unit testing the PixelCopy API is recommended.
         mBinding.bookmarksList.setDrawingCacheEnabled(true);
         mBinding.bookmarksList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 

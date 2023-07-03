@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+// TODO: AsyncTask in android.os has been deprecated
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CancellationSignal;

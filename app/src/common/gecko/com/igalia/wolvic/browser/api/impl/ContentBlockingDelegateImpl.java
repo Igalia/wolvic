@@ -220,6 +220,7 @@ class ContentBlockingDelegateImpl implements ContentBlocking.Delegate {
     }
 
     static int toGeckoCookieLifetime(@WContentBlocking.CBCookieLifetime int flags) {
+        // TODO: Deprecated cookieLifetime, this feature is not available anymore.
         switch (flags) {
             case WContentBlocking.CookieLifetime.DAYS:
                 return ContentBlocking.CookieLifetime.DAYS;
@@ -233,6 +234,7 @@ class ContentBlockingDelegateImpl implements ContentBlocking.Delegate {
     }
 
     static int fromGeckoCookieLifetime( int flags) {
+        // TODO: Deprecated cookieLifetime, this feature is not available anymore.
         switch (flags) {
             case ContentBlocking.CookieLifetime.DAYS:
                 return WContentBlocking.CookieLifetime.DAYS;

@@ -85,6 +85,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         Context context = LocaleUtils.init(this);
         Language language = LocaleUtils.getDisplayLanguage(context);
         newConfig.setLocale(language.getLocale());
+        // TODO: updateConfiguration(Configuration,DisplayMetrics) in Resources has been deprecated,
+        //  See Context.createConfigurationContext(Configuration).
         getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
         super.onConfigurationChanged(newConfig);
     }

@@ -7,7 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 
 import androidx.annotation.NonNull;
 
@@ -29,6 +30,11 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     }
 
     public void init() {
+        // TODO: CONNECTIVITY_ACTION constant was deprecated in API level 28.
+        //  apps should use the more versatile requestNetwork(NetworkRequest, PendingIntent),
+        //  registerNetworkCallback(NetworkRequest, PendingIntent) or
+        //  registerDefaultNetworkCallback(NetworkCallback) functions instead for faster and more
+        //  detailed updates about the network changes they care about.
         mContext.registerReceiver(this, new IntentFilter(CONNECTIVITY_ACTION));
     }
 
@@ -50,8 +56,10 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     }
 
     public static boolean isNetworkAvailable(Context aContext) {
-        ConnectivityManager manager = (ConnectivityManager) aContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        ConnectivityManager connectivityManager = (ConnectivityManager) aContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network = connectivityManager.getActiveNetwork();
+        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
+
+        return networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 }

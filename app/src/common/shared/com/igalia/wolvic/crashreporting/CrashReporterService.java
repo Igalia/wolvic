@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+// TODO: JobIntentService in androidx.core.app has been deprecated
 import androidx.core.app.JobIntentService;
 
 import com.igalia.wolvic.BuildConfig;
