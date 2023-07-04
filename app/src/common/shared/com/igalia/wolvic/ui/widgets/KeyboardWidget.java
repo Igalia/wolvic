@@ -8,7 +8,7 @@ package com.igalia.wolvic.ui.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
+import com.igalia.wolvic.input.Keyboard;
 import android.os.Handler;
 import android.os.LocaleList;
 import android.text.Editable;

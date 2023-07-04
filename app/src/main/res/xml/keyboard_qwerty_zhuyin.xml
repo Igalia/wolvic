@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:horizontalGap="@dimen/keyboard_horizontal_gap"
-    android:verticalGap="@dimen/keyboard_vertical_gap"
-    android:keyWidth="@dimen/keyboard_key_width"
-    android:keyHeight="@dimen/keyboard_key_height">
+<Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:horizontalGap="@dimen/keyboard_horizontal_gap"
+    app:verticalGap="@dimen/keyboard_vertical_gap"
+    app:keyWidth="@dimen/keyboard_key_width"
+    app:keyHeight="@dimen/keyboard_key_height">
     <Row>
-        <Key android:codes="0x3105" android:keyLabel="ㄅ" android:keyEdgeFlags="left"/>
-        <Key android:codes="0x3109" android:keyLabel="ㄉ"/>
-        <Key android:codes="0x02C7" android:keyLabel="ˇ"/>
-        <Key android:codes="0x02CB" android:keyLabel="ˋ"/>
-        <Key android:codes="0x3113" android:keyLabel="ㄓ"/>
-        <Key android:codes="0x02CA" android:keyLabel="ˊ"/>
-        <Key android:codes="0x02D9" android:keyLabel="˙"/>
-        <Key android:codes="0x311A" android:keyLabel="ㄚ"/>
-        <Key android:codes="0x311E" android:keyLabel="ㄞ"/>
-        <Key android:codes="0x3122" android:keyLabel="ㄢ"/>
-        <Key android:codes="0x3126" android:keyLabel="ㄦ"/>
-        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:isRepeatable="true"/>
+        <Key app:codes="0x3105" app:keyLabel="ㄅ" app:keyEdgeFlags="left"/>
+        <Key app:codes="0x3109" app:keyLabel="ㄉ"/>
+        <Key app:codes="0x02C7" app:keyLabel="ˇ"/>
+        <Key app:codes="0x02CB" app:keyLabel="ˋ"/>
+        <Key app:codes="0x3113" app:keyLabel="ㄓ"/>
+        <Key app:codes="0x02CA" app:keyLabel="ˊ"/>
+        <Key app:codes="0x02D9" app:keyLabel="˙"/>
+        <Key app:codes="0x311A" app:keyLabel="ㄚ"/>
+        <Key app:codes="0x311E" app:keyLabel="ㄞ"/>
+        <Key app:codes="0x3122" app:keyLabel="ㄢ"/>
+        <Key app:codes="0x3126" app:keyLabel="ㄦ"/>
+        <Key app:codes="-5" app:keyIcon="@drawable/ic_icon_keyboard_backspace" app:keyWidth="@dimen/keyboard_key_zhuyin_space_width" app:isRepeatable="true"/>
     </Row>
     <Row>
-        <Key android:codes="0x3106" android:keyLabel="ㄆ" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin"/>
-        <Key android:codes="0x310A" android:keyLabel="ㄊ"/>
-        <Key android:codes="0x310D" android:keyLabel="ㄍ"/>
-        <Key android:codes="0x3110" android:keyLabel="ㄐ"/>
-        <Key android:codes="0x3114" android:keyLabel="ㄔ"/>
-        <Key android:codes="0x3117" android:keyLabel="ㄗ"/>
-        <Key android:codes="0x3127" android:keyLabel="ㄧ"/>
-        <Key android:codes="0x311B" android:keyLabel="ㄛ"/>
-        <Key android:codes="0x311F" android:keyLabel="ㄟ"/>
-        <Key android:codes="0x3123" android:keyLabel="ㄣ"/>
-        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_zhuyin_enter_width"/>
-    </Row>
-
-    <Row>
-        <Key android:codes="-2" android:keyLabel="@string/keyboard_symbol" android:keyEdgeFlags="left"/>
-        <Key android:codes="0x3107" android:keyLabel="ㄇ"/>
-        <Key android:codes="0x310B" android:keyLabel="ㄋ"/>
-        <Key android:codes="0x310E" android:keyLabel="ㄎ"/>
-        <Key android:codes="0x3111" android:keyLabel="ㄑ"/>
-        <Key android:codes="0x3115" android:keyLabel="ㄕ"/>
-        <Key android:codes="0x3118" android:keyLabel="ㄘ"/>
-        <Key android:codes="0x3128" android:keyLabel="ㄨ"/>
-        <Key android:codes="0x311C" android:keyLabel="ㄜ"/>
-        <Key android:codes="0x3120" android:keyLabel="ㄠ"/>
-        <Key android:codes="0x3124" android:keyLabel="ㄤ"/>
-        <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:keyHeight="@dimen/keyboard_key_zhuyin_space_height" android:isRepeatable="true"/>
+        <Key app:codes="0x3106" app:keyLabel="ㄆ" app:keyEdgeFlags="left" app:horizontalGap="@dimen/keyboard_left_margin"/>
+        <Key app:codes="0x310A" app:keyLabel="ㄊ"/>
+        <Key app:codes="0x310D" app:keyLabel="ㄍ"/>
+        <Key app:codes="0x3110" app:keyLabel="ㄐ"/>
+        <Key app:codes="0x3114" app:keyLabel="ㄔ"/>
+        <Key app:codes="0x3117" app:keyLabel="ㄗ"/>
+        <Key app:codes="0x3127" app:keyLabel="ㄧ"/>
+        <Key app:codes="0x311B" app:keyLabel="ㄛ"/>
+        <Key app:codes="0x311F" app:keyLabel="ㄟ"/>
+        <Key app:codes="0x3123" app:keyLabel="ㄣ"/>
+        <Key app:codes="-4" app:keyLabel="@string/keyboard_enter_label" app:keyWidth="@dimen/keyboard_key_zhuyin_enter_width"/>
     </Row>
 
     <Row>
-        <Key android:codes="-12" android:keyIcon="@drawable/ic_icon_keyboard_globe" android:keyEdgeFlags="left"/>
-        <Key android:codes="0x3108" android:keyLabel="ㄈ"/>
-        <Key android:codes="0x310C" android:keyLabel="ㄌ"/>
-        <Key android:codes="0x310F" android:keyLabel="ㄏ"/>
-        <Key android:codes="0x3112" android:keyLabel="ㄒ"/>
-        <Key android:codes="0x3116" android:keyLabel="ㄖ"/>
-        <Key android:codes="0x3119" android:keyLabel="ㄙ"/>
-        <Key android:codes="0x3129" android:keyLabel="ㄩ"/>
-        <Key android:codes="0x311D" android:keyLabel="ㄝ"/>
-        <Key android:codes="0x3121" android:keyLabel="ㄡ"/>
-        <Key android:codes="0x3125" android:keyLabel="ㄥ"/>
+        <Key app:codes="-2" app:keyLabel="@string/keyboard_symbol" app:keyEdgeFlags="left"/>
+        <Key app:codes="0x3107" app:keyLabel="ㄇ"/>
+        <Key app:codes="0x310B" app:keyLabel="ㄋ"/>
+        <Key app:codes="0x310E" app:keyLabel="ㄎ"/>
+        <Key app:codes="0x3111" app:keyLabel="ㄑ"/>
+        <Key app:codes="0x3115" app:keyLabel="ㄕ"/>
+        <Key app:codes="0x3118" app:keyLabel="ㄘ"/>
+        <Key app:codes="0x3128" app:keyLabel="ㄨ"/>
+        <Key app:codes="0x311C" app:keyLabel="ㄜ"/>
+        <Key app:codes="0x3120" app:keyLabel="ㄠ"/>
+        <Key app:codes="0x3124" app:keyLabel="ㄤ"/>
+        <Key app:codes="32" app:keyLabel="" app:keyWidth="@dimen/keyboard_key_zhuyin_space_width" app:keyHeight="@dimen/keyboard_key_zhuyin_space_height" app:isRepeatable="true"/>
+    </Row>
+
+    <Row>
+        <Key app:codes="-12" app:keyIcon="@drawable/ic_icon_keyboard_globe" app:keyEdgeFlags="left"/>
+        <Key app:codes="0x3108" app:keyLabel="ㄈ"/>
+        <Key app:codes="0x310C" app:keyLabel="ㄌ"/>
+        <Key app:codes="0x310F" app:keyLabel="ㄏ"/>
+        <Key app:codes="0x3112" app:keyLabel="ㄒ"/>
+        <Key app:codes="0x3116" app:keyLabel="ㄖ"/>
+        <Key app:codes="0x3119" app:keyLabel="ㄙ"/>
+        <Key app:codes="0x3129" app:keyLabel="ㄩ"/>
+        <Key app:codes="0x311D" app:keyLabel="ㄝ"/>
+        <Key app:codes="0x3121" app:keyLabel="ㄡ"/>
+        <Key app:codes="0x3125" app:keyLabel="ㄥ"/>
     </Row>
 </Keyboard>
