@@ -1599,18 +1599,18 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_enter_vr">进入VR</string>
     <!-- This strings are displayed in the privacy dialog on first launch. -->
     <string name="privacy_dialog_title">隐私</string>
-    <string name="privacy_dialog_message">我们尊重您的隐私。在运行浏览器前，请先同意我们的服务条款与隐私政策。感谢使用Wolvic！</string>
+    <string name="privacy_dialog_message">我们尊重您的隐私。在运行浏览器前，请先同意我们的用户协议与隐私政策。感谢使用Wolvic！</string>
     <string name="privacy_dialog_agree">同意</string>
     <string name="privacy_dialog_disagree">不同意</string>
     <!-- These strings are the content of the Terms of Service. -->
-    <string name="terms_service_title">服务条款</string>
+    <string name="terms_service_title">用户协议</string>
     <string name="terms_service_section_1">
     Wolvic是免费的开源软件，由来自世界各地的数千社区成员建立。请知悉以下事项：
     \n\n\t\u2022 Wolvic根据Mozilla公共许可证条款服务用户。这意味着您可以使用、复制和发送Wolvic给其他人。您也可以根据个人需求修改Wolvic的源代码。Mozilla公共许可证还赋予您传播个人修改版本的权力。
     \n\n\t\u2022 您不具备Igalia或任何一方商标的商标使用权或使用许可，包括但不限于Wolvic名称或标志。
     \n\n\t\u2022 Wolvic的某些功能，如碰撞报告器（Crash Reporter），允许您向Igalia提供反馈。如果选择提交反馈意见，代表您允许Igalia使用反馈意见来改进产品，允许在其网站上匿名公布并传播反馈意见。
     \n\n\t\u2022 如对我们如何使用您的个人信息和通过Wolvic提交发聩感兴趣，可以访问Wolvic隐私政策。
-    \n\n\t\u2022 Wolvic某些功能利用了基于网络的信息服务；然而，我们不能保证使用信息100%准确性或无误的。更多细节，包括如何禁用使用这些服务功能的信息，请见以下服务条款。
+    \n\n\t\u2022 Wolvic某些功能利用了基于网络的信息服务；然而，我们不能保证使用信息100%准确性或无误的。更多细节，包括如何禁用使用这些服务功能的信息，请见以下用户协议。
     </string>
     <string name="terms_service_subtitle_2">Wolvic基于网络信息的服务</string>
     <string name="terms_service_section_2">
@@ -1691,7 +1691,7 @@ IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧�
     <string name="settings_privacy_choose_search_engine_description">选择你偏爱的搜索引擎。</string>
     <string name="voice_search_unsupported">您的语言尚无语音搜索支持。</string>
     <string name="voice_search_server_error">目前尚无语音搜索。</string>
-    <string name="settings_terms_service">服务条款</string>
+    <string name="settings_terms_service">用户协议</string>
     <string name="settings_privacy_search_engine_title">搜索引擎</string>
     <string name="settings_privacy_choose_search_engine_reset">重置搜索引擎设置</string>
     <string name="external_open_uri_error_title">外部应用程序打开错误</string>
