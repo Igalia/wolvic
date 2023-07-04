@@ -1641,7 +1641,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     \n\n\t\t\t\u2043 增强跟踪保护功能（Enhanced Tracking Protection）现已被禁用
     </string>
     <!-- These strings are the content of the Privacy Policy. -->
-    <string name="privacy_policy_title">WOLVIC基本隐私政策</string>
+    <string name="privacy_policy_title">WOLVIC隐私政策</string>
     <string name="privacy_policy_subtitle_1">基本信息</string>
     <string name="privacy_policy_section_1">
         本应用程序由Igalia, SL公司（以下简称IGALIA）开发，注册地址为西班牙加利西亚拉科鲁尼亚Bugallal Marchesi街22号1层，邮编：15008，（Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia, Spain），联系方式如下：
