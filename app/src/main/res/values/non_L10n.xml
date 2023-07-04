@@ -217,7 +217,7 @@
 
     <!-- Phone UI links -->
     <string name="hvr_learn_more_url" translatable="false">https://consumer.huawei.com/cn/wearables/vr-glass/</string>
-    <string name="landing_page_url" translatable="false">https://wolvic.com/en/welcome/</string>
+    <string name="landing_page_url" translatable="false">https://wolvic.com/welcome/</string>
 
     <!-- Shared preferences key to store the list of installed Web apps (JSON string) -->
     <string name="settings_key_web_apps_data" translatable="false">settings_key_web_apps_data</string>
