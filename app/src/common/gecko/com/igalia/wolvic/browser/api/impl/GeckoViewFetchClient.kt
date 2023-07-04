@@ -23,7 +23,6 @@ import java.util.concurrent.TimeoutException
  * GeckoView ([GeckoWebExecutor]) based implementation of [Client].
  */
 class GeckoViewFetchClient(
-        val context: Context,
         private val maxReadTimeOut: Pair<Long, TimeUnit> = Pair(MAX_READ_TIMEOUT_MINUTES, TimeUnit.MINUTES)
 ) : Client() {
 
@@ -64,8 +63,8 @@ class GeckoViewFetchClient(
         const val MAX_READ_TIMEOUT_MINUTES = 5L
 
         @JvmStatic
-        fun create(context: Context, executor: GeckoWebExecutor): GeckoViewFetchClient {
-            val client = GeckoViewFetchClient(context)
+        fun create(executor: GeckoWebExecutor): GeckoViewFetchClient {
+            val client = GeckoViewFetchClient()
             client.executor = executor
             return client
         }

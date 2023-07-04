@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets.menus;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -87,21 +88,11 @@ public class HamburgerMenuWidget extends UIWidget implements
         binding.list.addOnScrollListener(mScrollListener);
         binding.list.setHasFixedSize(true);
         binding.list.setItemViewCacheSize(20);
-        // TODO: This method was deprecated in API level 28.
-        //  The view drawing cache was largely made obsolete with the introduction of
-        //  hardware-accelerated rendering in API 11. With hardware-acceleration, intermediate
-        //  cache layers are largely unnecessary and can easily result in a net loss in performance
-        //  due to the cost of creating and updating the layer. In the rare cases where caching
-        //  layers are useful, such as for alpha animations,
-        //  setLayerType(int, android.graphics.Paint) handles this with hardware rendering.
-        //  For software-rendered snapshots of a small part of the View hierarchy or individual
-        //  Views it is recommended to create a Canvas from either a Bitmap or Picture and call
-        //  draw(android.graphics.Canvas) on the View. However these software-rendered usages are
-        //  discouraged and have compatibility issues with hardware-only rendering features such
-        //  as Config.HARDWARE bitmaps, real-time shadows, and outline clipping. For screenshots of
-        //  the UI for feedback reports or unit testing the PixelCopy API is recommended.
-        binding.list.setDrawingCacheEnabled(true);
-        binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            binding.list.setDrawingCacheEnabled(true);
+            binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         updateItems();
     }

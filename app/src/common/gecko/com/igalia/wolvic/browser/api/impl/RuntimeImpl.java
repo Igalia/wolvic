@@ -106,7 +106,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public Client createFetchClient(Context context) {
-        return GeckoViewFetchClient.create(context, mExecutor);
+        return GeckoViewFetchClient.create(mExecutor);
     }
 
     @Override
