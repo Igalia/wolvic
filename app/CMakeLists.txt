@@ -132,6 +132,7 @@ if(OPENXR)
             src/openxr/cpp/DeviceDelegateOpenXR.cpp
             src/openxr/cpp/OpenXRSwapChain.cpp
             src/openxr/cpp/OpenXRLayers.cpp
+            src/openxr/cpp/OpenXRGestureManager.cpp
             src/openxr/cpp/OpenXRInput.cpp
             src/openxr/cpp/OpenXRInputSource.cpp
             src/openxr/cpp/OpenXRActionSet.cpp

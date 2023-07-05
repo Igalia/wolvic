@@ -156,8 +156,10 @@ XrResult OpenXRInputSource::Initialize()
 #endif
         VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
 
-        if (!mSupportsFBHandTrackingAim)
-            mOneEuroFilterPosition = std::make_unique<OneEuroFilterVector>(0.25,0.1 ,1);
+        if (mSupportsFBHandTrackingAim)
+            mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
+        else
+            mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints);
     }
 
     return XR_SUCCESS;
@@ -497,11 +499,10 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     locateInfo.baseSpace = localSpace;
     locateInfo.time = frameState.predictedDisplayTime;
 
-    XrHandTrackingAimStateFB aimState { XR_TYPE_HAND_TRACKING_AIM_STATE_FB, XR_NULL_HANDLE, 0  };
     XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
     jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
     jointLocations.jointLocations = mHandJoints.data();
-    jointLocations.next = &aimState;
+    mGestureManager->populateNextStructureIfNeeded(jointLocations);
 
     CHECK_XRCMD(OpenXRExtensions::sXrLocateHandJointsEXT(mHandTracker, &locateInfo, &jointLocations));
     mHasHandJoints = jointLocations.isActive;
@@ -511,49 +512,9 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoA3)
         mHasHandJoints = true;
 #endif
-    if (mSupportsFBHandTrackingAim) {
-        mHasAimState = aimState.status & XR_HAND_TRACKING_AIM_VALID_BIT_FB;
-        if (mHasAimState)
-            mHandAimPose = aimState.aimPose;
-    } else {
-        mHasAimState = IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT, mHandJoints);
-        if (mHasAimState) {
-            mHandAimPose = jointLocations.jointLocations[XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT].pose;
-
-            auto lookAt = [](const vrb::Vector& sourcePoint, const vrb::Vector& destPoint) -> vrb::Quaternion {
-                const float EPSILON = 0.000001f;
-                vrb::Vector worldForward = { 0, 0, 1 };
-                vrb::Vector forwardVector = (destPoint - sourcePoint).Normalize();
-                float dot = worldForward.Dot(forwardVector);
-
-                // Vectors pointing to opposite directions -> 180 turn around up direction.
-                if (abs(dot - (-1.0f)) < EPSILON) {
-                    return {0, 1, 0, M_PI };
-                }
-                // Vectors pointing in the same direction -> identity quaternion (no rotation)
-                if (abs(dot - (1.0f)) < EPSILON) {
-                    return {0, 0, 0, 1 };
-                }
-
-                auto quaternionFromAxisAndAngle = [](const vrb::Vector& axis, float angle) -> vrb::Quaternion {
-                    float halfAngle = angle * .5f;
-                    float s = sin(halfAngle);
-                    return { axis.x() * s, axis.y() * s, axis.z() * s, cos(halfAngle) };
-                };
-
-                float rotationAngle = acos(dot);
-                auto rotationAxis = worldForward.Cross(forwardVector);
-                return quaternionFromAxisAndAngle(rotationAxis.Normalize(), rotationAngle);
-            };
-
-            auto pos = vrb::Vector(mHandAimPose.position.x, mHandAimPose.position.y, mHandAimPose.position.z);
-            float* filteredPos = mOneEuroFilterPosition->filter(frameState.predictedDisplayTime, pos.Data());
-
-            auto shoulder = head.MultiplyDirection({mHandeness == Right ? 0.15f : -0.15f,-0.25,0});
-            auto q = lookAt({filteredPos[0], filteredPos[1], filteredPos[2]}, shoulder);
-            mHandAimPose.orientation = { q.x(), q.y(), q.z(), q.w() };
-        }
-    }
+    mHasAimState = mGestureManager->hasAim();
+    if (mHasAimState)
+        mHandAimPose = mGestureManager->aimPose(jointLocations, frameState.predictedDisplayTime, mHandeness, head);
 
     return mHasHandJoints;
 }
