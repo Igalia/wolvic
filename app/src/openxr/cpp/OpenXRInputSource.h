@@ -5,7 +5,7 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRActionSet.h"
 #include "ElbowModel.h"
-#include "OneEuroFilter.h"
+#include "OpenXRGestureManager.h"
 #include <optional>
 #include <unordered_map>
 
@@ -74,7 +74,7 @@ private:
     XrPosef mHandAimPose;
     bool mSupportsFBHandTrackingAim { false };
     double mSmoothIndexThumbDistance { 0 };
-    std::unique_ptr<OneEuroFilterVector> mOneEuroFilterPosition;
+    OpenXRGesturePtr mGestureManager;
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
