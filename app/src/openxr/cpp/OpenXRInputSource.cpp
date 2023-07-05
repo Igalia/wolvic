@@ -516,7 +516,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
         if (mHasAimState)
             mHandAimPose = aimState.aimPose;
     } else {
-        mHasAimState = IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT);
+        mHasAimState = IsHandJointPositionValid(XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT, mHandJoints);
         if (mHasAimState) {
             mHandAimPose = jointLocations.jointLocations[XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT].pose;
 
@@ -569,19 +569,6 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
     return vrb::Vector(jointAPos - jointBPos).Magnitude();
 }
 
-bool OpenXRInputSource::IsHandJointPositionValid(const enum XrHandJointEXT aJoint) {
-    if (aJoint >= mHandJoints.size())
-        return false;
-#if SPACES
-    // A bug in spaces leaves the locationFlags always empty. The best we can do is to check that
-    // all positions are not 0.0 (which is what the runtime returns when they aren't tracked).
-    // https://gitlab.freedesktop.org/monado/monado/-/issues/264
-    auto pose = mHandJoints[aJoint].pose;
-    return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
-#endif
-    return (mHandJoints[aJoint].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0;
-}
-
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate)
 {
     // Prepare and submit hand joint locations data for rendering
@@ -590,7 +577,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     jointTransforms.resize(mHandJoints.size());
     for (int i = 0; i < mHandJoints.size(); i++) {
         vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
-        bool positionIsValid = IsHandJointPositionValid((XrHandJointEXT) i);
+        bool positionIsValid = IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints);
         if (positionIsValid) {
             if (renderMode == device::RenderMode::StandAlone)
                 transform.TranslateInPlace(kAverageHeight);
@@ -610,7 +597,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     systemTakesOverWhenHandsFacingHead = true;
 #endif
     bool palmFacesHead = false;
-    if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM)) {
+    if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM, mHandJoints)) {
         if (mSupportsFBHandTrackingAim || systemTakesOverWhenHandsFacingHead) {
             // With the FB aim extension we stop getting aim state precisely when hands face head.
             palmFacesHead = !mHasAimState;
@@ -635,7 +622,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // instead of a proper hand model.
 #if defined(PICOXR) || defined(SPACES)
     for (int i = 0; i < mHandJoints.size(); i++) {
-        if (IsHandJointPositionValid((XrHandJointEXT) i)) {
+        if (IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints)) {
             float radius = mHandJoints[i].radius;
             vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(
                     vrb::Vector(radius, radius, radius));
@@ -653,8 +640,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Select action
     bool indexPinching = false;
     double pinchFactor = 0.0f;
-    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT) &&
-        IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT)) {
+    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT, mHandJoints) &&
+        IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT, mHandJoints)) {
         const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
                                                                    XR_HAND_JOINT_INDEX_TIP_EXT);
 
