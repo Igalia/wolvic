@@ -31,12 +31,6 @@ const float kPinchThreshold = 0.019;
 const float kPinchStart = 0.055;
 const float kPinchRange = kPinchStart - kPinchThreshold;
 
-// This threshold is used to detect when palm is facing the head,
-// and enable the left hand action gesture. The higher the threshold
-// the more aligned objects should be to be considered facing each other.
-// 0.7 is generally accepted as good for objects facing each other.
-const float kPalmHeadThreshold = 0.7;
-
 // We apply a exponential smoothing filter to the measured distance between index and thumb so we
 // avoid erroneous click and release events. This constant is the smoothing factor of said filter.
 const double kSmoothFactor = 0.5;
@@ -490,14 +484,14 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
-bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head) {
+bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace localSpace, const vrb::Matrix& head) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
 
     // Update hand locations
     XrHandJointsLocateInfoEXT locateInfo { XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
     locateInfo.baseSpace = localSpace;
-    locateInfo.time = frameState.predictedDisplayTime;
+    locateInfo.time = predictedDisplayTime;
 
     XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
     jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
@@ -512,10 +506,6 @@ bool OpenXRInputSource::GetHandTrackingInfo(const XrFrameState& frameState, XrSp
     if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoA3)
         mHasHandJoints = true;
 #endif
-    mHasAimState = mGestureManager->hasAim();
-    if (mHasAimState)
-        mHandAimPose = mGestureManager->aimPose(jointLocations, frameState.predictedDisplayTime, mHandeness, head);
-
     return mHasHandJoints;
 }
 
@@ -530,7 +520,7 @@ float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHand
     return vrb::Vector(jointAPos - jointBPos).Magnitude();
 }
 
-void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate)
+void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate)
 {
     // Prepare and submit hand joint locations data for rendering
     assert(mHasHandJoints);
@@ -551,32 +541,13 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // This is not really needed. It's just an optimization for devices taking over the control of
-    // hands when facing head. In those cases we don't need to do all the matrix computations,
-    // we can just safely assume that the palm is facing the head when there is no aim.
+    // hands when facing head. In those cases we don't need to do all the matrix computations.
     bool systemTakesOverWhenHandsFacingHead = false;
-#if defined(OCULUS)
+#if defined(OCULUSVR)
     systemTakesOverWhenHandsFacingHead = true;
 #endif
-    bool palmFacesHead = false;
-    if (IsHandJointPositionValid(HAND_JOINT_FOR_AIM, mHandJoints)) {
-        if (mSupportsFBHandTrackingAim || systemTakesOverWhenHandsFacingHead) {
-            // With the FB aim extension we stop getting aim state precisely when hands face head.
-            palmFacesHead = !mHasAimState;
-        } else {
-            vrb::Matrix palmMatrix = jointTransforms[HAND_JOINT_FOR_AIM];
-            // For the hand we take the Y axis because that corresponds to head's Z axis when
-            // the hand is in upright position facing head (the gesture we want to detect).
-#ifdef PICOXR
-            // Axis are inverted in Pico
-            auto vectorPalm = palmMatrix.MultiplyDirection({0, 0, -1});
-#else
-            auto vectorPalm = palmMatrix.MultiplyDirection({0, 1, 0});
-#endif
-            auto vectorHead = head.MultiplyDirection({0, 0, -1});
-            palmFacesHead = vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
-            mHasAimState = mHasAimState && !palmFacesHead;
-        }
-    }
+    bool hasAim = mGestureManager->hasAim();
+    bool systemGestureDetected = mGestureManager->systemGestureDetected(jointTransforms[HAND_JOINT_FOR_AIM], head);
 
     // Scale joints according to their radius (for rendering). This is only
     // relevant for devices where we are using spheres to render the hands
@@ -592,9 +563,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 #endif
 
+    // We should handle the gesture whenever the system does not handle it.
+    bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
     delegate.SetHandJointLocations(mIndex, jointTransforms);
-    delegate.SetAimEnabled(mIndex, mHasAimState);
-    delegate.SetHandActionEnabled(mIndex, palmFacesHead);
+    delegate.SetAimEnabled(mIndex, hasAim);
+    delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
 
@@ -616,13 +589,13 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         indexPinching = mSmoothIndexThumbDistance < kPinchThreshold;
     }
     delegate.SetPinchFactor(mIndex, pinchFactor);
-    bool triggerButtonPressed = indexPinching && !palmFacesHead && mHasAimState;
+    bool triggerButtonPressed = indexPinching && !systemGestureDetected && hasAim;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, triggerButtonPressed,
                             triggerButtonPressed, 1.0);
-    if (palmFacesHead && !systemTakesOverWhenHandsFacingHead) {
+    if (isHandActionEnabled) {
         delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
-    } else if (mHasAimState) {
+    } else if (hasAim) {
         if (renderMode == device::RenderMode::Immersive && indexPinching != selectActionStarted) {
             selectActionStarted = indexPinching;
             if (selectActionStarted) {
@@ -634,11 +607,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 
     // Rest of the logic below requires having Aim info
-    if (!mHasAimState)
+    if (!hasAim)
         return;
 
     // Resolve beam and pointer transform
-    vrb::Matrix pointerTransform = XrPoseToMatrix(mHandAimPose);
+    vrb::Matrix pointerTransform = XrPoseToMatrix(mGestureManager->aimPose(predictedDisplayTime, mHandeness, head));
 
     // Both on Quest and Pico4 devices, hand pose returned by XR_FB_hand_tracking_aim appears
     // rotated relative to the corresponding pose of the controllers, and the rotation is
@@ -708,8 +681,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 #else
     bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
 #endif
-    if (isControllerUnavailable && GetHandTrackingInfo(frameState, localSpace, head)) {
-        EmulateControllerFromHand(renderMode, head, delegate);
+    if (isControllerUnavailable && GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head)) {
+        EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, delegate);
         return;
     }
 

@@ -41,9 +41,9 @@ private:
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
     XrResult stopHapticFeedback(XrAction) const;
     void UpdateHaptics(ControllerDelegate&);
-    bool GetHandTrackingInfo(const XrFrameState&, XrSpace, const vrb::Matrix& head);
+    bool GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    void EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate);
+    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -70,8 +70,6 @@ private:
     XrHandTrackerEXT mHandTracker { XR_NULL_HANDLE };
     HandJointsArray mHandJoints;
     bool mHasHandJoints { false };
-    bool mHasAimState { false };
-    XrPosef mHandAimPose;
     bool mSupportsFBHandTrackingAim { false };
     double mSmoothIndexThumbDistance { 0 };
     OpenXRGesturePtr mGestureManager;

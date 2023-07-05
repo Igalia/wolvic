@@ -21,14 +21,19 @@ virtual ~OpenXRGestureManager() = default;
 
 virtual void populateNextStructureIfNeeded(XrHandJointLocationsEXT& handJointLocations) {};
 virtual bool hasAim() const = 0;
-virtual XrPosef aimPose(const XrHandJointLocationsEXT&, const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const = 0;
+virtual XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const = 0;
+virtual bool systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const = 0;
+
+protected:
+bool palmFacesHead(const vrb::Matrix& palm, const vrb::Matrix& head) const;
 };
 
 class OpenXRGestureManagerFBHandTrackingAim : public OpenXRGestureManager {
 private:
 void populateNextStructureIfNeeded(XrHandJointLocationsEXT& handJointLocations) override;
 bool hasAim() const override;
-XrPosef aimPose(const XrHandJointLocationsEXT&, const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;
+XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;
+bool systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const override;
 
 XrHandTrackingAimStateFB mFBAimState;
 };
@@ -38,7 +43,9 @@ public:
 OpenXRGestureManagerHandJoints(HandJointsArray& handJoints);
 private:
 bool hasAim() const override;
-XrPosef aimPose(const XrHandJointLocationsEXT&, const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;
+XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;
+bool systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const override;
+
 HandJointsArray& mHandJoints;
 std::unique_ptr<OneEuroFilterVector> mOneEuroFilterPosition;
 };
