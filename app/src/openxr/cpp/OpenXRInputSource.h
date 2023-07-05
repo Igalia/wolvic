@@ -43,7 +43,6 @@ private:
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(const XrFrameState&, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint);
     void EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate);
 
     XrInstance mInstance { XR_NULL_HANDLE };
@@ -69,7 +68,7 @@ private:
     std::vector<float> axesContainer;
     crow::ElbowModelPtr elbow;
     XrHandTrackerEXT mHandTracker { XR_NULL_HANDLE };
-    std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> mHandJoints;
+    HandJointsArray mHandJoints;
     bool mHasHandJoints { false };
     bool mHasAimState { false };
     XrPosef mHandAimPose;

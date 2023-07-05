@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <EGL/egl.h>
 #include "jni.h"
 #include "Assertions.h"
@@ -124,6 +125,20 @@ inline XrPosef MatrixToXrPose(const vrb::Matrix& aMatrix) {
     result.orientation = XrQuaternionf{-q.x(), -q.y(), -q.z(), q.w()};
     result.position = XrVector3f{p.x(), p.y(), p.z()};
     return result;
+}
+
+typedef std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> HandJointsArray;
+inline bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint, const HandJointsArray& handJoints) {
+    if (aJoint >= handJoints.size())
+        return false;
+#if SPACES
+    // A bug in spaces leaves the locationFlags always empty. The best we can do is to check that
+    // all positions are not 0.0 (which is what the runtime returns when they aren't tracked).
+    // https://gitlab.freedesktop.org/monado/monado/-/issues/264
+    auto pose = handJoints[aJoint].pose;
+    return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
+#endif
+    return (handJoints[aJoint].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0;
 }
 
 }  // namespace crow
