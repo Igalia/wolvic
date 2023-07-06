@@ -1764,4 +1764,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="security_options_permission_fine_location_warning">Wolvic sólo puede obtener tu ubicación aproximada. Esto se puede cambiar en la configuración del sistema.</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="user_feedback_tooltip">Compartir ideas y opiniones</string>
 </resources>
