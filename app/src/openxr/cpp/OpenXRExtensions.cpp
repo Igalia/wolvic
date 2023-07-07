@@ -19,6 +19,8 @@ PFN_xrCreatePassthroughFB OpenXRExtensions::sXrCreatePassthroughFB = nullptr;
 PFN_xrDestroyPassthroughFB OpenXRExtensions::sXrDestroyPassthroughFB = nullptr;
 PFN_xrCreatePassthroughLayerFB OpenXRExtensions::sXrCreatePassthroughLayerFB = nullptr;
 PFN_xrDestroyPassthroughLayerFB OpenXRExtensions::sXrDestroyPassthroughLayerFB = nullptr;
+PFN_xrCreateHandMeshSpaceMSFT OpenXRExtensions::sXrCreateHandMeshSpaceMSFT = nullptr;
+PFN_xrUpdateHandMeshMSFT OpenXRExtensions::sXrUpdateHandMeshMSFT = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -86,6 +88,13 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyHandTrackerEXT)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLocateHandJointsEXT",
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrLocateHandJointsEXT)));
+
+        if (IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateHandMeshSpaceMSFT",
+                                              reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreateHandMeshSpaceMSFT)));
+            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrUpdateHandMeshMSFT",
+                                              reinterpret_cast<PFN_xrVoidFunction *>(&sXrUpdateHandMeshMSFT)));
+        }
     }
 
     if (IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
