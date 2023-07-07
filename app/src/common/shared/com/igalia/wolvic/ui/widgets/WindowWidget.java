@@ -1922,7 +1922,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onHistoryStateChange(@NonNull WSession session, @NonNull HistoryList historyList) {
         if (!mSession.isPrivateMode()) {
             for (HistoryItem item : historyList.getItems()) {
-                SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle()));
+                SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle(), null));
             }
         }
     }
@@ -1976,11 +1976,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             redirectSource = RedirectSource.TEMPORARY;
 
         } else {
-            redirectSource = RedirectSource.NOT_A_SOURCE;
+            redirectSource = null;
         }
 
         SessionStore.get().getHistoryStore().recordVisit(url, new PageVisit(visitType, redirectSource));
-        SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
+        SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url, null));
 
         return WResult.fromValue(true);
     }

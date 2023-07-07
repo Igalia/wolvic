@@ -228,6 +228,11 @@ class FxAAccountOptionsView extends SettingsView {
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.signButton.setButtonText(R.string.settings_fxa_account_sign_out);
         }
