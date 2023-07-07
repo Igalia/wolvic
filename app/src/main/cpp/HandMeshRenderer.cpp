@@ -35,7 +35,7 @@ struct HandMeshRendererSpheres::State {
     std::vector<HandMeshSpheres> handMeshState;
 };
 
-HandMeshRendererSpheres::HandMeshRendererSpheres(State &aState, vrb::CreationContextPtr& aContext)
+HandMeshRendererSpheres::HandMeshRendererSpheres(State& aState, vrb::CreationContextPtr& aContext)
     : m(aState) {
     context = aContext;
 }
@@ -257,7 +257,7 @@ struct HandMeshRendererSkinned::State {
     std::vector<HandMeshGLState> handGLState = { };
 };
 
-HandMeshRendererSkinned::HandMeshRendererSkinned(State &aState, vrb::CreationContextPtr& aContext)
+HandMeshRendererSkinned::HandMeshRendererSkinned(State& aState, vrb::CreationContextPtr& aContext)
     : m(aState) {
     m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);
     m.fragmentShader = vrb::LoadShader(GL_FRAGMENT_SHADER, sFragmentShader);
