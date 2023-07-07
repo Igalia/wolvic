@@ -32,7 +32,9 @@ public class Bookmark {
         mTitle = node.getTitle();
         mURL = node.getUrl();
         mGuid = node.getGuid();
-        mPosition = node.getPosition() != null ? node.getPosition() : 0;
+        // TODO: We shall get the position using `node.getPosition();` instead of 0.
+        // However, position is now kotlin.UInt which is not supported by Java.
+        mPosition = 0;
         mHasChildren = node.getChildren() != null;
 
         switch (node.getType()) {
@@ -76,6 +78,7 @@ public class Bookmark {
         mLevel = level;
     }
 
+    // TODO: This method is broken because upstream now uses kotlin.UInt for mPosition.
     public int getPosition() {
         return mPosition;
     }

@@ -218,4 +218,9 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
             hide(KEEP_WIDGET);
         }
     }
+
+    @Override
+    public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+    }
 }

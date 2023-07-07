@@ -319,6 +319,11 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }

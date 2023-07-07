@@ -1035,6 +1035,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     private AccountObserver mAccountObserver = new AccountObserver() {
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onLoggedOut() {
 
         }

@@ -12,7 +12,7 @@ if (getGradle().getStartParameter().getTaskRequests().toString() =~ /(h|H)vr/) {
     apply plugin: 'com.huawei.agconnect'
 }
 
-deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
+deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-native-forUnitTests:$project.ext.glean_version"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -153,6 +153,7 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
+            pickFirsts += ['**/libxul.so']
         }
     }
 
@@ -178,13 +179,11 @@ android {
 
     externalNativeBuild {
         cmake {
+            version "3.10.2"
             path "CMakeLists.txt"
         }
     }
 
-    lintOptions {
-        disable "ExtraTranslation"
-    }
 
     flavorDimensions "platform", "abi", "backend", "store"
 
@@ -506,7 +505,14 @@ android {
         unitTests.includeAndroidResources = true
     }
 
-    aaptOptions {
+
+    buildFeatures {
+        viewBinding true
+        prefab true // enable prefab support for various SDK AAR
+        dataBinding true
+    }
+    namespace 'com.igalia.wolvic'
+    androidResources {
         noCompress 'ja'
         // TODO: This statement should be moved under 'chromium' dimension or removed. So far, these
         // options are affected to every variants when`isChromiumAvailable()` is true.
@@ -516,11 +522,8 @@ android {
             noCompress 'pak'
         }
     }
-
-    buildFeatures {
-        viewBinding true
-        prefab true // enable prefab support for various SDK AAR
-        dataBinding true
+    lint {
+        disable 'ExtraTranslation'
     }
 }
 
@@ -557,6 +560,7 @@ dependencies {
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.browser_icons
+    implementation deps.android_components.feature_toolbar
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location
@@ -619,7 +623,7 @@ dependencies {
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
-    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
+    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.5.300'
     hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'

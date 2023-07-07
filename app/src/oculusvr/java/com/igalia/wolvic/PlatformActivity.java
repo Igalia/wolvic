@@ -56,6 +56,7 @@ public class PlatformActivity extends NativeActivity {
     }
 
     @Override
+    @Deprecated
     public void onBackPressed() {
         queueRunnable(new Runnable() {
             @Override
