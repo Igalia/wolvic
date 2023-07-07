@@ -10,10 +10,12 @@
 #include "vrb/Camera.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
+#include "vrb/GeometryDrawable.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
 #include "vrb/ProgramFactory.h"
 #include "vrb/Quaternion.h"
+#include "vrb/RenderBuffer.h"
 #include "vrb/RenderState.h"
 #include "vrb/ShaderUtil.h"
 #include "vrb/Toggle.h"
@@ -23,6 +25,18 @@
 #define XR_EXT_HAND_TRACKING_NUM_JOINTS 26
 
 namespace crow {
+
+vrb::RenderStatePtr GetHandMeshDefaultRenderState(vrb::CreationContextPtr create) {
+    auto program = create->GetProgramFactory()->CreateProgram(create, 0);
+    auto state = vrb::RenderState::Create(create);
+    state->SetProgram(program);
+    state->SetMaterial(vrb::Color(0.5f, 0.5f, 0.5f),
+                       vrb::Color(0.5f, 0.5f, 0.5f),
+                       vrb::Color(0.5f, 0.5f, 0.5f), 0.75f);
+    state->SetLightsEnabled(true);
+
+    return state;
+}
 
 // HandMeshRendererSpheres
 
@@ -45,7 +59,9 @@ HandMeshRendererPtr HandMeshRendererSpheres::Create(vrb::CreationContextPtr& aCo
 }
 
 void HandMeshRendererSpheres::Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
-                                     const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+                                     const vrb::GroupPtr& aRoot, HandMeshBufferPtr& buffer, const bool aEnabled, const bool leftHanded) {
+    assert(!buffer);
+
     if (aControllerIndex >= m.handMeshState.size())
         m.handMeshState.resize(aControllerIndex + 1);
     auto& handMesh = m.handMeshState.at(aControllerIndex);
@@ -65,15 +81,7 @@ void HandMeshRendererSpheres::Update(const uint32_t aControllerIndex, const std:
 
         assert(handJointTransforms.size() > 0);
 
-        vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
-        vrb::RenderStatePtr state = vrb::RenderState::Create(create);
-        state->SetProgram(program);
-        vrb::Color handColor = vrb::Color(0.5f, 0.5f, 0.5f);
-        handColor.SetAlpha(1.0);
-        state->SetMaterial(handColor, vrb::Color(0.5f, 0.5f, 0.5f),
-                           vrb::Color(0.5f, 0.5f, 0.5f),
-                           0.75f);
-        state->SetLightsEnabled(true);
+        auto state = GetHandMeshDefaultRenderState(create);
 
         float radius = 0.65;
         vrb::GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
@@ -97,6 +105,87 @@ void HandMeshRendererSpheres::Update(const uint32_t aControllerIndex, const std:
     assert(handMesh.sphereTransforms.size() == handJointTransforms.size());
     for (int i = 0; i < handMesh.sphereTransforms.size(); i++)
         handMesh.sphereTransforms[i]->SetTransform(handJointTransforms[i]);
+}
+
+// HandMeshRendererGeometry
+
+struct HandMeshGeometry {
+    vrb::TogglePtr toggle;
+    vrb::GeometryDrawablePtr geometry;
+};
+
+struct HandMeshRendererGeometry::State {
+    std::vector<HandMeshGeometry> handMeshState;
+};
+
+HandMeshRendererPtr HandMeshRendererGeometry::Create(vrb::CreationContextPtr& aContext) {
+    return std::make_unique<vrb::ConcreteClass<HandMeshRendererGeometry, HandMeshRendererGeometry::State> >(aContext);
+}
+
+HandMeshRendererGeometry::HandMeshRendererGeometry(State& aState, vrb::CreationContextPtr& aContext)
+        : m(aState) {
+    context = aContext;
+}
+
+void HandMeshRendererGeometry::Initialize(HandMeshGeometry& handMesh, const vrb::GroupPtr& aRoot) {
+    vrb::CreationContextPtr create = context.lock();
+    handMesh.toggle = vrb::Toggle::Create(create);
+    aRoot->AddNode(handMesh.toggle);
+
+    handMesh.geometry = vrb::GeometryDrawable::Create(create);
+    handMesh.toggle->AddNode(handMesh.geometry);
+
+    auto renderBuffer = vrb::RenderBuffer::Create(create);
+    renderBuffer->DefinePosition(offsetof(HandMeshVertexMSFT, position), 3);
+    renderBuffer->DefineNormal(offsetof(HandMeshVertexMSFT, normal), 3);
+    handMesh.geometry->SetRenderBuffer(renderBuffer);
+
+    auto state = GetHandMeshDefaultRenderState(create);
+    handMesh.geometry->SetRenderState(state);
+}
+
+void HandMeshRendererGeometry::Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                                      const vrb::GroupPtr& aRoot, HandMeshBufferPtr& aBuffer, const bool aEnabled, const bool leftHanded) {
+    if (aControllerIndex >= m.handMeshState.size())
+        m.handMeshState.resize(aControllerIndex + 1);
+    auto& handMesh = m.handMeshState.at(aControllerIndex);
+
+    // We need to call ToggleAll() even if aEnabled is false, to be able to hide the
+    // hand mesh.
+    if (handMesh.toggle)
+        handMesh.toggle->ToggleAll(aEnabled);
+
+    if (!aEnabled)
+        return;
+
+    // Lazily initialize toggle, transform and geometry nodes, and render buffers
+    if (!handMesh.toggle)
+        Initialize(handMesh, aRoot);
+
+    if (!aBuffer)
+        return;
+
+    assert(handMesh.geometry);
+    auto& renderBuffer = handMesh.geometry->GetRenderBuffer();
+
+    HandMeshBufferMSFTPtr buffer = std::dynamic_pointer_cast<HandMeshBufferMSFT>(aBuffer);
+
+    // @FIXME: VRB's GeometryDrawable assumes unsigned shorts (16 bits) for the indices, but we got
+    //         32 bits indices from XR_MSFT_hand_tracking_mesh; so we need to manually convert them.
+    std::vector<uint16_t> indices16;
+    indices16.resize(buffer->indices.size());
+    for (uint32_t i = 0; i < buffer->indices.size(); i++)
+        indices16[i] = (uint16_t) buffer->indices[i];
+
+    // Upload the new geometry to the render buffers
+    renderBuffer->SetIndexObject(buffer->ibo, buffer->indices.size());
+    renderBuffer->SetVertexObject(buffer->vbo, buffer->vertices.size());
+    renderBuffer->Bind();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer->indices.size() * sizeof(uint16_t),
+                 indices16.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, buffer->vertices.size() * sizeof(HandMeshVertexMSFT),
+                 buffer->vertices.data(), GL_STATIC_DRAW);
+    renderBuffer->Unbind();
 }
 
 
@@ -430,7 +519,9 @@ bool HandMeshRendererSkinned::LoadHandMeshFromAssets(const bool leftHanded, Hand
 }
 
 void HandMeshRendererSkinned::Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
-                                     const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+                                     const vrb::GroupPtr& aRoot, HandMeshBufferPtr& buffer, const bool aEnabled, const bool leftHanded) {
+    assert(!buffer);
+
     if (aControllerIndex >= m.handMeshState.size())
         m.handMeshState.resize(aControllerIndex + 1);
     auto& mesh = m.handMeshState.at(aControllerIndex);
@@ -446,12 +537,10 @@ void HandMeshRendererSkinned::Update(const uint32_t aControllerIndex, const std:
 }
 
 void HandMeshRendererSkinned::Draw(const uint32_t aControllerIndex, const vrb::Camera& aCamera) {
-    // Bail if the GL state has not yet been setup (e.g, by a call to Update())
-    if (aControllerIndex >= m.handGLState.size())
+    // Bail if the mesh or GL state has not yet been setup (e.g, by a call to Update())
+    if (aControllerIndex >= m.handGLState.size() || aControllerIndex >= m.handMeshState.size())
         return;
     const HandMeshGLState& state = m.handGLState.at(aControllerIndex);
-
-    assert(aControllerIndex < m.handMeshState.size());
     auto& mesh = m.handMeshState.at(aControllerIndex);
 
     assert(m.program);

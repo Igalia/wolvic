@@ -161,6 +161,14 @@ XrResult OpenXRInputSource::Initialize()
             mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints);
     }
 
+    // Initialize double buffers for storing XR_MSFT_hand_tracking_mesh geometry
+    if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+        for (int i = 0; i < 2; i++) {
+            auto buffer = std::make_shared<HandMeshBufferMSFT>();
+            mHandMeshMSFT.buffers.push_back(buffer);
+        }
+    }
+
     return XR_SUCCESS;
 }
 
@@ -489,6 +497,26 @@ void OpenXRInputSource::UpdateHaptics(ControllerDelegate &delegate)
     CHECK_XRCMD(applyHapticFeedback(mHapticAction, duration, XR_FREQUENCY_UNSPECIFIED, pulseIntensity));
 }
 
+HandMeshBufferPtr OpenXRInputSource::AcquireHandMeshBuffer() {
+    if (mHandMeshMSFT.buffers.empty())
+        return nullptr;
+
+    auto& result = mHandMeshMSFT.buffers.front();
+    mHandMeshMSFT.buffers.erase(mHandMeshMSFT.buffers.begin());
+
+    return result;
+}
+
+void OpenXRInputSource::ReleaseHandMeshBuffer() {
+    if (mHandMeshMSFT.usedBuffers.empty())
+        return;
+
+    auto& buffer = mHandMeshMSFT.usedBuffers.front();
+    mHandMeshMSFT.usedBuffers.erase(mHandMeshMSFT.usedBuffers.begin());
+
+    mHandMeshMSFT.buffers.push_back(buffer);
+}
+
 bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace localSpace, const vrb::Matrix& head) {
     if (OpenXRExtensions::sXrLocateHandJointsEXT == XR_NULL_HANDLE || mHandTracker == XR_NULL_HANDLE)
         return false;
@@ -511,6 +539,53 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoA3)
         mHasHandJoints = true;
 #endif
+
+    // Rest of the method deal with XR_MSFT_hand_tracking_mesh extension
+
+    if (!OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME) || !mHasHandJoints)
+        return mHasHandJoints;
+
+    // Lazily create the XrSpace required by XR_MSFT_hand_tracking_mesh extension.
+    if (mHandMeshMSFT.space == XR_NULL_HANDLE) {
+        assert(OpenXRExtensions::sXrCreateHandMeshSpaceMSFT != nullptr);
+        auto& matrix = vrb::Matrix::Identity().TranslateInPlace(kAverageHeight);
+        XrPosef pose = MatrixToXrPose(matrix);
+        XrHandMeshSpaceCreateInfoMSFT createInfo = {
+                .type = XR_TYPE_HAND_MESH_SPACE_CREATE_INFO_MSFT,
+                .handPoseType = XR_HAND_POSE_TYPE_TRACKED_MSFT,
+                .poseInHandMeshSpace = pose,
+        };
+        CHECK_XRCMD(OpenXRExtensions::sXrCreateHandMeshSpaceMSFT(mHandTracker, &createInfo,
+                                                                 &mHandMeshMSFT.space));
+    }
+
+    // Bail if hand mesh buffer sizes haven't yet been initialized
+    if (mHandMeshMSFT.handMesh.indexBuffer.indexCapacityInput == 0)
+        return mHasHandJoints;
+
+    assert(mHandMeshMSFT.handMesh.vertexBuffer.vertexCapacityInput > 0);
+
+    if (auto genericBuffer = AcquireHandMeshBuffer()) {
+        auto buffer = std::dynamic_pointer_cast<HandMeshBufferMSFT>(genericBuffer);
+        buffer->indices.resize(mHandMeshMSFT.handMesh.indexBuffer.indexCapacityInput);
+        mHandMeshMSFT.handMesh.indexBuffer.indices = (uint32_t*) buffer->indices.data();
+
+        buffer->vertices.resize(mHandMeshMSFT.handMesh.vertexBuffer.vertexCapacityInput);
+        mHandMeshMSFT.handMesh.vertexBuffer.vertices = (XrHandMeshVertexMSFT*) buffer->vertices.data();
+
+        XrHandMeshUpdateInfoMSFT updateInfo = {
+                .type = XR_TYPE_HAND_MESH_UPDATE_INFO_MSFT,
+                .time = predictedDisplayTime,
+                .handPoseType = XR_HAND_POSE_TYPE_TRACKED_MSFT,
+        };
+        CHECK_XRCMD(OpenXRExtensions::sXrUpdateHandMeshMSFT(mHandTracker, &updateInfo,
+                                                            &mHandMeshMSFT.handMesh));
+        mHandMeshMSFT.buffer = genericBuffer;
+
+        // Finally add the current buffer to the list of used ones
+        mHandMeshMSFT.usedBuffers.push_back(buffer);
+    }
+
     return mHasHandJoints;
 }
 
@@ -910,5 +985,15 @@ std::string OpenXRInputSource::ControllerModelName() const
   return { };
 }
 
+void OpenXRInputSource::SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount) {
+    mHandMeshMSFT.handMesh.indexBuffer.indexCapacityInput = indexCount;
+    mHandMeshMSFT.handMesh.vertexBuffer.vertexCapacityInput = vertexCount;
+}
+
+HandMeshBufferPtr
+OpenXRInputSource::GetNextHandMeshBuffer() {
+    ReleaseHandMeshBuffer();
+    return mHandMeshMSFT.buffer;
+}
 
 } // namespace crow

@@ -130,6 +130,18 @@ OpenXRInputMapping* OpenXRInput::GetActiveInputMapping() const
   return nullptr;
 }
 
+void OpenXRInput::SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount) {
+  for (auto& input : mInputSources) {
+    input->SetHandMeshBufferSizes(indexCount, vertexCount);
+  }
+}
+
+HandMeshBufferPtr OpenXRInput::GetNextHandMeshBuffer(const int32_t aControllerIndex) {
+  if (!mInputSources.at(aControllerIndex))
+    return nullptr;
+  return mInputSources.at(aControllerIndex)->GetNextHandMeshBuffer();
+}
+
 OpenXRInput::~OpenXRInput() {
 }
 
