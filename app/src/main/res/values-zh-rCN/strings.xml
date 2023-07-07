@@ -1750,11 +1750,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n如果您对政策或个人信息保护相关事宜有任何疑问或投诉、建议时，您可以将疑虑发送至info@igalia.com。
     </string>
-    <string name="terms_service_subtitle_2" />
-    <string name="terms_service_section_2" />
+    <string name="terms_service_subtitle_2">Wolvic 基于网络的信息服务</string>
+    <string name="terms_service_section_2"/>
     <!-- These strings are the content of the Privacy Policy. -->
     <string name="privacy_policy_title">Wolvic移动应用程序隐私政策</string>
-    <string name="privacy_policy_subtitle_1" />
+    <string name="privacy_policy_subtitle_1">通告</string>
     <string name="privacy_policy_section_1">
 生效日期：2023年06月21日
 \n更新日期：2023年07月03日
@@ -1969,10 +1969,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n您也可以通过热线400-650-7728联系我们，我们的工作时间为中国工作日早上10点至晚上6点。
     </string>
-    <string name="privacy_policy_subtitle_2" />
-    <string name="privacy_policy_section_2" />
-    <string name="privacy_policy_subtitle_3" />
-    <string name="privacy_policy_section_3" />
+    <string name="privacy_policy_subtitle_2">数据保护</string>
+    <string name="privacy_policy_section_2"/>
+    <string name="privacy_policy_subtitle_3"/>
+    <string name="privacy_policy_section_3"/>
     <string name="settings_privacy_choose_search_engine_description">选择你偏爱的搜索引擎。</string>
     <string name="voice_search_unsupported">您的语言尚无语音搜索支持。</string>
     <string name="voice_search_server_error">目前尚无语音搜索。</string>
@@ -2035,4 +2035,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_title">建议的更新</string>
     <string name="deprecated_version_dialog_info_button">了解更多…</string>
     <string name="deprecated_version_dialog_store_button">安装…</string>
+    <string name="user_feedback_tooltip">分享想法和反馈</string>
 </resources>
