@@ -5,6 +5,7 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRActionSet.h"
 #include "ElbowModel.h"
+#include "HandMeshRenderer.h"
 #include "OpenXRGestureManager.h"
 #include <optional>
 #include <unordered_map>
@@ -74,6 +75,23 @@ private:
     double mSmoothIndexThumbDistance { 0 };
     OpenXRGesturePtr mGestureManager;
 
+    struct HandMeshMSFT {
+        XrSpace space = XR_NULL_HANDLE;
+        XrHandMeshMSFT handMesh;
+        HandMeshBufferPtr buffer = nullptr;
+
+        std::vector<HandMeshBufferMSFTPtr> buffers;
+        std::vector<HandMeshBufferMSFTPtr> usedBuffers;
+        ~HandMeshMSFT() {
+            for (auto& buf: buffers)
+                buf.reset();
+            for (auto& buf: usedBuffers)
+                buf.reset();
+        }
+    } mHandMeshMSFT;
+    HandMeshBufferPtr AcquireHandMeshBuffer();
+    void ReleaseHandMeshBuffer();
+
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
@@ -83,6 +101,8 @@ public:
     XrResult UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
+    void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
+    HandMeshBufferPtr GetNextHandMeshBuffer();
 };
 
 } // namespace crow
