@@ -179,7 +179,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         try {
-            PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            PackageInfo pInfo;
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.S_V2) {
+                pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.PackageInfoFlags.of(0));
+            } else {
+                pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            }
             String app_name = getResources().getString(R.string.app_name);
             mBinding.versionText.setText(Html.fromHtml("<b>" + app_name + "</b>" +
                             " <b>" + pInfo.versionName + "</b>",

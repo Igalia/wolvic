@@ -45,6 +45,7 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
     @Override
+    @Deprecated
     protected Bitmap doInBackground(Void... voids) {
         if (mFileUri == null)
             return null;
@@ -66,6 +67,7 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
     @Override
+    @Deprecated
     protected void onCancelled() {
         super.onCancelled();
 
@@ -116,6 +118,7 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
     @Override
+    @Deprecated
     protected void onPostExecute(Bitmap bitmap) {
         if (bitmap != null && mOnSuccessDelegate != null) {
             (new Handler(Looper.getMainLooper())).post(() -> mOnSuccessDelegate.onSuccess(bitmap));

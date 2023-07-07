@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -117,7 +118,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         @Override
         public void onReceive(Context context, Intent intent) {
             if((intent.getAction() != null) && intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
-                Intent crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
+                Intent crashIntent;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG, Intent.class);
+                } else {
+                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
+                }
                 handleContentCrashIntent(crashIntent);
             }
         }
@@ -683,6 +689,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         LocaleUtils.update(this, language);
 
+        // TODO: Deprecated dispatchConfigurationChanged(Configuration) in FragmentController,
+        //  see https://github.com/Igalia/wolvic/issues/822
         mFragmentController.dispatchConfigurationChanged(newConfig);
 
         SessionStore.get().onConfigurationChanged(newConfig);
@@ -714,7 +722,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (DeviceType.isOculusBuild()) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String cmd = (String) bundle.get("intent_cmd");
+                String cmd = bundle.getString("intent_cmd");
                 if ((cmd != null) && (cmd.length() > 0)) {
                     try {
                         JSONObject object = new JSONObject(cmd);
@@ -893,6 +901,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
 
         // Determine which lifecycle or system event was raised.
         switch (level) {
@@ -1846,6 +1855,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    @Deprecated
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 

@@ -5,7 +5,7 @@
 
 package com.igalia.wolvic;
 
-import android.app.Activity;
+import androidx.activity.ComponentActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +45,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public abstract class PlatformActivity extends Activity implements SurfaceHolder.Callback, WidgetManagerDelegate {
+public abstract class PlatformActivity extends ComponentActivity implements SurfaceHolder.Callback, WidgetManagerDelegate {
     public static final String TAG = "PlatformActivity";
     private HVRLocationManager mLocationManager;
     private SharedPreferences mPrefs;

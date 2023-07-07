@@ -37,11 +37,11 @@ class LoginStorage(
     }
 
     fun delete(login: Login) = GlobalScope.future {
-        storage.value.delete(login.guid!!);
+        storage.value.delete(login.guid);
     }
 
     fun update(login: Login) = GlobalScope.future {
-        storage.value.update(login.guid!!, login.toEntry());
+        storage.value.update(login.guid, login.toEntry());
     }
 
 }
