@@ -48,6 +48,12 @@
 
 namespace crow {
 
+struct HandMeshPropertiesMSFT {
+    uint32_t indexCount = 0;
+    uint32_t vertexCount = 0;
+};
+typedef std::unique_ptr<HandMeshPropertiesMSFT> HandMeshPropertiesMSFTPtr;
+
 struct DeviceDelegateOpenXR::State {
   vrb::RenderContextWeak context;
   JavaContext* javaContext = nullptr;
@@ -109,6 +115,7 @@ struct DeviceDelegateOpenXR::State {
   XrEnvironmentBlendMode defaultBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
   XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
   HandMeshRendererPtr handMeshRenderer = nullptr;
+  HandMeshPropertiesMSFTPtr handMeshProperties;
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -157,6 +164,9 @@ struct DeviceDelegateOpenXR::State {
         extensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME)) {
             extensions.push_back(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
+        }
+        if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+            extensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
         }
     }
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
@@ -232,6 +242,13 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &passthroughProperties;
     }
 
+    XrSystemHandTrackingMeshPropertiesMSFT handMeshPropertiesMSFT{ XR_TYPE_SYSTEM_HAND_TRACKING_MESH_PROPERTIES_MSFT };
+    handMeshPropertiesMSFT.supportsHandTrackingMesh = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+        handMeshPropertiesMSFT.next = systemProperties.next;
+        systemProperties.next = &handMeshPropertiesMSFT;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
@@ -252,6 +269,13 @@ struct DeviceDelegateOpenXR::State {
             passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
         else
             passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
+    }
+
+    if (handMeshPropertiesMSFT.supportsHandTrackingMesh) {
+        handMeshProperties = std::make_unique<HandMeshPropertiesMSFT>();
+        handMeshProperties->vertexCount = handMeshPropertiesMSFT.maxHandMeshVertexCount;
+        handMeshProperties->indexCount = handMeshPropertiesMSFT.maxHandMeshIndexCount;
+        VRB_LOG("OpenXR runtime supports XR_MSFT_hand_tracking_mesh");
     }
   }
 
@@ -704,6 +728,10 @@ struct DeviceDelegateOpenXR::State {
       CHECK_XRCMD(xrDestroyInstance(instance));
       instance = XR_NULL_HANDLE;
     }
+
+    // Hand mesh properties
+    if (handMeshProperties)
+        handMeshProperties.reset();
 
     // TODO: Check if activity globarRef needs to be released
   }
@@ -1425,7 +1453,9 @@ DeviceDelegateOpenXR::UpdateHandMesh(const uint32_t aControllerIndex, const std:
                const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
   if (!m.handMeshRenderer)
     return;
-  m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, aEnabled, leftHanded);
+
+  HandMeshBufferPtr buffer = m.input->GetNextHandMeshBuffer(aControllerIndex);
+  m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, buffer, aEnabled, leftHanded);
 }
 
 void
@@ -1496,11 +1526,16 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Lazily create hand mesh renderer
   if (m.mHandTrackingSupported && !m.handMeshRenderer) {
     auto& create = context->GetRenderThreadCreationContext();
-#if defined(PICOXR) || defined(SPACES)
-    m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
+    if (m.handMeshProperties) {
+      m.handMeshRenderer = HandMeshRendererGeometry::Create(create);
+      m.input->SetHandMeshBufferSizes(m.handMeshProperties->indexCount, m.handMeshProperties->vertexCount);
+    } else {
+#if defined(PICOXR)
+      m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
 #else
-    m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
+      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
 #endif
+    }
   }
 
   // Initialize layers if needed

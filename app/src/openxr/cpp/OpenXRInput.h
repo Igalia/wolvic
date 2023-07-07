@@ -18,6 +18,9 @@ class OpenXRInputMapping;
 class OpenXRActionSet;
 typedef std::shared_ptr<OpenXRActionSet> OpenXRActionSetPtr;
 
+struct HandMeshBuffer;
+typedef std::shared_ptr<HandMeshBuffer> HandMeshBufferPtr;
+
 class OpenXRInput {
 private:
   OpenXRInput(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
@@ -38,7 +41,8 @@ public:
   std::string GetControllerModelName(const int32_t aModelIndex) const;
   void UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
   bool AreControllersReady() const;
-
+  void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
+  HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
   ~OpenXRInput();
 };
 
