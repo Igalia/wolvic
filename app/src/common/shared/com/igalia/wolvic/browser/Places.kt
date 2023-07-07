@@ -73,7 +73,8 @@ class Places(var context: Context) {
             }
         }
 
-        bookmarks.cleanup()
+        bookmarks.cancelWrites()
+        bookmarks.cancelReads()
         // We create a new storage, otherwise we would need to restart the app so it's created in the Application onCreate
         bookmarks = PlacesBookmarksStorage(context)
         // Update the storage in the proxy class
