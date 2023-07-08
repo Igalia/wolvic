@@ -1668,4 +1668,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \nInstallera den senaste versionen av Wolvic från Oculus Store.
 \n
 \nVIKTIGT: om du inte använder Firefox Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException vid start av intent för %1$s</string>
+    <string name="user_feedback_tooltip">Dela idéer och feedback</string>
+    <string name="hamburger_menu_toggle_passthrough">Passera genom</string>
 </resources>
