@@ -82,12 +82,10 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
                     if (SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
                         Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
-                        setHmsMessageServiceAutoInit(true);
-                        getHmsMessageServiceToken();
+                        enablePrivacySensitiveServices();
                     } else {
                         Log.d(TAG, "PushKit: privacy policy is denied, calling deleteHmsMessageServiceToken");
-                        setHmsMessageServiceAutoInit(false);
-                        deleteHmsMessageServiceToken();
+                        disablePrivacySensitiveServices();
                     }
                 }
             };
@@ -100,13 +98,6 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
         mLocationManager = new HVRLocationManager(this);
         PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
 
-        // Enable analytics
-        if (BuildConfig.BUILD_TYPE.equals("debug")) {
-            HiAnalyticsTools.enableLog();
-        }
-        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
-        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
-
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -114,15 +105,10 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
                 handlemHmsMessageBroadcast(intent);
             }
         };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
-        registerReceiver(mHmsMessageBroadcastReceiver, filter);
 
-        // We need to wait until the Privacy Policy is accepted before requesting a message token.
+        // We need to wait until the Privacy Policy is accepted before using remote services.
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-            Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
-            setHmsMessageServiceAutoInit(true);
-            getHmsMessageServiceToken();
+            enablePrivacySensitiveServices();
         }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
@@ -274,6 +260,29 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
             e.printStackTrace();
         }
     }
+
+    private void enablePrivacySensitiveServices() {
+        Log.d(TAG, "Privacy policy is accepted, initializing services");
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+            HiAnalyticsTools.enableLog();
+        }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
+        registerReceiver(mHmsMessageBroadcastReceiver, filter);
+
+        setHmsMessageServiceAutoInit(true);
+        getHmsMessageServiceToken();
+    }
+
+    private void disablePrivacySensitiveServices() {
+        unregisterReceiver(mHmsMessageBroadcastReceiver);
+        setHmsMessageServiceAutoInit(false);
+        deleteHmsMessageServiceToken();
+    }
+
 
     private void setHmsMessageServiceAutoInit(boolean enabled) {
         Log.d(TAG, "PushKit: setHmsMessageServiceAutoInit");
