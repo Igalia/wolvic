@@ -35,9 +35,10 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
             return;
 
         if (!SettingsStore.getInstance(getContext()).isTermsServiceAccepted()) {
+            Fragment fragment = BuildConfig.CN_FIRST_RUN_IN_PHONE_UI ? new FirstRunFragment() : new TermsServiceFragment();
             getFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.fragment_placeholder, new TermsServiceFragment())
+                    .replace(R.id.fragment_placeholder, fragment)
                     .commit();
         } else if (!SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted()) {
             getFragmentManager().beginTransaction()
@@ -52,7 +53,7 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
         } else {
             getFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(android.R.id.content, new EnterVrFragment())
+                    .replace(R.id.fragment_placeholder, new EnterVrFragment())
                     .commit();
         }
     }

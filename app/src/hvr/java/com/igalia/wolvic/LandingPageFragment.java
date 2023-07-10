@@ -112,7 +112,7 @@ public class LandingPageFragment extends Fragment {
         EnterVrFragment fragment = new EnterVrFragment();
         getFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(android.R.id.content, fragment)
+                .add(R.id.fragment_placeholder, fragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -121,7 +121,7 @@ public class LandingPageFragment extends Fragment {
         LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
         getFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(android.R.id.content, documentFragment)
+                .add(R.id.fragment_placeholder, documentFragment)
                 .addToBackStack(null)
                 .commit();
     }
