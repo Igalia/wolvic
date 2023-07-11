@@ -14,7 +14,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
