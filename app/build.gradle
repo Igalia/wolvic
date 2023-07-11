@@ -535,6 +535,7 @@ dependencies {
     implementation deps.lifecycle.viewmodel
     implementation deps.lifecycle.java8
     implementation deps.lifecycle.process
+    implementation deps.support.core
     implementation deps.support.annotations
     implementation deps.support.app_compat
     implementation deps.support.recyclerview

@@ -100,6 +100,7 @@ app_services.rustlog = "org.mozilla.appservices:rustlog:${versions.mozilla_appse
 deps.app_services = app_services
 
 def support = [:]
+support.core = "androidx.core:core:1.10.1"
 support.annotations = "androidx.annotation:annotation:1.1.0"
 support.app_compat = "androidx.appcompat:appcompat:1.4.2"
 support.recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
@@ -187,7 +188,7 @@ build_versions.min_sdk_wave = 25
 build_versions.target_sdk = 31
 build_versions.target_sdk_wave = 31
 build_versions.target_sdk_spaces = 29
-build_versions.compile_sdk = 31
+build_versions.compile_sdk = 33
 build_versions.build_tools = "30.0.3"
 ext.build_versions = build_versions
 
