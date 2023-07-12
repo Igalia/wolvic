@@ -855,7 +855,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                         + padding.top + statePadding;
                 canvas.translate(drawableX, drawableY);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    key.icon.setColorFilter(new BlendModeColorFilter(targetColor, BlendMode.MULTIPLY));
+                    key.icon.setColorFilter(new BlendModeColorFilter(targetColor, BlendMode.MODULATE));
                 } else {
                     key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
                 }
