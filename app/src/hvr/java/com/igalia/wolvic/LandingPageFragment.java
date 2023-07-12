@@ -32,6 +32,26 @@ public class LandingPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            toolbar.showOverflowMenu();
+            toolbar.inflateMenu(R.menu.app_menu);
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.enter_vr) {
+                    showEnterVr();
+                    return true;
+                } else if (item.getItemId() == R.id.terms_service) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
+                    return true;
+                } else if (item.getItemId() == R.id.privacy_policy) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
+                    return true;
+                }
+                return false;
+            });
+        }
+
         WebView webView = view.findViewById(R.id.web_view);
 
         // Links to wolvic.com will be opened in this Web view, "mailto" links will launch the email app
@@ -81,31 +101,6 @@ public class LandingPageFragment extends Fragment {
         enterVrButton.setOnClickListener(v -> {
             showEnterVr();
         });
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            toolbar.showOverflowMenu();
-            toolbar.inflateMenu(R.menu.app_menu);
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.enter_vr) {
-                    showEnterVr();
-                    return true;
-                } else if (item.getItemId() == R.id.terms_service) {
-                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
-                    return true;
-                } else if (item.getItemId() == R.id.privacy_policy) {
-                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
-                    return true;
-                }
-                return false;
-            });
-        }
     }
 
     private void showEnterVr() {
