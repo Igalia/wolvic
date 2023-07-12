@@ -15,7 +15,7 @@ jobs:
         flavour: [
           assembleOculusvrArm64GeckoMetaStore,
           assembleHvrArm64GeckoGeneric,
-          assembleHvrArm64GeckoAppInChina,
+          assembleHvrArm64GeckoMainlandChina,
           assemblePicoxrArm64GeckoGeneric,
           assembleLynxArm64GeckoGeneric,
           assembleSpacesArm64GeckoGeneric

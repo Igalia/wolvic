@@ -343,10 +343,12 @@ android {
             }
         }
 
-        appInChina {
+        mainlandChina {
             applicationId "com.cn.igalia.wolvic"
             dimension "store"
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
+            buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
         }
     }
 
@@ -361,7 +363,7 @@ android {
             variant.setIgnore(platform != 'noapi');
 
         // Create variants for China only for HVR platforms
-        if (store == 'appInChina' && !platform.startsWith('hvr'))
+        if (store == 'mainlandChina' && !platform.startsWith('hvr'))
             variant.setIgnore(true);
 
         // Create variants for chromium/webkit, only when they are available
@@ -701,7 +703,7 @@ android.applicationVariants.all { variant ->
     // HVR packages for mainland china must only use HVR speech recognition system.
     def platform = variant.productFlavors.get(0).name
     def store = variant.productFlavors.get(3).name
-    if (platform.toLowerCase().startsWith('hvr') && store == "appInChina") {
+    if (platform.toLowerCase().startsWith('hvr') && store == "mainlandChina") {
         variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
     }
 }
