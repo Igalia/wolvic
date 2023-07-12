@@ -16,6 +16,7 @@ jobs:
           assembleOculusvrArm64WorldGeckoGeneric,
           assembleOculusvrArm64WorldGeckoMetaStore,
           assembleHvrArm64WorldGeckoGeneric,
+          assembleHvrArm64GeckoMainlandChina
           assemblePicoxrArm64WorldGeckoGeneric,
           assembleLynxArm64WorldGeckoGeneric,
           assembleSpacesArm64WorldGeckoGeneric
