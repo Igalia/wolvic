@@ -1593,6 +1593,26 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">头戴设备：%1$s</string>
+    <!-- These strings are used in the first-run flow on the phone UI in mainland China. -->
+    <string name="rCN_first_launch_title">“Wolvic”用户协议及隐私政策申明</string>
+    <string name="rCN_first_launch_body">
+        欢迎使用 Wolvic !
+        \n
+        \n 注册使用 Wolvic 需要您同意用户协议和隐私政策，否则我们无法为 您提供服务。请您仔细阅读下方政策中的条款后再点击“同意”前往下一 步。如果您选择“不同意”，您将无法使用 Wolvic 。
+        \n
+        \n您可以阅读完整版用户协议和隐私政策
+    </string>
+    <string name="rCN_first_launch_clickable_terms_text">用户协议</string>
+    <string name="rCN_first_launch_clickable_privacy_text">隐私政策</string>
+    <string name="rCN_first_launch_agree">同意</string>
+    <string name="rCN_first_launch_disagree">不同意</string>
+    <string name="rCN_first_launch_confirmation_body">
+        如果您不同意本用户协议和隐私政策，很遗憾我们将无法继续为您提供服务。
+        \n
+        \n您可以阅读完整版用户协议和隐私政策
+    </string>
+    <string name="rCN_first_launch_confirmation_agree">同意并继续</string>
+    <string name="rCN_first_launch_confirmation_disagree">不同意并退出</string>
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
      This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">若要使用该应用,请连接华为 VR 眼镜 </string>
