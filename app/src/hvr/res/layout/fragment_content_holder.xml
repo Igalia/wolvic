@@ -7,14 +7,6 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.MaterialComponents.Toolbar.Primary"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        app:popupTheme="@style/Theme.WolvicPhone.PopupOverlay" />
-
     <FrameLayout
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"
