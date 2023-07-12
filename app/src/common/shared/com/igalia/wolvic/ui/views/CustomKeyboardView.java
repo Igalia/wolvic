@@ -18,6 +18,8 @@ package com.igalia.wolvic.ui.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -28,6 +30,7 @@ import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.Keyboard.Key;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -851,7 +854,11 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 final float drawableY = (key.height - padding.top - padding.bottom - key.icon.getIntrinsicHeight()) / 2.0f
                         + padding.top + statePadding;
                 canvas.translate(drawableX, drawableY);
-                key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    key.icon.setColorFilter(new BlendModeColorFilter(targetColor, BlendMode.MODULATE));
+                } else {
+                    key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
+                }
                 key.icon.setBounds(0, 0, key.icon.getIntrinsicWidth(), key.icon.getIntrinsicHeight());
                 key.icon.draw(canvas);
                 canvas.translate(-drawableX, -drawableY);
