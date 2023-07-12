@@ -2342,6 +2342,25 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          '%1$s' Will be replaced at runtime with the uri. -->
     <string name="external_open_uri_error_security_exception_body">SecurityException when starting intent for %1$s</string>
 
+    <!-- These strings are used in the first-run flow on the phone UI in mainland China. -->
+    <string name="rCN_first_launch_title">User Agreement &amp; Privacy Policy Notification</string>
+    <string name="rCN_first_launch_body">
+        Welcome to “Wolvic”!
+        \n
+        \nRegistering and using “Wolvic” requires you to agree to the User Agreement and Privacy Policy, or else we cannot provide services to you. Please carefully read the documents and click on “Agree” to continue. If you click “Disagree”, you will not be able to continue using “Wolvic”.
+        \n
+        \nYou can read the complete User Agreement and Privacy Policy.</string>
+    <string name="rCN_first_launch_clickable_terms_text">User Agreement</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Privacy Policy</string>
+    <string name="rCN_first_launch_agree">Agree</string>
+    <string name="rCN_first_launch_disagree">Disagree</string>
+    <string name="rCN_first_launch_confirmation_body">
+        \nIf you select “Disagree”, unfortunately we will no longer be able to provide services for you.
+        \n
+        \nYou can read the complete User Agreement and Privacy Policy.</string>
+    <string name="rCN_first_launch_confirmation_agree">Agree and Continue</string>
+    <string name="rCN_first_launch_confirmation_disagree">Disagree and Quit</string>
+
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
          This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">Connect your HUAWEI VR Glass to use this app</string>
