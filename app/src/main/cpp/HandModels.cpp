@@ -183,11 +183,28 @@ HandModels::Draw(const vrb::Camera& aCamera, const Controller& aController) {
   vrb::Matrix modelMatrix = vrb::Matrix::Identity();
   VRB_GL_CHECK(glUniformMatrix4fv(m.uModel, 1, GL_FALSE, modelMatrix.Data()));
 
-  assert(aController.meshJointTransforms.size() == state.jointCount);
-  std::vector<vrb::Matrix> jointMatrices;
-  jointMatrices.resize(state.jointCount);
+  auto jointMatrices = aController.meshJointTransforms;
+
+  // We ignore the first matrix, corresponding to the palm, because the
+  // models we are currently using don't include a palm joint.
+  assert(jointMatrices.size() == state.jointCount + 1);
+  jointMatrices.erase(jointMatrices.begin());
+
+  // The hand model we are currently using for the left hand has the
+  // bind matrices of the joints in reverse order with respect to that
+  // of the XR_EXT_hand_tracking extension, hence we correct it here
+  // before assigning.
+  if (aController.leftHanded) {
+    for (int i = 0; i < jointMatrices.size() / 2; i++) {
+      auto tmp = jointMatrices[i];
+      jointMatrices[i] = jointMatrices[jointMatrices.size() - i - 1];
+      jointMatrices[jointMatrices.size() - i - 1] = tmp;
+    }
+  }
+
+  assert(jointMatrices.size() == state.jointCount);
   for (int i = 0; i < state.jointCount; i++) {
-    jointMatrices[i] = aController.meshJointTransforms[i].PostMultiply(state.bindMatrices[i]);
+    jointMatrices[i].PostMultiplyInPlace(state.bindMatrices[i]);
     VRB_GL_CHECK(glUniformMatrix4fv(m.uJointMatrices + i, 1, GL_FALSE, jointMatrices[i].Data()));
   }
 
