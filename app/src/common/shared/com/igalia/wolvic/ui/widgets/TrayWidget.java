@@ -36,6 +36,7 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.TrayBinding;
@@ -818,6 +819,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private void updateWifi() {
+        // We are collecting sensitive data here, so we should ensure the user granted permissions.
+        if (!(SettingsStore.getInstance(getContext()).isTermsServiceAccepted() &&
+                SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted())) {
+            return;
+        }
+
         if ((mTrayViewModel.getWifiConnected().getValue() != null) && mTrayViewModel.getWifiConnected().getValue().get()) {
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
