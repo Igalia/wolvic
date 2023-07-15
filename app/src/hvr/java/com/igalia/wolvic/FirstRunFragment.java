@@ -1,7 +1,7 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -106,7 +106,7 @@ public class FirstRunFragment extends Fragment {
 
     private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {
         LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
-        getFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.fragment_placeholder, documentFragment)
                 .addToBackStack(null)

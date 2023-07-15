@@ -1,7 +1,7 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -105,7 +105,7 @@ public class LandingPageFragment extends Fragment {
 
     private void showEnterVr() {
         EnterVrFragment fragment = new EnterVrFragment();
-        getFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.fragment_placeholder, fragment)
                 .addToBackStack(null)
@@ -114,7 +114,7 @@ public class LandingPageFragment extends Fragment {
 
     private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {
         LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
-        getFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.fragment_placeholder, documentFragment)
                 .addToBackStack(null)
