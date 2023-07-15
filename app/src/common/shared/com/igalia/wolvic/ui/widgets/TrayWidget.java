@@ -17,6 +17,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -830,8 +831,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                // TODO: Deprecated calculateSignalLevel(int, int), see https://github.com/Igalia/wolvic/issues/802
-                int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+                int level;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                    level = wifiManager.calculateSignalLevel(wifiInfo.getRssi());
+                } else {
+                    level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+                }
                 if (level != mLastWifiLevel) {
                     if (updateWifiIcon(level)) {
                         mLastWifiLevel = level;
