@@ -1,6 +1,6 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -48,7 +48,7 @@ public class LegalDocumentFragment extends Fragment {
         view.requestFocus();
         view.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 return true;
             } else {
                 return false;
@@ -57,12 +57,12 @@ public class LegalDocumentFragment extends Fragment {
 
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_icon_back);
-        toolbar.setNavigationOnClickListener(v -> getFragmentManager().popBackStack());
+        toolbar.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
 
         NestedScrollView contentHolder = view.findViewById(R.id.scrollview);
 
         View content;
-        if (LegalDocument.TERMS_OF_SERVICE.equals(args.get(LEGAL_DOCUMENT))) {
+        if (LegalDocument.TERMS_OF_SERVICE.ordinal() == args.getInt(LEGAL_DOCUMENT)) {
             toolbar.setTitle(R.string.terms_service_title);
             content = inflater.inflate(R.layout.terms_service_content, contentHolder, false);
         } else {
