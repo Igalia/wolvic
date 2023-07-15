@@ -694,7 +694,10 @@ if(gradle.hasProperty("userProperties.openxr") && !gradle.startParameter.taskNam
 }
 
 if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
-    if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
+    if (getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains('x86_64')
+            && gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdirX64')) {
+        ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdirX64"
+    } else if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
         ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
     }
     ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
