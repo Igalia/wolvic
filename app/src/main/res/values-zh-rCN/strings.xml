@@ -1280,6 +1280,12 @@
     <string name="before_unload_prompt_stay">留在页面</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">离开页面</string>
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">确认重新提交表单</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">您所查找的网页要使用已输入的信息。返回此页可能需要重复已进行的所有操作。是否要继续操作？</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">继续</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">解除屏蔽页面</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->

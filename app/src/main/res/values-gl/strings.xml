@@ -409,6 +409,9 @@
     <string name="before_unload_prompt_message">Esta páxina está pedindo confirmación de que desexa abandonala. Os datos introducidos pódense perder.</string>
     <string name="before_unload_prompt_stay">Quedar na páxina</string>
     <string name="before_unload_prompt_leave">Abandonar a páxina</string>
+    <string name="repost_confirm_title">Confirmar reenvío do formulario</string>
+    <string name="repost_confirm_message">A páxina que estás buscando utilizou información que inseriches ti. Se volves a esa páxina é posible que se repita algunha das accións que levaches a cabo. Queres continuar?</string>
+    <string name="repost_confirm_continue">Continuar</string>
     <string name="performance_unblock_page">Desbloquear a páxina</string>
     <string name="performance_title">Rendemento baixo da páxina</string>
     <string name="performance_message">Probe a reducir o tamaño da xanela para mellorar o rendemento. Desbloquear esta páxina pode facer que a aplicación se peche por un erro.</string>

@@ -492,6 +492,9 @@
     <string name="max_windows_button">OK</string>
     <string name="not_entitled_message">%1$s não tem permissão para ser executado neste dispositivo e agora será encerrado.</string>
     <string name="before_unload_prompt_leave">Deixar página</string>
+    <string name="repost_confirm_title">Confirmar reenvio do formulário</string>
+    <string name="repost_confirm_message">A página que você está procurando usou as informações inseridas. Voltar à essa página poderá fazer com que todas as ações realizadas antes sejam repetidas. Quer continuar?</string>
+    <string name="repost_confirm_continue">Continuar</string>
     <string name="performance_unblock_page">Desbloquear página</string>
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar seu aplicativo.</string>
