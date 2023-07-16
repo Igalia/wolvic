@@ -1282,6 +1282,12 @@
     <string name="before_unload_prompt_stay">このページに留まる</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">別のページへ移動する</string>
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">フォーム再送信の確認</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">検索しているページは、入力した情報を使用しています。このページに戻った場合、操作のやり直しが発生する可能性があります。続行しますか？</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">続行</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">ページのブロックを解除します</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
