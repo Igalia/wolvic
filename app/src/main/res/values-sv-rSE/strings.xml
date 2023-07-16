@@ -1769,4 +1769,19 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n• E-post: info@igalia.com
 \n
 \nInnehållet och elementen som utgör applikationen har implementerats och/eller utvecklats av IGALIA under licenser med öppen källkod, och skyddas, utan begränsningar, av lagen om immateriell och industriell äganderätt i kungariket Spanien och av de internationella fördrag och avtal som kan resultat av ansökan.</string>
+    <string name="rCN_first_launch_title">Användaravtal och integritetspolicyavisering</string>
+    <string name="rCN_first_launch_body">Välkommen till “Wolvic”!
+\n
+\nRegistrering och användning av \"Wolvic\" kräver att du godkänner användaravtalet och integritetspolicyn, annars kan vi inte tillhandahålla tjänster till dig. Läs dokumenten noggrant och klicka på \"Godkänn\" för att fortsätta. Om du klickar på \"Godkänn inte\" kommer du inte att kunna fortsätta använda \"Wolvic\".
+\n
+\nDu kan läsa hela användaravtalet och sekretesspolicyn.</string>
+    <string name="rCN_first_launch_clickable_terms_text">Användaravtal</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Integritetspolicy</string>
+    <string name="rCN_first_launch_agree">Acceptera</string>
+    <string name="rCN_first_launch_disagree">Acceptera inte</string>
+    <string name="rCN_first_launch_confirmation_body">\\om du väljer \"Acceptera inte\", kommer vi tyvärr inte längre att kunna tillhandahålla tjänster åt dig.
+\n
+\nDu kan läsa hela användaravtalet och sekretesspolicyn.</string>
+    <string name="rCN_first_launch_confirmation_agree">Acceptera och fortsätt</string>
+    <string name="rCN_first_launch_confirmation_disagree">Acceptera inte och Avsluta</string>
 </resources>
