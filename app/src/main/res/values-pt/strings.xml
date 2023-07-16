@@ -118,6 +118,9 @@
     <string name="no_internet_title">Conexão à Internet Perdida</string>
     <string name="max_windows_button">OK</string>
     <string name="before_unload_prompt_leave">Deixar página</string>
+    <string name="repost_confirm_title">Confirmar nova submissão de formulário</string>
+    <string name="repost_confirm_message">A página que procura utilizou informações introduzidas por si. Regressar a essa página poderá originar a repetição de qualquer ação que tenha efetuado. Pretende continuar?</string>
+    <string name="repost_confirm_continue">Continuar</string>
     <string name="performance_unblock_page">Desbloquear página</string>
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar a sua app.</string>
