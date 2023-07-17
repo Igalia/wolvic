@@ -53,9 +53,9 @@ def getOpenXRFlags = { ->
 
 def getOpenXRCMakeFlags = { ->
     if (gradle.hasProperty("userProperties.openxr")) {
-        return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : ""
+        return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : "-DOPENXR=OFF"
     }
-    return ""
+    return "-DOPENXR=OFF"
 }
 
 def getHVRAppId = { ->
@@ -128,7 +128,12 @@ android {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
                          " -I" + file("src/main/cpp").absolutePath +
-                         " -I" + file("src/main/cpp/vrb/include").absolutePath
+                         " -I" + file("src/main/cpp/vrb/include").absolutePath +
+                         // CMake 3.10+ needs "-DANDROID" flag, since ANDROID
+                         // flag has been removed in favor of __ANDROID__. But
+                         // vrb still uses "#if defined(ANDROID)"
+                         " -DANDROID"
+
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
@@ -179,7 +184,6 @@ android {
 
     externalNativeBuild {
         cmake {
-            version "3.10.2"
             path "CMakeLists.txt"
         }
     }
