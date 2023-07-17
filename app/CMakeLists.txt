@@ -54,29 +54,29 @@ if(WAVEVR)
 target_sources(
     native-lib
     PUBLIC
-    src/wavevr/cpp/native-lib.cpp
-    src/wavevr/cpp/DeviceDelegateWaveVR.cpp
+    ${CMAKE_SOURCE_DIR}/src/wavevr/cpp/native-lib.cpp
+    ${CMAKE_SOURCE_DIR}/src/wavevr/cpp/DeviceDelegateWaveVR.cpp
     )
 elseif(NOAPI)
 target_sources(
     native-lib
     PUBLIC
-    src/noapi/cpp/native-lib.cpp
-    src/noapi/cpp/DeviceDelegateNoAPI.cpp
+    ${CMAKE_SOURCE_DIR}/src/noapi/cpp/native-lib.cpp
+    ${CMAKE_SOURCE_DIR}/src/noapi/cpp/DeviceDelegateNoAPI.cpp
     )
 elseif(HVR)
     target_sources(
             native-lib
             PUBLIC
-            src/hvr/cpp/native-lib.cpp
-            src/main/cpp/BrowserEGLContext.cpp
+            ${CMAKE_SOURCE_DIR}/src/hvr/cpp/native-lib.cpp
+            ${CMAKE_SOURCE_DIR}/src/main/cpp/BrowserEGLContext.cpp
     )
 else()
 target_sources(
     native-lib
     PUBLIC
-    src/main/cpp/native-lib.cpp
-    src/main/cpp/BrowserEGLContext.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/BrowserEGLContext.cpp
     )
 
 include(AndroidNdkModules)
@@ -121,15 +121,15 @@ if(OPENXR)
     target_sources(
             native-lib
             PUBLIC
-            src/openxr/cpp/DeviceDelegateOpenXR.cpp
-            src/openxr/cpp/OpenXRSwapChain.cpp
-            src/openxr/cpp/OpenXRLayers.cpp
-            src/openxr/cpp/OpenXRGestureManager.cpp
-            src/openxr/cpp/OpenXRInput.cpp
-            src/openxr/cpp/OpenXRInputSource.cpp
-            src/openxr/cpp/OpenXRActionSet.cpp
-            src/openxr/cpp/OpenXRExtensions.cpp
-            src/openxr/cpp/OpenXRPassthroughStrategy.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/DeviceDelegateOpenXR.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRSwapChain.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRLayers.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRGestureManager.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRInput.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRInputSource.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRActionSet.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRExtensions.cpp
+            ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRPassthroughStrategy.cpp
     )
 
 elseif(OCULUSVR)
@@ -141,9 +141,9 @@ include_directories(
 target_sources(
     native-lib
     PUBLIC
-    src/oculusvr/cpp/DeviceDelegateOculusVR.cpp
-    src/oculusvr/cpp/OculusSwapChain.cpp
-    src/oculusvr/cpp/OculusVRLayers.cpp
+    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/DeviceDelegateOculusVR.cpp
+    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/OculusSwapChain.cpp
+    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/OculusVRLayers.cpp
     )
 add_custom_command(TARGET native-lib POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
