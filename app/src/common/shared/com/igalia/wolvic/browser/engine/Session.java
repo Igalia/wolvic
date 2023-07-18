@@ -876,7 +876,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     public void loadHomePage() {
-        loadUri(getHomeUri());
+        loadUri(getHomeUri(), WSession.LOAD_FLAGS_BYPASS_CACHE);
     }
 
     public void loadPrivateBrowsingPage() {
