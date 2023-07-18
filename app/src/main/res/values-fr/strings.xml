@@ -1775,4 +1775,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \nVeuillez installer la nouvelle version de Wolvic à partir de l’Oculus Store.
 \n
 \nIMPORTANT : hormis si vous utilisez Firefox Sync, la nouvelle application Wolvic n’aura ni vos marque-pages ni vos onglets.</string>
+    <string name="rCN_first_launch_body">Bienvenue dans « Wolvic » !
+\n
+\nAfin de vous enregistrer et d’utiliser « Wolvic », vous devez accepter les conditions d’utilisation et la politique de confidentialité, ou nous ne pourrons pas vous fournir de services. Veuillez lire attentivement les documents et cliquer sur « Accepter » pour continuer. Si vous cliquez « Refuser », vous ne pourrez pas continuer à utiliser « Wolvic ».
+\n
+\nVous pouvez lire l\'intégralité des conditions d’utilisation et de la politique de confidentialité.</string>
+    <string name="user_feedback_tooltip">Partager idées et retours d\'expérience</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Politique de confidentialité</string>
+    <string name="rCN_first_launch_agree">Accepter</string>
+    <string name="rCN_first_launch_disagree">Refuser</string>
+    <string name="rCN_first_launch_confirmation_disagree">Refuser et quitter</string>
+    <string name="rCN_first_launch_confirmation_body">If vous sélectionnez « Refuser », nous ne pourrons malheureusement plus vous fournir de services.
+\n
+\nVous pouvez lire l’intégralité des conditions d’utilisation et de la politique de confidentialité.</string>
+    <string name="rCN_first_launch_title">Notification de conditions d’utilisation et politique de confidentialité</string>
+    <string name="rCN_first_launch_clickable_terms_text">Conditions d\'utilisation</string>
+    <string name="rCN_first_launch_confirmation_agree">Accepter et Continuer</string>
 </resources>
