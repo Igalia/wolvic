@@ -428,6 +428,11 @@ struct VRControllerState {
   // https://immersive-web.github.io/webxr/#dom-xrinputsource-targetrayspace
   VRPose targetRayPose;
 
+  // When Cap_Orientation is set in flags, targetRayOrientation corresponds
+  // to the orientation of the target ray (origin of the ray is determined by
+  // the controller position). Only used by the Chromium backend.
+  float targetRayOrientation[4];
+
   bool isPositionValid;
   bool isOrientationValid;
 

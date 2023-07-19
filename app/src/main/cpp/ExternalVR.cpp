@@ -528,6 +528,9 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
         vrb::Vector position(controller.transformMatrix.GetTranslation());
         memcpy(&(immersiveController.targetRayPose.position), position.Data(), sizeof(immersiveController.targetRayPose.position));
       }
+
+      vrb::Quaternion immersiveBeamRotate(controller.immersiveBeamTransform);
+      memcpy(&(immersiveController.targetRayOrientation), immersiveBeamRotate.Data(), sizeof(immersiveController.targetRayOrientation));
     }
 
     if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_GripSpacePosition)) {
