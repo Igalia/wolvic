@@ -76,7 +76,19 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setUserAgentMode(int value) {
-        mSessionSettings.setUserAgentMode(value);
+        switch (value) {
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE);
+                break;
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.DESKTOP);
+                break;
+            case WSessionSettings.USER_AGENT_MODE_VR:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE_VR);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user agent mode: " + value);
+        }
     }
 
     @Override
@@ -91,7 +103,17 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public int getUserAgentMode() {
-        return mSessionSettings.getUserAgentMode();
+        SessionSettings.UserAgentMode mode = mSessionSettings.getUserAgentMode();
+        switch (mode) {
+            case MOBILE:
+                return WSessionSettings.USER_AGENT_MODE_MOBILE;
+            case DESKTOP:
+                return WSessionSettings.USER_AGENT_MODE_DESKTOP;
+            case MOBILE_VR:
+                return WSessionSettings.USER_AGENT_MODE_VR;
+            default:
+                throw new IllegalStateException("Invalid user agent mode: " + mode);
+        }
     }
 
     @Override
