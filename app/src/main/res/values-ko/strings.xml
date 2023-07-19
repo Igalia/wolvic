@@ -1773,4 +1773,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
     <string name="deprecated_version_dialog_info_button">자세히 알아보기…</string>
     <string name="deprecated_version_dialog_store_button">설치…</string>
+    <string name="user_feedback_tooltip">의견 혹은 피드백 보내기</string>
+    <string name="rCN_first_launch_title">사용자 계약 &amp; 개인정보 보호 정책 알림</string>
+    <string name="rCN_first_launch_body">\"Wolvic\" 사용을 환영합니다!
+\n
+\n\"Wolvic\"을 이용하시려면 사용자 계약 및 개인정보 보호 정책에 동의해야 합니다. 관련 문서들을 주의 깊게 읽어보신 후 \"동의함\"을 클릭해 주시길 바랍니다. \"비동의\"를 클릭하신 경우, \"Wolvic\"을 사용하실 수 없습니다.
+\n
+\n당신은 사용자 계약 및 개인정보 보호 정책 전문을 확인하실 수 있습니다.</string>
+    <string name="rCN_first_launch_clickable_terms_text">사용자 계약</string>
+    <string name="rCN_first_launch_clickable_privacy_text">개인정보 보호 정책</string>
+    <string name="rCN_first_launch_agree">동의함</string>
+    <string name="rCN_first_launch_disagree">동의안함</string>
+    <string name="rCN_first_launch_confirmation_body">만약 \"동의안함\"을 선택하셨다면, 우리는 당신에게 서비스를 제공할 수 없습니다.
+\n
+\n당신은 사용자 계약 및 개인정보 보호 정책 전문을 확인하실 수 있습니다.</string>
+    <string name="rCN_first_launch_confirmation_agree">동의하고 계속하기</string>
+    <string name="rCN_first_launch_confirmation_disagree">동의하지 않고 종료하기</string>
 </resources>
