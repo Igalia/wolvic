@@ -2,18 +2,21 @@ package com.igalia.wolvic.browser.api.impl;
 
 import androidx.annotation.Nullable;
 
+import org.chromium.wolvic.SessionSettings;
+
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
 public class SettingsImpl implements WSessionSettings {
+    SessionSettings mSessionSettings = new SessionSettings();
+
+    // TODO: move these fields to the Chromium backend once they are supported.
     boolean mPrivateMode;
     boolean mUseTrackingProtection = true;
     boolean mSuspendMediaWhenInactive = false;
     boolean mAllowJavaScript = true;
     boolean mFullAccesibilityTree = false;
-    String mUserAgentOverride;
     int mDisplayMode = WSessionSettings.DISPLAY_MODE_BROWSER;
     int mViewportMode = WSessionSettings.VIEWPORT_MODE_MOBILE;
-    int mUserAgentMode = WSessionSettings.USER_AGENT_MODE_VR;
 
     public SettingsImpl(boolean aPrivateMode) {
         mPrivateMode = aPrivateMode;
@@ -73,7 +76,19 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setUserAgentMode(int value) {
-        // TODO: implement
+        switch (value) {
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE);
+                break;
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.DESKTOP);
+                break;
+            case WSessionSettings.USER_AGENT_MODE_VR:
+                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE_VR);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user agent mode: " + value);
+        }
     }
 
     @Override
@@ -88,8 +103,17 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public int getUserAgentMode() {
-        // TODO: implement
-        return WSessionSettings.USER_AGENT_MODE_MOBILE;
+        SessionSettings.UserAgentMode mode = mSessionSettings.getUserAgentMode();
+        switch (mode) {
+            case MOBILE:
+                return WSessionSettings.USER_AGENT_MODE_MOBILE;
+            case DESKTOP:
+                return WSessionSettings.USER_AGENT_MODE_DESKTOP;
+            case MOBILE_VR:
+                return WSessionSettings.USER_AGENT_MODE_VR;
+            default:
+                throw new IllegalStateException("Invalid user agent mode: " + mode);
+        }
     }
 
     @Override
@@ -104,13 +128,12 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setUserAgentOverride(@Nullable String value) {
-        // TODO: override in browser engine
-        mUserAgentOverride = value;
+        mSessionSettings.setUserAgentOverride(value);
     }
 
     @Nullable
     @Override
     public String getUserAgentOverride() {
-        return mUserAgentOverride;
+        return mSessionSettings.getUserAgentOverride();
     }
 }
