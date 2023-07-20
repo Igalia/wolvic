@@ -195,11 +195,8 @@ HandModels::Draw(const vrb::Camera& aCamera, const Controller& aController) {
   // of the XR_EXT_hand_tracking extension, hence we correct it here
   // before assigning.
   if (aController.leftHanded) {
-    for (int i = 0; i < jointMatrices.size() / 2; i++) {
-      auto tmp = jointMatrices[i];
-      jointMatrices[i] = jointMatrices[jointMatrices.size() - i - 1];
-      jointMatrices[jointMatrices.size() - i - 1] = tmp;
-    }
+    for (int i = 0; i < jointMatrices.size() / 2; i++)
+      std::swap(jointMatrices[i], jointMatrices[jointMatrices.size() - i - 1]);
   }
 
   assert(jointMatrices.size() == state.jointCount);
