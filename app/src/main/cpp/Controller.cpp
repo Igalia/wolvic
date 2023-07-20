@@ -75,11 +75,8 @@ Controller::operator=(const Controller& aController) {
   squeezeActionStartFrameId = aController.squeezeActionStartFrameId;
   squeezeActionStopFrameId = aController.squeezeActionStopFrameId;
   batteryLevel = aController.batteryLevel;
-  handMeshToggle = aController.handMeshToggle;
-  handJointTransforms = aController.handJointTransforms;
-  if (aController.handMesh)
-    handMesh = std::make_unique<ControllerDelegate::HandMesh>(*aController.handMesh);
   hasAim = aController.hasAim;
+  handJointTransforms = aController.handJointTransforms;
   handActionEnabled = aController.handActionEnabled;
   handActionButtonToggle = aController.handActionButtonToggle;
   handActionButtonTransform = aController.handActionButtonTransform;
@@ -129,11 +126,8 @@ Controller::Reset() {
   squeezeActionStartFrameId = 0;
   squeezeActionStopFrameId = 0;
   batteryLevel = -1;
-  handJointTransforms.clear();
-  handMeshToggle = nullptr;
-  handMesh = nullptr;
   hasAim = true;
-  meshJointTransforms.clear();
+  handJointTransforms.clear();
   handActionEnabled = false;
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;

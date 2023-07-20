@@ -28,7 +28,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/DeviceUtils.cpp
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/FadeAnimation.cpp
-             src/main/cpp/HandModels.cpp
+             src/main/cpp/HandMeshRenderer.cpp
              src/main/cpp/Quad.cpp
              src/main/cpp/EngineSurfaceTexture.cpp
              src/main/cpp/ExternalBlitter.cpp

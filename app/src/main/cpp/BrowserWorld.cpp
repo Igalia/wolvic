@@ -12,7 +12,7 @@
 #include "EngineSurfaceTexture.h"
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
-#include "HandModels.h"
+#include "HandMeshRenderer.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Pointer.h"
@@ -210,7 +210,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   VRLayerPassthroughPtr layerPassthrough;
-  HandModelsPtr handModelsRenderer = nullptr;
+  HandMeshRendererPtr handMeshRenderer = nullptr;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -530,29 +530,15 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
 
-    // We don't use hand models for Pico because the runtime is giving us
-    // incorrect data on some joints; instead, a sphere is drawn for each joint.
-#if !defined(PICOXR) && !defined(SPACES)
-    // Lazy-load hand models
-    if (controller.mode == ControllerMode::Hand && !controller.handMesh) {
-      controllers->LoadHandMeshFromAssets(controller);
-    }
-#else
-    if (controller.handMeshToggle)
-      controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
-#endif
-
     if (controller.beamToggle)
       controller.beamToggle->ToggleAll(controller.hasAim);
 
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
-    // If we are rendering hands using spheres, update the joints' transforms here.
-    if (controller.handJointTransforms.size() > 0) {
-      assert(controller.handJointTransforms.size() == controller.meshJointTransforms.size());
-      for (int i = 0; i < controller.handJointTransforms.size(); i++)
-        controller.handJointTransforms[i]->SetTransform(controller.meshJointTransforms[i]);
+    if (handMeshRenderer) {
+      handMeshRenderer->Update(controller, controllers->GetRoot(),
+                               controller.enabled && controller.mode == ControllerMode::Hand);
     }
 
     if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
@@ -561,8 +547,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
       vrb::Matrix indexTipMatrix;
       vrb::Matrix thumbTipMatrix;
-      indexTipMatrix = controller.meshJointTransforms[indexTipIndex];
-      thumbTipMatrix = controller.meshJointTransforms[thumbTipIndex];
+      indexTipMatrix = controller.handJointTransforms[indexTipIndex];
+      thumbTipMatrix = controller.handJointTransforms[thumbTipIndex];
 
       vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
       vrb::Vector position = indexTipMatrix.GetTranslation() - center;
@@ -1685,6 +1671,15 @@ BrowserWorld::TickWorld() {
   };
 }
 
+HandMeshStrategy
+SelectHandMeshRenderingStrategy() {
+#if defined(PICOXR) || defined(SPACES)
+  return HandMeshStrategy::Spheres;
+#else
+  return HandMeshStrategy::Skinned;
+#endif
+}
+
 void
 BrowserWorld::DrawWorld(device::Eye aEye) {
   ASSERT(m.device->ShouldRender());
@@ -1726,12 +1721,24 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
     m.drawList->Draw(*camera);
   }
 
-  // Draw hand models
+  // Draw hand mesh if active
   for (Controller& controller: m.controllers->GetControllers()) {
-    if (controller.enabled && controller.mode == ControllerMode::Hand && controller.handMesh) {
-      if (!m.handModelsRenderer)
-        m.handModelsRenderer = HandModels::Create(m.create);
-      m.handModelsRenderer->Draw(*camera, controller);
+    if (controller.enabled && controller.mode == ControllerMode::Hand) {
+      if (!m.handMeshRenderer) {
+        // Lazily create the hand mesh rendering object
+        HandMeshStrategy strategy = SelectHandMeshRenderingStrategy();
+        switch (strategy) {
+          case HandMeshStrategy::Spheres:
+            m.handMeshRenderer = HandMeshRendererSpheres::Create(m.create);
+            break;
+          case HandMeshStrategy::Skinned:
+            // fall-through
+          default:
+            m.handMeshRenderer = HandMeshRendererSkinned::Create(m.create);
+        }
+      }
+      assert(m.handMeshRenderer);
+      m.handMeshRenderer->Draw(controller, *camera);
     }
   }
 
