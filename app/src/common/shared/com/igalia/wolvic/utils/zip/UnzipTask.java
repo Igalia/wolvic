@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.progress.ProgressMonitor;
 
 import java.io.File;
@@ -58,7 +58,7 @@ public class UnzipTask {
             zipFile.setRunInThread(true);
             zipFile.extractAll(outputPath);
             mUnzipMonitor = zipFile.getProgressMonitor();
-            while (mUnzipMonitor.getState() == ProgressMonitor.STATE_BUSY) {
+            while (mUnzipMonitor.getState() == ProgressMonitor.State.BUSY) {
                 double progress = zipFile.getProgressMonitor().getPercentDone();
 
                 notifyProgress(progress);
@@ -89,7 +89,7 @@ public class UnzipTask {
 
     public void cancel() {
         if (mUnzipMonitor != null) {
-            mUnzipMonitor.cancelAllTasks();
+            mUnzipMonitor.setCancelAllTasks(true);
         }
     }
 
