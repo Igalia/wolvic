@@ -211,6 +211,8 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     if (!m.root)
         return;
 
+    controller.meshJointTransforms = jointTransforms;
+
     CreationContextPtr create = m.context.lock();
 
     // Initialize left and right hands action button, which for now triggers back navigation
@@ -272,30 +274,6 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
 
             controller.handMeshToggle->AddNode(transform);
         }
-    }
-
-    assert(jointTransforms.size() == controller.handJointTransforms.size());
-    for (uint32_t i = 0; i < jointTransforms.size(); i++) {
-        auto transform = jointTransforms[i];
-        assert(controller.handJointTransforms[i]);
-        controller.handJointTransforms[i]->SetTransform(transform);
-    }
-#else
-    std::vector<vrb::Matrix> tmpJointTransforms = jointTransforms;
-    // We ignore the first matrix, corresponding to the palm, because the
-    // models we are currently using don't include a palm joint.
-    tmpJointTransforms.erase(tmpJointTransforms.begin());
-
-    if (controller.meshJointTransforms.size() == 0)
-        controller.meshJointTransforms.resize(tmpJointTransforms.size());
-    assert(controller.meshJointTransforms.size() == tmpJointTransforms.size());
-
-    // The hand model we are currently using for the left hand has the
-    // bind matrices of the joints in reverse order with respect to that
-    // of the XR_EXT_hand_tracking extension, hence we correct it here
-    // before assigning.
-    for (int i = 0, j = tmpJointTransforms.size() - 1; i < tmpJointTransforms.size(); i++, j--) {
-        controller.meshJointTransforms[i] = tmpJointTransforms[controller.leftHanded ? j : i];
     }
 #endif
 }

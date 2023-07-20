@@ -548,23 +548,22 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
+    // If we are rendering hands using spheres, update the joints' transforms here.
+    if (controller.handJointTransforms.size() > 0) {
+      assert(controller.handJointTransforms.size() == controller.meshJointTransforms.size());
+      for (int i = 0; i < controller.handJointTransforms.size(); i++)
+        controller.handJointTransforms[i]->SetTransform(controller.meshJointTransforms[i]);
+    }
+
     if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
       // Layout the button between the thumb and index fingertips
       const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
       const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
       vrb::Matrix indexTipMatrix;
       vrb::Matrix thumbTipMatrix;
-      if (controller.handMesh) {
-        assert(controller.meshJointTransforms.size() > 0);
-        // We substract 1 from the index because we removed the palm joint (index 0) to match
-        // the joints in our hand mesh.
-        indexTipMatrix = controller.meshJointTransforms[indexTipIndex - 1];
-        thumbTipMatrix = controller.meshJointTransforms[thumbTipIndex - 1];
-      } else {
-        assert(controller.handJointTransforms.size() > 0);
-        indexTipMatrix = controller.handJointTransforms[indexTipIndex]->GetTransform();
-        thumbTipMatrix = controller.handJointTransforms[thumbTipIndex]->GetTransform();
-      }
+      indexTipMatrix = controller.meshJointTransforms[indexTipIndex];
+      thumbTipMatrix = controller.meshJointTransforms[thumbTipIndex];
+
       vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
       vrb::Vector position = indexTipMatrix.GetTranslation() - center;
 
