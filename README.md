@@ -78,11 +78,11 @@ The command line version of `gradlew` requires JDK 11. If you see an error that 
 
 *If you want to build Wolvic for WaveVR SDK:*
 
-Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://vivedeveloper.com/), and unzip it. Then, from the top-level project directory, run:
+Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://developer.vive.com/resources/vive-wave/download/archive/320/), and unzip it. Then, from the top-level project directory, run:
 
 ```bash
 mkdir -p third_party/wavesdk
-cp /path/to/the/sdk/2.0.32/SDK/libs/wvr_client.aar third_party/wavesdk
+cp wave_3.2.0_native_1/repo/com/htc/vr/wvr_client/3.2.0/wvr_client-3.2.0.aar third_party/wavesdk/wvr_client.aar
 ```
 
 Make certain to set the build flavor to `wavevrDebug` in Android Studio before building the project.
