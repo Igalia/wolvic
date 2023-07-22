@@ -1381,6 +1381,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mConfirmDialog.setTitle(promptData.getTitle());
         mConfirmDialog.setBody(promptData.getBody());
+        if (promptData.getTitleGravity() != Gravity.NO_GRAVITY) {
+            mConfirmDialog.setTitleGravity(promptData.getTitleGravity());
+        }
         if (promptData.getBodyGravity() != Gravity.NO_GRAVITY) {
             mConfirmDialog.setBodyGravity(promptData.getBodyGravity());
         }
