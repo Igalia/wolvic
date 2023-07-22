@@ -1748,23 +1748,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_cancel">Annuler</string>
     <string name="download_addon_install_confirm_install">Installer</string>
     <string name="download_addon_install_blocked">Installation de l\'extension locale bloquée</string>
-    <string name="download_copy_to_content_uri_confirm_title">Copier le fichier \?</string>
-    <string name="download_copy_to_content_uri_success_title">Copie réussie</string>
-    <string name="download_copy_to_content_uri_success_body">Le fichier a été copié avec succès et est disponible dans le répertoire Téléchargements du système.</string>
-    <string name="download_copy_to_content_uri_error_title">Échec de la copie</string>
-    <string name="download_context_copy_to_content_uri">Partager avec d\'autres applications</string>
     <string name="download_addon_install">Installer l\'extension</string>
     <string name="addons_experimental_section_title">Expérimental</string>
     <string name="web_apps_loading">Chargement des Applications Web</string>
     <string name="web_apps_dialog_cancel">Annuler</string>
     <string name="hamburger_menu_save_web_app">Enregistrer l\'application Web…</string>
     <string name="download_addon_install_blocked_body">Pour continuer, autorisez l\'installation de l\'extension locale dans les Options pour les développeurs.</string>
-    <string name="download_copy_to_content_uri_error_body">Une erreur est survenue lors de la copie du fichier téléchargé.</string>
     <string name="web_apps_dialog_body">Souhaitez-vous installer l\'application Web suivante \? Elle sera disponible dans la librairie.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">Une erreur est survenue lors de la copie de %1$s</string>
-    <string name="download_copy_to_content_uri_confirm_body">Une copie du fichier va être créée dans le répertoire Téléchargements du système, accessible par d\'autres applications.
-\n
-\nSouhaitez-vous continuer \?</string>
     <string name="settings_language_portuguese">Portugais</string>
     <string name="deprecated_version_dialog_title">Mise à jour recommandée</string>
     <string name="deprecated_version_dialog_info_button">En savoir plus…</string>
