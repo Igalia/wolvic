@@ -138,7 +138,7 @@ public class DownloadsManager {
 
         if (job.getOutputPath() == null) {
             try {
-                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
@@ -166,7 +166,7 @@ public class DownloadsManager {
             return;
         }
 
-        final File dir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        final File dir = new File(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS);
         if (dir == null) {
             Log.e(LOGTAG, "Error when saving " + job.getUri() + " : failed to get the Downloads directory");
             return;
