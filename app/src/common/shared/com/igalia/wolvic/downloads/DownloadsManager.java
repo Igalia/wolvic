@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -174,11 +173,13 @@ public class DownloadsManager {
             int currentIndex = 0;
             int lastDashIndex = name.lastIndexOf('-');
             if (lastDashIndex >= 0) {
+                String nameBackup = name;
                 try {
                     name = name.substring(0, lastDashIndex - 1);
                     String index = name.substring(lastDashIndex + 1);
                     currentIndex = Integer.parseInt(index);
                 } catch (Exception e) {
+                    name = nameBackup;
                 }
             }
             do {
@@ -205,9 +206,11 @@ public class DownloadsManager {
         }
         Log.i(LOGTAG, "Saved " + job.getUri() + " to " + file.getName() + " (" + readBytes + " bytes)");
 
-        mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
+        long downloadId = mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
                 true, UrlUtils.getMimeTypeFromUrl(file.getPath()), file.getPath(), readBytes, true,
-                Uri.parse(job.getUri().replaceFirst("^blob:","")), null);
+                Uri.parse(job.getUri().replaceFirst("^blob:", "")), null);
+
+        notifyDownloadCompleted(downloadId);
     }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {
@@ -291,17 +294,8 @@ public class DownloadsManager {
             String action = intent.getAction();
             long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 
-            if (mDownloadManager != null && DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(downloadId);
-                Cursor c = mDownloadManager.query(query);
-                if (c != null) {
-                    if (c.moveToFirst()) {
-                        notifyDownloadsUpdate();
-                        notifyDownloadCompleted(Download.from(c));
-                    }
-                    c.close();
-                }
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                notifyDownloadCompleted(downloadId);
             }
         }
     };
@@ -314,6 +308,23 @@ public class DownloadsManager {
         if (!activeDownloads) {
             stopUpdates();
         }
+    }
+
+    private void notifyDownloadCompleted(@NonNull long downloadId) {
+        if (mDownloadManager == null) {
+            return;
+        }
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        Cursor c = mDownloadManager.query(query);
+        if (c == null) {
+            return;
+        }
+        if (c.moveToFirst()) {
+            notifyDownloadsUpdate();
+            notifyDownloadCompleted(Download.from(c));
+        }
+        c.close();
     }
 
     private void notifyDownloadCompleted(@NonNull Download download) {
