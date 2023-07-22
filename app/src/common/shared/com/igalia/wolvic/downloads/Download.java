@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.format.Formatter;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -193,30 +194,17 @@ public class Download {
         switch (download.mStatus) {
             case Download.RUNNING:
                 try {
-                    if (download.mSizeBytes < MEGABYTE) {
-                        return String.format(language.getLocale(), "%.2f/%.2fKb (%d%%)",
-                                ((double)download.mDownloadedBytes / (double)KILOBYTE),
-                                ((double)download.mSizeBytes / (double)KILOBYTE),
-                                (download.mDownloadedBytes*100)/download.mSizeBytes);
-
-                    } else {
-                        return String.format(language.getLocale(), "%.2f/%.2fMB (%d%%)",
-                                ((double)download.mDownloadedBytes / (double)MEGABYTE),
-                                ((double)download.mSizeBytes / (double)MEGABYTE),
-                                (download.mDownloadedBytes*100)/download.mSizeBytes);
-                    }
+                    return Formatter.formatFileSize(context, download.mDownloadedBytes) + '/' +
+                            Formatter.formatFileSize(context, download.mSizeBytes) +
+                            String.format(language.getLocale(), " (%d%%)",
+                            (download.mDownloadedBytes*100)/download.mSizeBytes);
 
                 } catch (Exception e) {
                     return "-/-";
                 }
 
             case Download.SUCCESSFUL:
-                if (download.mSizeBytes < MEGABYTE) {
-                    return String.format(language.getLocale(), "%.2fKb", ((double)download.mSizeBytes / (double)KILOBYTE));
-
-                } else {
-                    return String.format(language.getLocale(), "%.2fMB", ((double)download.mSizeBytes / (double)MEGABYTE));
-                }
+                return Formatter.formatFileSize(context, download.mSizeBytes);
 
             case Download.FAILED:
                 return context.getString(R.string.download_status_failed);
