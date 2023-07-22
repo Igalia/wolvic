@@ -1646,10 +1646,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="upload_button">Загрузить</string>
     <string name="web_apps_dialog_cancel">Отмена</string>
     <string name="web_apps_saved_notification">Веб-приложение добавлено!</string>
-    <string name="download_context_copy_to_content_uri">Дать доступ другим приложениям</string>
     <string name="web_apps_dialog_body">Вы желаете установить это веб-приложение\? Оно будет доступно в Библиотеке.</string>
     <string name="download_addon_install">Установить дополнение</string>
-    <string name="download_copy_to_content_uri_success_body">Файл успешно скопирован и доступен в системной папке «Загруки».</string>
     <string name="download_addon_install_blocked_body">Чтобы продолжить, разрешите установку локальных дополнений в Настройках разработчика.</string>
     <string name="permissions_dialog_remember_choice">Запомнить этот выбор</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
@@ -1665,13 +1663,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_cancel">Отмена</string>
     <string name="download_addon_install_confirm_install">Установить</string>
     <string name="download_addon_install_blocked">Установка локального дополнения заблокирована</string>
-    <string name="download_copy_to_content_uri_confirm_title">Копировать файл\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Будет создана копия этого файла в системной папке «Загрузки», где она будет доступна для других приложений.
-\n
-\nЖелаете продолжить\?</string>
-    <string name="download_copy_to_content_uri_success_title">Успешно скопировано</string>
-    <string name="download_copy_to_content_uri_error_title">Ошибка копирования</string>
-    <string name="download_copy_to_content_uri_error_body">При копировании загруженного файла возникла ошибка.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">При копировании %1$s возникла ошибка</string>
     <string name="voice_service_metkai">MeetKai</string>
 </resources>

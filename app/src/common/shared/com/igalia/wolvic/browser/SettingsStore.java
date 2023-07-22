@@ -763,7 +763,7 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public @SortingContextMenuWidget.Order int getDownloadsSortingOrder() {
+    public @Storage int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
     }
 

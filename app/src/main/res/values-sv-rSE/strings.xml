@@ -1637,12 +1637,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permissions_dialog_remember_choice">Kom ihåg detta beslut</string>
     <string name="upload_button">Ladda upp</string>
     <string name="web_apps_saved_notification">Webbapp har lagts till!</string>
-    <string name="download_context_copy_to_content_uri">Dela med andra appar</string>
     <string name="hamburger_menu_save_web_app">Spara Webbapp…</string>
-    <string name="download_copy_to_content_uri_error_body_v1">Ett fel uppstod under kopieringen av %1$s</string>
     <string name="download_addon_install_confirm_install">Installera</string>
     <string name="download_addon_install_blocked_body">Tillåt lokal tilläggsinstallation i utvecklaralternativ för att fortsätta.</string>
-    <string name="download_copy_to_content_uri_error_body">Ett fel uppstod när den nedladdade filen skulle kopieras.</string>
     <string name="addons_experimental_section_title">Experimentell</string>
     <string name="web_apps_title">Webbappar</string>
     <string name="web_apps_description">Klicka på knappen Spara webbapp... när du är på en sida för att lägga till den i dina webbappar.</string>
@@ -1656,13 +1653,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install">Installera tillägg</string>
     <string name="download_addon_install_cancel">Avbryt</string>
     <string name="download_addon_install_blocked">Lokal tilläggsinstallation blockerad</string>
-    <string name="download_copy_to_content_uri_confirm_title">Kopiera fil\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Detta skapar en kopia av den här filen i systemets nedladdningsmapp, där den kan nås av andra appar.
-\n
-\nVill du fortsätta\?</string>
-    <string name="download_copy_to_content_uri_success_title">Kopierades framgångsrikt</string>
-    <string name="download_copy_to_content_uri_success_body">Filen kopierades framgångsrikt och är tillgänglig i systemets nedladdningar.</string>
-    <string name="download_copy_to_content_uri_error_title">Kopieringsfel</string>
     <string name="security_options_permission_fine_location_warning">Wolvic kan bara få din ungefärliga plats. Detta kan ändras i systeminställningarna.</string>
     <string name="upload_list_empty">Inga filer tillgängliga för uppladdning</string>
     <string name="deprecated_version_dialog_title">Rekommenderad uppdatering</string>

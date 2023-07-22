@@ -1634,8 +1634,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permissions_dialog_remember_choice">Husk denne beslutning</string>
     <string name="hamburger_menu_save_web_app">Gem webapp…</string>
     <string name="web_apps_loading">Indlæsning af webapps</string>
-    <string name="download_context_copy_to_content_uri">Del med andre apps</string>
-    <string name="download_copy_to_content_uri_error_body_v1">Der opstod en fejl under kopiering af %1$s</string>
     <string name="upload_button">Upload</string>
     <string name="addons_experimental_section_title">Eksperimentelt</string>
     <string name="web_apps_title">Web apps</string>
@@ -1652,14 +1650,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_confirm_install">Installer</string>
     <string name="download_addon_install_blocked">Lokal addon-installation blokeret</string>
     <string name="download_addon_install_blocked_body">Tillad lokal addon-installation i Udviklingsindstillinger for at fortsætte.</string>
-    <string name="download_copy_to_content_uri_confirm_title">Vil du kopiere filen\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Dette vil oprette en kopi af denne fil i systemets downloads-mappe, hvor den kan tilgås af andre apps.
-\n
-\nVil du fortsætte\?</string>
-    <string name="download_copy_to_content_uri_success_title">Kopieret med succes</string>
-    <string name="download_copy_to_content_uri_success_body">Filen blev kopieret med succes og er tilgængelig i systemets Downloads.</string>
-    <string name="download_copy_to_content_uri_error_title">Kopieringsfejl</string>
-    <string name="download_copy_to_content_uri_error_body">Der opstod en fejl under kopiering af den downloadede fil.</string>
     <string name="notifications_loading">Indlæsning af notifikationer</string>
     <string name="notifications_empty">Din notifikationsliste er tom</string>
     <string name="notifications_title">Notifikationer</string>
