@@ -1623,7 +1623,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_choose_language_voice_search_service_title">音声検索サービス</string>
     <string name="settings_language_choose_language_voice_search_service_description">音声検索に使用するサービスの優先順位を設定できます。</string>
     <string name="settings_language_galician">ガリシア語</string>
-    <string name="download_context_copy_to_content_uri">他のアプリと共有する</string>
     <string name="notifications_title">通知</string>
     <string name="web_apps_empty">ウェブアプリリストが空です</string>
     <string name="web_apps_loading">ウェブアプリを読み込んでいます</string>
@@ -1635,15 +1634,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_confirm_install">インストール</string>
     <string name="download_addon_install_blocked">ローカルアドオンのインストールはブロックされています</string>
     <string name="download_addon_install_blocked_body">開発者オプションにローカルアドオンのインストールを許可する。</string>
-    <string name="download_copy_to_content_uri_confirm_title">ファイルをコピーしますか？</string>
-    <string name="download_copy_to_content_uri_success_title">コピーが成功しました</string>
-    <string name="download_copy_to_content_uri_confirm_body">このファイルのコピーをシステムのダウンロードフォルダーに保存します。その場合、他のアプリにもアクセス可能になります。
-\n
-\n続けますか？</string>
-    <string name="download_copy_to_content_uri_success_body">コピーが成功しました、ファイルはシステムのダンロードフォルダーに保存しました。</string>
-    <string name="download_copy_to_content_uri_error_title">コピーエラー</string>
-    <string name="download_copy_to_content_uri_error_body">ダウンロードしたファイルのコピー中にエラーが発生しました。</string>
-    <string name="download_copy_to_content_uri_error_body_v1">%1$sをコピー中にエラーが発生しました</string>
     <string name="voice_service_metkai">MeetKai</string>
     <string name="upload_button">アップロード</string>
     <string name="upload_list_empty">アップロードできるファイルがありません</string>

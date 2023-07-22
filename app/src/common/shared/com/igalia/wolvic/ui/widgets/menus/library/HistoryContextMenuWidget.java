@@ -30,10 +30,10 @@ public class HistoryContextMenuWidget extends LibraryContextMenuWidget {
                 isBookmarked ? R.drawable.ic_icon_bookmarked_active : R.drawable.ic_icon_bookmarked,
                 () -> mItemDelegate.ifPresent((present -> {
                     if (isBookmarked) {
-                        ((HistoryContextMenuCallback) mItemDelegate.get()).onRemoveFromBookmarks(mItem);
+                        ((HistoryContextMenuCallback)mItemDelegate.get()).onRemoveFromBookmarks(mItem);
 
                     } else {
-                        ((HistoryContextMenuCallback) mItemDelegate.get()).onAddToBookmarks(mItem);
+                        ((HistoryContextMenuCallback)mItemDelegate.get()).onAddToBookmarks(mItem);
                     }
                 }))));
     }

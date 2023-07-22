@@ -1378,11 +1378,6 @@
          and also from disk. -->
     <string name="download_context_delete">Delete</string>
 
-    <!-- This string is displayed is the downloads context menu that is displayed when
-         the more button is pressed in a downloads item. It creates a copy of the selected item
-         in the public Downloads folder so it may be used by other apps. -->
-    <string name="download_context_copy_to_content_uri">Share with other apps</string>
-
     <!-- This string is displayed as the title of the System Notifications List, which contains
          the notifications received by the system (similar to Android's Notification Center). -->
     <string name="notifications_title">Notifications</string>
@@ -2235,28 +2230,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the error dialog shown when downloaded addon installation is blocked. -->
     <string name="download_addon_install_blocked_body">Allow local addon installation in Developer Options to proceed.</string>
-
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_title">Copy file?</string>
-
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_body">This will create a copy of this file on the system\'s Downloads folder, where it can be accessed by other apps.\n\nDo you want to continue?</string>
-
-    <!-- This string is displayed in the title of the download error dialog. -->
-    <string name="download_copy_to_content_uri_success_title">Successfully copied</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_success_body">The file was copied successfully and is available in the system\'s Downloads.</string>
-
-    <!-- This string is displayed in the title of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_title">Copy error</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_body">An error occurred while copying the downloaded file.</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog.
-         '%1$s' will be replaced at runtime with the name of the downloaded file. -->
-    <string name="download_copy_to_content_uri_error_body_v1">An error occurred while copying %1$s</string>
 
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->

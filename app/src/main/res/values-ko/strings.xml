@@ -1734,21 +1734,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_title">알림</string>
     <string name="notifications_empty">알림 목록이 비어있습니다</string>
     <string name="notifications_loading">알림을 로드 중 입니다</string>
-    <string name="download_context_copy_to_content_uri">다른 앱으로 공유</string>
     <string name="download_addon_install">애드온 설치</string>
     <string name="download_addon_install_cancel">취소</string>
     <string name="download_addon_install_confirm_install">설치</string>
     <string name="download_addon_install_blocked">애드온 설치 실패</string>
     <string name="download_addon_install_blocked_body">계속 진행하려면 개발자 옵션에서 애드온 설치를 허용해야 합니다.</string>
-    <string name="download_copy_to_content_uri_confirm_title">파일을 복사하시겠습니까\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">이 파일을 시스템의 Downloads 폴더에 복사합니다. 이 폴더는 다른 앱으로부터의 접근이 가능합니다.
-\n
-\n계속 하시겠습니까\?</string>
-    <string name="download_copy_to_content_uri_success_title">복사 성공</string>
-    <string name="download_copy_to_content_uri_success_body">파일이 시스템의 Downloads 폴더에 성공적으로 복사됐습니다.</string>
-    <string name="download_copy_to_content_uri_error_title">복사 실패</string>
-    <string name="download_copy_to_content_uri_error_body">다운로드한 파일을 복사하는 중 오류가 발생했습니다.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">%1$s을(를) 복사하는 중 오류가 발생했습니다</string>
     <string name="web_apps_title">웹 앱</string>
     <string name="web_apps_description">웹 앱에 추가할 페이지에 있을 때 웹 앱 저장... 버튼을 클릭하세요.</string>
     <string name="web_apps_empty">웹 앱 목록이 비어 있습니다</string>
