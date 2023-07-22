@@ -1599,6 +1599,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mWidgetManager.getFocusedWindow().showConfirmPrompt(new PromptData.Builder()
                     .withIconRes(R.drawable.ic_icon_downloads)
                     .withTitle(getResources().getString(R.string.download_confirm_title))
+                    .withTitleGravity(Gravity.START)
                     .withBody(downloadJob.getFilename() + fileSize)
                     .withBodyGravity(Gravity.START)
                     .withBtnMsg(new String[]{
