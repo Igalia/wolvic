@@ -271,6 +271,10 @@ public class PromptDialogWidget extends UIDialog {
         mBinding.checkbox.setChecked(checked);
     }
 
+    public void setTitleGravity(int gravity) {
+        mBinding.title.setGravity(gravity);
+    }
+
     public void setBodyGravity(int gravity) {
         mBinding.body.setGravity(gravity);
     }
