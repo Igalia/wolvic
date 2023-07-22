@@ -714,19 +714,12 @@
     <string name="notifications_title">Notificações</string>
     <string name="addons_experimental_section_title">Experimental</string>
     <string name="web_apps_title">Aplicativos Web</string>
-    <string name="download_context_copy_to_content_uri">Compartilhar com outros aplicativos</string>
     <string name="web_apps_empty">Sua lista de Aplicativos Web está vazia</string>
     <string name="web_apps_loading">Carregando Aplicativos Web</string>
     <string name="web_apps_dialog_title">Instalar Aplicativo Web</string>
     <string name="web_apps_description">Clique no botão Salvar Aplicativo Web... quando você estiver em uma página para adicioná-lo aos seus Aplicativos Web.</string>
     <string name="web_apps_saved_notification">Aplicativo Web adicionado!</string>
     <string name="download_addon_install_blocked">Instalação de complemento local bloqueada</string>
-    <string name="download_copy_to_content_uri_confirm_title">Copiar arquivo\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Isso criará uma cópia desse arquivo na pasta do sistema Downloads, onde ele pode ser acessado por outros aplicativos.
-\n
-\nDeseja continuar\?</string>
-    <string name="download_copy_to_content_uri_success_body">Este arquivo foi copiado com sucesso e está disponível na pasta Downloads.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">Ocorreu um erro ao copiar %1$s</string>
     <string name="download_addon_install_confirm_install">Instalar</string>
     <string name="upload_button">Carregar</string>
     <string name="upload_list_empty">Não há arquivos disponíveis para carregar</string>
@@ -736,9 +729,6 @@
     <string name="download_addon_install">Instalar complemento</string>
     <string name="download_addon_install_cancel">Cancelar</string>
     <string name="download_addon_install_blocked_body">Permita a instalação de Complemento local nas Opções do Desenvolvedor para continuar.</string>
-    <string name="download_copy_to_content_uri_error_body">Ocorreu um erro ao copiar o arquivo baixado.</string>
-    <string name="download_copy_to_content_uri_success_title">Copiado com sucesso</string>
-    <string name="download_copy_to_content_uri_error_title">Erro de cópia</string>
     <string name="web_apps_dialog_body">Deseja instalar o seguinte Aplicativo Web\? Ele estará disponível na Biblioteca.</string>
     <string name="hamburger_menu_save_web_app">Salvar aplicativo Web…</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
