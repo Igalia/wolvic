@@ -270,7 +270,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
         mKeyboardLayout = findViewById(R.id.keyboardLayout);
         mKeyboardContainer = findViewById(R.id.keyboardContainer);
-        mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag));
+        mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag, Remember.YES));
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
@@ -691,7 +691,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void setDefaultKeyboard() {
         KeyboardInterface keyboard = getKeyboardForLocale(SettingsStore.getInstance(getContext()).getKeyboardLocale());
         if (keyboard != null) {
-            handleLanguageChange(keyboard);
+            handleLanguageChange(keyboard, Remember.NO);
             return;
         }
 
@@ -707,7 +707,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             // Fall back to english.
             keyboard = getKeyboardForLocale(Locale.ENGLISH);
         }
-        handleLanguageChange(keyboard);
+        handleLanguageChange(keyboard, Remember.NO);
     }
 
     private KeyboardInterface getKeyboardForLocale(@Nullable Locale aLocale) {
@@ -877,7 +877,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         updateCandidates();
     }
 
-    private void handleLanguageChange(KeyboardInterface aKeyboard) {
+    enum Remember {
+        YES,
+        NO;
+    }
+    private void handleLanguageChange(KeyboardInterface aKeyboard, Remember remember) {
         cleanComposingText();
 
         mCurrentKeyboard = aKeyboard;
@@ -916,7 +920,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         params.topMargin = mCurrentKeyboard.supportsAutoCompletion() ? WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_margin_top_without_autocompletion) : 0;
         mKeyboardLayout.setLayoutParams(params);
 
-        SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
+        if (remember == Remember.YES) {
+            SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
+        }
+
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         updateSpaceBarLanguageLabel();
         disableShift(getSymbolsKeyboard());
