@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -17,6 +18,8 @@ import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -123,17 +126,24 @@ public class OffscreenDisplay {
 
             super.onCreate(savedInstanceState);
             try {
-                getWindow()
-                        .getDecorView()
-                        // TODO: Deprecated setSystemUiVisibility(int) and related flags,
-                        //  see https://github.com/Igalia/wolvic/issues/800
-                        .setSystemUiVisibility(
-                                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    getWindow().setDecorFitsSystemWindows(false);
+                    WindowInsetsController controller = getWindow().getInsetsController();
+                    if (controller != null) {
+                        controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+                        controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                    }
+                } else {
+                    getWindow()
+                            .getDecorView()
+                            .setSystemUiVisibility(
+                                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                }
             } catch (Exception e) {
             }
         }
