@@ -143,8 +143,7 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public String getDefaultUserAgent(int mode) {
-        // TODO: implement
-        return "";
+        return mSettings.getDefaultUserAgent(mode);
     }
 
     @Override
