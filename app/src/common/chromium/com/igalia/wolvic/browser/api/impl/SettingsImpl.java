@@ -4,10 +4,11 @@ import androidx.annotation.Nullable;
 
 import org.chromium.wolvic.SessionSettings;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
 public class SettingsImpl implements WSessionSettings {
-    SessionSettings mSessionSettings = new SessionSettings();
+    private SessionSettings mSessionSettings = new SessionSettings();
 
     // TODO: move these fields to the Chromium backend once they are supported.
     boolean mPrivateMode;
@@ -75,20 +76,8 @@ public class SettingsImpl implements WSessionSettings {
     }
 
     @Override
-    public void setUserAgentMode(int value) {
-        switch (value) {
-            case WSessionSettings.USER_AGENT_MODE_MOBILE:
-                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE);
-                break;
-            case WSessionSettings.USER_AGENT_MODE_DESKTOP:
-                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.DESKTOP);
-                break;
-            case WSessionSettings.USER_AGENT_MODE_VR:
-                mSessionSettings.setUserAgentMode(SessionSettings.UserAgentMode.MOBILE_VR);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid user agent mode: " + value);
-        }
+    public void setUserAgentMode(int mode) {
+        mSessionSettings.setUserAgentMode(toUserAgentMode(mode));
     }
 
     @Override
@@ -135,5 +124,21 @@ public class SettingsImpl implements WSessionSettings {
     @Override
     public String getUserAgentOverride() {
         return mSessionSettings.getUserAgentOverride();
+    }
+
+    public String getDefaultUserAgent(int mode) {
+        return mSessionSettings.getDefaultUserAgent(toUserAgentMode(mode)) + " Wolvic/" + BuildConfig.VERSION_NAME;
+    }
+
+    private SessionSettings.UserAgentMode toUserAgentMode(int mode) {
+        switch (mode) {
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+                return SessionSettings.UserAgentMode.MOBILE;
+            case WSessionSettings.USER_AGENT_MODE_VR:
+                return SessionSettings.UserAgentMode.MOBILE_VR;
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP:
+            default:
+                return SessionSettings.UserAgentMode.DESKTOP;
+        }
     }
 }
