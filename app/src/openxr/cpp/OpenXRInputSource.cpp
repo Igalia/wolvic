@@ -669,7 +669,13 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     // Pose transforms.
     bool isPoseActive { false };
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
-    if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, localSpace, frameState, isPoseActive, poseLocation))) {
+#ifdef CHROMIUM
+    // Chromium's WebXR code expects aim space to be based on the grip space.
+    XrSpace baseSpace = renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
+#else
+    XrSpace baseSpace = localSpace;
+#endif
+    if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, baseSpace, frameState, isPoseActive, poseLocation))) {
         delegate.SetEnabled(mIndex, false);
         return;
     }
