@@ -33,6 +33,27 @@ public class TabWebContentsObserver extends WebContentsObserver {
         dispatchCanGoBackOrForward();
     }
 
+    /**
+     *  Called when the browser process starts a navigation in the primary main frame. Called before
+     * initiating the network request. See also
+     * https://chromium.googlesource.com/chromium/src/+/main/docs/navigation.md#Navigation
+     * @param navigationHandle
+     */
+    @Override
+    public void didStartNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
+        super.didStartNavigationInPrimaryMainFrame(navigationHandle);
+
+        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
+        if (delegate == null)
+            return;
+
+        // FIXME: how to select different target windows? Does it make sense here?.
+        delegate.onLoadRequest(mSession, new WSession.NavigationDelegate.LoadRequest(
+                navigationHandle.getUrl().getSpec(), navigationHandle.getReferrerUrl().getSpec(),
+                WSession.NavigationDelegate.TARGET_WINDOW_CURRENT, navigationHandle.isRedirect(),
+                navigationHandle.hasUserGesture(), navigationHandle.isRendererInitiated()));
+    }
+
     @Override
     public void didStopLoading(GURL url, boolean isKnownValid) {
         @Nullable WSession.ProgressDelegate delegate = mSession.getProgressDelegate();
