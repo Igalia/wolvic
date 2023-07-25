@@ -178,6 +178,9 @@ struct DeviceDelegateOpenXR::State {
       extensions.push_back(XR_FB_PASSTHROUGH_EXTENSION_NAME);
     }
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME))
+        extensions.push_back(XR_EXTX_OVERLAY_EXTENSION_NAME);
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;
@@ -885,6 +888,12 @@ DeviceDelegateOpenXR::ProcessEvents() {
         }
         break;
       }
+      case XR_TYPE_EVENT_DATA_MAIN_SESSION_VISIBILITY_CHANGED_EXTX: {
+        assert(OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME));
+        const auto &event = *reinterpret_cast<const XrEventDataMainSessionVisibilityChangedEXTX *>(ev);
+        VRB_LOG("OpenXR main session is now %s", event.visible == XR_TRUE ? "visible" : "not visible");
+        break;
+      }
       default: {
         VRB_DEBUG("OpenXR ignoring event type %d", ev->type);
         break;
@@ -1432,6 +1441,18 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   XrSessionCreateInfo createInfo{XR_TYPE_SESSION_CREATE_INFO};
   createInfo.next = reinterpret_cast<const XrBaseInStructure*>(&m.graphicsBinding);
   createInfo.systemId = m.system;
+
+  if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME)) {
+    XrSessionCreateInfoOverlayEXTX overlayInfo {
+      .type = XR_TYPE_SESSION_CREATE_INFO_OVERLAY_EXTX,
+      .createFlags = 0,
+      .sessionLayersPlacement = 0
+    };
+    auto oldNext = createInfo.next;
+    createInfo.next = &overlayInfo;
+    overlayInfo.next = oldNext;
+  }
+
   CHECK_XRCMD(xrCreateSession(m.instance, &createInfo, &m.session));
   CHECK(m.session != XR_NULL_HANDLE);
   VRB_LOG("OpenXR session created succesfully");
