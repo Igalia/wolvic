@@ -1765,4 +1765,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nPuedes leer el Acuerdo de usuario y la Política de privacidad completos.</string>
     <string name="rCN_first_launch_confirmation_disagree">No estar de acuerdo y renunciar</string>
+    <string name="keyboardview_keycode_cancel">Cancelar</string>
+    <string name="keyboardview_keycode_delete">Borrar</string>
+    <string name="keyboardview_keycode_done">Hecho</string>
+    <string name="keyboardview_keycode_mode_change">Cambio de modo</string>
+    <string name="keyboardview_keycode_enter">Intro</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
 </resources>
