@@ -306,7 +306,7 @@ android {
             }
         }
 
-        x86_64 {
+        x64 {
             dimension "abi"
             ndk {
                 abiFilters "x86_64"
@@ -377,8 +377,8 @@ android {
         def backend = variant.getFlavors().get(2).name
         def store = variant.getFlavors().get(3).name
 
-        // Create x86_64 variants only for noapi and aosp platforms
-        if (abi == 'x86_64')
+        // Create x64 variants only for noapi and aosp platforms
+        if (abi == 'x64')
             variant.setIgnore(platform != 'noapi' && platform !='aosp');
 
         // Create variants for China only for HVR platforms
@@ -645,7 +645,7 @@ dependencies {
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
-            def abi = getName().toLowerCase().contains('x86_64') ? 'x86_64' : 'arm64'
+            def abi = getName().toLowerCase().contains('x64') ? 'x86_64' : 'arm64'
             def candidate = "geckoview-${branch}-${abi}"
             select(candidates.find { it.id.module.contains(candidate) })
         }
@@ -690,7 +690,7 @@ if(gradle.hasProperty("userProperties.openxr") && !gradle.startParameter.taskNam
 }
 
 if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
-    if (getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains('x86_64')
+    if (getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains('x64')
             && gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdirX64')) {
         ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdirX64"
     } else if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
