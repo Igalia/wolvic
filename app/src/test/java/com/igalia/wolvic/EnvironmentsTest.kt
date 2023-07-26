@@ -15,7 +15,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
 
-
+// TODO: Fix all these tests or just remove all of them
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = TestApplication::class)
 class EnvironmentsTest {

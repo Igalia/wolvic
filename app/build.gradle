@@ -606,6 +606,7 @@ dependencies {
 
     // Testing
     androidTestImplementation deps.atsl.runner
+    androidTestImplementation deps.atsl.junit
     androidTestImplementation deps.espresso.core
     testImplementation deps.junit
     testImplementation deps.atsl.core
