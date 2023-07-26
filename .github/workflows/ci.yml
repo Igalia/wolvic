@@ -20,7 +20,7 @@ jobs:
           assemblePicoxrArm64GeckoGeneric,
           assembleLynxArm64GeckoGeneric,
           assembleSpacesArm64GeckoGeneric,
-          assembleAospX86_64GeckoGeneric
+          assembleAospX64GeckoGeneric
         ]
 
     steps:
