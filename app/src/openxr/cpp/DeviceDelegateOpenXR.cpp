@@ -37,7 +37,6 @@
 #ifdef OCULUSVR
 #include <openxr/openxr_oculus.h>
 #endif
-#include "OpenXRHelpers.h"
 #include "OpenXRSwapChain.h"
 #include "OpenXRInput.h"
 #include "OpenXRInputMappings.h"
@@ -46,6 +45,8 @@
 #include "OpenXRPassthroughStrategy.h"
 
 namespace crow {
+
+vrb::Vector kAverageHeight;
 
 struct DeviceDelegateOpenXR::State {
   vrb::RenderContextWeak context;
@@ -213,6 +214,17 @@ struct DeviceDelegateOpenXR::State {
     CHECK_MSG(system != XR_NULL_SYSTEM_ID, "Failed to initialize XRSystem");
 
     deviceType = DeviceUtils::GetDeviceTypeFromSystem(IsPositionTrackingSupported());
+
+      switch (deviceType) {
+          case device::HVR3DoF:
+          case device::HVR6DoF:
+              kAverageHeight = vrb::Vector(0.0f, 1.6f, 0.0f);
+              break;
+
+          default:
+              kAverageHeight = vrb::Vector(0.0f, 1.7f, 0.0f);
+              break;
+      }
 
     // If hand tracking extension is present, query whether the runtime actually supports it
     XrSystemHandTrackingPropertiesEXT handTrackingProperties{XR_TYPE_SYSTEM_HAND_TRACKING_PROPERTIES_EXT};
@@ -428,6 +440,11 @@ struct DeviceDelegateOpenXR::State {
       return std::find(spaces.begin(), spaces.end(), aType) != spaces.end();
     };
 
+    bool supportsStageSpace = false;
+    if (supportsSpace(XR_REFERENCE_SPACE_TYPE_STAGE)) {
+      supportsStageSpace = true;
+    }
+
     // Initialize view spaces used by default
     if (viewSpace == XR_NULL_HANDLE) {
       CHECK_MSG(supportsSpace(XR_REFERENCE_SPACE_TYPE_VIEW), "XR_REFERENCE_SPACE_TYPE_VIEW not supported");
@@ -438,21 +455,35 @@ struct DeviceDelegateOpenXR::State {
     }
 
     if (localSpace == XR_NULL_HANDLE) {
-      CHECK_MSG(supportsSpace(XR_REFERENCE_SPACE_TYPE_LOCAL), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
+      XrReferenceSpaceType spaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+      if (supportsStageSpace) {
+        spaceType = XR_REFERENCE_SPACE_TYPE_STAGE;
+      } else {
+        CHECK_MSG(supportsSpace(spaceType), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
+      }
       XrReferenceSpaceCreateInfo create{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
       create.poseInReferenceSpace = XrPoseIdentity();
-      create.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+      create.referenceSpaceType = spaceType;
       CHECK_XRCMD(xrCreateReferenceSpace(session, &create, &localSpace));
     }
 
     if (layersSpace == XR_NULL_HANDLE) {
-      CHECK_MSG(supportsSpace(XR_REFERENCE_SPACE_TYPE_LOCAL), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
+      XrReferenceSpaceType spaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+      if (supportsStageSpace) {
+        spaceType = XR_REFERENCE_SPACE_TYPE_STAGE;
+      } else {
+        CHECK_MSG(supportsSpace(spaceType), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
+      }
       XrReferenceSpaceCreateInfo create{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
-      create.poseInReferenceSpace  = XrPoseIdentity();
-      create.poseInReferenceSpace.position = {
-        -kAverageHeight.x(), -kAverageHeight.y(), -kAverageHeight.z()
-      };
-      create.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+      create.poseInReferenceSpace = XrPoseIdentity();
+      if (!supportsStageSpace) {
+        create.poseInReferenceSpace.position = {
+          -kAverageHeight.x(), -kAverageHeight.y(), -kAverageHeight.z()
+        };
+      } else {
+        kAverageHeight = vrb::Vector(0.0f, 0.0f, 0.0f);
+      }
+      create.referenceSpaceType = spaceType;
       CHECK_XRCMD(xrCreateReferenceSpace(session, &create, &layersSpace));
     }
 

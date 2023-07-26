@@ -12,11 +12,7 @@
 
 namespace crow {
 
-#if defined(HVR)
-  const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
-#else
-  const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
-#endif
+extern vrb::Vector kAverageHeight;
 
 inline std::string Fmt(const char* fmt, ...) {
     va_list vl;

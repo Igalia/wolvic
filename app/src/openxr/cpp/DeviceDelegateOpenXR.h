@@ -10,6 +10,7 @@
 #include "vrb/MacroUtils.h"
 #include "DeviceDelegate.h"
 #include "JNIUtil.h"
+#include "OpenXRHelpers.h"
 #include <memory>
 
 class android_app;
