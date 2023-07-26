@@ -264,6 +264,7 @@ android {
 
         aosp {
             dimension "platform"
+            targetSdkVersion build_versions.target_sdk_aosp
             externalNativeBuild {
                 cmake {
                     cppFlags " -DAOSP -DOPENXR -I" + file("src/openxr/cpp").absolutePath
