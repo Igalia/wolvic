@@ -983,8 +983,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     });
 
-    UpdateEnvironment();
-
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {
         m.skybox->SetTintColor(aTintColor);
@@ -1202,6 +1200,9 @@ BrowserWorld::TogglePassthrough() {
 void
 BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
+  if (!m.device || !m.device->IsInVRMode()) {
+    return;
+  }
   std::string skyboxPath = VRBrowser::GetActiveEnvironment();
   std::string extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(skyboxPath);
   if (VRBrowser::isOverrideEnvPathEnabled()) {
@@ -1896,19 +1897,12 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   // Pico's OpenXR runtime does not support compressed textures at the moment. Use PNGs in the
   // meantime.
   const std::string extension = aExtension.empty() ? ".png" : aExtension;
-  GLenum glFormat = GL_SRGB8_ALPHA8;
 #else
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
-  GLenum glFormat = GL_RGBA8;
 #endif
 
-  if (extension == ".ktx") {
-#if defined(OPENXR) && defined(OCULUSVR)
-    glFormat =  GL_COMPRESSED_SRGB8_ETC2;
-#else
-    glFormat =  GL_COMPRESSED_RGB8_ETC2;
-#endif
-  }
+  int64_t glFormat = m.device->GetColorFormat(extension);
+
   const int32_t size = 1024;
   if (m.skybox) {
     m.skybox->SetVisible(true);

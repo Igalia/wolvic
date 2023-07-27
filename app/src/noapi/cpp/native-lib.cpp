@@ -37,6 +37,7 @@ JNI_METHOD(void, activityResumed)
   }
   BrowserWorld::Instance().InitializeGL();
   BrowserWorld::Instance().Resume();
+  BrowserWorld::Instance().UpdateEnvironment();
 }
 
 JNI_METHOD(void, activityCreated)
@@ -49,6 +50,7 @@ JNI_METHOD(void, activityCreated)
   BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
   BrowserWorld::Instance().InitializeGL();
+  BrowserWorld::Instance().UpdateEnvironment();
 }
 
 JNI_METHOD(void, updateViewport)

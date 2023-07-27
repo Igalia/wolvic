@@ -175,6 +175,8 @@ JNI_METHOD(void, nativeOnSurfaceChanged)
   }
 
    sAppContext->mDevice->EnterVR(*sAppContext->mEgl);
+   // We need the session to be created before we can update the environment
+   BrowserWorld::Instance().UpdateEnvironment();
 }
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)

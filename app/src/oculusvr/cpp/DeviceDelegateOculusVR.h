@@ -60,7 +60,7 @@ public:
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
   void OnDestroy();
-  bool IsInVRMode() const;
+  bool IsInVRMode() const override;
   bool ExitApp();
 protected:
   struct State;

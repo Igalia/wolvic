@@ -60,12 +60,13 @@ public:
   bool usesPassthroughCompositorLayer() const override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) override;
+  int64_t GetColorFormat(std::string extension) override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
   void OnDestroy();
-  bool IsInVRMode() const;
+  bool IsInVRMode() const override;
   bool ExitApp();
   bool ShouldExitRenderLoop() const;
 protected:

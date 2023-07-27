@@ -277,14 +277,32 @@ struct DeviceDelegateOpenXR::State {
     CHECK_MSG(swapchainFormatCount > 0, "OpenXR unexpected swapchainFormatCount");
     swapchainFormats.resize(swapchainFormatCount, 0);
     CHECK_XRCMD(xrEnumerateSwapchainFormats(session, (uint32_t)swapchainFormats.size(), &swapchainFormatCount,
-                                            swapchainFormats.data()));
+                                           swapchainFormats.data()));
     VRB_LOG("OpenXR Available color formats: %d", swapchainFormatCount);
   }
 
-  bool SupportsColorFormat(int64_t aColorFormat) {
+  int64_t GetColorFormat(std::string extension = "") {
     if (swapchainFormats.size() == 0) {
       InitializeSwapChainFormats();
     }
+
+    std::vector<int64_t> targetFormats;
+    extension == ".ktx"
+      ? targetFormats = {GL_COMPRESSED_SRGB8_ETC2, GL_COMPRESSED_RGB8_ETC2}
+      : targetFormats = {GL_SRGB8_ALPHA8, GL_RGBA8};
+
+    for (auto format : swapchainFormats) {
+      // The application should use the highest preference format that it supports for optimal performance and quality.
+      if (std::find(targetFormats.begin(), targetFormats.end(), format) != targetFormats.end()) {
+        return format;
+      }
+    }
+
+    // Let's just return the first available format if all target format is not working
+    return swapchainFormats[0];
+  }
+
+  bool SupportsColorFormat(int64_t aColorFormat) {
     return std::find(swapchainFormats.begin(), swapchainFormats.end(), aColorFormat) != swapchainFormats.end();
   }
 
@@ -372,11 +390,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   XrSwapchainCreateInfo GetSwapChainCreateInfo(uint32_t w = 0, uint32_t h = 0) {
-#if OCULUSVR
-    const int64_t colorFormat = GL_SRGB8_ALPHA8;
-#else
-    const int64_t colorFormat = GL_RGBA8;
-#endif
+    const int64_t colorFormat = GetColorFormat();
     CHECK_MSG(SupportsColorFormat(colorFormat), "Runtime doesn't support selected swapChain color format");
 
     CHECK(viewConfig.size() > 0);
@@ -1416,6 +1430,11 @@ int32_t DeviceDelegateOpenXR::GetHandTrackingJointIndex(const HandTrackingJoints
     case HandTrackingJoints::LittleTip: return XR_HAND_JOINT_LITTLE_TIP_EXT;
   }
   return -1;
+}
+
+int64_t
+DeviceDelegateOpenXR::GetColorFormat(std::string extension) {
+  return m.GetColorFormat(extension);
 }
 
 void

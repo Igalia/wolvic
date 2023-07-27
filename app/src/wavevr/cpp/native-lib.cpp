@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
   VRB_LOG("Java Initialized.");
   BrowserWorld::Instance().InitializeGL();
   BrowserWorld::Instance().Resume();
+  BrowserWorld::Instance().UpdateEnvironment();
   while (sDevice->IsRunning()) {
     sQueue->ProcessRunnables();
     //VRB_LOG("About to DRAW!");

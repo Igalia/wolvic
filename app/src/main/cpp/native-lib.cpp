@@ -186,6 +186,8 @@ android_main(android_app *aAppState) {
 
     BrowserWorld::Instance().InitializeGL();
     sAppContext->mDevice->EnterVR(*sAppContext->mEgl);
+    // We need the session to be created before we can update the environment
+    BrowserWorld::Instance().UpdateEnvironment();
   };
   // If 0 returns immediately without blocking. If negative, waits indefinitely for events.
   auto computeALooperTimeout = [aAppState]() {

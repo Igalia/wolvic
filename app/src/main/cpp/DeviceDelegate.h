@@ -101,6 +101,9 @@ public:
   virtual void OnControllersReady(const std::function<void()>& callback) {
     callback();
   }
+  virtual int64_t GetColorFormat(std::string extension) {
+    return extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGBA8;
+  }
   class ReorientClient {
   public:
     virtual void OnReorient() = 0;
@@ -111,6 +114,7 @@ public:
   void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
   virtual bool usesPassthroughCompositorLayer() const { return false; }
   virtual int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) { return -1; };
+  virtual bool IsInVRMode() const { return true; };
 
 protected:
   DeviceDelegate() {}
