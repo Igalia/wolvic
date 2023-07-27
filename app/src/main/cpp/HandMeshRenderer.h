@@ -18,9 +18,8 @@ class HandMeshRenderer {
 protected:
     vrb::CreationContextWeak context;
     virtual void Initialize(vrb::CreationContextPtr& aContext) { context = aContext; };
-    virtual void Shutdown() { };
 public:
-    virtual ~HandMeshRenderer() { Shutdown(); };
+    virtual ~HandMeshRenderer() = default;
     virtual void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) = 0;
     virtual void Draw(Controller& aController, const vrb::Camera& aCamera) { };
 };
@@ -31,6 +30,7 @@ protected:
     State& m;
 public:
     HandMeshRendererSpheres(State& aState, vrb::CreationContextPtr& aContext);
+    ~HandMeshRendererSpheres() = default;
     static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
     void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
 };
@@ -42,13 +42,13 @@ protected:
     struct State;
     State& m;
 public:
+    ~HandMeshRendererSkinned();
     HandMeshRendererSkinned(State& aState, vrb::CreationContextPtr& aContext);
     static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
     void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
     void Draw(Controller& aController, const vrb::Camera& aCamera) override;
 private:
     void Initialize(vrb::CreationContextPtr& aContext) override;
-    void Shutdown() override;
     bool LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& aHandMeshSkinned);
     void UpdateHandModel(const Controller& aController);
 };
