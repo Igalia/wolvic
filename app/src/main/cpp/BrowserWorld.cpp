@@ -1671,15 +1671,6 @@ BrowserWorld::TickWorld() {
   };
 }
 
-HandMeshStrategy
-SelectHandMeshRenderingStrategy() {
-#if defined(PICOXR) || defined(SPACES)
-  return HandMeshStrategy::Spheres;
-#else
-  return HandMeshStrategy::Skinned;
-#endif
-}
-
 void
 BrowserWorld::DrawWorld(device::Eye aEye) {
   ASSERT(m.device->ShouldRender());
@@ -1726,16 +1717,11 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
     if (controller.enabled && controller.mode == ControllerMode::Hand) {
       if (!m.handMeshRenderer) {
         // Lazily create the hand mesh rendering object
-        HandMeshStrategy strategy = SelectHandMeshRenderingStrategy();
-        switch (strategy) {
-          case HandMeshStrategy::Spheres:
-            m.handMeshRenderer = HandMeshRendererSpheres::Create(m.create);
-            break;
-          case HandMeshStrategy::Skinned:
-            // fall-through
-          default:
-            m.handMeshRenderer = HandMeshRendererSkinned::Create(m.create);
-        }
+#if defined(PICOXR) || defined(SPACES)
+        m.handMeshRenderer = HandMeshRendererSpheres::Create(m.create);
+#else
+        m.handMeshRenderer = HandMeshRendererSkinned::Create(m.create);
+#endif
       }
       assert(m.handMeshRenderer);
       m.handMeshRenderer->Draw(controller, *camera);

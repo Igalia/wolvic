@@ -36,21 +36,24 @@ struct HandMeshRendererSpheres::State {
 HandMeshRendererSpheres::HandMeshRendererSpheres(State &aState, vrb::CreationContextPtr& aContext)
     : m(aState) {}
 
-HandMeshRendererSpheres::~HandMeshRendererSpheres() {}
-
 HandMeshRendererPtr HandMeshRendererSpheres::Create(vrb::CreationContextPtr& aContext) {
-    auto instance = (HandMeshRendererPtr) std::make_shared<vrb::ConcreteClass<HandMeshRendererSpheres, HandMeshRendererSpheres::State> >(aContext);
+    auto instance = std::make_unique<vrb::ConcreteClass<HandMeshRendererSpheres, HandMeshRendererSpheres::State> >(aContext);
     instance->Initialize(aContext);
     return instance;
 }
 
 void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPtr& aRoot, const bool aEnabled) {
-    if (!aEnabled)
-        return;
-
     if (aController.index >= m.handMeshState.size())
         m.handMeshState.resize(aController.index + 1);
     auto& handMesh = m.handMeshState.at(aController.index);
+
+    // We need to call ToggleAll() even if aEnabled is false, to be able to hide the
+    // hand mesh.
+    if (handMesh.toggle)
+        handMesh.toggle->ToggleAll(aEnabled);
+
+    if (!aEnabled)
+        return;
 
     // Lazily create toggle and spheres' geometry and transform nodes.
     if (!handMesh.toggle) {
@@ -91,8 +94,6 @@ void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPt
     assert(handMesh.sphereTransforms.size() == aController.handJointTransforms.size());
     for (int i = 0; i < handMesh.sphereTransforms.size(); i++)
         handMesh.sphereTransforms[i]->SetTransform(aController.handJointTransforms[i]);
-
-    handMesh.toggle->ToggleAll(aEnabled);
 }
 
 
@@ -254,12 +255,8 @@ struct HandMeshRendererSkinned::State {
 HandMeshRendererSkinned::HandMeshRendererSkinned(State &aState, vrb::CreationContextPtr& aContext)
     : m(aState) {}
 
-HandMeshRendererSkinned::~HandMeshRendererSkinned() {
-    Shutdown();
-}
-
 HandMeshRendererPtr HandMeshRendererSkinned::Create(vrb::CreationContextPtr& aContext) {
-    auto instance = (HandMeshRendererPtr) std::make_shared<vrb::ConcreteClass<HandMeshRendererSkinned, HandMeshRendererSkinned::State> >(aContext);
+    auto instance = std::make_unique<vrb::ConcreteClass<HandMeshRendererSkinned, HandMeshRendererSkinned::State> >(aContext);
     instance->Initialize(aContext);
     return instance;
 }
@@ -333,9 +330,7 @@ static bool loadHandMeshAttribute(tinygltf::Model& model,
     return true;
 }
 
-bool HandMeshRendererSkinned::LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& aHandMeshSkinned) {
-    HandMeshSkinned& handMesh = aHandMeshSkinned;
-
+bool HandMeshRendererSkinned::LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& handMesh) {
     tinygltf::TinyGLTF modelLoader;
     tinygltf::Model model;
     std::string err;

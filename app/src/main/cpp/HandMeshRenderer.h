@@ -9,20 +9,18 @@
 
 namespace crow {
 
-enum class HandMeshStrategy { None, Skinned, Spheres };
-
 struct Controller;
 
 class HandMeshRenderer;
-typedef std::shared_ptr<HandMeshRenderer> HandMeshRendererPtr;
+typedef std::unique_ptr<HandMeshRenderer> HandMeshRendererPtr;
 
 class HandMeshRenderer {
 protected:
     vrb::CreationContextWeak context;
-    bool enabled = false;
+    virtual void Initialize(vrb::CreationContextPtr& aContext) { context = aContext; };
     virtual void Shutdown() { };
 public:
-    virtual void Initialize(vrb::CreationContextPtr& aContext) { context = aContext; };
+    virtual ~HandMeshRenderer() { Shutdown(); };
     virtual void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) = 0;
     virtual void Draw(Controller& aController, const vrb::Camera& aCamera) { };
 };
@@ -30,13 +28,11 @@ public:
 class HandMeshRendererSpheres: public HandMeshRenderer {
 protected:
     struct State;
+    State& m;
 public:
     HandMeshRendererSpheres(State& aState, vrb::CreationContextPtr& aContext);
-    ~HandMeshRendererSpheres();
     static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
     void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
-private:
-    State& m;
 };
 
 struct HandMeshSkinned;
@@ -44,14 +40,13 @@ struct HandMeshSkinned;
 class HandMeshRendererSkinned: public HandMeshRenderer {
 protected:
     struct State;
+    State& m;
 public:
     HandMeshRendererSkinned(State& aState, vrb::CreationContextPtr& aContext);
-    ~HandMeshRendererSkinned();
     static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
     void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
     void Draw(Controller& aController, const vrb::Camera& aCamera) override;
 private:
-    State& m;
     void Initialize(vrb::CreationContextPtr& aContext) override;
     void Shutdown() override;
     bool LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& aHandMeshSkinned);
