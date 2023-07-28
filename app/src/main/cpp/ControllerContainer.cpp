@@ -90,9 +90,6 @@ struct ControllerContainer::State {
     if (controller.pointer && !aVisible) {
       controller.pointer->SetVisible(false);
     }
-    if (controller.handMeshToggle) {
-      root->ToggleChild(*controller.handMeshToggle, aVisible);
-    }
   }
 };
 
@@ -211,7 +208,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     if (!m.root)
         return;
 
-    controller.meshJointTransforms = jointTransforms;
+    controller.handJointTransforms = jointTransforms;
 
     CreationContextPtr create = m.context.lock();
 
@@ -239,41 +236,6 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         controller.handActionButtonTransform->AddNode(icon->GetRoot());
         controller.handActionButtonToggle->ToggleAll(false);
         m.root->AddNode(controller.handActionButtonToggle);
-    }
-#endif
-
-    // Due to unstable or inaccurate hand-tracking data, hand mesh models
-    // are not enabled on Pico devices. We are drawing a sphere for each joint
-    // instead.
-#if defined(PICOXR) || defined(SPACES)
-    // Initialize hand joints if needed
-    if (controller.handJointTransforms.size() == 0) {
-        controller.handJointTransforms.resize(jointTransforms.size());
-
-        controller.handMeshToggle = Toggle::Create(create);
-        m.root->AddNode(controller.handMeshToggle);
-
-        ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
-        RenderStatePtr state = RenderState::Create(create);
-        state->SetProgram(program);
-        vrb::Color handColor = vrb::Color(0.5f, 0.5f, 0.5f);
-        handColor.SetAlpha(1.0);
-        state->SetMaterial(handColor, Color(0.5f, 0.5f, 0.5f),
-                           Color(0.5f, 0.5f, 0.5f),
-                           0.75f);
-        state->SetLightsEnabled(true);
-
-        float radius = 0.65;
-        GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
-        sphere->SetRenderState(state);
-
-        for (uint32_t i = 0; i < jointTransforms.size(); i++) {
-            TransformPtr transform = Transform::Create(create);
-            transform->AddNode(sphere);
-            controller.handJointTransforms[i] = transform;
-
-            controller.handMeshToggle->AddNode(transform);
-        }
     }
 #endif
 }
@@ -322,131 +284,6 @@ ControllerContainer::GetControllers() {
 const std::vector<Controller>&
 ControllerContainer::GetControllers() const {
   return m.list;
-}
-
-template <typename GenericVector>
-static bool loadHandMeshAttribute(tinygltf::Model& model,
-                                  int accessorIndex, int expectedType, int expectedComponentType,
-                                  size_t typeByteSize, int numComponents,
-                                  std::vector<GenericVector>& vector) {
-  auto& accessor = model.accessors[accessorIndex];
-
-  if (accessor.type != expectedType || accessor.componentType != expectedComponentType)
-    return false;
-  if (accessor.bufferView >= model.bufferViews.size())
-    return false;
-  auto& bufferView = model.bufferViews[accessor.bufferView];
-  if (bufferView.buffer >= model.buffers.size())
-    return false;
-  auto& buffer = model.buffers[bufferView.buffer];
-
-  vector.resize(accessor.count);
-  memcpy(vector.data(), buffer.data.data() + bufferView.byteOffset + accessor.byteOffset,
-         accessor.count * typeByteSize * numComponents);
-
-  return true;
-}
-
-bool ControllerContainer::LoadHandMeshFromAssets(Controller& aController) {
-  aController.handMesh = nullptr;
-  ControllerDelegate::HandMesh handMesh;
-
-  tinygltf::TinyGLTF modelLoader;
-  tinygltf::Model model;
-  std::string err;
-  std::string warn;
-  if (!modelLoader.LoadBinaryFromFile(&model, &err, &warn,
-                                      aController.leftHanded ? "hand-model-left.glb" : "hand-model-right.glb")) {
-    VRB_ERROR("Error loading hand mesh asset: %s", err.c_str());
-    return false;
-  }
-  if (!warn.empty())
-    VRB_WARN("%s", warn.c_str());
-
-  if (model.meshes.size() == 0)
-    return false;
-  // Assume the first mesh
-  auto& mesh = model.meshes[0];
-
-  if (mesh.primitives.size() == 0)
-    return false;
-  // Assume the first primitive of the mesh
-  auto& primitive = mesh.primitives[0];
-
-  // Load indices
-  if (primitive.indices < 0 || primitive.indices >= model.accessors.size())
-    return false;
-  if (!loadHandMeshAttribute(model, primitive.indices,
-                             TINYGLTF_TYPE_SCALAR, TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT,
-                             sizeof(uint16_t), 1, handMesh.indices)) {
-    return false;
-  }
-  handMesh.indexCount = handMesh.indices.size();
-
-  // Load vertex attributes
-  for (auto& attr: primitive.attributes) {
-    if (attr.second >= model.accessors.size())
-      return false;
-
-    bool loadedOk = true;
-
-    if (attr.first == "POSITION") {
-      loadedOk = loadHandMeshAttribute(model, attr.second,
-                                       TINYGLTF_TYPE_VEC3, TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                       sizeof(float), 3, handMesh.positions);
-    } else if (attr.first == "NORMAL") {
-      loadedOk = loadHandMeshAttribute(model, attr.second,
-                                       TINYGLTF_TYPE_VEC3, TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                       sizeof(float), 3, handMesh.normals);
-    } else if (attr.first == "JOINTS_0") {
-      // For joint indices the helper is not used because we can't copy the buffer
-      // directly.
-      auto& accessor = model.accessors[attr.second];
-      if (accessor.bufferView >= model.bufferViews.size())
-        return false;
-      auto& bufferView = model.bufferViews[accessor.bufferView];
-      if (bufferView.buffer >= model.buffers.size())
-        return false;
-      auto& buffer = model.buffers[bufferView.buffer];
-      if (accessor.type != TINYGLTF_TYPE_VEC4 || accessor.componentType != TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE)
-        return false;
-      if (bufferView.byteLength != accessor.count * sizeof(uint8_t) * 4)
-        return false;
-      handMesh.jointIndices.resize(accessor.count);
-      for (int i = 0; i < accessor.count; i++) {
-        unsigned char* ptr = buffer.data.data() + bufferView.byteOffset + accessor.byteOffset + i * 4;
-        handMesh.jointIndices[i].x = ptr[0];
-        handMesh.jointIndices[i].y = ptr[1];
-        handMesh.jointIndices[i].z = ptr[2];
-        handMesh.jointIndices[i].w = ptr[3];
-      }
-    } else if (attr.first == "WEIGHTS_0") {
-      loadedOk = loadHandMeshAttribute(model, attr.second,
-                                       TINYGLTF_TYPE_VEC4, TINYGLTF_COMPONENT_TYPE_FLOAT,
-                                       sizeof(float), 4, handMesh.jointWeights);
-    }
-
-    if (!loadedOk)
-      return false;
-  }
-  handMesh.vertexCount = handMesh.positions.size();
-
-  // Load joints' inverse bind matrices
-  if (model.skins.size() == 0)
-    return false;
-  auto& skin = model.skins[0];
-  if (skin.inverseBindMatrices >= model.accessors.size())
-    return false;
-  if (!loadHandMeshAttribute(model, skin.inverseBindMatrices,
-                            TINYGLTF_TYPE_MAT4, TINYGLTF_COMPONENT_TYPE_FLOAT,
-                            sizeof(vrb::Matrix), 1, handMesh.jointTransforms)) {
-    return false;
-  }
-  handMesh.jointCount = handMesh.jointTransforms.size();
-
-  aController.handMesh = std::make_unique<ControllerDelegate::HandMesh>(handMesh);
-
-  return true;
 }
 
 // crow::ControllerDelegate interface
@@ -824,7 +661,6 @@ ControllerContainer::SetVisible(const bool aVisible) {
     for (int i = 0; i < m.list.size(); ++i) {
       if (m.list[i].enabled) {
         m.root->ToggleChild(*m.list[i].transform, true);
-        m.root->ToggleChild(*m.list[i].handMeshToggle, true);
       }
     }
   } else {
