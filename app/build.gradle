@@ -195,6 +195,7 @@ android {
         // Supported platforms
         oculusvr {
             dimension "platform"
+            targetSdkVersion build_versions.target_sdk_oculusvr
             externalNativeBuild {
                 cmake {
                     cppFlags "-DOCULUSVR" + getOpenXRFlags()
