@@ -17,22 +17,21 @@ typedef std::unique_ptr<HandMeshRenderer> HandMeshRendererPtr;
 class HandMeshRenderer {
 protected:
     vrb::CreationContextWeak context;
-    virtual void Initialize(vrb::CreationContextPtr& aContext) { context = aContext; };
 public:
     virtual ~HandMeshRenderer() = default;
-    virtual void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) = 0;
-    virtual void Draw(Controller& aController, const vrb::Camera& aCamera) { };
+    virtual void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) = 0;
+    virtual void Draw(Controller&, const vrb::Camera&) { };
 };
 
 class HandMeshRendererSpheres: public HandMeshRenderer {
 protected:
     struct State;
     State& m;
+    HandMeshRendererSpheres(State&, vrb::CreationContextPtr&);
 public:
-    HandMeshRendererSpheres(State& aState, vrb::CreationContextPtr& aContext);
-    ~HandMeshRendererSpheres() = default;
-    static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
-    void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
+    static HandMeshRendererPtr Create(vrb::CreationContextPtr&);
+private:
+    void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
 };
 
 struct HandMeshSkinned;
@@ -41,16 +40,15 @@ class HandMeshRendererSkinned: public HandMeshRenderer {
 protected:
     struct State;
     State& m;
-public:
+    HandMeshRendererSkinned(State&, vrb::CreationContextPtr&);
     ~HandMeshRendererSkinned();
-    HandMeshRendererSkinned(State& aState, vrb::CreationContextPtr& aContext);
-    static HandMeshRendererPtr Create(vrb::CreationContextPtr& aContext);
-    void Update(Controller& aController, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
-    void Draw(Controller& aController, const vrb::Camera& aCamera) override;
+public:
+    static HandMeshRendererPtr Create(vrb::CreationContextPtr&);
 private:
-    void Initialize(vrb::CreationContextPtr& aContext) override;
-    bool LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& aHandMeshSkinned);
-    void UpdateHandModel(const Controller& aController);
+    void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
+    void Draw(Controller&, const vrb::Camera&) override;
+    bool LoadHandMeshFromAssets(Controller&, HandMeshSkinned&);
+    void UpdateHandModel(const Controller&);
 };
 
 };

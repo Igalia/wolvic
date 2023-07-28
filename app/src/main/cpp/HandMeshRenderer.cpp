@@ -34,12 +34,12 @@ struct HandMeshRendererSpheres::State {
 };
 
 HandMeshRendererSpheres::HandMeshRendererSpheres(State &aState, vrb::CreationContextPtr& aContext)
-    : m(aState) {}
+    : m(aState) {
+    context = aContext;
+}
 
 HandMeshRendererPtr HandMeshRendererSpheres::Create(vrb::CreationContextPtr& aContext) {
-    auto instance = std::make_unique<vrb::ConcreteClass<HandMeshRendererSpheres, HandMeshRendererSpheres::State> >(aContext);
-    instance->Initialize(aContext);
-    return instance;
+    return std::make_unique<vrb::ConcreteClass<HandMeshRendererSpheres, HandMeshRendererSpheres::State> >(aContext);
 }
 
 void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPtr& aRoot, const bool aEnabled) {
@@ -253,12 +253,27 @@ struct HandMeshRendererSkinned::State {
 };
 
 HandMeshRendererSkinned::HandMeshRendererSkinned(State &aState, vrb::CreationContextPtr& aContext)
-    : m(aState) {}
+    : m(aState) {
+    m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);
+    m.fragmentShader = vrb::LoadShader(GL_FRAGMENT_SHADER, sFragmentShader);
+    if (m.vertexShader && m.fragmentShader)
+        m.program = vrb::CreateProgram(m.vertexShader, m.fragmentShader);
+
+    assert(m.program);
+
+    m.aPosition = vrb::GetAttributeLocation(m.program, "a_position");
+    m.aNormal = vrb::GetAttributeLocation(m.program, "a_normal");
+    m.aJointIndices = vrb::GetAttributeLocation(m.program, "a_jointIndices");
+    m.aJointWeights = vrb::GetAttributeLocation(m.program, "a_jointWeights");
+
+    m.uJointMatrices = glGetUniformLocation(m.program, "u_jointMatrices");
+    m.uPerspective = vrb::GetUniformLocation(m.program, "u_perspective");
+    m.uView = vrb::GetUniformLocation(m.program, "u_view");
+    m.uModel = vrb::GetUniformLocation(m.program, "u_model");
+}
 
 HandMeshRendererPtr HandMeshRendererSkinned::Create(vrb::CreationContextPtr& aContext) {
-    auto instance = std::make_unique<vrb::ConcreteClass<HandMeshRendererSkinned, HandMeshRendererSkinned::State> >(aContext);
-    instance->Initialize(aContext);
-    return instance;
+    return std::make_unique<vrb::ConcreteClass<HandMeshRendererSkinned, HandMeshRendererSkinned::State> >(aContext);
 }
 
 HandMeshRendererSkinned::~HandMeshRendererSkinned() {
@@ -286,25 +301,6 @@ HandMeshRendererSkinned::~HandMeshRendererSkinned() {
         VRB_GL_CHECK(glDeleteShader(m.fragmentShader));
         m.fragmentShader = 0;
     }
-}
-
-void HandMeshRendererSkinned::Initialize(vrb::CreationContextPtr& aContext) {
-    m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);
-    m.fragmentShader = vrb::LoadShader(GL_FRAGMENT_SHADER, sFragmentShader);
-    if (m.vertexShader && m.fragmentShader)
-        m.program = vrb::CreateProgram(m.vertexShader, m.fragmentShader);
-
-    assert(m.program);
-
-    m.aPosition = vrb::GetAttributeLocation(m.program, "a_position");
-    m.aNormal = vrb::GetAttributeLocation(m.program, "a_normal");
-    m.aJointIndices = vrb::GetAttributeLocation(m.program, "a_jointIndices");
-    m.aJointWeights = vrb::GetAttributeLocation(m.program, "a_jointWeights");
-
-    m.uJointMatrices = glGetUniformLocation(m.program, "u_jointMatrices");
-    m.uPerspective = vrb::GetUniformLocation(m.program, "u_perspective");
-    m.uView = vrb::GetUniformLocation(m.program, "u_view");
-    m.uModel = vrb::GetUniformLocation(m.program, "u_model");
 }
 
 template <typename GenericVector>
