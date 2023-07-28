@@ -1780,4 +1780,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \nDu kan läsa hela användaravtalet och sekretesspolicyn.</string>
     <string name="rCN_first_launch_confirmation_agree">Acceptera och fortsätt</string>
     <string name="rCN_first_launch_confirmation_disagree">Acceptera inte och Avsluta</string>
+    <string name="keyboardview_keycode_mode_change">Lägesändring</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_delete">Ta bort</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="keyboardview_keycode_cancel">Avbryt</string>
+    <string name="keyboardview_keycode_done">Klart</string>
 </resources>
