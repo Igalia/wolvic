@@ -1,5 +1,7 @@
 #include "OpenXRExtensions.h"
 #include "OpenXRHelpers.h"
+#include "DeviceUtils.h"
+#include "OpenXRInputMappings.h"
 
 namespace crow {
 
@@ -37,6 +39,11 @@ void OpenXRExtensions::Initialize() {
     // Pico incorrectly advertises this extension as supported but it makes Wolvic not work.
     sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
 #endif
+
+    // Adding this check here is ugly but required to have a working build for VRX. With the current
+    // runtime the controller poses freeze (always report same pose) if hand tracking is enabled.
+    if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoVRX)
+        sSupportedExtensions.erase(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
 
     // API layers.
     uint32_t apiLayersCount;
