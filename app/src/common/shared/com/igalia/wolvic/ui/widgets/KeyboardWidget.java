@@ -1078,7 +1078,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
             });
         } else {
-            postInputCommand(() -> connection.commitText(text, 1));
+            try {
+                postInputCommand(() -> connection.commitText(text, 1));
+            } catch (IndexOutOfBoundsException e) {
+                // Workaround to fix crash when type in time picker dialog
+                Log.e("handleText", text + ": " + e.toString());
+            }
         }
 
         if (!mIsCapsLock) {
