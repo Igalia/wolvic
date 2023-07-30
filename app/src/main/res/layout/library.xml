@@ -11,9 +11,6 @@
             name="supportsSystemNotifications"
             type="boolean" />
     </data>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -34,23 +31,8 @@
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
-                        android:src="@drawable/ic_icon_webapps"
-                        android:id="@+id/web_apps"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <com.igalia.wolvic.ui.views.UIButton
-                        style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_history"
                         android:id="@+id/history"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <com.igalia.wolvic.ui.views.UIButton
-                        style="@style/libraryButtonMiddleTheme"
-                        android:src="@drawable/ic_icon_downloads"
-                        android:id="@+id/downloads"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <com.igalia.wolvic.ui.views.UIButton
-                        style="@style/libraryButtonMiddleTheme"
-                        android:src="@drawable/ic_icon_addons"
-                        android:id="@+id/addons"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
@@ -69,17 +51,17 @@
                 android:layout_alignParentEnd="true"
                 android:padding="20dp"
                 android:background="@drawable/library_panel_background">
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:layout_alignParentTop="true">
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal">
 
                     <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/backButton"
                         style="?attr/navigationBarButtonStyle"
-                        android:layout_alignParentStart="true"
                         android:src="@drawable/ic_icon_back"
                         android:tint="@color/midnight"
                         android:onClick="@{(view) -> delegate != null ? delegate.onBack(view) : void}"
@@ -87,10 +69,8 @@
 
                     <TextView
                         android:id="@+id/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center_horizontal"
                         android:textAlignment="gravity"
                         android:paddingStart="15dp"
@@ -99,14 +79,24 @@
                         android:textSize="@dimen/text_biggest_size"
                         android:textStyle="bold" />
 
-                    <com.igalia.wolvic.ui.views.UIButton
-                        android:id="@+id/closeButton"
-                        style="?attr/navigationBarButtonStyle"
-                        android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_icon_exit"
-                        android:tint="@color/midnight"
-                        android:onClick="@{(view) ->  delegate != null ? delegate.onClose(view) : void}" />
-                </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <SearchView
+                            android:id="@+id/search_bar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="50dp"/>
+
+                        <com.igalia.wolvic.ui.views.UIButton
+                            android:id="@+id/closeButton"
+                            style="?attr/navigationBarButtonStyle"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_icon_exit"
+                            android:tint="@color/midnight"
+                            android:onClick="@{(view) ->  delegate != null ? delegate.onClose(view) : void}" />
+                    </RelativeLayout>
+                </LinearLayout>
                 <FrameLayout
                     android:id="@+id/tabcontent"
                     android:layout_width="match_parent"
@@ -115,5 +105,4 @@
                     android:layout_alignParentBottom="true" />
             </RelativeLayout>
         </RelativeLayout>
-    </FrameLayout>
 </layout>

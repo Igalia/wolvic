@@ -28,6 +28,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.browser.icons.IconRequest;
@@ -46,6 +47,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int mMinPadding;
     private int mMaxPadding;
     private boolean mIsNarrowLayout;
+    private String mSearchFilter = "";
 
     @Nullable
     private final BookmarkItemCallback mBookmarkItemCallback;
@@ -68,13 +70,28 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void setSearchFilter(String s) {
+        mSearchFilter = s;
+    }
+
+    private List<Bookmark> filterBookmarkList(List<Bookmark> list) {
+        return list.stream()
+                .filter(value -> {
+                    if (value.getTitle() != null && !mSearchFilter.isEmpty()) {
+                        return value.getTitle().toLowerCase().contains(mSearchFilter);
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+    }
+
     public void setBookmarkList(final List<BookmarkNode> bookmarkList) {
         mBookmarksList = bookmarkList;
 
         List<Bookmark> newDisplayList;
         if (mDisplayList == null || mDisplayList.isEmpty()) {
             newDisplayList = Bookmark.getDisplayListTree(mBookmarksList, Collections.singletonList(BookmarkRoot.Mobile.getId()));
-            mDisplayList = newDisplayList;
+            mDisplayList = filterBookmarkList(newDisplayList);
             for (Bookmark node : mDisplayList) {
                 if (node.isExpanded()) {
                     if (mBookmarkItemCallback != null) {
@@ -86,7 +103,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         } else {
             List<String> openFoldersGuid = Bookmark.getOpenFoldersGuid(mDisplayList);
-            newDisplayList = Bookmark.getDisplayListTree(mBookmarksList, openFoldersGuid);
+            newDisplayList = filterBookmarkList(Bookmark.getDisplayListTree(mBookmarksList, openFoldersGuid));
             notifyDiff(newDisplayList);
         }
     }
