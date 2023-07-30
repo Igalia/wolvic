@@ -324,13 +324,8 @@ public class NavigationURLBar extends FrameLayout {
         return mBinding.urlEditText.getText().toString();
     }
 
-    public String getOriginalText() {
-        try {
-            return mBinding.urlEditText.getOriginalText();
-
-        } catch (IndexOutOfBoundsException e) {
-            return mBinding.urlEditText.getNonAutocompleteText();
-        }
+    public String getNonAutocompleteText() {
+        return mBinding.urlEditText.getNonAutocompleteText();
     }
 
     public UIButton getPopUpButton() {
