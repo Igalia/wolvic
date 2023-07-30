@@ -545,12 +545,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hidePanel(true);
 
         } else {
-            if (mViewModel.getIsDownloadsVisible().getValue().get()) {
-                hideDownloadsPanel(false);
-            }
-            if (mViewModel.getIsAddonsVisible().getValue().get()) {
-                hideAddonsPanel(false);
-            }
+            hideAllPanel(false);
             showPanel(panelType, true);
             mViewModel.refresh();
         }
@@ -561,12 +556,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hideDownloadsPanel(true);
 
         } else {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
-                hidePanel(false);
-            }
-            if (mViewModel.getIsAddonsVisible().getValue().get()) {
-                hideAddonsPanel(false);
-            }
+            hideAllPanel(false);
             showDownloadsPanel(true);
             mViewModel.refresh();
         }
@@ -577,12 +567,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hideAddonsPanel(true);
 
         } else {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
-                hidePanel(false);
-            }
-            if (mViewModel.getIsDownloadsVisible().getValue().get()) {
-                hideDownloadsPanel(false);
-            }
+            hideAllPanel(false);
             showAddonsPanel(true);
             mViewModel.refresh();
         }
