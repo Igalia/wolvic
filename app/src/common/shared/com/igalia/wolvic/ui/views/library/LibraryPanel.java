@@ -32,7 +32,6 @@ public class LibraryPanel extends FrameLayout {
     private WebAppsView mWebAppsView;
     private BookmarksView mBookmarksView;
     private HistoryView mHistoryView;
-    private DownloadsView mDownloadsView;
     private AddonsView mAddonsView;
     private SystemNotificationsView mSystemNotificationsView;
     private LibraryView mCurrentView;
@@ -60,7 +59,6 @@ public class LibraryPanel extends FrameLayout {
         mWebAppsView = new WebAppsView(getContext(), this);
         mBookmarksView = new BookmarksView(getContext(), this);
         mHistoryView = new HistoryView(getContext(), this);
-        mDownloadsView = new DownloadsView(getContext(), this);
         mAddonsView = new AddonsView(getContext(), this);
         mSystemNotificationsView = new SystemNotificationsView(getContext(), this);
         mCurrentPanel = Windows.BOOKMARKS;
@@ -119,7 +117,6 @@ public class LibraryPanel extends FrameLayout {
         mHistoryView.updateUI();
         mBookmarksView.updateUI();
         mWebAppsView.updateUI();
-        mDownloadsView.updateUI();
         mAddonsView.updateUI();
         mSystemNotificationsView.updateUI();
 
@@ -150,7 +147,6 @@ public class LibraryPanel extends FrameLayout {
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
         mWebAppsView.onDestroy();
-        mDownloadsView.onDestroy();
         mAddonsView.onDestroy();
         mSystemNotificationsView.onDestroy();
     }
@@ -164,9 +160,6 @@ public class LibraryPanel extends FrameLayout {
 
         } else if (mCurrentView == mHistoryView) {
             return Windows.HISTORY;
-
-        } else if (mCurrentView == mDownloadsView) {
-            return Windows.DOWNLOADS;
 
         } else if (mCurrentView == mAddonsView) {
             return Windows.ADDONS;
@@ -185,7 +178,6 @@ public class LibraryPanel extends FrameLayout {
         mBinding.bookmarks.setActiveMode(false);
         mBinding.webApps.setActiveMode(false);
         mBinding.history.setActiveMode(false);
-        mBinding.downloads.setActiveMode(false);
         mBinding.addons.setActiveMode(false);
         mBinding.notifications.setActiveMode(false);
         if(view.getId() == R.id.bookmarks){
@@ -193,9 +185,6 @@ public class LibraryPanel extends FrameLayout {
 
         } else if(view.getId() == R.id.history){
             selectHistory();
-
-        } else if(view.getId() == R.id.downloads){
-            selectDownloads();
 
         } else if(view.getId() == R.id.addons){
             selectAddons();
@@ -228,9 +217,6 @@ public class LibraryPanel extends FrameLayout {
             case Windows.HISTORY:
                 selectTab(mBinding.history);
                 break;
-            case Windows.DOWNLOADS:
-                selectTab(mBinding.downloads);
-                break;
             case Windows.ADDONS:
                 selectTab(mBinding.addons);
                 break;
@@ -256,12 +242,6 @@ public class LibraryPanel extends FrameLayout {
         mCurrentView = mHistoryView;
         mBinding.history.setActiveMode(true);
         mBinding.tabcontent.addView(mHistoryView);
-    }
-
-    private void selectDownloads() {
-        mCurrentView = mDownloadsView;
-        mBinding.downloads.setActiveMode(true);
-        mBinding.tabcontent.addView(mDownloadsView);
     }
 
     private void selectAddons() {

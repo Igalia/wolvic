@@ -62,6 +62,7 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.ui.views.downloads.DownloadsPanel;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
@@ -131,6 +132,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Session mSession;
     private int mWindowId;
     private LibraryPanel mLibrary;
+    private DownloadsPanel mDownloads;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
@@ -214,6 +216,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mLibrary = new LibraryPanel(aContext);
+        mDownloads = new DownloadsPanel(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
@@ -332,6 +335,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 hidePanel();
             }
 
+        } else if (mViewModel.getIsDownloadsVisible().getValue().get()) {
+            if (!mDownloads.onBack()) {
+                hideDownloadsPanel();
+            }
+
         } else {
             if (mSession.canGoBack()) {
                 mSession.goBack();
@@ -363,6 +371,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         super.onConfigurationChanged(newConfig);
 
         mLibrary.onConfigurationChanged(newConfig);
+        mDownloads.onConfigurationChanged(newConfig);
 
         mViewModel.refresh();
     }
@@ -372,6 +381,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideContextMenus();
         releaseWidget();
         mLibrary.onDestroy();
+        mDownloads.onDestroy();
         mViewModel.setIsTopBarVisible(false);
         mViewModel.setIsTitleBarVisible(false);
         SessionStore.get().destroySession(mSession);
@@ -486,6 +496,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mViewModel.getIsLibraryVisible().getValue().get();
     }
 
+    public boolean isDownloadsVisible() {
+        return mViewModel.getIsDownloadsVisible().getValue().get();
+    }
+
     public int getWindowWidth() {
         return mWidgetPlacement.width;
     }
@@ -510,11 +524,49 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hidePanel(true);
 
         } else {
+            if (mViewModel.getIsDownloadsVisible().getValue().get()) {
+                hideDownloadsPanel(false);
+            }
             showPanel(panelType, true);
+            mViewModel.refresh();
+        }
+    }
+
+    public void switchDownloadsPanel() {
+        if (mViewModel.getIsDownloadsVisible().getValue().get()) {
+            hideDownloadsPanel(true);
+
+        } else {
+            if (mViewModel.getIsLibraryVisible().getValue().get()) {
+                hidePanel(false);
+            }
+            showDownloadsPanel(true);
+            mViewModel.refresh();
         }
     }
 
     Runnable mRestoreFirstPaint;
+
+    private void showPanelCommonAction() {
+        if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+            final Runnable firstDrawCallback = mFirstDrawCallback;
+            onFirstContentfulPaint(mSession.getWSession());
+            mRestoreFirstPaint = () -> {
+                setFirstPaintReady(false);
+                setFirstDrawCallback(firstDrawCallback);
+                if (mWidgetManager != null) {
+                    mWidgetManager.updateWidget(WindowWidget.this);
+                }
+            };
+        }
+    }
+
+    private void hidePanelCommonAction() {
+        if (mRestoreFirstPaint != null) {
+            mRestoreFirstPaint.run();
+            mRestoreFirstPaint = null;
+        }
+    }
 
     public void showPanel(@Windows.PanelType int panelType) {
         showPanel(panelType, true);
@@ -528,17 +580,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mLibrary.onShow();
                 mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
-                if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
-                    final Runnable firstDrawCallback = mFirstDrawCallback;
-                    onFirstContentfulPaint(mSession.getWSession());
-                    mRestoreFirstPaint = () -> {
-                        setFirstPaintReady(false);
-                        setFirstDrawCallback(firstDrawCallback);
-                        if (mWidgetManager != null) {
-                            mWidgetManager.updateWidget(WindowWidget.this);
-                        }
-                    };
-                }
+                showPanelCommonAction();
 
             } else if (mView == mLibrary) {
                 mLibrary.selectPanel(panelType);
@@ -556,9 +598,39 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mLibrary.onHide();
             mViewModel.setIsPanelVisible(false);
         }
-        if (switchSurface && mRestoreFirstPaint != null) {
-            mRestoreFirstPaint.run();
-            mRestoreFirstPaint = null;
+        if (switchSurface) {
+            hidePanelCommonAction();
+        }
+    }
+
+    public void showDownloadsPanel() {
+        showDownloadsPanel(true);
+    }
+
+    private void showDownloadsPanel(boolean switchSurface) {
+        if (mDownloads != null) {
+            if (mView == null) {
+                setView(mDownloads, switchSurface);
+                mDownloads.onShow();
+                mViewModel.setIsDownloadsVisible(true);
+                showPanelCommonAction();
+
+            }
+        }
+    }
+
+    public void hideDownloadsPanel() {
+        hideDownloadsPanel(true);
+    }
+
+    private void hideDownloadsPanel(boolean switchSurface) {
+        if (mView != null && mDownloads != null) {
+            unsetView(mDownloads, switchSurface);
+            mDownloads.onHide();
+            mViewModel.setIsDownloadsVisible(false);
+        }
+        if (switchSurface) {
+            hidePanelCommonAction();
         }
     }
 
@@ -1103,12 +1175,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
+            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get()) {
                 mWidgetManager.popWorldBrightness(this);
             }
 
         } else {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
+            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get()) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
             }
         }
@@ -1943,7 +2015,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 showPanel(Windows.HISTORY);
 
             } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-                showPanel(Windows.DOWNLOADS);
+                showDownloadsPanel();
 
             } else if (UrlUtils.isAddonsUrl(uri.toString())) {
                 showPanel(Windows.ADDONS);

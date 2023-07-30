@@ -228,8 +228,8 @@
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/microphoneButton"
                     style="@style/urlBarIconTheme"
-                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
-                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
+                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
+                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
                     android:src="@drawable/ic_icon_microphone"
                     android:tint="@color/fog"
                     android:tooltipText="@string/voice_search_tooltip"
@@ -239,13 +239,13 @@
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/webAppButton"
                     style="@style/urlBarIconTheme"
-                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
-                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
+                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
+                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
                     android:src="@drawable/ic_web_app_registration"
                     android:tint="@color/fog"
                     android:tooltipText="@string/hamburger_menu_save_web_app"
                     app:privateMode="@{viewmodel.isPrivateSession}"
-                    app:visibleGone="@{viewmodel.isWebApp &amp;&amp; !(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}" />
+                    app:visibleGone="@{viewmodel.isWebApp &amp;&amp; !(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}" />
 
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/bookmarkButton"
@@ -254,7 +254,7 @@
                     android:tint="@color/fog"
                     android:tooltipText="@{viewmodel.isBookmarked ? @string/remove_bookmark_tooltip : @string/bookmark_tooltip}"
                     app:privateMode="@{viewmodel.isPrivateSession}"
-                    app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}"
+                    app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isDownloadsVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}"
                     tools:src="@drawable/ic_icon_bookmarked" />
 
                 <com.igalia.wolvic.ui.views.UIButton

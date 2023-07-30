@@ -1314,6 +1314,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
+    @Override
+    public void onDownloadsClicked() {
+        onLibraryClicked();
+    }
+
     private void finishWidgetResize() {
         mWidgetManager.finishWidgetResize(mAttachedWindow);
     }
