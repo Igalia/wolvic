@@ -603,6 +603,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mFocusedWindow.switchDownloadsPanel();
     }
 
+    private void closeAddonsPanelInFocusedWindowIfNeeded() {
+        if (!mFocusedWindow.isAddonsVisible())
+            return;
+        mFocusedWindow.switchAddonsPanel();
+    }
+
     public void enterPrivateMode() {
         if (mPrivateMode) {
             return;
@@ -615,6 +621,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             // get a EGL crash in Gecko.
             closeLibraryPanelInFocusedWindowIfNeeded();
             closeDownloadsPanelInFocusedWindowIfNeeded();
+            closeAddonsPanelInFocusedWindowIfNeeded();
         } else {
             mRegularWindowPlacement = WindowPlacement.FRONT;
         }
@@ -661,6 +668,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             // get a EGL crash in Gecko.
             closeLibraryPanelInFocusedWindowIfNeeded();
             closeDownloadsPanelInFocusedWindowIfNeeded();
+            closeAddonsPanelInFocusedWindowIfNeeded();
         } else {
             mPrivateWindowPlacement = WindowPlacement.FRONT;
         }

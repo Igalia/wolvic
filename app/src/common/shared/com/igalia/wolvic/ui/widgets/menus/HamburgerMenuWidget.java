@@ -196,7 +196,7 @@ public class HamburgerMenuWidget extends UIWidget implements
 
             final Session activeSession = SessionStore.get().getActiveSession();
             String url = activeSession.getCurrentUri();
-            boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
+            boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isAddonsVisible();
             final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
             if (tab != null && showAddons) {
                 final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
