@@ -1701,7 +1701,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (!UrlUtils.isFileUri(webResponseInfo.uri())) {
             DownloadJob job;
             if (UrlUtils.isBlobUri(webResponseInfo.uri())) {
-                job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers(), webResponseInfo.body());
+                String uri = webResponseInfo.uri();
+                if (uri.startsWith("blob:null/")) {
+                    // Fix uri when download from a HTML page file stored in local storage
+                    uri = uri.replaceFirst("^blob:null/", "blob:http://localhost/");
+                }
+                job = DownloadJob.fromUri(uri, webResponseInfo.headers(), webResponseInfo.body());
             } else {
                 job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
             }
