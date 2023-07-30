@@ -183,19 +183,31 @@
                 android:src="@{viewmodel.isPrivateSession ? @drawable/ic_icon_tray_private_browsing_on_v2 : @drawable/ic_icon_tray_private_browsing_v2}"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/libraryButton"
+                style="@style/trayButtonMiddleTheme"
+                android:tooltipText="@{viewmodel.isLibraryVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="bottom"
+                app:tooltipLayout="@layout/tooltip_tray"
+                android:src="@drawable/ic_icon_library"
+                app:clipDrawable="@drawable/ic_icon_library_clip"
+                app:activeMode="@{viewmodel.isLibraryVisible}"/>
+
             <RelativeLayout
                 android:layout_width="40dp"
                 android:layout_height="40dp">
                 <com.igalia.wolvic.ui.views.UIButton
-                    android:id="@+id/libraryButton"
+                    android:id="@+id/downloadsButton"
                     style="@style/trayButtonMiddleTheme"
-                    android:tooltipText="@{viewmodel.isLibraryVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
+                    android:tooltipText="@{viewmodel.isDownloadsVisible ? @string/close_downloads_tooltip : @string/open_downloads_tooltip}"
                     app:tooltipDensity="@dimen/tray_tooltip_density"
                     app:tooltipPosition="bottom"
                     app:tooltipLayout="@layout/tooltip_tray"
-                    android:src="@drawable/ic_icon_library"
-                    app:clipDrawable="@drawable/ic_icon_library_clip"
-                    app:activeMode="@{viewmodel.isLibraryVisible}"/>
+                    android:src="@drawable/ic_icon_downloads"
+                    app:clipDrawable="@drawable/ic_icon_downloads_clip"
+                    app:activeMode="@{viewmodel.isDownloadsVisible}"/>
+
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
