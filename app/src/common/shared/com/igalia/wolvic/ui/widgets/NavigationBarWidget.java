@@ -1399,11 +1399,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onAddons() {
                 hideMenu();
 
-                if (!mAttachedWindow.isLibraryVisible()) {
-                    mAttachedWindow.switchPanel(Windows.ADDONS);
+                if (!mAttachedWindow.isAddonsVisible()) {
+                    mAttachedWindow.switchAddonsPanel();
 
                 } else if (mAttachedWindow.getSelectedPanel() != Windows.ADDONS) {
-                    mAttachedWindow.showPanel(Windows.ADDONS);
+                    mAttachedWindow.showAddonsPanel();
                 }
             }
 

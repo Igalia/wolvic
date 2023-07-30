@@ -16,7 +16,6 @@ import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
-import com.igalia.wolvic.addons.views.AddonsView;
 import com.igalia.wolvic.databinding.LibraryBinding;
 import com.igalia.wolvic.ui.delegates.LibraryNavigationDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -32,7 +31,6 @@ public class LibraryPanel extends FrameLayout {
     private WebAppsView mWebAppsView;
     private BookmarksView mBookmarksView;
     private HistoryView mHistoryView;
-    private AddonsView mAddonsView;
     private SystemNotificationsView mSystemNotificationsView;
     private LibraryView mCurrentView;
     private @Windows.PanelType int mCurrentPanel;
@@ -59,7 +57,6 @@ public class LibraryPanel extends FrameLayout {
         mWebAppsView = new WebAppsView(getContext(), this);
         mBookmarksView = new BookmarksView(getContext(), this);
         mHistoryView = new HistoryView(getContext(), this);
-        mAddonsView = new AddonsView(getContext(), this);
         mSystemNotificationsView = new SystemNotificationsView(getContext(), this);
         mCurrentPanel = Windows.BOOKMARKS;
 
@@ -117,7 +114,6 @@ public class LibraryPanel extends FrameLayout {
         mHistoryView.updateUI();
         mBookmarksView.updateUI();
         mWebAppsView.updateUI();
-        mAddonsView.updateUI();
         mSystemNotificationsView.updateUI();
 
         updateUI();
@@ -147,7 +143,6 @@ public class LibraryPanel extends FrameLayout {
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
         mWebAppsView.onDestroy();
-        mAddonsView.onDestroy();
         mSystemNotificationsView.onDestroy();
     }
 
@@ -160,9 +155,6 @@ public class LibraryPanel extends FrameLayout {
 
         } else if (mCurrentView == mHistoryView) {
             return Windows.HISTORY;
-
-        } else if (mCurrentView == mAddonsView) {
-            return Windows.ADDONS;
 
         } else if (mCurrentView == mSystemNotificationsView) {
             return Windows.NOTIFICATIONS;
@@ -178,16 +170,12 @@ public class LibraryPanel extends FrameLayout {
         mBinding.bookmarks.setActiveMode(false);
         mBinding.webApps.setActiveMode(false);
         mBinding.history.setActiveMode(false);
-        mBinding.addons.setActiveMode(false);
         mBinding.notifications.setActiveMode(false);
         if(view.getId() == R.id.bookmarks){
             selectBookmarks();
 
         } else if(view.getId() == R.id.history){
             selectHistory();
-
-        } else if(view.getId() == R.id.addons){
-            selectAddons();
 
         } else if (view.getId() == R.id.notifications) {
             selectNotifications();
@@ -217,9 +205,6 @@ public class LibraryPanel extends FrameLayout {
             case Windows.HISTORY:
                 selectTab(mBinding.history);
                 break;
-            case Windows.ADDONS:
-                selectTab(mBinding.addons);
-                break;
             case Windows.NOTIFICATIONS:
                 selectTab(mBinding.notifications);
                 break;
@@ -242,12 +227,6 @@ public class LibraryPanel extends FrameLayout {
         mCurrentView = mHistoryView;
         mBinding.history.setActiveMode(true);
         mBinding.tabcontent.addView(mHistoryView);
-    }
-
-    private void selectAddons() {
-        mCurrentView = mAddonsView;
-        mBinding.addons.setActiveMode(true);
-        mBinding.tabcontent.addView(mAddonsView);
     }
 
     private void selectNotifications() {
