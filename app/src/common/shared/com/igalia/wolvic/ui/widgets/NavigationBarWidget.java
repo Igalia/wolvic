@@ -1090,7 +1090,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
 
         final String text = mBinding.navigationBarNavigation.urlBar.getText().trim();
-        final String originalText = mBinding.navigationBarNavigation.urlBar.getOriginalText().trim();
+        final String originalText = mBinding.navigationBarNavigation.urlBar.getNonAutocompleteText().trim();
         if (originalText.length() <= 0) {
             mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
             return;
@@ -1102,7 +1102,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 .whenCompleteAsync((items, ex) -> {
                     if (mBinding.navigationBarNavigation.urlBar.hasFocus()) {
                         mAwesomeBar.updateItems(items);
-                        mAwesomeBar.setHighlightedText(mBinding.navigationBarNavigation.urlBar.getOriginalText().trim());
+                        mAwesomeBar.setHighlightedText(mBinding.navigationBarNavigation.urlBar.getNonAutocompleteText().trim());
 
                         if (!mAwesomeBar.isVisible()) {
                             mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mBinding.navigationBarNavigation.urlBar.getWidth()));
