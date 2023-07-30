@@ -257,7 +257,7 @@ public class UrlUtils {
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
             TelemetryService.urlBarEvent(true);
-        } else if (text.startsWith("about:") || text.startsWith("resource://")) {
+        } else if (text.startsWith("about:") || text.startsWith("resource://") || UrlUtils.isFileUri(text)) {
             url = text;
         } else {
             url = SearchEngineWrapper.get(context).getSearchURL(text);
