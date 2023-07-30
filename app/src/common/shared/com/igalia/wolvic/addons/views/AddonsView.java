@@ -12,7 +12,6 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.addons.adapters.AddonsViewAdapter;
 import com.igalia.wolvic.addons.delegates.AddonsDelegate;
 import com.igalia.wolvic.databinding.AddonsBinding;
-import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.views.library.LibraryView;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -25,6 +24,7 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
 
     private AddonsBinding mBinding;
     private AddonsViewAdapter mAdapter;
+    private AddonsPanel mAddonsPanel;
 
     public AddonsView(@NonNull Context context) {
         super(context);
@@ -32,9 +32,9 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         initialize();
     }
 
-    public AddonsView(@NonNull Context context, @NonNull LibraryPanel rootPanel) {
-        super(context, rootPanel);
-
+    public AddonsView(@NonNull Context context, @NonNull AddonsPanel panel) {
+        super(context);
+        mAddonsPanel = panel;
         initialize();
     }
 
@@ -79,12 +79,12 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         updateLayout();
 
         if (mBinding.pager.getCurrentItem() == AddonsViewAdapter.ADDONS_LEVEL_0) {
-            if (mRootPanel != null) {
-                mRootPanel.onViewUpdated(getContext().getString(R.string.addons_title));
+            if (mAddonsPanel != null) {
+                mAddonsPanel.onViewUpdated(getContext().getString(R.string.addons_title));
             }
         } else {
-            if (mRootPanel != null) {
-                mRootPanel.onViewUpdated(ExtensionsKt.translateName(mAdapter.getCurrentAddon(), getContext()));
+            if (mAddonsPanel != null) {
+                mAddonsPanel.onViewUpdated(ExtensionsKt.translateName(mAdapter.getCurrentAddon(), getContext()));
             }
         }
     }
@@ -144,8 +144,8 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         mAdapter.setCurrentAddon(null);
         mAdapter.setCurrentItem(AddonsViewAdapter.ADDONS_LIST);
         mBinding.pager.setCurrentItem(AddonsViewAdapter.ADDONS_LEVEL_0);
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(getContext().getString(R.string.addons_title));
+        if (mAddonsPanel != null) {
+            mAddonsPanel.onViewUpdated(getContext().getString(R.string.addons_title));
         }
     }
 
@@ -154,8 +154,8 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         mAdapter.setCurrentAddon(addon);
         mAdapter.setCurrentItem(AddonsViewAdapter.ADDON_OPTIONS);
         mBinding.pager.setCurrentItem(AddonsViewAdapter.ADDONS_LEVEL_1);
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
+        if (mAddonsPanel != null) {
+            mAddonsPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
         }
     }
 
@@ -164,8 +164,8 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         mAdapter.setCurrentAddon(addon);
         mAdapter.setCurrentItem(AddonsViewAdapter.ADDON_OPTIONS_DETAILS);
         mBinding.pager.setCurrentItem(page);
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
+        if (mAddonsPanel != null) {
+            mAddonsPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
         }
     }
 
@@ -174,8 +174,8 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         mAdapter.setCurrentAddon(addon);
         mAdapter.setCurrentItem(AddonsViewAdapter.ADDON_OPTIONS_PERMISSIONS);
         mBinding.pager.setCurrentItem(AddonsViewAdapter.ADDONS_LEVEL_2);
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
+        if (mAddonsPanel != null) {
+            mAddonsPanel.onViewUpdated(ExtensionsKt.translateName(addon, getContext()));
         }
     }
 

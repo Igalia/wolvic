@@ -42,11 +42,13 @@ import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.WebAppsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.TrayBinding;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadsManager;
+import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.TrayViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.views.UIButton;
@@ -63,6 +65,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import mozilla.components.browser.icons.IconRequest;
 
 public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate {
 
@@ -97,6 +102,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private int mLeftControllerBatteryLevel;
     private int mRightControllerBatteryLevel;
     private ConnectivityReceiver mConnectivityReceived;
+    private WebAppsStore.WebAppsListener mWebAppsListener;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -228,6 +234,26 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             view.requestFocusFromTouch();
         });
 
+        mBinding.downloadsButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBinding.downloadsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            notifyDownloadsClicked();
+            view.requestFocusFromTouch();
+        });
+
+        mBinding.webAppsButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBinding.webAppsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            notifyWebAppsClicked();
+            view.requestFocusFromTouch();
+        });
+
         mBinding.wifi.setOnHoverListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                 NotificationManager.Notification notification = new NotificationManager.Builder(TrayWidget.this)
@@ -352,6 +378,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         updateTime();
         updateWifi();
+        updateWebApps();
     }
 
     public void start(Context context) {
@@ -418,6 +445,55 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         return false;
     };
+
+    public void updateWebApps() {
+        List<WebApp> webApps = SessionStore.get().getWebAppsStore()
+                .getWebApps().stream().sorted((a, b) -> {
+                    if (a.getLastOpenTime() == b.getLastOpenTime()) {
+                        return 0;
+                    }
+
+                    return a.getLastOpenTime() > b.getLastOpenTime() ? -1 : 1;
+                })
+                .limit(3).collect(Collectors.toList());
+        setWebApps(webApps);
+    }
+
+    private void setWebApp(@NonNull UIButton view, @NonNull WebApp webApp) {
+        view.setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            view.setTooltipText(webApp.getName());
+        }
+        view.setOnHoverListener(mButtonScaleHoverListener);
+        SessionStore sessionStore = SessionStore.get();
+        sessionStore.getBrowserIcons().loadIntoView(view,
+                webApp.getStartUrl(), webApp.getIconResources(), IconRequest.Size.LAUNCHER);
+        view.setOnClickListener(v -> {
+            Session session = sessionStore.getActiveSession();
+            session.loadUri(webApp.getStartUrl());
+
+            SessionStore.get().getWebAppsStore().updateWebAppOpenTime(webApp.getId());
+
+            WindowWidget window = mWidgetManager.getFocusedWindow();
+            window.hidePanel();
+        });
+    }
+
+    private void setWebApps(@NonNull List<WebApp> webApps) {
+        mBinding.webApp1.setVisibility(View.GONE);
+        mBinding.webApp2.setVisibility(View.GONE);
+        mBinding.webApp3.setVisibility(View.GONE);
+        switch (webApps.size()) {
+            default:
+                setWebApp(mBinding.webApp3, webApps.get(2));
+            case 2:
+                setWebApp(mBinding.webApp2, webApps.get(1));
+            case 1:
+                setWebApp(mBinding.webApp1, webApps.get(0));
+            case 0:
+                break;
+        }
+    }
 
     private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
         if (view.isPressed() || !mIsWindowAttached) {
@@ -490,6 +566,16 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private void notifyLibraryClicked() {
         hideNotifications();
         mTrayListeners.forEach(TrayListener::onLibraryClicked);
+    }
+
+    private void notifyDownloadsClicked() {
+        hideNotifications();
+        mTrayListeners.forEach(TrayListener::onDownloadsClicked);
+    }
+
+    private void notifyWebAppsClicked() {
+        hideNotifications();
+        mTrayListeners.forEach(TrayListener::onWebAppsClicked);
     }
 
     @Override
@@ -575,8 +661,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         if (mViewModel != null) {
             mViewModel.getIsLibraryVisible().removeObserver(mIsLibraryVisible);
+            mViewModel.getIsDownloadsVisible().removeObserver(mIsDownloadsVisible);
+            mViewModel.getIsWebAppsVisible().removeObserver(mIsWebAppsVisible);
             mViewModel.getIsPrivateSession().removeObserver(mIsPrivateSession);
             mViewModel = null;
+        }
+
+        if (mWebAppsListener != null) {
+            SessionStore.get().getWebAppsStore().removeListener(mWebAppsListener);
+            mWebAppsListener = null;
         }
 
         mIsWindowAttached = false;
@@ -598,11 +691,16 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
         mViewModel.getIsLibraryVisible().observe((VRBrowserActivity)getContext(), mIsLibraryVisible);
+        mViewModel.getIsDownloadsVisible().observe((VRBrowserActivity)getContext(), mIsDownloadsVisible);
+        mViewModel.getIsWebAppsVisible().observe((VRBrowserActivity)getContext(), mIsWebAppsVisible);
         mViewModel.getIsPrivateSession().observe((VRBrowserActivity)getContext(), mIsPrivateSession);
 
         mBinding.setViewmodel(mViewModel);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
+
+        mWebAppsListener = webApps -> updateWebApps();
+        SessionStore.get().getWebAppsStore().addListener(mWebAppsListener);
 
         mIsWindowAttached = true;
     }
@@ -615,6 +713,28 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             animateViewPadding(mBinding.libraryButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {
             animateViewPadding(mBinding.libraryButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsDownloadsVisible = aBoolean -> {
+        if (mBinding.downloadsButton.isHovered()) {
+            return;
+        }
+        if (aBoolean.get()) {
+            animateViewPadding(mBinding.downloadsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+        } else {
+            animateViewPadding(mBinding.downloadsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsWebAppsVisible = aBoolean -> {
+        if (mBinding.webAppsButton.isHovered()) {
+            return;
+        }
+        if (aBoolean.get()) {
+            animateViewPadding(mBinding.webAppsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+        } else {
+            animateViewPadding(mBinding.webAppsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
         }
     };
 
@@ -684,12 +804,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     public void showWebAppAddedNotification() {
-        showNotification(WEB_APP_ADDED_NOTIFICATION_ID, mBinding.libraryButton, R.string.web_apps_saved_notification);
+        showNotification(WEB_APP_ADDED_NOTIFICATION_ID, mBinding.webAppsButton, R.string.web_apps_saved_notification);
     }
 
     public void showDownloadCompletedNotification(String filename) {
         showNotification(DOWNLOAD_COMPLETED_NOTIFICATION_ID,
-                mBinding.libraryButton,
+                mBinding.downloadsButton,
                 getContext().getString(R.string.download_completed_notification, filename));
     }
 
@@ -744,7 +864,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         long inProgressNum = downloads.stream().filter(item -> item.inProgress()).count();
         mTrayViewModel.setDownloadsNumber((int)inProgressNum);
         if (inProgressNum == 0) {
-            mBinding.libraryButton.setLevel(0);
+            mBinding.downloadsButton.setLevel(0);
 
         } else {
             long size = downloads.stream()
@@ -756,7 +876,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                     .sum();
             if (size > 0) {
                 long percent = downloaded*100/size;
-                mBinding.libraryButton.setLevel((int)percent*100);
+                mBinding.downloadsButton.setLevel((int)percent*100);
             }
         }
     }

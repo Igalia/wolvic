@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package com.igalia.wolvic.ui.views.library;
+package com.igalia.wolvic.ui.views.downloads;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -33,11 +33,13 @@ import com.igalia.wolvic.ui.callbacks.DownloadItemCallback;
 import com.igalia.wolvic.ui.callbacks.DownloadsCallback;
 import com.igalia.wolvic.ui.callbacks.DownloadsContextMenuCallback;
 import com.igalia.wolvic.ui.viewmodel.DownloadsViewModel;
+import com.igalia.wolvic.ui.views.library.LibraryPanel;
+import com.igalia.wolvic.ui.views.library.LibraryView;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
-import com.igalia.wolvic.ui.widgets.menus.library.DownloadsContextMenuWidget;
+import com.igalia.wolvic.ui.widgets.menus.DownloadsContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.LibraryContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -58,9 +60,11 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     private DownloadsManager mDownloadsManager;
     private Comparator<Download> mSortingComparator;
     private DownloadsViewModel mViewModel;
+    private DownloadsPanel mDownloadsPanel;
 
-    public DownloadsView(Context aContext, @NonNull LibraryPanel delegate) {
-        super(aContext, delegate);
+    public DownloadsView(Context aContext, @NonNull DownloadsPanel delegate) {
+        super(aContext);
+        mDownloadsPanel = delegate;
         initialize();
     }
 
@@ -118,6 +122,12 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     }
 
     @Override
+    public void updateSearchFilter(String s) {
+        super.updateSearchFilter(s);
+        onDownloadsUpdate(mDownloadsManager.getDownloads());
+    };
+
+    @Override
     public void onDestroy() {
         mBinding.downloadsList.removeOnScrollListener(mScrollListener);
     }
@@ -127,8 +137,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         mDownloadsManager.addListener(this);
         onDownloadsUpdate(mDownloadsManager.getDownloads());
         updateLayout();
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(getContext().getString(R.string.downloads_title));
+        if (mDownloadsPanel != null) {
+            mDownloadsPanel.onViewUpdated(getContext().getString(R.string.downloads_title));
         }
     }
 
@@ -174,7 +184,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                 SessionStore.get().getActiveSession().loadUri(item.getOutputFileUriAsString());
 
                 WindowWidget window = mWidgetManager.getFocusedWindow();
-                window.hidePanel();
+                window.hideDownloadsPanel();
             }
         }
 
@@ -341,8 +351,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), window);
 
         Rect offsetViewBounds = new Rect();
-        mRootPanel.getDrawingRect(offsetViewBounds);
-        mRootPanel.offsetDescendantRectToMyCoords(view, offsetViewBounds);
+        mDownloadsPanel.getDrawingRect(offsetViewBounds);
+        mDownloadsPanel.offsetDescendantRectToMyCoords(view, offsetViewBounds);
 
         SortingContextMenuWidget menu = new SortingContextMenuWidget(getContext());
         menu.setItemDelegate(item -> {
@@ -432,7 +442,14 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         } else {
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
-            List<Download> sorted = downloads.stream().sorted(mSortingComparator).collect(Collectors.toList());
+            List<Download> sorted = downloads.stream()
+                    .filter(value -> {
+                        if (value.getTitle() != null && !mSearchFilter.isEmpty()) {
+                            return value.getTitle().toLowerCase().contains(mSearchFilter);
+                        }
+                        return true;
+                    })
+                    .sorted(mSortingComparator).collect(Collectors.toList());
             mDownloadsAdapter.setDownloadsList(sorted);
         }
 

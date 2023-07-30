@@ -1150,7 +1150,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // We shouldn't divide the scale factor when we pass the motion event to the web engine
             if (widget instanceof WindowWidget) {
                 WindowWidget windowWidget = (WindowWidget) widget;
-                if (!windowWidget.isLibraryVisible()) {
+                if (windowWidget.isInWebPage()) {
                     scale = 1.0f;
                 }
             }
