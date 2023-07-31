@@ -643,13 +643,13 @@ dependencies {
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
 
     // gecko
-    def branch = "nightly" // "nightly" or "beta"
+    def branch = "release" // "release", "nightly" or "beta"
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
             def abi = getName().toLowerCase().contains('x64') ? 'x86_64' : 'arm64'
-            def candidate = "geckoview-${branch}-${abi}"
+            def candidate = branch == "release" ? "geckoview-${abi}" : "geckoview-${branch}-${abi}"
             select(candidates.find { it.id.module.contains(candidate) })
         }
     }
