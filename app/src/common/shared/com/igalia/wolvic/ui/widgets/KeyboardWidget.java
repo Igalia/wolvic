@@ -7,6 +7,7 @@ package com.igalia.wolvic.ui.widgets;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import com.igalia.wolvic.input.Keyboard;
 import android.os.Handler;
@@ -542,6 +543,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     protected void onDismiss() {
         dismiss();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setDefaultKeyboard();
     }
 
     @Override
