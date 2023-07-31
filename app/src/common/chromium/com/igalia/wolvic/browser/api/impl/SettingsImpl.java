@@ -2,10 +2,10 @@ package com.igalia.wolvic.browser.api.impl;
 
 import androidx.annotation.Nullable;
 
-import org.chromium.wolvic.SessionSettings;
-
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.api.WSessionSettings;
+
+import org.chromium.wolvic.SessionSettings;
 
 public class SettingsImpl implements WSessionSettings {
     private SessionSettings mSessionSettings = new SessionSettings();
@@ -137,8 +137,9 @@ public class SettingsImpl implements WSessionSettings {
             case WSessionSettings.USER_AGENT_MODE_VR:
                 return SessionSettings.UserAgentMode.MOBILE_VR;
             case WSessionSettings.USER_AGENT_MODE_DESKTOP:
-            default:
                 return SessionSettings.UserAgentMode.DESKTOP;
+            default:
+                throw new IllegalStateException("Invalid user agent mode: " + mode);
         }
     }
 }
