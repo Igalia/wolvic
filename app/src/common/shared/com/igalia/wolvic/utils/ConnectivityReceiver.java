@@ -1,16 +1,15 @@
 package com.igalia.wolvic.utils;
 
-import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,34 +20,76 @@ public class ConnectivityReceiver extends BroadcastReceiver {
         void OnConnectivityChanged(boolean connected);
     }
 
-    private Context mContext;
-    private List<Delegate> mListeners;
+    private static class NetworkWatcher extends LiveData<Boolean> {
+        public final ConnectivityManager connectivityManager;
+        public final List<Delegate> listeners;
+        public ConnectivityManager.NetworkCallback networkCallback;
+        private final Context context;
+        public NetworkWatcher(@NonNull Context context){
+            this.context = context;
+            this.listeners = new ArrayList<>();
+            this.connectivityManager = context.getSystemService(ConnectivityManager.class);
+            this.networkCallback = new ConnectivityManager.NetworkCallback(){
+                @Override
+                public void onLost(@NonNull Network network) {
+                    NetworkWatcher.super.postValue(false);
+                }
+
+                @Override
+                public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
+                    NetworkWatcher.super.postValue(
+                            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    );
+                }
+            };
+        }
+
+        public void onReceive() {
+            listeners.forEach(listener -> listener.OnConnectivityChanged(isNetworkAvailable(context)));
+        }
+
+        @Override
+        protected void onActive() {
+            this.connectivityManager.registerDefaultNetworkCallback(this.networkCallback);
+
+            onReceive();
+            NetworkWatcher.super.observe((LifecycleOwner) context, Observer -> onReceive());
+        }
+
+        @Override
+        protected void onInactive() {
+            this.connectivityManager.unregisterNetworkCallback(this.networkCallback);
+
+            onReceive();
+            NetworkWatcher.super.removeObservers((LifecycleOwner) context);
+        }
+    }
+
+    private final NetworkWatcher mNetworkWatcher;
 
     public ConnectivityReceiver(@NonNull Context context) {
-        mContext = context;
-        mListeners = new ArrayList<>();
+        mNetworkWatcher = new NetworkWatcher(context);
     }
 
     public void init() {
-        // TODO: Deprecated CONNECTIVITY_ACTION, see https://github.com/Igalia/wolvic/issues/803
-        mContext.registerReceiver(this, new IntentFilter(CONNECTIVITY_ACTION));
+        mNetworkWatcher.onActive();
     }
 
     public void end() {
-        mContext.unregisterReceiver(this);
+        mNetworkWatcher.onInactive();
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mListeners.forEach(listener -> listener.OnConnectivityChanged(isNetworkAvailable(mContext)));
+        mNetworkWatcher.onReceive();
     }
 
     public void addListener(@NonNull Delegate aDelegate) {
-        mListeners.add(aDelegate);
+        mNetworkWatcher.listeners.add(aDelegate);
     }
 
     public void removeListener(@NonNull Delegate aDelegate) {
-        mListeners.remove(aDelegate);
+        mNetworkWatcher.listeners.remove(aDelegate);
     }
 
     public static boolean isNetworkAvailable(Context aContext) {
