@@ -55,7 +55,7 @@ class DisplayLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        mBinding.languageRadio.setOptions(LocaleUtils.getSupportedLocalizedLanguages());
+        mBinding.languageRadio.setOptions(LocaleUtils.getSupportedLocalizedLanguagesStringArray(getContext()));
 
         String languageId = LocaleUtils.getDisplayLanguageId(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
