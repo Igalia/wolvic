@@ -267,7 +267,7 @@ public class LocaleUtils {
 
     public static Locale getLocale(@NonNull Resources res) {
         Configuration config = res.getConfiguration();
-        return (Build.VERSION.SDK_INT >= N) ? config.getLocales().get(0) : config.locale;
+        return config.getLocales().get(0);
     }
 
     public static String mapToMozillaSpeechLocales(@NonNull String locale) {
