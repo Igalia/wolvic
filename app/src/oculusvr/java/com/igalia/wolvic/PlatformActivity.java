@@ -18,6 +18,9 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {
@@ -104,14 +107,19 @@ public class PlatformActivity extends NativeActivity {
 
     private void addFullScreenListener() {
         View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(
-                new View.OnSystemUiVisibilityChangeListener() {
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                            setFullScreen();
-                        }
+        ViewCompat.setOnApplyWindowInsetsListener(decorView,
+            new androidx.core.view.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(
+                        View view, WindowInsetsCompat windowInsets) {
+                    if (windowInsets.isVisible(WindowInsetsCompat.Type.statusBars())
+                            || windowInsets.isVisible(WindowInsetsCompat.Type.navigationBars())) {
+                        setFullScreen();
                     }
-                });
+                    return ViewCompat.onApplyWindowInsets(view, windowInsets);
+                }
+            }
+        );
     }
 
 
