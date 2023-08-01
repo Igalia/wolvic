@@ -5,7 +5,6 @@
 
 package com.igalia.wolvic;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -22,6 +20,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
 
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
@@ -45,7 +46,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public abstract class PlatformActivity extends Activity implements SurfaceHolder.Callback, WidgetManagerDelegate {
+public abstract class PlatformActivity extends FragmentActivity implements SurfaceHolder.Callback, WidgetManagerDelegate {
     public static final String TAG = "PlatformActivity";
     private HVRLocationManager mLocationManager;
     private SharedPreferences mPrefs;
