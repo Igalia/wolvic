@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -47,6 +46,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Accounts;
@@ -129,11 +129,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     };
 
-    private final LifecycleRegistry mLifeCycle;
+    private LifecycleRegistry mLifeCycle;
 
     @NonNull
     @Override
     public Lifecycle getLifecycle() {
+        // Ensure that mLifeCycle is initialized, because this method
+        // may be called early by a superclass at construction time.
+        return getLifecycleRegistry();
+    }
+
+    private LifecycleRegistry getLifecycleRegistry() {
+        if (mLifeCycle == null) {
+            mLifeCycle = new LifecycleRegistry(this);
+        }
         return mLifeCycle;
     }
 
@@ -146,8 +155,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     public VRBrowserActivity() {
-        mLifeCycle = new LifecycleRegistry(this);
-        mLifeCycle.setCurrentState(Lifecycle.State.INITIALIZED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.INITIALIZED);
 
         mViewModelStore = new ViewModelStore();
     }
@@ -351,7 +359,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the deprecated version dialog, if needed.
         showDeprecatedVersionDialogIfNeeded();
 
-        mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.CREATED);
     }
 
     protected void initializeWidgets() {
@@ -537,7 +545,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
         mFragmentController.dispatchStart();
-        mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.STARTED);
         if (mTray == null) {
             Log.e(LOGTAG, "Failed to start Tray clock");
         } else {
@@ -618,7 +626,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         ((VRBrowserApplication)getApplicationContext()).getAccounts().pollForEventsAsync();
 
         super.onResume();
-        mLifeCycle.setCurrentState(Lifecycle.State.RESUMED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.RESUMED);
     }
 
     @Override
@@ -659,7 +667,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
 
         super.onDestroy();
-        mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.DESTROYED);
         mViewModelStore.clear();
         // Always exit to work around https://github.com/MozillaReality/FirefoxReality/issues/3363
         finish();
