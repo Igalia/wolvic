@@ -479,6 +479,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             removeView(view);
             view.setVisibility(GONE);
 
+            float prevDensity = mWidgetPlacement.density;
             if (switchSurface) {
                 setWillNotDraw(true);
                 if (mTexture != null) {
@@ -490,11 +491,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                     }
                     mSurface = new Surface(mTexture);
                 }
-                float prevDensity = mWidgetPlacement.density;
                 mWidgetPlacement.density = getBrowserDensity();
-                mWidgetManager.updateWidget(WindowWidget.this);
-                mWidgetManager.popWorldBrightness(WindowWidget.this);
-                mWidgetManager.popBackHandler(mBackHandler);
+            }
+            mWidgetManager.updateWidget(WindowWidget.this);
+            mWidgetManager.popWorldBrightness(WindowWidget.this);
+            mWidgetManager.popBackHandler(mBackHandler);
+            if (switchSurface) {
                 if (mTexture != null) {
                     resumeCompositor();
                 }
