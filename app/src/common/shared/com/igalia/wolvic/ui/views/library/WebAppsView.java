@@ -32,6 +32,7 @@ import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsListener {
 
@@ -90,8 +91,7 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
         mViewModel.setIsNarrow(false);
         mViewModel.setIsLoading(true);
 
-        List<WebApp> webApps = SessionStore.get().getWebAppsStore().getWebApps();
-        setWebApps(webApps);
+        updateWebApps();
 
         setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
@@ -99,6 +99,25 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
         });
     }
 
+    @Override
+    public void updateSearchFilter(String s) {
+        super.updateSearchFilter(s);
+        updateWebApps();
+    };
+
+    private void updateWebApps() {
+        List<WebApp> webApps = SessionStore.get().getWebAppsStore()
+                .getWebApps().stream()
+                .filter(value -> {
+                    if (value.getName() != null && !mSearchFilter.isEmpty()) {
+                        return value.getName().toLowerCase().contains(mSearchFilter) ||
+                                value.getStartUrl().toLowerCase().contains(mSearchFilter);
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+        setWebApps(webApps);
+    }
 
     // WebAppsStore.WebAppsListener
     @Override
