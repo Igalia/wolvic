@@ -146,6 +146,13 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     }
 
     @Override
+    public void updateSearchFilter(String s) {
+        super.updateSearchFilter(s);
+        mBookmarkAdapter.setSearchFilter(s);
+        updateBookmarks();
+    };
+
+    @Override
     public void onShow() {
         updateLayout();
         mBinding.bookmarksList.smoothScrollToPosition(0);

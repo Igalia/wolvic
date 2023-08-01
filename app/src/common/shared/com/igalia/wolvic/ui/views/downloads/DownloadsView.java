@@ -122,6 +122,12 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     }
 
     @Override
+    public void updateSearchFilter(String s) {
+        super.updateSearchFilter(s);
+        onDownloadsUpdate(mDownloadsManager.getDownloads());
+    };
+
+    @Override
     public void onDestroy() {
         mBinding.downloadsList.removeOnScrollListener(mScrollListener);
     }
@@ -436,7 +442,14 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         } else {
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
-            List<Download> sorted = downloads.stream().sorted(mSortingComparator).collect(Collectors.toList());
+            List<Download> sorted = downloads.stream()
+                    .filter(value -> {
+                        if (value.getTitle() != null && !mSearchFilter.isEmpty()) {
+                            return value.getTitle().toLowerCase().contains(mSearchFilter);
+                        }
+                        return true;
+                    })
+                    .sorted(mSortingComparator).collect(Collectors.toList());
             mDownloadsAdapter.setDownloadsList(sorted);
         }
 

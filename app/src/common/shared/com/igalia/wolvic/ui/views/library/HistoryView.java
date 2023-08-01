@@ -151,6 +151,12 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     }
 
     @Override
+    public void updateSearchFilter(String s) {
+        super.updateSearchFilter(s);
+        updateHistory();
+    };
+
+    @Override
     public void onDestroy() {
         SessionStore.get().getHistoryStore().removeListener(this);
 
@@ -385,6 +391,13 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                     .sorted(Comparator.comparing(VisitInfo::getVisitTime)
                             .reversed())
                     .filter(distinctByUrl(VisitInfo::getUrl))
+                    .filter(value -> {
+                        if (value.getTitle() != null && !mSearchFilter.isEmpty()) {
+                            return value.getTitle().toLowerCase().contains(mSearchFilter) ||
+                                    value.getUrl().toLowerCase().contains(mSearchFilter);
+                        }
+                        return true;
+                    })
                     .collect(Collectors.toList());
 
             addSection(orderedItems, getResources().getString(R.string.history_section_today), Long.MAX_VALUE, todayLimit);

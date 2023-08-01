@@ -61,6 +61,7 @@ public class AddonsPanel extends FrameLayout {
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.library, this, true);
+        mBinding.searchBar.setVisibility(View.GONE);
         mBinding.buttons.setVisibility(View.GONE);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setSupportsSystemNotifications(BuildConfig.SUPPORTS_SYSTEM_NOTIFICATIONS);
@@ -110,6 +111,8 @@ public class AddonsPanel extends FrameLayout {
     public void onShow() {
         if (mAddonsView != null) {
             mAddonsView.onShow();
+            mBinding.searchBar.setQuery("", false);
+            mBinding.searchBar.clearFocus();
         }
     }
 

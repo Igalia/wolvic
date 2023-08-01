@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,6 +64,27 @@ public class DownloadsPanel extends FrameLayout {
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.library, this, true);
+        mBinding.searchBar.setIconifiedByDefault(false);
+        mBinding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                mDownloadsView.updateSearchFilter(s.toLowerCase());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (s.isEmpty()) {
+                    mDownloadsView.updateSearchFilter(s.toLowerCase());
+                    return true;
+                }
+                return false;
+            }
+        });
+        mBinding.searchBar.setOnCloseListener(() -> {
+            mDownloadsView.updateSearchFilter("");
+            return true;
+        });
         mBinding.buttons.setVisibility(View.GONE);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setSupportsSystemNotifications(BuildConfig.SUPPORTS_SYSTEM_NOTIFICATIONS);
@@ -118,6 +140,8 @@ public class DownloadsPanel extends FrameLayout {
     public void onHide() {
         if (mDownloadsView != null) {
             mDownloadsView.onHide();
+            mBinding.searchBar.setQuery("", false);
+            mBinding.searchBar.clearFocus();
         }
     }
 
