@@ -14,9 +14,9 @@ import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WResult;
 
 import org.chromium.base.task.PostTask;
+import org.chromium.base.task.TaskTraits;
 import org.chromium.content_public.browser.MediaSession;
 import org.chromium.content_public.browser.MediaSessionObserver;
-import org.chromium.content_public.browser.UiThreadTaskTraits;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.components.browser_ui.media.MediaNotificationImageUtils;
 import org.chromium.components.browser_ui.media.MediaImageCallback;
@@ -226,7 +226,7 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
 
     private void startUpdatingPosition() {
         mRunUpdatingPositionTask = true;
-        PostTask.postDelayedTask(UiThreadTaskTraits.DEFAULT, () -> updatePosition(), UPDATE_POSITION_TIME_MS);
+        PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> updatePosition(), UPDATE_POSITION_TIME_MS);
     }
 
     private void stopUpdatingPosition() {
