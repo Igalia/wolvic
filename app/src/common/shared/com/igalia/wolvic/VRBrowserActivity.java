@@ -697,10 +697,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         LocaleUtils.update(this, language);
 
-        // TODO: Deprecated dispatchConfigurationChanged(Configuration) in FragmentController,
-        //  see https://github.com/Igalia/wolvic/issues/822
-        mFragmentController.dispatchConfigurationChanged(newConfig);
-
         SessionStore.get().onConfigurationChanged(newConfig);
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
         SendTabDialogWidget.getInstance(this).onConfigurationChanged(newConfig);
