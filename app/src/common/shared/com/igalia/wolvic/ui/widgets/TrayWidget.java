@@ -15,6 +15,9 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -819,6 +822,17 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         return false;
     }
 
+    private WifiInfo getWifiInfo(@NonNull WifiManager wifiManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ConnectivityManager cm = getContext().getSystemService(ConnectivityManager.class);
+            Network n = cm.getActiveNetwork();
+            NetworkCapabilities netCaps = cm.getNetworkCapabilities(n);
+            return (WifiInfo) netCaps.getTransportInfo();
+        } else {
+            return wifiManager.getConnectionInfo();
+        }
+    }
+    
     private void updateWifi() {
         // We are collecting sensitive data here, so we should ensure the user granted permissions.
         if (!(SettingsStore.getInstance(getContext()).isTermsServiceAccepted() &&
@@ -826,11 +840,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             return;
         }
 
-        // TODO: Deprecated getConnectionInfo(), see https://github.com/Igalia/wolvic/issues/802
         if ((mTrayViewModel.getWifiConnected().getValue() != null) && mTrayViewModel.getWifiConnected().getValue().get()) {
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
-                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                WifiInfo wifiInfo = getWifiInfo(wifiManager);
                 int level;
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
                     level = wifiManager.calculateSignalLevel(wifiInfo.getRssi());
