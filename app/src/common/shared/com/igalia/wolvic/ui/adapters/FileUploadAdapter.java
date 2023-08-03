@@ -123,7 +123,8 @@ public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         binding.setItem(item);
         final Uri itemUri = item.getUri();
-        ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), item.getUri(),
+        TaskRunner taskRunner = new TaskRunner();
+        ThumbnailTask thumbnailTask = new ThumbnailTask(binding.layout.getContext(), item.getUri(),
                 bitmap -> {
                     if (bitmap == null || binding.getItem() == null || !Objects.equals(itemUri, binding.getItem().getUri()))
                         binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
@@ -131,8 +132,9 @@ public class FileUploadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         binding.thumbnail.setImageBitmap(bitmap);
                 }
         );
-        // TODO: Deprecated AsyncTask, see https://github.com/Igalia/wolvic/issues/801
-        task.execute();
+        taskRunner.executeAsync(thumbnailTask, (data) -> {
+            thumbnailTask.onPostExecute(data);
+        });
 
         boolean isSelected = mSelectedItems.contains(item);
         binding.layout.setSelected(isSelected);

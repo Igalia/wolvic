@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-// TODO: Deprecated AsyncTask, see https://github.com/Igalia/wolvic/issues/801
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
@@ -22,10 +20,16 @@ import com.igalia.wolvic.utils.UrlUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
-public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
+public class ThumbnailTask implements Callable<Bitmap> {
 
-    static final String LOGTAG = SystemUtils.createLogtag(ThumbnailAsyncTask.class);
+    static final String LOGTAG = SystemUtils.createLogtag(ThumbnailTask.class);
+
+    @Override
+    public Bitmap call() throws Exception {
+        return doInBackground();
+    }
 
     public interface OnSuccessDelegate {
         void onSuccess(Bitmap bitmap);
@@ -38,14 +42,12 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     private final OnSuccessDelegate mOnSuccessDelegate;
     private CancellationSignal mCancellationSignal;
 
-    public ThumbnailAsyncTask(@NonNull Context context, Uri fileUri, OnSuccessDelegate onSuccessDelegate) {
+    public ThumbnailTask(@NonNull Context context, Uri fileUri, OnSuccessDelegate onSuccessDelegate) {
         mContentResolver = context.getContentResolver();
         mFileUri = fileUri;
         mOnSuccessDelegate = onSuccessDelegate;
     }
 
-    @Override
-    @Deprecated
     protected Bitmap doInBackground(Void... voids) {
         if (mFileUri == null)
             return null;
@@ -66,11 +68,7 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
         }
     }
 
-    @Override
-    @Deprecated
     protected void onCancelled() {
-        super.onCancelled();
-
         if (mCancellationSignal != null) {
             mCancellationSignal.cancel();
             mCancellationSignal = null;
@@ -117,8 +115,6 @@ public class ThumbnailAsyncTask extends AsyncTask<Void, Void, Bitmap> {
         return null;
     }
 
-    @Override
-    @Deprecated
     protected void onPostExecute(Bitmap bitmap) {
         if (bitmap != null && mOnSuccessDelegate != null) {
             (new Handler(Looper.getMainLooper())).post(() -> mOnSuccessDelegate.onSuccess(bitmap));
