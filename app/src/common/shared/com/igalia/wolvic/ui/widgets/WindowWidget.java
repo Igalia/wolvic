@@ -66,6 +66,7 @@ import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.views.downloads.DownloadsPanel;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
+import com.igalia.wolvic.ui.views.webapps.WebAppsPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.ui.widgets.menus.ContextMenuWidget;
@@ -135,6 +136,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private int mWindowId;
     private LibraryPanel mLibrary;
     private DownloadsPanel mDownloads;
+    private WebAppsPanel mWebApps;
     private AddonsPanel mAddons;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
@@ -220,6 +222,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mLibrary = new LibraryPanel(aContext);
         mDownloads = new DownloadsPanel(aContext);
+        mWebApps = new WebAppsPanel(aContext);
         mAddons = new AddonsPanel(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
@@ -344,6 +347,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 hideDownloadsPanel();
             }
 
+        } else if (mViewModel.getIsWebAppsVisible().getValue().get()) {
+            if (!mWebApps.onBack()) {
+                hideWebAppsPanel();
+            }
+
         } else if (mViewModel.getIsAddonsVisible().getValue().get()) {
             if (!mAddons.onBack()) {
                 hideAddonsPanel();
@@ -381,6 +389,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mLibrary.onConfigurationChanged(newConfig);
         mDownloads.onConfigurationChanged(newConfig);
+        mWebApps.onConfigurationChanged(newConfig);
         mAddons.onConfigurationChanged(newConfig);
 
         mViewModel.refresh();
@@ -392,6 +401,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         releaseWidget();
         mLibrary.onDestroy();
         mDownloads.onDestroy();
+        mWebApps.onDestroy();
         mAddons.onDestroy();
         mViewModel.setIsTopBarVisible(false);
         mViewModel.setIsTitleBarVisible(false);
@@ -513,6 +523,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mViewModel.getIsDownloadsVisible().getValue().get();
     }
 
+    public boolean isWebAppsVisible() {
+        return mViewModel.getIsWebAppsVisible().getValue().get();
+    }
+
     public boolean isAddonsVisible() {
         return mViewModel.getIsAddonsVisible().getValue().get();
     }
@@ -537,6 +551,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mViewModel.getIsDownloadsVisible().getValue().get()) {
             hideDownloadsPanel(switchSurface);
         }
+        if (mViewModel.getIsWebAppsVisible().getValue().get()) {
+            hideWebAppsPanel(switchSurface);
+        }
         if (mViewModel.getIsAddonsVisible().getValue().get()) {
             hideAddonsPanel(switchSurface);
         }
@@ -560,6 +577,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             hideAllPanel(false);
             showDownloadsPanel(true);
+            mViewModel.refresh();
+        }
+    }
+
+    public void switchWebAppsPanel() {
+        if (mViewModel.getIsWebAppsVisible().getValue().get()) {
+            hideWebAppsPanel(true);
+
+        } else {
+            hideAllPanel(false);
+            showWebAppsPanel(true);
             mViewModel.refresh();
         }
     }
@@ -658,6 +686,37 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             unsetView(mDownloads, switchSurface);
             mDownloads.onHide();
             mViewModel.setIsDownloadsVisible(false);
+        }
+        if (switchSurface) {
+            hidePanelCommonAction();
+        }
+    }
+
+    public void showWebAppsPanel() {
+        showWebAppsPanel(true);
+    }
+
+    private void showWebAppsPanel(boolean switchSurface) {
+        if (mWebApps != null) {
+            if (mView == null) {
+                setView(mWebApps, switchSurface);
+                mWebApps.onShow();
+                mViewModel.setIsWebAppsVisible(true);
+                showPanelCommonAction();
+
+            }
+        }
+    }
+
+    public void hideWebAppsPanel() {
+        hideWebAppsPanel(true);
+    }
+
+    private void hideWebAppsPanel(boolean switchSurface) {
+        if (mView != null && mWebApps != null) {
+            unsetView(mWebApps, switchSurface);
+            mWebApps.onHide();
+            mViewModel.setIsWebAppsVisible(false);
         }
         if (switchSurface) {
             hidePanelCommonAction();
@@ -1236,12 +1295,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
-            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get()) {
+            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get() || mViewModel.getIsWebAppsVisible().getValue().get()) {
                 mWidgetManager.popWorldBrightness(this);
             }
 
         } else {
-            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get()) {
+            if (mViewModel.getIsLibraryVisible().getValue().get() || mViewModel.getIsDownloadsVisible().getValue().get() || mViewModel.getIsWebAppsVisible().getValue().get()) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
             }
         }

@@ -238,6 +238,16 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             view.requestFocusFromTouch();
         });
 
+        mBinding.webAppsButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBinding.webAppsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            notifyWebAppsClicked();
+            view.requestFocusFromTouch();
+        });
+
         mBinding.wifi.setOnHoverListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                 NotificationManager.Notification notification = new NotificationManager.Builder(TrayWidget.this)
@@ -507,6 +517,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayListeners.forEach(TrayListener::onDownloadsClicked);
     }
 
+    private void notifyWebAppsClicked() {
+        hideNotifications();
+        mTrayListeners.forEach(TrayListener::onWebAppsClicked);
+    }
+
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
@@ -591,6 +606,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         if (mViewModel != null) {
             mViewModel.getIsLibraryVisible().removeObserver(mIsLibraryVisible);
             mViewModel.getIsDownloadsVisible().removeObserver(mIsDownloadsVisible);
+            mViewModel.getIsWebAppsVisible().removeObserver(mIsWebAppsVisible);
             mViewModel.getIsPrivateSession().removeObserver(mIsPrivateSession);
             mViewModel = null;
         }
@@ -615,6 +631,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
         mViewModel.getIsLibraryVisible().observe((VRBrowserActivity)getContext(), mIsLibraryVisible);
         mViewModel.getIsDownloadsVisible().observe((VRBrowserActivity)getContext(), mIsDownloadsVisible);
+        mViewModel.getIsWebAppsVisible().observe((VRBrowserActivity)getContext(), mIsWebAppsVisible);
         mViewModel.getIsPrivateSession().observe((VRBrowserActivity)getContext(), mIsPrivateSession);
 
         mBinding.setViewmodel(mViewModel);
@@ -643,6 +660,17 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             animateViewPadding(mBinding.downloadsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {
             animateViewPadding(mBinding.downloadsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsWebAppsVisible = aBoolean -> {
+        if (mBinding.webAppsButton.isHovered()) {
+            return;
+        }
+        if (aBoolean.get()) {
+            animateViewPadding(mBinding.webAppsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+        } else {
+            animateViewPadding(mBinding.webAppsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
         }
     };
 
@@ -712,7 +740,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     public void showWebAppAddedNotification() {
-        showNotification(WEB_APP_ADDED_NOTIFICATION_ID, mBinding.libraryButton, R.string.web_apps_saved_notification);
+        showNotification(WEB_APP_ADDED_NOTIFICATION_ID, mBinding.webAppsButton, R.string.web_apps_saved_notification);
     }
 
     public void showDownloadCompletedNotification(String filename) {

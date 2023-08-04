@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package com.igalia.wolvic.ui.views.library;
+package com.igalia.wolvic.ui.views.webapps;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -27,6 +27,7 @@ import com.igalia.wolvic.databinding.WebappsBinding;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.adapters.WebAppsAdapter;
 import com.igalia.wolvic.ui.callbacks.WebAppItemCallback;
+import com.igalia.wolvic.ui.views.library.LibraryView;
 import com.igalia.wolvic.ui.viewmodel.WebAppsViewModel;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -42,9 +43,11 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
     private WebAppsAdapter mWebAppsAdapter;
     private WebAppsViewModel mViewModel;
     private Handler mHandler;
+    private WebAppsPanel mWebAppsPanel;
 
-    public WebAppsView(Context aContext, @NonNull LibraryPanel delegate) {
-        super(aContext, delegate);
+    public WebAppsView(Context aContext, @NonNull WebAppsPanel delegate) {
+        super(aContext);
+        mWebAppsPanel = delegate;
         initialize();
     }
 
@@ -139,8 +142,8 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
     public void onShow() {
         updateLayout();
         mBinding.webAppsList.smoothScrollToPosition(0);
-        if (mRootPanel != null) {
-            mRootPanel.onViewUpdated(getContext().getString(R.string.web_apps_title));
+        if (mWebAppsPanel != null) {
+            mWebAppsPanel.onViewUpdated(getContext().getString(R.string.web_apps_title));
         }
     }
 
