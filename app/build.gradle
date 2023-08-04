@@ -707,7 +707,7 @@ dependencies {
     }
 
     // gecko
-    def branch = "release" // "release", "nightly" or "beta"
+    def branch = "nightly" // "release", "nightly" or "beta"
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
