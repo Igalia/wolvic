@@ -36,11 +36,6 @@
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
-                        android:src="@drawable/ic_icon_webapps"
-                        android:id="@+id/web_apps"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
-                    <com.igalia.wolvic.ui.views.UIButton
-                        style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_dialog_notification"
                         android:id="@+id/notifications"
                         android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"

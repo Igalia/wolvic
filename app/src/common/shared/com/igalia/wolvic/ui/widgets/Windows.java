@@ -367,6 +367,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         aWindow.hidePanel();
         aWindow.hideDownloadsPanel();
+        aWindow.hideWebAppsPanel();
 
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
@@ -603,6 +604,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mFocusedWindow.switchDownloadsPanel();
     }
 
+    private void closeWebAppsPanelInFocusedWindowIfNeeded() {
+        if (!mFocusedWindow.isWebAppsVisible())
+            return;
+        mFocusedWindow.switchWebAppsPanel();
+    }
+
     private void closeAddonsPanelInFocusedWindowIfNeeded() {
         if (!mFocusedWindow.isAddonsVisible())
             return;
@@ -621,6 +628,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             // get a EGL crash in Gecko.
             closeLibraryPanelInFocusedWindowIfNeeded();
             closeDownloadsPanelInFocusedWindowIfNeeded();
+            closeWebAppsPanelInFocusedWindowIfNeeded();
             closeAddonsPanelInFocusedWindowIfNeeded();
         } else {
             mRegularWindowPlacement = WindowPlacement.FRONT;
@@ -668,6 +676,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             // get a EGL crash in Gecko.
             closeLibraryPanelInFocusedWindowIfNeeded();
             closeDownloadsPanelInFocusedWindowIfNeeded();
+            closeWebAppsPanelInFocusedWindowIfNeeded();
             closeAddonsPanelInFocusedWindowIfNeeded();
         } else {
             mPrivateWindowPlacement = WindowPlacement.FRONT;
@@ -1133,6 +1142,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onDownloadsClicked() {
         mFocusedWindow.switchDownloadsPanel();
+    }
+
+    @Override
+    public void onWebAppsClicked() {
+        mFocusedWindow.switchWebAppsPanel();
     }
 
     @Override
@@ -1644,7 +1658,7 @@ public void selectTab(@NonNull Session aTab) {
     }
 
     public boolean isSessionFocused(@NonNull Session session) {
-        return mRegularWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && !window.isDownloadsVisible() && session.isPrivateMode() == mPrivateMode) ||
-                mPrivateWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && !window.isDownloadsVisible() && session.isPrivateMode() == mPrivateMode );
+        return mRegularWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && !window.isDownloadsVisible() && !window.isWebAppsVisible() && session.isPrivateMode() == mPrivateMode) ||
+                mPrivateWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && !window.isDownloadsVisible() && !window.isWebAppsVisible() && session.isPrivateMode() == mPrivateMode );
     }
 }
