@@ -130,7 +130,7 @@
     <dimen name="tray_width">408dp</dimen>
     <dimen name="tray_height">66dp</dimen>
     <!-- The density of the tray tooltips is the default one. -->
-    <item name="tray_tooltip_density" format="float" type="dimen">1.0</item>
+    <item name="tray_tooltip_density" format="float" type="dimen">3.0</item>
     <dimen name="tray_tooltip_padding_h">20dp</dimen>
     <dimen name="tray_tooltip_padding_v">10dp</dimen>
     <dimen name="tray_tooltip_text_size">22sp</dimen>
