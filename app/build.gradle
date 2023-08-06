@@ -112,8 +112,8 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 98
-        versionName "1.4.1"
+        versionCode 99
+        versionName "1.4.2"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
@@ -513,6 +513,7 @@ android {
         prefab true // enable prefab support for various SDK AAR
         dataBinding true
     }
+    ndkVersion '25.2.9519653'
 }
 
 configurations {
