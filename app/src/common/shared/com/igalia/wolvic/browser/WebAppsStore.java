@@ -70,6 +70,15 @@ public class WebAppsStore implements SharedPreferences.OnSharedPreferenceChangeL
         SettingsStore.getInstance(mContext).setWebAppsData(json);
     }
 
+    public void updateWebAppOpenTime(@NonNull String id) {
+        WebApp existingWebApp = mWebApps.get(id);
+        if (existingWebApp != null) {
+            existingWebApp.setLastOpenTime();
+            saveWebAppsListToStorage();
+            notifyListeners();
+        }
+    }
+
     /**
      * @return {@code true} if the map did not contain the specified Web app (so it was added),
      * and {@code false} if the Web app was already in the list (so it was updated).

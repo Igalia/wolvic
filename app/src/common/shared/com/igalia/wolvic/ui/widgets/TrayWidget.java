@@ -42,11 +42,13 @@ import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.WebAppsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.TrayBinding;
 import com.igalia.wolvic.downloads.Download;
 import com.igalia.wolvic.downloads.DownloadsManager;
+import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.TrayViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.views.UIButton;
@@ -63,6 +65,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import mozilla.components.browser.icons.IconRequest;
 
 public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate {
 
@@ -97,6 +102,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private int mLeftControllerBatteryLevel;
     private int mRightControllerBatteryLevel;
     private ConnectivityReceiver mConnectivityReceived;
+    private WebAppsStore.WebAppsListener mWebAppsListener;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -372,6 +378,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         updateTime();
         updateWifi();
+        updateWebApps();
     }
 
     public void start(Context context) {
@@ -438,6 +445,55 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         return false;
     };
+
+    public void updateWebApps() {
+        List<WebApp> webApps = SessionStore.get().getWebAppsStore()
+                .getWebApps().stream().sorted((a, b) -> {
+                    if (a.getLastOpenTime() == b.getLastOpenTime()) {
+                        return 0;
+                    }
+
+                    return a.getLastOpenTime() > b.getLastOpenTime() ? -1 : 1;
+                })
+                .limit(3).collect(Collectors.toList());
+        setWebApps(webApps);
+    }
+
+    private void setWebApp(@NonNull UIButton view, @NonNull WebApp webApp) {
+        view.setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            view.setTooltipText(webApp.getName());
+        }
+        view.setOnHoverListener(mButtonScaleHoverListener);
+        SessionStore sessionStore = SessionStore.get();
+        sessionStore.getBrowserIcons().loadIntoView(view,
+                webApp.getStartUrl(), webApp.getIconResources(), IconRequest.Size.LAUNCHER);
+        view.setOnClickListener(v -> {
+            Session session = sessionStore.getActiveSession();
+            session.loadUri(webApp.getStartUrl());
+
+            SessionStore.get().getWebAppsStore().updateWebAppOpenTime(webApp.getId());
+
+            WindowWidget window = mWidgetManager.getFocusedWindow();
+            window.hidePanel();
+        });
+    }
+
+    private void setWebApps(@NonNull List<WebApp> webApps) {
+        mBinding.webApp1.setVisibility(View.GONE);
+        mBinding.webApp2.setVisibility(View.GONE);
+        mBinding.webApp3.setVisibility(View.GONE);
+        switch (webApps.size()) {
+            default:
+                setWebApp(mBinding.webApp3, webApps.get(2));
+            case 2:
+                setWebApp(mBinding.webApp2, webApps.get(1));
+            case 1:
+                setWebApp(mBinding.webApp1, webApps.get(0));
+            case 0:
+                break;
+        }
+    }
 
     private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
         if (view.isPressed() || !mIsWindowAttached) {
@@ -611,6 +667,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             mViewModel = null;
         }
 
+        if (mWebAppsListener != null) {
+            SessionStore.get().getWebAppsStore().removeListener(mWebAppsListener);
+            mWebAppsListener = null;
+        }
+
         mIsWindowAttached = false;
     }
 
@@ -637,6 +698,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mBinding.setViewmodel(mViewModel);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
+
+        mWebAppsListener = webApps -> updateWebApps();
+        SessionStore.get().getWebAppsStore().addListener(mWebAppsListener);
 
         mIsWindowAttached = true;
     }

@@ -242,6 +242,38 @@
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/darker_gray"/>
 
+            <LinearLayout
+                android:id="@+id/trayAppsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tray_background_bottom"
+                android:orientation="horizontal">
+
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/webApp1"
+                    style="@style/trayButtonMiddleTheme"
+                    app:tintColorList="@color/black"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray" />
+
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/webApp2"
+                    style="@style/trayButtonMiddleTheme"
+                    app:tintColorList="@color/black"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray" />
+
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/webApp3"
+                    style="@style/trayButtonMiddleTheme"
+                    app:tintColorList="@color/black"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray" />
+            </LinearLayout>
+
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/webAppsButton"
                 style="@style/trayButtonEndTheme"
@@ -253,6 +285,5 @@
                 app:clipDrawable="@drawable/ic_icon_webapps_clip"
                 app:activeMode="@{viewmodel.isWebAppsVisible}"/>
         </LinearLayout>
-
     </RelativeLayout>
 </layout>

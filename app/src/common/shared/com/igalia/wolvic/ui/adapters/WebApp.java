@@ -25,6 +25,7 @@ import mozilla.components.concept.engine.manifest.WebAppManifestParser;
  */
 public class WebApp {
     @NonNull private String mIdentity;
+    @NonNull private long mLastOpenTime;
     private WebAppManifest mManifest;
     private OptionalInt mHashCode = OptionalInt.empty();
 
@@ -54,6 +55,7 @@ public class WebApp {
             String id = manifest.optString("id");
             URL identityUrl = new URL(startUrl.getProtocol(), startUrl.getHost(), startUrl.getPort(), id);
             mIdentity = identityUrl.toString();
+            mLastOpenTime = 0;
         } else {
             // Since Identity is used to uniquely identify the Web application,
             // we treat its absence as an error.
@@ -64,6 +66,16 @@ public class WebApp {
     @NonNull
     public String getId() {
         return mIdentity;
+    }
+
+    @NonNull
+    public long getLastOpenTime() {
+        return mLastOpenTime;
+    }
+
+    @NonNull
+    public void setLastOpenTime() {
+        mLastOpenTime = System.currentTimeMillis();
     }
 
     public String getName() {
@@ -105,6 +117,7 @@ public class WebApp {
 
     public void copyFrom(WebApp webApp) {
         mIdentity = webApp.mIdentity;
+        mLastOpenTime = webApp.mLastOpenTime;
         mManifest = webApp.mManifest;
         mHashCode = OptionalInt.empty();
     }
@@ -133,6 +146,7 @@ public class WebApp {
     public String toString() {
         return "WebApp{" +
                 "mIdentity='" + mIdentity + '\'' +
+                ", mLastOpenTime='" + mLastOpenTime + '\'' +
                 ", mName='" + getName() + '\'' +
                 ", mShortName='" + getShortName() + '\'' +
                 ", mScope='" + getScope() + '\'' +
