@@ -266,6 +266,12 @@ public class UrlUtils {
             TelemetryService.urlBarEvent(false);
         }
 
+        try {
+            URI uri = parseUri(url);
+            if (uri.getScheme() == null)
+                return "http://" + uri.toString();
+        } catch (URISyntaxException e) {
+        }
         return url;
     }
 
