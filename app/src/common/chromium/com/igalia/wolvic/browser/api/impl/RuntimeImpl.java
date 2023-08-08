@@ -45,13 +45,6 @@ public class RuntimeImpl implements WRuntime {
         return mContext;
     }
 
-    public void addViewToBrowserContainer(View view) {
-        SettingsStore settings = SettingsStore.getInstance(mContext);
-        // using the default window size here, it will be updated later in onSurfaceChanged()
-        mContainerView.addView(view,
-                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
-    }
-
     @Override
     public WRuntimeSettings getSettings() {
         return mRuntimeSettings;
