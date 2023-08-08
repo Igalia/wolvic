@@ -1,11 +1,13 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.Matrix;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -29,7 +31,6 @@ public class SessionImpl implements WSession {
     PromptDelegateImpl mPromptDelegate;
     SelectionActionDelegate mSelectionActionDelegate;
     WMediaSession.Delegate mMediaSessionDelegate;
-    DisplayImpl mDisplay;
     TextInputImpl mTextInput;
     PanZoomControllerImpl mPanZoomController;
     private String mInitialUri;
@@ -154,18 +155,20 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public WDisplay acquireDisplay() {
-        assert mDisplay == null;
-        mDisplay = new DisplayImpl(this, mTab.getCompositorView());
-        mRuntime.addViewToBrowserContainer(mTab.getCompositorView());
-        mRuntime.addViewToBrowserContainer(getContentView());
+        SettingsStore settings = SettingsStore.getInstance(mRuntime.getContext());
+        WDisplay display = new DisplayImpl(this, mTab.getCompositorView());
+        mRuntime.getContainerView().addView(mTab.getCompositorView(),
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
+        mRuntime.getContainerView().addView(getContentView(),
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
         getTextInput().setView(getContentView());
-        return mDisplay;
+        return display;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
-        assert mDisplay != null;
-        mDisplay = null;
+        mRuntime.getContainerView().removeView(mTab.getCompositorView());
+        mRuntime.getContainerView().removeView(getContentView());
         getTextInput().setView(null);
     }
 
