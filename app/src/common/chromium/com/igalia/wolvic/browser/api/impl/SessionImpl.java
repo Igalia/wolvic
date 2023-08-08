@@ -88,12 +88,22 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setActive(boolean active) {
-        // TODO: Implement
+        if (mTab == null)
+            return;
+
+        assert mTab.getContentView() != null;
+        if (active)
+            mTab.getContentView().getWebContents().onShow();
+        else
+            mTab.getContentView().getWebContents().onHide();
     }
 
     @Override
     public void setFocused(boolean focused) {
-        // TODO: Implement
+        if (mTab == null)
+            return;
+        assert mTab.getContentView() != null;
+        mTab.getContentView().getWebContents().setFocus(focused);
     }
 
     @Override
