@@ -18,6 +18,8 @@ import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
 
+import org.chromium.content_public.browser.WebContents;
+
 public class SessionImpl implements WSession {
     RuntimeImpl mRuntime;
     SettingsImpl mSettings;
@@ -92,10 +94,14 @@ public class SessionImpl implements WSession {
             return;
 
         assert mTab.getContentView() != null;
-        if (active)
-            mTab.getContentView().getWebContents().onShow();
-        else
-            mTab.getContentView().getWebContents().onHide();
+        WebContents webContents = mTab.getContentView().getWebContents();
+        if (active) {
+            webContents.onShow();
+        } else {
+            webContents.onHide();
+            webContents.suspendAllMediaPlayers();
+        }
+        webContents.setAudioMuted(!active);
     }
 
     @Override
