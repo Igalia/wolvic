@@ -111,6 +111,9 @@ public:
   void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
   virtual bool usesPassthroughCompositorLayer() const { return false; }
   virtual int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) { return -1; };
+  virtual void UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                              const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {};
+  virtual void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) {};
 
 protected:
   DeviceDelegate() {}

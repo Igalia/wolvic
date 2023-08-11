@@ -7,6 +7,7 @@
 #include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "BrowserEGLContext.h"
+#include "HandMeshRenderer.h"
 #include "VRBrowser.h"
 #include "VRLayer.h"
 
@@ -107,6 +108,7 @@ struct DeviceDelegateOpenXR::State {
   PassthroughStrategyPtr passthroughStrategy;
   XrEnvironmentBlendMode defaultBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
   XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
+  HandMeshRendererPtr handMeshRenderer = nullptr;
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -1419,6 +1421,19 @@ int32_t DeviceDelegateOpenXR::GetHandTrackingJointIndex(const HandTrackingJoints
 }
 
 void
+DeviceDelegateOpenXR::UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+               const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+  if (m.handMeshRenderer)
+    m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, aEnabled, leftHanded);
+}
+
+void
+DeviceDelegateOpenXR::DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera& aCamera) {
+  if (m.handMeshRenderer)
+    m.handMeshRenderer->Draw(aControllerIndex, aCamera);
+}
+
+void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Reset reorientation after Enter VR
   m.reorientMatrix = vrb::Matrix::Identity();
@@ -1474,8 +1489,19 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.controllersReadyCallback = nullptr;
   }
 
-  // Initialize layers if needed
   vrb::RenderContextPtr context = m.context.lock();
+
+  // Lazily create hand mesh renderer
+  if (m.mHandTrackingSupported && !m.handMeshRenderer) {
+    auto& create = context->GetRenderThreadCreationContext();
+#if defined(PICOXR) || defined(SPACES)
+    m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
+#else
+    m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
+#endif
+  }
+
+  // Initialize layers if needed
   for (OpenXRLayerPtr& layer: m.uiLayers) {
     layer->Init(m.javaContext->env, m.session, context);
   }
