@@ -16,15 +16,17 @@ import com.igalia.wolvic.geolocation.GeolocationData
 import com.igalia.wolvic.search.suggestions.fetchSearchSuggestions
 import com.igalia.wolvic.search.suggestions.getSuggestionsAsync
 import com.igalia.wolvic.utils.SystemUtils
-import kotlinx.coroutines.Dispatchers.Default
-import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.search.SearchEngineManager
-import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
-import mozilla.components.browser.search.provider.filter.SearchEngineFilter
-import mozilla.components.browser.search.provider.localization.LocaleSearchLocalizationProvider
-import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
-import mozilla.components.browser.search.suggestions.SearchSuggestionClient
+import kotlinx.coroutines.Dispatchers
+import mozilla.components.browser.state.action.SearchAction
+import mozilla.components.browser.state.search.RegionState
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.searchEngines
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.search.ext.buildSearchUrl
+import mozilla.components.feature.search.middleware.SearchMiddleware
+import mozilla.components.feature.search.suggestions.SearchSuggestionClient
 import java.lang.ref.WeakReference
+import java.util.Locale
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 
@@ -32,11 +34,19 @@ class SearchEngineWrapper private constructor(aContext: Context) :
     OnSharedPreferenceChangeListener {
     private val mContextRef: WeakReference<Context?>
     var currentSearchEngine: SearchEngine? = null
+        private get
         private set
     private var mSuggestionsClient: SearchSuggestionClient? = null
     private val mPrefs: SharedPreferences?
     private var mAutocompleteEnabled: Boolean
     private var mSearchEnginesMap: LinkedHashMap<String?, SearchEngine>? = null
+    private val mIoDispatcher: CoroutineContext = Dispatchers.IO
+    private var mRegionState: RegionState? = null
+    private val mBrowserStore = BrowserStore(
+        middleware = listOf(
+            SearchMiddleware(aContext,
+                ioDispatcher = mIoDispatcher)
+        ))
     fun registerForUpdates() {
         if (hasContext()) {
             context!!.registerReceiver(
@@ -58,6 +68,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
     }
 
     fun getSearchURL(aQuery: String?): String {
+        if (currentSearchEngine == null) setupPreferredSearchEngine()
         return currentSearchEngine!!.buildSearchUrl(aQuery!!)
     }
 
@@ -67,6 +78,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
 
     val resourceURL: String
         get() {
+            if (currentSearchEngine == null) setupPreferredSearchEngine()
             val uri = Uri.parse(currentSearchEngine!!.buildSearchUrl(""))
             return uri.scheme + "://" + uri.host
         }
@@ -85,87 +97,110 @@ class SearchEngineWrapper private constructor(aContext: Context) :
         mContextRef = WeakReference(aContext)
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context!!)
         mAutocompleteEnabled = SettingsStore.getInstance(context!!).isAutocompleteEnabled
-        val preferredSearchEngineId = SettingsStore.getInstance(context!!).searchEngineId
-        setupSearchEngine(aContext, preferredSearchEngineId)
+        setupPreferredSearchEngine()
     }
 
     val availableSearchEngines: Collection<SearchEngine>
-        get() = mSearchEnginesMap!!.values
+        get() {
+            updateSearchEngine()
+            return mSearchEnginesMap!!.values
+        }
 
     fun setDefaultSearchEngine() {
         if (hasContext()) setupSearchEngine(context!!, null)
     }
 
     fun setCurrentSearchEngineId(context: Context?, searchEngineId: String?) {
-        if (hasContext()) SettingsStore.getInstance(this.context!!).searchEngineId = searchEngineId
+        if (hasContext()) SettingsStore.getInstance(context!!).searchEngineId = searchEngineId
+    }
+
+    fun setupPreferredSearchEngine() {
+        val preferredSearchEngineId = SettingsStore.getInstance(context!!).searchEngineId
+        setupSearchEngine(context!!, preferredSearchEngineId)
     }
 
     /**
-     * We cannot send system ACTION_LOCALE_CHANGED so the component refreshes the engines
-     * with the updated SearchLocalizationProvider information so we have to update the whole manager.
+     * We cannot directly getCurrentSearchEngine() if it's not fully initialized, so use this method instead.
+     *
+     * @return SearchEngine currentSearchEngine
+     */
+    fun resolveCurrentSearchEngine(): SearchEngine {
+        if (currentSearchEngine == null) setupPreferredSearchEngine()
+        return currentSearchEngine!!
+    }
+
+    /**
+     * We cannot send system ACTION_LOCALE_CHANGED when the component refreshes the engines
+     * with the updated information so we have to update the whole manager.
      *
      * @param aContext Activity context
      * @param userPref User preferred engine (among the available ones)
      */
-    private fun setupSearchEngine(aContext: Context, userPref: String?) {
-        val engineFilterList: List<SearchEngineFilter> = ArrayList()
-        val data = GeolocationData.parse(SettingsStore.getInstance(aContext).geolocationData)
-        val localizationProvider: SearchLocalizationProvider = if (data == null) {
-            Log.d(LOGTAG, "Using Locale based search localization provider")
-            // If we don't have geolocation data we default to the Locale search localization provider
-            LocaleSearchLocalizationProvider()
+    private fun setupSearchEngine(aContext: Context?, userPref: String?) {
+        val thisContext: Context = aContext ?: context!!
+
+        val data = GeolocationData.parse(SettingsStore.getInstance(thisContext).geolocationData)
+        val regionState = if (data != null) {
+            Log.d(LOGTAG, "Using Geolocation based search localization: $data")
+            // If we have geolocation data we initialize with the received data.
+            val country = data.countryCode
+            RegionState(country, country)
         } else {
-            Log.d(LOGTAG, "Using Geolocation based search localization provider: $data")
-            // If we have geolocation data we initialize the provider with the received data.
-            GeolocationLocalizationProvider(data)
+            val country = thisContext.resources.configuration.locales.get(0).country
+            RegionState(country, country)
         }
 
-        // Configure the assets search with the localization provider and the engines that we want
-        // to filter.
-        val engineProvider = AssetsSearchEngineProvider(
-            localizationProvider, emptyList(), emptyList()
-        )
-        var searchEngineManager = SearchEngineManager(
-            listOf(engineProvider),
-            (Default as CoroutineContext)
-        )
-
-        // If we don't get any result we use the default configuration.
-        var searchEngines = searchEngineManager.getSearchEngines(aContext)
-        if (searchEngines.isEmpty()) {
-            Log.d(LOGTAG, "  Could not find any available search engines, using default.")
-            searchEngineManager = SearchEngineManager()
-            searchEngines = searchEngineManager.getSearchEngines(aContext)
+        if (mRegionState == null || mRegionState != regionState) {
+            mBrowserStore.dispatch(
+                SearchAction.SetRegionAction(
+                    regionState,
+                ),
+            )
+            mRegionState = regionState
         }
+
+        val searchEngines: List<SearchEngine> = mBrowserStore.state.search.searchEngines
         mSearchEnginesMap = LinkedHashMap(searchEngines.size)
         for (i in searchEngines.indices) {
             val searchEngine = searchEngines[i]
-            mSearchEnginesMap!![searchEngine.identifier] = searchEngine
-        }
-        var userPrefName = ""
-        if (mSearchEnginesMap!!.containsKey(userPref)) {
-            // The search component API uses the engine's name, not its identifier.
-            userPrefName = mSearchEnginesMap!![userPref]!!.name
+            mSearchEnginesMap!![searchEngine.id] = searchEngine
         }
 
-        // A name can be used if the user gets to choose among the available engines
-        currentSearchEngine = searchEngineManager.getDefaultSearchEngine(aContext, userPrefName)
+        val newSearchEngine = if (mSearchEnginesMap!!.containsKey(userPref)) {
+            mSearchEnginesMap!![userPref]
+        } else {
+            mSearchEnginesMap!![mBrowserStore.state.search.regionDefaultSearchEngineId]
+        }
+
+        if (newSearchEngine == null || currentSearchEngine == newSearchEngine) return
+
         mSuggestionsClient = SearchSuggestionClient(
-            currentSearchEngine!!
+            newSearchEngine
         ) label@
         { searchUrl: String? ->
             if (mAutocompleteEnabled && vRBrowserActivity != null) {
                 if (!vRBrowserActivity!!.windows.isInPrivateMode) {
-                    return@label fetchSearchSuggestions(context!!, searchUrl!!)
+                    return@label fetchSearchSuggestions(thisContext, searchUrl!!)
                 }
             }
             null
         }
-        SettingsStore.getInstance(context!!).searchEngineId = currentSearchEngine!!.identifier
+        SettingsStore.getInstance(thisContext).searchEngineId = newSearchEngine.id
+        currentSearchEngine = newSearchEngine
     }
 
     private fun hasContext(): Boolean {
         return mContextRef.get() != null
+    }
+
+    private fun updateSearchEngine() {
+        val newSearchEngineName = if (currentSearchEngine != null) {
+            currentSearchEngine!!.id
+        } else {
+            null
+        }
+
+        setupSearchEngine(null, newSearchEngineName)
     }
 
     private val context: Context?
@@ -181,7 +216,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
                     .getString(R.string.settings_key_search_engine_id)
             ) {
                 val searchEngineId = SettingsStore.getInstance(mContextRef.get()!!).searchEngineId
-                if (currentSearchEngine == null || currentSearchEngine!!.identifier != searchEngineId) {
+                if (currentSearchEngine == null || currentSearchEngine!!.id != searchEngineId) {
                     setupSearchEngine(mContextRef.get()!!, searchEngineId)
                 }
             } else if (key == mContextRef.get()!!.getString(R.string.settings_key_autocomplete)) {

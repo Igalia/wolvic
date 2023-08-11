@@ -148,7 +148,7 @@ class PrivacyOptionsView extends SettingsView {
         setAutocomplete(SettingsStore.getInstance(getContext()).isAutocompleteEnabled(), false);
 
         mBinding.searchEngineButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.SEARCH_ENGINE));
-        String searchEngineName = SearchEngineWrapper.get(getContext()).getCurrentSearchEngine().getName();
+        String searchEngineName = SearchEngineWrapper.get(getContext()).resolveCurrentSearchEngine().getName();
         mBinding.searchEngineDescription.setText(searchEngineName);
 
         mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);

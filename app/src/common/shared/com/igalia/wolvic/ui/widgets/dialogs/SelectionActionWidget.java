@@ -158,7 +158,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
             buttons.add(createButton(
                     getContext().getString(
                             R.string.context_menu_web_search,
-                            SearchEngineWrapper.get(getContext()).getCurrentSearchEngine().getName()),
+                            SearchEngineWrapper.get(getContext()).resolveCurrentSearchEngine().getName()),
                     ACTION_WEB_SEARCH,
                     this::handleAction));
         }
