@@ -434,62 +434,6 @@ void HandMeshRendererSkinned::Update(Controller &aController, const vrb::GroupPt
             return;
         UpdateHandModel(aController);
     }
-
-    assert(mesh.jointCount > 0);
-    assert(mesh.indexCount > 0);
-    assert(mesh.vertexCount > 0);
-
-    if (aController.index >= m.handGLState.size())
-        m.handGLState.resize(aController.index + 1);
-
-    HandMeshGLState& state = m.handGLState.at(aController.index);
-    state.jointCount = mesh.jointCount;
-    state.vertexCount = mesh.vertexCount;
-    state.indexCount = mesh.indexCount;
-
-    if (state.iboIndices == 0) {
-        VRB_GL_CHECK(glGenBuffers(1, &state.vboPosition));
-        VRB_GL_CHECK(glGenBuffers(1, &state.vboNormal));
-        VRB_GL_CHECK(glGenBuffers(1, &state.vboJointIndices));
-        VRB_GL_CHECK(glGenBuffers(1, &state.vboJointWeights));
-        VRB_GL_CHECK(glGenBuffers(1, &state.iboIndices));
-    }
-
-    // Positions VBO
-    VRB_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, state.vboPosition));
-    VRB_GL_CHECK(glBufferData(GL_ARRAY_BUFFER, state.vertexCount * 3 * sizeof(float), mesh.positions.data(), GL_STATIC_DRAW));
-
-    // Normals VBO
-    VRB_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, state.vboNormal));
-    VRB_GL_CHECK(glBufferData(GL_ARRAY_BUFFER, state.vertexCount * 3 * sizeof(float), mesh.normals.data(), GL_STATIC_DRAW));
-
-    // Joint indices VBO
-    std::vector<float> jointIndices;
-    jointIndices.resize(state.vertexCount * 4);
-    for (int i = 0; i < state.vertexCount; i++) {
-        jointIndices[i * 4 + 0] = mesh.jointIndices[i].x;
-        jointIndices[i * 4 + 1] = mesh.jointIndices[i].y;
-        jointIndices[i * 4 + 2] = mesh.jointIndices[i].z;
-        jointIndices[i * 4 + 3] = mesh.jointIndices[i].w;
-    }
-    VRB_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, state.vboJointIndices));
-    VRB_GL_CHECK(glBufferData(GL_ARRAY_BUFFER, state.vertexCount * 4 * sizeof(float), jointIndices.data(), GL_STATIC_DRAW));
-
-    // Joint weights VBO
-    VRB_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, state.vboJointWeights));
-    VRB_GL_CHECK(glBufferData(GL_ARRAY_BUFFER, state.vertexCount * 4 * sizeof(float), mesh.jointWeights.data(), GL_STATIC_DRAW));
-
-    // Indices IBO
-    VRB_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state.iboIndices));
-    VRB_GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, state.indexCount * 1 * sizeof(uint16_t), mesh.indices.data(), GL_STATIC_DRAW));
-
-    // Joint bind matrices
-    state.bindMatrices.resize(XR_EXT_HAND_TRACKING_NUM_JOINTS);
-    for (int i = 0; i < state.jointCount; i++)
-        state.bindMatrices[i] = mesh.jointTransforms[i];
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void HandMeshRendererSkinned::Draw(Controller& aController, const vrb::Camera& aCamera) {
