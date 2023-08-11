@@ -701,6 +701,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
         SendTabDialogWidget.getInstance(this).onConfigurationChanged(newConfig);
 
+        SearchEngineWrapper.get(this).setupPreferredSearchEngine();
+
         super.onConfigurationChanged(newConfig);
     }
 

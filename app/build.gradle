@@ -603,11 +603,11 @@ dependencies {
 
     // Android Components
     implementation deps.android_components.browser_errorpages
-    implementation deps.android_components.browser_search
     implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.browser_icons
+    implementation deps.android_components.feature_search
     implementation deps.android_components.feature_toolbar
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
