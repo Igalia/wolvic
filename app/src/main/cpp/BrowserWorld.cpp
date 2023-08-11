@@ -537,8 +537,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
     if (handMeshRenderer) {
-      handMeshRenderer->Update(controller, controllers->GetRoot(),
-                               controller.enabled && controller.mode == ControllerMode::Hand);
+      handMeshRenderer->Update(controller.index, controller.handJointTransforms, controllers->GetRoot(),
+                               controller.enabled && controller.mode == ControllerMode::Hand, controller.leftHanded);
     }
 
     if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
@@ -1724,7 +1724,7 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
 #endif
       }
       assert(m.handMeshRenderer);
-      m.handMeshRenderer->Draw(controller, *camera);
+      m.handMeshRenderer->Draw(controller.index, *camera);
     }
   }
 

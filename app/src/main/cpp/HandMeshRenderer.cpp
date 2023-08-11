@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "Controller.h"
 #include "DeviceUtils.h"
 #include "HandMeshRenderer.h"
 #include "tiny_gltf.h"
@@ -12,10 +11,13 @@
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/GLError.h"
+#include "vrb/Matrix.h"
 #include "vrb/ProgramFactory.h"
+#include "vrb/Quaternion.h"
 #include "vrb/RenderState.h"
 #include "vrb/ShaderUtil.h"
 #include "vrb/Toggle.h"
+#include "vrb/Transform.h"
 #include "vrb/gl.h"
 
 #define XR_EXT_HAND_TRACKING_NUM_JOINTS 26
@@ -42,10 +44,11 @@ HandMeshRendererPtr HandMeshRendererSpheres::Create(vrb::CreationContextPtr& aCo
     return std::make_unique<vrb::ConcreteClass<HandMeshRendererSpheres, HandMeshRendererSpheres::State> >(aContext);
 }
 
-void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPtr& aRoot, const bool aEnabled) {
-    if (aController.index >= m.handMeshState.size())
-        m.handMeshState.resize(aController.index + 1);
-    auto& handMesh = m.handMeshState.at(aController.index);
+void HandMeshRendererSpheres::Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                                     const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+    if (aControllerIndex >= m.handMeshState.size())
+        m.handMeshState.resize(aControllerIndex + 1);
+    auto& handMesh = m.handMeshState.at(aControllerIndex);
 
     // We need to call ToggleAll() even if aEnabled is false, to be able to hide the
     // hand mesh.
@@ -60,7 +63,7 @@ void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPt
         vrb::CreationContextPtr create = context.lock();
         handMesh.toggle = vrb::Toggle::Create(create);
 
-        assert(aController.handJointTransforms.size() > 0);
+        assert(handJointTransforms.size() > 0);
 
         vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
         vrb::RenderStatePtr state = vrb::RenderState::Create(create);
@@ -76,7 +79,7 @@ void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPt
         vrb::GeometryPtr sphere = DeviceUtils::GetSphereGeometry(create, 36, radius);
         sphere->SetRenderState(state);
 
-        handMesh.sphereTransforms.resize(aController.handJointTransforms.size());
+        handMesh.sphereTransforms.resize(handJointTransforms.size());
         for (uint32_t i = 0; i < handMesh.sphereTransforms.size(); i++) {
             vrb::TransformPtr transform = vrb::Transform::Create(create);
             transform->AddNode(sphere);
@@ -91,9 +94,9 @@ void HandMeshRendererSpheres::Update(Controller &aController, const vrb::GroupPt
     if (parents.size() == 0)
         aRoot->AddNode(handMesh.toggle);
 
-    assert(handMesh.sphereTransforms.size() == aController.handJointTransforms.size());
+    assert(handMesh.sphereTransforms.size() == handJointTransforms.size());
     for (int i = 0; i < handMesh.sphereTransforms.size(); i++)
-        handMesh.sphereTransforms[i]->SetTransform(aController.handJointTransforms[i]);
+        handMesh.sphereTransforms[i]->SetTransform(handJointTransforms[i]);
 }
 
 
@@ -220,6 +223,8 @@ struct HandMeshSkinned {
 
     uint32_t indexCount;
     std::vector<uint16_t> indices;
+
+    bool leftHanded;
 };
 
 struct HandMeshGLState {
@@ -326,13 +331,14 @@ static bool loadHandMeshAttribute(tinygltf::Model& model,
     return true;
 }
 
-bool HandMeshRendererSkinned::LoadHandMeshFromAssets(Controller& aController, HandMeshSkinned& handMesh) {
+bool HandMeshRendererSkinned::LoadHandMeshFromAssets(const bool leftHanded, HandMeshSkinned& handMesh) {
     tinygltf::TinyGLTF modelLoader;
     tinygltf::Model model;
     std::string err;
     std::string warn;
+    handMesh.leftHanded = leftHanded;
     if (!modelLoader.LoadBinaryFromFile(&model, &err, &warn,
-                                        aController.leftHanded ? "hand-model-left.glb" : "hand-model-right.glb")) {
+                                        leftHanded ? "hand-model-left.glb" : "hand-model-right.glb")) {
         VRB_ERROR("Error loading hand mesh asset: %s", err.c_str());
         return false;
     }
@@ -423,25 +429,30 @@ bool HandMeshRendererSkinned::LoadHandMeshFromAssets(Controller& aController, Ha
     return true;
 }
 
-void HandMeshRendererSkinned::Update(Controller &aController, const vrb::GroupPtr& aRoot, const bool aEnabled) {
-    if (aController.index >= m.handMeshState.size())
-        m.handMeshState.resize(aController.index + 1);
-    auto& mesh = m.handMeshState.at(aController.index);
+void HandMeshRendererSkinned::Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                                     const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+    if (aControllerIndex >= m.handMeshState.size())
+        m.handMeshState.resize(aControllerIndex + 1);
+    auto& mesh = m.handMeshState.at(aControllerIndex);
 
     // Lazily load the hand mesh asset
     if (mesh.jointCount == 0) {
-        if (!LoadHandMeshFromAssets(aController, mesh))
+        if (!LoadHandMeshFromAssets(leftHanded, mesh))
             return;
-        UpdateHandModel(aController);
+        UpdateHandModel(aControllerIndex);
     }
+
+    mesh.jointTransforms = handJointTransforms;
 }
 
-void HandMeshRendererSkinned::Draw(Controller& aController, const vrb::Camera& aCamera) {
+void HandMeshRendererSkinned::Draw(const uint32_t aControllerIndex, const vrb::Camera& aCamera) {
     // Bail if the GL state has not yet been setup (e.g, by a call to Update())
-    if (aController.index >= m.handGLState.size())
+    if (aControllerIndex >= m.handGLState.size())
         return;
+    const HandMeshGLState& state = m.handGLState.at(aControllerIndex);
 
-    const HandMeshGLState& state = m.handGLState.at(aController.index);
+    assert(aControllerIndex < m.handMeshState.size());
+    auto& mesh = m.handMeshState.at(aControllerIndex);
 
     assert(m.program);
     VRB_GL_CHECK(glUseProgram(m.program));
@@ -460,7 +471,7 @@ void HandMeshRendererSkinned::Draw(Controller& aController, const vrb::Camera& a
     vrb::Matrix modelMatrix = vrb::Matrix::Identity();
     VRB_GL_CHECK(glUniformMatrix4fv(m.uModel, 1, GL_FALSE, modelMatrix.Data()));
 
-    auto jointMatrices = aController.handJointTransforms;
+    auto jointMatrices = mesh.jointTransforms;
 
     // We ignore the first matrix, corresponding to the palm, because the
     // models we are currently using don't include a palm joint.
@@ -471,7 +482,7 @@ void HandMeshRendererSkinned::Draw(Controller& aController, const vrb::Camera& a
     // bind matrices of the joints in reverse order with respect to that
     // of the XR_EXT_hand_tracking extension, hence we correct it here
     // before assigning.
-    if (aController.leftHanded) {
+    if (mesh.leftHanded) {
         for (int i = 0; i < jointMatrices.size() / 2; i++)
             std::swap(jointMatrices[i], jointMatrices[jointMatrices.size() - i - 1]);
     }
@@ -509,14 +520,14 @@ void HandMeshRendererSkinned::Draw(Controller& aController, const vrb::Camera& a
 }
 
 void
-HandMeshRendererSkinned::UpdateHandModel(const Controller& aController) {
-    assert(aController.index < m.handMeshState.size());
-    auto& mesh = m.handMeshState.at(aController.index);
+HandMeshRendererSkinned::UpdateHandModel(const uint32_t aControllerIndex) {
+    assert(aControllerIndex < m.handMeshState.size());
+    auto& mesh = m.handMeshState.at(aControllerIndex);
 
-    if (aController.index >= m.handGLState.size())
-        m.handGLState.resize(aController.index + 1);
+    if (aControllerIndex >= m.handGLState.size())
+        m.handGLState.resize(aControllerIndex + 1);
+    auto& state = m.handGLState.at(aControllerIndex);
 
-    HandMeshGLState& state = m.handGLState.at(aController.index);
     state.jointCount = mesh.jointCount;
     state.vertexCount = mesh.vertexCount;
     state.indexCount = mesh.indexCount;
