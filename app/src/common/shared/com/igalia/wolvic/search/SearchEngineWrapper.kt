@@ -23,6 +23,7 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.buildSearchUrl
+import mozilla.components.feature.search.ext.createSearchEngine
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.suggestions.SearchSuggestionClient
 import java.lang.ref.WeakReference
@@ -33,9 +34,7 @@ import kotlin.coroutines.CoroutineContext
 class SearchEngineWrapper private constructor(aContext: Context) :
     OnSharedPreferenceChangeListener {
     private val mContextRef: WeakReference<Context?>
-    var currentSearchEngine: SearchEngine? = null
-        private get
-        private set
+    private var currentSearchEngine: SearchEngine? = null
     private var mSuggestionsClient: SearchSuggestionClient? = null
     private val mPrefs: SharedPreferences?
     private var mAutocompleteEnabled: Boolean
@@ -55,6 +54,10 @@ class SearchEngineWrapper private constructor(aContext: Context) :
             )
             mPrefs?.registerOnSharedPreferenceChangeListener(this)
         }
+    }
+
+    fun setCurrentSearchEngine(searchEngine: SearchEngine?) {
+        currentSearchEngine = searchEngine
     }
 
     fun unregisterForUpdates() {
@@ -87,8 +90,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
     private val mLocaleChangedReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_LOCALE_CHANGED) {
-                val userSearchEngineId = SettingsStore.getInstance(context).searchEngineId
-                setupSearchEngine(context, userSearchEngineId)
+                setupPreferredSearchEngine()
             }
         }
     }
@@ -185,7 +187,6 @@ class SearchEngineWrapper private constructor(aContext: Context) :
             }
             null
         }
-        SettingsStore.getInstance(thisContext).searchEngineId = newSearchEngine.id
         currentSearchEngine = newSearchEngine
     }
 

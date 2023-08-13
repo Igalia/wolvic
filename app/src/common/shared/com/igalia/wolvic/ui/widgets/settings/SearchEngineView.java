@@ -67,7 +67,10 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
 
     @Override
     protected boolean reset() {
-        SearchEngineWrapper.get(getContext()).setDefaultSearchEngine();
+        SearchEngineWrapper s = SearchEngineWrapper.get(getContext());
+        s.setCurrentSearchEngineId(getContext(), null);
+        s.setDefaultSearchEngine();
+        updateUI();
         return false;
     }
 
