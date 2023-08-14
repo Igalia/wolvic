@@ -318,18 +318,6 @@ namespace crow {
       },
   };
 
-  const OpenXRInputMapping LynxR1 {
-      "/interaction_profiles/khr/simple_controller",
-      IS_6DOF,
-      "vr_controller_oculusgo.obj",
-      "vr_controller_oculusgo.obj",
-      device::LynxR1,
-      std::vector<OpenXRInputProfile> { "generic-button" },
-      std::vector<OpenXRButton> {
-          { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
-      },
-    };
-
     const OpenXRInputMapping LenovoVRX {
             "/interaction_profiles/oculus/touch_controller",
             IS_6DOF,
@@ -393,8 +381,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 11> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LynxR1, LenovoVRX, MagicLeap2, KHRSimple
+    const std::array<OpenXRInputMapping, 10> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, KHRSimple
     };
 
 } // namespace crow
