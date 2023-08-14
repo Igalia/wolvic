@@ -215,31 +215,6 @@ namespace crow {
             },
     };
 
-    const OpenXRInputMapping PicoNeo3 {
-            "/interaction_profiles/pico/neo3_controller",
-            IS_6DOF,
-            "vr_controller_pico4_left.obj",
-            "vr_controller_pico4_right.obj",
-            device::PicoNeo3,
-            std::vector<OpenXRInputProfile> { "pico-4", "generic-trigger-squeeze-thumbstick" },
-            std::vector<OpenXRButton> {
-                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
-                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
-                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
-                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
-                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
-                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
-                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
-                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true }
-            },
-            std::vector<OpenXRAxis> {
-                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
-            },
-            std::vector<OpenXRHaptic> {
-                    { kPathHaptic, OpenXRHandFlags::Both },
-            },
-    };
-
     // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
     const OpenXRInputMapping Pico4 {
             "/interaction_profiles/pico/neo3_controller",

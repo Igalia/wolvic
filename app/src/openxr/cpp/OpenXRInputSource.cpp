@@ -88,8 +88,13 @@ XrResult OpenXRInputSource::Initialize()
         systemDoF = DoF::IS_6DOF;
     }
     for (auto& mapping: OpenXRInputMappings) {
-      if (deviceType != mapping.controllerType && mapping.controllerType != device::UnknownType)
+      // Always populate default/fall-back profiles
+      if (mapping.controllerType == device::UnknownType) {
+        mMappings.push_back(mapping);
         continue;
+      } else if (deviceType != mapping.controllerType) {
+        continue;
+      }
 
       if (systemDoF != mapping.systemDoF)
           continue;
