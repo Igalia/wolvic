@@ -12,7 +12,6 @@
 #include "EngineSurfaceTexture.h"
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
-#include "HandMeshRenderer.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Pointer.h"
@@ -210,7 +209,6 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   VRLayerPassthroughPtr layerPassthrough;
-  HandMeshRendererPtr handMeshRenderer = nullptr;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -536,10 +534,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
-    if (handMeshRenderer) {
-      handMeshRenderer->Update(controller, controllers->GetRoot(),
-                               controller.enabled && controller.mode == ControllerMode::Hand);
-    }
+    device->UpdateHandMesh(controller.index, controller.handJointTransforms, controllers->GetRoot(),
+                           controller.enabled && controller.mode == ControllerMode::Hand, controller.leftHanded);
 
     if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
       // Layout the button between the thumb and index fingertips
@@ -1714,18 +1710,8 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
 
   // Draw hand mesh if active
   for (Controller& controller: m.controllers->GetControllers()) {
-    if (controller.enabled && controller.mode == ControllerMode::Hand) {
-      if (!m.handMeshRenderer) {
-        // Lazily create the hand mesh rendering object
-#if defined(PICOXR) || defined(SPACES)
-        m.handMeshRenderer = HandMeshRendererSpheres::Create(m.create);
-#else
-        m.handMeshRenderer = HandMeshRendererSkinned::Create(m.create);
-#endif
-      }
-      assert(m.handMeshRenderer);
-      m.handMeshRenderer->Draw(controller, *camera);
-    }
+    if (controller.enabled && controller.mode == ControllerMode::Hand)
+      m.device->DrawHandMesh(controller.index, *camera);
   }
 
   // Draw controllers

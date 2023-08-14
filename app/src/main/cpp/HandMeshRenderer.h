@@ -19,8 +19,9 @@ protected:
     vrb::CreationContextWeak context;
 public:
     virtual ~HandMeshRenderer() = default;
-    virtual void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) = 0;
-    virtual void Draw(Controller&, const vrb::Camera&) { };
+    virtual void Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                        const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) = 0;
+    virtual void Draw(const uint32_t aControllerIndex, const vrb::Camera&) { };
 };
 
 class HandMeshRendererSpheres: public HandMeshRenderer {
@@ -31,7 +32,8 @@ protected:
 public:
     static HandMeshRendererPtr Create(vrb::CreationContextPtr&);
 private:
-    void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
+    void Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) override;
 };
 
 struct HandMeshSkinned;
@@ -45,10 +47,11 @@ protected:
 public:
     static HandMeshRendererPtr Create(vrb::CreationContextPtr&);
 private:
-    void Update(Controller&, const vrb::GroupPtr& aRoot, const bool aEnabled) override;
-    void Draw(Controller&, const vrb::Camera&) override;
-    bool LoadHandMeshFromAssets(Controller&, HandMeshSkinned&);
-    void UpdateHandModel(const Controller&);
+    void Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) override;
+    void Draw(const uint32_t aControllerIndex, const vrb::Camera&) override;
+    bool LoadHandMeshFromAssets(const bool leftHanded, HandMeshSkinned&);
+    void UpdateHandModel(const uint32_t aControllerIndex);
 };
 
 };
