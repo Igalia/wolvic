@@ -827,6 +827,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             ConnectivityManager cm = getContext().getSystemService(ConnectivityManager.class);
             Network n = cm.getActiveNetwork();
             NetworkCapabilities netCaps = cm.getNetworkCapabilities(n);
+            if (netCaps == null) {
+                return 0;
+            }
             return netCaps.getSignalStrength();
         } else {
             return wifiManager.getConnectionInfo().getRssi();
