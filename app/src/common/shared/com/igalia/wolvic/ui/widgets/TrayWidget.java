@@ -822,14 +822,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         return false;
     }
 
-    private WifiInfo getWifiInfo(@NonNull WifiManager wifiManager) {
+    private int getWifiSignalStrength(@NonNull WifiManager wifiManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ConnectivityManager cm = getContext().getSystemService(ConnectivityManager.class);
             Network n = cm.getActiveNetwork();
             NetworkCapabilities netCaps = cm.getNetworkCapabilities(n);
-            return (WifiInfo) netCaps.getTransportInfo();
+            return netCaps.getSignalStrength();
         } else {
-            return wifiManager.getConnectionInfo();
+            return wifiManager.getConnectionInfo().getRssi();
         }
     }
     
@@ -843,17 +843,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         if ((mTrayViewModel.getWifiConnected().getValue() != null) && mTrayViewModel.getWifiConnected().getValue().get()) {
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
-                WifiInfo wifiInfo = getWifiInfo(wifiManager);
                 int level;
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-                    level = wifiManager.calculateSignalLevel(wifiInfo.getRssi());
+                    level = wifiManager.calculateSignalLevel(getWifiSignalStrength(wifiManager));
                 } else {
-                    level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+                    level = WifiManager.calculateSignalLevel(getWifiSignalStrength(wifiManager), 4);
                 }
-                if (level != mLastWifiLevel) {
-                    if (updateWifiIcon(level)) {
-                        mLastWifiLevel = level;
-                    }
+                if (level != mLastWifiLevel && updateWifiIcon(level)) {
+                    mLastWifiLevel = level;
                 }
                 WifiInfo currentWifi = wifiManager.getConnectionInfo();
                 if(currentWifi != null) {
