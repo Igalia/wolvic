@@ -1423,14 +1423,16 @@ int32_t DeviceDelegateOpenXR::GetHandTrackingJointIndex(const HandTrackingJoints
 void
 DeviceDelegateOpenXR::UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
                const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
-  if (m.handMeshRenderer)
-    m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, aEnabled, leftHanded);
+  if (!m.handMeshRenderer)
+    return;
+  m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, aEnabled, leftHanded);
 }
 
 void
 DeviceDelegateOpenXR::DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera& aCamera) {
-  if (m.handMeshRenderer)
-    m.handMeshRenderer->Draw(aControllerIndex, aCamera);
+  if (!m.handMeshRenderer)
+    return;
+  m.handMeshRenderer->Draw(aControllerIndex, aCamera);
 }
 
 void
