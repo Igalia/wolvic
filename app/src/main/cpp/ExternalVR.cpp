@@ -579,7 +579,7 @@ ExternalVR::WaitFrameResult() {
       return true; // Do not block to show loading screen until the first frame arrives.
     }
     // VRB_LOG("RequestFrame ABOUT TO WAIT FOR FRAME %llu %llu",m.browser.layerState[0].layer_stereo_immersive.frameId, m.lastFrameId);
-    const float kConditionTimeout = 0.1f;
+    const float kConditionTimeout = 0.25f;
     // Wait causes the current thread to block until the condition variable is notified or the timeout happens.
     // Waiting for the condition variable releases the mutex atomically. So GV can modify the browser data.
     if (!wait.DoWait(kConditionTimeout)) {
