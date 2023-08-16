@@ -1795,7 +1795,7 @@ BrowserWorld::TickImmersive() {
               m.context->GetTimestamp());
   }
   // DeviceDelegate::StartFrame() might have failed and then we should discard the frame.
-  aDiscardFrame = aDiscardFrame && !m.device->ShouldRender();
+  aDiscardFrame = aDiscardFrame || !m.device->ShouldRender();
 
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
