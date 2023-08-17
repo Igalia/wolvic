@@ -31,6 +31,7 @@ import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.webextensions.WebExtensionSupport
@@ -67,7 +68,9 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
 
     @Suppress("MagicNumber")
     private val addonUpdater by lazy {
-        DefaultAddonUpdater(context, Frequency(12, TimeUnit.HOURS))
+        DefaultAddonUpdater(context, Frequency(12, TimeUnit.HOURS), NotificationsDelegate(
+            NotificationManagerCompat.from(context))
+        )
     }
 
     private val addonManager by lazy {

@@ -4,7 +4,7 @@ buildscript {
     apply from: 'versions.gradle'
     addRepos(repositories)
     dependencies {
-        classpath "org.mozilla.components:tooling-glean-gradle:$versions.android_components"
+        classpath "org.mozilla.telemetry:glean-gradle-plugin:53.2.0"
         classpath "com.android.tools.build:gradle:$versions.android_gradle_plugin"
         classpath "$deps.kotlin.plugin"
         classpath 'com.huawei.agconnect:agcp:1.6.5.300'

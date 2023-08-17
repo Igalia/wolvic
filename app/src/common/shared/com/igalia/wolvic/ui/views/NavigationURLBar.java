@@ -54,8 +54,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Executor;
 
+import kotlin.coroutines.Continuation;
 import kotlin.Unit;
-import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
+import kotlin.coroutines.CoroutineContext;
+import mozilla.components.concept.toolbar.AutocompleteResult;
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
@@ -83,7 +85,19 @@ public class NavigationURLBar extends FrameLayout {
             return Unit.INSTANCE;
         }
 
-        DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
+        Continuation<? super AutocompleteResult> completion = new Continuation<AutocompleteResult>() {
+            @NonNull
+            @Override
+            public CoroutineContext getContext() {
+                return getContext();
+            }
+
+            @Override
+            public void resumeWith(@NonNull Object o) {
+
+            }
+        };
+        AutocompleteResult result = (AutocompleteResult) mAutocompleteProvider.getAutocompleteSuggestion(text, completion);
         if (result != null) {
             mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
                     result.getText(),
