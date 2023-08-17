@@ -263,7 +263,13 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             SuggestionItem selectedItem = getItem(position);
 
             // Make search substring as bold
-            itemViewHolder.title.setText(createHighlightedText(selectedItem.title));
+            if (selectedItem.title == null) {
+                itemViewHolder.title.setVisibility(GONE);
+
+            } else {
+                itemViewHolder.title.setVisibility(VISIBLE);
+                itemViewHolder.title.setText(createHighlightedText(selectedItem.title));
+            }
 
             // Set the URL text
             if (selectedItem.url == null) {
