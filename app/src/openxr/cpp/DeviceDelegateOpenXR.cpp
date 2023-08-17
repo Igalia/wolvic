@@ -212,6 +212,7 @@ struct DeviceDelegateOpenXR::State {
 
     XrInstanceProperties instanceProperties{XR_TYPE_INSTANCE_PROPERTIES};
     CHECK_XRCMD(xrGetInstanceProperties(instance, &instanceProperties));
+    SetOpenXRRuntimeVersion(instanceProperties.runtimeVersion);
     VRB_LOG("OpenXR Instance Created: RuntimeName=%s RuntimeVersion=%s", instanceProperties.runtimeName,
             GetXrVersionString(instanceProperties.runtimeVersion).c_str());
 
@@ -1531,11 +1532,15 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
       m.input->SetHandMeshBufferSizes(m.handMeshProperties->indexCount, m.handMeshProperties->vertexCount);
     } else {
 #if defined(PICOXR)
-      m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
-#else
-      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
+      // Due to unreliable hand-tracking orientation data on Pico devices running OpenXR runtime
+      // version earlier than 3.0.1, we use the Spheres strategy.
+      if (GetOpenXRRuntimeVersion() < kPicoHandTrackingRuntimeVersion)
+        m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
 #endif
     }
+
+    if (!m.handMeshRenderer)
+      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
   }
 
   // Initialize layers if needed

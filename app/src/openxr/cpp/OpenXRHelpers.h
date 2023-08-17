@@ -18,6 +18,18 @@ namespace crow {
   const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 #endif
 
+const unsigned long kPicoHandTrackingRuntimeVersion = XR_MAKE_VERSION(3, 0, 1);
+
+static uint64_t openXRRuntimeVersion = 0;
+
+inline void SetOpenXRRuntimeVersion(const uint64_t version) {
+    openXRRuntimeVersion = version;
+}
+
+inline uint64_t GetOpenXRRuntimeVersion() {
+    return openXRRuntimeVersion;
+}
+
 inline std::string Fmt(const char* fmt, ...) {
     va_list vl;
     va_start(vl, fmt);
