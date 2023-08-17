@@ -18,6 +18,7 @@ class LoginStorage(
 
     private val places = (context as AppServicesProvider).places
     private var storage = places.logins
+    private val passwordsKeyProvider by lazy { storage.value.crypto }
 
     init {
         EngineProvider.getOrCreateRuntime(context).setUpLoginPersistence(places.logins)
@@ -25,7 +26,10 @@ class LoginStorage(
             storage.value.warmUp()
         }
 
-        GlobalSyncableStoreProvider.configureStore(SyncEngine.Passwords to storage)
+        GlobalSyncableStoreProvider.configureStore(
+            SyncEngine.Passwords to storage,
+            keyProvider = lazy { passwordsKeyProvider }
+        )
     }
 
     fun getLogins(): CompletableFuture<List<Login>> = GlobalScope.future {
