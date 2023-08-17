@@ -26,7 +26,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
     public void didStartLoading(GURL url) {
         @Nullable WSession.ProgressDelegate delegate = mSession.getProgressDelegate();
         if (delegate != null) {
-            delegate.onPageStart(mSession, url.toString());
+            delegate.onPageStart(mSession, url.getSpec());
         }
         dispatchCanGoBackOrForward();
     }
