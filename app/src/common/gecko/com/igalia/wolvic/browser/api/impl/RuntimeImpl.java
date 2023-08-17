@@ -14,7 +14,7 @@ import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
 
-import org.mozilla.gecko.CrashHandler;
+import org.mozilla.geckoview.CrashHandler;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoRuntime;
@@ -143,7 +143,7 @@ public class RuntimeImpl implements WRuntime {
     public Thread.UncaughtExceptionHandler createCrashHandler(Context appContext, Class<? extends Service> handlerService) {
         return new CrashHandler(appContext, handlerService) {
             @Override
-            protected Bundle getCrashExtras(final Thread thread, final Throwable exc) {
+            public Bundle getCrashExtras(final Thread thread, final Throwable exc) {
                 final Bundle extras = super.getCrashExtras(thread, exc);
                 if (extras == null) {
                     return null;

@@ -133,7 +133,6 @@ class WolvicWebExtensionRuntime(
     /**
      * See [Engine.registerWebExtensionDelegate].
      */
-    @Suppress("Deprecation")
     override fun registerWebExtensionDelegate(
             webExtensionDelegate: WebExtensionDelegate
     ) {
@@ -141,11 +140,14 @@ class WolvicWebExtensionRuntime(
 
         val promptDelegate = object : WWebExtensionController.PromptDelegate {
             override fun onInstallPrompt(extension: WebExtension): WResult<WAllowOrDeny>? {
-                return if (webExtensionDelegate.onInstallPermissionRequest(extension)) {
-                    WResult.allow()
-                } else {
-                    WResult.deny()
+                val result = WResult.allow()
+                webExtensionDelegate.onInstallPermissionRequest(
+                        extension
+                ) {
+                    allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
+                    WAllowOrDeny.DENY)
                 }
+                return result
             }
 
             override fun onUpdatePrompt(

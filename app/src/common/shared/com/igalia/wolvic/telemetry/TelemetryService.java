@@ -10,6 +10,8 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import mozilla.components.concept.sync.FxAEntryPoint;
+
 public class TelemetryService {
 
     private final static String APP_NAME = "Wolvic";
@@ -185,7 +187,7 @@ public class TelemetryService {
         service.customEvent("newWindowOpenEvent");
     }
 
-    public static class FxA {
+    public static class FxA implements FxAEntryPoint {
 
         public static void signIn() {
             if (service == null) {
@@ -242,6 +244,12 @@ public class TelemetryService {
             Bundle bundle = new Bundle();
             bundle.putInt("source", source.ordinal());
             service.customEvent("FxA_receivedTab", bundle);
+        }
+
+        @NonNull
+        @Override
+        public String getEntryName() {
+            return "";
         }
     }
 
