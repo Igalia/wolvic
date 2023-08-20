@@ -17,10 +17,16 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
-
+import com.igalia.wolvic.browser.api.WWebResponse;
 import org.chromium.content_public.browser.WebContents;
+import org.chromium.wolvic.DownloadManagerBridge;
 
-public class SessionImpl implements WSession {
+import java.io.InputStream;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     RuntimeImpl mRuntime;
     SettingsImpl mSettings;
     ContentDelegate mContentDelegate;
@@ -60,6 +66,7 @@ public class SessionImpl implements WSession {
     private void init() {
         mTextInput = new TextInputImpl(this);
         mPanZoomController = new PanZoomControllerImpl(this);
+        DownloadManagerBridge.get().setDelegate(this);
     }
 
     @Override
@@ -348,6 +355,52 @@ public class SessionImpl implements WSession {
     @Override
     public SelectionActionDelegate getSelectionActionDelegate() {
         return mSelectionActionDelegate;
+    }
+
+    @Override
+    public void newDownload(String url) {
+        // Since we only have the URL, we have to use default values for the rest of the web
+        // response data.
+        mContentDelegate.onExternalResponse(this, new WWebResponse() {
+            @NonNull
+            @Override
+            public String uri() {
+                return url;
+            }
+
+            @NonNull
+            @Override
+            public Map<String, String> headers() {
+                return new HashMap<>();
+            }
+
+            @Override
+            public int statusCode() {
+                return 200;
+            }
+
+            @Override
+            public boolean redirected() {
+                return false;
+            }
+
+            @Override
+            public boolean isSecure() {
+                return true;
+            }
+
+            @Nullable
+            @Override
+            public X509Certificate certificate() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public InputStream body() {
+                return null;
+            }
+        });
     }
 
     public TabImpl getTab() {
