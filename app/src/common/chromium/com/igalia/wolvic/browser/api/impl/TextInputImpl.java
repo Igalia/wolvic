@@ -53,7 +53,8 @@ public class TextInputImpl implements WTextInput {
         @Override
         public boolean hideSoftInputFromWindow(
                 IBinder windowToken, int flags, ResultReceiver resultReceiver) {
-            mDelegate.hideSoftInput(mSession);
+            if (mDelegate != null)
+                mDelegate.hideSoftInput(mSession);
             return false;
         }
 
