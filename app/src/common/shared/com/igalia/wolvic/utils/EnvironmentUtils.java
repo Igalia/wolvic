@@ -223,10 +223,15 @@ public class EnvironmentUtils {
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
         String payload = env.getPayload();
-        if (!DeviceType.isOculusBuild())
+        String colorSpace = "_rgb", format = "_ktx"; // default configuration
+        if (DeviceType.isOculusBuild())
+            colorSpace = "_srgb";
+        else if (DeviceType.isPicoXR())
+            format = "_jpg";
+        else
             return payload;
         int at = payload.lastIndexOf(".");
-        return payload.substring(0, at) + "_srgb" + payload.substring(at);
+        return payload.substring(0, at) + format + colorSpace + payload.substring(at);
     }
 
     /**
