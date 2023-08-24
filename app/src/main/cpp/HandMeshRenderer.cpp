@@ -543,6 +543,10 @@ void HandMeshRendererSkinned::Draw(const uint32_t aControllerIndex, const vrb::C
     const HandMeshGLState& state = m.handGLState.at(aControllerIndex);
     auto& mesh = m.handMeshState.at(aControllerIndex);
 
+    // Bail if we don't have valid hand joints info (e.g, from a previous call to Update())
+    if (mesh.jointTransforms.size() == 0)
+        return;
+
     assert(m.program);
     VRB_GL_CHECK(glUseProgram(m.program));
 
