@@ -122,6 +122,7 @@ device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
         deviceNamesMap.emplace("Quest 2", device::OculusQuest2);
         // So far no need to differentiate between Pico4 and Pico4E
         deviceNamesMap.emplace("A8110", device::PicoXR);
+        deviceNamesMap.emplace("Pico Neo 3", device::PicoNeo3);
         deviceNamesMap.emplace("Lynx-R1", device::LynxR1);
         deviceNamesMap.emplace("kirin9000", is6DoF ? device::HVR6DoF : device::HVR3DoF);
         deviceNamesMap.emplace("motorola edge 30 pro", device::LenovoA3);
