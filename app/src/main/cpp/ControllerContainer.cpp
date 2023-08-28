@@ -25,6 +25,7 @@
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
 #include "vrb/VertexArray.h"
+#include "OpenXRHelpers.h"
 
 #include <assert.h>
 
@@ -246,8 +247,9 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
     // are not enabled on Pico devices. We are drawing a sphere for each joint
     // instead.
 #if defined(PICOXR) || defined(SPACES)
-    // Initialize hand joints if needed
-    if (controller.handJointTransforms.size() == 0) {
+  // Initialize hand joints if needed. On Pico, this code is only necessary with runtime versions prior to 3.0.1
+  char buildId[128] = {0};
+  if (CompareSemanticVersionStrings(GetBuildIdString(buildId), kPicoVersionHandTrackingUpdate) && controller.handJointTransforms.size() == 0) {
         controller.handJointTransforms.resize(jointTransforms.size());
 
         controller.handMeshToggle = Toggle::Create(create);

@@ -57,6 +57,7 @@
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
 #include "tiny_gltf.h"
+#include "OpenXRHelpers.h"
 
 #include <android/asset_manager_jni.h>
 #include <array>
@@ -541,8 +542,18 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
 #else
-    if (controller.handMeshToggle)
-      controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
+    char buildId[128] = {0};
+    if (CompareSemanticVersionStrings(GetBuildIdString(buildId), kPicoVersionHandTrackingUpdate)) {
+      if (controller.handMeshToggle)
+        controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
+    } else {
+      // Lazy-load hand models
+      if (controller.mode == ControllerMode::Hand && !controller.handMesh) {
+        if (controllers->LoadHandMeshFromAssets(controller)) {
+          handModelsRenderer->UpdateHandModel(controller);
+        }
+      }
+    }
 #endif
 
     if (controller.beamToggle)

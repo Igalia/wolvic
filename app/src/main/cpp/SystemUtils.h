@@ -20,6 +20,11 @@ inline int PopulateDeviceModelString(char* model) {
   return __system_property_get(ANDROID_OS_MODEL_ID, model);
 }
 
+// An initialization bug was fixed on Pico version 5.4.0
+const std::string kPicoVersionInitializeBug = "5.4.0";
+// Hand tracking was thoroughly updated on Pico version 5.7.1
+const std::string kPicoVersionHandTrackingUpdate = "5.7.1";
+
 // Parse a version string into an array of integers of size resultSize.
 inline void ParseVersionString(const std::string& aString, int result[], int resultSize) {
   std::istringstream stringStream(aString);

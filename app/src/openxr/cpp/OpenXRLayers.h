@@ -192,7 +192,7 @@ protected:
 #if defined(PICOXR)
     // Circumvent a bug in the pico OpenXR runtime in versions below 5.4.0.
     char buildId[128] = {0};
-    if (CompareSemanticVersionStrings(GetBuildIdString(buildId), "5.4.0")) {
+    if (CompareSemanticVersionStrings(GetBuildIdString(buildId), kPicoVersionInitializeBug)) {
       // System version is < 5.4.0
       shouldZeroInitialize = false;
     }
