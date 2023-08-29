@@ -672,7 +672,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     bool triggerButtonPressed = indexPinching && !systemGestureDetected && hasAim;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, triggerButtonPressed,
-                            triggerButtonPressed, 1.0);
+                            pinchFactor > 0, pinchFactor);
     if (isHandActionEnabled) {
         delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, indexPinching, indexPinching, 1.0);
     } else if (hasAim) {
