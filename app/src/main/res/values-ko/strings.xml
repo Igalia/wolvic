@@ -1285,7 +1285,7 @@
     <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
     <string name="repost_confirm_title">양식 다시 제출 확인</string>
     <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
-    <string name="repost_confirm_message">찾고 있는 페이지에서 사용자가 입력한 정보를 사용했습니다. 해당 페이지로 돌아가면 기존 작업을 반복할 수 있습니다. 계속하시겠습니까?</string>
+    <string name="repost_confirm_message">찾고 있는 페이지에서 사용자가 입력한 정보를 사용했습니다. 해당 페이지로 돌아가면 기존 작업을 반복할 수 있습니다. 계속하시겠습니까\?</string>
     <!-- This string is displayed in the resend button for post warning -->
     <string name="repost_confirm_continue">계속</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
@@ -1782,4 +1782,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n사용자 계약 및 개인정보 보호 정책 전문을 확인하실 수 있습니다.</string>
     <string name="rCN_first_launch_confirmation_agree">동의하고 계속하기</string>
     <string name="rCN_first_launch_confirmation_disagree">동의하지 않고 종료하기</string>
+    <string name="keyboardview_keycode_cancel">취소</string>
+    <string name="keyboardview_keycode_done">완료</string>
+    <string name="keyboardview_keycode_mode_change">모드 변경</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_delete">삭제</string>
 </resources>
