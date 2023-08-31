@@ -12,9 +12,20 @@ For more info on localization, how it works in the Wolvic XR project, and how to
 
 ## Setup instructions
 
-> By default Wolvic will try to download prebuilt GeckoView libraries from [Mozilla's maven repositories](https://maven.mozilla.org/maven2/org/mozilla/geckoview/?prefix=maven2/org/mozilla/geckoview/). Note that after [PR #70](https://github.com/Igalia/wolvic/pull/70) WebXR sessions won't work with those images because that PR introduced a change in the GeckoView protocol that is only available in the `wolvic_release` branch from [this repository](https://github.com/Igalia/gecko-dev/). For additional details on how to use a local GeckoView build check [this section](#dependency-substitutions)
+*GeckoView local substitution.*
 
->  **UPDATE**: use `FIREFOX_103_0_2_RELEASE` instead of `wolvic_release` after [PR #256](https://github.com/Igalia/wolvic/pull/256).
+After [PR #70](https://github.com/Igalia/wolvic/pull/70), WebXR sessions won't work with the prebuilt maven GeckoView libraries because that PR introduced a change in the GeckoView protocol. So you have to build GeckoView manually by applying patches at [this repository](https://github.com/Igalia/wolvic-gecko-patches).
+
+This could be done either by using a [local maven repository](http://mozac.org/contributing/testing-components-inside-app) (quite cumbersome), or via Gradle's [dependency substitutions](https://docs.gradle.org/current/userguide/dependency_resolution.html) (not at all cumbersome!).
+
+Currently, the substitution flow is streamlined for some of the core dependencies via configuration flags in `local.properties`. You can build against a local checkout of the following dependencies by specifying their local paths:
+- [GeckoView](https://hg.mozilla.org/releases/mozilla-release/tags), specifying its path via `dependencySubstitutions.geckoviewTopsrcdir=/path/to/mozilla-release` (and, optionally, `dependencySubstitutions.geckoviewTopobjdir=/path/to/topobjdir`). See [Bug 1533465](https://bugzilla.mozilla.org/show_bug.cgi?id=1533465).
+  - This assumes that you have built, packaged, and published your local GeckoView -- but don't worry, the dependency substitution script has the latest instructions for doing that.
+  - If you want to build for different architectures at the same time, you can specify the aarch64 path via `dependencySubstitutions.geckoviewTopobjdir` while the x86_64 path via `dependencySubstitutions.geckoviewTopobjdirX64`
+
+Do not forget to run a Gradle sync in Android Studio after changing `local.properties`. If you specified any substitutions, they will be reflected in the modules list, and you'll be able to modify them from a single Android Studio window.
+
+For step by step guide check [here](https://github.com/Igalia/wolvic/wiki/Developer-workflow:-building-steps#optional-compiling-gecko).
 
 *Clone Wolvic.*
 
@@ -89,18 +100,7 @@ Make certain to set the build flavor to `wavevrDebug` in Android Studio before b
 
 ## Local Development
 
-### Dependency substitutions
-
-You might be interested in building this project against local versions of some of the dependencies.
-This could be done either by using a [local maven repository](https://mozilla-mobile.github.io/android-components/contributing/testing-components-inside-app) (quite cumbersome), or via Gradle's [dependency substitutions](https://docs.gradle.org/current/userguide/customizing_dependency_resolution_behavior.html) (not at all cumbersome!).
-
-Currently, the substitution flow is streamlined for some of the core dependencies via configuration flags in `local.properties`. You can build against a local checkout of the following dependencies by specifying their local paths:
-- [GeckoView](https://hg.mozilla.org/mozilla-central), specifying its path via `dependencySubstitutions.geckoviewTopsrcdir=/path/to/mozilla-central` (and, optionally, `dependencySubstitutions.geckoviewTopobjdir=/path/to/topobjdir`). See [Bug 1533465](https://bugzilla.mozilla.org/show_bug.cgi?id=1533465).
-  - This assumes that you have built, packaged, and published your local GeckoView -- but don't worry, the dependency substitution script has the latest instructions for doing that.
-  - If you want to build for different architectures at the same time, you can specify the aarch64 path via `dependencySubstitutions.geckoviewTopobjdir` while the x86_64 path via `dependencySubstitutions.geckoviewTopobjdirX64`
-
-Do not forget to run a Gradle sync in Android Studio after changing `local.properties`. If you specified any substitutions, they will be reflected in the modules list, and you'll be able to modify them from a single Android Studio window.
-
+> By default Wolvic will try to download prebuilt GeckoView libraries from [Mozilla's maven repositories](https://maven.mozilla.org/maven2/org/mozilla/geckoview/?prefix=maven2/org/mozilla/geckoview/), where WebXR won't work and that should be used just for testing the 2D browser or to download browser features. If you want to have this, just skip the *GeckoView local substitution* part of the [Setup instructions](#setup-instructions).
 
 ## Install dev and production builds on device simultaneously
 
