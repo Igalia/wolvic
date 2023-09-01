@@ -326,7 +326,11 @@ public class DownloadsManager {
         }
         if (c.moveToFirst()) {
             notifyDownloadsUpdate();
-            notifyDownloadCompleted(Download.from(c));
+            Download download = Download.from(c);
+            if (download.getStatus() == Download.SUCCESSFUL)
+                notifyDownloadCompleted(download);
+            else
+                notifyDownloadError("Failed to download URI, missing input stream: ", download.getUri());
         }
         c.close();
     }

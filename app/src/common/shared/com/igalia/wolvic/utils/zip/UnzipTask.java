@@ -72,7 +72,7 @@ public class UnzipTask {
             }
 
             if (!mUnzipMonitor.isCancelAllTasks()) {
-                notifyFinish(mZipPath);
+                notifyFinish(outputPath);
 
             } else {
                 notifyCancelled();
