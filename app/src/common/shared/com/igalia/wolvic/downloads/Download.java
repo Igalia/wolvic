@@ -160,6 +160,10 @@ public class Download {
         return mLastModified;
     }
 
+    public boolean inProgress() {
+        return mStatus == RUNNING || mStatus == PAUSED || mStatus == PENDING;
+    }
+
     public double getProgress() {
         if (mSizeBytes != -1) {
             return mDownloadedBytes*100.0/mSizeBytes;

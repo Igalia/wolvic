@@ -736,10 +736,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @Override
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
-        long inProgressNum = downloads.stream().filter(item ->
-                item.getStatus() == Download.RUNNING ||
-                        item.getStatus() == Download.PAUSED ||
-                        item.getStatus() == Download.PENDING).count();
+        long inProgressNum = downloads.stream().filter(item -> item.inProgress()).count();
         mTrayViewModel.setDownloadsNumber((int)inProgressNum);
         if (inProgressNum == 0) {
             mBinding.libraryButton.setLevel(0);

@@ -101,6 +101,7 @@ public class EnvironmentUtils {
      * Check wether or not an external environment is ready to be used. Checks is the ouput directory exists
      * and if it contains 6 items. We make an assumption that those items are the right images and that they
      * follow the naming convention.
+     * right images and that they follow the naming convention.
      * @param context An activity context.
      * @param envId The environment id. This maps to the Remote properties JSON "value" environment property.
      * @return true is the environment is ready, false otherwise
@@ -215,23 +216,20 @@ public class EnvironmentUtils {
     }
 
     /**
-     * Returns the URL to the environment's payload, with the SRGB suffix for the devices requiring this
-     * compressed texture format.
+     * Returns the URL to the environment's payload, with the '_alt' suffix for the devices requiring an
+     * alternative compressed texture format (only JPG and PNG are allowed as alternative to KTX).
      * @param env An Environment data structure
      * @return The appropriated URL to the environment's payload .
      */
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
-        String payload = env.getPayload();
-        String colorSpace = "_rgb", format = "_ktx"; // default configuration
-        if (DeviceType.isOculusBuild())
-            colorSpace = "_srgb";
-        else if (DeviceType.isPicoXR())
-            format = "_jpg";
-        else
-            return payload;
-        int at = payload.lastIndexOf(".");
-        return payload.substring(0, at) + format + colorSpace + payload.substring(at);
+        if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
+            String payload = env.getPayload();
+            String format = DeviceType.isOculusBuild() ? "_ktx" : "_misc"; // PicoXR doesn't support 'ktx'
+            int at = payload.lastIndexOf(".");
+            return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
+        }
+        return env.getPayload(); // default is 'rgb' and 'ktx'
     }
 
     /**
