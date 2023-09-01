@@ -45,7 +45,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
 
-    private class ReadyCallback implements BrowserInitializer.Callback {
+    private class ReadyCallback implements RuntimeImpl.Callback {
         @Override
         public void onReady() {
             assert mTab == null;
@@ -122,7 +122,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public void open(@NonNull WRuntime runtime) {
         mRuntime = (RuntimeImpl) runtime;
-        mRuntime.getBrowserInitializer().registerCallback(mReadyCallback);
+        mRuntime.registerCallback(mReadyCallback);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     @Override
     public void close() {
-        mRuntime.getBrowserInitializer().unregisterCallback(mReadyCallback);
+        mRuntime.unregisterCallback(mReadyCallback);
         mTab = null;
     }
 
