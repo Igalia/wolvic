@@ -153,6 +153,10 @@ public class DownloadJob {
         return mOutputPath;
     }
 
+    public void setOutputPath(String outputPath) {
+        mOutputPath = outputPath;
+    }
+
     @Nullable
     public InputStream getInputStream() {
         return inputStream;
