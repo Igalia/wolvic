@@ -129,7 +129,7 @@
     <!-- Tray -->
     <item name="tray_world_y" format="float" type="dimen">0.25</item>
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>
-    <item name="tray_world_width" format="float" type="dimen">1.2</item>
+    <item name="tray_world_width" format="float" type="dimen">2</item>
     <dimen name="tray_width">408dp</dimen>
     <dimen name="tray_height">66dp</dimen>
     <!-- The density of the tray tooltips is the default one. -->
