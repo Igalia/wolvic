@@ -33,6 +33,7 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
@@ -76,6 +77,10 @@ public class NavigationURLBar extends FrameLayout {
     private int lastTouchDownOffset = 0;
 
     private Unit domainAutocompleteFilter(String text) {
+        if (!SettingsStore.getInstance(getContext()).isAutocompleteEnabled()) {
+            return Unit.INSTANCE;
+        }
+
         DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
         if (result != null) {
             mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
