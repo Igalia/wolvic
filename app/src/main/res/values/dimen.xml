@@ -105,6 +105,11 @@
     <dimen name="top_bar_height">40dp</dimen>
     <dimen name="top_bar_window_margin">20dp</dimen>
 
+    <!-- Top Tabs -->
+    <dimen name="top_tabs_width">650dp</dimen>
+    <dimen name="top_tabs_height">380dp</dimen>
+    <dimen name="top_tabs_window_margin">80dp</dimen>
+
     <!-- Tabs -->
     <dimen name="tabs_width">650dp</dimen>
     <dimen name="tabs_height">380dp</dimen>

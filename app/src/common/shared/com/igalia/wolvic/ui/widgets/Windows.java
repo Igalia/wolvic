@@ -60,7 +60,7 @@ import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
 
-public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
+public class Windows implements TrayListener, TopBarWidget.Delegate, TopTabsWidget.Delegate, TitleBarWidget.Delegate,
         WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
@@ -483,6 +483,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             if (mDelegate != null) {
                 mDelegate.onFocusedWindowChanged(mFocusedWindow, prev);
             }
+            updateTopTabsVisibility(aWindow);
         }
     }
 
@@ -1013,6 +1014,23 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         w2.setTopBar(bar1);
     }
 
+    private void updateTopTabsVisibility(@Nullable WindowWidget aWindow) {
+        if (mFocusedWindow != null) {
+            aWindow.getTopTabs().show(UIWidget.KEEP_FOCUS);
+            // If we're signed-in, poll for any new device events (e.g. received tabs)
+            // There's no push support right now, so this helps with the perception of speedy tab delivery.
+            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().refreshDevicesAsync();
+            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().pollForEventsAsync();
+        }
+
+        for (WindowWidget window : getCurrentWindows()) {
+            window.getTopTabs().setVisible(aWindow == window);
+
+            // Capture active session snapshots when showing the tabs menu
+            window.captureImage();
+        }
+    }
+
     private void updateViews() {
         WindowWidget frontWindow = getFrontWindow();
         WindowWidget leftWindow = getLeftWindow();
@@ -1038,6 +1056,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         for (WindowWidget window: getCurrentWindows()) {
             mWidgetManager.updateWidget(window);
             mWidgetManager.updateWidget(window.getTopBar());
+            mWidgetManager.updateWidget(window.getTopTabs());
             mWidgetManager.updateWidget(window.getTitleBar());
         }
     }
@@ -1055,6 +1074,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         window.addWindowListener(this);
         getCurrentWindows().add(window);
         window.getTopBar().setDelegate(this);
+        window.getTopTabs().setDelegate(this);
         window.getTitleBar().setDelegate(this);
 
         if (mPrivateMode) {
@@ -1262,6 +1282,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             moveWindowRight(window);
         }
     }
+
+    // TopTabsWidget Delegate
+
 
     // Title Bar Delegate
     @Override
@@ -1477,6 +1500,7 @@ public void selectTab(@NonNull Session aTab) {
                 addBackgroundTab(mFocusedWindow, aUri);
             }
         }
+        updateTopTabsVisibility(mFocusedWindow);
     }
 
     public void openInKioskMode(@NonNull String aUri) {
