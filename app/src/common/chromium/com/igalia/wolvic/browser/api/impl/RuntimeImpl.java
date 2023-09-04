@@ -159,6 +159,13 @@ public class RuntimeImpl implements WRuntime {
         mCallbacks.remove(callback);
     }
 
+    private void setupWebGLMSAA() {
+        String MSAALevelAsString = Integer.toString(mRuntimeSettings.getGlMsaaLevel());
+        if (mRuntimeSettings.getGlMsaaLevel() == 0)
+            CommandLine.getInstance().appendSwitchWithValue("webgl-antialiasing-mode", "none");
+        CommandLine.getInstance().appendSwitchWithValue("webgl-msaa-sample-count", MSAALevelAsString);
+    }
+
     private void initBrowserProcess(Context context) {
         assert isBrowserProcess() == true;
 
@@ -172,6 +179,7 @@ public class RuntimeImpl implements WRuntime {
         CommandLine.init(new String[] {});
         if (BuildConfig.DEBUG)
             CommandLine.getInstance().appendSwitchWithValue("enable-logging", "stderr");
+        setupWebGLMSAA();
         DeviceUtils.addDeviceSpecificUserAgentSwitch();
         LibraryLoader.getInstance().ensureInitialized();
 
