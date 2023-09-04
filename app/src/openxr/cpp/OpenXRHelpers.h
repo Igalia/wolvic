@@ -8,6 +8,7 @@
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
 #include <openxr/openxr_reflection.h>
+#include "SystemUtils.h"
 #include "vrb/Matrix.h"
 
 namespace crow {
@@ -17,6 +18,14 @@ namespace crow {
 #else
   const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 #endif
+
+// Hand tracking was thoroughly updated on Pico version 5.7.1
+static const std::string kPicoVersionHandTrackingUpdate = "5.7.1";
+
+inline bool CompareBuildIdString(const std::string str) {
+    char buildId[128];
+    return CompareSemanticVersionStrings(GetBuildIdString(buildId), str);
+}
 
 inline std::string Fmt(const char* fmt, ...) {
     va_list vl;

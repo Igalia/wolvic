@@ -1531,11 +1531,15 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
       m.input->SetHandMeshBufferSizes(m.handMeshProperties->indexCount, m.handMeshProperties->vertexCount);
     } else {
 #if defined(PICOXR)
-      m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
-#else
-      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
+      // Due to unreliable hand-tracking orientation data on Pico devices running system
+      // versions earlier than 5.7.1, we use the Spheres strategy.
+      if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
+        m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
 #endif
     }
+
+    if (!m.handMeshRenderer)
+      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
   }
 
   // Initialize layers if needed
