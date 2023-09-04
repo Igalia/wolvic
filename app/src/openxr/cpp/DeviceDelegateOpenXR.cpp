@@ -1533,7 +1533,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 #if defined(PICOXR)
       // Due to unreliable hand-tracking orientation data on Pico devices running system
       // versions earlier than 5.7.1, we use the Spheres strategy.
-      if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0)
+      if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
         m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
 #endif
     }

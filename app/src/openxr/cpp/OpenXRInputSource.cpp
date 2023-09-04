@@ -7,7 +7,7 @@
 
 #if defined(PICOXR)
     // Pico system version prior to 5.7.1 doesn't provide palm joint info :( so we use the wrist instead.
-#define HAND_JOINT_FOR_AIM ((CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) ? XR_HAND_JOINT_WRIST_EXT : XR_HAND_JOINT_PALM_EXT)
+#define HAND_JOINT_FOR_AIM (CompareBuildIdString(kPicoVersionHandTrackingUpdate) ? XR_HAND_JOINT_WRIST_EXT : XR_HAND_JOINT_PALM_EXT)
 #else
 #define HAND_JOINT_FOR_AIM XR_HAND_JOINT_PALM_EXT
 #endif
@@ -633,7 +633,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Scale joints according to their radius (for rendering). This is currently only
     // relevant on Pico with system version earlier than 5.7.1, where we are using spheres
     // to render the hands instead of a proper hand model due to incorrect joint orientation.
-    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) {
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate)) {
         for (int i = 0; i < mHandJoints.size(); i++) {
             if (IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints)) {
                 float radius = mHandJoints[i].radius;
@@ -708,7 +708,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 #elif defined(PICOXR)
     // On Pico, this only affects system versions earlier than 5.7.1
-    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) {
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate)) {
         float correctionAngle = -M_PI_2;
         pointerTransform
             .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)

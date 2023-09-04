@@ -20,7 +20,7 @@ OpenXRGestureManager::palmFacesHead(const vrb::Matrix &palm, const vrb::Matrix &
     auto vectorPalm = palm.MultiplyDirection({0, 1, 0});
 #ifdef PICOXR
     // Axis are inverted in Pico system versions prior to 5.7.1
-    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0)
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
         vectorPalm = palm.MultiplyDirection({0, 0, -1});
 #endif
     auto vectorHead = head.MultiplyDirection({0, 0, -1});

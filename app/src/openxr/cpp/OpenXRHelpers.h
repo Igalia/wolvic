@@ -22,7 +22,7 @@ namespace crow {
 // Hand tracking was thoroughly updated on Pico version 5.7.1
 static const std::string kPicoVersionHandTrackingUpdate = "5.7.1";
 
-inline int CompareBuildIdString(const std::string str) {
+inline bool CompareBuildIdString(const std::string str) {
     char buildId[128];
     return CompareSemanticVersionStrings(GetBuildIdString(buildId), str);
 }
