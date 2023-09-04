@@ -19,8 +19,8 @@ OpenXRGestureManager::palmFacesHead(const vrb::Matrix &palm, const vrb::Matrix &
     // the hand is in upright position facing head (the gesture we want to detect).
     auto vectorPalm = palm.MultiplyDirection({0, 1, 0});
 #ifdef PICOXR
-    // Axis are inverted in Pico with runtime versions prior to 3.0.1
-    if (GetOpenXRRuntimeVersion() < kPicoHandTrackingRuntimeVersion)
+    // Axis are inverted in Pico system versions prior to 5.7.1
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0)
         vectorPalm = palm.MultiplyDirection({0, 0, -1});
 #endif
     auto vectorHead = head.MultiplyDirection({0, 0, -1});

@@ -6,8 +6,8 @@
 #include "SystemUtils.h"
 
 #if defined(PICOXR)
-    // Pico runtime prior to 3.0.1 doesn't provide palm joint info :( so we use the wrist instead.
-#define HAND_JOINT_FOR_AIM ((GetOpenXRRuntimeVersion() < kPicoHandTrackingRuntimeVersion) ? XR_HAND_JOINT_WRIST_EXT : XR_HAND_JOINT_PALM_EXT)
+    // Pico system version prior to 5.7.1 doesn't provide palm joint info :( so we use the wrist instead.
+#define HAND_JOINT_FOR_AIM ((CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) ? XR_HAND_JOINT_WRIST_EXT : XR_HAND_JOINT_PALM_EXT)
 #else
 #define HAND_JOINT_FOR_AIM XR_HAND_JOINT_PALM_EXT
 #endif
@@ -631,9 +631,9 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
 #if defined(PICOXR)
     // Scale joints according to their radius (for rendering). This is currently only
-    // relevant on Pico with runtime version earlier than 3.0.1, where we are using spheres
+    // relevant on Pico with system version earlier than 5.7.1, where we are using spheres
     // to render the hands instead of a proper hand model due to incorrect joint orientation.
-    if (GetOpenXRRuntimeVersion() < kPicoHandTrackingRuntimeVersion) {
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) {
         for (int i = 0; i < mHandJoints.size(); i++) {
             if (IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints)) {
                 float radius = mHandJoints[i].radius;
@@ -707,8 +707,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
     }
 #elif defined(PICOXR)
-    // On Pico, this only affects runtime versions earlier than 3.0.1
-    if (GetOpenXRRuntimeVersion() < kPicoHandTrackingRuntimeVersion) {
+    // On Pico, this only affects system versions earlier than 5.7.1
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate) < 0) {
         float correctionAngle = -M_PI_2;
         pointerTransform
             .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)
