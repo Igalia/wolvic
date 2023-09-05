@@ -49,10 +49,7 @@ public class SettingsImpl implements WSessionSettings {
     }
 
     @Override
-    public boolean getUsePrivateMode() {
-        // TODO: implement
-        return false;
-    }
+    public boolean getUsePrivateMode() { return mPrivateMode; }
 
     @Nullable
     @Override
