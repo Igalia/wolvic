@@ -16,7 +16,7 @@ public class TabImpl extends Tab {
     private TabWebContentsObserver mWebContentsObserver;
 
     public TabImpl(@NonNull Context context, @NonNull SessionImpl session) {
-        super(context);
+        super(context, session.getSettings().getUsePrivateMode());
         registerCallbacks(session);
     }
 
