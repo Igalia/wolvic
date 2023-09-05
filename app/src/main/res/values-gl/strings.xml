@@ -681,6 +681,7 @@
     <string name="tabs_selected_counter_none">0 pestanas seleccionadas</string>
     <string name="hamburger_menu_send_tab">Enviar pestana a dispositivo</string>
     <string name="hamburger_menu_resize">Redimensionar xanela</string>
+    <string name="hamburger_menu_find_in_page">Buscar na páxina</string>
     <string name="hamburger_menu_addons">Complementos</string>
     <string name="whats_new_button_start_browsing">Comezar a navegar</string>
     <string name="deprecated_version_dialog_title">Actualización recomendada</string>

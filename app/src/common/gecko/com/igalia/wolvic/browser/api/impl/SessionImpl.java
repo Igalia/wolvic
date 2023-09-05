@@ -145,6 +145,12 @@ public class SessionImpl implements WSession {
         }
     }
 
+    @NonNull
+    @Override
+    public SessionFinder getSessionFinder() {
+        return new SessionFinderImpl(mSession.getFinder());
+    }
+
     @Override
     public void exitFullScreen() {
         mSession.exitFullScreen();

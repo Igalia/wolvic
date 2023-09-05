@@ -54,6 +54,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isWebApp;
     private MutableLiveData<ObservableBoolean> isFocused;
     private MutableLiveData<ObservableBoolean> isUrlEmpty;
+    private MutableLiveData<ObservableBoolean> isFindInPage;
     private MutableLiveData<ObservableBoolean> isPopUpAvailable;
     private MutableLiveData<ObservableBoolean> isPopUpBlocked;
     private MutableLiveData<ObservableBoolean> canGoForward;
@@ -133,6 +134,7 @@ public class WindowViewModel extends AndroidViewModel {
         isWebApp = new MutableLiveData<>(new ObservableBoolean(false));
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
         isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
+        isFindInPage = new MutableLiveData<>(new ObservableBoolean(false));
         isPopUpAvailable = new MutableLiveData<>(new ObservableBoolean(false));
         isPopUpBlocked = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
@@ -333,6 +335,7 @@ public class WindowViewModel extends AndroidViewModel {
         isBookmarked.postValue(isBookmarked.getValue());
         isFocused.postValue(isFocused.getValue());
         isUrlEmpty.postValue(isUrlEmpty.getValue());
+        isFindInPage.postValue(isFindInPage.getValue());
         isPopUpAvailable.postValue(isPopUpAvailable.getValue());
         isPopUpBlocked.postValue(isPopUpBlocked.getValue());
         canGoForward.postValue(canGoForward.getValue());
@@ -615,6 +618,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsUrlEmpty(boolean isUrlEmpty) {
         this.isUrlEmpty.postValue(new ObservableBoolean(isUrlEmpty));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsFindInPage() {
+        return isFindInPage;
+    }
+
+    public void setIsFindInPage(boolean isFindInPage) {
+        this.isFindInPage.postValue(new ObservableBoolean(isFindInPage));
     }
 
     @NonNull

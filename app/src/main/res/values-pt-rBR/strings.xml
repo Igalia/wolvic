@@ -507,6 +507,7 @@
     <string name="tab_sent_notification">Guia enviada!</string>
     <string name="hamburger_menu_send_tab">Enviar guia para dispositivo</string>
     <string name="hamburger_menu_resize">Redimensionar janela</string>
+    <string name="hamburger_menu_find_in_page">Encontrar na página</string>
     <string name="whats_new_button_sign_in">Entrar</string>
     <string name="slow_script_dialog_description">Uma página da web está deixando seu navegador mais lento (%1$s). O que você gostaria de fazer\?</string>
     <string name="popup_permission_dialog_message">O bloqueio de pop-ups é %1$s para este site.</string>

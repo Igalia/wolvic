@@ -170,6 +170,13 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         return mSettings.getDefaultUserAgent(mode);
     }
 
+    @Nullable
+    @Override
+    public SessionFinder getSessionFinder() {
+        // TODO: Implement session finder
+        return null;
+    }
+
     @Override
     public void exitFullScreen() {
         getTab().exitFullScreen();
