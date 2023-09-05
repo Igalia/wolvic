@@ -38,6 +38,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NavigationUrlBinding;
+import com.igalia.wolvic.findinpage.FindInPageInteractor;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
@@ -62,6 +63,7 @@ public class NavigationURLBar extends FrameLayout {
 
     private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
+    private FindInPageInteractor mFindInPage;
     private WindowViewModel mViewModel;
     private SettingsViewModel mSettingsViewModel;
     private NavigationUrlBinding mBinding;
@@ -242,7 +244,22 @@ public class NavigationURLBar extends FrameLayout {
         // Web app
         mBinding.webAppButton.setOnClickListener(mWebAppButtonClick);
 
+        mFindInPage = new FindInPageInteractor(
+                mBinding.findInPage,
+                () -> {
+                    mViewModel.setIsFindInPage(false);
+                    return null;
+                }
+        );
+        bindFindInPageSession();
+
         clearFocus();
+    }
+
+    private void bindFindInPageSession() {
+        if (mSession == null) { return; }
+        mFindInPage.bind(mSession.getWSession().getSessionFinder());
+        mFindInPage.start();
     }
 
     public void detachFromWindow() {
@@ -267,7 +284,10 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setSession(Session session) {
+        mFindInPage.stop();
+        mFindInPage.unbind();
         mSession = session;
+        bindFindInPageSession();
     }
 
     public void onPause() {

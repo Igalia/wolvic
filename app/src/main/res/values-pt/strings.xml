@@ -394,6 +394,7 @@
     <string name="developer_options_foveated_3">3</string>
     <string name="video_controls_unmute">Desmutar</string>
     <string name="hamburger_menu_resize">Redimensionar janela</string>
+    <string name="hamburger_menu_find_in_page">Procurar na página</string>
     <string name="bookmarks_desktop_unfiled_title">Outros favoritos</string>
     <string name="addons_close_tooltip">Fechar Add-ons</string>
     <string name="privacy_options_saved_logins_reset">Redefinir configurações de logins salvos</string>

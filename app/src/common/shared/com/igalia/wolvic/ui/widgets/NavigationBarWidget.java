@@ -1283,6 +1283,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
 
             @Override
+            public void onFindInPage() {
+                hideMenu();
+
+                mViewModel.setIsFindInPage(true);
+            }
+
+            @Override
             public void onResize() {
                 hideMenu();
 
