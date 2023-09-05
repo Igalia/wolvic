@@ -258,7 +258,10 @@ public class NavigationURLBar extends FrameLayout {
 
     private void bindFindInPageSession() {
         if (mSession == null) { return; }
-        mFindInPage.bind(mSession.getWSession().getSessionFinder());
+        WSession.SessionFinder finder = mSession.getWSession().getSessionFinder();
+        // FIXME: finder should be NonNull but we haven't implemented it for Chromium yet.
+        if (finder == null) { return; };
+        mFindInPage.bind(finder);
         mFindInPage.start();
     }
 
