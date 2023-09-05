@@ -62,24 +62,30 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
     @Override
     public void mediaSessionStateChanged(boolean isControllable, boolean isSuspended, boolean isActive) {
         assert mMediaSession != null;
+
+        // If the Session is being closed just ignore the change notification.
+        WMediaSession.Delegate delegate = mSession.getMediaSessionDelegate();
+        if (delegate == null)
+            return;
+
         if (isActive != mIsActive) {
             mIsActive = isActive;
             if (mIsActive) {
-                mSession.getMediaSessionDelegate().onActivated(mSession, mMediaSession);
+                delegate.onActivated(mSession, mMediaSession);
             } else {
                 stopUpdatingPosition();
-                mSession.getMediaSessionDelegate().onStop(mSession, mMediaSession);
-                mSession.getMediaSessionDelegate().onDeactivated(mSession, mMediaSession);
+                delegate.onStop(mSession, mMediaSession);
+                delegate.onDeactivated(mSession, mMediaSession);
             }
         }
         if (isSuspended != mIsSuspended) {
             mIsSuspended = isSuspended;
             if (!mIsSuspended) {
                 startUpdatingPosition();
-                mSession.getMediaSessionDelegate().onPlay(mSession, mMediaSession);
+                delegate.onPlay(mSession, mMediaSession);
             } else {
                 stopUpdatingPosition();
-                mSession.getMediaSessionDelegate().onPause(mSession, mMediaSession);
+                delegate.onPause(mSession, mMediaSession);
             }
         }
     }
@@ -116,8 +122,9 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
 
     public void onMediaFullscreen(boolean isFullscreen) {
         assert mMediaSession != null;
-        mSession.getMediaSessionDelegate().onFullscreen(
-                mSession, mMediaSession, isFullscreen, null);
+        if (mSession.getMediaSessionDelegate() != null)
+            mSession.getMediaSessionDelegate().onFullscreen(
+                    mSession, mMediaSession, isFullscreen, null);
     }
 
     /* package */ class WMediaSessionImpl implements WMediaSession {
@@ -205,7 +212,7 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
     }
 
     private void updatePosition() {
-        if (mMediaPosition == null || !mIsActive)
+        if (mMediaPosition == null || !mIsActive || mSession.getMediaSessionDelegate() == null)
             return;
 
         assert mMediaSession != null;
@@ -267,6 +274,8 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
 
     private void updateMetaData() {
         assert mMediaSession != null;
+        if (mSession.getMediaSessionDelegate() == null)
+            return;
 
         WMediaSession.Metadata metadata;
         if (mMetadata != null) {
