@@ -519,6 +519,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 setView(mLibrary, switchSurface);
                 mLibrary.selectPanel(panelType);
                 mLibrary.onShow();
+                mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
                 if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
                     final Runnable firstDrawCallback = mFirstDrawCallback;
