@@ -217,7 +217,9 @@
                 android:layout_height="56dp"
                 android:padding="4dp"
                 app:visibleGone="@{viewmodel.isFindInPage}"
-                app:findInPageButtonsTint="@color/white" />
+                app:findInPageButtonsTint="@color/white"
+                app:findInPageResultCountTextColor="@color/white"
+                app:findInPageNoMatchesTextColor="@color/fire"/>
 
             <LinearLayout
                 android:id="@+id/endButtonsLayout"
