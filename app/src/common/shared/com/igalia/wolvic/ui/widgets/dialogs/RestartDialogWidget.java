@@ -31,7 +31,7 @@ public class RestartDialogWidget extends PromptDialogWidget {
 
             } else if (index == PromptDialogWidget.POSITIVE) {
                 mWidgetManager.saveState();
-                postDelayed(() -> SystemUtils.scheduleRestart(getContext(), 100), 500);
+                postDelayed(() -> SystemUtils.restart(getContext()), 500);
             }
         });
         setCheckboxVisible(false);

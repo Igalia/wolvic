@@ -1,8 +1,6 @@
 package com.igalia.wolvic.utils;
 
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
@@ -10,9 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
@@ -35,24 +31,12 @@ public class SystemUtils {
     public static final long TWO_DAYS_MILLIS = 172800000;
     public static final long ONE_WEEK_MILLIS = 604800000;
 
-    public static final void restart(@NonNull Context context) {
-        Intent i = new Intent(context, VRBrowserActivity.class);
-        i.setPackage(BuildConfig.APPLICATION_ID);
-        context.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-
-    public static final void scheduleRestart(@NonNull Context context, long delay) {
-        Intent i = new Intent(context, VRBrowserActivity.class);
-        i.setPackage(BuildConfig.APPLICATION_ID);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        PendingIntent mPendingIntent = PendingIntent.getActivity(context, 0, i,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + delay, mPendingIntent);
-
-        System.exit(0);
+    public static void restart(@NonNull Context context) {
+        context.startActivity(
+                Intent.makeRestartActivityTask(
+                        context.getPackageManager().getLaunchIntentForPackage(
+                                context.getPackageName()).getComponent()));
+        Runtime.getRuntime().exit(0);
     }
 
     @NonNull
