@@ -107,6 +107,7 @@ public interface WidgetManagerDelegate {
     void openNewWindow(String uri);
     void openNewTab(@NonNull String uri);
     void openNewTabForeground(@NonNull String uri);
+    void openNewPageNoInterrupt(@NonNull String uri);
     WindowWidget getFocusedWindow();
     TrayWidget getTray();
     NavigationBarWidget getNavigationBar();
