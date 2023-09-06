@@ -654,47 +654,30 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
-    // Workaround for a bug in YouTube, which is not providing the media playback events
-    // that we need to recognize when a video is playing and obtain its metadata.
-    // Related Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1827583
-    private boolean needsYoutubeVideoWorkaround() {
-        if (getSession().getFullScreenVideo() != null) {
-            return false;
-        }
-        String host = Uri.parse(getSession().getCurrentUri()).getHost();
-        return host != null && (host.contains(".youtube.com") || host.contains(".youtube-nocookie.com"));
-    }
-
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
             if (getSession().getFullScreenVideo() != null) {
                 onEnterFullScreen(aWindow);
             } else {
-                // No active fullscreen video. There might be three reasons for that:
-                // 1. The website is not providing media playback information (YouTube bug).
-                // 2. The video is not active yet -> wait for onVideoAvailabilityChanged
-                // 3. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                if (needsYoutubeVideoWorkaround()) {
-                    Log.w(LOGTAG, "onFullScreen: workaround for immersive YouTube videos");
-                    onEnterFullScreen(aWindow);
-                } else {
-                    mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-                        @Override
-                        public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                            WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                            assert getSession().getActiveVideo() != null;
-                            onEnterFullScreen(aWindow);
-                            mAttachedWindow.removeWindowListener(this);
-                        }
-                        @Override
-                        public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                            assert getSession().getFullScreenVideo() != null;
-                            onEnterFullScreen(aWindow);
-                            mAttachedWindow.removeWindowListener(this);
-                        }
-                    });
-                }
+                // No active fullscreen video. There might be two reasons for that:
+                // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
+                // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
+                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
+                    @Override
+                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
+                        assert getSession().getActiveVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                    @Override
+                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+                        assert getSession().getFullScreenVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                });
             }
         } else {
             mWidgetPlacement = mBeforeFullscreenPlacement;
@@ -899,10 +882,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
             mediaWidth = (int) mFullScreenMedia.getWidth();
             mediaHeight = (int) mFullScreenMedia.getHeight();
-        } else if (needsYoutubeVideoWorkaround()) {
-            // Default to the size of a 4K video, which is our preferred video quality on YouTube.
-            mediaWidth = 3840;
-            mediaHeight = 2160;
         } else {
             // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
             mediaWidth = mAttachedWindow.getWindowWidth();
