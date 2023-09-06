@@ -698,7 +698,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsFindInPage(boolean isFindInPage) {
-        this.isFindInPage.postValue(new ObservableBoolean(isFindInPage));
+        this.isFindInPage.setValue(new ObservableBoolean(isFindInPage));
     }
 
     @NonNull

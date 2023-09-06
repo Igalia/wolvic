@@ -1327,7 +1327,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             @Override
             public void onFindInPage() {
                 hideMenu();
-                mAttachedWindow.hidePanel();
+                mAttachedWindow.hideAllPanel();
 
                 mViewModel.setIsFindInPage(true);
             }
