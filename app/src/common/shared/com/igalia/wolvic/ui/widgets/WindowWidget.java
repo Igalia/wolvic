@@ -544,6 +544,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mLibrary.getSelectedPanelType();
     }
 
+    public void hideAllPanel() {
+        hideAllPanel(true);
+    }
+
     private void hideAllPanel(boolean switchSurface) {
         if (mViewModel.getIsLibraryVisible().getValue().get()) {
             hidePanel(switchSurface);
@@ -670,6 +674,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (mView == null) {
                 setView(mDownloads, switchSurface);
                 mDownloads.onShow();
+                mViewModel.setIsFindInPage(false);
                 mViewModel.setIsDownloadsVisible(true);
                 showPanelCommonAction();
 
@@ -701,6 +706,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (mView == null) {
                 setView(mWebApps, switchSurface);
                 mWebApps.onShow();
+                mViewModel.setIsFindInPage(false);
                 mViewModel.setIsWebAppsVisible(true);
                 showPanelCommonAction();
 
@@ -732,6 +738,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (mView == null) {
                 setView(mAddons, switchSurface);
                 mAddons.onShow();
+                mViewModel.setIsFindInPage(false);
                 mViewModel.setIsAddonsVisible(true);
                 showPanelCommonAction();
 
