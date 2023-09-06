@@ -1944,6 +1944,35 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWindows.addTab(mWindows.getFocusedWindow(), uri);
     }
 
+    private boolean openNewTabNoInterrupt(@NonNull WindowWidget window, @NonNull String uri) {
+        if (window.getSession() == null || window.getSession().getActiveVideo() != null) {
+            return false;
+        }
+
+        mWindows.addTab(window, uri);
+        mWindows.focusWindow(window);
+        return true;
+    }
+    @Override
+    public void openNewPageNoInterrupt(@NonNull String uri) {
+        if (openNewTabNoInterrupt(mWindows.getFocusedWindow(), uri)) { return; }
+
+        // If we have video playing in current window, ensure we don't open a new tab
+        // in a window that has active video
+        if (mWindows.getWindowsCount() > 1) {
+            for (WindowWidget window : mWindows.getCurrentWindows()) {
+                if (openNewTabNoInterrupt(window, uri)) { return; }
+            }
+        }
+        // All the current opened Windows have video playing, so we have to open uri in a new window.
+        // If we have maximum window number, then open the uri as a new tab in current window.
+        if (canOpenNewWindow()) {
+            openNewWindow(uri);
+        } else {
+            openNewTabForeground(uri);
+        }
+    }
+
     @Override
     public WindowWidget getFocusedWindow() {
         return mWindows.getFocusedWindow();
