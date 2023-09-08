@@ -12,7 +12,7 @@ For more info on localization, how it works in the Wolvic XR project, and how to
 
 ## Setup instructions
 
-*GeckoView local substitution.*
+### GeckoView local substitution
 
 After [PR #70](https://github.com/Igalia/wolvic/pull/70), WebXR sessions won't work with the prebuilt maven GeckoView libraries because that PR introduced a change in the GeckoView protocol. So you have to build GeckoView manually by applying patches at [this repository](https://github.com/Igalia/wolvic-gecko-patches).
 
@@ -25,16 +25,16 @@ Currently, the substitution flow is streamlined for some of the core dependencie
 
 Do not forget to run a Gradle sync in Android Studio after changing `local.properties`. If you specified any substitutions, they will be reflected in the modules list, and you'll be able to modify them from a single Android Studio window.
 
-For step by step guide check [here](https://github.com/Igalia/wolvic/wiki/Developer-workflow:-building-steps#optional-compiling-gecko).
+For step by step guide check [here](https://github.com/Igalia/wolvic/wiki/Developer-workflow#building-gecko).
 
-*Clone Wolvic.*
+### Clone Wolvic
 
 ```bash
 git clone git@github.com:Igalia/wolvic.git
 cd wolvic
 ```
 
-*Clone the third-party repo.*
+### Clone the third-party repo
 
 If you're developing for the Oculus, Huawei, Pico, or VIVE, you need to clone the repo with third-party SDK files.
 
@@ -60,7 +60,7 @@ The [repo in `third_party`](https://github.com/Igalia/wolvic-third-parties) can 
 pushd third_party && git fetch && git checkout main && git rebase origin/main && popd
 ```
 
-*Fetch Git submodules.*
+### Fetch Git submodules
 
 You may need to set up [two-factor authentication](https://blog.github.com/2013-09-03-two-factor-authentication/#how-does-it-work-for-command-line-git) for the command line.
 
