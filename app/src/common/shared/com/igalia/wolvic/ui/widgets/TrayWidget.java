@@ -143,6 +143,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
 
         updateTime();
+        OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(getContext()));
 
         if (DeviceType.getType() == DeviceType.OculusQuest) {
             mTrayViewModel.setLeftControllerIcon(R.drawable.ic_icon_statusbar_leftcontroller);
