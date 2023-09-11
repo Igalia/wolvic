@@ -1,46 +1,60 @@
 package com.igalia.wolvic.utils;
 
-import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
-
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectivityReceiver extends BroadcastReceiver {
+public class ConnectivityReceiver extends LiveData<Boolean> {
 
     public interface Delegate {
         void OnConnectivityChanged(boolean connected);
     }
 
-    private Context mContext;
-    private List<Delegate> mListeners;
+    private final Context mContext;
+    private final List<Delegate> mListeners;
+    private final ConnectivityManager mConnectivityManager;
+    private final ConnectivityManager.NetworkCallback mNetworkCallback;
 
     public ConnectivityReceiver(@NonNull Context context) {
         mContext = context;
         mListeners = new ArrayList<>();
+        mConnectivityManager = context.getSystemService(ConnectivityManager.class);
+        mNetworkCallback = new ConnectivityManager.NetworkCallback(){
+            @Override
+            public void onLost(@NonNull Network network) {
+                ConnectivityReceiver.super.postValue(false);
+            }
+
+            @Override
+            public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
+                ConnectivityReceiver.super.postValue(
+                        networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                );
+            }
+        };
     }
 
     public void init() {
-        // TODO: Deprecated CONNECTIVITY_ACTION, see https://github.com/Igalia/wolvic/issues/803
-        mContext.registerReceiver(this, new IntentFilter(CONNECTIVITY_ACTION));
+        mConnectivityManager.registerDefaultNetworkCallback(mNetworkCallback);
+        ConnectivityReceiver.super.observe((LifecycleOwner) mContext,
+                Observer -> onReceive(Boolean.TRUE.equals(ConnectivityReceiver.super.getValue())));
     }
 
     public void end() {
-        mContext.unregisterReceiver(this);
+        mConnectivityManager.unregisterNetworkCallback(mNetworkCallback);
+        ConnectivityReceiver.super.removeObservers((LifecycleOwner) mContext);
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        mListeners.forEach(listener -> listener.OnConnectivityChanged(isNetworkAvailable(mContext)));
+    private void onReceive(boolean status) {
+        mListeners.forEach(listener -> listener.OnConnectivityChanged(status));
     }
 
     public void addListener(@NonNull Delegate aDelegate) {
