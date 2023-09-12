@@ -83,7 +83,6 @@ struct DeviceDelegateOpenXR::State {
   OpenXRLayerCubePtr cubeLayer;
   OpenXRLayerEquirectPtr equirectLayer;
   std::vector<OpenXRLayerPtr> uiLayers;
-  OpenXRSwapChainPtr crearColorSwapChain;
   device::RenderMode renderMode = device::RenderMode::StandAlone;
   vrb::CameraEyePtr cameras[2];
   FramePrediction framePrediction = FramePrediction::NO_FRAME_AHEAD;
@@ -678,15 +677,12 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void Shutdown() {
-    // Release swapChains
-    for (OpenXRSwapChainPtr swapChain: eyeSwapChains) {
-      swapChain->Destroy();
-    }
-
-    if (passthroughLayer != nullptr) {
-        passthroughLayer->Destroy();
-        passthroughLayer = nullptr;
-    }
+    // Release swapChains before destroying the instance. Note that layers are backed by swapchains.
+    eyeSwapChains.clear();
+    uiLayers.clear();
+    cubeLayer.reset();
+    equirectLayer.reset();
+    passthroughLayer.reset();
 
     // Release spaces
     if (viewSpace != XR_NULL_HANDLE) {
