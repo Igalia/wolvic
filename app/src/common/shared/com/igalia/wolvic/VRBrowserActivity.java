@@ -1909,6 +1909,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mWindows != null && aDensity == 0.0f && mWindows.getWindowsCount() > 1) {
             return;
         }
+        setCylinderDensityForce(aDensity);
+    }
+
+    @Override
+    public void setCylinderDensityForce(final float aDensity) {
         mCurrentCylinderDensity = aDensity;
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
