@@ -77,6 +77,7 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
@@ -145,6 +146,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private SharedPreferences mPrefs;
     private DownloadsManager mDownloadsManager;
     private float mBrowserDensity;
+    private HashSet<String> mDownloadRequestUri;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -239,6 +241,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mViewModel.setWidth(mWidgetPlacement.width);
         mViewModel.setHeight(mWidgetPlacement.height);
+        mDownloadRequestUri = new HashSet<>();
     }
 
     @Override
@@ -1709,6 +1712,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 }
                 job = DownloadJob.fromUri(uri, webResponseInfo.headers(), webResponseInfo.body());
             } else {
+                mDownloadRequestUri.add(webResponseInfo.uri());
                 job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
             }
             // Don't show the confirmation dialog when we are in WebXR, because it will not be visible.
@@ -1894,6 +1898,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
 
         } else {
+            if (mDownloadRequestUri.contains(aRequest.uri)) {
+                result.complete(WAllowOrDeny.DENY);
+                mDownloadRequestUri.remove(aRequest.uri);
+                // Fix issue https://github.com/Igalia/wolvic/issues/353
+                aSession.loadUri(aRequest.uri, WSession.LOAD_FLAGS_BYPASS_CACHE);
+                return result;
+            }
+
             hideLibraryPanel();
         }
 
