@@ -130,6 +130,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private ArrayList<NavigationListener> mNavigationListeners;
     private TrackingProtectionStore mTrackingDelegate;
     private WidgetPlacement mBeforeFullscreenPlacement;
+    private float mSavedCylinderDensity = 0.0f;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -731,6 +732,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
         closeFloatingMenus();
         mWidgetManager.pushWorldBrightness(mBrightnessWidget, mBrightnessWidget.getSelectedBrightness());
+        // Disable curved window for 3D side by side video
+        mSavedCylinderDensity = mWidgetManager.getCylinderDensity();
+        mWidgetManager.setCylinderDensityForce(0.0f);
     }
 
     private void exitFullScreenMode() {
@@ -761,6 +765,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
+        mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
     }
 
     private void enterResizeMode() {
