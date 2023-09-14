@@ -1,0 +1,42 @@
+name: CI Internal
+
+on:
+  workflow_dispatch:  # Allow manual triggers
+  pull_request:
+  push:
+
+jobs:
+  check-secret:
+    name: secret-validator
+    runs-on: ubuntu-latest
+    outputs:
+      is-secret-set: ${{ steps.check-secret-set.outputs.is-secret-set }}
+
+    steps:
+      - name: check if the necessary secrets are set in github secrets
+        id: check-secret-set
+        env:
+          THIRD_PARTY_PAT: ${{ secrets.THIRD_PARTY_PAT }}
+        run: "echo \"is-secret-set=${{ env.THIRD_PARTY_PAT != '' }}\" >> $GITHUB_OUTPUT\n"
+
+  build-internal:
+    name: Internal Build
+    needs: [check-secret]
+    if: needs.check-secret.outputs.is-secret-set == 'true'
+    uses: ./.github/workflows/build.yml
+    with:
+      flavour: ${{ matrix.flavour }}
+      internal: true
+    strategy:
+      fail-fast: false
+      matrix:
+        flavour: [
+          assembleOculusvrArm64GeckoMetaStore,
+          assembleHvrArm64GeckoGeneric,
+          assembleHvrArm64GeckoMainlandChina,
+          assemblePicoxrArm64GeckoGeneric,
+          assembleLynxArm64GeckoGeneric,
+          assembleSpacesArm64GeckoGeneric,
+          assembleAospX64GeckoGeneric,
+        ]
+    secrets: inherit
