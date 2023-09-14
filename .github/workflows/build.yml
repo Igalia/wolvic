@@ -72,3 +72,9 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: ${{ inputs.flavour }}
+
+      - name: Upload APK to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.flavour }}
+          path: app/build/outputs/apk/
