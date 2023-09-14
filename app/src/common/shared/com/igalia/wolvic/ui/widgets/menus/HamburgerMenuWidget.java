@@ -273,6 +273,18 @@ public class HamburgerMenuWidget extends UIWidget implements
                 break;
             }
             mItems.add(item);
+
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                (menuItem) -> {
+                    if (mDelegate != null) {
+                        mDelegate.onFindInPage();
+                    }
+                    return null;
+                })
+                .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
+                .withIcon(R.drawable.ic_icon_search)
+                .build());
         }
 
         mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
@@ -285,18 +297,6 @@ public class HamburgerMenuWidget extends UIWidget implements
                 })
                 .withTitle(getContext().getString(R.string.hamburger_menu_resize))
                 .withIcon(R.drawable.ic_icon_resize)
-                .build());
-
-        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                (menuItem) -> {
-                    if (mDelegate != null) {
-                        mDelegate.onFindInPage();
-                    }
-                    return null;
-                })
-                .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
-                .withIcon(R.drawable.ic_icon_search)
                 .build());
 
         if (mWidgetManager != null && mWidgetManager.isPassthroughSupported()) {
