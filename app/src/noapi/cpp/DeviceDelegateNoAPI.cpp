@@ -316,10 +316,12 @@ DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
     m.pitch = 0.0f;
     m.headingMatrix = vrb::Matrix::Identity();
     m.pitchMatrix = vrb::Matrix::Identity();
+    ProcessEvents();
     return;
   }
   VRB_LOG("pos: %s heading: %f pitch: %f", m.position.ToString().c_str(), m.heading, m.pitch);
   m.position += m.headingMatrix.MultiplyDirection(vrb::Vector(aX, aY, aZ));
+  ProcessEvents();
 }
 
 void
@@ -327,6 +329,7 @@ DeviceDelegateNoAPI::RotateHeading(const float aHeading) {
   static const vrb::Vector sUp(0.0f, 1.0f, 0.0f);
   m.heading += aHeading;
   m.headingMatrix = vrb::Matrix::Rotation(sUp, m.heading);
+  ProcessEvents();
 }
 
 void
@@ -334,6 +337,7 @@ DeviceDelegateNoAPI::RotatePitch(const float aPitch) {
   static const vrb::Vector sLeft(1.0f, 0.0f, 0.0f);
   m.pitch += aPitch;
   m.pitchMatrix = vrb::Matrix::Rotation(sLeft, m.pitch);
+  ProcessEvents();
 }
 
 static float
