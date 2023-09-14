@@ -218,6 +218,7 @@ DeviceDelegateNoAPI::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glEnable(GL_CULL_FACE));
   VRB_GL_CHECK(glEnable(GL_BLEND));
   VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  mShouldRender = true;
   if (m.controller) {
     vrb::RenderContextPtr context = m.context.lock();
     if (context) {
