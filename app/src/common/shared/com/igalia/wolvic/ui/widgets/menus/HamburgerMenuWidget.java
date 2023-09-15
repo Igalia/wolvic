@@ -183,7 +183,7 @@ public class HamburgerMenuWidget extends UIWidget implements
     private void updateItems() {
         mItems = new ArrayList<>();
 
-        // In kiosk mode, only resize and passthrough are available.
+        // In kiosk mode, only resize, find in page and passthrough are available.
         if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
@@ -273,8 +273,9 @@ public class HamburgerMenuWidget extends UIWidget implements
                 break;
             }
             mItems.add(item);
+        }
 
-            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                 HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
                 (menuItem) -> {
                     if (mDelegate != null) {
@@ -285,7 +286,6 @@ public class HamburgerMenuWidget extends UIWidget implements
                 .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
                 .withIcon(R.drawable.ic_icon_search)
                 .build());
-        }
 
         mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                 HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
