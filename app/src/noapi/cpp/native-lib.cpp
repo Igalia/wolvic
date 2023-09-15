@@ -8,6 +8,7 @@
 
 #include "BrowserWorld.h"
 #include "DeviceDelegateNoAPI.h"
+#include "VRBrowser.h"
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 
@@ -41,6 +42,8 @@ JNI_METHOD(void, activityResumed)
 
 JNI_METHOD(void, activityCreated)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
+  crow::VRBrowser::InitializeJava(aEnv, aActivity);
+
   if (!sDevice) {
     sDevice = crow::DeviceDelegateNoAPI::Create(BrowserWorld::Instance().GetRenderContext());
   }
