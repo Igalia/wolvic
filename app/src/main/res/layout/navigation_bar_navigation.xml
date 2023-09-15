@@ -65,7 +65,7 @@
             android:layout_marginStart="10dp"
             android:layout_weight="100"
             android:orientation="horizontal"
-            app:visibleGone="@{!viewmodel.isKioskMode}" />
+            app:visibleGone="@{!viewmodel.isKioskMode || viewmodel.isFindInPage}" />
 
         <Space
             android:id="@+id/urlBarPlaceholder"
@@ -73,7 +73,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
             android:layout_weight="100"
-            app:visibleGone="@{viewmodel.isKioskMode}" />
+            app:visibleGone="@{viewmodel.isKioskMode &amp;&amp; !viewmodel.isFindInPage}" />
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/userFeedbackButton"
