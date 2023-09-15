@@ -205,5 +205,6 @@ def addRepos(RepositoryHandler handler) {
     handler.mavenCentral()
     handler.maven { url 'https://maven.mozilla.org/maven2' }
     handler.maven { url 'https://developer.huawei.com/repo/' }
+    handler.maven { url 'https://storage.googleapis.com/r8-releases/raw' }
 }
 ext.addRepos = this.&addRepos
