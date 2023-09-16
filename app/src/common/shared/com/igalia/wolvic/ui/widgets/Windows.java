@@ -1372,6 +1372,15 @@ public void selectTab(@NonNull Session aTab) {
         }
     }
 
+    public void findTabAndSelect(@NonNull String aUri) {
+        Session selectedSession = SessionStore.get().getSessionByUri(aUri);
+        if (selectedSession != null) {
+            onTabSelect(selectedSession);
+        } else {
+            openNewTabAfterRestore(aUri, Windows.OPEN_IN_FOREGROUND);
+        }
+    }
+
     private void openNewTab(@NonNull String aUri, @NewTabLocation int aLocation) {
         if (aLocation == OPEN_IN_NEW_WINDOW) {
             WindowWidget newWindow = addWindow();
