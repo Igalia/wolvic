@@ -82,7 +82,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         @Override
         public boolean onDown (MotionEvent e) {
             mBinding.buildText.setText(mIsHash ?
-                    "versionCode " + BuildConfig.VERSION_CODE :
+                    StringUtils.versionCodeToDate(getContext(), BuildConfig.VERSION_CODE) :
                     BuildConfig.GIT_HASH + " (AC " + Build.version + ")");
 
             mIsHash = !mIsHash;

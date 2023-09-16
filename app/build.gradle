@@ -150,7 +150,8 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    project.archivesBaseName = "Wolvic"
+    project.archivesBaseName = "Wolvic-$defaultConfig.versionName-$generatedVersionCode"
+    defaultConfig.versionCode = generatedVersionCode
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -814,5 +815,15 @@ android.applicationVariants.all { variant ->
     // value so that this is visible from inside the app.
     if (variant.buildType.name == "debug") {
         variant.resValue "string", "app_name", variant.mergedFlavor.resValues.get("string/app_name").value + " (Dev)"
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
+//  Dynamically set versionCode (See tools/build/versionCode.gradle
+// -------------------------------------------------------------------------------------------------
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        output.versionCodeOverride = generatedVersionCode
     }
 }

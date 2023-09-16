@@ -80,6 +80,40 @@ public class StringUtils {
         return aString.chars().filter(ch -> ch == target).count();
     }
 
+    /**
+     * The version code is composed like: yDDDHHmm
+     *  * y   = Double digit year, with 16 substracted: 2017 -> 17 -> 1
+     *  * DDD = Day of the year, pad with zeros if needed: September 6th -> 249
+     *  * HH  = Hour in day (00-23)
+     *  * mm  = Minute in hour
+     *
+     * For September 6th, 2017, 9:41 am this will generate the versionCode: 12490941 (1-249-09-41).
+     *
+     * @param aVersionCode Application version code minus the leading architecture digit.
+     * @return String The converted date in the format yyyy-MM-dd
+     */
+    public static String versionCodeToDate(final @NonNull Context context, final int aVersionCode) {
+        String versionCode = Integer.toString(aVersionCode - 100000000);
+
+        String formatted;
+        try {
+            int year = Integer.parseInt(versionCode.substring(0, 1)) + 2016;
+            int dayOfYear = Integer.parseInt(versionCode.substring(1, 4));
+
+            GregorianCalendar cal = (GregorianCalendar)GregorianCalendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.DAY_OF_YEAR, dayOfYear);
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            formatted = format.format(cal.getTime());
+
+        } catch (StringIndexOutOfBoundsException | NumberFormatException e) {
+            formatted = context.getString(R.string.settings_version_developer);
+        }
+
+        return formatted;
+    }
+
     @NonNull
     public static String capitalize(@NonNull String input) {
         try {
