@@ -854,7 +854,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 } else if (openInBackground) {
                     location = Windows.OPEN_IN_BACKGROUND;
                 }
-                mWindows.openNewTabAfterRestore(targetUri.toString(), location);
+                if (location == Windows.OPEN_IN_FOREGROUND) {
+                    mWindows.findTabAndSelect(targetUri.toString());
+                } else {
+                    mWindows.openNewTabAfterRestore(targetUri.toString(), location);
+                }
             }
         } else if (mWindows.getFocusedWindow().isCurrentUriBlank()) {
             mWindows.getFocusedWindow().loadHome();

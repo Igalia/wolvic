@@ -292,6 +292,10 @@ public class SessionStore implements
         return mSessions.stream().filter(session -> session.getId().equals(aId)).findFirst().orElse(null);
     }
 
+    public @Nullable Session getSessionByUri(String uri) {
+        return mSessions.stream().filter(session -> session.getCurrentUri().equals(uri)).findFirst().orElse(null);
+    }
+
     public @Nullable Session getSession(WSession aSession) {
         return mSessions.stream().filter(session -> session.getWSession() == aSession).findFirst().orElse(null);
     }
