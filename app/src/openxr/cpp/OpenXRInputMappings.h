@@ -231,7 +231,7 @@ namespace crow {
                     { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
                     { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
                     { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
-                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true }
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
             },
             std::vector<OpenXRAxis> {
                     { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
@@ -256,7 +256,7 @@ namespace crow {
                     { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
                     { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
                     { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
-                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Both, ControllerDelegate::Button::BUTTON_APP, true }
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
             },
             std::vector<OpenXRAxis> {
                     { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
