@@ -57,6 +57,22 @@ public class TabWebContentsObserver extends WebContentsObserver {
                 navigationHandle.hasUserGesture(), navigationHandle.isRendererInitiated()));
     }
 
+    private int toWSessionOnVisitedFlags(NavigationHandle navigationHandle) {
+        int flags = 0;
+        // TODO: get different types of redirection.
+        if (navigationHandle.isInPrimaryMainFrame())
+            flags |= WSession.HistoryDelegate.VISIT_TOP_LEVEL;
+        if (navigationHandle.isRedirect()) {
+            int statusCode = navigationHandle.httpStatusCode();
+            flags |= (statusCode == 301 || statusCode == 308) ?
+                    WSession.HistoryDelegate.VISIT_REDIRECT_SOURCE_PERMANENT :
+                    WSession.HistoryDelegate.VISIT_REDIRECT_SOURCE;
+        }
+        if (navigationHandle.isErrorPage())
+            flags |= WSession.HistoryDelegate.VISIT_UNRECOVERABLE_ERROR;
+        return flags;
+    }
+
     /**
      * Called when the navigation is committed. The commit can be an error page if the server
      * responded with an error code or a successful document. See also:
@@ -65,8 +81,8 @@ public class TabWebContentsObserver extends WebContentsObserver {
      */
     @Override
     public void didFinishNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
-        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
-        if (delegate == null)
+        WSession.NavigationDelegate navigationDelegate = mSession.getNavigationDelegate();
+        if (navigationDelegate == null)
             return;
 
         if (navigationHandle.isErrorPage()) {
@@ -74,7 +90,11 @@ public class TabWebContentsObserver extends WebContentsObserver {
             return;
         }
 
-        delegate.onLocationChange(mSession, navigationHandle.getUrl().getSpec());
+        navigationDelegate.onLocationChange(mSession, navigationHandle.getUrl().getSpec());
+        WSession.HistoryDelegate historyDelegate = mSession.getHistoryDelegate();
+        if (historyDelegate != null) {
+            historyDelegate.onVisited(mSession, navigationHandle.getUrl().getSpec(), navigationHandle.getReferrerUrl().getSpec(), toWSessionOnVisitedFlags(navigationHandle));
+        }
     }
 
     @Override
