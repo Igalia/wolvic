@@ -139,14 +139,13 @@ OpenXRLayerCube::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPtr& a
   OpenXRLayerBase<VRLayerCubePtr, XrCompositionLayerCubeKHR>::Init(aEnv, session, aContext);
 }
 
-void
-OpenXRLayerCube::Destroy() {
+OpenXRLayerCube::~OpenXRLayerCube() {
   if (!swapchain) {
     return;
   }
   layer->SetTextureHandle(0);
   layer->SetLoaded(false);
-  OpenXRLayerBase<VRLayerCubePtr, XrCompositionLayerCubeKHR>::Destroy();
+  destroySurface();
 }
 
 bool
@@ -192,10 +191,8 @@ OpenXRLayerEquirect::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPt
   OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Init(aEnv, session, aContext);
 }
 
-void
-OpenXRLayerEquirect::Destroy() {
-  swapchain = nullptr;
-  OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Destroy();
+OpenXRLayerEquirect::~OpenXRLayerEquirect() {
+  destroySurface();
 }
 
 bool
@@ -276,14 +273,13 @@ OpenXRLayerPassthrough::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain
   OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Update(aSpace, aPose, aClearSwapChain);
 }
 
-void
-OpenXRLayerPassthrough::Destroy() {
+OpenXRLayerPassthrough::~OpenXRLayerPassthrough() {
   if (mPassthroughLayerHandle == XR_NULL_HANDLE)
     return;
 
   CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughLayerFB(mPassthroughLayerHandle));
   mPassthroughLayerHandle = XR_NULL_HANDLE;
-  OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Destroy();
+  destroySurface();
 }
 
 }

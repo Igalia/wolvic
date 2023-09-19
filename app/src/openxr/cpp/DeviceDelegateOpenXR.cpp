@@ -913,8 +913,8 @@ DeviceDelegateOpenXR::ProcessEvents() {
       case XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB: {
         auto result = m.passthroughStrategy->handleEvent(*ev);
         if (result == OpenXRPassthroughStrategy::HandleEventResult::NonRecoverableError) {
-            if (m.passthroughLayer->IsValid())
-                m.passthroughLayer->Destroy();
+          if (m.passthroughLayer->IsValid())
+            m.passthroughLayer.reset();
         } else if (result == OpenXRPassthroughStrategy::HandleEventResult::NeedsReinit) {
             // TODO: return a bool with the initialization result?
             m.passthroughStrategy->initializePassthrough(m.session);
@@ -1329,9 +1329,7 @@ DeviceDelegateOpenXR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aIn
   if (!m.layersEnabled) {
     return nullptr;
   }
-  if (m.cubeLayer) {
-    m.cubeLayer->Destroy();
-  }
+  m.cubeLayer.reset();
   VRLayerCubePtr layer = VRLayerCube::Create(aWidth, aHeight, aInternalFormat);
   m.cubeLayer = OpenXRLayerCube::Create(layer, aInternalFormat);
   if (m.session != XR_NULL_HANDLE) {
@@ -1355,9 +1353,7 @@ DeviceDelegateOpenXR::CreateLayerEquirect(const VRLayerPtr &aSource) {
       break;
     }
   }
-  if (m.equirectLayer) {
-    m.equirectLayer->Destroy();
-  }
+  m.equirectLayer.reset();
   m.equirectLayer = OpenXRLayerEquirect::Create(result, source);
   if (m.session != XR_NULL_HANDLE) {
     vrb::RenderContextPtr context = m.context.lock();
@@ -1373,9 +1369,7 @@ DeviceDelegateOpenXR::CreateLayerPassthrough() {
     return nullptr;
   }
 
-  if (m.passthroughLayer != nullptr) {
-    m.passthroughLayer->Destroy();
-  }
+  m.passthroughLayer.reset();
   VRLayerPassthroughPtr result = VRLayerPassthrough::Create();
   m.passthroughLayer = m.passthroughStrategy->createLayerIfSupported(result);
   assert(m.passthroughLayer);
@@ -1395,23 +1389,19 @@ DeviceDelegateOpenXR::usesPassthroughCompositorLayer() const {
 void
 DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
   if (m.cubeLayer && m.cubeLayer->layer == aLayer) {
-    m.cubeLayer->Destroy();
-    m.cubeLayer = nullptr;
+    m.cubeLayer.reset();
     return;
   }
   if (m.equirectLayer && m.equirectLayer->layer == aLayer) {
-    m.equirectLayer->Destroy();
-    m.equirectLayer = nullptr;
+    m.equirectLayer.reset();
     return;
   }
   if (m.passthroughLayer && m.passthroughLayer->layer == aLayer) {
-    m.passthroughLayer->Destroy();
-    m.passthroughLayer = nullptr;
+    m.passthroughLayer.reset();
     return;
   }
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aLayer) {
-      m.uiLayers[i]->Destroy();
       m.uiLayers.erase(m.uiLayers.begin() + i);
       return;
     }

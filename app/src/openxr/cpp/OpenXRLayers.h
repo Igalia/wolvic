@@ -48,7 +48,6 @@ public:
   virtual bool IsComposited() const = 0;
   virtual void SetComposited(bool aValue) = 0;
   virtual VRLayerPtr GetLayer() const = 0;
-  virtual void Destroy() = 0;
   typedef std::function<void(const OpenXRSwapChainPtr &, GLenum aTarget, bool aBound)> BindDelegate;
   virtual void SetBindDelegate(const BindDelegate &aDelegate) = 0;
   virtual jobject GetSurface() const = 0;
@@ -159,13 +158,6 @@ public:
   void SetClipEnabled(bool aEnabled) {
   }
 
-  void Destroy() override {
-    swapchain = nullptr;
-    layer->SetInitialized(false);
-    SetComposited(false);
-    layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Destroy, nullptr);
-  }
-
   void SetBindDelegate(const BindDelegate &aDelegate) override {}
 
   jobject GetSurface() const override {
@@ -182,8 +174,16 @@ public:
     return (IsComposited() || layer->GetClearColor().Alpha() == 0) ? swapchain->SwapChain() : aClearSwapChain;
   }
 
+  void destroySurface() {
+    layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Destroy, nullptr);
+  }
+
 protected:
-  virtual ~OpenXRLayerBase() {}
+  virtual ~OpenXRLayerBase() {
+    swapchain = nullptr;
+    layer->SetInitialized(false);
+    SetComposited(false);
+  }
   XrSwapchainCreateInfo GetSwapChainCreateInfo(VRLayerSurface::SurfaceType aSurfaceType, uint32_t width, uint32_t height) {
     XrSwapchainCreateInfo info{XR_TYPE_SWAPCHAIN_CREATE_INFO};
     info.width = width;
@@ -324,6 +324,7 @@ public:
     return this->swapchain->AndroidSurface();
   }
 
+  virtual ~OpenXRLayerSurface() {};
 protected:
   void TakeSurface(JNIEnv * aEnv, const OpenXRLayerPtr &aSource) {
     this->swapchain = aSource->GetSwapChain();
@@ -391,8 +392,9 @@ public:
   static OpenXRLayerCubePtr Create(const VRLayerCubePtr &aLayer, GLint aInternalFormat);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
   void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
-  void Destroy() override;
   bool IsLoaded() const;
+
+  ~OpenXRLayerCube();
 
 protected:
   GLint glFormat;
@@ -410,8 +412,9 @@ public:
   Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
   void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
-  void Destroy() override;
   bool IsDrawRequested() const override;
+
+  ~OpenXRLayerEquirect();
 };
 
 
@@ -426,11 +429,12 @@ class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrC
     Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
     void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
     void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
-    void Destroy() override;
     bool IsDrawRequested() const override { return layer->IsDrawRequested(); };
     bool IsValid() const { return mPassthroughLayerHandle != XR_NULL_HANDLE; }
 
-private:
+    ~OpenXRLayerPassthrough();
+
+  private:
     XrPassthroughFB mPassthroughInstance;
     XrPassthroughLayerFB mPassthroughLayerHandle;
 };
