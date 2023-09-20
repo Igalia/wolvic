@@ -51,6 +51,15 @@
                 <category android:name="android.intent.category.INFO" />
                 <category android:name="com.oculus.intent.category.VR" android:value="vr_only"/>
             </intent-filter>
+            <!-- Used for the special wolvic:// links -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="wolvic"
+                    android:host="com.igalia.wolvic" />
+            </intent-filter>
             <!--
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
