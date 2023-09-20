@@ -23,9 +23,13 @@ virtual void populateNextStructureIfNeeded(XrHandJointLocationsEXT& handJointLoc
 virtual bool hasAim() const = 0;
 virtual XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const = 0;
 virtual bool systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const = 0;
+virtual void getTriggerPinchStatusAndFactor(const HandJointsArray& handJoints, bool& isPinching, double& pinchFactor);
 
 protected:
 bool palmFacesHead(const vrb::Matrix& palm, const vrb::Matrix& head) const;
+
+private:
+double mSmoothIndexThumbDistance { 0 };
 };
 
 class OpenXRGestureManagerFBHandTrackingAim : public OpenXRGestureManager {
@@ -34,6 +38,7 @@ void populateNextStructureIfNeeded(XrHandJointLocationsEXT& handJointLocations) 
 bool hasAim() const override;
 XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;
 bool systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const override;
+void getTriggerPinchStatusAndFactor(const HandJointsArray& handJoints, bool& isPinching, double& pinchFactor) override;
 
 XrHandTrackingAimStateFB mFBAimState;
 };

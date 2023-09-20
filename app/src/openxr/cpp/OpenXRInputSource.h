@@ -72,7 +72,6 @@ private:
     HandJointsArray mHandJoints;
     bool mHasHandJoints { false };
     bool mSupportsFBHandTrackingAim { false };
-    double mSmoothIndexThumbDistance { 0 };
     OpenXRGesturePtr mGestureManager;
 
     struct HandMeshMSFT {

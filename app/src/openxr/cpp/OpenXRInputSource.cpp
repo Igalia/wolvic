@@ -18,23 +18,6 @@ namespace crow {
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
 
-// Distance threshold to consider that two hand joints touch
-// Used to detect pinch events between thumb-tip joint and the
-// rest of the finger tips.
-const float kPinchThreshold = 0.019;
-
-// These two are used to measure a pinch factor between [0,1]
-// between the thumb and the index fingertips, where 0 is no
-// pinch at all and 1.0 means fingers are touching. These
-// value is used to give a visual cue to the user (e.g, size
-// of pointer target).
-const float kPinchStart = 0.055;
-const float kPinchRange = kPinchStart - kPinchThreshold;
-
-// We apply a exponential smoothing filter to the measured distance between index and thumb so we
-// avoid erroneous click and release events. This constant is the smoothing factor of said filter.
-const double kSmoothFactor = 0.5;
-
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -589,17 +572,6 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     return mHasHandJoints;
 }
 
-float OpenXRInputSource::GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB)
-{
-    XrVector3f jointAPosXr = mHandJoints[jointA].pose.position;
-    vrb::Vector jointAPos = vrb::Vector(jointAPosXr.x, jointAPosXr.y, jointAPosXr.z);
-
-    XrVector3f jointBPosXr = mHandJoints[jointB].pose.position;
-    vrb::Vector jointBPos = vrb::Vector(jointBPosXr.x, jointBPosXr.y, jointBPosXr.z);
-
-    return vrb::Vector(jointAPos - jointBPos).Magnitude();
-}
-
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate)
 {
     // Prepare and submit hand joint locations data for rendering
@@ -656,20 +628,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Select action
     bool indexPinching = false;
     double pinchFactor = 0.0f;
-    if (IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT, mHandJoints) &&
-        IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT, mHandJoints)) {
-        const double indexThumbDistance = GetDistanceBetweenJoints(XR_HAND_JOINT_THUMB_TIP_EXT,
-                                                                   XR_HAND_JOINT_INDEX_TIP_EXT);
+    mGestureManager->getTriggerPinchStatusAndFactor(mHandJoints, indexPinching, pinchFactor);
 
-        // Apply a smoothing filter to reduce the number of phantom events.
-        mSmoothIndexThumbDistance =
-                kSmoothFactor * indexThumbDistance + (1 - kSmoothFactor) * mSmoothIndexThumbDistance;
-
-        pinchFactor = 1.0 -
-                      std::clamp((mSmoothIndexThumbDistance - kPinchThreshold) / kPinchRange, 0.0,
-                                 1.0);
-        indexPinching = mSmoothIndexThumbDistance < kPinchThreshold;
-    }
     delegate.SetPinchFactor(mIndex, pinchFactor);
     bool triggerButtonPressed = indexPinching && !systemGestureDetected && hasAim;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
