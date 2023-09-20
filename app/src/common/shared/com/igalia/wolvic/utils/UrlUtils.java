@@ -80,7 +80,7 @@ public class UrlUtils {
         return result;
     }
 
-    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\\/[^ ]*)?$");
+    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,24}(:[0-9]{1,5})?(\\/[^ ]*)?$");
     public static boolean isDomain(String text) {
         return domainPattern.matcher(text).find();
     }
