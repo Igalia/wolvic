@@ -1843,6 +1843,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsMediaAvailable(false);
         mViewModel.setIsMediaPlaying(false);
         mViewModel.setIsWebApp(false);
+        mViewModel.setIsFindInPage(false);
 
         if (StringUtils.isEmpty(url)) {
             mViewModel.setIsBookmarked(false);
