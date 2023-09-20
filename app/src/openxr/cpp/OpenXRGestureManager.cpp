@@ -13,6 +13,23 @@ namespace crow {
 // 0.7 is generally accepted as good for objects facing each other.
 const float kPalmHeadThreshold = 0.7;
 
+// Distance threshold to consider that two hand joints touch
+// Used to detect pinch events between thumb-tip joint and the
+// rest of the finger tips.
+const float kPinchThreshold = 0.019;
+
+// These two are used to measure a pinch factor between [0,1]
+// between the thumb and the index fingertips, where 0 is no
+// pinch at all and 1.0 means fingers are touching. These
+// value is used to give a visual cue to the user (e.g, size
+// of pointer target).
+const float kPinchStart = 0.055;
+const float kPinchRange = kPinchStart - kPinchThreshold;
+
+// We apply a exponential smoothing filter to the measured distance between index and thumb so we
+// avoid erroneous click and release events. This constant is the smoothing factor of said filter.
+const double kSmoothFactor = 0.5;
+
 bool
 OpenXRGestureManager::palmFacesHead(const vrb::Matrix &palm, const vrb::Matrix &head) const {
     // For the hand we take the Y axis because that corresponds to head's Z axis when
@@ -25,6 +42,41 @@ OpenXRGestureManager::palmFacesHead(const vrb::Matrix &palm, const vrb::Matrix &
 #endif
     auto vectorHead = head.MultiplyDirection({0, 0, -1});
     return vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
+}
+
+double
+GetDistanceBetweenJoints (const HandJointsArray& handJoints, XrHandJointEXT jointA, XrHandJointEXT jointB) {
+    XrVector3f jointAPosXr = handJoints[jointA].pose.position;
+    vrb::Vector jointAPos = vrb::Vector(jointAPosXr.x, jointAPosXr.y, jointAPosXr.z);
+
+    XrVector3f jointBPosXr = handJoints[jointB].pose.position;
+    vrb::Vector jointBPos = vrb::Vector(jointBPosXr.x, jointBPosXr.y, jointBPosXr.z);
+
+    return vrb::Vector(jointAPos - jointBPos).Magnitude();
+}
+
+void
+OpenXRGestureManager::getTriggerPinchStatusAndFactor(const HandJointsArray& handJoints,
+                                                     bool& isPinching, double& pinchFactor) {
+    isPinching = false;
+    pinchFactor = 1.0;
+
+    if (!IsHandJointPositionValid(XR_HAND_JOINT_THUMB_TIP_EXT, handJoints) ||
+        !IsHandJointPositionValid(XR_HAND_JOINT_INDEX_TIP_EXT, handJoints)) {
+        return;
+    }
+
+    const double indexThumbDistance = GetDistanceBetweenJoints(handJoints, XR_HAND_JOINT_THUMB_TIP_EXT,
+                                                               XR_HAND_JOINT_INDEX_TIP_EXT);
+
+    // Apply a smoothing filter to reduce the number of phantom events.
+    mSmoothIndexThumbDistance =
+        kSmoothFactor * indexThumbDistance + (1 - kSmoothFactor) * mSmoothIndexThumbDistance;
+
+    pinchFactor = 1.0 -
+                  std::clamp((mSmoothIndexThumbDistance - kPinchThreshold) / kPinchRange, 0.0,
+                             1.0);
+    isPinching = mSmoothIndexThumbDistance < kPinchThreshold;
 }
 
 void
@@ -52,6 +104,20 @@ OpenXRGestureManagerFBHandTrackingAim::systemGestureDetected(const vrb::Matrix& 
     return palmFacesHead(palm, head) && !hasAim();
 #else
     return mFBAimState.status & XR_HAND_TRACKING_AIM_SYSTEM_GESTURE_BIT_FB;
+#endif
+}
+
+void
+OpenXRGestureManagerFBHandTrackingAim::getTriggerPinchStatusAndFactor(const HandJointsArray& handJoints,
+                                                                         bool& isPinching, double& pinchFactor) {
+#ifdef PICOXR
+    // Pico's support for XR_FB_hand_tracking_aim extension doesn't give correct
+    // values for flags and piching strength, so fallback to our own pinch detection
+    // algorithm.
+    OpenXRGestureManager::getTriggerPinchStatusAndFactor(handJoints, isPinching, pinchFactor);
+#else
+    isPinching = mFBAimState.status & XR_HAND_TRACKING_AIM_INDEX_PINCHING_BIT_FB;
+    pinchFactor = mFBAimState.pinchStrengthIndex;
 #endif
 }
 
