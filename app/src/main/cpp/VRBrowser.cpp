@@ -46,6 +46,8 @@ const char* const kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 const char* const kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 const char* const kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
 const char* const kIsOverrideEnvPathEnabledSignature = "()Z";
+const char* const kCheckTogglePassthrough = "checkTogglePassthrough";
+const char* const kCheckTogglePassthroughSignature = "()V";
 const char* const kGetActiveEnvironment = "getActiveEnvironment";
 const char* const kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 const char* const kGetPointerColor = "getPointerColor";
@@ -90,6 +92,7 @@ jmethodID sOnWebXRRenderStateChange = nullptr;
 jmethodID sRenderPointerLayer = nullptr;
 jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
+jmethodID sCheckTogglePassthrough = nullptr;
 jmethodID sGetActiveEnvironment = nullptr;
 jmethodID sGetPointerColor = nullptr;
 jmethodID sAreLayersEnabled = nullptr;
@@ -138,6 +141,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sRenderPointerLayer = FindJNIMethodID(sEnv, sBrowserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
+  sCheckTogglePassthrough = FindJNIMethodID(sEnv, sBrowserClass, kCheckTogglePassthrough, kCheckTogglePassthroughSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
@@ -187,6 +191,7 @@ VRBrowser::ShutdownJava() {
   sRenderPointerLayer = nullptr;
   sGetStorageAbsolutePath = nullptr;
   sIsOverrideEnvPathEnabled = nullptr;
+  sCheckTogglePassthrough = nullptr;
   sGetActiveEnvironment = nullptr;
   sGetPointerColor = nullptr;
   sAreLayersEnabled = nullptr;
@@ -349,6 +354,13 @@ VRBrowser::isOverrideEnvPathEnabled() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return jBool;
+}
+
+void
+VRBrowser::CheckTogglePassthrough() {
+  if (!ValidateMethodID(sEnv, sActivity, sCheckTogglePassthrough, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sCheckTogglePassthrough);
+  CheckJNIException(sEnv, __FUNCTION__);
 }
 
 std::string

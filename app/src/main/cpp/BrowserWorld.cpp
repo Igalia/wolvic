@@ -980,6 +980,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     });
 
     UpdateEnvironment();
+    VRBrowser::CheckTogglePassthrough();
 
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {

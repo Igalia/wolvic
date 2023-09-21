@@ -301,6 +301,21 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public static boolean shouldStartWithPassthrougEnabled() {
+        return DeviceType.getType() == DeviceType.LenovoA3;
+    }
+
+    public boolean isStartWithPassthroughEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_start_with_passthrough), shouldStartWithPassthrougEnabled());
+    }
+
+    public void setStartWithPassthroughEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_start_with_passthrough), isEnabled);
+        editor.commit();
+    }
+
     public boolean isEnvironmentOverrideEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_environment_override), ENV_OVERRIDE_DEFAULT);
