@@ -224,8 +224,10 @@ public class UrlUtils {
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {
-        String feed = aContext.getString(R.string.homepage_url);
-        return UrlUtils.getHost(feed).equalsIgnoreCase(UrlUtils.getHost(url));
+        // Not needed unless the homepage is wolvic.com:
+        // String feed = aContext.getString(R.string.homepage_url);
+        // return UrlUtils.getHost(feed).equalsIgnoreCase(UrlUtils.getHost(url));
+        return false;
     }
 
     public static String getHost(String uri) {

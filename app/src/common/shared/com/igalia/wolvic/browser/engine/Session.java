@@ -726,9 +726,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     public String getHomeUri() {
         String homepage = SettingsStore.getInstance(mContext).getHomepage();
-        if (homepage.equals(mContext.getString(R.string.homepage_url)) && mState.mRegion != null) {
-            homepage = homepage + "?region=" + mState.mRegion;
-        }
+        // Not needed unless the homepage is wolvic.com:
+        // if (homepage.equals(mContext.getString(R.string.homepage_url)) && mState.mRegion != null) {
+        //     homepage = homepage + "?region=" + mState.mRegion;
+        // }
         return homepage;
     }
 
