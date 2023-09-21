@@ -1353,6 +1353,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    public void checkTogglePassthrough() {
+        if (mSettings.isStartWithPassthroughEnabled() && !mIsPassthroughEnabled) {
+            runOnUiThread(this::togglePassthrough);
+        }
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     public boolean areLayersEnabled() {
         return SettingsStore.getInstance(this).getLayersEnabled();
     }
@@ -1372,12 +1380,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
-        runOnUiThread(() -> {
-            DeviceType.setType(aType);
-            if (aType == DeviceType.LenovoA3) {
-                togglePassthrough();
-            }
-        });
+        DeviceType.setType(aType);
     }
 
     @Keep

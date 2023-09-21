@@ -37,6 +37,7 @@ void OnWebXRRenderStateChange(const bool aRendering);
 void RenderPointerLayer(jobject aSurface, const int32_t color, const std::function<void()>& aFirstCompositeCallback);
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
+void CheckTogglePassthrough();
 std::string GetActiveEnvironment();
 int32_t GetPointerColor();
 bool AreLayersEnabled();
