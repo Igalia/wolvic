@@ -831,6 +831,10 @@
          blocking. -->
     <string name="security_options_block_pup_up_windows">Block Pop-Up Windows</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables the use of
+         system root CA for certificate. -->
+    <string name="security_options_use_system_root_ca">Use System Trusted Root Certificates</string>
+
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Advanced</string>

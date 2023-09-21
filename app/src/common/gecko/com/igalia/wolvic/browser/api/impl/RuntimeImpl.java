@@ -54,6 +54,7 @@ public class RuntimeImpl implements WRuntime {
                 .displayDensityOverride(settings.getDisplayDensityOverride())
                 .remoteDebuggingEnabled(settings.isRemoteDebugging())
                 .displayDpiOverride(settings.getDisplayDpiOverride())
+                .enterpriseRootsEnabled(settings.isEnterpriseRootsEnabled())
                 .screenSizeOverride(settings.getScreenWidthOverride(), settings.getScreenHeightOverride())
                 .inputAutoZoomEnabled(settings.isInputAutoZoomEnabled())
                 .doubleTapZoomingEnabled(settings.isDoubleTapZoomingEnabled())

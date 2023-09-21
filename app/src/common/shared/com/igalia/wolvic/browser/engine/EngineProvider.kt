@@ -41,6 +41,7 @@ object EngineProvider {
             builder.remoteDebuggingEnabled(settingsStore.isRemoteDebuggingEnabled)
             builder.displayDpiOverride(settingsStore.displayDpi)
             builder.screenSizeOverride(settingsStore.maxWindowWidth, settingsStore.maxWindowHeight)
+            builder.enterpriseRootsEnabled(settingsStore.isSystemRootCAEnabled)
             builder.inputAutoZoomEnabled(false)
             builder.doubleTapZoomingEnabled(false)
             builder.forceUserScalableEnabled(false)

@@ -74,6 +74,7 @@ public class SettingsStore {
     // Developer options default values
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
+    public final static boolean SYSTEM_ROOT_CA_DEFAULT = false;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
@@ -287,6 +288,17 @@ public class SettingsStore {
         editor.commit();
 
         mSettingsViewModel.setIsTrackingProtectionEnabled(level != WContentBlocking.EtpLevel.NONE);
+    }
+
+    public boolean isSystemRootCAEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_system_root_ca), SYSTEM_ROOT_CA_DEFAULT);
+    }
+
+    public void setSystemRootCAEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_system_root_ca), isEnabled);
+        editor.commit();
     }
 
     public boolean isEnvironmentOverrideEnabled() {
