@@ -1062,7 +1062,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             });
         }
 
-        mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mVoiceSearchWidget.setPlacement(mAttachedWindow.getHandle());
         mVoiceSearchWidget.show(REQUEST_FOCUS);
     }
 
