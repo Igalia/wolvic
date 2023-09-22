@@ -106,6 +106,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private int mKeyboardPopupTopMargin;
     private ImageButton mCloseKeyboardButton;
     private ImageButton mKeyboardMoveButton;
+    private ImageButton mKeyboardVoiceButton;
     private boolean mIsLongPress;
     private boolean mIsMultiTap;
     private boolean mIsCapsLock;
@@ -341,6 +342,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardMoveButton = findViewById(R.id.keyboardMoveButton);
         mKeyboardMoveButton.setOnTouchListener(new MoveTouchListener());
         mKeyboardMoveButton.setOnHoverListener(new ControlButtonHoverListener());
+        mKeyboardVoiceButton = findViewById(R.id.keyboardVoiceButton);
+        mKeyboardVoiceButton.setOnClickListener(v -> handleVoiceInput());
+        mKeyboardVoiceButton.setOnHoverListener(new ControlButtonHoverListener());
         mKeyWidth = getResources().getDimensionPixelSize(R.dimen.keyboard_key_width);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
@@ -1098,13 +1102,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
         if (mVoiceSearchWidget == null) {
-            mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
-            mVoiceSearchWidget.setPlacementForKeyboard(this.getHandle());
+            mVoiceSearchWidget = new VoiceSearchWidget(getContext());
+            mVoiceSearchWidget.setVoiceStartString(R.string.voice_input_start);
             mVoiceSearchWidget.setDelegate(this); // VoiceSearchDelegate
             mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
         }
         mIsInVoiceInput = true;
         TelemetryService.voiceInputEvent();
+        mVoiceSearchWidget.setPlacement(this.getHandle());
         mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);

@@ -641,6 +641,9 @@
          button used to initiate Voice Search. -->
     <string name="voice_search_start">您想搜点什么？</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">您想输入什么？</string>
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_example">例如：可说“全景视频、天气、新闻…”</string>
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being

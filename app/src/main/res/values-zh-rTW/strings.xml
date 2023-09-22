@@ -835,6 +835,10 @@
     <string name="voice_search_start">您想在網路上搜尋何種內容？</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">您想輸入何種內容？</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_example">範例: 可說「360 度影片、天氣、新聞…」</string>
 

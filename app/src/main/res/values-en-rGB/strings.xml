@@ -836,6 +836,10 @@
     <string name="voice_search_start">What would you like to search on the Web?</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">What would you like to input?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_example">Example: Please say, “360 videos, weather, news…”</string>
 
