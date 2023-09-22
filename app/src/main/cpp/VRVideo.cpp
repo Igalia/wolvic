@@ -75,6 +75,10 @@ struct VRVideo::State {
         leftEye = createQuadProjection(device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f));
         rightEye = createQuadProjection(device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
         break;
+      case VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM:
+        leftEye = createQuadProjection(device::EyeRect(0.0f, 0.0f, 1.0f, 0.5f));
+        rightEye = createQuadProjection(device::EyeRect(0.0f, 0.5f, 1.0f, 0.5f));
+        break;
       case VRVideoProjection::VIDEO_PROJECTION_360:
         leftEye = createSphereProjection(false, device::EyeRect(0.0f, 0.0f, 1.0f, 1.0f));
         break;
@@ -105,6 +109,15 @@ struct VRVideo::State {
         rightEye = createQuadProjectionLayer(device::Eye::Right, device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
 #else
         leftEye = createQuadProjectionLayer(device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f), device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+#endif
+        break;
+      case VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM:
+#if defined(OCULUSVR) && !defined(OPENXR)
+        window->GetLayer()->SetWorldSize(mWorldWidthBackup, mWorlHeightBackup * 2.0f);
+        leftEye = createQuadProjectionLayer(device::Eye::Left, device::EyeRect(0.0f, 0.0f, 1.0f, 0.5f));
+        rightEye = createQuadProjectionLayer(device::Eye::Right, device::EyeRect(0.0f, 0.5f, 1.0f, 0.5f));
+#else
+        leftEye = createQuadProjectionLayer(device::EyeRect(0.0f, 0.0f, 1.0f, 0.5f), device::EyeRect(0.0f, 0.5f, 1.0f, 0.5f));
 #endif
         break;
       case VRVideoProjection::VIDEO_PROJECTION_360:

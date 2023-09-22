@@ -975,6 +975,9 @@
     <string name="video_mode_3d_side">3D Side by Side</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
