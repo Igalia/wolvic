@@ -703,6 +703,8 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D 并排</string>
     <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D 上下</string>
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360°</string>
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360_stereo">360° 立体</string>
