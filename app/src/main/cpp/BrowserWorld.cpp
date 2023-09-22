@@ -1534,6 +1534,17 @@ BrowserWorld::ExitImmersive() {
   m.exitImmersiveRequested = true;
 }
 
+bool
+isFrontFacingVRProjection(VRVideo::VRVideoProjection projection){
+  switch (projection) {
+    case VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE:
+    case VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM:
+      return false;
+    default:
+      return true;
+  }
+}
+
 void
 BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
   WidgetPtr widget = m.GetWidget(aWindowHandle);
@@ -1547,10 +1558,10 @@ BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
   }
   auto projection = static_cast<VRVideo::VRVideoProjection>(aVideoProjection);
   m.vrVideo = VRVideo::Create(m.create, widget, projection, m.device);
-  if (m.skybox && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+  if (m.skybox && isFrontFacingVRProjection(projection)) {
     m.skybox->SetVisible(false);
   }
-  if (m.fadeAnimation && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+  if (m.fadeAnimation && isFrontFacingVRProjection(projection)) {
     m.fadeAnimation->SetVisible(false);
   }
 }

@@ -921,6 +921,9 @@
     <string name="video_mode_3d_side">3D 子母畫面</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D 上下畫面</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->

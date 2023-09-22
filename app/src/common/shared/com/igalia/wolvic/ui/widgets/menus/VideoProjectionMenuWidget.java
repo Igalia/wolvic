@@ -21,7 +21,8 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
     @IntDef(value = { VIDEO_PROJECTION_NONE, VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
                       VIDEO_PROJECTION_360_STEREO, VIDEO_PROJECTION_180,
-                      VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM })
+                      VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM,
+                      VIDEO_PROJECTION_3D_TOP_BOTTOM })
     public @interface VideoProjectionFlags {}
 
     public static final int VIDEO_PROJECTION_NONE = -1;
@@ -31,6 +32,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     public static final int VIDEO_PROJECTION_180 = 3;
     public static final int VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT = 4;
     public static final int VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM = 5;
+    public static final int VIDEO_PROJECTION_3D_TOP_BOTTOM = 6;
 
     public interface Delegate {
         void onVideoProjectionClick(@VideoProjectionFlags int aProjection);
@@ -93,6 +95,9 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
         mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_3D_SIDE_BY_SIDE, getContext().getString(R.string.video_mode_3d_side),
                 R.drawable.ic_icon_videoplayback_3dsidebyside));
+
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_3D_TOP_BOTTOM, getContext().getString(R.string.video_mode_3d_top_bottom),
+                R.drawable.ic_icon_videoplayback_3dtopbottom));
 
         mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360, getContext().getString(R.string.video_mode_360),
                 R.drawable.ic_icon_videoplayback_360));
