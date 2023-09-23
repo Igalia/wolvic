@@ -172,6 +172,8 @@ public class VideoProjectionMenuWidget extends MenuWidget {
             return VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM;
         } else if (projection.startsWith("180")) {
             return VIDEO_PROJECTION_180;
+        } else if (projection.startsWith("3dtb")) {
+            return VIDEO_PROJECTION_3D_TOP_BOTTOM;
         } else if (projection.startsWith("3d")) {
             return VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
         }
