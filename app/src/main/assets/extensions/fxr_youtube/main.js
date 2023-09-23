@@ -114,6 +114,18 @@ class YoutubeExtension {
         return targets.some((node) => node && this.isSBS(node.textContent) && !this.isAudio(node.textContent));
     }
 
+    isTopBottom(text) {
+        return text.toLowerCase().includes('top') && text.toLowerCase().includes('bottom');
+    }
+
+    isTopBottomVideo() {
+        const targets = [
+            document.querySelector(YT_SELECTORS.embedTitle),
+            document.querySelector(YT_SELECTORS.description)
+        ];
+        return targets.some((node) => node && this.isTopBottom(node.textContent));
+    }
+
     // Automatically select a video projection if needed
     overrideVideoProjection() {
         if (!this.isWatchingPage()) {
@@ -131,6 +143,8 @@ class YoutubeExtension {
         let projection =  null;
         if (this.isSBSVideo()) {
             projection = '3d_auto';
+        } else if (this.isTopBottomVideo()) {
+            projection = '3dtb_auto';
         } else if (this.is360Video()) {
             projection = this.isStereoVideo() ? '360s_auto' : '360_auto';
         }
