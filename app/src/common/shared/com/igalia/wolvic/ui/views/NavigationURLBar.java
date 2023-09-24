@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -72,7 +70,6 @@ public class NavigationURLBar extends FrameLayout {
     private Runnable mFindInPageBackHandler;
     private SettingsViewModel mSettingsViewModel;
     private NavigationUrlBinding mBinding;
-    private Animation mLoadingAnimation;
     private NavigationURLBarDelegate mDelegate;
     private ShippedDomainsProvider mAutocompleteProvider;
     private AudioEngine mAudio;
@@ -143,8 +140,6 @@ public class NavigationURLBar extends FrameLayout {
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mSession = SessionStore.get().getActiveSession();
-
-        mLoadingAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.loading);
 
         mFindInPageBackHandler = () -> mViewModel.setIsFindInPage(false);
 
@@ -288,7 +283,6 @@ public class NavigationURLBar extends FrameLayout {
     public void detachFromWindow() {
         if (mViewModel != null) {
             mViewModel.setIsFocused(false);
-            mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
             mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
             mViewModel.getIsFindInPage().removeObserver(mIsFindInPageObserver);
             mViewModel = null;
@@ -303,7 +297,6 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
         mViewModel.getIsFindInPage().observe((VRBrowserActivity)getContext(), mIsFindInPageObserver);
     }
@@ -313,19 +306,6 @@ public class NavigationURLBar extends FrameLayout {
         mFindInPage.unbind();
         mSession = session;
         bindFindInPageSession();
-    }
-
-    public void onPause() {
-        if (mViewModel.getIsLoading().getValue().get()) {
-            mBinding.loadingView.clearAnimation();
-
-        }
-    }
-
-    public void onResume() {
-        if (mViewModel.getIsLoading().getValue().get()) {
-            mBinding.loadingView.startAnimation(mLoadingAnimation);
-        }
     }
 
     public void setDelegate(NavigationURLBarDelegate delegate) {
@@ -359,14 +339,6 @@ public class NavigationURLBar extends FrameLayout {
         });
 
     }
-
-    private Observer<ObservableBoolean> mIsLoadingObserver = aBoolean -> {
-        if (aBoolean.get()) {
-            mBinding.loadingView.startAnimation(mLoadingAnimation);
-        } else {
-            mBinding.loadingView.clearAnimation();
-        }
-    };
 
     private Observer<ObservableBoolean> mIsBookmarkedObserver = aBoolean -> mBinding.bookmarkButton.clearFocus();
 

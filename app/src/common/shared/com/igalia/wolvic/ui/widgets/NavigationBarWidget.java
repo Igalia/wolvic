@@ -22,6 +22,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.URLUtil;
 import android.widget.EditText;
 
@@ -131,6 +133,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private TrackingProtectionStore mTrackingDelegate;
     private WidgetPlacement mBeforeFullscreenPlacement;
     private float mSavedCylinderDensity = 0.0f;
+    private Animation mAnimation;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -161,6 +164,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         updateUI();
 
         mAppContext = aContext.getApplicationContext();
+
+        mAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
 
         mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
 
@@ -461,7 +466,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     @Override
     public void onPause() {
         super.onPause();
-        mBinding.navigationBarNavigation.urlBar.onPause();
+        if (mViewModel.getIsLoading().getValue().get()) {
+            mBinding.navigationBarNavigation.progressBar.clearAnimation();
+        }
         exitFullScreenMode();
         exitVRVideo();
     }
@@ -469,7 +476,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     @Override
     public void onResume() {
         super.onResume();
-        mBinding.navigationBarNavigation.urlBar.onResume();
+        if (mViewModel.getIsLoading().getValue().get()) {
+            mBinding.navigationBarNavigation.progressBar.startAnimation(mAnimation);
+        }
     }
 
     @Override
@@ -550,6 +559,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrackingDelegate.removeListener(mTrackingListener);
 
         if (mViewModel != null) {
+            mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
             mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel = null;
@@ -573,6 +583,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.setViewmodel(mViewModel);
 
+        mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
@@ -981,6 +992,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     // Content delegate
+
+    private Observer<ObservableBoolean> mIsLoadingObserver = aBoolean -> {
+        // Although the animation does nothing here, it's still needed to trigger the progress bar native animation
+        // Work around to fix the progress bar animation stucks
+        if (aBoolean.get()) {
+            mBinding.navigationBarNavigation.progressBar.startAnimation(mAnimation);
+        } else {
+            mBinding.navigationBarNavigation.progressBar.clearAnimation();
+        }
+    };
 
     private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
 
