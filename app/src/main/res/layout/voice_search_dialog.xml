@@ -57,11 +57,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/voice_search_start"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:typeface="sans"
+                android:maxLines="4"
+                android:scrollbars="vertical"
                 visibleInvisible="@{state == State.LISTENING}"
                 android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
+                android:gravity="center_horizontal|bottom"
                 tools:text="@string/voice_search_start" />
 
             <TextView
