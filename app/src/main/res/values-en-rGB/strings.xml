@@ -1932,6 +1932,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          it switches User Agent from desktop to mobile and vice versa -->
     <string name="hamburger_menu_switch_to_desktop">Desktop Mode</string>
 
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from mobile to desktop and vice versa -->
+    <string name="hamburger_menu_switch_to_mobile">Mobile Mode</string>
+
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
 

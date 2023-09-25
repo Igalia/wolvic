@@ -431,7 +431,9 @@ public class SettingsStore {
 
     public void setUaMode(int mode) {
         int checkedMode = mode;
-        if ((mode != WSessionSettings.USER_AGENT_MODE_VR) && (mode != WSessionSettings.USER_AGENT_MODE_MOBILE)) {
+        if (mode != WSessionSettings.USER_AGENT_MODE_VR &&
+            mode != WSessionSettings.USER_AGENT_MODE_DESKTOP &&
+            mode != WSessionSettings.USER_AGENT_MODE_MOBILE) {
             Log.e(LOGTAG, "User agent mode: " + mode + " is not supported.");
             checkedMode = UA_MODE_DEFAULT;
         }

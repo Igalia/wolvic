@@ -154,24 +154,28 @@ public class HamburgerMenuWidget extends UIWidget implements
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
     }
 
+    private void updateUADisplay(int uaMode, @NonNull HamburgerMenuAdapter.MenuItem item) {
+        switch (uaMode) {
+            case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
+                item.setIcon(R.drawable.ic_icon_ua_desktop);
+                item.setTitle(getContext().getString(R.string.hamburger_menu_switch_to_mobile));
+            }
+            break;
+
+            case WSessionSettings.USER_AGENT_MODE_MOBILE:
+            case WSessionSettings.USER_AGENT_MODE_VR: {
+                item.setIcon(R.drawable.ic_icon_ua_default);
+                item.setTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop));
+            }
+            break;
+        }
+    }
+
     public void setUAMode(int uaMode) {
         mCurrentUAMode = uaMode;
         HamburgerMenuAdapter.MenuItem item = getSwitchModeIndex();
         if (item != null) {
-            switch (uaMode) {
-                case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
-                    item.setIcon(R.drawable.ic_icon_ua_desktop);
-                }
-                break;
-
-                case WSessionSettings.USER_AGENT_MODE_MOBILE:
-                case WSessionSettings.USER_AGENT_MODE_VR: {
-                    item.setIcon(R.drawable.ic_icon_ua_default);
-                }
-                break;
-
-            }
-
+            updateUADisplay(uaMode, item);
             mAdapter.notifyItemChanged(mItems.indexOf(item));
         }
     }
@@ -260,18 +264,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                     .withId(SWITCH_ITEM_ID)
                     .withTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop))
                     .build();
-            switch (mCurrentUAMode) {
-                case WSessionSettings.USER_AGENT_MODE_DESKTOP: {
-                    item.setIcon(R.drawable.ic_icon_ua_desktop);
-                }
-                break;
-
-                case WSessionSettings.USER_AGENT_MODE_MOBILE:
-                case WSessionSettings.USER_AGENT_MODE_VR: {
-                    item.setIcon(R.drawable.ic_icon_ua_default);
-                }
-                break;
-            }
+            updateUADisplay(mCurrentUAMode, item);
             mItems.add(item);
         }
 

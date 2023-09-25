@@ -107,6 +107,10 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
             mIcon = icon;
         }
 
+        public void setTitle(String title) {
+            mTitle = title;
+        }
+
         public static class Builder {
 
             @MenuItem.MenuItemType

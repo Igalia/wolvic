@@ -315,14 +315,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         });
 
         mBinding.navigationBarNavigation.desktopModeButton.setOnClickListener(view -> {
-            final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
-            if (mHamburgerMenu != null) {
-                mHamburgerMenu.setUAMode(defaultUaMode);
-            }
-            if (mAttachedWindow.getSession() != null) {
-                mAttachedWindow.getSession().setUaMode(defaultUaMode, true);
-            }
-
+            switchUA();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -1376,17 +1369,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             @Override
             public void onSwitchMode() {
-                int uaMode = mAttachedWindow.getSession().getUaMode();
-                if (uaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                    final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
-                    mHamburgerMenu.setUAMode(defaultUaMode);
-                    mAttachedWindow.getSession().setUaMode(defaultUaMode, true);
-
-                } else {
-                    mHamburgerMenu.setUAMode(WSessionSettings.USER_AGENT_MODE_DESKTOP);
-                    mAttachedWindow.getSession().setUaMode(WSessionSettings.USER_AGENT_MODE_DESKTOP, true);
-                }
-
+                switchUA();
                 hideMenu();
             }
 
@@ -1422,6 +1405,27 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private void hideMenu() {
         if (mHamburgerMenu != null) {
             mHamburgerMenu.hide(UIWidget.REMOVE_WIDGET, false);
+        }
+    }
+
+    private void switchUA() {
+        int uaMode = mAttachedWindow.getSession().getUaMode();
+        final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
+        int uaModeToSwitch = defaultUaMode;
+        if (uaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
+            if (defaultUaMode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                // Let's switch to VR mode if the default mode is desktop
+                uaModeToSwitch = WSessionSettings.USER_AGENT_MODE_VR;
+            }
+        } else {
+            uaModeToSwitch = WSessionSettings.USER_AGENT_MODE_DESKTOP;
+        }
+
+        if (mHamburgerMenu != null) {
+            mHamburgerMenu.setUAMode(uaModeToSwitch);
+        }
+        if (mAttachedWindow.getSession() != null) {
+            mAttachedWindow.getSession().setUaMode(uaModeToSwitch, true);
         }
     }
 
