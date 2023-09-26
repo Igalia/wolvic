@@ -35,6 +35,7 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -853,12 +854,19 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 if (level != mLastWifiLevel && updateWifiIcon(level)) {
                     mLastWifiLevel = level;
                 }
-                WifiInfo currentWifi = wifiManager.getConnectionInfo();
-                if(currentWifi != null) {
-                    mWifiSSID = currentWifi.getSSID().replaceAll("\"", "");
-
+                // Getting the SSID, even if it's just to show it to the user, is considered
+                // "recollection of personal information" by Huawei store in Mainland China so avoid
+                // getting it.
+                if (BuildConfig.FLAVOR_store.toLowerCase().contains("mainlandChina") && DeviceType.isHVRBuild()) {
+                    mWifiSSID = getContext().getString(R.string.tray_wifi_unavailable_ssid);
                 } else {
-                    mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
+                    WifiInfo currentWifi = wifiManager.getConnectionInfo();
+                    if (currentWifi != null) {
+                        mWifiSSID = currentWifi.getSSID().replaceAll("\"", "");
+
+                    } else {
+                        mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
+                    }
                 }
             }
         }

@@ -2469,4 +2469,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- Description of the Enter button in a KeyboardView. [CHAR LIMIT=NONE] -->
     <string name="keyboardview_keycode_enter">Enter</string>
 
+    <!-- Shown in the tray wifi icon popup when SSID cannot be retrieved -->
+    <string name="tray_wifi_unavailable_ssid">Unknown SSID</string>
+
 </resources>
