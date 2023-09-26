@@ -122,7 +122,6 @@ android {
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
-        buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
