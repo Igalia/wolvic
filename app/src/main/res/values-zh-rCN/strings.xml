@@ -2035,4 +2035,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_info_button">了解更多…</string>
     <string name="deprecated_version_dialog_store_button">安装…</string>
     <string name="user_feedback_tooltip">分享想法和反馈</string>
+    <string name="keyboardview_keycode_shift">换档</string>
+    <string name="keyboardview_keycode_done">完成</string>
+    <string name="keyboardview_keycode_delete">删除</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_cancel">取消</string>
+    <string name="keyboardview_keycode_mode_change">模式转变</string>
+    <string name="keyboardview_keycode_enter">回车键</string>
+
+    <string name="tray_wifi_unavailable_ssid">SSID不可知</string>
 </resources>
