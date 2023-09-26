@@ -69,6 +69,7 @@
         <attr name="description" />
         <attr name="by" />
         <attr name="highlightedTextColor" />
+        <attr name="hintTextColor" />
         <attr name="android:width" />
         <attr name="android:maxLength" />
         <attr name="android:inputType" />

@@ -82,6 +82,7 @@
                     android:width="300dp"
                     android:inputType="text|textNoSuggestions"
                     app:description="@string/login_edit_dialog_username_description"
+                    app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
@@ -91,6 +92,7 @@
                     android:width="300dp"
                     android:inputType="text|textPassword|textNoSuggestions"
                     app:description="@string/login_edit_dialog_password_description"
+                    app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
                 <TextView
