@@ -18,7 +18,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintWidth_max="500dp"
+                app:layout_constraintWidth_max="1000dp"
                 android:paddingEnd="20dp"
                 android:layout_gravity="center_horizontal">
                 <LinearLayout
@@ -44,7 +44,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/prompt_background"
-                        android:orientation="vertical">
+                        android:layout_margin="20dp"
+                        android:orientation="horizontal">
+
+                        <DatePicker
+                            android:id="@+id/date_picker"
+                            android:layout_width="475dp"
+                            android:layout_height="match_parent">
+                        </DatePicker>
+
+                        <TimePicker
+                            android:id="@+id/time_picker"
+                            android:layout_width="475dp"
+                            android:layout_height="match_parent">
+                        </TimePicker>
                     </LinearLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,6 +71,22 @@
                         app:layout_constraintEnd_toEndOf="parent">
 
                         <Button
+                            android:id="@+id/neutralButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:background="@drawable/dialog_regular_button_background"
+                            android:fontFamily="sans-serif"
+                            android:minWidth="120dp"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            android:text="@string/private_clear_button"
+                            android:textColor="@drawable/prompt_button_text_color"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
                             android:id="@+id/negativeButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -68,22 +97,6 @@
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:text="@string/cancel_button"
-                            android:textColor="@drawable/prompt_button_text_color"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/neutralButton"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <Button
-                            android:id="@+id/neutralButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/dialog_regular_button_background"
-                            android:fontFamily="sans-serif"
-                            android:minWidth="120dp"
-                            android:padding="10dp"
-                            android:scaleType="fitCenter"
-                            android:text="@string/private_clear_button"
                             android:textColor="@drawable/prompt_button_text_color"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toStartOf="@+id/positiveButton"
