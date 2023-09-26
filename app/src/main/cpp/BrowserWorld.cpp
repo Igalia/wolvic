@@ -979,8 +979,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     });
 
-    UpdateEnvironment();
     VRBrowser::CheckTogglePassthrough();
+    UpdateEnvironment();
 
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {
@@ -1190,15 +1190,24 @@ void
 BrowserWorld::TogglePassthrough() {
   ASSERT_ON_RENDER_THREAD();
   m.device->TogglePassthroughEnabled();
-  if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
-    m.layerPassthrough = m.device->CreateLayerPassthrough();
-    m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+  if (m.device->IsPassthroughEnabled()) {
+    if (m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
+      m.layerPassthrough = m.device->CreateLayerPassthrough();
+      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+    }
+  } else {
+    // Make environment changes during pass through mode on to take effect
+    UpdateEnvironment();
   }
 }
 
 void
 BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
+  if (m.device->IsPassthroughEnabled()) {
+    return;
+  }
+
   std::string skyboxPath = VRBrowser::GetActiveEnvironment();
   std::string extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(skyboxPath);
   if (VRBrowser::isOverrideEnvPathEnabled()) {
