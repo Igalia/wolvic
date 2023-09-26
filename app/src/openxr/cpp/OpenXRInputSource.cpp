@@ -73,7 +73,9 @@ XrResult OpenXRInputSource::Initialize()
     for (auto& mapping: OpenXRInputMappings) {
       // Always populate default/fall-back profiles
       if (mapping.controllerType == device::UnknownType) {
-        mMappings.push_back(mapping);
+          mMappings.push_back(mapping);
+          // Use the system's deviceType instead to ensure we get a valid VRController on WebXR sessions
+          mMappings.back().controllerType = deviceType;
         continue;
       } else if (deviceType != mapping.controllerType) {
         continue;
