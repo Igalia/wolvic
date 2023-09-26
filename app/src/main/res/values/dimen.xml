@@ -156,6 +156,7 @@
     <dimen name="prompt_min_height">400dp</dimen>
     <dimen name="prompt_file_width">600dp</dimen>
     <dimen name="prompt_file_height">600dp</dimen>
+    <dimen name="prompt_datetime_width">1000dp</dimen>
 
     <!-- Dialog buttons -->
 

@@ -3,17 +3,15 @@ package com.igalia.wolvic.ui.widgets.prompts;
 import android.content.Context;
 import android.icu.util.Calendar;
 import android.text.format.DateFormat;
-import android.view.Gravity;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import android.widget.DatePicker;
-import android.widget.FrameLayout;
 import android.widget.TimePicker;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 import androidx.annotation.NonNull;
 
@@ -50,10 +48,6 @@ public class DateTimePromptWidget extends PromptWidget {
     }
 
     protected void initialize(Context aContext) {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
-        final int padding = 10;
-
         switch (mPrompt.type()) {
             case WSession.PromptDelegate.DateTimePrompt.Type.DATE:
                 format = "yyyy-MM-dd";
@@ -78,7 +72,6 @@ public class DateTimePromptWidget extends PromptWidget {
 
         final DatePicker datePicker;
         final TimePicker timePicker;
-        final ViewGroup layoutPicker = findViewById(R.id.layout_picker);
 
         mAudio = AudioEngine.fromContext(aContext);
         mLayout = findViewById(R.id.layout);
@@ -98,7 +91,7 @@ public class DateTimePromptWidget extends PromptWidget {
                 || mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.MONTH
                 || mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.WEEK
                 || mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.DATETIME_LOCAL) {
-            datePicker = new DatePicker(mLayout.getContext());
+            datePicker = findViewById(R.id.date_picker);
             datePicker.init(
                     cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),
@@ -116,7 +109,7 @@ public class DateTimePromptWidget extends PromptWidget {
 
         if (mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.TIME
                 || mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.DATETIME_LOCAL) {
-            timePicker = new TimePicker(mLayout.getContext());
+            timePicker = findViewById(R.id.time_picker);
             timePicker.setHour(cal.get(java.util.Calendar.HOUR_OF_DAY));
             timePicker.setMinute(cal.get(java.util.Calendar.MINUTE));
             timePicker.setIs24HourView(DateFormat.is24HourFormat(aContext));
@@ -161,15 +154,9 @@ public class DateTimePromptWidget extends PromptWidget {
             hide(REMOVE_WIDGET);
         });
 
-        if (datePicker != null) {
-            datePicker.setLayoutParams(layoutParams);
-            datePicker.setPadding(padding, padding, padding, padding);
-            layoutPicker.addView(datePicker);
-        }
-        if (timePicker != null) {
-            timePicker.setLayoutParams(layoutParams);
-            timePicker.setPadding(padding, padding, padding, padding);
-            layoutPicker.addView(timePicker);
+        if (datePicker != null && timePicker != null) {
+            mWidgetPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_datetime_width);
+            mWidgetManager.updateWidget(this);
         }
     }
 
