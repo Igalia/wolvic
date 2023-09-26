@@ -2048,4 +2048,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="keyboardview_keycode_cancel">取消</string>
     <string name="keyboardview_keycode_mode_change">模式转变</string>
     <string name="keyboardview_keycode_enter">回车键</string>
+
+    <string name="tray_wifi_unavailable_ssid">未知的SSID</string>
 </resources>
