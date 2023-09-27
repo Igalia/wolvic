@@ -75,7 +75,7 @@ class DisplayOptionsView extends SettingsView {
             mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
         }
 
-        mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
+        mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
         mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
