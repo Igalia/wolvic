@@ -165,14 +165,23 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
 
             @Override
             public void onSeekPreview(String aText, double aRatio) {
+                final int padding = WidgetPlacement.dpDimension(getContext(), R.dimen.media_controls_seek_bar_padding);
                 mBinding.mediaControlSeekLabel.setText(aText);
                 View childView = mBinding.mediaControlSeekBar.getSeekBarView();
                 childView.getDrawingRect(mOffsetViewBounds);
                 MediaControlsWidget.this.offsetDescendantRectToMyCoords(childView, mOffsetViewBounds);
 
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mBinding.mediaControlSeekLabel.getLayoutParams();
-                params.setMarginStart(mOffsetViewBounds.left + (int) (aRatio * mOffsetViewBounds.width()) - mBinding.mediaControlSeekLabel.getMeasuredWidth() / 2);
+                params.setMarginStart(mOffsetViewBounds.left + padding +
+                        (int) (aRatio * (mOffsetViewBounds.width() - 2 * padding)) -
+                        mBinding.mediaControlSeekLabel.getMeasuredWidth() / 2);
                 mBinding.mediaControlSeekLabel.setLayoutParams(params);
+
+                if (aRatio < 0 || aRatio > 1) {
+                    mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
+                } else {
+                    mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
+                }
             }
         });
 

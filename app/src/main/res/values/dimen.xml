@@ -94,6 +94,7 @@
     <dimen name="media_controls_panel_width">284dp</dimen>
     <dimen name="media_controls_panel_height">85dp</dimen>
     <dimen name="media_controls_rounded_corners">15dp</dimen>
+    <dimen name="media_controls_seek_bar_padding">30dp</dimen>
     <dimen name="media_controls_world_z" format="float" type="dimen">2.5</dimen>
 
     <!-- Top Bar -->
