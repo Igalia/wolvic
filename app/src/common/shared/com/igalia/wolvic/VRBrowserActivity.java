@@ -835,7 +835,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 // unless we are already showing a website in kiosk mode.
                 WindowWidget window = mWindows.getFocusedWindow();
                 if (window == null || !window.isKioskMode() || window.isCurrentUriBlank())
-                    targetUri = Uri.parse(getString(R.string.homepage_url));
+                    targetUri = Uri.parse(getString(R.string.HOMEPAGE_URL));
             }
         }
 

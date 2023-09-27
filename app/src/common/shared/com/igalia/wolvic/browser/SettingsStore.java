@@ -356,7 +356,7 @@ public class SettingsStore {
     public String getHomepage() {
         return mPrefs.getString(
                 mContext.getString(R.string.settings_key_homepage),
-                mContext.getString(R.string.homepage_url));
+                mContext.getString(R.string.HOMEPAGE_URL));
     }
 
     public void setHomepage(String aHomepage) {

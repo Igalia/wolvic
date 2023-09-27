@@ -66,7 +66,7 @@ class DisplayOptionsView extends SettingsView {
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
 
-        mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
+        mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
         mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
