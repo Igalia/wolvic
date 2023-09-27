@@ -901,7 +901,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setVisible(false);
 
         closeFloatingMenus();
-        if (isFrontFacingVRProjection(aProjection)) {
+        if (!isFrontFacingVRProjection(aProjection)) {
             mWidgetManager.setControllersVisible(false);
         }
 
@@ -1179,9 +1179,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         switch (projection) {
             case VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE:
             case VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_TOP_BOTTOM:
-                return false;
-            default:
                 return true;
+            default:
+                return false;
         }
     }
 
@@ -1190,7 +1190,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     public void onWorldClick() {
         if (mViewModel.getIsInVRVideo().getValue().get() && mMediaControlsWidget != null) {
             mMediaControlsWidget.setVisible(!mMediaControlsWidget.isVisible());
-            if (isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
+            if (!isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
                 if (mMediaControlsWidget.isVisible()) {
                     // Reorient the MediaControl UI when the users clicks to show it.
                     // So you can look at any point of the 180/360 video and the UI always shows in front of you.
@@ -1200,7 +1200,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             if (mMediaControlsWidget.isVisible()) {
                 mWidgetManager.setControllersVisible(true);
-            } else if (isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
+            } else if (!isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
                 mWidgetManager.setControllersVisible(false);
             }
         } else if (mViewModel.getIsFullscreen().getValue().get()) {
