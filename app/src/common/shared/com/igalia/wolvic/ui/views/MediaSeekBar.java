@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;
@@ -83,8 +84,9 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
                 notify = true;
             }
 
+            final int padding = WidgetPlacement.dpDimension(getContext(), R.dimen.media_controls_seek_bar_padding);
             if (notify) {
-                final float ratio = event.getX() / view.getWidth();
+                final float ratio = (event.getX() - padding) / (view.getWidth() - 2 * padding);
                 notifySeekPreview(mDuration * ratio);
             }
 
