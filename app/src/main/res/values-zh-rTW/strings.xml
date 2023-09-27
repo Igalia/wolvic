@@ -2178,6 +2178,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_headset">頭盔: %1$s</string>
 
     <!-- Shown in the tray wifi icon popup when SSID cannot be retrieved -->
-    <string name="tray_wifi_unavailable_ssid">未知的SSID</string>
+    <string name="tray_wifi_unavailable_ssid">SSID不可知</string>
 
 </resources>
