@@ -224,7 +224,7 @@ public class UrlUtils {
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {
-        String feed = aContext.getString(R.string.homepage_url);
+        String feed = aContext.getString(R.string.HOMEPAGE_URL);
         return UrlUtils.getHost(feed).equalsIgnoreCase(UrlUtils.getHost(url));
     }
 
