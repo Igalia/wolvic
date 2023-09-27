@@ -123,6 +123,7 @@ android {
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
@@ -369,6 +370,7 @@ android {
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
+            resValue 'string', 'HOMEPAGE_URL', 'about:blank'
         }
     }
 
