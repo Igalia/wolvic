@@ -33,7 +33,6 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
     private MediaControlsBinding mBinding;
     private Media mMedia;
     private Runnable mBackHandler;
-    private boolean mPlayOnSeekEnd;
     private Rect mOffsetViewBounds;
     private VideoProjectionMenuWidget mProjectionMenu;
     static long VOLUME_SLIDER_CHECK_DELAY = 1000;
@@ -140,9 +139,7 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
         mBinding.mediaControlSeekBar.setDelegate(new MediaSeekBar.Delegate() {
             @Override
             public void onSeekDragStart() {
-                mPlayOnSeekEnd = mMedia.isPlaying();
                 mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
-                mMedia.pause();
                 mBinding.mediaControlSeekBar.requestFocusFromTouch();
             }
 
@@ -153,9 +150,6 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
 
             @Override
             public void onSeekDragEnd() {
-                if (mPlayOnSeekEnd) {
-                    mMedia.play();
-                }
                 mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
             }
 
