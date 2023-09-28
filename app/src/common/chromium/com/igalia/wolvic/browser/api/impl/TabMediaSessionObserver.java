@@ -209,6 +209,12 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
                 return;
             getMediaSession().setMute(mute);
         }
+
+        @Override
+        public boolean canCtrlVolume() {
+            // TODO: Check if the media session in Chromium supports volume control.
+            return false;
+        }
     }
 
     private void updatePosition() {
