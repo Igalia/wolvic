@@ -116,9 +116,14 @@ public class Media implements WMediaSession.Delegate {
         // TODO: mMediaSession doesn't seem to have a way to set volume. Should we change system volume instead?
     }
 
+    public boolean canCtrlVolume() {
+        return mMediaSession != null && mMediaSession.canCtrlVolume();
+    }
+
     public void setMuted(boolean aIsMuted) {
         if (mMediaSession != null) {
             mMediaSession.muteAudio(aIsMuted);
+            mIsMuted = aIsMuted;
         }
     }
 

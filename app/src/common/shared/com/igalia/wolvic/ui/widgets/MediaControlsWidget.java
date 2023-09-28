@@ -126,6 +126,7 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
                 mMedia.setMuted(true);
                 mBinding.volumeControl.setVolume(0);
             }
+            mBinding.setMuted(mMedia.isMuted());
             mBinding.mediaVolumeButton.requestFocusFromTouch();
         });
 
@@ -223,6 +224,11 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             return false;
         });
         mBinding.mediaVolumeButton.setOnHoverListener((v, event) -> {
+            // Only show the volume control when it's supported
+            if (!mMedia.canCtrlVolume()) {
+                return false;
+            }
+
             float startY = v.getY();
             float maxY = startY + v.getHeight();
             //for this we only hide on the left side of volume button or outside y area of button
@@ -315,7 +321,6 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
         mBinding.mediaControlSeekBar.setCurrentTime(mMedia.getCurrentTime());
         mBinding.setPlaying(mMedia.isPlaying());
         mBinding.mediaControlSeekBar.setSeekable(mMedia.canSeek());
-        mBinding.mediaVolumeButton.setEnabled(false);
 
         mMedia.addMediaListener(this);
     }

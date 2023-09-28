@@ -76,6 +76,13 @@ public interface WMediaSession {
      */
     void muteAudio(final boolean mute);
 
+    /**
+     * Check whether the media session supports volume control.
+     *
+     * @return True if this media session supports volume control, false otherwise.
+     */
+    boolean canCtrlVolume();
+
     /** Implement this delegate to receive media session events. */
     @UiThread
     interface Delegate {
