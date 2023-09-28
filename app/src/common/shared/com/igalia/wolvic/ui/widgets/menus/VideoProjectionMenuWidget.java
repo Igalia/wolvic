@@ -93,6 +93,9 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     private void createMenuItems() {
         mItems = new ArrayList<>();
 
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_NONE, getContext().getString(R.string.video_mode_2d),
+                R.drawable.ic_icon_videoplayback_2d));
+
         mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_3D_SIDE_BY_SIDE, getContext().getString(R.string.video_mode_3d_side),
                 R.drawable.ic_icon_videoplayback_3dsidebyside));
 
