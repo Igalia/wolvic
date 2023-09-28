@@ -82,6 +82,10 @@ class PrivacyOptionsView extends SettingsView {
             SessionStore.get().clearCache(WRuntime.ClearFlags.ALL_CACHES);
         });
 
+        mBinding.clearUserData.setOnClickListener(v -> {
+            showClearUserDataDialog();
+        });
+
         mBinding.permissionsTitle.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
         mPermissionButtons = new ArrayList<>();

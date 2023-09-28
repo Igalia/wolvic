@@ -42,6 +42,7 @@ import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.ClearUserDataDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
 import com.igalia.wolvic.utils.RemoteProperties;
@@ -68,6 +69,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private int mViewMarginH;
     private int mViewMarginV;
     private RestartDialogWidget mRestartDialog;
+    private ClearUserDataDialogWidget mClearUserDataDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
     private SettingsView.SettingViewType mOpenDialog;
@@ -563,6 +565,15 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         }
 
         mRestartDialog.show(REQUEST_FOCUS);
+    }
+
+    @Override
+    public void showClearUserDataDialog() {
+        if (mClearUserDataDialog == null) {
+            mClearUserDataDialog = new ClearUserDataDialogWidget(getContext());
+        }
+
+        mClearUserDataDialog.show(REQUEST_FOCUS);
     }
 
     @Override
