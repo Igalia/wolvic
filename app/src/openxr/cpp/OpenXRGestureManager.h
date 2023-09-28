@@ -45,7 +45,12 @@ XrHandTrackingAimStateFB mFBAimState;
 
 class OpenXRGestureManagerHandJoints : public OpenXRGestureManager {
 public:
-OpenXRGestureManagerHandJoints(HandJointsArray& handJoints);
+typedef struct OneEuroFilterParams {
+float mincutoff;
+float beta;
+float dcutoff;
+} OneEuroFilterParams;
+OpenXRGestureManagerHandJoints(HandJointsArray&, OneEuroFilterParams* = nullptr);
 private:
 bool hasAim() const override;
 XrPosef aimPose(const XrTime predictedDisplayTime, const OpenXRHandFlags, const vrb::Matrix& head) const override;

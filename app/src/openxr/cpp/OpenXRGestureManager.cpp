@@ -121,9 +121,10 @@ OpenXRGestureManagerFBHandTrackingAim::getTriggerPinchStatusAndFactor(const Hand
 #endif
 }
 
-OpenXRGestureManagerHandJoints::OpenXRGestureManagerHandJoints(HandJointsArray& handJoints)
-    : mHandJoints(handJoints)
-    , mOneEuroFilterPosition(std::make_unique<OneEuroFilterVector>(0.25, 0.1, 1)) {
+OpenXRGestureManagerHandJoints::OpenXRGestureManagerHandJoints(HandJointsArray& handJoints, OneEuroFilterParams* filterParams)
+    : mHandJoints(handJoints) {
+    if (filterParams)
+        mOneEuroFilterPosition = std::make_unique<OneEuroFilterVector>(filterParams->mincutoff, filterParams->beta, filterParams->dcutoff);
 }
 
 bool
@@ -162,7 +163,7 @@ OpenXRGestureManagerHandJoints::aimPose(const XrTime predictedDisplayTime, const
 
     auto aimPose = mHandJoints[XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT].pose;
     auto pos = vrb::Vector(aimPose.position.x, aimPose.position.y, aimPose.position.z);
-    float* filteredPos = mOneEuroFilterPosition->filter(predictedDisplayTime, pos.Data());
+    float* filteredPos = mOneEuroFilterPosition ? mOneEuroFilterPosition->filter(predictedDisplayTime, pos.Data()) : pos.Data();
 
     auto shoulder = head.MultiplyDirection({handeness == Right ? 0.15f : -0.15f,-0.25,0});
     auto q = lookAt({filteredPos[0], filteredPos[1], filteredPos[2]}, shoulder);
