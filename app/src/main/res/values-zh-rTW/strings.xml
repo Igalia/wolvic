@@ -406,6 +406,14 @@
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">有什麼新鮮事</string>
 
+    <!-- This string is the title of a dialog box shown to the user when
+         user wants the application to clear all user data. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_title">清除 %1$s 使用者資料</string>
+
+    <!-- This string is the text displayed in the clear user data dialog box explaining what
+         will happen. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_text">%1$s 將被重置。 如果未同步，所有資料（包括儲存的登入資訊、歷史記錄和書籤）都將被永久刪除。 重置完成後 %1$s 將自動關閉。 您想要繼續嗎？</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">需要重新啟動</string>
@@ -479,6 +487,10 @@
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">已快取的網頁內容</string>
+
+    <!-- The string labels the description text for the clear user data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_user_data_description">全部使用者資料</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">清除資料</string>
