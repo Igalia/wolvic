@@ -137,5 +137,11 @@ import org.mozilla.geckoview.GeckoSession;
         public void muteAudio(boolean mute) {
             mGeckoMediaSession.muteAudio(mute);
         }
+
+        @Override
+        public boolean canCtrlVolume() {
+            // Gecko MediaSession doesn't have a way to control volume.
+            return false;
+        }
     }
 }
