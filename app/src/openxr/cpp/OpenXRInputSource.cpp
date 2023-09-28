@@ -140,8 +140,18 @@ XrResult OpenXRInputSource::Initialize()
 
         if (mSupportsFBHandTrackingAim)
             mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
-        else
-            mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints);
+        else {
+            switch (deviceType) {
+                case device::MagicLeap2:
+                    // Disable filtering for ML2, data is already quite good.
+                    mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints);
+                    break;
+                default:
+                    // TODO: fine tune params for different devices.
+                    OpenXRGestureManagerHandJoints::OneEuroFilterParams params = { 0.25, 0.1, 1 };
+                    mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints, &params);
+            };
+        }
     }
 
     // Initialize double buffers for storing XR_MSFT_hand_tracking_mesh geometry
