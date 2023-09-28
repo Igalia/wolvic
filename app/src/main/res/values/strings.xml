@@ -449,6 +449,14 @@
          Navigation Bar. The button it labels, when pressed, open the release notes page. -->
     <string name="user_feedback_tooltip">Share ideas and feedback</string>
 
+    <!-- This string is the title of a dialog box shown to the user when
+         user wants the application to clear all user data. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_title">Clear %1$s User Data</string>
+
+    <!-- This string is the text displayed in the clear user data dialog box explaining what
+         will happen. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_text">%1$s will be reset. All the data, including saved logins, history and bookmarks, will get permanently deleted if haven\'t been synced. %1$s will close automatically after the reset is complete. Do you want to continue?</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Restart Required</string>
@@ -522,6 +530,10 @@
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">Cached Web Content</string>
+
+    <!-- The string labels the description text for the clear user data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_user_data_description">All User Data</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">Clear Data</string>

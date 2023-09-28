@@ -49,6 +49,7 @@ public abstract class SettingsView extends FrameLayout {
         void onDismiss();
         void exitWholeSettings();
         void showRestartDialog();
+        void showClearUserDataDialog();
         void showAlert(String aTitle, String aMessage);
         void showView(SettingsView.SettingViewType type);
         void showView(SettingsView.SettingViewType type, @Nullable Object extras);
@@ -78,6 +79,12 @@ public abstract class SettingsView extends FrameLayout {
     protected void showRestartDialog() {
         if (mDelegate != null) {
             mDelegate.showRestartDialog();
+        }
+    }
+
+    protected void showClearUserDataDialog() {
+        if (mDelegate != null) {
+            mDelegate.showClearUserDataDialog();
         }
     }
 
