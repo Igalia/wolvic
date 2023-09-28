@@ -717,8 +717,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mWidgetManager.addWidget(mProjectionMenu);
             mProjectionMenu.setDelegate((projection)-> {
                 if (mViewModel.getIsInVRVideo().getValue().get()) {
-                    // Reproject while reproducing VRVideo
-                    mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
+                    if (projection == VIDEO_PROJECTION_NONE) {
+                        exitVRVideo();
+                    } else {
+                        // Reproject while reproducing VRVideo
+                        mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
+                    }
                     closeFloatingMenus();
                 } else {
                     enterVRVideo(projection);
@@ -944,6 +948,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setVisible(true);
         mMediaControlsWidget.setVisible(false);
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() && !mAttachedWindow.isKioskMode());
+        mViewModel.setAutoEnteredVRVideo(false);
+        AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
