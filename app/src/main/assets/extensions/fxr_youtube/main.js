@@ -191,7 +191,7 @@ class YoutubeExtension {
                 if (paused) {
                      player.playVideo();
                 }
-                return !paused;
+                return paused;
             }), 200);
         }
     }
