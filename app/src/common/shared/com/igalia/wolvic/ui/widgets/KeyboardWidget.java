@@ -1242,7 +1242,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mComposingDisplayText = aText;
         if (aAction == ComposingAction.FINISH) {
             mInputConnection.finishComposingText();
-            mComposingText = "";
         }
     }
 
