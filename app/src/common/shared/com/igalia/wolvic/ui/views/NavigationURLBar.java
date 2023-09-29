@@ -43,6 +43,7 @@ import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.utils.StringUtils;
@@ -67,6 +68,8 @@ public class NavigationURLBar extends FrameLayout {
 
     private FindInPageInteractor mFindInPage;
     private WindowViewModel mViewModel;
+    private WidgetManagerDelegate mWidgetManager;
+    private Runnable mFindInPageBackHandler;
     private SettingsViewModel mSettingsViewModel;
     private NavigationUrlBinding mBinding;
     private Animation mLoadingAnimation;
@@ -134,6 +137,7 @@ public class NavigationURLBar extends FrameLayout {
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(SettingsViewModel.class);
 
+        mWidgetManager = (WidgetManagerDelegate) getContext();
         mAudio = AudioEngine.fromContext(aContext);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
@@ -141,6 +145,8 @@ public class NavigationURLBar extends FrameLayout {
         mSession = SessionStore.get().getActiveSession();
 
         mLoadingAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.loading);
+
+        mFindInPageBackHandler = () -> mViewModel.setIsFindInPage(false);
 
         // Layout setup
         mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.navigation_url, this, true);
@@ -367,8 +373,10 @@ public class NavigationURLBar extends FrameLayout {
     private Observer<ObservableBoolean> mIsFindInPageObserver = aBoolean -> {
         if (aBoolean.get()) {
             mBinding.findInPage.focus();
+            mWidgetManager.pushBackHandler(mFindInPageBackHandler);
         } else {
             mBinding.findInPage.clear();
+            mWidgetManager.popBackHandler(mFindInPageBackHandler);
         }
     };
 
