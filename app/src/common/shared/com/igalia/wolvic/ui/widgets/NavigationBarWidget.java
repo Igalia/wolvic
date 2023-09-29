@@ -340,10 +340,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE) {
-                enterVRVideo(mAutoSelectedProjection);
-                return;
-            }
             boolean wasVisible = mProjectionMenu != null ? mProjectionMenu.isVisible() : false;
             closeFloatingMenus();
 
