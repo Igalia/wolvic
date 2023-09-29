@@ -18,6 +18,8 @@ const logDebug = (...args) => ENABLE_LOGS && console.log(LOGTAG, ...args);
 const logError = (...args) => ENABLE_LOGS && console.error(LOGTAG, ...args);
 const CHROME_CONTROLS_MIN_WIDTH = 480;
 
+let hasLeftInitialPage = false;
+
 class YoutubeExtension {
     // We set a custom UA to force Youtube to display the most optimal
     // and high-resolution layout available for playback in a mobile VR browser.
@@ -133,7 +135,7 @@ class YoutubeExtension {
             return; // Only override projection in the Youtube watching page.
         }
         const qs = new URLSearchParams(window.location.search);
-        if (qs.get(VIDEO_PROJECTION_PARAM)) {
+        if (qs.get(VIDEO_PROJECTION_PARAM) && !hasLeftInitialPage) {
             logDebug(`Video has already a video projection selected: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
             this.updateVideoStyle();
             return;
@@ -151,12 +153,13 @@ class YoutubeExtension {
 
         if (projection !== null) {
             qs.set(VIDEO_PROJECTION_PARAM, projection);
-            this.updateURL(qs);
             this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
         } else {
+            qs.delete(VIDEO_PROJECTION_PARAM);
             logDebug(`Video is flat, no projection selected`);
         }
+        this.updateURL(qs);
     }
 
     updateVideoStyle() {
@@ -386,19 +389,15 @@ logDebug(`Initializing youtube extension in frame: ${window.location.href}`);
 const youtube = new YoutubeExtension();
 youtube.overrideUA();
 youtube.overrideViewport();
-window.addEventListener('load', () => {
-    logDebug('page load');
-    // Wait until video has loaded the first frame to force quality change.
-    // This prevents the infinite spinner problem.
-    // See https://github.com/MozillaReality/FirefoxReality/issues/1433
+window.addEventListener("resize", () => youtube.playerControlsMarginFix());
+document.addEventListener("fullscreenchange", () => youtube.playerControlsMarginFix());
+window.addEventListener('click', event => youtube.overrideClick(event));
+window.addEventListener('mouseup', event => youtube.queueContextMenuFix());
+// Reset the projection when navigating to a new page.
+window.addEventListener("yt-navigate-start", () => hasLeftInitialPage = true);
+window.addEventListener("yt-update-title", () => {
+    logDebug('page navigated and title updated');
     if (youtube.isWatchingPage()) {
         youtube.waitForVideoReady(() => youtube.playerFixes());
     }
 });
-window.addEventListener("resize", () => youtube.playerControlsMarginFix());
-document.addEventListener("fullscreenchange", () => youtube.playerControlsMarginFix());
-window.addEventListener('pushstate', () => youtube.overrideVideoProjection());
-window.addEventListener('popstate', () => youtube.overrideVideoProjection());
-window.addEventListener('click', event => youtube.overrideClick(event));
-window.addEventListener('mouseup', event => youtube.queueContextMenuFix());
-window.addEventListener("yt-navigate-finish", () => youtube.waitForVideoReady(() => youtube.playerFixes()));
