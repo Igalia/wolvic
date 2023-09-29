@@ -60,31 +60,17 @@ public class EnvironmentUtils {
     }
 
     /**
-     * Returns a path in the external for the remote environments unzipping.
+     * Returns a path in the cache for the remote environments unzipping.
      * @param context An activity context.
      * @param envId The environment id. This maps to the Remote properties JSON "value" environment property.
      * @return The location of the environment in the devices memory.
      */
     @Nullable
     public static String getExternalEnvPath(@NonNull Context context, @NonNull String envId) {
-        File outputFolder = context.getExternalFilesDir(ENVS_FOLDER);
-        if (outputFolder != null) {
-            outputFolder = new File(outputFolder, envId);
-            if (!outputFolder.exists()) {
-                if (outputFolder.mkdirs()) {
-                    return outputFolder.getAbsolutePath();
-
-                } else {
-                    return null;
-                }
-
-            } else {
-                return outputFolder.getAbsolutePath();
-            }
-
-        } else {
-            return null;
-        }
+        File outputFolder = new File(context.getCacheDir().getAbsolutePath(), ENVS_FOLDER + "/" + envId);
+        if (outputFolder.exists())
+            return outputFolder.getAbsolutePath();
+        return outputFolder.mkdirs() ? outputFolder.getAbsolutePath() : null;
     }
 
     /**
