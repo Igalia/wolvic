@@ -112,7 +112,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int itemCount() {
         if (mHistoryList != null) {
             return mHistoryList.stream().allMatch(item ->
-                    item.getVisitType() == VisitType.NOT_A_VISIT) ?
+                    item.getVisitType() == VisitType.TYPED) ?
                     0 :
                     mHistoryList.size();
         }
@@ -271,7 +271,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private boolean isPositionHeader(int position) {
-        return mHistoryList.get(position).getVisitType() == VisitType.NOT_A_VISIT;
+        return mHistoryList.get(position).getVisitType() == VisitType.TYPED;
     }
 
     private View.OnHoverListener mIconHoverListener = (view, motionEvent) -> {

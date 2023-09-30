@@ -83,7 +83,6 @@ class HistoryStore constructor(val context: Context) {
 
     fun getDetailedHistory(): CompletableFuture<List<VisitInfo>?> = GlobalScope.future {
         storage.getDetailedVisits(0, excludeTypes = listOf(
-                VisitType.NOT_A_VISIT,
                 VisitType.DOWNLOAD,
                 VisitType.REDIRECT_TEMPORARY,
                 VisitType.RELOAD,
@@ -94,7 +93,6 @@ class HistoryStore constructor(val context: Context) {
 
     fun getVisitsPaginated(offset: Long, count: Long): CompletableFuture<List<VisitInfo>?> = GlobalScope.future {
         storage.getVisitsPaginated(offset, count, excludeTypes = listOf(
-                VisitType.NOT_A_VISIT,
                 VisitType.DOWNLOAD,
                 VisitType.REDIRECT_TEMPORARY,
                 VisitType.RELOAD,

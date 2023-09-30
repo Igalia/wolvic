@@ -275,4 +275,16 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         });
     }
 
+    @Override
+    public void onFindMoreAddonsButtonClicked() {
+    }
+
+    @Override
+    public boolean shouldShowFindMoreAddonsButton() {
+        return false;
+    }
+
+    @Override
+    public void onLearnMoreLinkClicked(@NonNull LearnMoreLinks learnMoreLinks, @NonNull Addon addon) {
+    }
 }

@@ -79,7 +79,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
             // If the addon is not installed we set the homepage link
             mBinding.homepage.setOnClickListener(view -> {
                 view.requestFocusFromTouch();
-                mWidgetManager.openNewTabForeground(mBinding.getAddon().getSiteUrl());
+                mWidgetManager.openNewTabForeground(mBinding.getAddon().getHomepageUrl());
             });
 
             bindTranslatedDescription(mBinding.addonDescription, addon);
@@ -133,9 +133,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
     private void bindAuthors(@NonNull TextView view, Addon addon) {
         String text = view.getContext().getString(R.string.addons_no_authors);
         if (addon != null) {
-            String authors = addon.getAuthors().stream()
-                    .map(Addon.Author::getName)
-                    .collect(Collectors.joining( "," ));
+            String authors = addon.getAuthor().getName();
             if (!authors.isEmpty()) {
                 text = authors;
             }

@@ -30,7 +30,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
+import mozilla.components.feature.addons.amo.AMOAddonsProvider
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.feature.addons.ui.CustomViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.AddonViewHolder
@@ -57,7 +57,7 @@ private const val VIEW_HOLDER_TYPE_ADDON = 1
  */
 @Suppress("TooManyFunctions", "LargeClass")
 class AddonsManagerAdapter(
-        private val addonCollectionProvider: AddonCollectionProvider,
+        private val addonCollectionProvider: AMOAddonsProvider,
         private val addonsManagerDelegate: AddonsManagerAdapterDelegate,
         addons: List<Addon>,
         private val style: Style? = null
@@ -105,6 +105,7 @@ class AddonsManagerAdapter(
         val userCountView = view.findViewById<TextView>(R.id.users_count)
         val addButton = view.findViewById<ImageView>(R.id.add_button)
         val allowedInPrivateBrowsingLabel = view.findViewById<ImageView>(R.id.allowed_in_private_browsing_label)
+        val statusErrorView = view.findViewById<TextView>(R.id.add_on_status_error_message)
         return AddonViewHolder(
             view,
             iconView,
@@ -114,7 +115,8 @@ class AddonsManagerAdapter(
             ratingAccessibleView,
             userCountView,
             addButton,
-            allowedInPrivateBrowsingLabel
+            allowedInPrivateBrowsingLabel,
+            statusErrorView
         )
     }
 
@@ -158,15 +160,12 @@ class AddonsManagerAdapter(
             // for contentDescription for the TalkBack feature
             holder.ratingAccessibleView.text = ratingContentDescription
             holder.ratingView.rating = addon.rating!!.average
-            holder.userCountView.text = String.format(userCount, getFormattedAmount(addon.rating!!.reviews))
 
             holder.ratingView.visibility = View.VISIBLE
             holder.ratingAccessibleView.visibility = View.VISIBLE
-            holder.userCountView.visibility = View.VISIBLE
         } else {
             holder.ratingView.visibility = View.GONE
             holder.ratingAccessibleView.visibility = View.GONE
-            holder.userCountView.visibility = View.GONE
         }
 
         val displayLanguage = LocaleUtils.getDisplayLanguage(context).locale.language
@@ -236,7 +235,7 @@ class AddonsManagerAdapter(
                 // if takes less than a second, we assume it comes
                 // from a cache and we don't show any transition animation.
                 val startTime = System.currentTimeMillis()
-                val iconBitmap = addonCollectionProvider.getAddonIconBitmap(addon) ?: addon.installedState?.icon
+                val iconBitmap = addon.icon?: addon.installedState?.icon
                 val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
                 val isFromCache = timeToFetch < 1
                 if (iconBitmap != null) iconDrawable = BitmapDrawable(iconView.resources, iconBitmap)

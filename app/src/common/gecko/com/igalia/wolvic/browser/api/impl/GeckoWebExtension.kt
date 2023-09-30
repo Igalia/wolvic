@@ -342,12 +342,12 @@ class GeckoWebExtension(
      */
     override fun getMetadata(): Metadata {
         return nativeExtension.metaData.let {
-            Metadata(
+            mozilla.components.concept.engine.webextension.Metadata(
                     name = it.name,
                     description = it.description,
                     developerName = it.creatorName,
                     developerUrl = it.creatorUrl,
-                    homePageUrl = it.homepageUrl,
+                    homepageUrl = it.homepageUrl,
                     version = it.version,
                     permissions = it.permissions.toList(),
                     // Origins is marked as @NonNull but may be null: https://bugzilla.mozilla.org/show_bug.cgi?id=1629957
@@ -355,7 +355,16 @@ class GeckoWebExtension(
                     disabledFlags = DisabledFlags.select(it.disabledFlags),
                     optionsPageUrl = it.optionsPageUrl,
                     openOptionsPageInTab = it.openOptionsPageInTab,
-                    baseUrl = it.baseUrl
+                    baseUrl = it.baseUrl,
+                    averageRating = it.averageRating.toFloat(),
+                    creatorName = it.creatorName,
+                    creatorUrl = it.creatorUrl,
+                    detailUrl = it.homepageUrl,
+                    downloadUrl = it.downloadUrl,
+                    fullDescription = it.fullDescription,
+                    reviewCount = it.reviewCount,
+                    reviewUrl = it.reviewUrl,
+                    updateDate = it.updateDate
             )
         }
     }

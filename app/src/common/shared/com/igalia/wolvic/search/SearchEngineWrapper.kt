@@ -210,7 +210,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
         private get() = if (hasContext() && context is VRBrowserActivity) context as VRBrowserActivity? else null
 
     // SharedPreferences.OnSharedPreferenceChangeListener
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (mContextRef.get() != null) {
             if (key == mContextRef.get()!!
                     .getString(R.string.settings_key_geolocation_data) || key == mContextRef.get()!!

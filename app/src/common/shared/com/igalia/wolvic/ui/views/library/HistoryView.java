@@ -403,7 +403,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
 
     private void addSection(final @NonNull List<VisitInfo> items, @NonNull String section, long rangeStart, long rangeEnd) {
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getVisitTime() == rangeStart && items.get(i).getVisitType() == VisitType.NOT_A_VISIT)
+            if (items.get(i).getVisitTime() == rangeStart && items.get(i).getVisitType() == VisitType.TYPED)
                 break;
 
             if (items.get(i).getVisitTime() < rangeStart && items.get(i).getVisitTime() > rangeEnd) {
@@ -411,7 +411,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                         section,
                         section,
                         rangeStart,
-                        VisitType.NOT_A_VISIT,
+                        VisitType.TYPED,
                         null,
                         false
                 ));

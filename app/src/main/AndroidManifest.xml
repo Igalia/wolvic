@@ -29,7 +29,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:extractNativeLibs="true"
         android:theme="@style/FxR.Dark">
         <activity
             android:name="com.igalia.wolvic.VRBrowserActivity"
