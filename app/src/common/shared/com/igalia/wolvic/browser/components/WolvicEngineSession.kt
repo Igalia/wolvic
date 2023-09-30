@@ -10,6 +10,9 @@ import com.igalia.wolvic.browser.engine.Session
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.Settings
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import org.json.JSONObject
 
 class WolvicEngineSession(
@@ -36,13 +39,44 @@ class WolvicEngineSession(
     ) = Unit
     override fun loadData(data: String, mimeType: String, encoding: String) = Unit
     override fun reload(flags: LoadUrlFlags) = Unit
+    override fun requestAnalysisStatus(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit;
+
     override fun requestPdfToDownload() = Unit
     override fun requestPrintContent() = Unit
+    override fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
+
+    override fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
+
+    override fun requestTranslate(fromLanguage: String, toLanguage: String, options: TranslationOptions?) = Unit
+
+    override fun requestTranslationRestore() = Unit
+
     override fun restoreState(state: EngineSessionState) = true
+    override fun sendClickAttributionEvent(aid: String, onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit) = Unit
+
+    override fun sendImpressionAttributionEvent(aid: String, onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit) = Unit
+
     override fun stopLoading() = Unit
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) = Unit
     override fun updateTrackingProtection(policy: TrackingProtectionPolicy) = Unit
     override fun purgeHistory() = Unit;
+    override fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit;
 }
 
 private class DummyEngineSessionState : EngineSessionState {

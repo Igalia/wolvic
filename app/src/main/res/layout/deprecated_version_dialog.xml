@@ -50,13 +50,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/mozac_ic_warning"
+                android:src="@drawable/mozac_ic_warning_fill_24"
                 android:layout_gravity="center_vertical|start" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/mozac_ic_warning"
+                android:src="@drawable/mozac_ic_warning_fill_24"
                 android:layout_gravity="center_vertical|end" />
 
             <TextView

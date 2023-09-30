@@ -28,7 +28,7 @@ import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
+import mozilla.components.feature.addons.amo.AMOAddonsProvider
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.support.base.android.NotificationsDelegate
@@ -52,14 +52,14 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
 
     val addonCollectionProvider by lazy {
         if (BuildConfig.AMO_COLLECTION.isNotEmpty()) {
-            AddonCollectionProvider(
+            AMOAddonsProvider(
                     context,
                     EngineProvider.getDefaultClient(context),
                     collectionName = BuildConfig.AMO_COLLECTION,
                     maxCacheAgeInMinutes = DAY_IN_MINUTES
             )
         } else {
-            AddonCollectionProvider(
+            AMOAddonsProvider(
                     context,
                     EngineProvider.getDefaultClient(context),
                     maxCacheAgeInMinutes = DAY_IN_MINUTES)
@@ -220,7 +220,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
                 val enabled = installedExtensions[addons[i].id]?.isEnabled() ?: false
                 val icon = CoroutineScope(Dispatchers.Main).future {
                     try {
-                        installedExtensions[addons[i].id]?.loadIcon(AddonManager.TEMPORARY_ADDON_ICON_SIZE)
+                        installedExtensions[addons[i].id]?.loadIcon(AddonManager.ADDON_ICON_SIZE)
                     } catch (throwable: Throwable) {
                         Logger.warn("Failed to load addon icon.", throwable)
                         null
