@@ -1060,7 +1060,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         final String text = aText;
         final InputConnection connection = mInputConnection;
-        if (mCurrentKeyboard.usesComposingText()) {
+        if (mCurrentKeyboard.usesComposingText() && !mIsInVoiceInput) {
             postInputCommand(() -> {
                 CharSequence seq = connection.getSelectedText(0);
                 String selected = seq != null ? seq.toString() : "";
@@ -1070,7 +1070,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
                 mComposingText += text;
             });
-        } else if (mCurrentKeyboard.usesTextOverride()) {
+        } else if (mCurrentKeyboard.usesTextOverride() || mIsInVoiceInput) {
             postInputCommand(() -> {
                 String beforeText = getTextBeforeCursor(connection);
                 String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
