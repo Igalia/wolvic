@@ -3,12 +3,11 @@ package com.igalia.wolvic.crashreporting;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-// TODO: Deprecated JobIntentService, see https://github.com/Igalia/wolvic/issues/805
-import androidx.core.app.JobIntentService;
+import android.app.Service;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
@@ -22,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public abstract class CrashReporterService extends JobIntentService {
+public abstract class CrashReporterService extends Service {
 
     private static final String LOGTAG = SystemUtils.createLogtag(CrashReporterService.class);
 
@@ -39,31 +38,11 @@ public abstract class CrashReporterService extends JobIntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOGTAG, "onStartCommand");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            enqueueWork(this, this.getClass(), JOB_ID, intent);
+        if (intent == null) {
+            stopSelf();
+            return Service.START_NOT_STICKY;
         }
 
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @NonNull
-    public static ArrayList<String> findCrashFiles(@NonNull Context aContext) {
-        ArrayList<String> files = new ArrayList<>();
-        String[] allFiles = aContext.fileList();
-        for (String value: allFiles) {
-            if (value.startsWith(CRASH_FILE_PREFIX)) {
-                files.add(value);
-            }
-        }
-        return files;
-    }
-
-    @NonNull
-    protected abstract WRuntime.CrashReportIntent createCrashReportIntent();
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         String action = intent.getAction();
         // We cannot use WRuntime::getCrashReportIntent() because we don't know whether the runtime
         // is alive at this point and creating the runtime might have additional constraints (like
@@ -76,7 +55,8 @@ public abstract class CrashReporterService extends JobIntentService {
             boolean cancelRestart = count > MAX_RESTART_COUNT;
             if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
                 Log.e(LOGTAG, "Too many restarts. Abort crash reporter service.");
-                return;
+                stopSelf();
+                return Service.START_NOT_STICKY;
             }
 
             if (fatal) {
@@ -93,11 +73,13 @@ public abstract class CrashReporterService extends JobIntentService {
                 }
                 if (activityPid == 0) {
                     Log.e(LOGTAG, "Application was quitting. Crash reporter will not trigger a restart.");
-                    return;
+                    stopSelf();
+                    return Service.START_NOT_STICKY;
                 }
                 final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
                 if (activityManager == null) {
-                    return;
+                    stopSelf();
+                    return Service.START_NOT_STICKY;
                 }
 
                 int pidCheckCount = 0;
@@ -140,7 +122,28 @@ public abstract class CrashReporterService extends JobIntentService {
         }
 
         Log.d(LOGTAG, "Crash reporter job finished");
+        return Service.START_NOT_STICKY;
     }
+
+    @NonNull
+    public static ArrayList<String> findCrashFiles(@NonNull Context aContext) {
+        ArrayList<String> files = new ArrayList<>();
+        String[] allFiles = aContext.fileList();
+        for (String value: allFiles) {
+            if (value.startsWith(CRASH_FILE_PREFIX)) {
+                files.add(value);
+            }
+        }
+        return files;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @NonNull
+    protected abstract WRuntime.CrashReportIntent createCrashReportIntent();
 
     public static void submitCaughtException(@NonNull Exception exception) {
 
