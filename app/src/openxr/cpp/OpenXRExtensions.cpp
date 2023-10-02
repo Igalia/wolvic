@@ -35,8 +35,9 @@ void OpenXRExtensions::Initialize() {
         sSupportedExtensions.insert(extension.extensionName);
     }
 #ifdef LYNX
-    // Lynx incorrectly advertises this extension as supported but in reality it does not work.
+    // Lynx incorrectly advertises these extensions as supported but in reality they don't work.
     sSupportedExtensions.erase(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME);
+    sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
 #elif PICOXR
     // Pico incorrectly advertises this extension as supported but it makes Wolvic not work.
     sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
