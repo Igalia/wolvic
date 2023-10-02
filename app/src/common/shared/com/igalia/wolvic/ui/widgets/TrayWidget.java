@@ -911,7 +911,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @NonNull
     private String getFormattedDate() {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy", LocaleUtils.getDisplayLanguage(getContext()).getLocale());
+        java.text.DateFormat format = SimpleDateFormat.getDateInstance(
+                SimpleDateFormat.FULL, LocaleUtils.getDisplayLanguage(getContext()).getLocale());
         return format.format(new Date());
     }
 }
