@@ -589,7 +589,9 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // Prepare and submit hand joint locations data for rendering
     assert(mHasHandJoints);
     std::vector<vrb::Matrix> jointTransforms;
+    std::vector<float> jointRadii;
     jointTransforms.resize(mHandJoints.size());
+    jointRadii.resize(mHandJoints.size());
     for (int i = 0; i < mHandJoints.size(); i++) {
         vrb::Matrix transform = XrPoseToMatrix(mHandJoints[i].pose);
         bool positionIsValid = IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints);
@@ -602,6 +604,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         }
 
         jointTransforms[i] = transform;
+        jointRadii[i] = mHandJoints[i].radius;
     }
 
     // This is not really needed. It's just an optimization for devices taking over the control of
@@ -631,7 +634,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     // We should handle the gesture whenever the system does not handle it.
     bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
-    delegate.SetHandJointLocations(mIndex, std::move(jointTransforms));
+    delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
     delegate.SetAimEnabled(mIndex, hasAim);
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);

@@ -77,6 +77,7 @@ Controller::operator=(const Controller& aController) {
   batteryLevel = aController.batteryLevel;
   hasAim = aController.hasAim;
   handJointTransforms = aController.handJointTransforms;
+  handJointRadii = aController.handJointRadii;
   handActionEnabled = aController.handActionEnabled;
   handActionButtonToggle = aController.handActionButtonToggle;
   handActionButtonTransform = aController.handActionButtonTransform;
@@ -128,6 +129,7 @@ Controller::Reset() {
   batteryLevel = -1;
   hasAim = true;
   handJointTransforms.clear();
+  handJointRadii.clear();
   handActionEnabled = false;
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;
