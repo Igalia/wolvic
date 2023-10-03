@@ -360,7 +360,7 @@ struct DeviceDelegateOpenXR::State {
       const auto supportsAlphaBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
       CHECK(supportsOpaqueBlendMode || supportsAdditiveBlendMode || supportsAlphaBlendMode);
 
-      passthroughBlendMode = supportsAdditiveBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ADDITIVE : (supportsAlphaBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND : XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
+      passthroughBlendMode = supportsAlphaBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND : (supportsAdditiveBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ADDITIVE : XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
       defaultBlendMode = supportsOpaqueBlendMode ? XR_ENVIRONMENT_BLEND_MODE_OPAQUE : passthroughBlendMode;
       VRB_LOG("OpenXR: selected default blend mode %s", to_string(defaultBlendMode));
       VRB_LOG("OpenXR: selected passthrough blend mode %s", to_string(passthroughBlendMode));
