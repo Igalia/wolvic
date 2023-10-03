@@ -691,8 +691,11 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 #endif
 
+    vrb::Matrix pointerTransformStandalone;
     if (renderMode == device::RenderMode::StandAlone)
-        pointerTransform.TranslateInPlace(kAverageHeight);
+        pointerTransformStandalone = pointerTransform.Translate(kAverageHeight);
+    else
+        pointerTransformStandalone = pointerTransform;
 
 #if CHROMIUM
     // Blink WebXR uses the grip space instead of the local space to position the
