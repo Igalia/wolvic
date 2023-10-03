@@ -179,6 +179,8 @@ public class RuntimeImpl implements WRuntime {
         CommandLine.init(new String[] {});
         if (BuildConfig.DEBUG)
             CommandLine.getInstance().appendSwitchWithValue("enable-logging", "stderr");
+        if (BuildConfig.FLAVOR_abi == "x64")
+            CommandLine.getInstance().appendSwitchWithValue("disable-features", "Vulkan");
         setupWebGLMSAA();
         DeviceUtils.addDeviceSpecificUserAgentSwitch();
         LibraryLoader.getInstance().ensureInitialized();
