@@ -1919,8 +1919,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Comenzar a navegar</string>
 
-    <string name="deprecated_version_dialog_title">Actualización recomendada</string>
-    <string name="deprecated_version_dialog_body">Actualmente estás usando una versión de desarrollo de Wolvic.
+    <string name="deprecated_version_dialog_title">Actualización necesaria</string>
+    <string name="deprecated_version_dialog_body">Esta versión de desarrollo de Wolvic dejará de estar disponible en breve.
         \n\nPor favor, instala la versión más actual de Wolvic desde la tienda de Oculus.
         \n\nIMPORTANTE: a menos que uses Firefox Sync, la nueva app de Wolvic no tendrá tus marcadores ni tus páginas abiertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender más…</string>
