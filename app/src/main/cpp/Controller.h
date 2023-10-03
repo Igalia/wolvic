@@ -44,6 +44,7 @@ struct Controller {
   vrb::TogglePtr beamToggle;
   vrb::TogglePtr modelToggle;
   std::vector<vrb::Matrix>handJointTransforms;
+  std::vector<float>handJointRadii;
   bool hasAim;
   bool handActionEnabled;
   vrb::TogglePtr handActionButtonToggle;
