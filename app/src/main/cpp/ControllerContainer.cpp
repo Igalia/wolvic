@@ -199,7 +199,8 @@ ControllerContainer::InitializeBeam() {
   }
 }
 
-void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix> jointTransforms)
+void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix> jointTransforms,
+                                                std::vector<float> jointRadii)
 {
     if (!m.Contains(aControllerIndex))
         return;
@@ -209,6 +210,7 @@ void ControllerContainer::SetHandJointLocations(const int32_t aControllerIndex, 
         return;
 
     controller.handJointTransforms = std::move(jointTransforms);
+    controller.handJointRadii = std::move(jointRadii);
 
     // Initialize left and right hands action button, which for now triggers back navigation
     // and exit app respectively.
