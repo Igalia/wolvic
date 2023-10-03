@@ -46,6 +46,18 @@
             android:layout_marginEnd="44dp"
             android:layout_marginBottom="10dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/mozac_ic_warning"
+                android:layout_gravity="center_vertical|start" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/mozac_ic_warning"
+                android:layout_gravity="center_vertical|end" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
