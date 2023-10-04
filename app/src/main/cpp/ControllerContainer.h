@@ -67,7 +67,7 @@ public:
   bool IsVisible() const override;
   void SetVisible(const bool aVisible) override;
   void SetGazeModeIndex(const int32_t aControllerIndex) override;
-  void SetHandJointLocations(const int32_t aControllerIndex, const std::vector<vrb::Matrix>& jointTransforms) override;
+  void SetHandJointLocations(const int32_t aControllerIndex, std::vector<vrb::Matrix> jointTransforms) override;
   void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) override;
   void SetHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) override;
   void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) override;
