@@ -631,7 +631,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
     // We should handle the gesture whenever the system does not handle it.
     bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
-    delegate.SetHandJointLocations(mIndex, jointTransforms);
+    delegate.SetHandJointLocations(mIndex, std::move(jointTransforms));
     delegate.SetAimEnabled(mIndex, hasAim);
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
