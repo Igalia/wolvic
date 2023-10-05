@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsDisplayBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
@@ -74,6 +75,9 @@ class DisplayOptionsView extends SettingsView {
         } else {
             mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
         }
+
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), true);
 
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
@@ -148,6 +152,10 @@ class DisplayOptionsView extends SettingsView {
         setStartWithPassthrough(value);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mSoundEffectListener = (compoundButton, enabled, apply) -> {
+        setSoundEffect(enabled, true);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -205,6 +213,7 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
+        setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -243,6 +252,17 @@ class DisplayOptionsView extends SettingsView {
         mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
 
         SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
+    }
+
+    private void setSoundEffect(boolean value, boolean doApply) {
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(null);
+        mBinding.soundEffectSwitch.setValue(value, false);
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setAudioEnabled(value);
+            AudioEngine.fromContext(getContext()).setEnabled(value);
+        }
     }
 
     private void setHomepage(String newHomepage) {
