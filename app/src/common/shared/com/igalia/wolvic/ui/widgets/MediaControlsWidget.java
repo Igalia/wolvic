@@ -137,6 +137,14 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             mBinding.mediaBackButton.requestFocusFromTouch();
         });
 
+        mBinding.mediaControlSeekBar.getLeftTextView().setOnClickListener(v -> {
+            mMedia.seek(0);
+        });
+
+        mBinding.mediaControlSeekBar.getRightTextView().setOnClickListener(v -> {
+            mMedia.seek(mMedia.getDuration());
+        });
+
         mBinding.mediaControlSeekBar.setDelegate(new MediaSeekBar.Delegate() {
             @Override
             public void onSeekDragStart() {

@@ -170,6 +170,14 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
         return mSeekBar;
     }
 
+    public View getLeftTextView() {
+        return mLeftText;
+    }
+
+    public View getRightTextView() {
+        return mRightText;
+    }
+
     private void updateProgress() {
         if (mTouching || mDuration <= 0) {
             return;
