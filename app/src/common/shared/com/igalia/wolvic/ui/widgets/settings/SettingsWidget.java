@@ -149,10 +149,6 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         mBinding.languageButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
             onLanguageOptionsClick();
         });
 
