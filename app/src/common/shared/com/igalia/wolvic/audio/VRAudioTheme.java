@@ -20,6 +20,7 @@ public class VRAudioTheme implements AudioEngine.AudioTheme {
             case CLICK: return "click.wav";
             case BACK: return "back.wav";
             case EXIT: return "exit.wav";
+            case ERROR: return "error.wav";
         }
 
         return null;
