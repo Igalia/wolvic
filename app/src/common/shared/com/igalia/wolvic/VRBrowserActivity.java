@@ -48,6 +48,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
+import com.igalia.wolvic.audio.AndroidMediaPlayer;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.Media;
@@ -316,7 +317,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 
-        mAudioEngine = new AudioEngine(this, null);
+        mAudioEngine = new AudioEngine(this, new AndroidMediaPlayer(getBaseContext()));
         mAudioEngine.setEnabled(SettingsStore.getInstance(this).isAudioEnabled());
         mAudioEngine.preloadAsync(() -> {
             Log.i(LOGTAG, "AudioEngine sounds preloaded!");

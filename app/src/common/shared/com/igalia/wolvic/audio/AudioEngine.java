@@ -30,6 +30,7 @@ public class AudioEngine {
         CLICK,
         BACK,
         EXIT,
+        ERROR,
         AMBIENT(SoundType.FIELD);
 
         private SoundType mType;
