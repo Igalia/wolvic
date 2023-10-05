@@ -203,6 +203,10 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         mBinding.surveyLink.setOnClickListener(v -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
             mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
             exitWholeSettings();
         });
@@ -215,9 +219,13 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             onDismiss();
         });
 
-        mBinding.fxaButton.setOnClickListener(view ->
-                manageAccount()
-        );
+        mBinding.fxaButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            manageAccount();
+        });
 
         mBinding.developerOptionsButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -236,6 +244,10 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         mBinding.whatsNewButton.setOnClickListener(v -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
             SettingsStore.getInstance(getContext()).setRemotePropsVersionName(BuildConfig.VERSION_NAME);
             RemoteProperties props = mSettingsViewModel.getProps().getValue().get(BuildConfig.VERSION_NAME);
             if (props != null) {
