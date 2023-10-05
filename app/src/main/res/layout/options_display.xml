@@ -72,6 +72,12 @@
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autoplay" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/soundEffectSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_sound_effect" />
+
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"
