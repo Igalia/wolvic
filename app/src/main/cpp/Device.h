@@ -50,6 +50,7 @@ const DeviceType LynxR1 = 14;
 const DeviceType LenovoA3 = 15;
 const DeviceType LenovoVRX = 16;
 const DeviceType MagicLeap2 = 17;
+const DeviceType MetaQuest3 = 18;
 
 enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
 
