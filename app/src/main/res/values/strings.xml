@@ -2028,10 +2028,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Start Browsing</string>
 
-    <string name="deprecated_version_dialog_title">Recommended update</string>
-    <string name="deprecated_version_dialog_body">You are currently running an \"App Lab\" development version of Wolvic.
-        \n\nPlease install the newest version of Wolvic from the Oculus Store.
-        \n\nIMPORTANT: unless you use Firefox Sync, the new Wolvic app will not have your bookmarks and tabs.</string>
+    <string name="deprecated_version_dialog_title">Support ending soon</string>
+    <string name="deprecated_version_dialog_body">This \"App Lab\" version of Wolvic will be removed by the end of October 2023.
+        \n\nPlease install the latest version of Wolvic from the Meta Quest Store.
+        \n\nIMPORTANT: unless you use Sync, the new Wolvic app will not have your bookmarks and tabs.</string>
     <string name="deprecated_version_dialog_info_button">Learn more…</string>
     <string name="deprecated_version_dialog_info_url" translatable="false">https://wolvic.com/support/firefox-sync/</string>
     <string name="deprecated_version_dialog_store_button">Install…</string>

@@ -688,9 +688,9 @@
     <string name="hamburger_menu_resize">Redimensionar xanela</string>
     <string name="hamburger_menu_addons">Complementos</string>
     <string name="whats_new_button_start_browsing">Comezar a navegar</string>
-    <string name="deprecated_version_dialog_title">Actualización recomendada</string>
-    <string name="deprecated_version_dialog_body">Actualmente estás a usar unha versión de desenrolo de Wolvic.
-        \n\nPor favor, instala a versión máis actual de Wolvic dende la tenda de Oculus.
+    <string name="deprecated_version_dialog_title">Actualización necesaria</string>
+    <string name="deprecated_version_dialog_body">Esta versión de desenrolo de Wolvic deixará de estar dispoñible a finais de Outubro de 2023.
+        \n\nPor favor, instala a versión máis actual de Wolvic dende a Meta Quest Store.
         \n\nIMPORTANTE: a menos que uses Firefox Sync, a nova app de Wolvic non terá os teus marcadores nen as tuas páxinas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender máis…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>

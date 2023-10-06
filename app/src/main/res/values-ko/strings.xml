@@ -1759,7 +1759,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_toggle_passthrough">패스스루</string>
     <string name="deprecated_version_dialog_title">권장 업데이트</string>
     <string name="security_options_permission_fine_location_warning">울빅은 당신의 대략적인 위치만 알 수 있습니다. 이는 시스템 설정에서 변경할 수 있습니다.</string>
-    <string name="deprecated_version_dialog_body">현재 울빅의 개발 버전인 \"App Lab\"을 실행하고 있습니다.
+    <string name="deprecated_version_dialog_body">현재 울빅의 개발 버전인 \"App Lab\"을 실행하고 있습니다.2023년 10월 말에 중단될 예정입니다.
 \n
 \n오큘러스 스토어에서 최신 버전의 울빅을 설치하세요.
 \n

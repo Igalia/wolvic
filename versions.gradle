@@ -187,7 +187,7 @@ ext.deps = deps
 def build_versions = [:]
 build_versions.min_sdk = 24
 build_versions.min_sdk_wave = 25
-build_versions.target_sdk = 31
+build_versions.target_sdk = 32
 build_versions.target_sdk_wave = 31
 build_versions.target_sdk_spaces = 29
 build_versions.compile_sdk = 31
@@ -199,6 +199,7 @@ ext.deps = deps
 def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
+    handler.mavenCentral()
     handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     handler.maven { url 'https://maven.mozilla.org/maven2' }
     handler.maven { url 'https://download.servo.org/nightly/maven' }
