@@ -199,8 +199,7 @@ ext.deps = deps
 
 def addRepos(RepositoryHandler handler) {
     handler.google()
-    handler.jcenter()
-    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    handler.mavenCentral()
     handler.maven { url 'https://maven.mozilla.org/maven2' }
     handler.maven { url 'https://download.servo.org/nightly/maven' }
     handler.maven { url 'https://developer.huawei.com/repo/' }
