@@ -1655,9 +1655,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_portuguese">ポルトガル語</string>
     <string name="security_options_permission_fine_location_warning">Wolvicはおおよその位置情報のアクセスに限られています。この設定はシステム設定で変更できます。</string>
     <string name="deprecated_version_dialog_title">推奨アップデート</string>
-    <string name="deprecated_version_dialog_body">現在「App Lab」開発版のWolvicをご利用されています。
+    <string name="deprecated_version_dialog_body">現在「App Lab」開発版のWolvicをご利用されています。2023年10月の終わりまでに廃止される予定です。
 \n
-\nOculus Storeから最新版のWolvicをインストールしてください。
+\nMeta Quest Storeから最新版のWolvicをインストールしてください。
 \n
 \n重要：Firefox Syncを利用していない場合、最新版のWolvicにブックマークとタブは同期されません。</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>

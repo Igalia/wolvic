@@ -3,11 +3,12 @@
 
     <RelativeLayout
         android:layout_width="@dimen/prompt_dialog_width"
-        android:layout_height="@dimen/prompt_dialog_height"
+        android:layout_height="wrap_content"
         android:background="@drawable/dialog_background"
         android:paddingStart="20dp"
         android:paddingTop="@dimen/prompt_dialog_padding_top"
         android:paddingEnd="20dp"
+        android:minHeight="@dimen/prompt_dialog_height"
         android:paddingBottom="@dimen/prompt_dialog_padding_bottom">
 
         <FrameLayout
