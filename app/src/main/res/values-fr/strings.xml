@@ -1763,9 +1763,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_info_button">En savoir plus…</string>
     <string name="deprecated_version_dialog_store_button">Installer…</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
-    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic sera bientôt discontinuée.
+    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic sera discontinuée à la fin d\'octobre 2023.
 \n
-\nVeuillez installer la nouvelle version de Wolvic à partir de l’Oculus Store.
+\nVeuillez installer la nouvelle version de Wolvic à partir de la Meta Quest Store.
 \n
 \nIMPORTANT : hormis si vous utilisez Firefox Sync, la nouvelle application Wolvic n’aura ni vos marque-pages ni vos onglets.</string>
     <string name="rCN_first_launch_body">Bienvenue dans « Wolvic » !
