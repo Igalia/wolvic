@@ -81,8 +81,8 @@ struct WidgetMover::State {
   }
 
   WidgetPlacementPtr& HandleKeyboardMove(const vrb::Vector& aDelta) {
-    float x = initialPlacement->translation.x() * WidgetPlacement::kWorldDPIRatio;
-    float y = initialPlacement->translation.y() * WidgetPlacement::kWorldDPIRatio;
+    float x = initialPlacement->translation.x() * WidgetPlacement::kWorldDPIRatio + aDelta.x();
+    float y = initialPlacement->translation.y() * WidgetPlacement::kWorldDPIRatio + aDelta.y();
     const float windowZ = -initialPlacement->cylinderMapRadius; // Happen to be the negative number of the changing windowZ
     const float maxX = 4.0f; // Relative to 0.5f anchor point.
     const float minX = -maxX;
@@ -93,18 +93,14 @@ struct WidgetMover::State {
     const float minZ = -2.5f - windowZ;
     const float maxZ = -3.2f - windowZ;
     const float thresholdZ = 1.45f;
-    x += aDelta.x();
-    y += aDelta.y();
 
     float w, h;
     widget->GetWorldSize(w, h);
     const float dx = w * (anchorPoint.x() - 0.5f);
     const float dy = h * anchorPoint.y();
 
-    x = fmin(x, maxX + dx);
-    x = fmax(x, minX - dx);
-    y = fmin(y, maxY + dy);
-    y = fmax(y, minY + dy);
+    x = fmax(fmin(x, maxX + dx), minX - dx);
+    y = fmax(fmin(y, maxY + dy), minY - dy);
 
     movePlacement->translation.x() = x / WidgetPlacement::kWorldDPIRatio;
     movePlacement->translation.y() = y / WidgetPlacement::kWorldDPIRatio;
@@ -162,13 +158,28 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
     return m.HandleKeyboardMove(delta);
   } else {
     // General case
-    vrb::Matrix updatedTransform = m.initialTransform.Translate(vrb::Vector(delta.x(), delta.y(), 0.0f));
-    m.widget->SetTransform(updatedTransform);
-    m.endDelta.x() = delta.x() / WidgetPlacement::kWorldDPIRatio;
-    m.endDelta.y() = delta.y() / WidgetPlacement::kWorldDPIRatio;
-    m.endDelta.z() = 0.0f;
+    const float maxX = 1.5f;
+    const float minX = -maxX;
+    const float maxY = 3.0f;
+    const float minY = -maxY;
+    vrb::Vector translation = m.initialPlacement->translation;
+    float x = translation.x() * WidgetPlacement::kWorldDPIRatio + delta.x();
+    float y = translation.y() * WidgetPlacement::kWorldDPIRatio + delta.y();
+
+    float w, h;
+    m.widget->GetWorldSize(w, h);
+    const float dx = w * (m.anchorPoint.x() - 0.5f);
+    const float dy = h * m.anchorPoint.y();
+
+    x = fmax(fmin(x, maxX + dx), minX - dx);
+    y = fmax(fmin(y, maxY + dy), minY - dy);
+
+    m.movePlacement->translation.x() = x / WidgetPlacement::kWorldDPIRatio;
+    m.movePlacement->translation.y() = y / WidgetPlacement::kWorldDPIRatio;
+    m.endDelta = m.movePlacement->translation - translation;
     m.endRotation = 0.0f;
-    return nullptr;
+
+    return m.movePlacement;
   }
 }
 

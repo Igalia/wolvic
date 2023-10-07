@@ -136,6 +136,15 @@
         </RelativeLayout>
 
         <com.igalia.wolvic.ui.views.UIButton
+            android:id="@+id/moveButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="0"
+            android:src="@drawable/ic_icon_move"
+            android:tooltipText="@string/move_tooltip"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
+
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"

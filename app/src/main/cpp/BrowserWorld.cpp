@@ -1429,7 +1429,7 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
       continue;
     }
 
-    if (controller.pointer && controller.focused && controller.pointer->GetHitWidget() == widget) {
+    if (controller.pointer && controller.focused) {
       controllerIndex = controller.index;
       start = controller.StartPoint();
       direction = controller.Direction();
