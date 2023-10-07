@@ -744,7 +744,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Nullable
-    private WindowWidget getFrontWindow() {
+    public WindowWidget getFrontWindow() {
         return getFrontWindow(mPrivateMode);
     }
 
