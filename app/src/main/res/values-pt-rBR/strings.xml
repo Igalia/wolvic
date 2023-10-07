@@ -630,8 +630,8 @@
     <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Firefox para enviar guias do Firefox do computador ou dispositivo móvel para o seu fone de ouvido.</string>
     <string name="whats_new_button_start_browsing">Iniciar navegação</string>
     <string name="deprecated_version_dialog_title">Actualização necessária</string>
-    <string name="deprecated_version_dialog_body">Esta versão de desenvolvimento do Wolvic será descontinuada em breve.
-        \n\nPor favor, instale a última versão de Wolvic a partir da loja Oculus.
+    <string name="deprecated_version_dialog_body">Esta versão de desenvolvimento do Wolvic será descontinuada no final de outubro de 2023.
+        \n\nPor favor, instale a última versão de Wolvic a partir da Meta Quest Store.
         \n\nIMPORTANTE: a menos que utilize Firefox Sync, a nova aplicação Wolvic não terá os seus marcadores e páginas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Saber mais…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>

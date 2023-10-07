@@ -1742,12 +1742,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_saved_notification">¡Aplicación web añadida!</string>
     <string name="download_addon_install">Instalar complemento</string>
     <string name="settings_language_portuguese">Portugués</string>
-    <string name="deprecated_version_dialog_title">Actualización necesaria</string>
-    <string name="deprecated_version_dialog_body">Esta versión de desarrollo de Wolvic dejará de estar disponible en breve.
-\n
-\nPor favor, instala la versión más reciente de Wolvic desde Oculus Store.
-\n
-\nIMPORTANTE: a menos que utilices Firefox Sync, la nueva aplicación Wolvic no tendrá tus marcadores y pestañas.</string>
     <string name="deprecated_version_dialog_info_button">Más información…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="security_options_permission_fine_location_warning">Wolvic sólo puede obtener tu ubicación aproximada. Esto se puede cambiar en la configuración del sistema.</string>
