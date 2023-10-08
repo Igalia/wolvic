@@ -1658,7 +1658,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_blocked">Lokal tilläggsinstallation blockerad</string>
     <string name="security_options_permission_fine_location_warning">Wolvic kan bara få din ungefärliga plats. Detta kan ändras i systeminställningarna.</string>
     <string name="upload_list_empty">Inga filer tillgängliga för uppladdning</string>
-    <string name="deprecated_version_dialog_title">Rekommenderad uppdatering</string>
+    <string name="deprecated_version_dialog_title">Stöd upphör snart</string>
     <string name="deprecated_version_dialog_info_button">Läs mer…</string>
     <string name="deprecated_version_dialog_store_button">Installera…</string>
     <string name="settings_language_portuguese">Portugisiska</string>
