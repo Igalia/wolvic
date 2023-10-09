@@ -865,7 +865,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
-        if (mViewModel.getIsInVRVideo().getValue().get()) {
+        if (mViewModel.getIsInVRVideo().getValue().get() || aProjection == VIDEO_PROJECTION_NONE) {
             return;
         }
 
