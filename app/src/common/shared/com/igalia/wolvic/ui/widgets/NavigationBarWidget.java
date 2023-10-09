@@ -743,9 +743,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
         closeFloatingMenus();
         mWidgetManager.pushWorldBrightness(mBrightnessWidget, mBrightnessWidget.getSelectedBrightness());
-        // Disable curved window for 3D side by side video
-        mSavedCylinderDensity = mWidgetManager.getCylinderDensity();
-        mWidgetManager.setCylinderDensityForce(0.0f);
     }
 
     private void exitFullScreenMode() {
@@ -776,7 +773,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
-        mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
     }
 
     private void enterResizeMode() {
@@ -872,6 +868,14 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         if (mViewModel.getIsInVRVideo().getValue().get()) {
             return;
         }
+
+        // Remember the cylinder density before we enter VR video
+        mSavedCylinderDensity = mWidgetManager.getCylinderDensity();
+        // We have to disable curved display temporary if we are playing front facing VR videos
+        if (isFrontFacingVRProjection(aProjection)) {
+            mWidgetManager.setCylinderDensityForce(0.0f);
+        }
+
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
@@ -958,6 +962,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setAutoEnteredVRVideo(false);
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
+        mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
     }
