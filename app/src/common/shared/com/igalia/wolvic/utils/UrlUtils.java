@@ -171,6 +171,12 @@ public class UrlUtils {
         }
     }
 
+    public static final String ABOUT_HOME = "about://home";
+
+    public static boolean isHomeUrl(@Nullable String url) {
+        return url != null && url.equalsIgnoreCase(ABOUT_HOME);
+    }
+
     public static final String ABOUT_HISTORY = "about://history";
 
     public static boolean isHistoryUrl(@Nullable String url) {

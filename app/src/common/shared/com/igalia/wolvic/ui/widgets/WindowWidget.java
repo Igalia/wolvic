@@ -62,6 +62,7 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.ui.views.home.HomeView;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
@@ -125,6 +126,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private View mView;
     private Session mSession;
     private int mWindowId;
+    private HomeView mHome;
     private LibraryPanel mLibrary;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
@@ -204,6 +206,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mListeners = new CopyOnWriteArrayList<>();
         setupListeners(mSession);
+
+        mHome = new HomeView(aContext);
 
         mLibrary = new LibraryPanel(aContext);
 
@@ -485,6 +489,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public int getWindowHeight() {
         return mWidgetPlacement.height;
+    }
+
+    public void showHome() {
+        if (mHome == null) {
+            return;
+        }
+
+        if (mView == null) {
+            setView(mHome, true);
+            mViewModel.setIsFindInPage(false);
+            mViewModel.setIsPanelVisible(false);
+            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
+                onFirstContentfulPaint(mSession.getWSession());
+                mRestoreFirstPaint = () -> {
+                    setFirstPaintReady(false);
+                    setFirstDrawCallback(firstDrawCallback);
+                    if (mWidgetManager != null) {
+                        mWidgetManager.updateWidget(WindowWidget.this);
+                    }
+                };
+            }
+        }
     }
 
     public @Windows.PanelType
@@ -1878,7 +1905,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         Uri uri = Uri.parse(aRequest.uri);
         if (UrlUtils.isAboutPage(uri.toString())) {
-            if(UrlUtils.isBookmarksUrl(uri.toString())) {
+            if (UrlUtils.isHomeUrl(uri.toString())) {
+                showHome();
+            } else if(UrlUtils.isBookmarksUrl(uri.toString())) {
                 showPanel(Windows.BOOKMARKS);
 
             } else if (UrlUtils.isHistoryUrl(uri.toString())) {

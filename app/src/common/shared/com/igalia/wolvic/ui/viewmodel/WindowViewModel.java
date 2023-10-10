@@ -47,6 +47,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isInsecure;
     private MutableLiveData<ObservableBoolean> isActiveWindow;
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
+    private MutableLiveData<ObservableBoolean> isHomeVisible;
     private MutableLiveData<ObservableBoolean> isLibraryVisible;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
@@ -126,6 +127,8 @@ public class WindowViewModel extends AndroidViewModel {
         isTitleBarVisible.addSource(isOnlyWindow, mIsTitleBarVisibleObserver);
         isTitleBarVisible.setValue(new ObservableBoolean(true));
 
+        isHomeVisible = new MutableLiveData<>(new ObservableBoolean(false));
+
         isLibraryVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
@@ -149,6 +152,7 @@ public class WindowViewModel extends AndroidViewModel {
         isInsecureVisible = new MediatorLiveData<>();
         isInsecureVisible.addSource(isInsecure, mIsInsecureVisibleObserver);
         isInsecureVisible.addSource(isPrivateSession, mIsInsecureVisibleObserver);
+        isInsecureVisible.addSource(isHomeVisible, mIsInsecureVisibleObserver);
         isInsecureVisible.addSource(isLibraryVisible, mIsInsecureVisibleObserver);
         isInsecureVisible.setValue(new ObservableBoolean(false));
 
@@ -170,6 +174,7 @@ public class WindowViewModel extends AndroidViewModel {
         isUrlBarButtonsVisible.addSource(isDrmUsed, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isPopUpAvailable, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isWebXRUsed, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isHomeVisible, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isLibraryVisible, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isFocused, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.setValue(new ObservableBoolean(false));
@@ -226,9 +231,10 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isLibraryVisible.getValue().get()) {
+            if (isHomeVisible.getValue().get()) {
+                url = getApplication().getString(R.string.url_home_title);
+            } else if (isLibraryVisible.getValue().get()) {
                 url = getApplication().getString(R.string.url_library_title);
-
             } else {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
                         (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get())) {
@@ -258,6 +264,7 @@ public class WindowViewModel extends AndroidViewModel {
                         (UrlUtils.isDataUri(aUrl) && isPrivateSession.getValue().get()) ||
                         UrlUtils.isFileUri(aUrl) ||
                         UrlUtils.isHomeUri(getApplication(), aUrl) ||
+                        isHomeVisible.getValue().get() ||
                         isLibraryVisible.getValue().get() ||
                         UrlUtils.isBlankUri(getApplication(), aUrl)) {
                     isInsecureVisible.postValue(new ObservableBoolean(false));
@@ -295,6 +302,7 @@ public class WindowViewModel extends AndroidViewModel {
             String aUrl = url.getValue().toString();
             isUrlBarButtonsVisible.postValue(new ObservableBoolean(
                     !isFocused.getValue().get() &&
+                            !isHomeVisible.getValue().get() &&
                             !isLibraryVisible.getValue().get() &&
                             !UrlUtils.isContentFeed(getApplication(), aUrl) &&
                             !UrlUtils.isPrivateAboutPage(getApplication(), aUrl) &&
@@ -314,6 +322,7 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(ObservableBoolean o) {
             isUrlBarIconsVisible.postValue(new ObservableBoolean(
+                    !isHomeVisible.getValue().get() &&
                     !isLibraryVisible.getValue().get() &&
                             (isLoading.getValue().get() ||
                                     isInsecureVisible.getValue().get())
@@ -425,9 +434,10 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isLibraryVisible.getValue().get()) {
+        if (isHomeVisible.getValue().get()) {
+            return getApplication().getString(R.string.url_home_title);
+        } else if (isLibraryVisible.getValue().get()) {
             return getApplication().getString(R.string.url_library_title);
-
         } else {
             return getApplication().getString(R.string.search_placeholder);
         }
@@ -550,6 +560,16 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsActiveWindow(boolean isActiveWindow) {
         this.isActiveWindow.setValue(new ObservableBoolean(isActiveWindow));
+    }
+
+    public void setIsHomeVisible(boolean isHomeVisible) {
+        this.isHomeVisible.postValue(new ObservableBoolean(isHomeVisible));
+        this.url.postValue(this.getUrl().getValue());
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsHomeVisible() {
+        return isHomeVisible;
     }
 
     public void setIsLibraryVisible(boolean isLibraryVisible) {
