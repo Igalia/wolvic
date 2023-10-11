@@ -391,7 +391,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.translationX = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_x);
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_y) - WidgetPlacement.unitFromMeters(context, R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_z) - WidgetPlacement.unitFromMeters(context, R.dimen.window_world_z);
         aPlacement.rotationAxisX = 1.0f;
         aPlacement.rotation = (float)Math.toRadians(WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_rotation));
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
@@ -399,6 +398,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         // FIXME: keyboard is misplaced when rendered in a cylinder layer.
         aPlacement.cylinder = !((VRBrowserActivity) getContext()).areLayersEnabled();
         aPlacement.layerPriority = 1;
+        updatePlacementTranslationZ();
+    }
+
+    @Override
+    public void updatePlacementTranslationZ() {
+        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.keyboard_z) - WidgetPlacement.getWindowWorldZMeters(getContext());
     }
 
     @Override

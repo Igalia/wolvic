@@ -390,6 +390,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
     }
 
+    @Override
+    public void updatePlacementTranslationZ() {
+        // To be implemented by inheriting widgets
+    }
+
     public void updateWidget() {
         if (mWidgetManager != null) {
             mWidgetManager.updateWidget(this);

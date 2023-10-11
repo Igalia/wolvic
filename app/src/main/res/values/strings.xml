@@ -497,6 +497,10 @@
          and is used to customize if head lock should be enabled in the app. -->
     <string name="display_options_head_lock">Enable Head Lock</string>
 
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize the windows distance. -->
+    <string name="display_options_windows_distance">Windows Distance</string>
+
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
     <string name="developer_options_env_override">Enable Environment Override</string>
