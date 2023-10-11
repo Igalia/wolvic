@@ -406,6 +406,14 @@
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">有什麼新鮮事</string>
 
+    <!-- This string is the title of a dialog box shown to the user when
+         user wants the application to clear all user data. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_title">清除 %1$s 使用者資料</string>
+
+    <!-- This string is the text displayed in the clear user data dialog box explaining what
+         will happen. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_text">%1$s 將被重置。 如果未同步，所有資料（包括儲存的登入資訊、歷史記錄和書籤）都將被永久刪除。 重置完成後 %1$s 將自動關閉。 您想要繼續嗎？</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">需要重新啟動</string>
@@ -429,6 +437,10 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">啟用遠端除錯</string>
+
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we use passthrough mode when the app starts. -->
+    <string name="display_options_start_with_passthrough">啟動時使用直通模式</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -475,6 +487,10 @@
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">已快取的網頁內容</string>
+
+    <!-- The string labels the description text for the clear user data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_user_data_description">全部使用者資料</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">清除資料</string>
@@ -784,6 +800,10 @@
          blocking. -->
     <string name="security_options_block_pup_up_windows">封鎖彈出視窗</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables the use of
+         system root CA for certificate. -->
+    <string name="security_options_use_system_root_ca">使用系統受信任根證書</string>
+
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">進階</string>
@@ -833,6 +853,10 @@
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">您想在網路上搜尋何種內容？</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">您想輸入何種內容？</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -911,6 +935,9 @@
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D 子母畫面</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D 上下畫面</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
