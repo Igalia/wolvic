@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:gravity="start">
+                <TextView
+                    android:id="@+id/setting_description"
+                    android:textAlignment="textStart"
+                    android:paddingEnd="20dp"
+                    style="@style/settingsText"
+                    tools:text="Slider Setting Description" />
+
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/settings_help_button"
+                    android:visibility="gone"
+                    style="@style/settingsHelpButton" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/slider_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/settings_slider"
+                    style="@style/settingsSlider" />
+            </LinearLayout>
+    </LinearLayout>
+</merge>

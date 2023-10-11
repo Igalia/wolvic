@@ -70,8 +70,13 @@ public class TabsWidget extends UIDialog {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
                 WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
-                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
+        updatePlacementTranslationZ();
+    }
+
+    @Override
+    public void updatePlacementTranslationZ() {
+        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
+                WidgetPlacement.getWindowWorldZMeters(getContext());
     }
 
     private void initialize() {

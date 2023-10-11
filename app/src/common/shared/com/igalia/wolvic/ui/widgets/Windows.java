@@ -892,7 +892,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                     // center the window vertically relative to its default position
                     placement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - placement.height) / 2.0f;
                 }
-                placement.translationZ = WidgetPlacement.unitFromMeters(mContext, R.dimen.window_world_z);
+                placement.translationZ = WidgetPlacement.getWindowWorldZMeters(mContext);
                 break;
             case LEFT:
                 placement.anchorX = 1.0f;
@@ -1062,14 +1062,24 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    WindowWidget frontWindow = getFrontWindow();
+
                     if (Objects.equals(key, mContext.getString(R.string.settings_key_window_movement))) {
-                        WindowWidget frontWindow = getFrontWindow();
                         boolean isWindowMovementEnabled = sharedPreferences.getBoolean(key, SettingsStore.WINDOW_MOVEMENT_DEFAULT);
 
                         // Reset the position of the windows when the setting becomes disabled.
                         if (frontWindow != null && !isWindowMovementEnabled) {
                             placeWindow(frontWindow, WindowPlacement.FRONT);
                         }
+                        updateViews();
+                    }
+
+                    if (!Objects.equals(key, mContext.getString(R.string.settings_key_window_distance)))
+                        return;
+
+                    if (frontWindow != null) {
+                        frontWindow.getPlacement().translationZ = WidgetPlacement.getWindowWorldZMeters(mContext);
+                        mWidgetManager.updateWidgetsPlacementTranslationZ();
                         updateViews();
                     }
                 }

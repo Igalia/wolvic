@@ -500,8 +500,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.tray_world_width);
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.tray_world_y) -
                 WidgetPlacement.unitFromMeters(context, R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.tray_world_z) -
-                WidgetPlacement.unitFromMeters(context, R.dimen.window_world_z);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
         aPlacement.parentAnchorX = 0.5f;
@@ -510,6 +508,13 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         aPlacement.rotation = (float)Math.toRadians(-45);
         aPlacement.cylinder = false;
         aPlacement.textureScale *= aPlacement.worldWidth;
+        updatePlacementTranslationZ();
+    }
+
+    @Override
+    public void updatePlacementTranslationZ() {
+        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tray_world_z) -
+                WidgetPlacement.getWindowWorldZMeters(getContext());
     }
 
     @Override

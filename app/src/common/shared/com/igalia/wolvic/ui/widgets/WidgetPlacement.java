@@ -36,12 +36,13 @@ public class WidgetPlacement {
 
     private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
+        mConext = aContext;
         density = aContext.getResources().getDisplayMetrics().density;
-        // Default value
-        cylinderMapRadius = Math.abs(WidgetPlacement.floatDimension(aContext, R.dimen.window_world_z));
+        updateCylinderMapRadius();
         textureScale = SettingsStore.getInstance(aContext).getDisplayDpi() / 100.0f;
     }
 
+    private Context mConext;
     public float density;
     public int width;
     public int height;
@@ -122,6 +123,15 @@ public class WidgetPlacement {
         this.cylinderMapRadius = w.cylinderMapRadius;
     }
 
+    public void updateCylinderMapRadius() {
+        // We should check the context to make sure it's not null here to avoid crash
+        // when we adjust windows distance after we exit from fullscreen mode.
+        if (mConext != null) {
+            // Default value
+            cylinderMapRadius = Math.abs(getWindowWorldZ(mConext));
+        }
+    }
+
     public int textureWidth() {
         return (int) Math.ceil(width * density * textureScale);
     }
@@ -146,6 +156,19 @@ public class WidgetPlacement {
         int paddingV = aView.getPaddingTop() + aView.getPaddingBottom();
         width = (int)Math.ceil((aView.getMeasuredWidth() + paddingH)/density) + border * 2;
         height = (int)Math.ceil((aView.getMeasuredHeight() + paddingV)/density) + border * 2;
+    }
+
+    public static float getWindowWorldZ(Context aContext) {
+        float value = SettingsStore.getInstance(aContext).getWindowDistance();
+
+        // linear interpolation between min and max positions
+        float minDistance = floatDimension(aContext, R.dimen.window_world_z_min);
+        float maxDistance = floatDimension(aContext, R.dimen.window_world_z_max);
+        return minDistance + value * (maxDistance - minDistance);
+    }
+
+    public static float getWindowWorldZMeters(Context aContext) {
+        return unitFromMeters(getWindowWorldZ(aContext));
     }
 
     public static int pixelDimension(Context aContext, int aDimensionID) {
