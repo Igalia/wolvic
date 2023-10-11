@@ -77,7 +77,7 @@ struct WidgetMover::State {
   WidgetPlacementPtr& HandleKeyboardMove(const vrb::Vector& aDelta) {
     float x = initialPlacement->translation.x() * WidgetPlacement::kWorldDPIRatio + aDelta.x();
     float y = initialPlacement->translation.y() * WidgetPlacement::kWorldDPIRatio + aDelta.y();
-    const float windowZ = -4.2f; // Must match window_world_z in dimen.xml
+    const float windowZ = -initialPlacement->cylinderMapRadius; // Happen to be the negative number of the changing windowZ
     const float maxX = 4.0f; // Relative to 0.5f anchor point.
     const float minX = -maxX;
     const float maxY = 1.8f;  // Relative to 0.0f anchor point.

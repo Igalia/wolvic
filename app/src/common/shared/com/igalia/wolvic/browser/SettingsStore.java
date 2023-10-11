@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -83,6 +84,7 @@ public class SettingsStore {
     public final static boolean NOTIFICATIONS_DEFAULT = true;
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
+    public final static float WINDOW_DISTANCE_DEFAULT = 0.0f;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
 
@@ -388,6 +390,17 @@ public class SettingsStore {
     public void setPerformanceMonitorEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_performance_monitor), isEnabled);
+        editor.commit();
+    }
+
+    @FloatRange(from = 0, to = 1)
+    public float getWindowDistance() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_window_distance), WINDOW_DISTANCE_DEFAULT);
+    }
+
+    public void setWindowDistance(@FloatRange(from = 0, to = 1) float distance) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_window_distance), distance);
         editor.commit();
     }
 

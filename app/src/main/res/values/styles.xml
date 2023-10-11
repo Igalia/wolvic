@@ -335,6 +335,11 @@
         <item name="android:track">@drawable/switch_track</item>
     </style>
 
+    <style name="settingsSlider">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="checkbox">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>

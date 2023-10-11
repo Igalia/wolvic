@@ -355,6 +355,9 @@
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
     <string name="display_options_head_lock">头部锁定</string>
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize the windows distance. -->
+    <string name="display_options_windows_distance">窗口距离</string>
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
     <string name="developer_options_env_override">启用环境覆盖</string>
