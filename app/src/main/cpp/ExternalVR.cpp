@@ -508,8 +508,6 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
       continue;
     }
     mozilla::gfx::VRControllerState& immersiveController = m.system.controllerState[i];
-    memset(&immersiveController, 0, sizeof(immersiveController));
-
     memcpy(immersiveController.controllerName, controller.immersiveName.c_str(), controller.immersiveName.size() + 1);
     immersiveController.numButtons = controller.numButtons;
     immersiveController.buttonPressed = controller.immersivePressedState;
@@ -541,11 +539,11 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     }
 
     if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_GripSpacePosition)) {
-      vrb::Matrix immersiveBeamTransform;
-      if (controller.mode == ControllerMode::Device)
-        immersiveBeamTransform = controller.immersiveBeamTransform;
-      else
-        immersiveBeamTransform = controller.transformMatrix.PostMultiply(controller.immersiveBeamTransform);
+#ifdef OPENXR
+      auto immersiveBeamTransform = controller.immersiveBeamTransform;
+#else
+      auto immersiveBeamTransform = controller.transformMatrix.PostMultiply(controller.immersiveBeamTransform);
+#endif
       vrb::Vector position(immersiveBeamTransform.GetTranslation());
       vrb::Quaternion rotate(immersiveBeamTransform.AfineInverse());
       memcpy(&(immersiveController.pose.position), position.Data(), sizeof(immersiveController.pose.position));
