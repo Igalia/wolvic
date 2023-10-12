@@ -78,6 +78,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -454,6 +455,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     };
 
+    public MediaControlsWidget getMediaControlsWidget() {
+        return mMediaControlsWidget;
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -692,6 +697,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
             exitFullScreenMode();
         }
+    }
+
+    public boolean isInVRVideo() {
+        return Objects.requireNonNull(mViewModel.getIsInVRVideo().getValue()).get();
     }
 
     @Override
