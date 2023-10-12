@@ -1115,12 +1115,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (!isWidgetInputEnabled(widget)) {
                 return;
             }
-            if (widget != null) {
-                float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
-                MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
-            } else {
-                Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
+            if (widget == null) {
+                if (getNavigationBar().isInVRVideo()) {
+                    widget = getNavigationBar().getMediaControlsWidget();
+                } else {
+                    Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
+                    return;
+                }
             }
+            float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
+            MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
         });
     }
 

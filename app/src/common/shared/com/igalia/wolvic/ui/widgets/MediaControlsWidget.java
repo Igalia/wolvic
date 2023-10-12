@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -89,19 +90,9 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             mBinding.mediaPlayButton.requestFocusFromTouch();
         });
 
-        mBinding.mediaSeekBackwardButton.setOnClickListener(v -> {
-            mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
-            mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
-        });
+        mBinding.mediaSeekBackwardButton.setOnClickListener(v -> seekBackward());
 
-        mBinding.mediaSeekForwardButton.setOnClickListener(v -> {
-            double t = mMedia.getCurrentTime() + 30;
-            if (mMedia.getDuration() > 0) {
-                t = Math.min(mMedia.getDuration(), t);
-            }
-            mMedia.seek(t);
-            mBinding.mediaSeekForwardButton.requestFocusFromTouch();
-        });
+        mBinding.mediaSeekForwardButton.setOnClickListener(v -> seekForward());
 
         mBinding.mediaProjectionButton.setOnClickListener(v -> {
             WidgetPlacement placement = mProjectionMenu.getPlacement();
@@ -265,6 +256,36 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             }
             return false;
         });
+    }
+
+    private void seekForward() {
+        double t = mMedia.getCurrentTime() + 30;
+        if (mMedia.getDuration() > 0) {
+            t = Math.min(mMedia.getDuration(), t);
+        }
+        mMedia.seek(t);
+        mBinding.mediaSeekForwardButton.requestFocusFromTouch();
+    }
+
+    private void seekBackward() {
+        mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
+        mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
+    }
+
+    @Override
+    public void handleHoverEvent(MotionEvent aEvent) {
+        if (aEvent.getAction() == MotionEvent.ACTION_SCROLL) {
+            setVisible(true);
+
+            final float aX = aEvent.getAxisValue(MotionEvent.AXIS_HSCROLL);
+            final float aY = aEvent.getAxisValue(MotionEvent.AXIS_VSCROLL);
+
+            if (aX > 0) {
+                seekForward();
+            } else {
+                seekBackward();
+            }
+        }
     }
 
     @Override

@@ -256,6 +256,7 @@ struct BrowserWorld::State {
   void UpdateControllers(bool& aRelayoutWidgets);
   void SimulateBack();
   void ClearWebXRControllerData();
+  void HandleControllerScroll(Controller& controller, int handle);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
   bool IsParent(const Widget& aChild, const Widget& aParent) const;
@@ -612,19 +613,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointerY = theY;
         VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(controller.focused), jboolean(pressed), controller.pointerX, controller.pointerY);
       }
-      if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
-        if (controller.scrollStart < 0.0) {
-          controller.scrollStart = context->GetTimestamp();
-        }
-        const double ctime = context->GetTimestamp();
-        VRBrowser::HandleScrollEvent(controller.widget, controller.index,
-                            ScaleScrollDelta(controller.scrollDeltaX, controller.scrollStart, ctime),
-                            ScaleScrollDelta(controller.scrollDeltaY, controller.scrollStart, ctime));
-        controller.scrollDeltaX = 0.0f;
-        controller.scrollDeltaY = 0.0f;
-      } else {
-        controller.scrollStart = -1.0;
-      }
+      HandleControllerScroll(controller, controller.widget);
       if (!pressed) {
         if (controller.touched) {
           if (!controller.wasTouched) {
@@ -649,6 +638,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     } else if (wasPressed != pressed) {
       VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
     } else if (vrVideo != nullptr) {
+      HandleControllerScroll(controller, -1);
       const bool togglePressed = controller.buttonState & ControllerDelegate::BUTTON_X ||
                                  controller.buttonState & ControllerDelegate::BUTTON_A;
       const bool toggleWasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_X ||
@@ -677,6 +667,23 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         VRBrowser::HandleGesture(javaType);
       }
     }
+  }
+}
+
+void
+BrowserWorld::State::HandleControllerScroll(Controller& controller, int handle) {
+  if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
+    if (controller.scrollStart < 0.0) {
+      controller.scrollStart = context->GetTimestamp();
+    }
+    const double ctime = context->GetTimestamp();
+    VRBrowser::HandleScrollEvent(handle, controller.index,
+                                 ScaleScrollDelta(controller.scrollDeltaX, controller.scrollStart, ctime),
+                                 ScaleScrollDelta(controller.scrollDeltaY, controller.scrollStart, ctime));
+    controller.scrollDeltaX = 0.0f;
+    controller.scrollDeltaY = 0.0f;
+  } else {
+    controller.scrollStart = -1.0;
   }
 }
 
