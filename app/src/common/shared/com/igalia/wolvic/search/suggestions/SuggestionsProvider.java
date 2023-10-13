@@ -14,10 +14,13 @@ import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class SuggestionsProvider {
 
@@ -180,11 +183,38 @@ public class SuggestionsProvider {
         return future;
     }
 
+    private CompletableFuture<List<SuggestionItem>> removeDuplicatedItems(@NonNull final List<SuggestionItem> items) {
+        CompletableFuture<List<SuggestionItem>> future = new CompletableFuture<>();
+
+        // Create a HashSet to store unique URLs
+        Set<String> urls = new HashSet<>();
+
+        // Sort before we remove duplication so that only those duplicated results
+        // that appear at the bottom of the list will get removed
+        if (mComparator != null) {
+            items.sort(mComparator);
+        }
+
+        // Filter out duplicate items based on the URL
+        List<SuggestionItem> uniqueItems = items.stream().filter(item -> {
+            if (urls.contains(item.url)) {
+                return false;
+            }
+            urls.add(item.url);
+            return true;
+        }).collect(Collectors.toList());
+
+        future.complete(uniqueItems);
+
+        return future;
+    }
+
     public CompletableFuture<List<SuggestionItem>> getSuggestions() {
         return CompletableFuture.supplyAsync((Supplier<ArrayList<SuggestionItem>>) ArrayList::new)
                 .thenComposeAsync(this::getSearchEngineSuggestions)
                 .thenComposeAsync(this::getBookmarkSuggestions)
-                .thenComposeAsync(this::getHistorySuggestions);
+                .thenComposeAsync(this::getHistorySuggestions)
+                .thenComposeAsync(this::removeDuplicatedItems);
     }
 
 }
