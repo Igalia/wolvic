@@ -2,7 +2,6 @@
 <resources>
     <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
     https://github.com/Igalia/wolvic/wiki/Localization -->
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">EINGABE</string>
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
@@ -304,7 +303,6 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Hilfe</string>
-
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Senden Sie uns Ihr Feedback</string>
@@ -1395,7 +1393,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the find in page option -->
     <string name="hamburger_menu_find_in_page">Auf Seite suchen</string>
-
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">Add-ons</string>
@@ -1630,4 +1627,58 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_loading">Benachrichtigungen werden geladen</string>
     <string name="settings_language_galician">Galizisch</string>
     <string name="external_open_uri_error_title">Fehler beim Öffnen einer externen Anwendung</string>
+    <string name="web_apps_loading">Lade Web Apps</string>
+    <string name="upload_button">Hochladen</string>
+    <string name="keyboardview_keycode_shift">Umschalttaste</string>
+    <string name="developer_options_clear_user_data_description">Alle Benutzerdaten</string>
+    <string name="privacy_dialog_message">Ihre Privatsphäre ist uns wichtig. Um den Browser nutzen zu können, akzeptieren Sie bitte unsere Nutzungsbedingungen und Datenschutzrichtlinien. Vielen Dank für die Nutzung von Wolvic!</string>
+    <string name="rCN_first_launch_confirmation_disagree">Ablehnen und Beenden</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="security_options_use_system_root_ca">Nutze vom System vertraute Root-Zertifikate</string>
+    <string name="terms_service_title">Nutzungsbedingungen</string>
+    <string name="web_apps_empty">Deine Web Apps Liste ist leer</string>
+    <string name="terms_service_subtitle_2">Wolvic web-basierte Informationsdienste</string>
+    <string name="deprecated_version_dialog_store_button">Installiere…</string>
+    <string name="web_apps_dialog_install">Installieren</string>
+    <string name="download_addon_install_cancel">Abbrechen</string>
+    <string name="web_apps_saved_notification">Web App hinzugefügt!</string>
+    <string name="addons_experimental_section_title">Experimentell</string>
+    <string name="keyboardview_keycode_cancel">Abbrechen</string>
+    <string name="privacy_policy_title">Allgemeine Datenschutzbestimmungen</string>
+    <string name="privacy_policy_subtitle_2">Datenschutz</string>
+    <string name="privacy_dialog_agree">Zustimmen</string>
+    <string name="deprecated_version_dialog_title">Support endet bald</string>
+    <string name="rCN_first_launch_agree">Zustimmen</string>
+    <string name="download_addon_install">Erweiterung installieren</string>
+    <string name="privacy_policy_subtitle_1">Allgemeine Informationen</string>
+    <string name="user_feedback_tooltip">Teile Ideen und Feedback</string>
+    <string name="deprecated_version_dialog_info_button">Erfahre mehr…</string>
+    <string name="hvr_connect_glass_message">Verbinden Sie Ihre HUAWEI VR Glass, um diese App zu nutzen</string>
+    <string name="web_apps_dialog_title_parameter">%1$s installieren</string>
+    <string name="settings_language_portuguese">Portugiesisch</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="rCN_first_launch_confirmation_agree">Zustimmen und Fortfahren</string>
+    <string name="keyboardview_keycode_delete">Entfernen</string>
+    <string name="privacy_dialog_disagree">Wolvic schließen</string>
+    <string name="voice_service_huawei_asr">Huawei automatische Spracherkennung</string>
+    <string name="clear_user_data_dialog_title">Lösche %1$s Nutzerdaten</string>
+    <string name="deprecated_version_dialog_body">Diese \"App Lab\" version von Wolvic wird bald entfernt.
+\n
+\nBitte installieren Sie die neueste Version von Wolvic aus dem Meta Store.
+\n
+\nWICHTIG: Lesezeichen und Tabs werden nur durch Sync übertragen.</string>
+    <string name="web_apps_title">Web Apps</string>
+    <string name="clear_user_data_dialog_text">%1$s wird zurückgesezt. Alle Daten, inklusive gespeicherter Anmeldungen, Historie und Lesezeichen, werden permantent gelöscht sein, sofern diese nicht synchronisiert sind. %1$s wird automatisch nach Abschluss des Zurücksetzens geschlossen. Möchten Sie fortfahren\?</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic kann nur deinen ungefähren Standort ermitteln. Dies kann in den Systemeinstellungen geändert werden.</string>
+    <string name="privacy_policy_subtitle_3">Anwendbares Recht und Originalsprache</string>
+    <string name="upload_list_empty">Keine Dateien zum Hochladen verfügbar</string>
+    <string name="rCN_first_launch_disagree">Ablehnen</string>
+    <string name="web_apps_dialog_cancel">Abbrechen</string>
+    <string name="privacy_dialog_title">Privatsphäre</string>
+    <string name="hamburger_menu_save_web_app">Speichere Web app…</string>
+    <string name="web_apps_dialog_title">Web App installieren</string>
+    <string name="tray_wifi_unavailable_ssid">SSID nicht verfügbar</string>
+    <string name="download_addon_install_confirm_install">Installieren</string>
+    <string name="voice_input_start">Was würdest du gerne eingeben\?</string>
 </resources>
