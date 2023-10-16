@@ -90,6 +90,9 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         } else if (deviceType == DeviceType.MetaQuestPro) {
             addController(DeviceType.MetaQuestPro, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.MetaQuestPro, WebXRInterstitialController.HAND_RIGHT);
+        } else if (deviceType == DeviceType.MetaQuest3) {
+            addController(DeviceType.MetaQuest3, WebXRInterstitialController.HAND_LEFT);
+            addController(DeviceType.MetaQuest3, WebXRInterstitialController.HAND_RIGHT);
         } else if (deviceType == DeviceType.OculusQuest || deviceType == DeviceType.OculusQuest2) {
             addController(DeviceType.OculusQuest, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.OculusQuest, WebXRInterstitialController.HAND_RIGHT);
