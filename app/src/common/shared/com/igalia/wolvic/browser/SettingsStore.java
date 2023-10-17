@@ -95,7 +95,7 @@ public class SettingsStore {
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
-    public final static boolean AUDIO_ENABLED = false;
+    public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
