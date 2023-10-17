@@ -558,6 +558,25 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     immersiveController.selectActionStopFrameId = controller.selectActionStopFrameId;
     immersiveController.squeezeActionStartFrameId = controller.squeezeActionStartFrameId;
     immersiveController.squeezeActionStopFrameId = controller.squeezeActionStopFrameId;
+
+#if CHROMIUM
+    // WebXR hand-tracking support
+    if (controller.mode == ControllerMode::Hand) {
+      immersiveController.hasHandTrackingData = true;
+
+      // While XR_EXT_hand_tracking extension specifies 26 joints, WebXR Hand input defines only
+      // 25, being the palm joint the one omitted.
+      // See https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#convention-of-hand-joints
+      // vs. https://www.w3.org/TR/webxr-hand-input-1/#skeleton-joints-section.
+      // Since the palm joint is at index zero, we pass joints from 1 to 25 (omitting the palm).
+      assert(controller.handJointTransforms.size() == mozilla::gfx::kHandTrackingNumJoints + 1);
+      for (int j = 0; j < mozilla::gfx::kHandTrackingNumJoints; j++) {
+        memcpy(&immersiveController.handTrackingData.handJointData[j].transform,
+               &controller.handJointTransforms[j + 1], sizeof(vrb::Matrix));
+        immersiveController.handTrackingData.handJointData[j].radius = controller.handJointRadii[j + 1];
+      }
+    }
+#endif
   }
 
   m.system.sensorState.timestamp = aTimestamp;
