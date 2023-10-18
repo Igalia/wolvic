@@ -1099,14 +1099,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             final float y = aY / scale;
 
             if (widget == null) {
-                MotionEventGenerator.dispatch(mRootWidget, aDevice, aFocused, aPressed, x, y);
+                MotionEventGenerator.dispatch(this, mRootWidget, aDevice, aFocused, aPressed, x, y);
 
             } else if (widget.getBorderWidth() > 0) {
                 final int border = widget.getBorderWidth();
-                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x - border, y - border);
+                MotionEventGenerator.dispatch(this, widget, aDevice, aFocused, aPressed, x - border, y - border);
 
             } else {
-                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x, y);
+                MotionEventGenerator.dispatch(this, widget, aDevice, aFocused, aPressed, x, y);
             }
         });
     }
