@@ -12,6 +12,7 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 
 import com.igalia.wolvic.ui.widgets.Widget;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.Arrays;
@@ -86,7 +87,7 @@ public class MotionEventGenerator {
         event.recycle();
     }
 
-    public static void dispatch(Widget aWidget, int aDevice, boolean aFocused, boolean aPressed, float aX, float aY) {
+    public static void dispatch(WidgetManagerDelegate widgetManager, Widget aWidget, int aDevice, boolean aFocused, boolean aPressed, float aX, float aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
             device = new Device(aDevice);
@@ -119,6 +120,7 @@ public class MotionEventGenerator {
         }
         if (aWidget != device.mPreviousWidget && !aPressed) {
             generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
+            widgetManager.triggerHapticFeedback();
             device.mHoverStartWidget = aWidget;
         }
         if (aPressed && !device.mWasPressed) {
@@ -140,6 +142,7 @@ public class MotionEventGenerator {
             if (!isOtherDeviceDown(device.mDevice)) {
                 generateEvent(device.mTouchStartWidget, device, aFocused, MotionEvent.ACTION_UP, false);
                 generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
+                widgetManager.triggerHapticFeedback();
                 device.mHoverStartWidget = aWidget;
             }
             device.mTouchStartWidget = null;
