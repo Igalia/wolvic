@@ -14,6 +14,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsControllerBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
+import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 
 class ControllerOptionsView extends SettingsView {
@@ -53,6 +54,9 @@ class ControllerOptionsView extends SettingsView {
         int scrollDirection = SettingsStore.getInstance(getContext()).getScrollDirection();
         mBinding.scrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
         setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(scrollDirection), false);
+
+        mBinding.hapticFeedbackSwitch.setOnCheckedChangeListener(mHapticFeedbackListener);
+        setHapticFeedbackEnabled(SettingsStore.getInstance(getContext()).isHapticFeedbackEnabled(), false);
     }
 
     private void resetOptions() {
@@ -62,6 +66,7 @@ class ControllerOptionsView extends SettingsView {
         if (!mBinding.scrollDirectionRadio.getValueForId(mBinding.scrollDirectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.SCROLL_DIRECTION_DEFAULT)) {
             setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(SettingsStore.SCROLL_DIRECTION_DEFAULT), true);
         }
+        setHapticFeedbackEnabled(SettingsStore.HAPTIC_FEEDBACK_ENABLED, true);
     }
 
     private void setPointerColor(int checkedId, boolean doApply) {
@@ -85,6 +90,16 @@ class ControllerOptionsView extends SettingsView {
         }
     }
 
+    private void setHapticFeedbackEnabled(boolean value, boolean doApply) {
+        mBinding.hapticFeedbackSwitch.setOnCheckedChangeListener(null);
+        mBinding.hapticFeedbackSwitch.setValue(value, false);
+        mBinding.hapticFeedbackSwitch.setOnCheckedChangeListener(mHapticFeedbackListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setHapticFeedbackEnabled(value);
+        }
+    }
+
     private RadioGroupSetting.OnCheckedChangeListener mPointerColorListener = (radioGroup, checkedId, doApply) -> {
         setPointerColor(checkedId, doApply);
     };
@@ -92,6 +107,9 @@ class ControllerOptionsView extends SettingsView {
     private RadioGroupSetting.OnCheckedChangeListener mScrollDirectionListener = (radioGroup, checkedId, doApply) -> {
         setScrollDirection(checkedId, doApply);
     };
+
+    private SwitchSetting.OnCheckedChangeListener mHapticFeedbackListener = (compoundButton, enabled, apply) ->
+    setHapticFeedbackEnabled(enabled, true);
 
     @Override
     protected SettingViewType getType() {

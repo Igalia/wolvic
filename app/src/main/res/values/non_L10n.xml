@@ -33,6 +33,9 @@
     <string name="settings_key_display_language" translatable="false">settings_display_language</string>
     <string name="settings_key_content_languages" translatable="false">settings_content_languages</string>
     <string name="settings_key_cylinder_density" translatable="false">settings_cylinder_density</string>
+    <string name="settings_key_haptic_pulse_duration" translatable="false">settings_haptic_pulse_duration</string>
+    <string name="settings_key_haptic_pulse_intensity" translatable="false">settings_haptic_pulse_intensity</string>
+    <string name="settings_key_haptic_feedback_enabled" translatable="false">settings_haptic_feedback_enabled</string>
     <string name="settings_key_keyboard_locale" translatable="false">settings_key_keyboard_locale</string>
     <string name="settings_key_crash_restart_count" translatable="false">settings_key_crash_restart_count</string>
     <string name="settings_key_crash_restart_count_timestamp" translatable="false">settings_key_crash_restart_count_timestamp</string>

@@ -250,6 +250,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         @Override
         public void onGlobalFocusChanged(View oldFocus, View newFocus) {
             Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
+            triggerHapticFeedback();
             for (FocusChangeListener listener: mFocusChangeListeners) {
                 listener.onGlobalFocusChanged(oldFocus, newFocus);
             }
@@ -1826,6 +1827,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void triggerHapticFeedback() {
+        SettingsStore settings = SettingsStore.getInstance(this);
+        if (settings.isHapticFeedbackEnabled()) {
+            queueRunnable(() -> triggerHapticFeedbackNative(settings.getHapticPulseDuration(), settings.getHapticPulseIntensity()));
+        }
+    }
+
+    @Override
     public void setControllersVisible(final boolean aVisible) {
         queueRunnable(() -> setControllersVisibleNative(aVisible));
     }
@@ -2029,6 +2038,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void startWidgetMoveNative(int aHandle, int aMoveBehaviour);
     private native void finishWidgetMoveNative();
     private native void setWorldBrightnessNative(float aBrightness);
+    private native void triggerHapticFeedbackNative(float aPulseDuration, float aPulseIntensity);
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
