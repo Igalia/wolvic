@@ -77,6 +77,7 @@ public interface WidgetManagerDelegate {
     void pushWorldBrightness(Object aKey, float aBrightness);
     void setWorldBrightness(Object aKey, float aBrightness);
     void popWorldBrightness(Object aKey);
+    void triggerHapticFeedback();
     void setControllersVisible(boolean visible);
     void setWindowSize(float targetWidth, float targetHeight);
     void keyboardDismissed();

@@ -40,6 +40,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/haptic_feedback_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/controller_options_haptic_feedback" />
+
                 <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/pointer_color_radio"
                     android:layout_width="match_parent"

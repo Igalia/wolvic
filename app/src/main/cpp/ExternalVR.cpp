@@ -630,10 +630,6 @@ ExternalVR::SetHapticState(ControllerContainerPtr aControllerContainer) const {
         break;
       }
     }
-    // All hapticState has already been reset to zero, so it can't be match.
-    if (j == mozilla::gfx::kVRHapticsMaxCount) {
-      aControllerContainer->SetHapticFeedback(i, 0, 0.0f, 0.0f);
-    }
   }
 }
 

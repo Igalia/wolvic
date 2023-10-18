@@ -97,6 +97,9 @@ public class SettingsStore {
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
+    public final static float HAPTIC_PULSE_DURATION_DEFAULT = 10.0f;
+    public final static float HAPTIC_PULSE_INTENSITY_DEFAULT = 1.0f;
+    public final static boolean HAPTIC_FEEDBACK_ENABLED = false;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = BuildConfig.DEBUG;
@@ -592,6 +595,36 @@ public class SettingsStore {
 
     public boolean isCurvedModeEnabled() {
         return getCylinderDensity() > 0;
+    }
+
+    public float getHapticPulseDuration() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_haptic_pulse_duration), HAPTIC_PULSE_DURATION_DEFAULT);
+    }
+
+    public void setHapticPulseDuration(float aPulseDuration) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_duration), aPulseDuration);
+        editor.commit();
+    }
+
+    public float getHapticPulseIntensity() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_haptic_pulse_intensity), HAPTIC_PULSE_INTENSITY_DEFAULT);
+    }
+
+    public void setHapticPulseIntensity(float aPulseIntensity) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_intensity), aPulseIntensity);
+        editor.commit();
+    }
+
+    public void setHapticFeedbackEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isHapticFeedbackEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), HAPTIC_FEEDBACK_ENABLED);
     }
 
     public void setSelectedKeyboard(Locale aLocale) {
