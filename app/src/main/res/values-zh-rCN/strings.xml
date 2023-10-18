@@ -468,6 +468,9 @@
          "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
          motion of user input. -->
     <string name="developer_options_scroll_direction_reversed">反向</string>
+    <!-- This string is used to label the switch that allow the user to enable/disable
+         haptic feedback of the remote controller. -->
+    <string name="controller_options_haptic_feedback">触觉反馈</string>
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">重置开发者设置</string>

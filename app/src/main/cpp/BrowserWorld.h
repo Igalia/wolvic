@@ -47,6 +47,7 @@ public:
   void StartFrame();
   void Draw(device::Eye aEye);
   void EndFrame();
+  void TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity);
   void TogglePassthrough();
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
