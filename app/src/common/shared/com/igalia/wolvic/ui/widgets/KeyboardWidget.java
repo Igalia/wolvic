@@ -469,8 +469,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mInputConnection = null;
         }
 
-        boolean showKeyboard = mInputConnection != null;
+        boolean showKeyboard = mInputConnection != null && !VRBrowserActivity.mHideVisuals;
         boolean keyboardIsVisible = this.getVisibility() == View.VISIBLE;
+
         if (showKeyboard != keyboardIsVisible) {
             if (showKeyboard) {
                 mWidgetManager.pushBackHandler(mBackHandler);

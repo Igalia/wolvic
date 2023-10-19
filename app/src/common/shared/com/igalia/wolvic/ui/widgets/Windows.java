@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.HistoryStore;
@@ -26,6 +27,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.downloads.DownloadsManager;
+import com.igalia.wolvic.skillsvr.utils.Logging;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
@@ -319,6 +321,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         // We are only interested in general windows opened.
         if (!isInPrivateMode()) {
             TelemetryService.newWindowOpenEvent();
+        }
+
+        if(VRBrowserActivity.mHideVisuals)
+        {
+            newWindow.setVisible(false);
         }
         return newWindow;
     }
@@ -1282,7 +1289,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             placeWindow(aWindow, WindowPlacement.FRONT, fullscreenCurved);
             focusWindow(aWindow);
             for (WindowWidget win: getCurrentWindows()) {
-                setWindowVisible(win, win == mFullscreenWindow);
+                if(!VRBrowserActivity.mHideVisuals) {
+                    setWindowVisible(win, win == mFullscreenWindow);
+                }
             }
             updateMaxWindowScales();
             updateViews();
@@ -1290,7 +1299,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             aWindow.restoreBeforeFullscreenPlacement();
             mFullscreenWindow = null;
             for (WindowWidget win : getCurrentWindows()) {
-                setWindowVisible(win, true);
+                if(!VRBrowserActivity.mHideVisuals) {
+                    setWindowVisible(win, true);
+                }
             }
             updateMaxWindowScales();
             updateViews();

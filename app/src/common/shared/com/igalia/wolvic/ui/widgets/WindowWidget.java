@@ -927,6 +927,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void setIsFullScreen(boolean isFullScreen) {
         if (mViewModel.getIsFullscreen().getValue().get() != isFullScreen) {
             mViewModel.setIsFullscreen(isFullScreen);
+            if(VRBrowserActivity.mHideVisuals) {
+                mViewModel.setIsWindowVisible(false);
+            }
             for (WindowListener listener: mListeners) {
                 listener.onFullScreen(this, isFullScreen);
             }

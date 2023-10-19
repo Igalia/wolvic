@@ -1,6 +1,9 @@
 package com.igalia.wolvic.ui.widgets;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.view.LayoutInflater;
 
@@ -10,6 +13,7 @@ import com.igalia.wolvic.PlatformActivity;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.WebxrInterstitialBinding;
+import com.igalia.wolvic.skillsvr.utils.Logging;
 import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.ViewUtils;
 
@@ -57,7 +61,6 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
 
         mSpinnerAnimation = (AnimatedVectorDrawable) mBinding.webxrSpinner.getDrawable();
         mWidgetManager.addWebXRListener(this);
-
     }
 
     private void setHowToVisible(boolean aShow) {
@@ -150,16 +153,19 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
     @Override
     public void onEnterWebXR() {
         startAnimation();
+        if (mWidgetManager != null && !mWidgetManager.isWebXRIntersitialHidden()) {
+            setHowToVisible(false);
+        }
         if (firstEnterXR) {
             firstEnterXR = false;
-            showControllers();
+            //showControllers();
             // Add some delay to duplicated input detection conflicts with the EnterVR button.
-            postDelayed(() -> {
-                if (mWidgetManager != null && !mWidgetManager.isWebXRIntersitialHidden()) {
-                    mWidgetManager.setWebXRIntersitialState(WidgetManagerDelegate.WEBXR_INTERSTITIAL_ALLOW_DISMISS);
-                }
-            }, 50);
-        }
+                postDelayed(() -> {
+                    if (mWidgetManager != null && !mWidgetManager.isWebXRIntersitialHidden()) {
+                        mWidgetManager.setWebXRIntersitialState(WidgetManagerDelegate.WEBXR_INTERSTITIAL_ALLOW_DISMISS);
+                    }
+                }, 50);
+            }
         show(KEEP_FOCUS);
     }
 
