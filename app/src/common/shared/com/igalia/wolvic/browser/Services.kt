@@ -8,6 +8,7 @@ package com.igalia.wolvic.browser
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.igalia.wolvic.BuildConfig
 import com.igalia.wolvic.R
@@ -92,8 +93,8 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
         serverConfig = serverConfig,
         deviceConfig = DeviceConfig(
             // This is a default name, and can be changed once user is logged in.
-            // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceNameAsync("new name")
-            name = "${context.getString(R.string.app_name)} on ${Build.MANUFACTURER} ${Build.MODEL}",
+            // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceName("new name", context)
+            name = com.igalia.wolvic.utils.DeviceType.getDeviceName(context),
             type = DeviceType.VR,
             capabilities = setOf(DeviceCapability.SEND_TAB)
         ),

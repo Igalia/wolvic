@@ -1704,6 +1704,9 @@
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="homepage_hint">%1$s Home (Default)</string>
 
+    <!-- This string is displayed in mozilla account's device name.
+         '%1$s' will be replaced at runtime with the app's name while '%2$s' will be replaced with the actual device name. -->
+    <string name="device_name">%1$s on %2$s</string>
 
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">Authentication Required</string>

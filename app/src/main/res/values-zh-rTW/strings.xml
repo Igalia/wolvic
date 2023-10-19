@@ -1702,7 +1702,9 @@
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="homepage_hint">%1$s 首頁（預設值）</string>
-
+    <!-- This string is displayed in mozilla account's device name.
+         '%1$s' will be replaced at runtime with the app's name while '%2$s' will be replaced with the actual device name. -->
+    <string name="device_name">%2$s 上的 %1$s</string>
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">需要驗證</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
