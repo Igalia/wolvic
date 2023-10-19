@@ -1,9 +1,13 @@
 package com.igalia.wolvic.utils;
 
+import android.content.Context;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
 
+import com.igalia.wolvic.R;
 import com.igalia.wolvic.BuildConfig;
 
 public class DeviceType {
@@ -30,60 +34,60 @@ public class DeviceType {
     public static final int MetaQuest3 = 18;
 
     private static @Type int mType = Unknown;
+    private static String mDeviceName = "Unknown Device";
 
     public static void setType(@Type int aType) {
-        String name;
         switch (aType) {
             case OculusGo:
-                name = "Oculus Go";
+                mDeviceName = "Oculus Go";
                 break;
             case OculusQuest:
-                name = "Oculus Quest";
+                mDeviceName = "Oculus Quest";
                 break;
             case OculusQuest2:
-                name = "Oculus Quest 2";
+                mDeviceName = "Oculus Quest 2";
                 break;
             case MetaQuestPro:
-                name = "Meta Quest Pro";
+                mDeviceName = "Meta Quest Pro";
                 break;
             case ViveFocus:
-                name = "Vive Focus";
+                mDeviceName = "Vive Focus";
                 break;
             case ViveFocusPlus:
-                name = "Vive Focus Plus";
+                mDeviceName = "Vive Focus Plus";
                 break;
             case PicoNeo2:
-                name = "Pico Neo 2";
+                mDeviceName = "Pico Neo 2";
                 break;
             case PicoNeo3:
-                name = "Pico Neo 3";
+                mDeviceName = "Pico Neo 3";
                 break;
             case PicoG2:
-                name = "Pico G2";
+                mDeviceName = "Pico G2";
                 break;
             case PicoXR:
-                name = "Pico XR";
+                mDeviceName = "Pico XR";
                 break;
             case LynxR1:
-                name = "Lynx-R1";
+                mDeviceName = "Lynx-R1";
                 break;
             case LenovoA3:
-                name = "Lenovo A3";
+                mDeviceName = "Lenovo A3";
                 break;
             case LenovoVRX:
-                name = "Lenovo VRX";
+                mDeviceName = "Lenovo VRX";
                 break;
             case MagicLeap2:
-                name = "Magic Leap 2";
+                mDeviceName = "Magic Leap 2";
                 break;
             case MetaQuest3:
-                name = "Meta Quest 3";
+                mDeviceName = "Meta Quest 3";
                 break;
             default:
-                name = "Unknown Type";
+                mDeviceName = "Unknown Device";
                 break;
         }
-        Log.d("VRB", "Setting device type to: " + name);
+        Log.d("VRB", "Setting device type to: " + mDeviceName);
         mType = aType;
     }
     public static @Type int getType() {
@@ -145,5 +149,14 @@ public class DeviceType {
             return StoreType.META_APP_LAB;
         else
             return StoreType.NONE;
+    }
+
+    public static String getDeviceName(Context aContext) {
+        String appName = aContext.getString(R.string.app_name);
+        String deviceName = mDeviceName;
+        if (mType == DeviceType.Unknown) {
+            deviceName = Build.MANUFACTURER + " " + Build.MODEL;
+        }
+        return aContext.getString(R.string.device_name, appName, deviceName);
     }
 }
