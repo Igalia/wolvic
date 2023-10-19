@@ -72,6 +72,16 @@
                     android:text=""
                     tools:text="mozilla@mozilla.com" />
 
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/device_name_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="textWebEditText"
+                    app:description="@string/fxa_account_options_device_name"
+                    app:hintTextColor="@color/iron_blur"
+                    app:highlightedTextColor="@color/fog" />
+
                 <TextView
                     style="@style/settingsDescription"
                     android:gravity="center_vertical"
