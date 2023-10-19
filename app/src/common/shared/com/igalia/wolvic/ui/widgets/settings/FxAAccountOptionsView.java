@@ -23,6 +23,7 @@ import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.dialogs.SignOutDialogWidget;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.EmptyCoroutineContext;
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthFlowError;
 import mozilla.components.concept.sync.AuthType;
@@ -78,6 +83,12 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.signButton.setOnClickListener(this::signOut);
         mBinding.syncButton.setOnClickListener(this::sync);
 
+        mBinding.deviceNameEdit.setHint1(DeviceType.getDeviceName(getContext()));
+        mBinding.deviceNameEdit.setDefaultFirstValue(DeviceType.getDeviceName(getContext()));
+        mBinding.deviceNameEdit.setFirstText(SettingsStore.getInstance(getContext()).getDeviceName());
+        mBinding.deviceNameEdit.setOnClickListener(mDeviceNameListener);
+        setDeviceName(SettingsStore.getInstance(getContext()).getDeviceName(), false);
+
         mBinding.setIsSyncing(mAccounts.isSyncing());
         mBinding.setLastSync(mAccounts.lastSync());
 
@@ -89,6 +100,34 @@ class FxAAccountOptionsView extends SettingsView {
 
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
+    }
+
+    @Override
+    protected void onDismiss() {
+        if (isEditing()) {
+            return;
+        }
+        super.onDismiss();
+    }
+
+    @Override
+    public boolean isEditing() {
+        boolean editing = mBinding.deviceNameEdit.isEditing();
+        if (editing) {
+            mBinding.deviceNameEdit.cancel();
+        }
+
+        return editing;
+    }
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == null) {
+            return;
+        }
+        if (mBinding.deviceNameEdit.contains(oldFocus) && mBinding.deviceNameEdit.isEditing()) {
+            mBinding.deviceNameEdit.cancel();
+        }
     }
 
     @Override
@@ -107,6 +146,9 @@ class FxAAccountOptionsView extends SettingsView {
 
     @Override
     public void onHidden() {
+        if (isEditing()) {
+            return;
+        }
         super.onHidden();
 
         mAccounts.removeAccountListener(mAccountListener);
@@ -132,6 +174,7 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.bookmarksSyncSwitch.setValue(SettingsStore.BOOKMARKS_SYNC_DEFAULT, true);
         mBinding.historySyncSwitch.setValue(SettingsStore.HISTORY_SYNC_DEFAULT, true);
         mBinding.loginsSyncSwitch.setValue(SettingsStore.LOGIN_SYNC_DEFAULT, true);
+        setDeviceName(DeviceType.getDeviceName(getContext()), true);
     }
 
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
@@ -167,6 +210,32 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.setIsSyncing(isSyncing);
         mBinding.setLastSync(mAccounts.lastSync());
         mBinding.executePendingBindings();
+    }
+
+    private void setDeviceName(String newDeviceName, boolean doApply) {
+        mBinding.deviceNameEdit.setOnClickListener(null);
+        if (newDeviceName.isEmpty()) {
+            newDeviceName = DeviceType.getDeviceName(getContext());
+        }
+        if (doApply) {
+            String prevDeviceName = SettingsStore.getInstance(getContext()).getDeviceName();
+            if (!Objects.equals(prevDeviceName, newDeviceName)) {
+                SettingsStore.getInstance(getContext()).setDeviceName(newDeviceName);
+                Continuation<? super Unit> completion = new Continuation<Unit>() {
+                    @NonNull
+                    @Override
+                    public CoroutineContext getContext() {
+                        return EmptyCoroutineContext.INSTANCE;
+                    }
+
+                    @Override
+                    public void resumeWith(@NonNull Object o) {}
+                };
+                mAccounts.setDeviceName(newDeviceName, completion);
+            }
+        }
+        mBinding.deviceNameEdit.setFirstText(newDeviceName);
+        mBinding.deviceNameEdit.setOnClickListener(mDeviceNameListener);
     }
 
     void updateCurrentAccountState() {
@@ -224,6 +293,11 @@ class FxAAccountOptionsView extends SettingsView {
         exitWholeSettings();
         mSignOutDialog.show(UIWidget.REQUEST_FOCUS);
     }
+
+    private OnClickListener mDeviceNameListener = (view) -> {
+            String newDeviceName = mBinding.deviceNameEdit.getFirstText();
+            setDeviceName(newDeviceName, true);
+    };
 
     private AccountObserver mAccountListener = new AccountObserver() {
 

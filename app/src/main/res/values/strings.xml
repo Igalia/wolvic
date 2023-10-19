@@ -702,6 +702,9 @@
     <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
     <string name="fxa_account_options_account">Account</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description of the device name edit. -->
+    <string name="fxa_account_options_device_name">Device Name</string>
+
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">Sync Settings</string>
 

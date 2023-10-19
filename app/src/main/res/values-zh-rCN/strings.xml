@@ -508,6 +508,8 @@
     <string name="developer_options_homepage">主页</string>
     <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
     <string name="fxa_account_options_account">账户</string>
+    <!-- This string is used to in the FxA account manage panel as a description of the device name edit. -->
+    <string name="fxa_account_options_device_name">设备名称</string>
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">同步设置</string>
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.

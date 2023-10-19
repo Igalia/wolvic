@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mozilla.components.concept.sync.*
 import mozilla.components.service.fxa.FirefoxAccount
 import mozilla.components.service.fxa.SyncEngine
@@ -130,6 +131,10 @@ class Accounts constructor(val context: Context) {
             }
 
             accountStatus = AccountStatus.SIGNED_IN
+
+            // We must delay applying the device name from settings after we are authenticated
+            // as we will stuck if we get it directly when initializing services.accountManager
+            runBlocking { setDeviceName(SettingsStore.getInstance(context).deviceName) }
 
             // Enable syncing after signing in
             syncNowAsync(SyncReason.EngineChange, true)
@@ -395,6 +400,10 @@ class Accounts constructor(val context: Context) {
     fun setOrigin(origin: LoginOrigin, sessionId: String?) {
         loginOrigin = origin
         originSessionId = sessionId
+    }
+
+    suspend fun setDeviceName(deviceName: String) {
+        services.accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceName(deviceName, context);
     }
 
 }

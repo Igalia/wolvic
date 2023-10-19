@@ -415,6 +415,17 @@ public class SettingsStore {
         return (float)getWindowWidth() / (float)getWindowHeight();
     }
 
+    public String getDeviceName() {
+        return mPrefs.getString(
+                mContext.getString(R.string.settings_key_device_name), DeviceType.getDeviceName(mContext));
+    }
+
+    public void setDeviceName(String aDeviceName) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_device_name), aDeviceName);
+        editor.commit();
+    }
+
     public int getDisplayDpi() {
         return mPrefs.getInt(
                 mContext.getString(R.string.settings_key_display_dpi), DISPLAY_DPI_DEFAULT);
