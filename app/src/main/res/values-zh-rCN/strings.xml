@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">开发者选项</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">登录账户</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">管理账户</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">退出</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">重新连接</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -306,11 +306,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">提交您的反馈意见</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">登录</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">退出</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">重新连接</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -565,11 +565,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">自动填写</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">使用 Firefox 账户同步登录信息</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">使用 Mozilla 账户同步登录信息</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">账户…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -647,10 +647,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">关</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">同步</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">停用同步</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -801,7 +801,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">显示所有书签</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">同步</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">历史记录</string>
@@ -950,12 +950,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">详细了解“权限”</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">同步</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">正在同步…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">要退出 Firefox 账户吗？</string>
+    <string name="fxa_signout_confirmation_title">要退出 Mozilla 账户吗？</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">退出后，就无法发送标签页或收到来自其他设备的标签页，也会停止同步书签与历史记录。</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1435,12 +1435,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">登录以发送标签页</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">创建或登录一个 Firefox 账户，以便您在台式机、笔记本电脑、移动设备向头戴式设备上的 Firefox 发送标签页。</string>
+    <string name="whats_new_body_1">创建或登录一个 Mozilla 账户，以便您在台式机、笔记本电脑、移动设备向头戴式设备上的 Firefox 发送标签页。</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox 账户还可让您在所有设备上同步书签和历史记录。</string>
+    <string name="whats_new_body_sub_1">Mozilla 账户还可让您在所有设备上同步书签和历史记录。</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">登录</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1999,7 +1999,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n您也可以通过热线400-650-7728联系我们，我们的工作时间为中国工作日早上10点至晚上6点。
     </string>
     <string name="privacy_policy_subtitle_2">数据保护</string>
-    <string name="privacy_policy_section_2">IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧洲议会和理事会关于保护自然人处理个人数据和此类数据自由流动的第2016/679号欧盟条例，废除95/46/EC欧盟指令（《通用数据保护条例》）；12 月 5 日第 3/2018 号《个人数据保护和保障数字权利组织法》（LOPDGDD）。 “个人数据”指任何与个人身份识别，提供直接或间接地追踪个人身份的相关信息，特别是身份信息，例如姓名、识别号码、位置数据等，或者结合其它与特定个人相关的可识别信息，例如上述人的身体、生理、遗传、精神、经济、文化或社会身份标识。 IGALIA不会以可识别用户的方式收集个人数据。因此，您可以在不透露身份的情况下，或直接或间接向IGALIA提供个人数据的情况下使用该应用程序，咨询和浏览虚拟现实环境；因此，IGALIA将不对任何输入WOLVIC的数据负责。 IGALIA从本应用程序的使用中获得的唯一数据和信息，在任何时候都不会与用户关联，这些数据和信息如下： • 分析性的、纯统计性的、非身份识别性的数据。 • 为了获取声音并将其译成文本，用户的声音数据将通过相关应用程序接口（API）发送到负责每个平台的第三方公司的服务器上：例如，Facebook旗下的Oculus，声音数据将被发送到Oculus Voice SDK。上述数据在任何时候都不会被处理、访问或纳入IGALIA服务器中。传送的数据将由拥有各平台的第三方公司（以下简称“第三方”）全权负责，这些公司可能位于欧盟以外，并受用户隐私保护程度较弱的法律制度约束。我们建议您在接受和使用这些外部平台的服务之前，仔细阅读其隐私政策和使用条款。IGALIA不会直接或间接对上述第三方的个人数据处理负责。 • 地理位置信息可能从浏览器中获得，而非系统所在的地理位置信息。然而，要获取地理位置信息，必须通过相关具体通知设置设备位置权限，IGALIA不会以任何方式将上述信息用以确定和识别您的身份，但上一点中所提及的第三方可能会进行相关操作。我们建议您关注第三方的法律条款。 • IGALIA不会以任何方式访问或储存您访问过的地址或网络地址（URL）。 • 如果使用云服务（如火狐账户或谷歌账户）集成同步您的浏览历史或用户书签等数据。在这种情况下，IGALIA不会以任何方式访问或处理任何信息，且该信息不会经过IGALIA服务器。 同样，您会注意到本应用程序将针对您的设备请求一系列特殊权限，下面我们就其功能和用途进行说明： • 录音权限：如果您授权，除了Meetkai提供的语音搜索功能（“语音搜索”）之外，它还将用于翻译功能（上述语音到文本），可以在这里阅读其隐私政策： https://meetkai.com/privacy • 拍摄照片和视频的权限：通过跟踪系统，如果用户的设备使用相机记录用户所处物理空间的环境和地点，则可能会请求此权限。 IGLIA 不访问或处理任何信息。 • 读取、修改或删除存储卡上的照片、多媒体内容和文件的权限：这是必要的，以便浏览器可以在设备上保存本地信息，例如缓存文件、设置、访问的页面和收藏夹等。IGALIA 不访问或处理所述信息。 • 根据 GPS、电话站或 WIFI 等来源获取位置信息的权限：如果您授权，您的应用程序将始终显示一个图标，以示连接类型，以及在适当情况下，上面提到的地理位置。 IGLIA 绝不会将上述信息与您作为已识别或可识别的人联系起来，但是上述第三方可能会这样做（如果适用的话）。请注意他们的法律条款。具体来说，在华为设备中，GPS 信息会被访问并提供给公司名为“LocationService”的服务。 我们再次提醒您，您访问或使用本应用程序的第三方平台可能会收集上述数据或其他身份识别数据(自愿或非自愿地、有意或无意填写的数据)，相关数据收集可能超出欧洲数据保护立法的范围。因此，我们建议您了解并特别关注相关第三方法律条款，例如： • 谷歌: https://policies.google.com/privacy • Facebook: https://www.facebook.com/about/privacy/update • 华为: https://www.huawei.com/es/privacy-policy 同样, 望您知悉, 在使用浏览器的语音识别选项时, Meetkai将以完全匿名的方式保存您的语音转录, 用于改善其服务。Meetkai不会直接保存您的语音, 也不会以任何方式关联您的语音转录与您的身份。更多关于MeetKai的隐私策略请看: https://meetkai.com/es/privacy Igalia也无意于关联任何语音转录和身份或影响其隐私, 因此, Igalia 要求其声音地址中不得包含任何个人或机密信息。 在任何情况下，IGALIA保证当事人对其个人数据行使访问、纠正、删除、反对、限制处理和转移的权利。 为此，IGALIA已建立内部协议/程序来行使以上权利。 当事人可通过以下方式行使该权利：致信IGALIA的公司所在地：拉科鲁尼亚Bugallal Marchesi街22号1层，邮编15008，（Calle Bugallal Marchesi, 22, 1º, 15008, A Coruña），注明“数据保护”（“Data Protection”）；或者，发送电子邮件至info@igalia.com。 使用以上两种方式联系时，当事人必须附上国民身份证、护照或身份证明文件的副本，以证明其身份。 • 数据保护官员或相关权利管理部门将在专用表格中记录权利行使事宜，其中包含以下数据： • 申请号：将为每份收到的申请分配一个编号。 • 管理部门：如果负责人管理多个部门，将写明收到申请的部门。 • 投诉提交渠道：将写明收到请求的渠道，包括邮寄地址、邮件等。 • 申请日期：将注明申请被提交的日期。 • 行使的权利：当事人行使的权利类型。 • 反馈日期：向当事人发送答复的日期。 支持性文件（请求/回复受理凭证、通信等）将被存档，以便妥善保管。 同样，提醒您，您有权向西班牙数据保护局投诉。</string>
+    <string name="privacy_policy_section_2">IGALIA承诺遵守相关个人数据保护的法律规定：2016年4月27日欧洲议会和理事会关于保护自然人处理个人数据和此类数据自由流动的第2016/679号欧盟条例，废除95/46/EC欧盟指令（《通用数据保护条例》）；12 月 5 日第 3/2018 号《个人数据保护和保障数字权利组织法》（LOPDGDD）。 “个人数据”指任何与个人身份识别，提供直接或间接地追踪个人身份的相关信息，特别是身份信息，例如姓名、识别号码、位置数据等，或者结合其它与特定个人相关的可识别信息，例如上述人的身体、生理、遗传、精神、经济、文化或社会身份标识。 IGALIA不会以可识别用户的方式收集个人数据。因此，您可以在不透露身份的情况下，或直接或间接向IGALIA提供个人数据的情况下使用该应用程序，咨询和浏览虚拟现实环境；因此，IGALIA将不对任何输入WOLVIC的数据负责。 IGALIA从本应用程序的使用中获得的唯一数据和信息，在任何时候都不会与用户关联，这些数据和信息如下： • 分析性的、纯统计性的、非身份识别性的数据。 • 为了获取声音并将其译成文本，用户的声音数据将通过相关应用程序接口（API）发送到负责每个平台的第三方公司的服务器上：例如，Facebook旗下的Oculus，声音数据将被发送到Oculus Voice SDK。上述数据在任何时候都不会被处理、访问或纳入IGALIA服务器中。传送的数据将由拥有各平台的第三方公司（以下简称“第三方”）全权负责，这些公司可能位于欧盟以外，并受用户隐私保护程度较弱的法律制度约束。我们建议您在接受和使用这些外部平台的服务之前，仔细阅读其隐私政策和使用条款。IGALIA不会直接或间接对上述第三方的个人数据处理负责。 • 地理位置信息可能从浏览器中获得，而非系统所在的地理位置信息。然而，要获取地理位置信息，必须通过相关具体通知设置设备位置权限，IGALIA不会以任何方式将上述信息用以确定和识别您的身份，但上一点中所提及的第三方可能会进行相关操作。我们建议您关注第三方的法律条款。 • IGALIA不会以任何方式访问或储存您访问过的地址或网络地址（URL）。 • 如果使用云服务（如Mozilla账户或谷歌账户）集成同步您的浏览历史或用户书签等数据。在这种情况下，IGALIA不会以任何方式访问或处理任何信息，且该信息不会经过IGALIA服务器。 同样，您会注意到本应用程序将针对您的设备请求一系列特殊权限，下面我们就其功能和用途进行说明： • 录音权限：如果您授权，除了Meetkai提供的语音搜索功能（“语音搜索”）之外，它还将用于翻译功能（上述语音到文本），可以在这里阅读其隐私政策： https://meetkai.com/privacy • 拍摄照片和视频的权限：通过跟踪系统，如果用户的设备使用相机记录用户所处物理空间的环境和地点，则可能会请求此权限。 IGLIA 不访问或处理任何信息。 • 读取、修改或删除存储卡上的照片、多媒体内容和文件的权限：这是必要的，以便浏览器可以在设备上保存本地信息，例如缓存文件、设置、访问的页面和收藏夹等。IGALIA 不访问或处理所述信息。 • 根据 GPS、电话站或 WIFI 等来源获取位置信息的权限：如果您授权，您的应用程序将始终显示一个图标，以示连接类型，以及在适当情况下，上面提到的地理位置。 IGLIA 绝不会将上述信息与您作为已识别或可识别的人联系起来，但是上述第三方可能会这样做（如果适用的话）。请注意他们的法律条款。具体来说，在华为设备中，GPS 信息会被访问并提供给公司名为“LocationService”的服务。 我们再次提醒您，您访问或使用本应用程序的第三方平台可能会收集上述数据或其他身份识别数据(自愿或非自愿地、有意或无意填写的数据)，相关数据收集可能超出欧洲数据保护立法的范围。因此，我们建议您了解并特别关注相关第三方法律条款，例如： • 谷歌: https://policies.google.com/privacy • Facebook: https://www.facebook.com/about/privacy/update • 华为: https://www.huawei.com/es/privacy-policy 同样, 望您知悉, 在使用浏览器的语音识别选项时, Meetkai将以完全匿名的方式保存您的语音转录, 用于改善其服务。Meetkai不会直接保存您的语音, 也不会以任何方式关联您的语音转录与您的身份。更多关于MeetKai的隐私策略请看: https://meetkai.com/es/privacy Igalia也无意于关联任何语音转录和身份或影响其隐私, 因此, Igalia 要求其声音地址中不得包含任何个人或机密信息。 在任何情况下，IGALIA保证当事人对其个人数据行使访问、纠正、删除、反对、限制处理和转移的权利。 为此，IGALIA已建立内部协议/程序来行使以上权利。 当事人可通过以下方式行使该权利：致信IGALIA的公司所在地：拉科鲁尼亚Bugallal Marchesi街22号1层，邮编15008，（Calle Bugallal Marchesi, 22, 1º, 15008, A Coruña），注明“数据保护”（“Data Protection”）；或者，发送电子邮件至info@igalia.com。 使用以上两种方式联系时，当事人必须附上国民身份证、护照或身份证明文件的副本，以证明其身份。 • 数据保护官员或相关权利管理部门将在专用表格中记录权利行使事宜，其中包含以下数据： • 申请号：将为每份收到的申请分配一个编号。 • 管理部门：如果负责人管理多个部门，将写明收到申请的部门。 • 投诉提交渠道：将写明收到请求的渠道，包括邮寄地址、邮件等。 • 申请日期：将注明申请被提交的日期。 • 行使的权利：当事人行使的权利类型。 • 反馈日期：向当事人发送答复的日期。 支持性文件（请求/回复受理凭证、通信等）将被存档，以便妥善保管。 同样，提醒您，您有权向西班牙数据保护局投诉。</string>
     <string name="privacy_policy_subtitle_3">适用法律和原文语言</string>
     <string name="privacy_policy_section_3">本隐私政策受西班牙法律管辖。本应用程序的隐私政策语言为西班牙语。因此，西班牙语原文版本和其他语言的译文之间可能出现的任何分歧，均以西班牙语版本为准。</string>
     <string name="settings_privacy_choose_search_engine_description">选择你偏爱的搜索引擎。</string>
@@ -2050,7 +2050,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n请安装 Meta Quest 商店的Wolvic最新版本。
 \n
-\n重要提示：除非您用火狐同步，新版 Wolvic应用不会有你的书签和标签页。</string>
+\n重要提示：除非您用Mozilla同步，新版 Wolvic应用不会有你的书签和标签页。</string>
     <string name="deprecated_version_dialog_title">建议的更新</string>
     <string name="deprecated_version_dialog_info_button">了解更多…</string>
     <string name="deprecated_version_dialog_store_button">安装…</string>
