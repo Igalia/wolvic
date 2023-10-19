@@ -137,7 +137,7 @@
 
     <!-- Options Panel -->
     <dimen name="options_width">585dp</dimen>
-    <dimen name="options_height">385dp</dimen>
+    <dimen name="options_height">420dp</dimen>
 
     <!-- Developer Panel -->
     <dimen name="options_button_width">140dp</dimen>
