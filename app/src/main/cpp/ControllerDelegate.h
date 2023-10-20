@@ -84,7 +84,7 @@ public:
   virtual void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) = 0;
   virtual void SetHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) = 0;
   virtual void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) = 0;
-  virtual void SetPinchFactor(const int32_t aControllerIndex, float aFactor = 1.0f) = 0;
+  virtual void SetSelectFactor(const int32_t aControllerIndex, float aFactor = 1.0f) = 0;
 protected:
   ControllerDelegate() {}
 private:

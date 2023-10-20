@@ -645,7 +645,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     double pinchFactor = 0.0f;
     mGestureManager->getTriggerPinchStatusAndFactor(mHandJoints, indexPinching, pinchFactor);
 
-    delegate.SetPinchFactor(mIndex, pinchFactor);
+    delegate.SetSelectFactor(mIndex, pinchFactor);
     bool triggerButtonPressed = indexPinching && !systemGestureDetected && hasAim;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, triggerButtonPressed,
@@ -828,6 +828,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         auto browserButton = GetBrowserButton(button);
         auto immersiveButton = GetImmersiveButton(button);
         delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1, state->clicked, state->touched, state->value);
+
+        if (button.type == OpenXRButtonType::Trigger)
+            delegate.SetSelectFactor(mIndex, state->value);
 
         // Select action
         if (renderMode == device::RenderMode::Immersive && button.type == OpenXRButtonType::Trigger && state->clicked != selectActionStarted) {

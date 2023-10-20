@@ -81,6 +81,7 @@ Controller::operator=(const Controller& aController) {
   handActionEnabled = aController.handActionEnabled;
   handActionButtonToggle = aController.handActionButtonToggle;
   handActionButtonTransform = aController.handActionButtonTransform;
+  selectFactor = aController.selectFactor;
   return *this;
 }
 
@@ -133,6 +134,7 @@ Controller::Reset() {
   handActionEnabled = false;
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;
+  selectFactor = 0.0;
 }
 
 vrb::Vector Controller::StartPoint() const {
