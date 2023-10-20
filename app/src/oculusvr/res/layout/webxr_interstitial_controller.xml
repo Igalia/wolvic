@@ -158,6 +158,18 @@
 
             tools:ignore="RtlHardcoded" />
 
+
+        <!-- Meta Quest 3 Right Controller -->
+        <ImageView
+            app:visibleGone="@{model == DeviceType.MetaQuest3 &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
+            tools:visibility="gone"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            android:scaleX="-1"
+            android:src="@drawable/controller_quest_3_left"
+
+            tools:ignore="RtlHardcoded" />
         <!-- Oculus Go Controller -->
         <RelativeLayout
             app:visibleGone="@{model == DeviceType.OculusGo }"
