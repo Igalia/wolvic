@@ -170,16 +170,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Entwickler-Optionen</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Mit Konto anmelden</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Konto verwalten</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Abmelden</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Verbindung wiederherstellen</string>
 
@@ -392,13 +392,13 @@
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Senden Sie uns Ihr Feedback</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Anmelden</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Abmelden</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Verbindung wiederherstellen</string>
 
@@ -720,12 +720,12 @@
     <string name="security_options_login_autofill">Automatisch ausfüllen</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Zugangsdaten mit Firefox-Konten synchronisieren</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Zugangsdaten mit Mozilla-Konten synchronisieren</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Konto…</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
@@ -824,11 +824,11 @@
     <string name="off">Aus</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Synchronisieren</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Nicht synchronisieren</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
@@ -1034,7 +1034,7 @@
     <string name="bookmarks_show_all">Lesezeichen verwalten</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Synchronisieren</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
@@ -1242,14 +1242,14 @@ um: <ul>%1$s</ul></p>]]></string>
     <string name="addons_permissions_learn_more">Erfahren Sie mehr über Berechtigungen</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Synchronisieren</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Wird synchronisiert…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Vom Firefox-Konto abmelden?</string>
+    <string name="fxa_signout_confirmation_title">Vom Mozilla-Konto abmelden?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">Wenn Sie sich abmelden, können Sie keine Tabs von anderen Geräten senden oder empfangen. Ihre Lesezeichen und die Chronik werden ebenfalls nicht mehr synchronisiert.</string>
@@ -1899,14 +1899,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Melden Sie sich an oder erstellen Sie ein neues Firefox-Konto, um Tabs von Firefox auf Ihrem Desktop oder Mobilgerät an Ihr Headset zu senden.</string>
+    <string name="whats_new_body_1">Melden Sie sich an oder erstellen Sie ein neues Mozilla-Konto, um Tabs von Firefox auf Ihrem Desktop oder Mobilgerät an Ihr Headset zu senden.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Mit dem Firefox-Konto können Sie außerdem Lesezeichen und Chronik auf allen Ihren Geräten synchronisieren.</string>
+    <string name="whats_new_body_sub_1">Mit dem Mozilla-Konto können Sie außerdem Lesezeichen und Chronik auf allen Ihren Geräten synchronisieren.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Anmelden</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated

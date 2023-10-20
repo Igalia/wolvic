@@ -170,16 +170,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Opciones para desarrolladores</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Iniciar sesión en cuenta</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Administrar cuenta</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Cerrar sesión</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Reconectar</string>
 
@@ -392,13 +392,13 @@
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Enviar comentarios</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Iniciar sesión</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Cerrar sesión</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Reconectar</string>
 
@@ -720,12 +720,12 @@
     <string name="security_options_login_autofill">Autocompletado</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Sincronizar inicios de sesión con cuentas de Firefox</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Sincronizar inicios de sesión con cuentas de Mozilla</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Cuenta…</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
@@ -829,11 +829,11 @@
     <string name="off">Desactivado</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Sincronizar</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">No sincronizar</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
@@ -1039,7 +1039,7 @@
     <string name="bookmarks_show_all">Mostrar todos los marcadores</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Sincronizar</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
@@ -1246,14 +1246,14 @@
     <string name="addons_permissions_learn_more">Saber más sobre permisos</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Sincronizar</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Sincronizando…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">¿Salir de tu cuenta Firefox?</string>
+    <string name="fxa_signout_confirmation_title">¿Salir de tu cuenta Mozilla?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">Cuando cierres la sesión, no podrás enviar ni recibir pestañas de otros dispositivos. Tus marcadores e historial también dejarán de sincronizarse.</string>
@@ -1905,14 +1905,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Firefox para enviar pestañas, desde Firefox en tu ordenador de escritorio o dispositivo móvil, a tus auriculares.</string>
+    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Mozilla para enviar pestañas, desde Firefox en tu ordenador de escritorio o dispositivo móvil, a tus auriculares.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">La cuenta de Firefox también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
+    <string name="whats_new_body_sub_1">La cuenta de Mozilla también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Iniciar sesión</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
@@ -1922,7 +1922,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_title">Actualización necesaria</string>
     <string name="deprecated_version_dialog_body">Esta versión de desarrollo de Wolvic dejará de estar disponible a finales de Octubre de 2023.
         \n\nPor favor, instala la versión más actual de Wolvic desde la Meta Quest Store.
-        \n\nIMPORTANTE: a menos que uses Firefox Sync, la nueva app de Wolvic no tendrá tus marcadores ni tus páginas abiertas.</string>
+        \n\nIMPORTANTE: a menos que uses Mozilla Sync, la nueva app de Wolvic no tendrá tus marcadores ni tus páginas abiertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender más…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
 

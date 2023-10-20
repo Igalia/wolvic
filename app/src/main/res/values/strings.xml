@@ -179,16 +179,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Developer Options</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Sign Into Account</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Manage Account</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Sign Out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Reconnect</string>
 
@@ -431,13 +431,13 @@
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Send us Your Feedback</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Sign in</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Sign out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Reconnect</string>
 
@@ -779,12 +779,12 @@
     <string name="security_options_login_autofill">Autofill</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Sync logins with Firefox Accounts</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Sync logins with Mozilla Accounts</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Account…</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
@@ -892,11 +892,11 @@
     <string name="off">Off</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Sync</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Don’t Sync</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
@@ -1122,7 +1122,7 @@
     <string name="bookmarks_show_all">Show All Bookmarks</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Sync</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
@@ -1332,14 +1332,14 @@
     <string name="addons_permissions_learn_more">Learn more about permissions</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Sync</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Syncing…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Sign out of your Firefox Account?</string>
+    <string name="fxa_signout_confirmation_title">Sign out of your Mozilla Account?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">When you sign out, you won’t be able to send or receive tabs from other devices. Your bookmarks and history will also stop syncing.</string>
@@ -2047,14 +2047,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Sign in or create a new Firefox Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
+    <string name="whats_new_body_1">Sign in or create a new Mozilla Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox Account also lets you sync bookmarks and history across all your devices.</string>
+    <string name="whats_new_body_sub_1">Mozilla Account also lets you sync bookmarks and history across all your devices.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Sign In</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
@@ -2439,7 +2439,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         \n\t\u2022 In order to capture and translate the voice into text, the user’s sound data is sent to the servers owned by the third party company responsible for each platform, through an API for this purpose: for example, in Oculus, from Facebook, a service that sends it to Oculus Voice SDK. At no time is the aforementioned data processed, accessed, or incorporated into the servers owned by IGALIA. The data transmitted will be the exclusive responsibility of the third party companies that own each platform (hereinafter, the Third Parties), which may be located outside the European Union and subject to a legal regime that is less protective of user privacy. We recommend that you carefully read the privacy policy and terms of use of each of these external platforms before accepting and using their services. IGALIA will not be directly or indirectly responsible for the processing of personal data by said Third Parties.
         \n\t\u2022 Geographic location information maybe be obtained from the browser, instead of the one used by the system. However, in order to do so, you must set the location permissions of your device through a specific notice in this regard and IGALIA will in no way link the aforementioned information to you as an identified or identifiable person, although the Third Parties mentioned in the previous point could do so, if applicable. We recommend you to pay attention to their legal terms.
         \n\t\u2022 IGALIA will not access or store, in any way, the addresses or URLs visited by you.
-        \n\t\u2022 Integration with Cloud services (such as Firefox Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
+        \n\t\u2022 Integration with Cloud services (such as Mozilla Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
         \n\nWe remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
         \n\n\t\u2022 Google: https://policies.google.com/privacy
         \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update

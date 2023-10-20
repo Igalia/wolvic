@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">開発者オプション</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">アカウントにログイン</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">アカウントを管理</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">ログアウト</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">再接続</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -306,11 +306,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">フィードバックを送る</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">ログイン</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">ログアウト</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">再接続</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -553,11 +553,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">自動補完</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Firefox アカウントでログイン情報を同期する</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Mozilla アカウントでログイン情報を同期する</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">アカウント…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -633,10 +633,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">オフ</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">同期する</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">同期しない</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -782,7 +782,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">すべてのブックマークを表示</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">同期</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">履歴</string>
@@ -931,12 +931,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">許可設定の詳細</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">同期</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">同期中...</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Firefox アカウントからログアウトしますか？</string>
+    <string name="fxa_signout_confirmation_title">Mozilla アカウントからログアウトしますか？</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">ログアウトすると、他の端末とタブを送受信できなくなります。ブックマークと履歴の同期も停止します。</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1417,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">ログインしてタブを送信</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Firefox アカウントにログインまたはアカウント登録をして、タブをデスクトップまたはモバイル端末の Firefox からヘッドセットへ送信できます。</string>
+    <string name="whats_new_body_1">Mozilla アカウントにログインまたはアカウント登録をして、タブをデスクトップまたはモバイル端末の Firefox からヘッドセットへ送信できます。</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox アカウントを利用して、ブックマークや履歴をご使用のすべての端末と同期することもできます。</string>
+    <string name="whats_new_body_sub_1">Mozilla アカウントを利用して、ブックマークや履歴をご使用のすべての端末と同期することもできます。</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">ログイン</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1659,7 +1659,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nMeta Quest Storeから最新版のWolvicをインストールしてください。
 \n
-\n重要：Firefox Syncを利用していない場合、最新版のWolvicにブックマークとタブは同期されません。</string>
+\n重要：Mozilla Syncを利用していない場合、最新版のWolvicにブックマークとタブは同期されません。</string>
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
     <string name="deprecated_version_dialog_info_button">詳細情報…</string>
     <string name="deprecated_version_dialog_store_button">インストール…</string>

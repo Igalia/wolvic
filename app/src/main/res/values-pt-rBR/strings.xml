@@ -63,7 +63,7 @@
     <string name="addons_last_updated_title">Última atualização</string>
     <string name="addons_remove_error_dialog_ok">Ok</string>
     <string name="fxa_syncing">Sincronizando…</string>
-    <string name="fxa_signout_confirmation_title">Sair de sua Conta Firefox\?</string>
+    <string name="fxa_signout_confirmation_title">Sair de sua Conta Mozilla\?</string>
     <string name="history_section_today">Hoje</string>
     <string name="download_context_delete">Remover</string>
     <string name="downloads_sort">Organizar Por</string>
@@ -228,7 +228,7 @@
     <string name="fxa_account_syncing_off">A sincronização está desativada</string>
     <string name="security_options_login_save">Salvar logins e senhas</string>
     <string name="security_options_login_autofill">Preenchimento automático</string>
-    <string name="security_options_login_sync">Sincronize logins com contas Firefox</string>
+    <string name="security_options_login_sync">Sincronize logins com contas Mozilla</string>
     <string name="security_options_permission_notifications">Notificações</string>
     <string name="cancel_button">Cancelar</string>
     <string name="security_options_tracking_protection">Proteção contra rastreamento</string>
@@ -572,7 +572,7 @@
 \n• Para capturar e traduzir a voz em texto, os dados sonoros do usuário são enviados aos servidores de propriedade da empresa terceirizada responsável por cada plataforma, por meio de uma API para esse fim: por exemplo, no Oculus, do Facebook, um serviço que o envia para o Oculus Voice SDK. Em nenhum momento os dados acima mencionados são processados, acessados ou incorporados aos servidores de propriedade da IGALIA. Os dados transmitidos serão da exclusiva responsabilidade das empresas terceiras proprietárias de cada plataforma (doravante, os Terceiros), que poderão estar localizadas fora da União Europeia e sujeitas a um regime jurídico menos protetor da privacidade do utilizador. Recomendamos que você leia atentamente a política de privacidade e os termos de uso de cada uma dessas plataformas externas antes de aceitar e usar seus serviços. A IGALIA não será direta ou indiretamente responsável pelo tratamento de dados pessoais por tais Terceiros.
 \n• As informações de localização geográfica podem ser obtidas do navegador, ao invés do utilizado pelo sistema. No entanto, para isso, deve definir as permissões de localização do seu dispositivo através de um aviso específico a este respeito e a IGALIA não vinculará de forma alguma as referidas informações a você como pessoa identificada ou identificável, embora os Terceiros mencionados no ponto anterior poderia fazê-lo, se aplicável. Recomendamos que você preste atenção aos seus termos legais.
 \n• A IGALIA não acessará nem armazenará, de forma alguma, os endereços ou URLs visitados por você.
-\n• Pode ser possível a integração com serviços em nuvem (como Contas Firefox ou Contas do Google) para sincronizar dados como seu histórico de navegação ou seus favoritos de usuário. Neste caso, a IGALIA não acessará ou processará qualquer informação de forma alguma, nem passará pelos servidores da IGALIA.
+\n• Pode ser possível a integração com serviços em nuvem (como Contas Mozilla ou Contas do Google) para sincronizar dados como seu histórico de navegação ou seus favoritos de usuário. Neste caso, a IGALIA não acessará ou processará qualquer informação de forma alguma, nem passará pelos servidores da IGALIA.
 \n
 \nLembramos novamente que as plataformas de Terceiros que você acessa ou usa com este aplicativo podem coletar esses ou outros dados de identificação sobre você, preenchendo-os de forma voluntária ou involuntária e/ou consciente ou inconscientemente, possivelmente fora do escopo da legislação europeia de proteção de dados . Portanto, recomendamos que você se informe e preste atenção especial aos termos legais dos referidos Terceiros, como, por exemplo, o seguinte:
 \n
@@ -626,13 +626,13 @@
     <string name="login_edit_dialog_site_button">Abrir</string>
     <string name="slow_script_dialog_action_wait">Esperar</string>
     <string name="tracking_dialog_button_disable">Desativar</string>
-    <string name="whats_new_body_sub_1">A Conta Firefox também permite sincronizar favoritos e histórico em todos os seus dispositivos.</string>
-    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Firefox para enviar guias do Firefox do computador ou dispositivo móvel para o seu fone de ouvido.</string>
+    <string name="whats_new_body_sub_1">A Conta Mozilla também permite sincronizar favoritos e histórico em todos os seus dispositivos.</string>
+    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Mozilla para enviar guias do Firefox do computador ou dispositivo móvel para o seu fone de ouvido.</string>
     <string name="whats_new_button_start_browsing">Iniciar navegação</string>
     <string name="deprecated_version_dialog_title">Actualização necessária</string>
     <string name="deprecated_version_dialog_body">Esta versão de desenvolvimento do Wolvic será descontinuada no final de outubro de 2023.
         \n\nPor favor, instale a última versão de Wolvic a partir da Meta Quest Store.
-        \n\nIMPORTANTE: a menos que utilize Firefox Sync, a nova aplicação Wolvic não terá os seus marcadores e páginas abertas.</string>
+        \n\nIMPORTANTE: a menos que utilize Mozilla Sync, a nova aplicação Wolvic não terá os seus marcadores e páginas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Saber mais…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="popup_dialog_button_on">Ligado</string>

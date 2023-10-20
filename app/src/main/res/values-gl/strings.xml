@@ -104,7 +104,7 @@
     <string name="voice_samples_collect_dialog_description2"><![CDATA[Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a>]]></string>
     <string name="hamburger_menu_tooltip">Menú</string>
     <string name="hamburger_menu_switch_to_desktop">Modo escritorio</string>
-    <string name="whats_new_body_1">Inicie sesión ou cree unha nova Firefox Account para enviar pestanas dende o escritorio ou móbil ao dispositivo XR.</string>
+    <string name="whats_new_body_1">Inicie sesión ou cree unha nova Mozilla Account para enviar pestanas dende o escritorio ou móbil ao dispositivo XR.</string>
     <string name="tracking_dialog_message"><![CDATA[A protección mellorada de seguimento está %1$s para esta páxina web. <a href="%2$s">Saber máis</a>]]></string>
     <string name="exit_confirm_dialog_body">Seguro que quere saír de %1$s\?</string>
     <string name="download_delete_all_confirm_body">Seguro que quere borrar todos os arquivos descargados\?</string>
@@ -217,7 +217,7 @@
     <string name="security_options_restore_tabs">Restaurar pestanas e xanelas ao reiniciar</string>
     <string name="security_options_autocomplete">Autocompletado na barra de enderezos</string>
     <string name="security_options_login_autofill">Autocompletado</string>
-    <string name="security_options_login_sync">Sincronizar inicios de sesión con Firefox Accounts</string>
+    <string name="security_options_login_sync">Sincronizar inicios de sesión con Mozilla Accounts</string>
     <string name="security_options_login_fxa">Conta…</string>
     <string name="security_options_login_exceptions">Excepcións…</string>
     <string name="security_options_tracking_protection">Protección de tracking</string>
@@ -314,7 +314,7 @@
     <string name="addons_remove_error_dialog_title">Ocorreu un erro ao eliminar %1$s</string>
     <string name="addons_permissions_learn_more">Saber máis sobre permisos</string>
     <string name="addons_remove_error_dialog_ok">Ok</string>
-    <string name="fxa_signout_confirmation_title">Pechar a sesión de Firefox Accounts\?</string>
+    <string name="fxa_signout_confirmation_title">Pechar a sesión de Mozilla Accounts\?</string>
     <string name="fxa_signout_confirmation_body">Cando peche a sesión, non vai poder enviar ou recibir pestanas doutros dispositivos. O seu historial e os marcadores tamén deixarán de sincronizarse.</string>
     <string name="fxa_signout_confirmation_checkbox_v1">Limpar historial, marcadores e inicios de sesión neste dispositivo</string>
     <string name="fxa_signout_confirmation_signout">Pechar sesión</string>
@@ -442,7 +442,7 @@
     <string name="send_tab_dialog_button">Enviar</string>
     <string name="whats_new_title_1">Iniciar sesión para enviar pestanas</string>
     <string name="whats_new_button_sign_in">Iniciar sesión</string>
-    <string name="whats_new_body_sub_1">Firefox Account tamén permite sincronizar os marcadores e o historial en todos os dispositivos.</string>
+    <string name="whats_new_body_sub_1">Mozilla Account tamén permite sincronizar os marcadores e o historial en todos os dispositivos.</string>
     <string name="slow_script_dialog_title">Script lento</string>
     <string name="slow_script_dialog_action_stop">Deter o script</string>
     <string name="slow_script_dialog_description">Unha páxina web está ralentizando o navegador (%1$s). Que desexa facer\?</string>
@@ -561,7 +561,7 @@
 \n\t• Para capturar e traducir a voz en texto, os datos de son do usuario son transferidos a servidores propiedade da compañía responsable de cada plataforma, a través da API para este propósito: por exemplo, en Oculus, de Facebook, un servizo que o envía ao SDK de voz de Oculus. En ningún momento, os datos mencionados son procesados, accedidos ou incorporados a servidores propiedade de IGALIA. Os datos transmitidos serán responsabilidade exclusiva das compañías que posúen cada plataforma (de aquí en diante, Terceiras Partes), que poden estar localizadas fora da Unión Europea e suxeitas a un réxime legar menos protector da privacidade do usuario. Recomendámoslle que lea con coidade a política de privacidade e os termos de uso de cada unha destas plataformas externas antes de aceptar e usar os seus servizos. IGALIA non será directa nin indirectamente responsable do procesamento dos datos persoais por estas Terceiras Partes.
 \n\t• A información de localización xeográfica podería obterse dende o navegador, en lugar da usada polo sistema. No entanto, para facer isto, debe configurar os permisos de localización do seu dispositivo cun aviso específico neste sentido e IGALIA non enlazará en ningún momento esta información a vostede como persoa identificada ou identificable, aínda que as Terceiras Partes mencionadas no punto anterior poderían facelo, se é aplicable. Recomendámoslle que preste atención aos seus termos legais.
 \n\t• IGALIA non accederá nin almacenará, de ningún modo, os enderezos ou URLs que visite.
-\n\t• A integración con servizos cloud (como Firefox Accounts ou Google Accounts) para sincronizar datos como o historial de busca ou os seus marcadores podería ser posible. Neste caso, IGALIA non accederá ou procesará ningunha información de ningún modo, e tampouco a transmitirá a través dos servidores de IGALIA.
+\n\t• A integración con servizos cloud (como Mozilla Accounts ou Google Accounts) para sincronizar datos como o historial de busca ou os seus marcadores podería ser posible. Neste caso, IGALIA non accederá ou procesará ningunha información de ningún modo, e tampouco a transmitirá a través dos servidores de IGALIA.
 \n
 \nRecordámoslle de novo que as plataformas de Terceiras Partes ás que vostede acceda ou use con esta aplicación poderían recoller estes ou outros datos identificativos de seu, ben proporcionándoos de maneira voluntaria ou involuntaria, consciente ou inconscientemente, posiblemente fora do alcance da lexislación de protección de datos Europea. Polo tanto, recomendámoslle que se informe e preste especial atención aos termos legais de ditas Terceiras Partes, como por exemplo, as seguintes:
 \n
@@ -687,7 +687,7 @@
     <string name="deprecated_version_dialog_title">Actualización necesaria</string>
     <string name="deprecated_version_dialog_body">Esta versión de desenrolo de Wolvic deixará de estar dispoñible a finais de Outubro de 2023.
         \n\nPor favor, instala a versión máis actual de Wolvic dende a Meta Quest Store.
-        \n\nIMPORTANTE: a menos que uses Firefox Sync, a nova app de Wolvic non terá os teus marcadores nen as tuas páxinas abertas.</string>
+        \n\nIMPORTANTE: a menos que uses Mozilla Sync, a nova app de Wolvic non terá os teus marcadores nen as tuas páxinas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender máis…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="webxr_dialog_button_on">Activado</string>
