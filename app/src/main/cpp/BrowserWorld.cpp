@@ -88,7 +88,7 @@ const double kHoverRate = 1.0 / 10.0;
 // 'azure' color, for active pinch gesture while on hand mode
 const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
-const float kPointerPinchSize = 5.0;
+const float kPointerSize = 3.0;
 
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -516,16 +516,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
 
         const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
-        if (controller.mode == ControllerMode::Device) {
-          controller.pointer->SetScale(scale);
+        controller.pointer->SetScale(scale + kPointerSize - controller.selectFactor * kPointerSize);
+        if (controller.selectFactor >= 1.0f)
+          controller.pointer->SetPointerColor(kPointerColorSelected);
+        else
           controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        } else {
-          controller.pointer->SetScale(scale + kPointerPinchSize - controller.pinchFactor * kPointerPinchSize);
-          if (controller.pinchFactor >= 1.0f)
-            controller.pointer->SetPointerColor(kPointerColorSelected);
-          else
-            controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        }
       }
     }
 
@@ -553,7 +548,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       vrb::Matrix iconMatrix = vrb::Matrix::Identity();
 
       // Scale the button down as the pinch gesture is closing
-      float scale = 1.0 - controller.pinchFactor * 0.5f;
+      float scale = 1.0 - controller.selectFactor * 0.5f;
       // Make the button disappear if pinch is closed
       scale = scale <= 0.5f ? 0.0f : scale;
       iconMatrix.ScaleInPlace(vrb::Vector(scale, scale, scale));
