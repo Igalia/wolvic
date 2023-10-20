@@ -88,7 +88,7 @@ const double kHoverRate = 1.0 / 10.0;
 // 'azure' color, for active pinch gesture while on hand mode
 const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
-const float kPointerPinchSize = 5.0;
+const float kPointerSize = 3.0;
 
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
