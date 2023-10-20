@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">개발자 옵션</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">계정 로그인</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">계정 관리</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">로그아웃</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">다시 연결하기</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -307,11 +307,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">의견 보내기</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">로그인</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">로그아웃</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">다시 연결하기</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -554,11 +554,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">자동 채우기</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Firefox 계정과 로그인 동기화</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Mozilla 계정과 로그인 동기화</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">계정…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -635,10 +635,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">꺼짐</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">동기화</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">동기화 안 함</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -784,7 +784,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">모든 북마크 보기</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">동기화</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">기록</string>
@@ -933,12 +933,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">권한에 대해 더 알아보기</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">동기화</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">동기화 중…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃하시겠습니까?</string>
+    <string name="fxa_signout_confirmation_title">Mozilla 계정에서 로그아웃하시겠습니까?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 기록도 동기화가 중지됩니다.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1417,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">탭을 보내기 위해 로그인</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">데스크톱 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Firefox 계정을 만드세요.</string>
+    <string name="whats_new_body_1">데스크톱 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Mozilla 계정을 만드세요.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 기기에서 북마크와 기록을 동기화 할 수 있습니다.</string>
+    <string name="whats_new_body_sub_1">Mozilla 계정을 사용하면 모든 기기에서 북마크와 기록을 동기화 할 수 있습니다.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">로그인</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1701,7 +1701,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t• 음성을 캡쳐하여 텍스트로 변환하기 위해 사용자의 사운드 데이터는 이러한 목적을 위해 만들어진 API를 통해서 각 플랫폼을 담당하는 제 3자 회사가 소유한 서버로 전송됩니다: 예를 들어, Facebook의 Oculus 서비스는 Oculus Voice SDK로 전송합니다. 앞서 언급한 데이터는 그 어떤 시점에서도 IGALIA 소유의 서버에서 처리, 접근, 통합되지 않습니다. 전송된 데이터는 각 플랫폼을 소유한 제 3자 회사들(이하 제 3자들)이 전적으로 책임질 것이며, 이는 유럽 연합 외부에 위치할 수 있고 사용자 프라이버시를 덜 보호하는 법적 제도를 적용할 수도 있습니다. 서비스를 수락하고 사용하기 전에 이러한 외부 플랫폼들의 개인 정보 정책 및 사용 약관을 주의 깊게 읽어볼 것을 권장합니다. IGALIA는 상기 제 3자들의 개인 데이터 처리에 관해 직간접적으로 책임을 지지 않습니다.
 \n\t• 지리적 위치 정보는 시스템에서 사용되는 것이 아니라 브라우저에서 얻을 수 있습니다. 그러나 그렇게 하기 위해선, 이와 관련한 특정 통지를 통해서 장치의 위치 권한을 설정해야 하며, IGALIA는 앞서 언급한 정보를 식별 되었거나 식별 가능한 사람으로 연결 지을 수 없습니다. 만약 그것이 적용 가능하다면, 이전 항목에서 언급한 제 3자들은 그렇게 할 수도 있습니다. 제 3자들의 법적 조항에 주의를 기울이는 것을 권장합니다.
 \n\t• IGALIA는 귀하가 방문한 주소 또는 URL에 어떠한 방식으로도 접근하거나 저장하지 않습니다.
-\n\t• 브라우저 탐색 기록 또는 사용자 북마크와 같은 데이터를 동기화 하기 위해서 (Firefox 계정 또는 Google 계정과 같은) 클라우드 서비스와 통합될 수 있습니다. 이러한 경우, IGALIA는 어떤 방식으로든 어떠한 정보에도 접근하거나 처리하지 않으며 IGALIA의 서버로도 전달하지 않습니다.
+\n\t• 브라우저 탐색 기록 또는 사용자 북마크와 같은 데이터를 동기화 하기 위해서 (Mozilla 계정 또는 Google 계정과 같은) 클라우드 서비스와 통합될 수 있습니다. 이러한 경우, IGALIA는 어떤 방식으로든 어떠한 정보에도 접근하거나 처리하지 않으며 IGALIA의 서버로도 전달하지 않습니다.
 \n
 \n귀하가 이 애플리케이션과 함께 접근하거나 사용하는 제 3자 플랫폼들이 자발적 또는 비자발적 및/또는 의식적 또는 무의식적으로 유럽 데이터 보호법의 범위를 벗어나 귀하에 관한 식별 데이터를 수집할 수 있음을 다시 한번 알려드립니다. 따라서 다음과 같은 제3자의 법적 조항들을 숙지하고 특별한 주의를 기울이는 것을 권장합니다.
 \n
@@ -1762,7 +1762,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n오큘러스 스토어에서 최신 버전의 울빅을 설치하세요.
 \n
-\n중요: Firefox 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
+\n중요: Mozilla 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
     <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
     <string name="deprecated_version_dialog_info_button">자세히 알아보기…</string>
     <string name="deprecated_version_dialog_store_button">설치…</string>

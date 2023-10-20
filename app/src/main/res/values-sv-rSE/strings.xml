@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Utvecklaralternativ</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Logga in på konto</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Hantera konto</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Logga ut</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Återanslut</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -306,11 +306,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Skicka oss din feedback</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Logga in</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Logga ut</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Återanslut</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -553,11 +553,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">Autofyll</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Synkronisera inloggningar med Firefox-konton</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Synkronisera inloggningar med Mozilla-konton</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Konto…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -633,10 +633,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Av</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Synkronisera</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Synkronisera inte</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -782,7 +782,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Visa alla bokmärken</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Synkronisera</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Historik</string>
@@ -931,12 +931,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">Läs mer om behörigheter</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Synkronisera</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synkroniserar…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Logga ut från ditt Firefox-konto?</string>
+    <string name="fxa_signout_confirmation_title">Logga ut från ditt Mozilla-konto?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">När du loggar ut kommer du inte att kunna skicka eller ta emot flikar från andra enheter. Dina bokmärken och historik slutar också synkronisera.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1417,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">Logga in för att skicka flikar</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Logga in eller skapa ett nytt Firefox-konto för att skicka flikar från Firefox på din stationära eller mobila enhet till ditt headset.</string>
+    <string name="whats_new_body_1">Logga in eller skapa ett nytt Mozilla-konto för att skicka flikar från Firefox på din stationära eller mobila enhet till ditt headset.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Med ett Firefox-konto kan du också synkronisera bokmärken och historik mellan alla dina enheter.</string>
+    <string name="whats_new_body_sub_1">Med ett Mozilla-konto kan du också synkronisera bokmärken och historik mellan alla dina enheter.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Logga in</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1666,7 +1666,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nInstallera den senaste versionen av Wolvic från Oculus Store.
 \n
-\nVIKTIGT: om du inte använder Firefox Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
+\nVIKTIGT: om du inte använder Mozilla Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
     <string name="external_open_uri_error_security_exception_body">SecurityException vid start av intent för %1$s</string>
     <string name="user_feedback_tooltip">Dela idéer och feedback</string>
     <string name="hamburger_menu_toggle_passthrough">Passera genom</string>
@@ -1727,7 +1727,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n• För att fånga och översätta rösten till text skickas användarens ljuddata till servrarna som ägs av det tredje part som ansvarar för varje plattform, genom ett API för detta ändamål: till exempel i Oculus, från Facebook, en tjänst som skickar den till Oculus Voice SDK. Vid inget tillfälle behandlas, nås eller införlivas ovan nämnda data i servrarna som ägs av IGALIA. De data som överförs kommer att vara det exklusiva ansvaret för de tredjepartsföretag som äger varje plattform (hädanefter tredje parten), som kan vara belägen utanför Europeiska unionen och omfattas av en rättslig ordning som är mindre skyddande för användarnas integritet. Vi rekommenderar att du noggrant läser sekretesspolicyn och användarvillkoren för var och en av dessa externa plattformar innan du accepterar och använder deras tjänster. IGALIA kommer inte att vara direkt eller indirekt ansvarig för behandlingen av personuppgifter av nämnda tredje parter.
 \n• Geografisk platsinformation kan erhållas från webbläsaren, istället för den som används av systemet. För att göra det måste du dock ställa in platsbehörigheterna för din enhet genom ett specifikt meddelande i detta avseende och IGALIA kommer inte på något sätt att länka ovannämnda information till dig som en identifierad eller identifierbar person, även om de tredje parter som nämns i föregående punkt skulle kunna göra det, om tillämpligt. Vi rekommenderar att du uppmärksammar deras juridiska villkor.
 \n• IGALIA kommer inte att komma åt eller lagra på något sätt de adresser eller webbadresser som du besökt.
-\n• Integration med molntjänster (som Firefox-konton eller Google-konton) för att synkronisera data som din webbhistorik eller dina användarbokmärken kan vara möjlig. I det här fallet kommer IGALIA inte att komma åt eller bearbeta någon information på något sätt, och den kommer inte heller att passera genom IGALIAs servrar.
+\n• Integration med molntjänster (som Mozilla-konton eller Google-konton) för att synkronisera data som din webbhistorik eller dina användarbokmärken kan vara möjlig. I det här fallet kommer IGALIA inte att komma åt eller bearbeta någon information på något sätt, och den kommer inte heller att passera genom IGALIAs servrar.
 \n
 \nVi påminner dig igen om att de tredjepartsplattformar som du kommer åt eller använder med denna applikation kan samla in denna eller andra identifierande data om dig, antingen fylla i dem frivilligt eller ofrivilligt och/eller medvetet eller omedvetet, möjligen utanför räckvidden av europeisk dataskyddslagstiftning . Därför rekommenderar vi att du informerar dig själv och ägnar särskild uppmärksamhet åt de juridiska villkoren för nämnda tredje parter, såsom till exempel följande:
 \n
