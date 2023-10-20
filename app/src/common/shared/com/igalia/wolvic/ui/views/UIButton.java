@@ -324,7 +324,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), parent);
 
             mTooltipView.getPlacement().parentHandle = parent.getHandle();
-            mTooltipView.getPlacement().density = mTooltipDensity;
+            mTooltipView.setDensityScale(mTooltipDensity);
             // At the moment we only support showing tooltips on top or bottom of the target view
             if (mTooltipPosition == ViewUtils.TooltipPosition.BOTTOM) {
                 mTooltipView.getPlacement().anchorY = 1.0f;
