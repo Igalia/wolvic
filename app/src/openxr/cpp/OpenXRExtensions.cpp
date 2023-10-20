@@ -33,6 +33,7 @@ void OpenXRExtensions::Initialize() {
 
     for (auto& extension: extensions) {
         sSupportedExtensions.insert(extension.extensionName);
+        VRB_LOG("OpenXR ext: %s", extension.extensionName);
     }
 #ifdef LYNX
     // Lynx incorrectly advertises these extensions as supported but in reality they don't work.

@@ -330,6 +330,7 @@ XrResult OpenXRInputSource::GetActionState(XrAction action, float* value) const
 
     RETURN_IF_XR_FAILED(xrGetActionStateFloat(mSession, &info, &state));
     *value = state.currentState;
+    // VRB_LOG("HAND_INTERACTION: value: %f", *value);
 
     return XR_SUCCESS;
 }
@@ -637,8 +638,9 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
     delegate.SetAimEnabled(mIndex, hasAim);
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
-    delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
+
+    return;
 
     // Select action
     bool indexPinching = false;
@@ -741,7 +743,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
 #ifdef CHROMIUM
     // Chromium's WebXR code expects aim space to be based on the grip space.
-    XrSpace baseSpace = renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
+    XrSpace baseSpace = localSpace; // renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
 #else
     XrSpace baseSpace = localSpace;
 #endif
@@ -757,14 +759,19 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 #else
     bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
 #endif
-    if (isControllerUnavailable && GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head)) {
+    if (/*isControllerUnavailable && */GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head)) {
         EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, delegate);
-        return;
-    }
+        delegate.SetMode(mIndex, ControllerMode::Hand);
+        // return;
+    } else {
+        delegate.SetMode(mIndex, ControllerMode::Device);
 
-    if ((poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0) {
-      delegate.SetEnabled(mIndex, false);
-      return;
+        if ((poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0) {
+            delegate.SetEnabled(mIndex, false);
+            return;
+        }
+
+        delegate.SetAimEnabled(mIndex, true);
     }
 
     // HVR: adjust to local if app is using stageSpace.
@@ -776,9 +783,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     };
     adjustPoseLocation(offsets);
 
-    delegate.SetMode(mIndex, ControllerMode::Device);
     delegate.SetEnabled(mIndex, true);
-    delegate.SetAimEnabled(mIndex, true);
 
     device::CapabilityFlags flags = device::Orientation;
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
@@ -923,13 +928,14 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
         }
 
         constexpr uint32_t bufferSize = 100;
-        char buffer[bufferSize];
+        char buffer[bufferSize] = {0,};
         uint32_t writtenCount = 0;
         RETURN_IF_XR_FAILED(xrPathToString(mInstance, state.interactionProfile,
                                            bufferSize, &writtenCount,
                                            buffer));
         path = buffer;
         path_len = writtenCount;
+        VRB_LOG("HAND_INTERACTION: New interaction profile: %s", path);
     } else {
         path = emulateProfile;
         path_len = strlen(emulateProfile);

@@ -167,6 +167,10 @@ struct DeviceDelegateOpenXR::State {
         if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
             extensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
         }
+        if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME)) {
+            extensions.push_back(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
+            VRB_LOG("HAND_INTERACTION: Enabled!");
+        }
     }
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
         extensions.push_back(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME);
@@ -571,7 +575,7 @@ struct DeviceDelegateOpenXR::State {
       // APIs.
       if (mHandTrackingSupported) {
           if (const char* defaultProfilePath = GetDefaultInteractionProfilePath())
-              UpdateInteractionProfile(defaultProfilePath);
+              UpdateInteractionProfile(nullptr /*defaultProfilePath*/);
       }
   }
 

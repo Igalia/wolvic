@@ -408,8 +408,24 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 11> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, KHRSimple
+    // XR_MSFT_hand_interaction: https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XR_MSFT_hand_interaction
+    const OpenXRInputMapping MSFTHandInteraction {
+            "/interaction_profiles/microsoft/hand_interaction",
+            IS_6DOF,
+            "",
+            "",
+            device::UnknownType,
+            std::vector<OpenXRInputProfile> { "generic-hand-select-grasp", "generic-hand-select", "generic-button" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathSelect, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+            },
+            {},
+            {},
+    };
+
+    const std::array<OpenXRInputMapping, 12> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4, Pico4E, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, KHRSimple, MSFTHandInteraction,
     };
 
 } // namespace crow
