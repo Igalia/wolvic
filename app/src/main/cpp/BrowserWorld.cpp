@@ -516,16 +516,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
 
         const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
-        if (controller.mode == ControllerMode::Device) {
-          controller.pointer->SetScale(scale);
+        controller.pointer->SetScale(scale + kPointerSize - controller.selectFactor * kPointerSize);
+        if (controller.selectFactor >= 1.0f)
+          controller.pointer->SetPointerColor(kPointerColorSelected);
+        else
           controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        } else {
-          controller.pointer->SetScale(scale + kPointerPinchSize - controller.selectFactor * kPointerPinchSize);
-          if (controller.selectFactor >= 1.0f)
-            controller.pointer->SetPointerColor(kPointerColorSelected);
-          else
-            controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        }
       }
     }
 

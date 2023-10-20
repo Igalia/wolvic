@@ -839,6 +839,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         auto immersiveButton = GetImmersiveButton(button);
         delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1, state->clicked, state->touched, state->value);
 
+        if (button.type == OpenXRButtonType::Trigger)
+            delegate.SetSelectFactor(mIndex, state->value);
+
         // Select action
         if (renderMode == device::RenderMode::Immersive && button.type == OpenXRButtonType::Trigger && state->clicked != selectActionStarted) {
           selectActionStarted = state->clicked;
