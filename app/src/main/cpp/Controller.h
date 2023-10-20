@@ -49,7 +49,7 @@ struct Controller {
   bool handActionEnabled;
   vrb::TogglePtr handActionButtonToggle;
   vrb::TransformPtr handActionButtonTransform;
-  float pinchFactor;
+  float selectFactor;
   vrb::TransformPtr beamParent;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;

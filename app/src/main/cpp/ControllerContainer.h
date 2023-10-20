@@ -71,7 +71,7 @@ public:
   void SetAimEnabled(const int32_t aControllerIndex, bool aEnabled = true) override;
   void SetHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) override;
   void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) override;
-  void SetPinchFactor(const int32_t aControllerIndex, float aFactor = 1.0f) override;
+  void SetSelectFactor(const int32_t aControllerIndex, float aFactor = 1.0f) override;
   void SetFrameId(const uint64_t aFrameId);
 protected:
   struct State;

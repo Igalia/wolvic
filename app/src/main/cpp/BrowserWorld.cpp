@@ -520,8 +520,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
           controller.pointer->SetScale(scale);
           controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
         } else {
-          controller.pointer->SetScale(scale + kPointerPinchSize - controller.pinchFactor * kPointerPinchSize);
-          if (controller.pinchFactor >= 1.0f)
+          controller.pointer->SetScale(scale + kPointerPinchSize - controller.selectFactor * kPointerPinchSize);
+          if (controller.selectFactor >= 1.0f)
             controller.pointer->SetPointerColor(kPointerColorSelected);
           else
             controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
@@ -553,7 +553,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       vrb::Matrix iconMatrix = vrb::Matrix::Identity();
 
       // Scale the button down as the pinch gesture is closing
-      float scale = 1.0 - controller.pinchFactor * 0.5f;
+      float scale = 1.0 - controller.selectFactor * 0.5f;
       // Make the button disappear if pinch is closed
       scale = scale <= 0.5f ? 0.0f : scale;
       iconMatrix.ScaleInPlace(vrb::Vector(scale, scale, scale));

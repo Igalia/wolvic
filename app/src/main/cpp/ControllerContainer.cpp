@@ -249,11 +249,11 @@ void ControllerContainer::SetMode(const int32_t aControllerIndex, ControllerMode
   m.list[aControllerIndex].mode = aMode;
 }
 
-void ControllerContainer::SetPinchFactor(const int32_t aControllerIndex, float aFactor)
+void ControllerContainer::SetSelectFactor(const int32_t aControllerIndex, float aFactor)
 {
   if (!m.Contains(aControllerIndex))
     return;
-  m.list[aControllerIndex].pinchFactor = aFactor;
+  m.list[aControllerIndex].selectFactor = aFactor;
 }
 
 void ControllerContainer::SetAimEnabled(const int32_t aControllerIndex, bool aEnabled) {

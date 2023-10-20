@@ -645,7 +645,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     double pinchFactor = 0.0f;
     mGestureManager->getTriggerPinchStatusAndFactor(mHandJoints, indexPinching, pinchFactor);
 
-    delegate.SetPinchFactor(mIndex, pinchFactor);
+    delegate.SetSelectFactor(mIndex, pinchFactor);
     bool triggerButtonPressed = indexPinching && !systemGestureDetected && hasAim;
     delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_TRIGGER,
                             device::kImmersiveButtonTrigger, triggerButtonPressed,
