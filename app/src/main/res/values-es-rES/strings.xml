@@ -1775,7 +1775,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="developer_options_clear_user_data_description">Todos los datos del usuario</string>
     <string name="security_options_use_system_root_ca">Utilizar los certificados raíz de confianza del sistema</string>
     <string name="video_mode_3d_top_bottom">Pantalla superior e inferior en 3D</string>
-    <string name="clear_user_data_dialog_title">Borrar %1$s datos de usuario</string>
+    <string name="clear_user_data_dialog_title">Borrar %1$s datos del usuario</string>
     <string name="clear_user_data_dialog_text">%1$s se restablecerá. Todos los datos, incluidos los inicios de sesión guardados, el historial y los marcadores, se eliminarán permanentemente si no se han sincronizado. %1$s se cerrará automáticamente una vez finalizado el restablecimiento. ¿Quieres continuar\?</string>
     <string name="display_options_start_with_passthrough">Empezar en modo Passthrough</string>
     <string name="display_options_head_lock">Fijar la ventana en tu campo visual</string>
