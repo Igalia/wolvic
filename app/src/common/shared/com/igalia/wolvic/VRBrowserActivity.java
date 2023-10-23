@@ -1206,12 +1206,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        simulateBrowserWindowTouchEvent(732.26f, 423.5f);
+                        simulateBrowserWindowTouchEvent(732.26f, 423.5f); // Common Enter VR button location
 
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                simulateBrowserWindowTouchEvent(997.6f, 566.17f);
+                                simulateBrowserWindowTouchEvent(997.6f, 566.17f); // Common Enter VR button location
 
                                 new Timer().schedule(new TimerTask() {
                                     @Override
