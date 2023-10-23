@@ -2,6 +2,8 @@ package com.igalia.wolvic;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,6 +31,7 @@ public class LandingPageFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_landing_page, container, false);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -53,6 +56,9 @@ public class LandingPageFragment extends Fragment {
         }
 
         WebView webView = view.findViewById(R.id.web_view);
+
+        // Enable JavaScript; this should be safe because we will only open wolvic.com on this view.
+        webView.getSettings().setJavaScriptEnabled(true);
 
         // Links to wolvic.com will be opened in this Web view, "mailto" links will launch the email app
         // and all other links will be opened in the default browser.
