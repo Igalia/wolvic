@@ -13,7 +13,6 @@ import com.igalia.wolvic.PlatformActivity;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.WebxrInterstitialBinding;
-import com.igalia.wolvic.skillsvr.utils.Logging;
 import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.ViewUtils;
 

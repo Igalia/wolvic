@@ -27,7 +27,6 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.downloads.DownloadsManager;
-import com.igalia.wolvic.skillsvr.utils.Logging;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;

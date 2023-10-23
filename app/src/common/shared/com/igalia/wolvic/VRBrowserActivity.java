@@ -64,7 +64,6 @@ import com.igalia.wolvic.crashreporting.GlobalExceptionHandler;
 import com.igalia.wolvic.geolocation.GeolocationWrapper;
 import com.igalia.wolvic.input.MotionEventGenerator;
 import com.igalia.wolvic.search.SearchEngineWrapper;
-import com.igalia.wolvic.skillsvr.utils.Logging;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
@@ -135,7 +134,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public BroadcastReceiver startImmersiveReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logging.d("onReceive!");
 
             Timer tryStartImmersiveTimer = new Timer();
 
@@ -1184,7 +1182,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void run() {
                 if(mIsPresentingImmersive) {
                     //Mission accomplished
-                    Logging.d("found enter webxr button");
                     return;
                 }
 
@@ -1240,7 +1237,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             {
                 if(mIsPresentingImmersive) {
                     //Mission accomplished
-                    Logging.d("found enter webxr button");
                     return;
                 }
 
