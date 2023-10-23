@@ -292,7 +292,7 @@ class DisplayOptionsView extends SettingsView {
         mBinding.dpiEdit.setOnClickListener(null);
         boolean restart = false;
         int prevDensity = SettingsStore.getInstance(getContext()).getDisplayDpi();
-        if (newDpi <= 0) {
+        if (newDpi < SettingsStore.DISPLAY_DPI_MIN || newDpi > SettingsStore.DISPLAY_DPI_MAX) {
             newDpi = prevDensity;
 
         } else if (prevDensity != newDpi) {
