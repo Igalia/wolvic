@@ -1228,7 +1228,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         runTouch.run();
 
-        if(true)
+        if(mIsPresentingImmersive) // Already found the Enter VR button
             return;
 
         for(float y = maxSizeY; y > minSizeY; y-=interval)
