@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
@@ -74,6 +74,7 @@ public class SettingsStore {
     // Developer options default values
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
+    public final static boolean SYSTEM_ROOT_CA_DEFAULT = false;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
@@ -289,6 +290,32 @@ public class SettingsStore {
         mSettingsViewModel.setIsTrackingProtectionEnabled(level != WContentBlocking.EtpLevel.NONE);
     }
 
+    public boolean isSystemRootCAEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_system_root_ca), SYSTEM_ROOT_CA_DEFAULT);
+    }
+
+    public void setSystemRootCAEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_system_root_ca), isEnabled);
+        editor.commit();
+    }
+
+    public static boolean shouldStartWithPassthrougEnabled() {
+        return DeviceType.getType() == DeviceType.LenovoA3;
+    }
+
+    public boolean isStartWithPassthroughEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_start_with_passthrough), shouldStartWithPassthrougEnabled());
+    }
+
+    public void setStartWithPassthroughEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_start_with_passthrough), isEnabled);
+        editor.commit();
+    }
+
     public boolean isEnvironmentOverrideEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_environment_override), ENV_OVERRIDE_DEFAULT);
@@ -356,7 +383,7 @@ public class SettingsStore {
     public String getHomepage() {
         return mPrefs.getString(
                 mContext.getString(R.string.settings_key_homepage),
-                mContext.getString(R.string.homepage_url));
+                mContext.getString(R.string.HOMEPAGE_URL));
     }
 
     public void setHomepage(String aHomepage) {
@@ -763,7 +790,7 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public @SortingContextMenuWidget.Order int getDownloadsSortingOrder() {
+    public @Storage int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
     }
 

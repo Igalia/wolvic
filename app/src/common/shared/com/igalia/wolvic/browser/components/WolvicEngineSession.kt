@@ -22,15 +22,22 @@ class WolvicEngineSession(
 
 
     override val settings: Settings = object : Settings() {}
+    override fun checkForPdfViewer(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit) = Unit
     override fun clearFindMatches() = Unit
     override fun exitFullScreenMode() = Unit
     override fun findAll(text: String) = Unit
     override fun findNext(forward: Boolean) = Unit
-    override fun goBack() = Unit
-    override fun goForward() = Unit
+    override fun goBack(userInteraction: Boolean) = Unit
+    override fun goForward(userInteraction: Boolean) = Unit
     override fun goToHistoryIndex(index: Int) = Unit
+    override fun hasCookieBannerRuleForSession(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
     override fun loadData(data: String, mimeType: String, encoding: String) = Unit
     override fun reload(flags: LoadUrlFlags) = Unit
+    override fun requestPdfToDownload() = Unit
+    override fun requestPrintContent() = Unit
     override fun restoreState(state: EngineSessionState) = true
     override fun stopLoading() = Unit
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) = Unit

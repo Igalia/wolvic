@@ -11,6 +11,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 import org.mozilla.geckoview.GeckoSession;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -46,7 +47,19 @@ import java.util.Collection;
         @Nullable
         @Override
         public RectF clientRect() {
-            return mSelection.clientRect;
+            Class<?> clazz = mSelection.getClass();
+            String[] fieldNames = {"screenRect", "clientRect"};
+
+            for (String fieldName : fieldNames) {
+                try {
+                    Field field = clazz.getDeclaredField(fieldName);
+                    field.setAccessible(true); // Allow access to private fields
+                    return (RectF) field.get(mSelection);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    // Field not found, continue to the next field name
+                }
+            }
+            return null;
         }
 
         @NonNull

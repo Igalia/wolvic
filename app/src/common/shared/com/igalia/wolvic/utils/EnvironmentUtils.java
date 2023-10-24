@@ -60,31 +60,17 @@ public class EnvironmentUtils {
     }
 
     /**
-     * Returns a path in the external for the remote environments unzipping.
+     * Returns a path in the cache for the remote environments unzipping.
      * @param context An activity context.
      * @param envId The environment id. This maps to the Remote properties JSON "value" environment property.
      * @return The location of the environment in the devices memory.
      */
     @Nullable
     public static String getExternalEnvPath(@NonNull Context context, @NonNull String envId) {
-        File outputFolder = context.getExternalFilesDir(ENVS_FOLDER);
-        if (outputFolder != null) {
-            outputFolder = new File(outputFolder, envId);
-            if (!outputFolder.exists()) {
-                if (outputFolder.mkdirs()) {
-                    return outputFolder.getAbsolutePath();
-
-                } else {
-                    return null;
-                }
-
-            } else {
-                return outputFolder.getAbsolutePath();
-            }
-
-        } else {
-            return null;
-        }
+        File outputFolder = new File(context.getCacheDir().getAbsolutePath(), ENVS_FOLDER + "/" + envId);
+        if (outputFolder.exists())
+            return outputFolder.getAbsolutePath();
+        return outputFolder.mkdirs() ? outputFolder.getAbsolutePath() : null;
     }
 
     /**
@@ -101,6 +87,7 @@ public class EnvironmentUtils {
      * Check wether or not an external environment is ready to be used. Checks is the ouput directory exists
      * and if it contains 6 items. We make an assumption that those items are the right images and that they
      * follow the naming convention.
+     * right images and that they follow the naming convention.
      * @param context An activity context.
      * @param envId The environment id. This maps to the Remote properties JSON "value" environment property.
      * @return true is the environment is ready, false otherwise
@@ -215,18 +202,20 @@ public class EnvironmentUtils {
     }
 
     /**
-     * Returns the URL to the environment's payload, with the SRGB suffix for the devices requiring this
-     * compressed texture format.
+     * Returns the URL to the environment's payload, with the '_alt' suffix for the devices requiring an
+     * alternative compressed texture format (only JPG and PNG are allowed as alternative to KTX).
      * @param env An Environment data structure
      * @return The appropriated URL to the environment's payload .
      */
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
-        String payload = env.getPayload();
-        if (!DeviceType.isOculusBuild())
-            return payload;
-        int at = payload.lastIndexOf(".");
-        return payload.substring(0, at) + "_srgb" + payload.substring(at);
+        if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
+            String payload = env.getPayload();
+            String format = DeviceType.isOculusBuild() ? "_ktx" : "_misc"; // PicoXR doesn't support 'ktx'
+            int at = payload.lastIndexOf(".");
+            return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
+        }
+        return env.getPayload(); // default is 'rgb' and 'ktx'
     }
 
     /**

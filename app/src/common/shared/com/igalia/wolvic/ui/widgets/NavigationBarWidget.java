@@ -16,12 +16,14 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.URLUtil;
 import android.widget.EditText;
 
@@ -76,6 +78,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -130,6 +133,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private ArrayList<NavigationListener> mNavigationListeners;
     private TrackingProtectionStore mTrackingDelegate;
     private WidgetPlacement mBeforeFullscreenPlacement;
+    private float mSavedCylinderDensity = 0.0f;
+    private Animation mAnimation;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -160,6 +165,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         updateUI();
 
         mAppContext = aContext.getApplicationContext();
+
+        mAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
 
         mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
 
@@ -275,6 +282,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
+        mBinding.navigationBarNavigation.userFeedbackButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            String uri = getResources().getString(R.string.feedback_link, BuildConfig.VERSION_NAME, DeviceType.getType());
+            mWidgetManager.openNewPageNoInterrupt(uri);
+        });
+
         mBinding.navigationBarNavigation.desktopModeButton.setOnClickListener(view -> {
             final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
             if (mHamburgerMenu != null) {
@@ -333,10 +346,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE) {
-                enterVRVideo(mAutoSelectedProjection);
-                return;
-            }
             boolean wasVisible = mProjectionMenu != null ? mProjectionMenu.isVisible() : false;
             closeFloatingMenus();
 
@@ -446,6 +455,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     };
 
+    public MediaControlsWidget getMediaControlsWidget() {
+        return mMediaControlsWidget;
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -458,7 +471,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     @Override
     public void onPause() {
         super.onPause();
-        mBinding.navigationBarNavigation.urlBar.onPause();
+        if (mViewModel.getIsLoading().getValue().get()) {
+            mBinding.navigationBarNavigation.progressBar.clearAnimation();
+        }
         exitFullScreenMode();
         exitVRVideo();
     }
@@ -466,7 +481,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     @Override
     public void onResume() {
         super.onResume();
-        mBinding.navigationBarNavigation.urlBar.onResume();
+        if (mViewModel.getIsLoading().getValue().get()) {
+            mBinding.navigationBarNavigation.progressBar.startAnimation(mAnimation);
+        }
     }
 
     @Override
@@ -547,6 +564,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrackingDelegate.removeListener(mTrackingListener);
 
         if (mViewModel != null) {
+            mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
             mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel = null;
@@ -570,6 +588,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.setViewmodel(mViewModel);
 
+        mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
@@ -644,47 +663,30 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
-    // Workaround for a bug in YouTube, which is not providing the media playback events
-    // that we need to recognize when a video is playing and obtain its metadata.
-    // Related Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1827583
-    private boolean needsYoutubeVideoWorkaround() {
-        if (getSession().getFullScreenVideo() != null) {
-            return false;
-        }
-        String host = Uri.parse(getSession().getCurrentUri()).getHost();
-        return host != null && (host.contains(".youtube.com") || host.contains(".youtube-nocookie.com"));
-    }
-
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
             if (getSession().getFullScreenVideo() != null) {
                 onEnterFullScreen(aWindow);
             } else {
-                // No active fullscreen video. There might be three reasons for that:
-                // 1. The website is not providing media playback information (YouTube bug).
-                // 2. The video is not active yet -> wait for onVideoAvailabilityChanged
-                // 3. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                if (needsYoutubeVideoWorkaround()) {
-                    Log.w(LOGTAG, "onFullScreen: workaround for immersive YouTube videos");
-                    onEnterFullScreen(aWindow);
-                } else {
-                    mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-                        @Override
-                        public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                            WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                            assert getSession().getActiveVideo() != null;
-                            onEnterFullScreen(aWindow);
-                            mAttachedWindow.removeWindowListener(this);
-                        }
-                        @Override
-                        public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                            assert getSession().getFullScreenVideo() != null;
-                            onEnterFullScreen(aWindow);
-                            mAttachedWindow.removeWindowListener(this);
-                        }
-                    });
-                }
+                // No active fullscreen video. There might be two reasons for that:
+                // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
+                // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
+                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
+                    @Override
+                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
+                        assert getSession().getActiveVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                    @Override
+                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+                        assert getSession().getFullScreenVideo() != null;
+                        onEnterFullScreen(aWindow);
+                        mAttachedWindow.removeWindowListener(this);
+                    }
+                });
             }
         } else {
             mWidgetPlacement = mBeforeFullscreenPlacement;
@@ -695,6 +697,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
             exitFullScreenMode();
         }
+    }
+
+    public boolean isInVRVideo() {
+        return Objects.requireNonNull(mViewModel.getIsInVRVideo().getValue()).get();
     }
 
     @Override
@@ -727,8 +733,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mWidgetManager.addWidget(mProjectionMenu);
             mProjectionMenu.setDelegate((projection)-> {
                 if (mViewModel.getIsInVRVideo().getValue().get()) {
-                    // Reproject while reproducing VRVideo
-                    mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
+                    if (projection == VIDEO_PROJECTION_NONE) {
+                        exitVRVideo();
+                    } else {
+                        // Reproject while reproducing VRVideo
+                        mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
+                    }
                     closeFloatingMenus();
                 } else {
                     enterVRVideo(projection);
@@ -864,9 +874,17 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
-        if (mViewModel.getIsInVRVideo().getValue().get()) {
+        if (mViewModel.getIsInVRVideo().getValue().get() || aProjection == VIDEO_PROJECTION_NONE) {
             return;
         }
+
+        // Remember the cylinder density before we enter VR video
+        mSavedCylinderDensity = mWidgetManager.getCylinderDensity();
+        // We have to disable curved display temporary if we are playing front facing VR videos
+        if (isFrontFacingVRProjection(aProjection)) {
+            mWidgetManager.setCylinderDensityForce(0.0f);
+        }
+
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
@@ -889,10 +907,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
             mediaWidth = (int) mFullScreenMedia.getWidth();
             mediaHeight = (int) mFullScreenMedia.getHeight();
-        } else if (needsYoutubeVideoWorkaround()) {
-            // Default to the size of a 4K video, which is our preferred video quality on YouTube.
-            mediaWidth = 3840;
-            mediaHeight = 2160;
         } else {
             // Fallback to window sizes if the engine does not provide valid fullscreen sizes.
             mediaWidth = mAttachedWindow.getWindowWidth();
@@ -911,7 +925,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setVisible(false);
 
         closeFloatingMenus();
-        if (aProjection != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+        if (!isFrontFacingVRProjection(aProjection)) {
             mWidgetManager.setControllersVisible(false);
         }
 
@@ -954,7 +968,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setVisible(true);
         mMediaControlsWidget.setVisible(false);
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen() && !mAttachedWindow.isKioskMode());
+        mViewModel.setAutoEnteredVRVideo(false);
+        AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
+        mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
     }
@@ -989,6 +1006,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     // Content delegate
+
+    private Observer<ObservableBoolean> mIsLoadingObserver = aBoolean -> {
+        // Although the animation does nothing here, it's still needed to trigger the progress bar native animation
+        // Work around to fix the progress bar animation stucks
+        if (aBoolean.get()) {
+            mBinding.navigationBarNavigation.progressBar.startAnimation(mAnimation);
+        } else {
+            mBinding.navigationBarNavigation.progressBar.clearAnimation();
+        }
+    };
 
     private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
 
@@ -1072,7 +1099,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             });
         }
 
-        mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mVoiceSearchWidget.setPlacement(mAttachedWindow.getHandle());
         mVoiceSearchWidget.show(REQUEST_FOCUS);
     }
 
@@ -1085,7 +1112,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
 
         final String text = mBinding.navigationBarNavigation.urlBar.getText().trim();
-        final String originalText = mBinding.navigationBarNavigation.urlBar.getOriginalText().trim();
+        final String originalText = mBinding.navigationBarNavigation.urlBar.getNonAutocompleteText().trim();
         if (originalText.length() <= 0) {
             mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
             return;
@@ -1097,7 +1124,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 .whenCompleteAsync((items, ex) -> {
                     if (mBinding.navigationBarNavigation.urlBar.hasFocus()) {
                         mAwesomeBar.updateItems(items);
-                        mAwesomeBar.setHighlightedText(mBinding.navigationBarNavigation.urlBar.getOriginalText().trim());
+                        mAwesomeBar.setHighlightedText(mBinding.navigationBarNavigation.urlBar.getNonAutocompleteText().trim());
 
                         if (!mAwesomeBar.isVisible()) {
                             mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mBinding.navigationBarNavigation.urlBar.getWidth()));
@@ -1185,12 +1212,22 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
     }
 
+    private boolean isFrontFacingVRProjection(int projection){
+        switch (projection) {
+            case VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE:
+            case VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_TOP_BOTTOM:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     // WorldClickListener
     @Override
     public void onWorldClick() {
         if (mViewModel.getIsInVRVideo().getValue().get() && mMediaControlsWidget != null) {
             mMediaControlsWidget.setVisible(!mMediaControlsWidget.isVisible());
-            if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+            if (!isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
                 if (mMediaControlsWidget.isVisible()) {
                     // Reorient the MediaControl UI when the users clicks to show it.
                     // So you can look at any point of the 180/360 video and the UI always shows in front of you.
@@ -1200,7 +1237,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             if (mMediaControlsWidget.isVisible()) {
                 mWidgetManager.setControllersVisible(true);
-            } else if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+            } else if (!isFrontFacingVRProjection(mProjectionMenu.getSelectedProjection())) {
                 mWidgetManager.setControllersVisible(false);
             }
         } else if (mViewModel.getIsFullscreen().getValue().get()) {
@@ -1275,6 +1312,14 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 hideMenu();
 
                 showSendTabDialog();
+            }
+
+            @Override
+            public void onFindInPage() {
+                hideMenu();
+                mAttachedWindow.hidePanel();
+
+                mViewModel.setIsFindInPage(true);
             }
 
             @Override

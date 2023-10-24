@@ -80,7 +80,7 @@ public class UrlUtils {
         return result;
     }
 
-    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\\/[^ ]*)?$");
+    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,24}(:[0-9]{1,5})?(\\/[^ ]*)?$");
     public static boolean isDomain(String text) {
         return domainPattern.matcher(text).find();
     }
@@ -224,7 +224,7 @@ public class UrlUtils {
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {
-        String feed = aContext.getString(R.string.homepage_url);
+        String feed = aContext.getString(R.string.HOMEPAGE_URL);
         return UrlUtils.getHost(feed).equalsIgnoreCase(UrlUtils.getHost(url));
     }
 
@@ -257,7 +257,7 @@ public class UrlUtils {
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
             TelemetryService.urlBarEvent(true);
-        } else if (text.startsWith("about:") || text.startsWith("resource://")) {
+        } else if (text.startsWith("about:") || text.startsWith("resource://") || UrlUtils.isFileUri(text)) {
             url = text;
         } else {
             url = SearchEngineWrapper.get(context).getSearchURL(text);
@@ -266,6 +266,12 @@ public class UrlUtils {
             TelemetryService.urlBarEvent(false);
         }
 
+        try {
+            URI uri = parseUri(url);
+            if (uri.getScheme() == null)
+                return "http://" + uri.toString();
+        } catch (URISyntaxException e) {
+        }
         return url;
     }
 

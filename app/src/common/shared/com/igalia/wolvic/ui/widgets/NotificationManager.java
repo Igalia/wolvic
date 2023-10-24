@@ -215,7 +215,7 @@ public class NotificationManager {
 
     private static void setPlacement(@NonNull TooltipWidget notificationView, @NonNull Notification notification) {
         notificationView.getPlacement().parentHandle = notification.mParent.getHandle();
-        notificationView.getPlacement().density = WidgetPlacement.floatDimension(notification.mParent.getContext(), notification.mDensity);
+        notificationView.setDensityScale(WidgetPlacement.floatDimension(notification.mParent.getContext(), notification.mDensity));
         notificationView.getPlacement().translationZ = notification.mZTranslation;
         notificationView.getPlacement().cylinder = notification.mCurved;
 

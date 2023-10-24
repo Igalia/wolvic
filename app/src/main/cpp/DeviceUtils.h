@@ -9,6 +9,9 @@
 #include "vrb/MacroUtils.h"
 #include "vrb/Forward.h"
 #include "vrb/Geometry.h"
+#include "Device.h"
+
+#include <unordered_map>
 
 namespace crow {
 
@@ -26,7 +29,10 @@ public:
                                      const uint32_t aMaxWidth, const uint32_t aMaxHeight,
                                      uint32_t& aTargetWidth, uint32_t& aTargetHeight);
   static vrb::GeometryPtr GetSphereGeometry(vrb::CreationContextPtr& context, uint32_t resolution, float radius);
+  static device::DeviceType GetDeviceTypeFromSystem(bool is6DoF);
+
 private:
+  static std::unordered_map<std::string, device::DeviceType> deviceNamesMap;
   VRB_NO_DEFAULTS(DeviceUtils)
 };
 

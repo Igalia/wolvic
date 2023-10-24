@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Utvecklaralternativ</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Logga in på konto</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Hantera konto</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Logga ut</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Återanslut</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -306,11 +306,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Skicka oss din feedback</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Logga in</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Logga ut</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Återanslut</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -553,11 +553,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">Autofyll</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Synkronisera inloggningar med Firefox-konton</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Synkronisera inloggningar med Mozilla-konton</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Konto…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -633,10 +633,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Av</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Synkronisera</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Synkronisera inte</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -782,7 +782,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Visa alla bokmärken</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Synkronisera</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Historik</string>
@@ -931,12 +931,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">Läs mer om behörigheter</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Synkronisera</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synkroniserar…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Logga ut från ditt Firefox-konto?</string>
+    <string name="fxa_signout_confirmation_title">Logga ut från ditt Mozilla-konto?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">När du loggar ut kommer du inte att kunna skicka eller ta emot flikar från andra enheter. Dina bokmärken och historik slutar också synkronisera.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1282,6 +1282,12 @@
     <string name="before_unload_prompt_stay">Stanna på sidan</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Lämna sidan</string>
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">Bekräfta återsändning av formulär</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">Önskad sida använder information som du har angett. Om du återgår till sidan kan eventuella åtgärder på sidan upprepas. Vill du fortsätta?</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">Fortsätt</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Avblockera sida</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1384,6 +1390,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">Ändra fönsterstorlek</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the find in page option -->
+    <string name="hamburger_menu_find_in_page">Hitta på sidan</string>
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">Tillägg</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
@@ -1408,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">Logga in för att skicka flikar</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Logga in eller skapa ett nytt Firefox-konto för att skicka flikar från Firefox på din stationära eller mobila enhet till ditt headset.</string>
+    <string name="whats_new_body_1">Logga in eller skapa ett nytt Mozilla-konto för att skicka flikar från Firefox på din stationära eller mobila enhet till ditt headset.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Med ett Firefox-konto kan du också synkronisera bokmärken och historik mellan alla dina enheter.</string>
+    <string name="whats_new_body_sub_1">Med ett Mozilla-konto kan du också synkronisera bokmärken och historik mellan alla dina enheter.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Logga in</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1622,4 +1631,163 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="external_open_uri_error_no_activity_body">Ingen app hittades för att hantera %1$s</string>
     <string name="voice_search_unsupported">Röstsökning stöds inte för ditt språk.</string>
     <string name="language_service_options_reset">Återställ inställningarna för röstsökningstjänsten</string>
+    <string name="settings_language_galician">Galiciska</string>
+    <string name="hvr_enter_vr">Gå in i VR</string>
+    <string name="settings_language_portuguese_br">Portugisiska (Brasilien)</string>
+    <string name="notifications_title">Aviseringar</string>
+    <string name="notifications_empty">Din aviseringslista är tom</string>
+    <string name="notifications_loading">Laddar aviseringar</string>
+    <string name="permissions_dialog_remember_choice">Kom ihåg detta beslut</string>
+    <string name="upload_button">Ladda upp</string>
+    <string name="web_apps_saved_notification">Webbapp har lagts till!</string>
+    <string name="hamburger_menu_save_web_app">Spara Webbapp…</string>
+    <string name="download_addon_install_confirm_install">Installera</string>
+    <string name="download_addon_install_blocked_body">Tillåt lokal tilläggsinstallation i utvecklaralternativ för att fortsätta.</string>
+    <string name="addons_experimental_section_title">Experimentell</string>
+    <string name="web_apps_title">Webbappar</string>
+    <string name="web_apps_description">Klicka på knappen Spara webbapp... när du är på en sida för att lägga till den i dina webbappar.</string>
+    <string name="web_apps_empty">Din webbappslista är tom</string>
+    <string name="web_apps_loading">Laddar webbappar</string>
+    <string name="web_apps_dialog_title">Installera Webbapp</string>
+    <string name="web_apps_dialog_title_parameter">Installera %1$s</string>
+    <string name="web_apps_dialog_body">Vill du installera följande webbapp\? Den kommer att finnas i biblioteket.</string>
+    <string name="web_apps_dialog_install">Installera</string>
+    <string name="web_apps_dialog_cancel">Avbryt</string>
+    <string name="download_addon_install">Installera tillägg</string>
+    <string name="download_addon_install_cancel">Avbryt</string>
+    <string name="download_addon_install_blocked">Lokal tilläggsinstallation blockerad</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic kan bara få din ungefärliga plats. Detta kan ändras i systeminställningarna.</string>
+    <string name="upload_list_empty">Inga filer tillgängliga för uppladdning</string>
+    <string name="deprecated_version_dialog_title">Rekommenderad uppdatering</string>
+    <string name="deprecated_version_dialog_info_button">Läs mer…</string>
+    <string name="deprecated_version_dialog_store_button">Installera…</string>
+    <string name="settings_language_portuguese">Portugisiska</string>
+    <string name="deprecated_version_dialog_body">Du kör för närvarande en \"App Lab\"-utvecklingsversion av Wolvic.
+\n
+\nInstallera den senaste versionen av Wolvic från Oculus Store.
+\n
+\nVIKTIGT: om du inte använder Mozilla Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException vid start av intent för %1$s</string>
+    <string name="user_feedback_tooltip">Dela idéer och feedback</string>
+    <string name="hamburger_menu_toggle_passthrough">Passera genom</string>
+    <string name="terms_service_section_2">Wolvic använder webbaserade informationstjänster (”Tjänster”) för att tillhandahålla några av de funktioner som tillhandahålls för din användning med denna binära version av Wolvic under de villkor som beskrivs nedan.
+\n
+\n• Igalia och dess bidragsgivare, licensgivare och partners arbetar för att tillhandahålla de mest exakta och uppdaterade tjänsterna. Vi kan dock inte garantera att denna information är heltäckande och felfri. Säker webbsökning kan till exempel inte identifiera vissa riskfyllda webbplatser och kan identifiera vissa säkra webbplatser av misstag, och i Platsmedvetena tjänster är alla platser som returneras av våra tjänsteleverantörer endast uppskattningar och varken vi eller våra tjänsteleverantörer garanterar noggrannheten av angivna platser.
+\n
+\n• Igalia kan avbryta eller ändra tjänsterna efter eget gottfinnande.
+\n
+\n• Du är välkommen att använda dessa tjänster med den medföljande versionen av Wolvic, och Igalia ger dig sina rättigheter att göra det. Igalia och dess licensgivare förbehåller sig alla andra rättigheter till tjänsterna. Dessa villkor är inte avsedda att begränsa några rättigheter som beviljas under licenser för öppen källkod som gäller för Wolvic och till motsvarande källkodsversioner av Wolvic.
+\n
+\n• Tjänsterna tillhandahålls \"i befintligt skick.\" Igalia, dess bidragsgivare, licensgivare och distributörer, frånsäger sig alla garantier, vare sig uttryckliga eller underförstådda, inklusive utan begränsning, garantier för att tjänsterna är säljbara och lämpliga för dina specifika ändamål. Du bär hela risken när det gäller att välja Tjänsterna för dina syften och beträffande Tjänsternas kvalitet och prestanda.
+\n
+\n• Förutom vad som krävs enligt lag kommer Igalia, dess bidragsgivare, licensgivare och distributörer inte att hållas ansvariga för några indirekta, speciella, tillfälliga, följdskador, straffskador eller exemplariska skador som uppstår till följd av eller på något sätt relaterade till användningen av Wolvic och Tjänster. Det kollektiva ansvaret enligt dessa villkor kommer inte att överstiga $500 (femhundra dollar). Vissa jurisdiktioner tillåter inte uteslutning eller begränsning av vissa skador, så denna uteslutning och begränsning kanske inte gäller dig.
+\n
+\n• Igalia kan uppdatera dessa villkor då och då. Dessa villkor får inte ändras eller avbrytas utan Igalias skriftliga godkännande.
+\n
+\n• Dessa villkor regleras av lagarna i Spanien, exklusive dess lagkonfliktbestämmelser. Om någon del av dessa villkor anses vara ogiltig eller omöjlig att verkställa, kommer de återstående delarna att förbli i full kraft och verkan. I händelse av en konflikt mellan en översatt version av dessa villkor och den spanska språkversionen ska den spanska versionen styra.
+\n
+\n• Om du inte vill använda en eller flera av tjänsterna eller om villkoren ovan är oacceptabla, kan du inaktivera funktionen eller tjänsterna. Instruktioner om hur du inaktiverar en viss funktion eller tjänst finns nedan. Andra funktioner och tjänster kan inaktiveras i programinställningarna.
+\n
+\n◦ Säker webbsökning är aktiverat som standard. Att inaktivera Safe Browsing-funktionen rekommenderas inte eftersom det kan leda till att du går till osäkra webbplatser. Om du vill inaktivera funktionen helt, följ dessa steg:
+\n
+\n⁃ Skriv about:config i URL-fältet
+\n
+\n⁃ Skriv browser.safebrowsing.malware.enabled
+\n
+\n⁃ Dubbelklicka på inställningen browser.safebrowsing.malware.enabled
+\n
+\n⁃ Skriv browser.safebrowsing.phishing.enabled
+\n
+\n⁃ Dubbelklicka på inställningen browser.safebrowsing.phishing.enabled
+\n
+\n⁃ Säker webbsökning är nu inaktiverad
+\n
+\n◦ Platsmedveten surfning: är alltid opt-in. Ingen platsinformation skickas någonsin utan din tillåtelse. Om du vill inaktivera funktionen helt, följ dessa steg:
+\n
+\n⁃ Skriv about:config i URL-fältet
+\n
+\n⁃ Skriv geo.enabled
+\n
+\n⁃ Dubbelklicka på inställningen geo.enabled
+\n
+\n⁃ Platsmedveten surfning är nu inaktiverad
+\n
+\n◦ Förbättrat spårningsskydd i Wolvic skyddar automatiskt din integritet medan du surfar. Det blockerar spårare som följer dig runt på nätet för att samla in information om dina surfvanor och intressen utan att bryta webbplatsens funktionalitet. Den innehåller också skydd mot skadliga skript, till exempel skadlig programvara som tömmer ditt batteri. Det finns tre lägen för spårningsskydd: Standard, Strikt och Av. Om du vill stänga av den, följ dessa steg:
+\n
+\n⁃ Gå till inställningarna \"Sekretess och säkerhet\".
+\n
+\n⁃ Välj alternativknapp \"Av\".
+\n
+\n⁃ Förbättrat spårningsskydd är nu inaktiverat.</string>
+    <string name="privacy_policy_section_2">IGALIA har åtagit sig att följa lagbestämmelserna om skydd av personuppgifter: Europaparlamentets och rådets förordning (EU) 2016/679 av den 27 april 2016 om skydd av fysiska personer med avseende på behandling av personuppgifter och om fri rörlighet för sådana uppgifter och om upphävande av direktiv 95/46/EG (allmän dataskyddsförordning) och i den organiska lagen 3/2018, av den 5 december, om dataskydd och garanti för digitala rättigheter (LOPDGDD).
+\nIGALIA samlar inte in personuppgifter på ett sådant sätt att användaren kan identifieras. Därför kan du använda applikationen, konsultera och bläddra i den virtuella verklighetsmiljön utan att avslöja din identitet eller lämna personuppgifter till IGALIA, varken direkt eller indirekt; därför kommer IGALIA inte att hållas ansvarigt för någon data som skrivs in i WOLVIC.
+\nDen enda data och information som IGALIA kommer att få för användningen av denna applikation, som inte vid något tillfälle kommer att vara individuellt länkad till användaren, är följande:
+\n
+\n• Analytiska, rent statistiska och icke-identifierande data.
+\n• För att fånga och översätta rösten till text skickas användarens ljuddata till servrarna som ägs av det tredje part som ansvarar för varje plattform, genom ett API för detta ändamål: till exempel i Oculus, från Facebook, en tjänst som skickar den till Oculus Voice SDK. Vid inget tillfälle behandlas, nås eller införlivas ovan nämnda data i servrarna som ägs av IGALIA. De data som överförs kommer att vara det exklusiva ansvaret för de tredjepartsföretag som äger varje plattform (hädanefter tredje parten), som kan vara belägen utanför Europeiska unionen och omfattas av en rättslig ordning som är mindre skyddande för användarnas integritet. Vi rekommenderar att du noggrant läser sekretesspolicyn och användarvillkoren för var och en av dessa externa plattformar innan du accepterar och använder deras tjänster. IGALIA kommer inte att vara direkt eller indirekt ansvarig för behandlingen av personuppgifter av nämnda tredje parter.
+\n• Geografisk platsinformation kan erhållas från webbläsaren, istället för den som används av systemet. För att göra det måste du dock ställa in platsbehörigheterna för din enhet genom ett specifikt meddelande i detta avseende och IGALIA kommer inte på något sätt att länka ovannämnda information till dig som en identifierad eller identifierbar person, även om de tredje parter som nämns i föregående punkt skulle kunna göra det, om tillämpligt. Vi rekommenderar att du uppmärksammar deras juridiska villkor.
+\n• IGALIA kommer inte att komma åt eller lagra på något sätt de adresser eller webbadresser som du besökt.
+\n• Integration med molntjänster (som Mozilla-konton eller Google-konton) för att synkronisera data som din webbhistorik eller dina användarbokmärken kan vara möjlig. I det här fallet kommer IGALIA inte att komma åt eller bearbeta någon information på något sätt, och den kommer inte heller att passera genom IGALIAs servrar.
+\n
+\nVi påminner dig igen om att de tredjepartsplattformar som du kommer åt eller använder med denna applikation kan samla in denna eller andra identifierande data om dig, antingen fylla i dem frivilligt eller ofrivilligt och/eller medvetet eller omedvetet, möjligen utanför räckvidden av europeisk dataskyddslagstiftning . Därför rekommenderar vi att du informerar dig själv och ägnar särskild uppmärksamhet åt de juridiska villkoren för nämnda tredje parter, såsom till exempel följande:
+\n
+\n• Google: https://policies.google.com/privacy
+\n• Facebook: https://www.facebook.com/about/privacy/update
+\n• MeetKai: https://meetkai.com/privacy
+\n
+\nPå samma sätt informerar IGALIA dig att när du använder webbläsarens röstigenkänningsalternativ kommer Meetkai att behålla helt anonymiserade rösttranskriptioner av din röst i syfte att förbättra tjänsten som tillhandahålls av dem. Din röst kommer inte att behållas eller kommer att vara något sätt att koppla transkriptionerna med din identitet. Mer information om MeetKais sekretesspolicy i följande länk: https://meetkai.com/es/privacy. Igalia har varken något intresse av att länka transkriptioner med någon användare eller att påverka deras integritet; följaktligen begär Igalia att ingen personlig eller konfidentiell information av något slag inkluderas i deras ljudtalsadresser.
+\nI vilket fall som helst garanterar IGALIA de berörda parterna utövandet av rätten till åtkomst, rättelse, radering, opposition, begränsning av behandling och portabilitet avseende deras personuppgifter.
+\nFör sådana ändamål har IGALIA upprättat ett internt protokoll/procedur för att genomföra dem.
+\nIntresserade parter kan utöva sina rättigheter enligt följande: genom att skicka en begäran till IGALIA:s fysiska adress: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referens: \"Dataskydd\"; eller till följande e-postadress: info@igalia.com.
+\nI båda fallen måste den berörda parten bifoga en kopia av sitt nationella ID, pass eller identitetshandling för att styrka sin identitet.
+\nDataskyddsombudet eller den avdelning som har anförtrotts förvaltningen av rättigheterna kommer att registrera utövandet av rättigheterna i den form som är tillgänglig för detta ändamål, i vilken följande data kommer att spelas in:
+\n
+\n• Ansökningsnummer: ett nummer kommer att tilldelas var och en av de mottagna ansökningarna.
+\n• Högkvarter: om den ansvarige har flera huvudkontor, kommer det att anges vilket huvudkontor förfrågan togs emot.
+\n• Kanal att lämna anspråk: kanalen genom vilken begäran togs emot kommer att anges: fysisk e-postadress, e-post, etc.
+\n• Inlämningsdatum: det datum då begäran har lämnats in kommer att anges.
+\n• Utövade rättigheter: typen av rättighet personen utövade.
+\n• Svarsdag: den dag då svaret skickades till den berörda parten.
+\n
+\nDen stödjande dokumentationen (mottagande av förfrågan/svar, kommunikation etc.) kommer att arkiveras i syfte att bevisa dess korrekta hantering.
+\nPå samma sätt påminns du om att du har rätt att lämna in en ansökan till den spanska dataskyddsmyndigheten.</string>
+    <string name="terms_service_section_1">Wolvic är gratis programvara med öppen källkod, byggt av en gemenskap med tusentals från hela världen. Det finns några saker du bör veta:
+\n
+\n• Wolvic görs tillgängligt för dig under villkoren i Mozilla Public License. Detta innebär att du får använda, kopiera och distribuera Wolvic till andra. Du är också välkommen att ändra källkoden för Wolvic för att möta dina behov. Mozilla Public License ger dig också rätt att distribuera dina modifierade versioner.
+\n
+\n• Du beviljas inte några varumärkesrättigheter eller licenser till varumärken som tillhör Igalia eller någon part, inklusive men inte begränsat till Wolvics namn eller logotyp.
+\n
+\n• Vissa funktioner i Wolvic, som Kraschrapporteraren ger dig möjlighet att ge feedback till Igalia. Genom att välja att skicka feedback ger du Igalia tillåtelse att använda feedbacken för att förbättra sina produkter, att publicera anonymiserad feedback på sina webbplatser och att distribuera den anonymiserade feedbacken.
+\n
+\n• Hur vi använder din personliga information och feedback som skickats till Igalia genom Wolvic beskrivs i Wolvics sekretesspolicy.
+\n
+\n• Vissa Wolvic-funktioner använder sig av webbaserade informationstjänster; vi kan dock inte garantera att de är 100 % korrekta eller felfria. Mer information, inklusive information om hur du inaktiverar funktionerna som använder dessa tjänster, finns i tjänstevillkoren (nedan).</string>
+    <string name="privacy_policy_section_1">Denna applikation har utvecklats av Igalia, SL (nedan kallat IGALIA), med registrerat kontor på Bugallal Marchesi, 22 – 1º, 15008, A Coruña, Galicien (Spanien), vars kontaktuppgifter är:
+\n
+\n• Telefonnummer +34 981 913991;
+\n• E-post: info@igalia.com
+\n
+\nInnehållet och elementen som utgör applikationen har implementerats och/eller utvecklats av IGALIA under licenser med öppen källkod, och skyddas, utan begränsningar, av lagen om immateriell och industriell äganderätt i kungariket Spanien och av de internationella fördrag och avtal som kan resultat av ansökan.</string>
+    <string name="rCN_first_launch_title">Användaravtal och integritetspolicyavisering</string>
+    <string name="rCN_first_launch_body">Välkommen till “Wolvic”!
+\n
+\nRegistrering och användning av \"Wolvic\" kräver att du godkänner användaravtalet och integritetspolicyn, annars kan vi inte tillhandahålla tjänster till dig. Läs dokumenten noggrant och klicka på \"Godkänn\" för att fortsätta. Om du klickar på \"Godkänn inte\" kommer du inte att kunna fortsätta använda \"Wolvic\".
+\n
+\nDu kan läsa hela användaravtalet och sekretesspolicyn.</string>
+    <string name="rCN_first_launch_clickable_terms_text">Användaravtal</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Integritetspolicy</string>
+    <string name="rCN_first_launch_agree">Acceptera</string>
+    <string name="rCN_first_launch_disagree">Acceptera inte</string>
+    <string name="rCN_first_launch_confirmation_body">\\om du väljer \"Acceptera inte\", kommer vi tyvärr inte längre att kunna tillhandahålla tjänster åt dig.
+\n
+\nDu kan läsa hela användaravtalet och sekretesspolicyn.</string>
+    <string name="rCN_first_launch_confirmation_agree">Acceptera och fortsätt</string>
+    <string name="rCN_first_launch_confirmation_disagree">Acceptera inte och Avsluta</string>
+    <string name="keyboardview_keycode_mode_change">Lägesändring</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_delete">Ta bort</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="keyboardview_keycode_cancel">Avbryt</string>
+    <string name="keyboardview_keycode_done">Klart</string>
 </resources>

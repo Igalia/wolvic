@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+// TODO: Deprecated JobIntentService, see https://github.com/Igalia/wolvic/issues/805
 import androidx.core.app.JobIntentService;
 
 import com.igalia.wolvic.BuildConfig;

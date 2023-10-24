@@ -31,6 +31,7 @@ public class SingleEditSetting extends RelativeLayout {
     protected TextView mButton;
     private OnClickListener mListener;
     protected int mHighlightedTextColor;
+    protected int mHintTextColor;
     private String mDefaultFirstValue;
     private AppCompatToggleButton mPasswordToggle;
 
@@ -47,6 +48,7 @@ public class SingleEditSetting extends RelativeLayout {
         mWidth = attributes.getDimension(R.styleable.EditSetting_android_width, 0.0f);
         mInputType = attributes.getInt(R.styleable.EditSetting_android_inputType, InputType.TYPE_NULL);
         mHighlightedTextColor = attributes.getColor(R.styleable.EditSetting_highlightedTextColor, 0);
+        mHintTextColor = attributes.getColor(R.styleable.EditSetting_hintTextColor, 0);
         initialize(context);
     }
 
@@ -63,6 +65,7 @@ public class SingleEditSetting extends RelativeLayout {
 
         mEdit1 = findViewById(R.id.editValue1);
         mEdit1.setHighlightedTextColor(mHighlightedTextColor);
+        mEdit1.setHintTextColor(mHintTextColor);
         mEdit1.setOnEditorActionListener(mInternalEditorActionListener);
 
         if (mMaxLength != 0) {

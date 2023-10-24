@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -33,14 +31,17 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NavigationUrlBinding;
+import com.igalia.wolvic.findinpage.FindInPageInteractor;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
 import com.igalia.wolvic.utils.StringUtils;
@@ -52,8 +53,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Executor;
 
+import kotlin.coroutines.Continuation;
 import kotlin.Unit;
-import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
+import kotlin.coroutines.CoroutineContext;
+import mozilla.components.concept.toolbar.AutocompleteResult;
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
@@ -61,10 +64,12 @@ public class NavigationURLBar extends FrameLayout {
 
     private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
+    private FindInPageInteractor mFindInPage;
     private WindowViewModel mViewModel;
+    private WidgetManagerDelegate mWidgetManager;
+    private Runnable mFindInPageBackHandler;
     private SettingsViewModel mSettingsViewModel;
     private NavigationUrlBinding mBinding;
-    private Animation mLoadingAnimation;
     private NavigationURLBarDelegate mDelegate;
     private ShippedDomainsProvider mAutocompleteProvider;
     private AudioEngine mAudio;
@@ -76,13 +81,28 @@ public class NavigationURLBar extends FrameLayout {
     private int lastTouchDownOffset = 0;
 
     private Unit domainAutocompleteFilter(String text) {
-        DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
+        if (!SettingsStore.getInstance(getContext()).isAutocompleteEnabled()) {
+            return Unit.INSTANCE;
+        }
+
+        Continuation<? super AutocompleteResult> completion = new Continuation<AutocompleteResult>() {
+            @NonNull
+            @Override
+            public CoroutineContext getContext() {
+                return getContext();
+            }
+
+            @Override
+            public void resumeWith(@NonNull Object o) {
+
+            }
+        };
+        AutocompleteResult result = (AutocompleteResult) mAutocompleteProvider.getAutocompleteSuggestion(text, completion);
         if (result != null) {
             mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
                     result.getText(),
                     result.getSource(),
-                    result.getTotalItems(),
-                    null));
+                    result.getTotalItems()));
         } else {
             mBinding.urlEditText.noAutocompleteResult();
         }
@@ -114,13 +134,14 @@ public class NavigationURLBar extends FrameLayout {
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(SettingsViewModel.class);
 
+        mWidgetManager = (WidgetManagerDelegate) getContext();
         mAudio = AudioEngine.fromContext(aContext);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mSession = SessionStore.get().getActiveSession();
 
-        mLoadingAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.loading);
+        mFindInPageBackHandler = () -> mViewModel.setIsFindInPage(false);
 
         // Layout setup
         mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.navigation_url, this, true);
@@ -238,14 +259,32 @@ public class NavigationURLBar extends FrameLayout {
         // Web app
         mBinding.webAppButton.setOnClickListener(mWebAppButtonClick);
 
+        mFindInPage = new FindInPageInteractor(
+                mBinding.findInPage,
+                () -> {
+                    mViewModel.setIsFindInPage(false);
+                    return null;
+                }
+        );
+        bindFindInPageSession();
+
         clearFocus();
+    }
+
+    private void bindFindInPageSession() {
+        if (mSession == null) { return; }
+        WSession.SessionFinder finder = mSession.getWSession().getSessionFinder();
+        // FIXME: finder should be NonNull but we haven't implemented it for Chromium yet.
+        if (finder == null) { return; };
+        mFindInPage.bind(finder);
+        mFindInPage.start();
     }
 
     public void detachFromWindow() {
         if (mViewModel != null) {
             mViewModel.setIsFocused(false);
-            mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
             mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
+            mViewModel.getIsFindInPage().removeObserver(mIsFindInPageObserver);
             mViewModel = null;
         }
     }
@@ -258,25 +297,15 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
+        mViewModel.getIsFindInPage().observe((VRBrowserActivity)getContext(), mIsFindInPageObserver);
     }
 
     public void setSession(Session session) {
+        mFindInPage.stop();
+        mFindInPage.unbind();
         mSession = session;
-    }
-
-    public void onPause() {
-        if (mViewModel.getIsLoading().getValue().get()) {
-            mBinding.loadingView.clearAnimation();
-
-        }
-    }
-
-    public void onResume() {
-        if (mViewModel.getIsLoading().getValue().get()) {
-            mBinding.loadingView.startAnimation(mLoadingAnimation);
-        }
+        bindFindInPageSession();
     }
 
     public void setDelegate(NavigationURLBarDelegate delegate) {
@@ -311,27 +340,24 @@ public class NavigationURLBar extends FrameLayout {
 
     }
 
-    private Observer<ObservableBoolean> mIsLoadingObserver = aBoolean -> {
+    private Observer<ObservableBoolean> mIsBookmarkedObserver = aBoolean -> mBinding.bookmarkButton.clearFocus();
+
+    private Observer<ObservableBoolean> mIsFindInPageObserver = aBoolean -> {
         if (aBoolean.get()) {
-            mBinding.loadingView.startAnimation(mLoadingAnimation);
+            mBinding.findInPage.focus();
+            mWidgetManager.pushBackHandler(mFindInPageBackHandler);
         } else {
-            mBinding.loadingView.clearAnimation();
+            mBinding.findInPage.clear();
+            mWidgetManager.popBackHandler(mFindInPageBackHandler);
         }
     };
-
-    private Observer<ObservableBoolean> mIsBookmarkedObserver = aBoolean -> mBinding.bookmarkButton.clearFocus();
 
     public String getText() {
         return mBinding.urlEditText.getText().toString();
     }
 
-    public String getOriginalText() {
-        try {
-            return mBinding.urlEditText.getOriginalText();
-
-        } catch (IndexOutOfBoundsException e) {
-            return mBinding.urlEditText.getNonAutocompleteText();
-        }
+    public String getNonAutocompleteText() {
+        return mBinding.urlEditText.getNonAutocompleteText();
     }
 
     public UIButton getPopUpButton() {

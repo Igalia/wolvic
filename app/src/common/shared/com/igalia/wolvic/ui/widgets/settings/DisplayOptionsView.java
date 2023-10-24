@@ -66,7 +66,16 @@ class DisplayOptionsView extends SettingsView {
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
 
-        mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
+        mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
+        setStartWithPassthrough(SettingsStore.getInstance(getContext()).isStartWithPassthroughEnabled());
+
+        if (mWidgetManager != null && mWidgetManager.isPassthroughSupported()) {
+            mBinding.startWithPassthroughSwitch.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
+        }
+
+        mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
         mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
@@ -135,6 +144,10 @@ class DisplayOptionsView extends SettingsView {
         setAutoplay(enabled, true);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mStartWithPassthroughListener = (compoundButton, value, doApply) -> {
+        setStartWithPassthrough(value);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -193,6 +206,10 @@ class DisplayOptionsView extends SettingsView {
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
 
+        if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
+            setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
+        }
+
         if (restart) {
             showRestartDialog();
         }
@@ -218,6 +235,14 @@ class DisplayOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setAutoplayEnabled(value);
         }
+    }
+
+    private void setStartWithPassthrough(boolean value) {
+        mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(null);
+        mBinding.startWithPassthroughSwitch.setValue(value, false);
+        mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
+
+        SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
     }
 
     private void setHomepage(String newHomepage) {

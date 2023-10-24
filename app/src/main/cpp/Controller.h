@@ -43,13 +43,13 @@ struct Controller {
   vrb::TransformPtr transform;
   vrb::TogglePtr beamToggle;
   vrb::TogglePtr modelToggle;
-  vrb::TogglePtr handMeshToggle;
-  std::vector<vrb::TransformPtr> handJointTransforms;
+  std::vector<vrb::Matrix>handJointTransforms;
+  std::vector<float>handJointRadii;
   bool hasAim;
-  bool leftHandActionEnabled;
+  bool handActionEnabled;
   vrb::TogglePtr handActionButtonToggle;
   vrb::TransformPtr handActionButtonTransform;
-  float pinchFactor;
+  float selectFactor;
   vrb::TransformPtr beamParent;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;

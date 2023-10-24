@@ -3,11 +3,12 @@
 
     <RelativeLayout
         android:layout_width="@dimen/prompt_dialog_width"
-        android:layout_height="@dimen/prompt_dialog_height"
+        android:layout_height="wrap_content"
         android:background="@drawable/dialog_background"
         android:paddingStart="20dp"
         android:paddingTop="@dimen/prompt_dialog_padding_top"
         android:paddingEnd="20dp"
+        android:minHeight="@dimen/prompt_dialog_height"
         android:paddingBottom="@dimen/prompt_dialog_padding_bottom">
 
         <FrameLayout
@@ -46,6 +47,18 @@
             android:layout_marginEnd="44dp"
             android:layout_marginBottom="10dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/mozac_ic_warning"
+                android:layout_gravity="center_vertical|start" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/mozac_ic_warning"
+                android:layout_gravity="center_vertical|end" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -53,7 +66,6 @@
                 android:layout_gravity="center_horizontal"
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
-                android:lines="1"
                 android:maxLines="2"
                 android:minLines="1"
                 android:text="@string/deprecated_version_dialog_title"

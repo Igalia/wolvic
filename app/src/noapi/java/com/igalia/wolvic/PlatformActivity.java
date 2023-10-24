@@ -5,14 +5,17 @@
 
 package com.igalia.wolvic;
 
-import android.app.Activity;
+import androidx.activity.ComponentActivity;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
@@ -24,7 +27,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class PlatformActivity extends Activity {
+public class PlatformActivity extends ComponentActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
     static final float ROTATION = 0.098174770424681f;
 
@@ -199,15 +202,24 @@ public class PlatformActivity extends Activity {
     }
 
     void setImmersiveSticky() {
-        getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+            WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+                controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
+        } else {
+            getWindow()
+                    .getDecorView()
+                    .setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     void queueRunnable(Runnable aRunnable) {
@@ -245,7 +257,13 @@ public class PlatformActivity extends Activity {
         findViewById(R.id.left_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(ROTATION * mScale));
         findViewById(R.id.pitch_up_button).setOnClickListener((View view) -> dispatchRotatePitch(ROTATION * mScale));
         findViewById(R.id.pitch_down_button).setOnClickListener((View view) -> dispatchRotatePitch(-ROTATION * mScale));
-        findViewById(R.id.back_button).setOnClickListener((View view) -> onBackPressed());
+        findViewById(R.id.back_button).setOnClickListener((View view) -> {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+                getOnBackPressedDispatcher().onBackPressed();
+            } else {
+                onBackPressed();
+            }
+        });
         findViewById(R.id.click_button).setOnTouchListener((View view, MotionEvent event) -> {
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN:

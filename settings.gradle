@@ -1,12 +1,5 @@
 include ':app'
 
-def wavebuild = new File('third_party/wavesdk/build.gradle')
-
-if (wavebuild.exists()) {
-    include ':wavesdk'
-    project(':wavesdk').projectDir = new File('third_party/wavesdk/')
-}
-
 Properties userProperties = null;
 if (file('user.properties').canRead()) {
     userProperties = new Properties()

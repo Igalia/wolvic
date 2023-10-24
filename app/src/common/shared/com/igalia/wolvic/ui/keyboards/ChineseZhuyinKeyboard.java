@@ -3,7 +3,7 @@ package com.igalia.wolvic.ui.keyboards;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.inputmethodservice.Keyboard.Key;
+import com.igalia.wolvic.input.Keyboard.Key;
 import android.util.Log;
 
 import androidx.annotation.NonNull;

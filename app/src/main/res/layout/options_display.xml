@@ -44,6 +44,12 @@
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_curved_display" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/startWithPassthroughSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_start_with_passthrough" />
+
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/ua_radio"
                     android:layout_width="match_parent"
@@ -73,6 +79,7 @@
                     android:width="300dp"
                     android:inputType="textWebEmailAddress"
                     app:description="@string/developer_options_homepage"
+                    app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
@@ -83,6 +90,7 @@
                     android:inputType="numberDecimal"
                     android:maxLength="4"
                     app:description="@string/developer_options_display_density"
+                    app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
@@ -93,6 +101,7 @@
                     android:inputType="number"
                     android:maxLength="4"
                     app:description="@string/developer_options_display_dpi"
+                    app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
             </LinearLayout>

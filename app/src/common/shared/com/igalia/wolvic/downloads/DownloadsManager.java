@@ -2,9 +2,6 @@ package com.igalia.wolvic.downloads;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,14 +11,12 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.utils.StringUtils;
@@ -32,11 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -129,11 +121,13 @@ public class DownloadsManager {
         request.setDescription(job.getDescription());
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setVisibleInDownloadsUi(false);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            request.setVisibleInDownloadsUi(false);
+        }
 
         if (job.getOutputPath() == null) {
             try {
-                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
@@ -161,7 +155,7 @@ public class DownloadsManager {
             return;
         }
 
-        final File dir = mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        final File dir = new File(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS);
         if (dir == null) {
             Log.e(LOGTAG, "Error when saving " + job.getUri() + " : failed to get the Downloads directory");
             return;
@@ -182,11 +176,13 @@ public class DownloadsManager {
             int currentIndex = 0;
             int lastDashIndex = name.lastIndexOf('-');
             if (lastDashIndex >= 0) {
+                String nameBackup = name;
                 try {
                     name = name.substring(0, lastDashIndex - 1);
                     String index = name.substring(lastDashIndex + 1);
                     currentIndex = Integer.parseInt(index);
                 } catch (Exception e) {
+                    name = nameBackup;
                 }
             }
             do {
@@ -213,9 +209,12 @@ public class DownloadsManager {
         }
         Log.i(LOGTAG, "Saved " + job.getUri() + " to " + file.getName() + " (" + readBytes + " bytes)");
 
-        mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
+        // TODO: Deprecated addCompletedDownload(...), see https://github.com/Igalia/wolvic/issues/798
+        long downloadId = mDownloadManager.addCompletedDownload(file.getName(), file.getName(),
                 true, UrlUtils.getMimeTypeFromUrl(file.getPath()), file.getPath(), readBytes, true,
-                Uri.parse(job.getUri().replaceFirst("^blob:","")), null);
+                Uri.parse(job.getUri().replaceFirst("^blob:", "")), null);
+
+        notifyDownloadCompleted(downloadId);
     }
 
     public void removeDownload(long downloadId, boolean deleteFiles) {
@@ -299,136 +298,41 @@ public class DownloadsManager {
             String action = intent.getAction();
             long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 
-            if (mDownloadManager != null && DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(downloadId);
-                Cursor c = mDownloadManager.query(query);
-                if (c != null) {
-                    if (c.moveToFirst()) {
-                        notifyDownloadsUpdate();
-                        notifyDownloadCompleted(Download.from(c));
-                    }
-                    c.close();
-                }
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                notifyDownloadCompleted(downloadId);
             }
         }
     };
 
-    //Returns the content URI of the public copy of this downloaded file, if it exists.
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public Uri getContentUriForDownloadedFile(@NonNull Download download) {
-        ContentResolver contentResolver = mContext.getContentResolver();
-
-        // We assume that the copy would have the same name, origin, and size.
-        Cursor cursor = contentResolver.query(MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Downloads._ID},
-                MediaStore.Downloads.DISPLAY_NAME + "=? AND " +
-                        MediaStore.Downloads.DOWNLOAD_URI + "=? AND " +
-                        MediaStore.Downloads.SIZE + "=" + download.getSizeBytes(),
-                new String[]{
-                        download.getFilename(),
-                        download.getUri()
-                },
-                null,
-                null
-        );
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                return ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID)));
-            }
-            cursor.close();
-        }
-        return null;
-    }
-
-    // Copies the downloaded file to a content URI in Android's media database.
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void copyToContentUri(long downloadId, @NonNull CopyToContentUriCallback callback) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler uiHandler = new Handler(Looper.getMainLooper());
-        ContentResolver contentResolver = mContext.getContentResolver();
-
-        Download download = getDownload(downloadId);
-        if (download == null) {
-            uiHandler.post(() -> callback.onFailure(null));
-            return;
-        }
-
-        // Check that the file has not already been copied before
-        Uri existingUri = getContentUriForDownloadedFile(download);
-        if (existingUri != null) {
-            uiHandler.post(() -> callback.onSuccess(existingUri, false));
-            return;
-        }
-
-        // Fill in the values for a new entry in the Downloads table in MediaStore.
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Downloads.DISPLAY_NAME, download.getFilename());
-        contentValues.put(MediaStore.Downloads.SIZE, download.getSizeBytes());
-        contentValues.put(MediaStore.Downloads.DATE_MODIFIED, download.getLastModified());
-        contentValues.put(MediaStore.Downloads.DOWNLOAD_URI, download.getUri());
-
-        String mimeFromExtension = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(download.getOutputFileUriAsString());
-        if (extension != null) {
-            mimeFromExtension = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-
-        File downloadedFile = download.getOutputFile();
-        Uri downloadedFileUri = Uri.fromFile(downloadedFile);
-        String mimeFromFile = contentResolver.getType(downloadedFileUri);
-
-        String mimeFromDownload = download.getMediaType();
-
-        if (mimeFromExtension != null) {
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromExtension);
-        } else if (mimeFromFile != null) {
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromFile);
-        } else {
-            contentValues.put(MediaStore.Downloads.MIME_TYPE, mimeFromDownload);
-        }
-
-        // This flag indicates that the file is not yet ready.
-        contentValues.put(MediaStore.Downloads.IS_PENDING, 1);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            contentValues.put(MediaStore.Downloads.IS_DRM, 0);
-        }
-
-        Uri contentUri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
-
-        if (contentUri == null) {
-            uiHandler.post(() -> callback.onFailure(download));
-            return;
-        }
-
-        // Copy the file asynchronously. Callbacks will happen in the UI thread.
-        executor.execute(() -> {
-            try {
-                Files.copy(downloadedFile.toPath(), contentResolver.openOutputStream(contentUri));
-                contentValues.put(MediaStore.Downloads.IS_PENDING, 0);
-                contentResolver.update(contentUri, contentValues, null, null);
-
-                uiHandler.post(() -> callback.onSuccess(contentUri, true));
-            } catch (IOException e) {
-                Log.e(LOGTAG, "Error while copying: " + e.getMessage(), e);
-
-                contentResolver.delete(contentUri, null, null);
-
-                uiHandler.post(() -> callback.onFailure(download));
-            }
-        });
-    }
-
     private void notifyDownloadsUpdate() {
         List<Download> downloads = getDownloads();
         int filter = Download.RUNNING | Download.PAUSED | Download.PENDING;
-        boolean activeDownloads = downloads.stream().filter(d -> (d.getStatus() & filter) != 0).count() > 0;
+        boolean activeDownloads = downloads.stream().filter(d -> (d.getStatus() & filter) != 0).count()  > 0;
         mListeners.forEach(listener -> listener.onDownloadsUpdate(downloads));
         if (!activeDownloads) {
             stopUpdates();
         }
+    }
+
+    private void notifyDownloadCompleted(@NonNull long downloadId) {
+        if (mDownloadManager == null) {
+            return;
+        }
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        Cursor c = mDownloadManager.query(query);
+        if (c == null) {
+            return;
+        }
+        if (c.moveToFirst()) {
+            notifyDownloadsUpdate();
+            Download download = Download.from(c);
+            if (download.getStatus() == Download.SUCCESSFUL)
+                notifyDownloadCompleted(download);
+            else
+                notifyDownloadError("Failed to download URI, missing input stream: ", download.getUri());
+        }
+        c.close();
     }
 
     private void notifyDownloadCompleted(@NonNull Download download) {

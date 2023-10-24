@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.browser.api.WWebRequestError;
 
 import org.chromium.content_public.browser.LifecycleState;
 import org.chromium.content_public.browser.NavigationHandle;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
 import org.chromium.url.GURL;
+
+import java.security.cert.X509Certificate;
 
 public class TabWebContentsObserver extends WebContentsObserver {
     private @NonNull SessionImpl mSession;
@@ -23,7 +26,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
     public void didStartLoading(GURL url) {
         @Nullable WSession.ProgressDelegate delegate = mSession.getProgressDelegate();
         if (delegate != null) {
-            delegate.onPageStart(mSession, url.toString());
+            delegate.onPageStart(mSession, url.getSpec());
         }
         dispatchCanGoBackOrForward();
     }
@@ -31,6 +34,47 @@ public class TabWebContentsObserver extends WebContentsObserver {
     @Override
     public void didRedirectNavigation(NavigationHandle navigationHandle) {
         dispatchCanGoBackOrForward();
+    }
+
+    /**
+     *  Called when the browser process starts a navigation in the primary main frame. Called before
+     * initiating the network request. See also
+     * https://chromium.googlesource.com/chromium/src/+/main/docs/navigation.md#Navigation
+     * @param navigationHandle
+     */
+    @Override
+    public void didStartNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
+        super.didStartNavigationInPrimaryMainFrame(navigationHandle);
+
+        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
+        if (delegate == null)
+            return;
+
+        // FIXME: how to select different target windows? Does it make sense here?.
+        delegate.onLoadRequest(mSession, new WSession.NavigationDelegate.LoadRequest(
+                navigationHandle.getUrl().getSpec(), navigationHandle.getReferrerUrl().getSpec(),
+                WSession.NavigationDelegate.TARGET_WINDOW_CURRENT, navigationHandle.isRedirect(),
+                navigationHandle.hasUserGesture(), navigationHandle.isRendererInitiated()));
+    }
+
+    /**
+     * Called when the navigation is committed. The commit can be an error page if the server
+     * responded with an error code or a successful document. See also:
+     * https://chromium.googlesource.com/chromium/src/+/main/docs/navigation.md#Navigation
+     * @param navigationHandle
+     */
+    @Override
+    public void didFinishNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
+        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
+        if (delegate == null)
+            return;
+
+        if (navigationHandle.isErrorPage()) {
+            didFailLoad(true, navigationHandle.errorCode(), navigationHandle.getUrl(), 0);
+            return;
+        }
+
+        delegate.onLocationChange(mSession, navigationHandle.getUrl().getSpec());
     }
 
     @Override
@@ -49,6 +93,29 @@ public class TabWebContentsObserver extends WebContentsObserver {
             delegate.onPageStop(mSession, false);
         }
         dispatchCanGoBackOrForward();
+
+        WSession.NavigationDelegate navigationDelegate = mSession.getNavigationDelegate();
+        if (navigationDelegate != null) {
+            navigationDelegate.onLoadError(mSession, failingUrl.getSpec(), new WWebRequestError() {
+                @Override
+                public int code() {
+                    return errorCode;
+                }
+
+                @Override
+                public int category() {
+                    // FIXME: can we improve this?.
+                    return ERROR_CATEGORY_UNKNOWN;
+                }
+
+                @Nullable
+                @Override
+                public X509Certificate certificate() {
+                    // FIXME: can we improve this?.
+                    return null;
+                }
+            });
+        }
     }
 
     private void dispatchCanGoBackOrForward() {

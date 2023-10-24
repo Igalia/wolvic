@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:horizontalGap="@dimen/keyboard_horizontal_gap"
-    android:verticalGap="@dimen/keyboard_vertical_gap"
-    android:keyWidth="@dimen/keyboard_key_width"
-    android:keyHeight="@dimen/keyboard_key_height">
+<Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:horizontalGap="@dimen/keyboard_horizontal_gap"
+    app:verticalGap="@dimen/keyboard_vertical_gap"
+    app:keyWidth="@dimen/keyboard_key_width"
+    app:keyHeight="@dimen/keyboard_key_height">
     <Row>
-        <Key android:codes="55" android:keyLabel="7" android:keyEdgeFlags="left" android:horizontalGap="0dp"/>
-        <Key android:codes="56" android:keyLabel="8"/>
-        <Key android:codes="57" android:keyLabel="9"/>
+        <Key app:codes="55" app:keyLabel="7" app:keyEdgeFlags="left" app:horizontalGap="0dp"/>
+        <Key app:codes="56" app:keyLabel="8"/>
+        <Key app:codes="57" app:keyLabel="9"/>
     </Row>
     <Row>
-        <Key android:codes="52" android:keyLabel="4" android:keyEdgeFlags="left" android:horizontalGap="0dp"/>
-        <Key android:codes="53" android:keyLabel="5"/>
-        <Key android:codes="54" android:keyLabel="6"/>
+        <Key app:codes="52" app:keyLabel="4" app:keyEdgeFlags="left" app:horizontalGap="0dp"/>
+        <Key app:codes="53" app:keyLabel="5"/>
+        <Key app:codes="54" app:keyLabel="6"/>
     </Row>
     <Row>
-        <Key android:codes="49" android:keyLabel="1"  android:keyEdgeFlags="left" android:horizontalGap="0dp"/>
-        <Key android:codes="50" android:keyLabel="2"/>
-        <Key android:codes="51" android:keyLabel="3"/>
+        <Key app:codes="49" app:keyLabel="1"  app:keyEdgeFlags="left" app:horizontalGap="0dp"/>
+        <Key app:codes="50" app:keyLabel="2"/>
+        <Key app:codes="51" app:keyLabel="3"/>
     </Row>
     <Row>
-        <Key android:codes="35" android:keyLabel="#" android:keyEdgeFlags="left" android:horizontalGap="0dp"/>
-        <Key android:codes="48" android:keyLabel="0"/>
-        <Key android:codes="42" android:keyIcon="@drawable/ic_keyboard_asterisk"/>
+        <Key app:codes="35" app:keyLabel="#" app:keyEdgeFlags="left" app:horizontalGap="0dp"/>
+        <Key app:codes="48" app:keyLabel="0"/>
+        <Key app:codes="42" app:keyIcon="@drawable/ic_keyboard_asterisk"/>
     </Row>
 </Keyboard>

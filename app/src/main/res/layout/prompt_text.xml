@@ -22,7 +22,6 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:lines="1"
             android:maxLines="2"
             android:minLines="1"
             android:textColor="@color/fog"

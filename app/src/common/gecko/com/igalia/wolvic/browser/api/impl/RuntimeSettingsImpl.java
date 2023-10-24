@@ -242,15 +242,6 @@ class RuntimeSettingsImpl extends WRuntimeSettings {
             mRuntime.getSettings().getContentBlocking().setCookieBehaviorPrivateMode(ContentBlockingDelegateImpl.toGeckoCookieBehavior(cookieBehaviorPrivate));
         }
 
-        @Override
-        public int getCookieLifetime() {
-            return ContentBlockingDelegateImpl.fromGeckoCookieLifetime(mRuntime.getSettings().getContentBlocking().getCookieLifetime());
-        }
-
-        @Override
-        public void setCookieLifetime(int cookieLifetime) {
-            mRuntime.getSettings().getContentBlocking().setCookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(cookieLifetime));
-        }
 
         @Override
         public int getEnhancedTrackingProtectionLevel() {

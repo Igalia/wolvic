@@ -22,11 +22,19 @@
 
         <!-- Left Controller -->
         <RelativeLayout
-            app:visibleGone="@{hand == WebXRInterstitialController.HAND_LEFT}"
+            app:visibleGone="@{model == DeviceType.LenovoVRX &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
             tools:visibility="gone"
             android:layout_width="200dp"
             android:layout_height="130dp"
             >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_vrx_left"
+                tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,7 +46,7 @@
                 android:layout_alignParentTop="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_webxr_controller_arrow"
-                android:tint="@color/window_border_hover"
+                app:tint="@color/window_border_hover"
                 tools:ignore="RtlHardcoded,RtlSymmetry"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -55,11 +63,20 @@
 
         <!-- Right Controller -->
         <RelativeLayout
-            app:visibleGone="@{hand == WebXRInterstitialController.HAND_RIGHT}"
+            app:visibleGone="@{model == DeviceType.LenovoVRX &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
             tools:visibility="gone"
             android:layout_width="200dp"
             android:layout_height="130dp"
             >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:scaleX="-1"
+                android:src="@drawable/controller_vrx_left"
+                tools:ignore="RtlHardcoded" />
         </RelativeLayout>
 
     </FrameLayout>

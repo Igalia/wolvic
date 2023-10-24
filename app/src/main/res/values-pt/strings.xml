@@ -118,6 +118,9 @@
     <string name="no_internet_title">Conexão à Internet Perdida</string>
     <string name="max_windows_button">OK</string>
     <string name="before_unload_prompt_leave">Deixar página</string>
+    <string name="repost_confirm_title">Confirmar nova submissão de formulário</string>
+    <string name="repost_confirm_message">A página que procura utilizou informações introduzidas por si. Regressar a essa página poderá originar a repetição de qualquer ação que tenha efetuado. Pretende continuar?</string>
+    <string name="repost_confirm_continue">Continuar</string>
     <string name="performance_unblock_page">Desbloquear página</string>
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar a sua app.</string>
@@ -135,7 +138,7 @@
     <string name="tab_sent_notification">Guia enviada!</string>
     <string name="hamburger_menu_send_tab">Enviar guia para aparelho</string>
     <string name="whats_new_title_1">Faça login para enviar guias</string>
-    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Firefox para enviar guias do Firefox do computador ou aparelho móvel para os seus auscultadores.</string>
+    <string name="whats_new_body_1">Inicie sessão ou crie uma nova Conta Mozilla para enviar guias do Firefox do computador ou aparelho móvel para os seus auscultadores.</string>
     <string name="whats_new_button_sign_in">Entrar</string>
     <string name="slow_script_dialog_title">Script lento</string>
     <string name="slow_script_dialog_action_wait">Esperar</string>
@@ -215,7 +218,7 @@
 \n• Para capturar e traduzir a voz em texto, os dados sonoros do utilizador são enviados aos servidores de propriedade da empresa terceirizada responsável por cada plataforma, por meio de uma API para esse fim: por exemplo, no Oculus, do Facebook, um serviço que o envia para o Oculus Voice SDK. Em nenhum momento os dados acima mencionados são processados, acessados ou incorporados aos servidores de propriedade da IGALIA. Os dados transmitidos serão da exclusiva responsabilidade das empresas terceiras proprietárias de cada plataforma (doravante, os Terceiros), que poderão estar localizadas fora da União Europeia e sujeitas a um regime jurídico menos protetor da privacidade do utilizador. Recomendamos que leia atentamente a política de privacidade e os termos de uso de cada uma dessas plataformas externas antes de aceitar e usar os serviços dela. A IGALIA não será direta ou indiretamente responsável pelo tratamento de dados pessoais por tais Terceiros.
 \n• As informações de localização geográfica podem ser obtidas do navegador, ao invés do utilizado pelo sistema. No entanto, para isso, deve definir as permissões de localização do seu aparelho através de um aviso específico a este respeito e a IGALIA não vinculará de forma alguma as referidas informações a como pessoa identificada ou identificável, embora os Terceiros mencionados no ponto anterior poderia fazê-lo, se aplicável. Recomendamos que preste atenção aos seus termos legais.
 \n• A IGALIA não acessará nem armazenará, de forma alguma, os endereços ou URLs visitados por si.
-\n• Pode ser possível a integração com serviços em nuvem (como Contas Firefox ou Contas do Google) para sincronizar dados como seu histórico de navegação ou os seus favoritos de utilizador. Neste caso, a IGALIA não acessará ou processará qualquer informação de forma alguma, nem passará pelos servidores da IGALIA.
+\n• Pode ser possível a integração com serviços em nuvem (como Contas Mozilla ou Contas do Google) para sincronizar dados como seu histórico de navegação ou os seus favoritos de utilizador. Neste caso, a IGALIA não acessará ou processará qualquer informação de forma alguma, nem passará pelos servidores da IGALIA.
 \n
 \nLembramos novamente que as plataformas de Terceiros que acessa ou usa com esta aplicação podem coletar esses ou outros dados de identificação sobre si, preenchendo-os de forma voluntária ou involuntária e/ou consciente ou inconscientemente, possivelmente fora do escopo da legislação europeia de proteção de dados . Portanto, recomendamos que se informe e preste atenção especial aos termos legais dos referidos Terceiros, como, por exemplo, o seguinte:
 \n
@@ -391,6 +394,7 @@
     <string name="developer_options_foveated_3">3</string>
     <string name="video_controls_unmute">Desmutar</string>
     <string name="hamburger_menu_resize">Redimensionar janela</string>
+    <string name="hamburger_menu_find_in_page">Procurar na página</string>
     <string name="bookmarks_desktop_unfiled_title">Outros favoritos</string>
     <string name="addons_close_tooltip">Fechar Add-ons</string>
     <string name="privacy_options_saved_logins_reset">Redefinir configurações de logins salvos</string>
@@ -482,7 +486,7 @@
     <string name="security_options_login_fxa">Conta…</string>
     <string name="settings_fxa_account_manage">Configurar Conta</string>
     <string name="settings_developer_options">Opções de Programador</string>
-    <string name="security_options_login_sync">Sincronize logins com contas Firefox</string>
+    <string name="security_options_login_sync">Sincronize logins com contas Mozilla</string>
     <string name="restart_now_dialog_button">Reiniciar Agora</string>
     <string name="keyboard_enter_label">ENTER</string>
     <string name="permission_notification">Permite %1$s enviar notificações\?</string>
@@ -574,7 +578,7 @@
     <string name="addons_download_success_dialog_ok">Certo, entendi</string>
     <string name="addons_remove_success_dialog_ok">Ok</string>
     <string name="addons_remove_success_dialog_title">%1$s desinstalado com sucesso</string>
-    <string name="fxa_signout_confirmation_title">Sair da sua Conta Firefox\?</string>
+    <string name="fxa_signout_confirmation_title">Sair da sua Conta Mozilla\?</string>
     <string name="addons_remove_error_dialog_title">Um erro aconteceu ao remover %1$s</string>
     <string name="fxa_signout_confirmation_checkbox_v1">Apagar histórico, favoritos e logins deste aparelho</string>
     <string name="history_clear_now">Limpe Agora</string>
@@ -666,7 +670,7 @@
     <string name="tab_added_notification">Nova guia adicionada!</string>
     <string name="hamburger_menu_switch_to_desktop">Modo desktop</string>
     <string name="send_tab_dialog_description">Escolha um aparelho para enviar a guia.</string>
-    <string name="whats_new_body_sub_1">A Conta Firefox também permite sincronizar favoritos e histórico em todos os seus aparelhos.</string>
+    <string name="whats_new_body_sub_1">A Conta Mozilla também permite sincronizar favoritos e histórico em todos os seus aparelhos.</string>
     <string name="slow_script_dialog_description">Uma página da web está deixando seu navegador mais lento (%1$s). O que gostaria de fazer\?</string>
     <string name="download_error_body">Ocorreu um erro ao descarregar %1$s. Por favor, tente novamente.</string>
     <string name="download_error_ok">Ok</string>
@@ -709,7 +713,6 @@
     <string name="web_apps_dialog_body">Pretende instalar a seguinte Aplicação Web\? Estará disponível de seguida na sua Biblioteca.</string>
     <string name="web_apps_title">Aplicações Web</string>
     <string name="addons_experimental_section_title">Experimental</string>
-    <string name="download_context_copy_to_content_uri">Partilhar com outras aplicações</string>
     <string name="web_apps_empty">A sua lista de Aplicações Web está Vazia</string>
     <string name="settings_language_portuguese">Português</string>
     <string name="web_apps_dialog_cancel">Cancelar</string>
@@ -722,13 +725,4 @@
     <string name="download_addon_install_confirm_install">Instalar</string>
     <string name="download_addon_install_blocked">Instalação de complemento local bloqueada</string>
     <string name="download_addon_install_blocked_body">Permita a instalação de Complemento local nas Opções do Programador para continuar.</string>
-    <string name="download_copy_to_content_uri_confirm_title">Copiar ficheiro\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">Isso criará uma cópia desse ficheiro na pasta do sistema Downloads, onde ele pode ser acessado por outras apps.
-\n
-\nDeseja continuar\?</string>
-    <string name="download_copy_to_content_uri_success_title">Copiado com sucesso</string>
-    <string name="download_copy_to_content_uri_success_body">Este ficheiro foi copiado com sucesso e está disponível na pasta Downloads.</string>
-    <string name="download_copy_to_content_uri_error_title">Erro de cópia</string>
-    <string name="download_copy_to_content_uri_error_body">Ocorreu um erro ao copiar o ficheiro descarregado.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">Ocorreu um erro ao copiar %1$s</string>
 </resources>

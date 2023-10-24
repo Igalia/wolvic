@@ -5,8 +5,6 @@
 
 package com.igalia.wolvic;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -23,6 +20,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
 
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
@@ -46,15 +46,12 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public abstract class PlatformActivity extends Activity implements SurfaceHolder.Callback, WidgetManagerDelegate {
+public abstract class PlatformActivity extends FragmentActivity implements SurfaceHolder.Callback, WidgetManagerDelegate {
     public static final String TAG = "PlatformActivity";
-    private SurfaceView mView;
-    private Context mContext = null;
     private HVRLocationManager mLocationManager;
-    private Dialog mActiveDialog;
     private SharedPreferences mPrefs;
     private BroadcastReceiver mHmsMessageBroadcastReceiver;
-    private Runnable mPhoneBackHandler = super::onBackPressed;
+    private final Runnable mPhoneBackHandler = super::onBackPressed;
 
     static {
         Log.i(TAG, "LoadLibrary");
@@ -82,12 +79,10 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
                     if (SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
                         Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
-                        setHmsMessageServiceAutoInit(true);
-                        getHmsMessageServiceToken();
+                        enablePrivacySensitiveServices();
                     } else {
                         Log.d(TAG, "PushKit: privacy policy is denied, calling deleteHmsMessageServiceToken");
-                        setHmsMessageServiceAutoInit(false);
-                        deleteHmsMessageServiceToken();
+                        disablePrivacySensitiveServices();
                     }
                 }
             };
@@ -96,16 +91,8 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
-        mContext = this;
         mLocationManager = new HVRLocationManager(this);
         PermissionDelegate.sPlatformLocationOverride = session -> mLocationManager.start(session);
-
-        // Enable analytics
-        if (BuildConfig.BUILD_TYPE.equals("debug")) {
-            HiAnalyticsTools.enableLog();
-        }
-        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
-        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
 
         mHmsMessageBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -114,15 +101,10 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
                 handlemHmsMessageBroadcast(intent);
             }
         };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
-        registerReceiver(mHmsMessageBroadcastReceiver, filter);
 
-        // We need to wait until the Privacy Policy is accepted before requesting a message token.
+        // We need to wait until the Privacy Policy is accepted before using remote services.
         if (SettingsStore.getInstance(this).isPrivacyPolicyAccepted()) {
-            Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
-            setHmsMessageServiceAutoInit(true);
-            getHmsMessageServiceToken();
+            enablePrivacySensitiveServices();
         }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
@@ -205,11 +187,11 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
 
         Log.d(TAG, "PushKit: title= " + title + " , body= " + body + " , action= " + action);
 
-        if (title != null) {
+        if (title != null && body != null) {
             SystemNotification systemNotification = new SystemNotification(title, body, action, Calendar.getInstance());
             Log.i(TAG, "PushKit: created SystemNotification: " + systemNotification);
             // FIXME here and in a few other places we cast the current Context to WidgetManagerDelegate
-            UIWidget parentWidget = ((WidgetManagerDelegate) this).getTray();
+            UIWidget parentWidget = this.getTray();
             SystemNotificationsManager.getInstance().addNewSystemNotification(systemNotification, parentWidget);
         }
     }
@@ -240,12 +222,9 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
     }
 
     private void initializeVR() {
-        if (mActiveDialog != null) {
-            mActiveDialog.dismiss();
-        }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setTheme(R.style.FxR_Dark);
-        mView = new SurfaceView(this);
+        SurfaceView mView = new SurfaceView(this);
         setContentView(mView);
 
         mView.getHolder().addCallback(this);
@@ -274,6 +253,29 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
             e.printStackTrace();
         }
     }
+
+    private void enablePrivacySensitiveServices() {
+        Log.d(TAG, "Privacy policy is accepted, initializing services");
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
+        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+            HiAnalyticsTools.enableLog();
+        }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
+        registerReceiver(mHmsMessageBroadcastReceiver, filter);
+
+        setHmsMessageServiceAutoInit(true);
+        getHmsMessageServiceToken();
+    }
+
+    private void disablePrivacySensitiveServices() {
+        unregisterReceiver(mHmsMessageBroadcastReceiver);
+        setHmsMessageServiceAutoInit(false);
+        deleteHmsMessageServiceToken();
+    }
+
 
     private void setHmsMessageServiceAutoInit(boolean enabled) {
         Log.d(TAG, "PushKit: setHmsMessageServiceAutoInit");
@@ -338,12 +340,9 @@ public abstract class PlatformActivity extends Activity implements SurfaceHolder
 
     @Override
     public void onBackPressed() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                System.exit(0);
-            }
+        queueRunnable(() -> {
+            finish();
+            System.exit(0);
         });
     }
 

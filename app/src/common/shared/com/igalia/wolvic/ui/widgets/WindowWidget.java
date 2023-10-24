@@ -17,7 +17,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -518,6 +519,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 setView(mLibrary, switchSurface);
                 mLibrary.selectPanel(panelType);
                 mLibrary.onShow();
+                mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
                 if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
                     final Runnable firstDrawCallback = mFirstDrawCallback;
@@ -1383,6 +1385,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mConfirmDialog.setTitle(promptData.getTitle());
         mConfirmDialog.setBody(promptData.getBody());
+        if (promptData.getTitleGravity() != Gravity.NO_GRAVITY) {
+            mConfirmDialog.setTitleGravity(promptData.getTitleGravity());
+        }
         if (promptData.getBodyGravity() != Gravity.NO_GRAVITY) {
             mConfirmDialog.setBodyGravity(promptData.getBodyGravity());
         }
@@ -1592,18 +1597,24 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void startDownload(@NonNull DownloadJob downloadJob, boolean showConfirmDialog) {
         if (showConfirmDialog) {
-            mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                    R.drawable.ic_icon_downloads,
-                    getResources().getString(R.string.download_confirm_title),
-                    downloadJob.getFilename(),
-                    new String[]{
+            // As of O, the prefixes are used in their standard meanings in the SI system, so kB = 1000 bytes, MB = 1,000,000 bytes, etc.
+            // In Build.VERSION_CODES.N and earlier, powers of 1024 are used instead, with KB = 1024 bytes, MB = 1,048,576 bytes, etc.
+            String fileSize = downloadJob.getContentLength() > 0 ? "<br>" + Formatter.formatFileSize(getContext(), downloadJob.getContentLength()) : "";
+            mWidgetManager.getFocusedWindow().showConfirmPrompt(new PromptData.Builder()
+                    .withIconRes(R.drawable.ic_icon_downloads)
+                    .withTitle(getResources().getString(R.string.download_confirm_title))
+                    .withTitleGravity(Gravity.START)
+                    .withBody(downloadJob.getFilename() + fileSize)
+                    .withBodyGravity(Gravity.START)
+                    .withBtnMsg(new String[]{
                             getResources().getString(R.string.download_confirm_cancel),
-                            getResources().getString(R.string.download_confirm_download)},
-                    (index, isChecked) -> {
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            mDownloadsManager.startDownload(downloadJob);
-                        }
-                    }
+                            getResources().getString(R.string.download_confirm_download)})
+                    .withCallback((index, isChecked) -> {
+                            if (index == PromptDialogWidget.POSITIVE) {
+                                mDownloadsManager.startDownload(downloadJob);
+                            }
+                        })
+                    .build()
             );
         } else {
             mDownloadsManager.startDownload(downloadJob);
@@ -1694,7 +1705,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (!UrlUtils.isFileUri(webResponseInfo.uri())) {
             DownloadJob job;
             if (UrlUtils.isBlobUri(webResponseInfo.uri())) {
-                job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers(), webResponseInfo.body());
+                String uri = webResponseInfo.uri();
+                if (uri.startsWith("blob:null/")) {
+                    // Fix uri when download from a HTML page file stored in local storage
+                    uri = uri.replaceFirst("^blob:null/", "blob:http://localhost/");
+                }
+                job = DownloadJob.fromUri(uri, webResponseInfo.headers(), webResponseInfo.body());
             } else {
                 job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
             }
@@ -1830,6 +1846,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsMediaAvailable(false);
         mViewModel.setIsMediaPlaying(false);
         mViewModel.setIsWebApp(false);
+        mViewModel.setIsFindInPage(false);
 
         if (StringUtils.isEmpty(url)) {
             mViewModel.setIsBookmarked(false);
@@ -1919,7 +1936,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onHistoryStateChange(@NonNull WSession session, @NonNull HistoryList historyList) {
         if (!mSession.isPrivateMode()) {
             for (HistoryItem item : historyList.getItems()) {
-                SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle()));
+                SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle(), null));
             }
         }
     }
@@ -1973,11 +1990,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             redirectSource = RedirectSource.TEMPORARY;
 
         } else {
-            redirectSource = RedirectSource.NOT_A_SOURCE;
+            redirectSource = null;
         }
 
         SessionStore.get().getHistoryStore().recordVisit(url, new PageVisit(visitType, redirectSource));
-        SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
+        SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url, null));
 
         return WResult.fromValue(true);
     }

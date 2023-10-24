@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.igalia.wolvic"
     android:installLocation="auto">
     <uses-feature android:glEsVersion="0x00030001"/>
     <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="${headtrackingRequired}" />
     <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
     <uses-permission android:name="${permissionToRemove}" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove"/>
 
     <!-- Not needed in Android 10 (API >= 29) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove"/>
 
     <uses-feature android:name="oculus.software.handtracking" android:required="false" />
     <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
@@ -33,7 +32,7 @@
         android:supportsPictureInPicture="false"
         >
         <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
-        <meta-data android:name="com.oculus.supportedDevices" android:value="quest|quest2"/>
+        <meta-data android:name="com.oculus.supportedDevices" android:value="quest|quest2|questpro"/>
         <activity
             android:name=".VRBrowserActivity"
             android:launchMode="singleTask"
@@ -44,7 +43,7 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             android:resizeableActivity="false"
             android:supportsPictureInPicture="false"
-            tools:node="replace"
+            tools:replace="android:launchMode, android:configChanges"
             android:exported="true">
             <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
@@ -53,15 +52,6 @@
                 <category android:name="android.intent.category.INFO" />
                 <category android:name="com.oculus.intent.category.VR" android:value="vr_only"/>
             </intent-filter>
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.INFO" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-            </intent-filter>
-            -->
         </activity>
     </application>
 </manifest>

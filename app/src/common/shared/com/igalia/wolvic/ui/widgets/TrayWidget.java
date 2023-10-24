@@ -15,8 +15,12 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,11 +35,13 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.BookmarksStore;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.TrayBinding;
@@ -138,6 +144,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
 
         updateTime();
+        OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(getContext()));
 
         if (DeviceType.getType() == DeviceType.OculusQuest) {
             mTrayViewModel.setLeftControllerIcon(R.drawable.ic_icon_statusbar_leftcontroller);
@@ -729,10 +736,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @Override
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
-        long inProgressNum = downloads.stream().filter(item ->
-                item.getStatus() == Download.RUNNING ||
-                        item.getStatus() == Download.PAUSED ||
-                        item.getStatus() == Download.PENDING).count();
+        long inProgressNum = downloads.stream().filter(item -> item.inProgress()).count();
         mTrayViewModel.setDownloadsNumber((int)inProgressNum);
         if (inProgressNum == 0) {
             mBinding.libraryButton.setLevel(0);
@@ -817,23 +821,49 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         return false;
     }
 
+    private int getWifiSignalStrength(@NonNull WifiManager wifiManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ConnectivityManager cm = getContext().getSystemService(ConnectivityManager.class);
+            Network n = cm.getActiveNetwork();
+            NetworkCapabilities netCaps = cm.getNetworkCapabilities(n);
+            return netCaps != null ? netCaps.getSignalStrength() : 0;
+        } else {
+            return wifiManager.getConnectionInfo().getRssi();
+        }
+    }
+    
     private void updateWifi() {
+        // We are collecting sensitive data here, so we should ensure the user granted permissions.
+        if (!(SettingsStore.getInstance(getContext()).isTermsServiceAccepted() &&
+                SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted())) {
+            return;
+        }
+
         if ((mTrayViewModel.getWifiConnected().getValue() != null) && mTrayViewModel.getWifiConnected().getValue().get()) {
             WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
-                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
-                if (level != mLastWifiLevel) {
-                    if (updateWifiIcon(level)) {
-                        mLastWifiLevel = level;
-                    }
-                }
-                WifiInfo currentWifi = wifiManager.getConnectionInfo();
-                if(currentWifi != null) {
-                    mWifiSSID = currentWifi.getSSID().replaceAll("\"", "");
-
+                int level;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                    level = wifiManager.calculateSignalLevel(getWifiSignalStrength(wifiManager));
                 } else {
-                    mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
+                    level = WifiManager.calculateSignalLevel(getWifiSignalStrength(wifiManager), 4);
+                }
+                if (level != mLastWifiLevel && updateWifiIcon(level)) {
+                    mLastWifiLevel = level;
+                }
+                // Getting the SSID, even if it's just to show it to the user, is considered
+                // "recollection of personal information" by Huawei store in Mainland China so avoid
+                // getting it.
+                if (BuildConfig.FLAVOR_store.toLowerCase().contains("mainlandchina") && DeviceType.isHVRBuild()) {
+                    mWifiSSID = getContext().getString(R.string.tray_wifi_unavailable_ssid);
+                } else {
+                    WifiInfo currentWifi = wifiManager.getConnectionInfo();
+                    if (currentWifi != null) {
+                        mWifiSSID = currentWifi.getSSID().replaceAll("\"", "");
+
+                    } else {
+                        mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
+                    }
                 }
             }
         }
@@ -881,7 +911,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @NonNull
     private String getFormattedDate() {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy", LocaleUtils.getDisplayLanguage(getContext()).getLocale());
+        java.text.DateFormat format = SimpleDateFormat.getDateInstance(
+                SimpleDateFormat.FULL, LocaleUtils.getDisplayLanguage(getContext()).getLocale());
         return format.format(new Date());
     }
 }

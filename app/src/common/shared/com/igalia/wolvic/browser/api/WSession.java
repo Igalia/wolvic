@@ -2580,9 +2580,90 @@ public interface WSession {
     @NonNull
     String getDefaultUserAgent(final int mode);
 
+    @AnyThread
+    @NonNull
+    WSession.SessionFinder getSessionFinder();
+
     /** Exits fullscreen mode */
     @AnyThread
     void exitFullScreen();
+
+    interface SessionFinder {
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef(
+                flag = true,
+                value = {
+                        FINDER_FIND_BACKWARDS,
+                        FINDER_FIND_LINKS_ONLY,
+                        FINDER_FIND_MATCH_CASE,
+                        FINDER_FIND_WHOLE_WORD
+                })
+        public @interface FinderFindFlags {}
+
+        /** Go backwards when finding the next match. */
+        public static final int FINDER_FIND_BACKWARDS = 1;
+        /** Perform case-sensitive match; default is to perform a case-insensitive match. */
+        public static final int FINDER_FIND_MATCH_CASE = 1 << 1;
+        /** Must match entire words; default is to allow matching partial words. */
+        public static final int FINDER_FIND_WHOLE_WORD = 1 << 2;
+        /** Limit matches to links on the page. */
+        public static final int FINDER_FIND_LINKS_ONLY = 1 << 3;
+
+        public class FinderResult {
+            /** Whether a match was found. */
+            public boolean found;
+            /** Whether the search wrapped around the top or bottom of the page. */
+            public boolean wrapped;
+            /** Ordinal number of the current match starting from 1, or 0 if no match. */
+            public int current;
+            /** Total number of matches found so far, or -1 if unknown. */
+            public int total;
+            /** Search string. */
+            @NonNull
+            public String searchString;
+            /**
+             * Flags used for the search; either 0 or a combination of FINDER_FIND_* flags.
+             */
+            public int flags;
+            /** URI of the link, if the current match is a link, or null otherwise. */
+            @Nullable
+            public String linkUri;
+            /** Bounds of the current match in client coordinates, or null if unknown. */
+            @Nullable public RectF clientRect;
+        }
+
+        /**
+         * Find and select a string on the current page, starting from the current selection or the
+         * start of the page if there is no selection. Optionally return results related to the
+         * search. If searchString is null, search is performed using the previous search string.
+         *
+         * @param searchString String to search, or null to find again using the previous string.
+         * @param flags Flags for performing the search;
+         *              either 0 or a combination of FINDER_FIND_* constants.
+         * @return WResult<?> instance, Result of the search operation.
+         */
+        @AnyThread
+        @NonNull
+        WResult<FinderResult> find(@Nullable String searchString, int flags);
+
+        /** Clear any highlighted find-in-page matches. */
+        @AnyThread
+        void clear();
+
+        /** Return flags for displaying find-in-page matches.
+         *
+         * @return Display flags as a combination of FINDER_DISPLAY_* constants.
+         */
+        @AnyThread
+        int getDisplayFlags();
+
+        /** Set flags for displaying find-in-page matches.
+         *
+         * @param flags Display flags as a combination of FINDER_DISPLAY_* constants.
+         */
+        @AnyThread
+        void setDisplayFlags(int flags);
+    }
 
     /**
      * Acquire the WDisplay instance for providing the session with a drawing Surface. Be sure to

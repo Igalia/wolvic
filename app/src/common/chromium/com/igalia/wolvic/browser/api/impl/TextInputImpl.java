@@ -31,14 +31,16 @@ public class TextInputImpl implements WTextInput {
         public void restartInput(View view) {
             // TODO : Chromium doesn't have an interface for the restarting reason, and we would
             //        consider to extend parameters if necessary.
-            mDelegate.restartInput(mSession, WSession.TextInputDelegate.RESTART_REASON_FOCUS);
+            if (mDelegate != null)
+                mDelegate.restartInput(mSession, WSession.TextInputDelegate.RESTART_REASON_FOCUS);
         }
 
         @Override
         public void showSoftInput(final View view, int flags, ResultReceiver resultReceiver) {
             EditorInfo outAttrs = new EditorInfo();
             view.onCreateInputConnection(outAttrs);
-            mDelegate.showSoftInput(mSession);
+            if (mDelegate != null)
+                mDelegate.showSoftInput(mSession);
 
             // We don't take content space for the keyboard, and we report back to the ImeAdapter
             // that the keyboard was always showing.
@@ -53,7 +55,8 @@ public class TextInputImpl implements WTextInput {
         @Override
         public boolean hideSoftInputFromWindow(
                 IBinder windowToken, int flags, ResultReceiver resultReceiver) {
-            mDelegate.hideSoftInput(mSession);
+            if (mDelegate != null)
+                mDelegate.hideSoftInput(mSession);
             return false;
         }
 
@@ -66,12 +69,15 @@ public class TextInputImpl implements WTextInput {
 
         @Override
         public void updateCursorAnchorInfo(View view, CursorAnchorInfo cursorAnchorInfo) {
-            mDelegate.updateCursorAnchorInfo(mSession, cursorAnchorInfo);
+            if (mDelegate != null)
+                mDelegate.updateCursorAnchorInfo(mSession, cursorAnchorInfo);
         }
 
         @Override
         public void updateExtractedText(
                 View view, int token, android.view.inputmethod.ExtractedText text) {
+            if (mDelegate == null)
+                return;
             ExtractedTextRequest request = new ExtractedTextRequest();
             request.token = token;
             mDelegate.updateExtractedText(mSession, request, text);

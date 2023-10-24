@@ -36,6 +36,7 @@ public:
     VIDEO_PROJECTION_180 = 3,
     VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT = 4,
     VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM = 5,
+    VIDEO_PROJECTION_3D_TOP_BOTTOM = 6,
   };
   static VRVideoPtr Create(vrb::CreationContextPtr aContext,
                            const WidgetPtr& aWindow,

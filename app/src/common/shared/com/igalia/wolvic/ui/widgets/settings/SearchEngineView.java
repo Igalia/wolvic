@@ -3,7 +3,7 @@ package com.igalia.wolvic.ui.widgets.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
@@ -18,7 +18,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import java.util.ArrayList;
 import java.util.List;
 
-import mozilla.components.browser.search.SearchEngine;
+import mozilla.components.browser.state.search.SearchEngine;
 
 public class SearchEngineView extends SettingsView implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -61,13 +61,16 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
         mBinding.searchEngineRadio.setOptions(mSearchEngines.stream().map(SearchEngine::getName).toArray(String[]::new));
 
         mBinding.searchEngineRadio.setOnCheckedChangeListener(mSearchEngineListener);
-        int checkedIndex = mSearchEngines.indexOf(SearchEngineWrapper.get(getContext()).getCurrentSearchEngine());
+        int checkedIndex = mSearchEngines.indexOf(SearchEngineWrapper.get(getContext()).resolveCurrentSearchEngine());
         setSearchEngine(checkedIndex, false);
     }
 
     @Override
     protected boolean reset() {
-        SearchEngineWrapper.get(getContext()).setDefaultSearchEngine();
+        SearchEngineWrapper s = SearchEngineWrapper.get(getContext());
+        s.setCurrentSearchEngineId(getContext(), null);
+        s.setDefaultSearchEngine();
+        updateUI();
         return false;
     }
 
@@ -78,7 +81,7 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
 
         SearchEngine searchEngine = mSearchEngines.get(checkedId);
         if (searchEngine != null && doApply) {
-            SearchEngineWrapper.get(getContext()).setCurrentSearchEngineId(getContext(), searchEngine.getIdentifier());
+            SearchEngineWrapper.get(getContext()).setCurrentSearchEngineId(getContext(), searchEngine.getId());
         }
     }
 
@@ -112,7 +115,7 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
             if (checkedId >= 0 && checkedId < mSearchEngines.size()) {
                 SearchEngine selected = mSearchEngines.get(checkedId);
                 String storedSearchEngineId = sharedPreferences.getString(key, "");
-                if (storedSearchEngineId.equals(selected.getIdentifier())) {
+                if (storedSearchEngineId.equals(selected.getId())) {
                     // The selected radio button is already the correct one, so we are done.
                     return;
                 }

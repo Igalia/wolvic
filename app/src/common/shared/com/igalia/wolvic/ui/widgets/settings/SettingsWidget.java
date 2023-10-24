@@ -42,6 +42,7 @@ import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.ClearUserDataDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
 import com.igalia.wolvic.utils.RemoteProperties;
@@ -68,6 +69,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private int mViewMarginH;
     private int mViewMarginV;
     private RestartDialogWidget mRestartDialog;
+    private ClearUserDataDialogWidget mClearUserDataDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
     private SettingsView.SettingViewType mOpenDialog;
@@ -179,7 +181,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         try {
-            PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            PackageInfo pInfo;
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.S_V2) {
+                pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.PackageInfoFlags.of(0));
+            } else {
+                pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            }
             String app_name = getResources().getString(R.string.app_name);
             mBinding.versionText.setText(Html.fromHtml("<b>" + app_name + "</b>" +
                             " <b>" + pInfo.versionName + "</b>",
@@ -342,6 +349,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private AccountObserver mAccountObserver = new AccountObserver() {
+
+        @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
 
         @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
@@ -553,6 +565,15 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         }
 
         mRestartDialog.show(REQUEST_FOCUS);
+    }
+
+    @Override
+    public void showClearUserDataDialog() {
+        if (mClearUserDataDialog == null) {
+            mClearUserDataDialog = new ClearUserDataDialogWidget(getContext());
+        }
+
+        mClearUserDataDialog.show(REQUEST_FOCUS);
     }
 
     @Override

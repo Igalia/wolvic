@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">개발자 옵션</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">계정 로그인</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">계정 관리</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">로그아웃</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">다시 연결하기</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -307,11 +307,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">의견 보내기</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">로그인</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">로그아웃</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">다시 연결하기</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -437,7 +437,7 @@
      https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
     <string name="developer_options_foveated_app">Foveation Level (앱)</string>
     <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
-    <string name="developer_options_foveated_webvr">Foveation Level (WebVR)</string>
+    <string name="developer_options_foveated_webvr">포비에이션 레벨 (WebVR)</string>
     <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
     <string name="developer_options_foveated_disabled">비활성화됨</string>
     <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
@@ -554,11 +554,11 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">자동 채우기</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Firefox 계정과 로그인 동기화</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Mozilla 계정과 로그인 동기화</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">계정…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
@@ -635,10 +635,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">꺼짐</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">동기화</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">동기화 안 함</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -784,7 +784,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">모든 북마크 보기</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">동기화</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">기록</string>
@@ -933,12 +933,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">권한에 대해 더 알아보기</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">동기화</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">동기화 중…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃하시겠습니까?</string>
+    <string name="fxa_signout_confirmation_title">Mozilla 계정에서 로그아웃하시겠습니까?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 기록도 동기화가 중지됩니다.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1282,6 +1282,12 @@
     <string name="before_unload_prompt_stay">머무르기</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">나가기</string>
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">양식 다시 제출 확인</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">찾고 있는 페이지에서 사용자가 입력한 정보를 사용했습니다. 해당 페이지로 돌아가면 기존 작업을 반복할 수 있습니다. 계속하시겠습니까\?</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">계속</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">페이지 차단 해제</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1384,6 +1390,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">창 크기 조정</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the find in page option -->
+    <string name="hamburger_menu_find_in_page">페이지에서 찾기</string>
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">부가 기능</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
@@ -1408,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">탭을 보내기 위해 로그인</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">데스크톱 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Firefox 계정을 만드세요.</string>
+    <string name="whats_new_body_1">데스크톱 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Mozilla 계정을 만드세요.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 기기에서 북마크와 기록을 동기화 할 수 있습니다.</string>
+    <string name="whats_new_body_sub_1">Mozilla 계정을 사용하면 모든 기기에서 북마크와 기록을 동기화 할 수 있습니다.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">로그인</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1685,7 +1694,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="privacy_policy_subtitle_3">준거법 및 원어</string>
     <string name="privacy_policy_section_3">이 개인 정보 정책은 스페인 법률의 적용을 받습니다. 이 응용 프로그램의 개인 정보 정책 언어는 스페인어 입니다. 이러한 이유로, 스페인어로 된 원본 버전과 다른 언어로 번역된 버전 간에 발생하는 차이는 https://wolvic.com/es/legal/privacy/ 에서 찾을 수 있는 스페인어 버전이 우선적인 것으로 고려됩니다.</string>
     <string name="privacy_policy_section_2">IGALIA는 개인 데이터 보호에 관한 법률 조항: 2016년 4월 27일 유럽 의회 및 이사회의 규정(EU) 2016/679 - 자연인의 개인 데이터 처리 및 해당 데이터의 자유로운 이동에 관한 보호와 95/46/EC(일반 데이터 보호 규정)의 폐지와 데이터 보호와 디지털 권리 보장에 관한 12월 5일자 유기법 3/2018 (LOPDGDD)을 준수하기 위해 최선을 다하고 있습니다.
-\n
 \nIGALIA는 사용자를 식별할 수 있는 방식으로 개인 데이터를 수집하지 않습니다. 그러므로 직간접적으로 IGALIA에 신원을 공개하거나 개인 데이터를 제공하지 않고도 이 응용 프로그램을 사용하고 가상 현실 환경을 참조하고 탐색할 수 있습니다. 따라서 IGALIA는 WOLVIC에 입력된 어떤 데이터에 관해서도 법률상의 책임을 지지 않습니다.
 \nIGALIA가 이 응용 프로그램의 사용을 위해 획득하는 유일한 데이터 및 정보는 사용자에게 개별적으로 연결되지 않으며 다음과 같습니다.
 \n
@@ -1693,7 +1701,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t• 음성을 캡쳐하여 텍스트로 변환하기 위해 사용자의 사운드 데이터는 이러한 목적을 위해 만들어진 API를 통해서 각 플랫폼을 담당하는 제 3자 회사가 소유한 서버로 전송됩니다: 예를 들어, Facebook의 Oculus 서비스는 Oculus Voice SDK로 전송합니다. 앞서 언급한 데이터는 그 어떤 시점에서도 IGALIA 소유의 서버에서 처리, 접근, 통합되지 않습니다. 전송된 데이터는 각 플랫폼을 소유한 제 3자 회사들(이하 제 3자들)이 전적으로 책임질 것이며, 이는 유럽 연합 외부에 위치할 수 있고 사용자 프라이버시를 덜 보호하는 법적 제도를 적용할 수도 있습니다. 서비스를 수락하고 사용하기 전에 이러한 외부 플랫폼들의 개인 정보 정책 및 사용 약관을 주의 깊게 읽어볼 것을 권장합니다. IGALIA는 상기 제 3자들의 개인 데이터 처리에 관해 직간접적으로 책임을 지지 않습니다.
 \n\t• 지리적 위치 정보는 시스템에서 사용되는 것이 아니라 브라우저에서 얻을 수 있습니다. 그러나 그렇게 하기 위해선, 이와 관련한 특정 통지를 통해서 장치의 위치 권한을 설정해야 하며, IGALIA는 앞서 언급한 정보를 식별 되었거나 식별 가능한 사람으로 연결 지을 수 없습니다. 만약 그것이 적용 가능하다면, 이전 항목에서 언급한 제 3자들은 그렇게 할 수도 있습니다. 제 3자들의 법적 조항에 주의를 기울이는 것을 권장합니다.
 \n\t• IGALIA는 귀하가 방문한 주소 또는 URL에 어떠한 방식으로도 접근하거나 저장하지 않습니다.
-\n\t• 브라우저 탐색 기록 또는 사용자 북마크와 같은 데이터를 동기화 하기 위해서 (Firefox 계정 또는 Google 계정과 같은) 클라우드 서비스와 통합될 수 있습니다. 이러한 경우, IGALIA는 어떤 방식으로든 어떠한 정보에도 접근하거나 처리하지 않으며 IGALIA의 서버로도 전달하지 않습니다.
+\n\t• 브라우저 탐색 기록 또는 사용자 북마크와 같은 데이터를 동기화 하기 위해서 (Mozilla 계정 또는 Google 계정과 같은) 클라우드 서비스와 통합될 수 있습니다. 이러한 경우, IGALIA는 어떤 방식으로든 어떠한 정보에도 접근하거나 처리하지 않으며 IGALIA의 서버로도 전달하지 않습니다.
 \n
 \n귀하가 이 애플리케이션과 함께 접근하거나 사용하는 제 3자 플랫폼들이 자발적 또는 비자발적 및/또는 의식적 또는 무의식적으로 유럽 데이터 보호법의 범위를 벗어나 귀하에 관한 식별 데이터를 수집할 수 있음을 다시 한번 알려드립니다. 따라서 다음과 같은 제3자의 법적 조항들을 숙지하고 특별한 주의를 기울이는 것을 권장합니다.
 \n
@@ -1729,24 +1737,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_title">알림</string>
     <string name="notifications_empty">알림 목록이 비어있습니다</string>
     <string name="notifications_loading">알림을 로드 중 입니다</string>
-    <string name="download_context_copy_to_content_uri">다른 앱으로 공유</string>
     <string name="download_addon_install">애드온 설치</string>
     <string name="download_addon_install_cancel">취소</string>
     <string name="download_addon_install_confirm_install">설치</string>
     <string name="download_addon_install_blocked">애드온 설치 실패</string>
     <string name="download_addon_install_blocked_body">계속 진행하려면 개발자 옵션에서 애드온 설치를 허용해야 합니다.</string>
-    <string name="download_copy_to_content_uri_confirm_title">파일을 복사하시겠습니까\?</string>
-    <string name="download_copy_to_content_uri_confirm_body">이 파일을 시스템의 Downloads 폴더에 복사합니다. 이 폴더는 다른 앱으로부터의 접근이 가능합니다.
-\n
-\n계속 하시겠습니까\?</string>
-    <string name="download_copy_to_content_uri_success_title">복사 성공</string>
-    <string name="download_copy_to_content_uri_success_body">파일이 시스템의 Downloads 폴더에 성공적으로 복사됐습니다.</string>
-    <string name="download_copy_to_content_uri_error_title">복사 실패</string>
-    <string name="download_copy_to_content_uri_error_body">다운로드한 파일을 복사하는 중 오류가 발생했습니다.</string>
-    <string name="download_copy_to_content_uri_error_body_v1">%1$s을(를) 복사하는 중 오류가 발생했습니다</string>
     <string name="web_apps_title">웹 앱</string>
     <string name="web_apps_description">웹 앱에 추가할 페이지에 있을 때 웹 앱 저장... 버튼을 클릭하세요.</string>
-    <string name="web_apps_empty">웹 앱 목록이 비어 있습니다.</string>
+    <string name="web_apps_empty">웹 앱 목록이 비어 있습니다</string>
     <string name="hamburger_menu_save_web_app">웹 앱 저장…</string>
     <string name="upload_button">업로드</string>
     <string name="web_apps_dialog_cancel">취소</string>
@@ -1757,4 +1755,38 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_dialog_title">웹 앱 설치</string>
     <string name="web_apps_dialog_title_parameter">%1$s 설치</string>
     <string name="web_apps_dialog_install">설치</string>
+    <string name="hamburger_menu_toggle_passthrough">패스스루</string>
+    <string name="deprecated_version_dialog_title">권장 업데이트</string>
+    <string name="security_options_permission_fine_location_warning">울빅은 당신의 대략적인 위치만 알 수 있습니다. 이는 시스템 설정에서 변경할 수 있습니다.</string>
+    <string name="deprecated_version_dialog_body">현재 울빅의 개발 버전인 \"App Lab\"을 실행하고 있습니다.2023년 10월 말에 중단될 예정입니다.
+\n
+\n오큘러스 스토어에서 최신 버전의 울빅을 설치하세요.
+\n
+\n중요: Mozilla 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
+    <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
+    <string name="deprecated_version_dialog_info_button">자세히 알아보기…</string>
+    <string name="deprecated_version_dialog_store_button">설치…</string>
+    <string name="user_feedback_tooltip">의견 혹은 피드백 보내기</string>
+    <string name="rCN_first_launch_title">사용자 계약 &amp; 개인정보 보호 정책 알림</string>
+    <string name="rCN_first_launch_body">\"Wolvic\" 사용을 환영합니다!
+\n
+\n\"Wolvic\"을 이용하시려면 사용자 계약 및 개인정보 보호 정책에 동의해야 합니다. 관련 문서들을 주의 깊게 읽어보신 후 \"동의함\"을 클릭해 주시길 바랍니다. \"비동의\"를 클릭하신 경우, \"Wolvic\"을 사용하실 수 없습니다.
+\n
+\n사용자 계약 및 개인정보 보호 정책 전문을 확인하실 수 있습니다.</string>
+    <string name="rCN_first_launch_clickable_terms_text">사용자 약관</string>
+    <string name="rCN_first_launch_clickable_privacy_text">개인정보 보호 정책</string>
+    <string name="rCN_first_launch_agree">동의함</string>
+    <string name="rCN_first_launch_disagree">동의안함</string>
+    <string name="rCN_first_launch_confirmation_body">만약 \"동의안함\"을 선택하셨다면, 더 이상 서비스를 제공 받으실 수 없습니다.
+\n
+\n사용자 계약 및 개인정보 보호 정책 전문을 확인하실 수 있습니다.</string>
+    <string name="rCN_first_launch_confirmation_agree">동의하고 계속하기</string>
+    <string name="rCN_first_launch_confirmation_disagree">동의하지 않고 종료하기</string>
+    <string name="keyboardview_keycode_cancel">취소</string>
+    <string name="keyboardview_keycode_done">완료</string>
+    <string name="keyboardview_keycode_mode_change">모드 변경</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_delete">삭제</string>
 </resources>

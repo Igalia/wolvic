@@ -1,7 +1,9 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,10 +31,34 @@ public class LandingPageFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_landing_page, container, false);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            toolbar.showOverflowMenu();
+            toolbar.inflateMenu(R.menu.app_menu);
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.enter_vr) {
+                    showEnterVr();
+                    return true;
+                } else if (item.getItemId() == R.id.terms_service) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
+                    return true;
+                } else if (item.getItemId() == R.id.privacy_policy) {
+                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
+                    return true;
+                }
+                return false;
+            });
+        }
+
         WebView webView = view.findViewById(R.id.web_view);
+
+        // Enable JavaScript; this should be safe because we will only open wolvic.com on this view.
+        webView.getSettings().setJavaScriptEnabled(true);
 
         // Links to wolvic.com will be opened in this Web view, "mailto" links will launch the email app
         // and all other links will be opened in the default browser.
@@ -83,45 +109,20 @@ public class LandingPageFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            toolbar.showOverflowMenu();
-            toolbar.inflateMenu(R.menu.app_menu);
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.enter_vr) {
-                    showEnterVr();
-                    return true;
-                } else if (item.getItemId() == R.id.terms_service) {
-                    showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
-                    return true;
-                } else if (item.getItemId() == R.id.privacy_policy) {
-                    showLegalDocument(LegalDocumentFragment.LegalDocument.PRIVACY_POLICY);
-                    return true;
-                }
-                return false;
-            });
-        }
-    }
-
     private void showEnterVr() {
         EnterVrFragment fragment = new EnterVrFragment();
-        getFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(android.R.id.content, fragment)
+                .add(R.id.fragment_placeholder, fragment)
                 .addToBackStack(null)
                 .commit();
     }
 
     private void showLegalDocument(LegalDocumentFragment.LegalDocument document) {
         LegalDocumentFragment documentFragment = LegalDocumentFragment.newInstance(document);
-        getFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(android.R.id.content, documentFragment)
+                .add(R.id.fragment_placeholder, documentFragment)
                 .addToBackStack(null)
                 .commit();
     }

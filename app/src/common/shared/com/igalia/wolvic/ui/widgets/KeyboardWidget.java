@@ -7,8 +7,9 @@ package com.igalia.wolvic.ui.widgets;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
+import com.igalia.wolvic.input.Keyboard;
 import android.os.Handler;
 import android.os.LocaleList;
 import android.text.Editable;
@@ -105,6 +106,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private int mKeyboardPopupTopMargin;
     private ImageButton mCloseKeyboardButton;
     private ImageButton mKeyboardMoveButton;
+    private ImageButton mKeyboardVoiceButton;
     private boolean mIsLongPress;
     private boolean mIsMultiTap;
     private boolean mIsCapsLock;
@@ -270,7 +272,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
         mKeyboardLayout = findViewById(R.id.keyboardLayout);
         mKeyboardContainer = findViewById(R.id.keyboardContainer);
-        mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag));
+        mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag, Remember.YES));
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
@@ -340,6 +342,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardMoveButton = findViewById(R.id.keyboardMoveButton);
         mKeyboardMoveButton.setOnTouchListener(new MoveTouchListener());
         mKeyboardMoveButton.setOnHoverListener(new ControlButtonHoverListener());
+        mKeyboardVoiceButton = findViewById(R.id.keyboardVoiceButton);
+        mKeyboardVoiceButton.setOnClickListener(v -> handleVoiceInput());
+        mKeyboardVoiceButton.setOnHoverListener(new ControlButtonHoverListener());
         mKeyWidth = getResources().getDimensionPixelSize(R.dimen.keyboard_key_width);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
@@ -546,6 +551,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setDefaultKeyboard();
+    }
+
+    @Override
     public void onPress(int primaryCode) {
         Log.d(LOGTAG, "Keyboard onPress " + primaryCode);
     }
@@ -692,7 +703,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void setDefaultKeyboard() {
         KeyboardInterface keyboard = getKeyboardForLocale(SettingsStore.getInstance(getContext()).getKeyboardLocale());
         if (keyboard != null) {
-            handleLanguageChange(keyboard);
+            handleLanguageChange(keyboard, Remember.NO);
             return;
         }
 
@@ -708,7 +719,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             // Fall back to english.
             keyboard = getKeyboardForLocale(Locale.ENGLISH);
         }
-        handleLanguageChange(keyboard);
+        handleLanguageChange(keyboard, Remember.NO);
     }
 
     private KeyboardInterface getKeyboardForLocale(@Nullable Locale aLocale) {
@@ -878,7 +889,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         updateCandidates();
     }
 
-    private void handleLanguageChange(KeyboardInterface aKeyboard) {
+    enum Remember {
+        YES,
+        NO;
+    }
+    private void handleLanguageChange(KeyboardInterface aKeyboard, Remember remember) {
         cleanComposingText();
 
         mCurrentKeyboard = aKeyboard;
@@ -917,7 +932,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         params.topMargin = mCurrentKeyboard.supportsAutoCompletion() ? WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_margin_top_without_autocompletion) : 0;
         mKeyboardLayout.setLayoutParams(params);
 
-        SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
+        if (remember == Remember.YES) {
+            SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
+        }
+
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         updateSpaceBarLanguageLabel();
         disableShift(getSymbolsKeyboard());
@@ -1043,7 +1061,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         final String text = aText;
         final InputConnection connection = mInputConnection;
-        if (mCurrentKeyboard.usesComposingText()) {
+        if (mCurrentKeyboard.usesComposingText() && !mIsInVoiceInput) {
             postInputCommand(() -> {
                 CharSequence seq = connection.getSelectedText(0);
                 String selected = seq != null ? seq.toString() : "";
@@ -1053,7 +1071,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
                 mComposingText += text;
             });
-        } else if (mCurrentKeyboard.usesTextOverride()) {
+        } else if (mCurrentKeyboard.usesTextOverride() || mIsInVoiceInput) {
             postInputCommand(() -> {
                 String beforeText = getTextBeforeCursor(connection);
                 String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
@@ -1065,7 +1083,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
             });
         } else {
-            postInputCommand(() -> connection.commitText(text, 1));
+            try {
+                postInputCommand(() -> connection.commitText(text, 1));
+            } catch (IndexOutOfBoundsException e) {
+                // Workaround to fix crash when type in time picker dialog
+                Log.e("handleText", text + ": " + e.toString());
+            }
         }
 
         if (!mIsCapsLock) {
@@ -1080,13 +1103,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
         if (mVoiceSearchWidget == null) {
-            mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
-            mVoiceSearchWidget.setPlacementForKeyboard(this.getHandle());
+            mVoiceSearchWidget = new VoiceSearchWidget(getContext());
+            mVoiceSearchWidget.setVoiceStartString(R.string.voice_input_start);
             mVoiceSearchWidget.setDelegate(this); // VoiceSearchDelegate
             mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
         }
         mIsInVoiceInput = true;
         TelemetryService.voiceInputEvent();
+        mVoiceSearchWidget.setPlacement(this.getHandle());
         mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
@@ -1132,21 +1156,22 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
 
         if (mCurrentKeyboard.usesComposingText()) {
-            final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(mComposingText);
-            setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
-            mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
-            if (candidates != null && candidates.action == KeyboardInterface.CandidatesResult.Action.AUTO_COMPOSE) {
-                setAutoCompletionVisible(false);
-                onAutoCompletionItemClick(candidates.words.get(0));
-            } else if (candidates != null) {
-                postInputCommand(() -> displayComposingText(candidates.composing, ComposingAction.DO_NOT_FINISH));
-            } else {
-                mComposingText = "";
-
-                postInputCommand(() -> {
-                    displayComposingText("", ComposingAction.FINISH);
+            postInputCommand(() -> {
+                final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(mComposingText);
+                postUICommand(() -> {
+                    setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
+                    mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
                 });
-            }
+                if (candidates != null && candidates.action == KeyboardInterface.CandidatesResult.Action.AUTO_COMPOSE) {
+                    postUICommand(() -> setAutoCompletionVisible(false));
+                    onAutoCompletionItemClick(candidates.words.get(0));
+                } else if (candidates != null) {
+                     displayComposingText(candidates.composing, ComposingAction.DO_NOT_FINISH);
+                } else {
+                    mComposingText = "";
+                    displayComposingText("", ComposingAction.FINISH);
+                }
+            });
         } else {
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> {
@@ -1223,7 +1248,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mComposingDisplayText = aText;
         if (aAction == ComposingAction.FINISH) {
             mInputConnection.finishComposingText();
-            mComposingText = "";
         }
     }
 

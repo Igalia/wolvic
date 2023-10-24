@@ -82,6 +82,10 @@ class PrivacyOptionsView extends SettingsView {
             SessionStore.get().clearCache(WRuntime.ClearFlags.ALL_CACHES);
         });
 
+        mBinding.clearUserData.setOnClickListener(v -> {
+            showClearUserDataDialog();
+        });
+
         mBinding.permissionsTitle.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
         mPermissionButtons = new ArrayList<>();
@@ -136,6 +140,9 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.crashReportsDataSwitch.setOnCheckedChangeListener(mCrashReportsListener);
         setCrashReports(SettingsStore.getInstance(getContext()).isCrashReportingEnabled(), false);
 
+        mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(mUseSystemRootCAListener);
+        setUseSystemRootCA(SettingsStore.getInstance(getContext()).isSystemRootCAEnabled(), false);
+
         mBinding.popUpsBlockingSwitch.setOnCheckedChangeListener(mPopUpsBlockingListener);
         setPopUpsBlocking(SettingsStore.getInstance(getContext()).isPopUpsBlockingEnabled(), false);
 
@@ -148,7 +155,7 @@ class PrivacyOptionsView extends SettingsView {
         setAutocomplete(SettingsStore.getInstance(getContext()).isAutocompleteEnabled(), false);
 
         mBinding.searchEngineButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.SEARCH_ENGINE));
-        String searchEngineName = SearchEngineWrapper.get(getContext()).getCurrentSearchEngine().getName();
+        String searchEngineName = SearchEngineWrapper.get(getContext()).resolveCurrentSearchEngine().getName();
         mBinding.searchEngineDescription.setText(searchEngineName);
 
         mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);
@@ -211,6 +218,10 @@ class PrivacyOptionsView extends SettingsView {
         setCrashReports(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mUseSystemRootCAListener = (compoundButton, value, doApply) -> {
+        setUseSystemRootCA(value, doApply);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mPopUpsBlockingListener = (compoundButton, value, doApply) -> {
         setPopUpsBlocking(value, doApply);
     };
@@ -251,6 +262,10 @@ class PrivacyOptionsView extends SettingsView {
 
         if (mBinding.crashReportsDataSwitch.isChecked() != SettingsStore.CRASH_REPORTING_DEFAULT) {
             setCrashReports(SettingsStore.CRASH_REPORTING_DEFAULT, true);
+        }
+
+        if (mBinding.useSystemRootCASwitch.isChecked() != SettingsStore.SYSTEM_ROOT_CA_DEFAULT) {
+            setUseSystemRootCA(SettingsStore.SYSTEM_ROOT_CA_DEFAULT, true);
         }
 
         if (mBinding.popUpsBlockingSwitch.isChecked() != SettingsStore.POP_UPS_BLOCKING_DEFAULT) {
@@ -327,6 +342,17 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setCrashReportingEnabled(value);
+        }
+    }
+
+    private void setUseSystemRootCA(boolean value, boolean doApply) {
+        mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(null);
+        mBinding.useSystemRootCASwitch.setValue(value, false);
+        mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(mUseSystemRootCAListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setSystemRootCAEnabled(value);
+            showRestartDialog();
         }
     }
 

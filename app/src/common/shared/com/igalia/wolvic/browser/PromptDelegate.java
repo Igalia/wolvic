@@ -29,6 +29,7 @@ import com.igalia.wolvic.ui.widgets.prompts.AuthPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ChoicePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ColorPromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.ConfirmPromptWidget;
+import com.igalia.wolvic.ui.widgets.prompts.DateTimePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.FilePromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.PromptWidget;
 import com.igalia.wolvic.ui.widgets.prompts.SaveLoginPromptWidget;
@@ -317,9 +318,24 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onDateTimePrompt(@NonNull WSession session, @NonNull DateTimePrompt prompt) {
-        // TODO implement date/time picker
         final WResult<PromptResponse> result = WResult.create();
-        result.cancel();
+
+        mPrompt = new DateTimePromptWidget(mContext, prompt);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.setTitle(prompt.title());
+        mPrompt.setPromptDelegate(new DateTimePromptWidget.DateTimePromptDelegate() {
+            @Override
+            public void confirm(@NonNull final String dateTime) {
+                result.complete(prompt.confirm(dateTime));
+            }
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
         return result;
     }
 
@@ -523,9 +539,31 @@ public class PromptDelegate implements
     @Nullable
     @Override
     public WResult<PromptResponse> onRepostConfirmPrompt(@NonNull WSession session, @NonNull RepostConfirmPrompt prompt) {
-        // TODO implement POST resubmission confirmation
         final WResult<PromptResponse> result = WResult.create();
-        result.cancel();
+
+        mPrompt = new ConfirmPromptWidget(mContext);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        mPrompt.setTitle(mContext.getString(R.string.repost_confirm_title));
+        mPrompt.setMessage(mContext.getString(R.string.repost_confirm_message));
+        ((ConfirmPromptWidget)mPrompt).setButtons(new String[] {
+                mContext.getResources().getText(R.string.repost_confirm_continue).toString(),
+                mContext.getResources().getText(R.string.cancel_button).toString()
+        });
+        mPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
+            @Override
+            public void confirm(int index) {
+                result.complete(prompt.confirm(index == 0 ? WAllowOrDeny.ALLOW : WAllowOrDeny.DENY));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
+
         return result;
     }
 

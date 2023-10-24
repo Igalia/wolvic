@@ -13,6 +13,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -65,6 +66,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
     private SpeechRecognizer mCurrentSpeechRecognizer;
+    private int mVoiceStartString = R.string.voice_search_start;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -92,6 +94,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mWidgetManager.addPermissionListener(this);
 
         mSearchingAnimation = (AnimatedVectorDrawable) mBinding.voiceSearchAnimationSearching.getDrawable();
+        mBinding.voiceSearchStart.setMovementMethod(new ScrollingMovementMethod());
 
         mApplication.registerActivityLifecycleCallbacks(this);
     }
@@ -111,7 +114,11 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mBinding.voiceSearchAnimationListening.setImageDrawable(new LayerDrawable(layers));
         mVoiceInputClipDrawable.setLevel(0);
 
-        mBinding.closeButton.setOnClickListener(view -> hide(KEEP_WIDGET));
+        mBinding.closeButton.setOnClickListener(view -> onDismiss());
+    }
+
+    public void setVoiceStartString(int string) {
+        mVoiceStartString = string;
     }
 
     @Override
@@ -153,10 +160,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                 WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
-    public void setPlacementForKeyboard(int aHandle) {
+    public void setPlacement(int aHandle) {
         mWidgetPlacement.parentHandle = aHandle;
-        mWidgetPlacement.translationY = 0;
-        mWidgetPlacement.translationZ = 0;
     }
 
     SpeechRecognizer.Callback mResultCallback = new SpeechRecognizer.Callback() {
@@ -164,7 +169,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         public void onStartListening() {
             // Handle when the api successfully opened the microphone and started listening
             Log.d(LOGTAG, "===> START_LISTEN");
-            mBinding.voiceSearchStart.setText( getContext().getString(R.string.voice_search_start));
+            mBinding.voiceSearchStart.setText( getContext().getString(mVoiceStartString));
         }
 
         @Override
@@ -315,7 +320,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
-        mBinding.voiceSearchStart.setText( getContext().getString(R.string.voice_search_start));
+        mBinding.voiceSearchStart.setText(getContext().getString(mVoiceStartString));
         stopVoiceSearch();
         mBinding.setState(State.LISTENING);
     }

@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:horizontalGap="@dimen/keyboard_horizontal_gap"
-    android:verticalGap="@dimen/keyboard_vertical_gap"
-    android:keyWidth="@dimen/keyboard_key_width"
-    android:keyHeight="@dimen/keyboard_key_height">
+<Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:horizontalGap="@dimen/keyboard_horizontal_gap"
+    app:verticalGap="@dimen/keyboard_vertical_gap"
+    app:keyWidth="@dimen/keyboard_key_width"
+    app:keyHeight="@dimen/keyboard_key_height">
     <Row>
-        <Key android:codes="113" android:keyLabel="q" android:keyEdgeFlags="left" />
-        <Key android:codes="119" android:keyLabel="w" />
-        <Key android:codes="101" android:keyLabel="e" />
-        <Key android:codes="114" android:keyLabel="r" />
-        <Key android:codes="116" android:keyLabel="t" />
-        <Key android:codes="121" android:keyLabel="y" />
-        <Key android:codes="117" android:keyLabel="u" />
-        <Key android:codes="105" android:keyLabel="i" />
-        <Key android:codes="111" android:keyLabel="o" />
-        <Key android:codes="112" android:keyLabel="p" />
-        <Key android:codes="95" android:keyLabel="_"/>
-        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyWidth="@dimen/keyboard_key_backspace_width" />
+        <Key app:codes="113" app:keyLabel="q" app:keyEdgeFlags="left" />
+        <Key app:codes="119" app:keyLabel="w" />
+        <Key app:codes="101" app:keyLabel="e" />
+        <Key app:codes="114" app:keyLabel="r" />
+        <Key app:codes="116" app:keyLabel="t" />
+        <Key app:codes="121" app:keyLabel="y" />
+        <Key app:codes="117" app:keyLabel="u" />
+        <Key app:codes="105" app:keyLabel="i" />
+        <Key app:codes="111" app:keyLabel="o" />
+        <Key app:codes="112" app:keyLabel="p" />
+        <Key app:codes="95" app:keyLabel="_"/>
+        <Key app:codes="-5" app:keyIcon="@drawable/ic_icon_keyboard_backspace" app:isRepeatable="true" app:keyWidth="@dimen/keyboard_key_backspace_width" />
     </Row>
 
     <Row>
-        <Key android:codes="97" android:keyLabel="a" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin" />
-        <Key android:codes="115" android:keyLabel="s" />
-        <Key android:codes="100" android:keyLabel="d" />
-        <Key android:codes="102" android:keyLabel="f" />
-        <Key android:codes="103" android:keyLabel="g" />
-        <Key android:codes="104" android:keyLabel="h" />
-        <Key android:codes="106" android:keyLabel="j" />
-        <Key android:codes="107" android:keyLabel="k" />
-        <Key android:codes="108" android:keyLabel="l" />
-        <Key android:keyOutputText="ー" android:keyLabel="ー"/>
-        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width"  />
+        <Key app:codes="97" app:keyLabel="a" app:keyEdgeFlags="left" app:horizontalGap="@dimen/keyboard_left_margin" />
+        <Key app:codes="115" app:keyLabel="s" />
+        <Key app:codes="100" app:keyLabel="d" />
+        <Key app:codes="102" app:keyLabel="f" />
+        <Key app:codes="103" app:keyLabel="g" />
+        <Key app:codes="104" app:keyLabel="h" />
+        <Key app:codes="106" app:keyLabel="j" />
+        <Key app:codes="107" app:keyLabel="k" />
+        <Key app:codes="108" app:keyLabel="l" />
+        <Key app:keyOutputText="ー" app:keyLabel="ー"/>
+        <Key app:codes="-4" app:keyLabel="@string/keyboard_enter_label" app:keyWidth="@dimen/keyboard_key_enter_width"  />
     </Row>
 
     <Row>
-        <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_off" android:keyEdgeFlags="left"/>
-        <Key android:codes="122" android:keyLabel="z" />
-        <Key android:codes="120" android:keyLabel="x" />
-        <Key android:codes="99" android:keyLabel="c"  />
-        <Key android:codes="118" android:keyLabel="v" />
-        <Key android:codes="98" android:keyLabel="b"  />
-        <Key android:codes="110" android:keyLabel="n" />
-        <Key android:codes="109" android:keyLabel="m" />
-        <Key android:codes="45" android:keyLabel="-" />
-        <Key android:codes="43" android:keyLabel="+" />
-        <Key android:codes="47" android:keyLabel="/" />
-        <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_off" />
+        <Key app:codes="-1" app:keyIcon="@drawable/ic_icon_keyboard_shift_off" app:keyEdgeFlags="left"/>
+        <Key app:codes="122" app:keyLabel="z" />
+        <Key app:codes="120" app:keyLabel="x" />
+        <Key app:codes="99" app:keyLabel="c"  />
+        <Key app:codes="118" app:keyLabel="v" />
+        <Key app:codes="98" app:keyLabel="b"  />
+        <Key app:codes="110" app:keyLabel="n" />
+        <Key app:codes="109" app:keyLabel="m" />
+        <Key app:codes="45" app:keyLabel="-" />
+        <Key app:codes="43" app:keyLabel="+" />
+        <Key app:codes="47" app:keyLabel="/" />
+        <Key app:codes="-1" app:keyIcon="@drawable/ic_icon_keyboard_shift_off" />
     </Row>
 
     <Row>
-        <Key android:codes="-2" android:keyLabel="@string/keyboard_symbol" android:keyEdgeFlags="left"/>
-        <Key android:codes="-12" android:keyIcon="@drawable/ic_icon_keyboard_globe" />
-        <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_space_width" android:isRepeatable="true"/>
-        <Key android:keyOutputText="、" android:keyLabel="、"/>
-        <Key android:keyOutputText="。" android:keyLabel="。"/>
-        <Key android:codes="33" android:keyLabel="!" />
-        <Key android:codes="63" android:keyLabel="\?" />
-        <Key android:codes="-14" android:keyLabel="\.com" />
-        <Key android:codes="64" android:keyLabel="\@"/>
+        <Key app:codes="-2" app:keyLabel="@string/keyboard_symbol" app:keyEdgeFlags="left"/>
+        <Key app:codes="-12" app:keyIcon="@drawable/ic_icon_keyboard_globe" />
+        <Key app:codes="32" app:keyLabel="" app:keyWidth="@dimen/keyboard_key_space_width" app:isRepeatable="true"/>
+        <Key app:keyOutputText="、" app:keyLabel="、"/>
+        <Key app:keyOutputText="。" app:keyLabel="。"/>
+        <Key app:codes="33" app:keyLabel="!" />
+        <Key app:codes="63" app:keyLabel="\?" />
+        <Key app:codes="-14" app:keyLabel="\.com" />
+        <Key app:codes="64" app:keyLabel="\@"/>
     </Row>
 </Keyboard>

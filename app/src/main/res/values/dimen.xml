@@ -94,6 +94,7 @@
     <dimen name="media_controls_panel_width">284dp</dimen>
     <dimen name="media_controls_panel_height">85dp</dimen>
     <dimen name="media_controls_rounded_corners">15dp</dimen>
+    <dimen name="media_controls_seek_bar_padding">30dp</dimen>
     <dimen name="media_controls_world_z" format="float" type="dimen">2.5</dimen>
 
     <!-- Top Bar -->
@@ -128,7 +129,8 @@
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">204dp</dimen>
     <dimen name="tray_height">66dp</dimen>
-    <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
+    <!-- The density of the tray tooltips is the default one. -->
+    <item name="tray_tooltip_density" format="float" type="dimen">1.0</item>
     <dimen name="tray_tooltip_padding_h">20dp</dimen>
     <dimen name="tray_tooltip_padding_v">10dp</dimen>
     <dimen name="tray_tooltip_text_size">22sp</dimen>
@@ -156,6 +158,7 @@
     <dimen name="prompt_min_height">400dp</dimen>
     <dimen name="prompt_file_width">600dp</dimen>
     <dimen name="prompt_file_height">600dp</dimen>
+    <dimen name="prompt_datetime_width">1000dp</dimen>
 
     <!-- Dialog buttons -->
 
@@ -230,7 +233,8 @@
     <dimen name="tooltip_default_padding_h">25dp</dimen>
     <dimen name="tooltip_default_padding_v">15dp</dimen>
     <dimen name="tooltip_default_text_size">24sp</dimen>
-    <item name="tooltip_default_density" format="float" type="dimen">3.0</item>
+    <!-- We modify the density slightly so the tooltip will be 50% larger. -->
+    <item name="tooltip_default_density" format="float" type="dimen">.75</item>
 
     <!-- General 2nd level settings dimensions -->
     <dimen name="settings_dialog_width">600dp</dimen>

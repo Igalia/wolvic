@@ -18,6 +18,8 @@ package com.igalia.wolvic.ui.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -25,9 +27,10 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.Keyboard.Key;
+import com.igalia.wolvic.input.Keyboard;
+import com.igalia.wolvic.input.Keyboard.Key;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -286,7 +289,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private static class MessageHandler extends Handler {
         private WeakReference<CustomKeyboardView> mView;
 
-
+        @Deprecated
         public MessageHandler(@NonNull CustomKeyboardView view) {
             mView = new WeakReference<>(view);
         }
@@ -498,7 +501,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     }
 
     /**
-     * Returns the {@link android.inputmethodservice.KeyboardView.OnKeyboardActionListener} object.
+     * Returns the {@link com.igalia.wolvic.input.KeyboardView.OnKeyboardActionListener} object.
      * @return the listener attached to this keyboard
      */
     protected OnKeyboardActionListener getOnKeyboardActionListener() {
@@ -545,7 +548,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
      * Sets the state of the shift key of the keyboard, if any.
      * @param shifted whether or not to enable the state of the shift key
      * @return true if the shift key state changed, false if there was no change
-     * @see android.inputmethodservice.KeyboardView#isShifted()
+     * @see com.igalia.wolvic.input.KeyboardView#isShifted()
      */
     public boolean setShifted(boolean shifted) {
         if (mKeyboard != null) {
@@ -561,7 +564,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
      * Returns the state of the shift key of the keyboard, if any.
      * @return true if the shift is in a pressed state, false otherwise. If there is
      * no shift key on the keyboard or there is no keyboard attached, it returns false.
-     * @see android.inputmethodservice.KeyboardView#setShifted(boolean)
+     * @see com.igalia.wolvic.input.KeyboardView#setShifted(boolean)
      */
     public boolean isShifted() {
         if (mKeyboard != null) {
@@ -605,7 +608,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     }
 
     /**
-     * When enabled, calls to {@link android.inputmethodservice.KeyboardView.OnKeyboardActionListener#onKey} will include key
+     * When enabled, calls to {@link com.igalia.wolvic.input.KeyboardView.OnKeyboardActionListener#onKey} will include key
      * codes for adjacent keys.  When disabled, only the primary key code will be
      * reported.
      * @param enabled whether or not the proximity correction is enabled
@@ -851,7 +854,11 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 final float drawableY = (key.height - padding.top - padding.bottom - key.icon.getIntrinsicHeight()) / 2.0f
                         + padding.top + statePadding;
                 canvas.translate(drawableX, drawableY);
-                key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    key.icon.setColorFilter(new BlendModeColorFilter(targetColor, BlendMode.MODULATE));
+                } else {
+                    key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
+                }
                 key.icon.setBounds(0, 0, key.icon.getIntrinsicWidth(), key.icon.getIntrinsicHeight());
                 key.icon.draw(canvas);
                 canvas.translate(-drawableX, -drawableY);
@@ -1169,8 +1176,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mDirtyRect.union(key.x + getPaddingLeft(), key.y + getPaddingTop(),
                 key.x + key.width + getPaddingLeft(), key.y + key.height + getPaddingTop());
         onBufferDraw();
-        invalidate(key.x + getPaddingLeft(), key.y + getPaddingTop(),
-                key.x + key.width + getPaddingLeft(), key.y + key.height + getPaddingTop());
+        invalidate();
     }
 
     private boolean openPopupIfRequired(MotionEvent me) {

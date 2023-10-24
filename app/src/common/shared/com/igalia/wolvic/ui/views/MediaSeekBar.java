@@ -2,6 +2,7 @@ package com.igalia.wolvic.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;
@@ -58,7 +60,7 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
 
     private void initialize() {
         inflate(getContext(), R.layout.media_controls_seek_bar, this);
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
         mSeekBar = findViewById(R.id.mediaSeekBar);
         mLeftText = findViewById(R.id.mediaSeekLeftLabel);
         mRightText = findViewById(R.id.mediaSeekRightLabel);
@@ -82,8 +84,9 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
                 notify = true;
             }
 
+            final int padding = WidgetPlacement.dpDimension(getContext(), R.dimen.media_controls_seek_bar_padding);
             if (notify) {
-                final float ratio = event.getX() / view.getWidth();
+                final float ratio = (event.getX() - padding) / (view.getWidth() - 2 * padding);
                 notifySeekPreview(mDuration * ratio);
             }
 
@@ -165,6 +168,14 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
 
     public View getSeekBarView() {
         return mSeekBar;
+    }
+
+    public View getLeftTextView() {
+        return mLeftText;
+    }
+
+    public View getRightTextView() {
+        return mRightText;
     }
 
     private void updateProgress() {

@@ -1,6 +1,6 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,16 +20,16 @@ public class EnterVrFragment extends Fragment {
         toolbar.setTitle(null);
 
         // If we were launched from another screen, allow the user to navigate back
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        if (getParentFragmentManager().getBackStackEntryCount() > 0) {
             toolbar.setNavigationIcon(R.drawable.ic_icon_back);
-            toolbar.setNavigationOnClickListener(v -> getFragmentManager().popBackStack());
+            toolbar.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
 
             // Handle Back presses
             view.setFocusableInTouchMode(true);
             view.requestFocus();
             view.setOnKeyListener((v, keyCode, event) -> {
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return true;
                 } else {
                     return false;

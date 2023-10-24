@@ -21,3 +21,9 @@ prefs:
   media.webspeech.synth.enabled: false
   # GPU process in Android broke WebXR. https://bugzilla.mozilla.org/show_bug.cgi?id=1771854
   layers.gpu-process.enabled: false
+  # disable pinch gestures
+  browser.gesture.pinch.out: ''
+  browser.gesture.pinch.in: ''
+  browser.gesture.pinch.out.shift: ''
+  browser.gesture.pinch.in.shift: ''
+  apz.one_touch_pinch.enabled: false

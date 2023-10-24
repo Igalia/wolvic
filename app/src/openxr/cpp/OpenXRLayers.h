@@ -420,16 +420,19 @@ typedef std::shared_ptr<OpenXRLayerPassthrough> OpenXRLayerPassthroughPtr;
 
 class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB> {
   public:
-    XrPassthroughLayerFB xrLayer;
+    XrCompositionLayerPassthroughFB xrCompositionLayer;
 
     static OpenXRLayerPassthroughPtr
     Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
     void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
+    void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
     void Destroy() override;
     bool IsDrawRequested() const override { return layer->IsDrawRequested(); };
+    bool IsValid() const { return mPassthroughLayerHandle != XR_NULL_HANDLE; }
 
 private:
     XrPassthroughFB mPassthroughInstance;
+    XrPassthroughLayerFB mPassthroughLayerHandle;
 };
 
 }

@@ -8,7 +8,7 @@ import com.igalia.wolvic.BuildConfig;
 
 public class DeviceType {
     // These values need to match those in Device.h
-    @IntDef(value = {Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3, OculusQuest2, HVR3DoF, HVR6DoF, PicoXR, MetaQuestPro, LynxR1, LenovoA3})
+    @IntDef(value = {Unknown, OculusGo, OculusQuest, ViveFocus, ViveFocusPlus, PicoNeo2, PicoG2, PicoNeo3, OculusQuest2, HVR3DoF, HVR6DoF, PicoXR, MetaQuestPro, LynxR1, LenovoA3, LenovoVRX, MagicLeap2, MetaQuest3})
     public @interface Type {}
     public static final int Unknown = 0;
     public static final int OculusGo = 1;
@@ -25,6 +25,9 @@ public class DeviceType {
     public static final int MetaQuestPro = 13;
     public static final int LynxR1 = 14;
     public static final int LenovoA3 = 15;
+    public static final int LenovoVRX = 16;
+    public static final int MagicLeap2 = 17;
+    public static final int MetaQuest3 = 18;
 
     private static @Type int mType = Unknown;
 
@@ -66,6 +69,14 @@ public class DeviceType {
             case LenovoA3:
                 name = "Lenovo A3";
                 break;
+            case LenovoVRX:
+                name = "Lenovo VRX";
+                break;
+            case MagicLeap2:
+                name = "Magic Leap 2";
+                break;
+            case MetaQuest3:
+                name = "Meta Quest 3";
             default:
                 name = "Unknown Type";
         }

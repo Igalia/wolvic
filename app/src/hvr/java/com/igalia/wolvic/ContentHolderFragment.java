@@ -1,10 +1,10 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,24 +35,25 @@ public class ContentHolderFragment extends Fragment implements SharedPreferences
             return;
 
         if (!SettingsStore.getInstance(getContext()).isTermsServiceAccepted()) {
-            getFragmentManager().beginTransaction()
+            Fragment fragment = BuildConfig.CN_FIRST_RUN_IN_PHONE_UI ? new FirstRunFragment() : new TermsServiceFragment();
+            getParentFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.fragment_placeholder, new TermsServiceFragment())
+                    .replace(R.id.fragment_placeholder, fragment)
                     .commit();
         } else if (!SettingsStore.getInstance(getContext()).isPrivacyPolicyAccepted()) {
-            getFragmentManager().beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new PrivacyPolicyFragment())
                     .commit();
         } else if (BuildConfig.WEBVIEW_IN_PHONE_UI) {
-            getFragmentManager().beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_placeholder, new LandingPageFragment())
                     .commit();
         } else {
-            getFragmentManager().beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(android.R.id.content, new EnterVrFragment())
+                    .replace(R.id.fragment_placeholder, new EnterVrFragment())
                     .commit();
         }
     }

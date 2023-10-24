@@ -54,6 +54,7 @@ class Places(var context: Context) {
                     SettingsStore.getInstance(context).recordPasswordsEncryptionKeyGenerated()
                     getSecureAbove22Preferences().putString(PASSWORDS_KEY, it)
                 }
+        lazy { getSecureAbove22Preferences() }
     }
 
     var bookmarks = PlacesBookmarksStorage(context)
@@ -72,7 +73,8 @@ class Places(var context: Context) {
             }
         }
 
-        bookmarks.cleanup()
+        bookmarks.cancelWrites()
+        bookmarks.cancelReads()
         // We create a new storage, otherwise we would need to restart the app so it's created in the Application onCreate
         bookmarks = PlacesBookmarksStorage(context)
         // Update the storage in the proxy class
@@ -90,17 +92,6 @@ class Places(var context: Context) {
             // The login storage has a wipe method the should bring us back to the state before the first sync
             // (although it actually just deletes everything) so there is no need to delete the whole database.
             logins.value.wipeLocal()
-        }
-    }
-
-    fun clearLoginsDatabaseUglyHack() {
-        // This is the ugliest part of this hack. We're using the name extracted from the sources of the
-        // mozilla-components. That database file should be totally opaque to us, but that's what it is as
-        // long as mozilla-components don't provide a better solution for clients.
-        var loginsDatabase = context.getDatabasePath("logins.sqlite")
-        if (loginsDatabase != null) {
-            if (loginsDatabase.delete())
-                Logger.warn("Force-deleted logins database ${loginsDatabase.absolutePath}")
         }
     }
 }

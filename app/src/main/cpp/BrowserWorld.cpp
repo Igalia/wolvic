@@ -55,7 +55,9 @@
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
+#include "tiny_gltf.h"
 
+#include <android/asset_manager_jni.h>
 #include <array>
 #include <functional>
 #include <fstream>
@@ -86,7 +88,7 @@ const double kHoverRate = 1.0 / 10.0;
 // 'azure' color, for active pinch gesture while on hand mode
 const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
-const float kPointerPinchSize = 5.0;
+const float kPointerSize = 3.0;
 
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -254,6 +256,7 @@ struct BrowserWorld::State {
   void UpdateControllers(bool& aRelayoutWidgets);
   void SimulateBack();
   void ClearWebXRControllerData();
+  void HandleControllerScroll(Controller& controller, int handle);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
   bool IsParent(const Widget& aChild, const Widget& aParent) const;
@@ -424,7 +427,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
       (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
       (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
-      SimulateBack();
+      if (controller.handActionEnabled && !controller.leftHanded) {
+          VRBrowser::HandleAppExit();
+      } else {
+          SimulateBack();
+      }
     }
 
 
@@ -509,41 +516,39 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
 
         const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
-        if (controller.mode == ControllerMode::Device) {
-          controller.pointer->SetScale(scale);
+        controller.pointer->SetScale(scale + kPointerSize - controller.selectFactor * kPointerSize);
+        if (controller.selectFactor >= 1.0f)
+          controller.pointer->SetPointerColor(kPointerColorSelected);
+        else
           controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        } else {
-          controller.pointer->SetScale(scale + kPointerPinchSize - controller.pinchFactor * kPointerPinchSize);
-          if (controller.pinchFactor >= 1.0f)
-            controller.pointer->SetPointerColor(kPointerColorSelected);
-          else
-            controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
-        }
       }
     }
 
-    if (controller.handMeshToggle)
-      controller.handMeshToggle->ToggleAll(controller.mode == ControllerMode::Hand);
-
     if (controller.beamToggle)
-      controller.beamToggle->ToggleAll(controller.mode == ControllerMode::Device && controller.hasAim);
+      controller.beamToggle->ToggleAll(controller.hasAim);
 
     if (controller.modelToggle)
       controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
 
-    if (controller.leftHandActionEnabled && controller.handActionButtonTransform != nullptr) {
+    device->UpdateHandMesh(controller.index, controller.handJointTransforms, controllers->GetRoot(),
+                           controller.enabled && controller.mode == ControllerMode::Hand, controller.leftHanded);
+
+    if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
       // Layout the button between the thumb and index fingertips
       const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
       const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
-      vrb::Matrix indexTipMatrix = controller.handJointTransforms[indexTipIndex]->GetTransform();
-      vrb::Matrix thumbTipMatrix = controller.handJointTransforms[thumbTipIndex]->GetTransform();
+      vrb::Matrix indexTipMatrix;
+      vrb::Matrix thumbTipMatrix;
+      indexTipMatrix = controller.handJointTransforms[indexTipIndex];
+      thumbTipMatrix = controller.handJointTransforms[thumbTipIndex];
+
       vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
       vrb::Vector position = indexTipMatrix.GetTranslation() - center;
 
       vrb::Matrix iconMatrix = vrb::Matrix::Identity();
 
       // Scale the button down as the pinch gesture is closing
-      float scale = 1.0 - controller.pinchFactor * 0.5f;
+      float scale = 1.0 - controller.selectFactor * 0.5f;
       // Make the button disappear if pinch is closed
       scale = scale <= 0.5f ? 0.0f : scale;
       iconMatrix.ScaleInPlace(vrb::Vector(scale, scale, scale));
@@ -603,19 +608,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.pointerY = theY;
         VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(controller.focused), jboolean(pressed), controller.pointerX, controller.pointerY);
       }
-      if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
-        if (controller.scrollStart < 0.0) {
-          controller.scrollStart = context->GetTimestamp();
-        }
-        const double ctime = context->GetTimestamp();
-        VRBrowser::HandleScrollEvent(controller.widget, controller.index,
-                            ScaleScrollDelta(controller.scrollDeltaX, controller.scrollStart, ctime),
-                            ScaleScrollDelta(controller.scrollDeltaY, controller.scrollStart, ctime));
-        controller.scrollDeltaX = 0.0f;
-        controller.scrollDeltaY = 0.0f;
-      } else {
-        controller.scrollStart = -1.0;
-      }
+      HandleControllerScroll(controller, controller.widget);
       if (!pressed) {
         if (controller.touched) {
           if (!controller.wasTouched) {
@@ -640,6 +633,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     } else if (wasPressed != pressed) {
       VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
     } else if (vrVideo != nullptr) {
+      HandleControllerScroll(controller, -1);
       const bool togglePressed = controller.buttonState & ControllerDelegate::BUTTON_X ||
                                  controller.buttonState & ControllerDelegate::BUTTON_A;
       const bool toggleWasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_X ||
@@ -668,6 +662,23 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         VRBrowser::HandleGesture(javaType);
       }
     }
+  }
+}
+
+void
+BrowserWorld::State::HandleControllerScroll(Controller& controller, int handle) {
+  if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
+    if (controller.scrollStart < 0.0) {
+      controller.scrollStart = context->GetTimestamp();
+    }
+    const double ctime = context->GetTimestamp();
+    VRBrowser::HandleScrollEvent(handle, controller.index,
+                                 ScaleScrollDelta(controller.scrollDeltaX, controller.scrollStart, ctime),
+                                 ScaleScrollDelta(controller.scrollDeltaY, controller.scrollStart, ctime));
+    controller.scrollDeltaX = 0.0f;
+    controller.scrollDeltaY = 0.0f;
+  } else {
+    controller.scrollStart = -1.0;
   }
 }
 
@@ -942,6 +953,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   VRBrowser::SetDeviceType(m.device->GetDeviceType());
 
+  tinygltf::asset_manager = AAssetManager_fromJava(m.env, aAssetManager);
+
   if (!m.modelsLoaded) {
     m.device->OnControllersReady([this](){
       const int32_t modelCount = m.device->GetControllerModelCount();
@@ -968,6 +981,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     });
 
+    VRBrowser::CheckTogglePassthrough();
     UpdateEnvironment();
 
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
@@ -1107,10 +1121,12 @@ BrowserWorld::StartFrame() {
     }
   }
 
-#if defined(OCULUSVR) && defined(STORE_BUILD)
+#if defined(OCULUSVR)
+#if defined(STORE_BUILD)
   ProcessOVRPlatformEvents();
 #endif
   m.device->ProcessEvents();
+#endif
   m.context->Update();
   m.externalVR->PullBrowserState();
   m.externalVR->SetHapticState(m.controllers);
@@ -1176,15 +1192,24 @@ void
 BrowserWorld::TogglePassthrough() {
   ASSERT_ON_RENDER_THREAD();
   m.device->TogglePassthroughEnabled();
-  if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
-    m.layerPassthrough = m.device->CreateLayerPassthrough();
-    m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+  if (m.device->IsPassthroughEnabled()) {
+    if (m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
+      m.layerPassthrough = m.device->CreateLayerPassthrough();
+      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+    }
+  } else {
+    // Make environment changes during pass through mode on to take effect
+    UpdateEnvironment();
   }
 }
 
 void
 BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
+  if (m.device->IsPassthroughEnabled()) {
+    return;
+  }
+
   std::string skyboxPath = VRBrowser::GetActiveEnvironment();
   std::string extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(skyboxPath);
   if (VRBrowser::isOverrideEnvPathEnabled()) {
@@ -1521,6 +1546,17 @@ BrowserWorld::ExitImmersive() {
   m.exitImmersiveRequested = true;
 }
 
+bool
+isFrontFacingVRProjection(VRVideo::VRVideoProjection projection){
+  switch (projection) {
+    case VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE:
+    case VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM:
+      return true;
+    default:
+      return false;
+  }
+}
+
 void
 BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
   WidgetPtr widget = m.GetWidget(aWindowHandle);
@@ -1534,10 +1570,10 @@ BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
   }
   auto projection = static_cast<VRVideo::VRVideoProjection>(aVideoProjection);
   m.vrVideo = VRVideo::Create(m.create, widget, projection, m.device);
-  if (m.skybox && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+  if (m.skybox && !isFrontFacingVRProjection(projection)) {
     m.skybox->SetVisible(false);
   }
-  if (m.fadeAnimation && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+  if (m.fadeAnimation && !isFrontFacingVRProjection(projection)) {
     m.fadeAnimation->SetVisible(false);
   }
 }
@@ -1695,6 +1731,12 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
     m.drawList->Draw(*camera);
   }
 
+  // Draw hand mesh if active
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (controller.enabled && controller.mode == ControllerMode::Hand)
+      m.device->DrawHandMesh(controller.index, *camera);
+  }
+
   // Draw controllers
   m.drawList->Reset();
   m.rootController->Cull(*m.cullVisitor, *m.drawList);
@@ -1744,7 +1786,7 @@ BrowserWorld::TickImmersive() {
               m.context->GetTimestamp());
   }
   // DeviceDelegate::StartFrame() might have failed and then we should discard the frame.
-  aDiscardFrame = aDiscardFrame && !m.device->ShouldRender();
+  aDiscardFrame = aDiscardFrame || !m.device->ShouldRender();
 
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
@@ -1864,18 +1906,13 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   // meantime.
   const std::string extension = aExtension.empty() ? ".png" : aExtension;
   GLenum glFormat = GL_SRGB8_ALPHA8;
+#elif defined(OPENXR) && defined(OCULUSVR)
+  const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
+  GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_SRGB8_ETC2 : GL_SRGB8_ALPHA8;
 #else
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
-  GLenum glFormat = GL_RGBA8;
+  GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGBA8;
 #endif
-
-  if (extension == ".ktx") {
-#if defined(OPENXR) && defined(OCULUSVR)
-    glFormat =  GL_COMPRESSED_SRGB8_ETC2;
-#else
-    glFormat =  GL_COMPRESSED_RGB8_ETC2;
-#endif
-  }
   const int32_t size = 1024;
   if (m.skybox) {
     m.skybox->SetVisible(true);

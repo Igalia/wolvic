@@ -5,6 +5,8 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRActionSet.h"
 #include "ElbowModel.h"
+#include "HandMeshRenderer.h"
+#include "OpenXRGestureManager.h"
 #include <optional>
 #include <unordered_map>
 
@@ -30,24 +32,6 @@ private:
       bool touched { false };
       float value { 0 };
     };
-
-    struct OpenXRHandMesh {
-        // Skeleton
-        uint32_t jointCount;
-        std::vector<XrPosef> jointPoses;
-        std::vector<XrHandJointEXT> jointParents;
-        std::vector<float> jointRadii;
-        // Vertex
-        uint32_t vertexCount;
-        std::vector<XrVector3f> vertexPositions;
-        std::vector<XrVector3f> vertexNormals;
-        std::vector<XrVector2f> vertexUVs;
-        std::vector<XrVector4sFB> vertexBlendIndices;
-        std::vector<XrVector4f> vertexBlendWeights;
-        // Index
-        uint32_t indexCount;
-        std::vector<int16_t> indices;
-    };
     std::optional<OpenXRButtonState> GetButtonState(const OpenXRButton&) const;
     std::optional<XrVector2f> GetAxis(OpenXRAxisType) const;
     XrResult GetActionState(XrAction, bool*) const;
@@ -58,9 +42,9 @@ private:
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
     XrResult stopHapticFeedback(XrAction) const;
     void UpdateHaptics(ControllerDelegate&);
-    bool GetHandTrackingInfo(const XrFrameState&, XrSpace);
+    bool GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint);
+    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -85,24 +69,39 @@ private:
     std::vector<float> axesContainer;
     crow::ElbowModelPtr elbow;
     XrHandTrackerEXT mHandTracker { XR_NULL_HANDLE };
-    std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> mHandJoints;
+    HandJointsArray mHandJoints;
     bool mHasHandJoints { false };
-    bool mHasAimState { false };
-    XrPosef mHandAimPose;
     bool mSupportsFBHandTrackingAim { false };
-    OpenXRHandMesh mHandMesh;
-    bool mHasHandMesh { false };
+    OpenXRGesturePtr mGestureManager;
+
+    struct HandMeshMSFT {
+        XrSpace space = XR_NULL_HANDLE;
+        XrHandMeshMSFT handMesh;
+        HandMeshBufferPtr buffer = nullptr;
+
+        std::vector<HandMeshBufferMSFTPtr> buffers;
+        std::vector<HandMeshBufferMSFTPtr> usedBuffers;
+        ~HandMeshMSFT() {
+            for (auto& buf: buffers)
+                buf.reset();
+            for (auto& buf: usedBuffers)
+                buf.reset();
+        }
+    } mHandMeshMSFT;
+    HandMeshBufferPtr AcquireHandMeshBuffer();
+    void ReleaseHandMeshBuffer();
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
 
     XrResult SuggestBindings(SuggestedBindings&) const;
-    void EmulateControllerFromHand(device::RenderMode renderMode, const vrb::Matrix& head, ControllerDelegate& delegate);
     void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
+    void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
+    HandMeshBufferPtr GetNextHandMeshBuffer();
 };
 
 } // namespace crow

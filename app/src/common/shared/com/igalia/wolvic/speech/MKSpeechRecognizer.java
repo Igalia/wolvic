@@ -19,6 +19,7 @@ import com.meetkai.speechlibrary.STTResult;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionListener {
 
@@ -74,12 +75,13 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
         }
 
         Locale locale;
-        if (mSupportedLanguages.contains(settings.locale)) {
+        if (!Objects.equals(settings.locale, LocaleUtils.DEFAULT_LANGUAGE_ID) &&
+            mSupportedLanguages.contains(settings.locale)) {
             // the user has selected a specific language in the Settings UI
             // TODO use the device's location to find the country code
             locale = new Locale(settings.locale, defaultLocale.getCountry());
         } else {
-            locale = defaultLocale;
+            locale = new Locale(defaultLocale.getLanguage(), defaultLocale.getCountry());
         }
         settings.locale = LocaleUtils.getClosestLanguageForLocale(
                 locale, mSupportedLocales, LocaleUtils.FALLBACK_LANGUAGE_TAG);

@@ -6,7 +6,9 @@
 #ifndef VRBROWSER_DEVICE_H
 #define VRBROWSER_DEVICE_H
 
+#include <map>
 #include <stdint.h>
+#include "SystemUtils.h"
 
 namespace crow {
 namespace device {
@@ -46,6 +48,9 @@ const DeviceType PicoXR = 12;
 const DeviceType MetaQuestPro = 13;
 const DeviceType LynxR1 = 14;
 const DeviceType LenovoA3 = 15;
+const DeviceType LenovoVRX = 16;
+const DeviceType MagicLeap2 = 17;
+const DeviceType MetaQuest3 = 18;
 
 enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
 

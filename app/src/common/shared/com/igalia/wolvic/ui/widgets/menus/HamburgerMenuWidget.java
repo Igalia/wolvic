@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets.menus;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -44,6 +45,7 @@ public class HamburgerMenuWidget extends UIWidget implements
     public interface MenuDelegate {
         void onSendTab();
         void onResize();
+        void onFindInPage();
         void onSwitchMode();
         void onAddons();
         void onSaveWebApp();
@@ -87,8 +89,11 @@ public class HamburgerMenuWidget extends UIWidget implements
         binding.list.addOnScrollListener(mScrollListener);
         binding.list.setHasFixedSize(true);
         binding.list.setItemViewCacheSize(20);
-        binding.list.setDrawingCacheEnabled(true);
-        binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        // Drawing Cache is deprecated in API level 28: https://developer.android.com/reference/android/view/View#getDrawingCache().
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            binding.list.setDrawingCacheEnabled(true);
+            binding.list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
 
         updateItems();
     }
@@ -178,7 +183,7 @@ public class HamburgerMenuWidget extends UIWidget implements
     private void updateItems() {
         mItems = new ArrayList<>();
 
-        // In kiosk mode, only resize and passthrough are available.
+        // In kiosk mode, only resize, find in page and passthrough are available.
         if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
@@ -269,6 +274,18 @@ public class HamburgerMenuWidget extends UIWidget implements
             }
             mItems.add(item);
         }
+
+        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                (menuItem) -> {
+                    if (mDelegate != null) {
+                        mDelegate.onFindInPage();
+                    }
+                    return null;
+                })
+                .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
+                .withIcon(R.drawable.ic_icon_search)
+                .build());
 
         mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                 HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,

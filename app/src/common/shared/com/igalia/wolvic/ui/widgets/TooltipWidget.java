@@ -11,13 +11,14 @@ import androidx.annotation.StringRes;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.utils.AnimationHelper;
-import com.igalia.wolvic.utils.DeviceType;
 
 public class TooltipWidget extends UIWidget {
 
     protected TextView mText;
     protected ViewGroup mLayout;
     protected int mLayoutRes;
+    protected float mDefaultDensity;
+    protected float mDensityScale = 1.0f;
 
     public TooltipWidget(@NonNull Context aContext, @NonNull  @LayoutRes int layoutRes) {
         super(aContext);
@@ -46,6 +47,8 @@ public class TooltipWidget extends UIWidget {
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tooltip_z_distance);
+        mDefaultDensity = getResources().getDisplayMetrics().density;
+        aPlacement.density = mDefaultDensity * mDensityScale;
     }
 
     public void updateUI() {
@@ -72,8 +75,6 @@ public class TooltipWidget extends UIWidget {
         int paddingV = getPaddingTop() + getPaddingBottom();
         mWidgetPlacement.width = (int)((getMeasuredWidth() + paddingH)/mWidgetPlacement.density);
         mWidgetPlacement.height = (int)((getMeasuredHeight() + paddingV)/mWidgetPlacement.density);
-        // Widgets are very small in HVR
-        mWidgetPlacement.worldWidth = 1.2f * WidgetPlacement.worldToDpRatio(getContext()) * mWidgetPlacement.width;
 
         super.show(aShowFlags);
         AnimationHelper.scaleIn(mLayout, 100, 0, null);
@@ -96,4 +97,9 @@ public class TooltipWidget extends UIWidget {
         mText.setText(text);
     }
 
+    // Modify the widget scale to change the size of the widget.
+    public void setDensityScale(float densityScale) {
+        mDensityScale = densityScale;
+        getPlacement().density = mDefaultDensity * mDensityScale;
+    }
 }

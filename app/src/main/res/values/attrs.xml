@@ -69,6 +69,7 @@
         <attr name="description" />
         <attr name="by" />
         <attr name="highlightedTextColor" />
+        <attr name="hintTextColor" />
         <attr name="android:width" />
         <attr name="android:maxLength" />
         <attr name="android:inputType" />
@@ -104,4 +105,133 @@
         <attr name="android:fastScrollAlwaysVisible" />
         <attr name="dynamicHeight" format="boolean"/>
     </declare-styleable>
+
+    <!-- {Copied from com.android.internal.R} -->
+    <declare-styleable name="KeyboardView">
+        <!-- Default KeyboardView style.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyboardViewStyle" format="reference" />
+        <!-- Image for the key. This image needs to be a StateListDrawable, with the following
+             possible states: normal, pressed, checkable, checkable+pressed, checkable+checked,
+             checkable+checked+pressed.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyBackground" format="reference" />
+        <!-- Size of the text for character keys.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyTextSize" format="dimension" />
+        <!-- Size of the text for custom keys with some text and no icon.
+             {Copied from com.android.internal.R} -->
+        <attr name="labelTextSize" format="dimension" />
+        <!-- Color to use for the label in a key.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyTextColor" format="color" />
+        <!-- Layout resource for key press feedback.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyPreviewLayout" format="reference" />
+        <!-- Vertical offset of the key press feedback from the key.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyPreviewOffset" format="dimension" />
+        <!-- Height of the key press feedback popup.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyPreviewHeight" format="dimension" />
+        <!-- Amount to offset the touch Y coordinate by, for bias correction.
+             {Copied from com.android.internal.R} -->
+        <attr name="verticalCorrection" format="dimension" />
+        <!-- Layout resource for popup keyboards.
+             {Copied from com.android.internal.R} -->
+        <attr name="popupLayout" format="reference" />
+        <!-- {Copied from com.android.internal.R} -->
+        <attr name="shadowColor" format="color" />
+        <!-- {Copied from com.android.internal.R} -->
+        <attr name="shadowRadius" format="float" />
+    </declare-styleable>
+    <!-- {Copied from com.android.internal.R} -->
+    <declare-styleable name="KeyboardViewPreviewState">
+        <!-- State for {@link com.igalia.wolvic.input.KeyboardView KeyboardView}
+                key preview background.
+             {Copied from com.android.internal.R} -->
+        <attr name="state_long_pressable" format="boolean" />
+    </declare-styleable>
+    <!-- {Copied from com.android.internal.R} -->
+    <declare-styleable name="Keyboard">
+        <!-- Default width of a key, in pixels or percentage of display width.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyWidth" format="dimension|fraction" />
+        <!-- Default height of a key, in pixels or percentage of display width.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyHeight" format="dimension|fraction" />
+        <!-- Default horizontal gap between keys.
+             {Copied from com.android.internal.R} -->
+        <attr name="horizontalGap" format="dimension|fraction" />
+        <!-- Default vertical gap between rows of keys.
+             {Copied from com.android.internal.R} -->
+        <attr name="verticalGap" format="dimension|fraction" />
+    </declare-styleable>
+    <!-- {Copied from com.android.internal.R} -->
+    <declare-styleable name="Keyboard_Row">
+        <!-- Row edge flags.
+             {Copied from com.android.internal.R} -->
+        <attr name="rowEdgeFlags">
+            <!-- Row is anchored to the top of the keyboard.
+             {Copied from com.android.internal.R} -->
+            <flag name="top" value="4" />
+            <!-- Row is anchored to the bottom of the keyboard.
+             {Copied from com.android.internal.R} -->
+            <flag name="bottom" value="8" />
+        </attr>
+        <!-- Mode of the keyboard. If the mode doesn't match the
+             requested keyboard mode, the row will be skipped.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyboardMode" format="reference" />
+    </declare-styleable>
+    <!-- {Copied from com.android.internal.R} -->
+    <declare-styleable name="Keyboard_Key">
+        <!-- The unicode value or comma-separated values that this key outputs.
+             {Copied from com.android.internal.R} -->
+        <attr name="codes" format="integer|string" />
+        <!-- The XML keyboard layout of any popup keyboard.
+             {Copied from com.android.internal.R} -->
+        <attr name="popupKeyboard" format="reference" />
+        <!-- The characters to display in the popup keyboard.
+             {Copied from com.android.internal.R} -->
+        <attr name="popupCharacters" format="string" />
+        <!-- Key edge flags.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyEdgeFlags">
+            <!-- Key is anchored to the left of the keyboard.
+                 {Copied from com.android.internal.R} -->
+            <flag name="left" value="1" />
+            <!-- Key is anchored to the right of the keyboard.
+                 {Copied from com.android.internal.R} -->
+            <flag name="right" value="2" />
+        </attr>
+        <!-- Whether this is a modifier key such as Alt or Shift.
+             {Copied from com.android.internal.R} -->
+        <attr name="isModifier" format="boolean" />
+        <!-- Whether this is a toggle key.
+             {Copied from com.android.internal.R} -->
+        <attr name="isSticky" format="boolean" />
+        <!-- Whether long-pressing on this key will make it repeat.
+             {Copied from com.android.internal.R} -->
+        <attr name="isRepeatable" format="boolean" />
+        <!-- The icon to show in the popup preview.
+             {Copied from com.android.internal.R} -->
+        <attr name="iconPreview" format="reference" />
+        <!-- The string of characters to output when this key is pressed.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyOutputText" format="string" />
+        <!-- The label to display on the key.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyLabel" format="string" />
+        <!-- The icon to display on the key instead of the label.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyIcon" format="reference" />
+        <!-- Mode of the keyboard. If the mode doesn't match the
+             requested keyboard mode, the key will be skipped.
+             {Copied from com.android.internal.R} -->
+        <attr name="keyboardMode" />
+    </declare-styleable>
+    <!-- Enables swipe versus poly-finger touch disambiguation in the KeyboardView -->
+    <bool name="config_swipeDisambiguation">true</bool>
+    <item type="id" name="keyboardView" />
 </resources>

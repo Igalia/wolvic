@@ -3,11 +3,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.igalia.wolvic.browser.adapter
 
 import com.igalia.wolvic.browser.components.WolvicEngineSession
 import com.igalia.wolvic.browser.engine.Session
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.WebExtensionAction
@@ -15,7 +20,6 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.*
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flowScoped
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 class ComponentsAdapter private constructor(
         val store: BrowserStore = BrowserStore()
@@ -86,7 +90,7 @@ class ComponentsAdapter private constructor(
     init {
         // This flow calls listeners when an Add-On request a Session selection
         store.flowScoped { flow ->
-            flow.ifChanged { it.selectedTab }
+            flow.distinctUntilChangedBy { it.selectedTab }
                     .collect { state ->
                         storeUpdatesListeners.forEach { listener ->
                             listener.onTabSelected(state, state.selectedTab)
@@ -96,7 +100,7 @@ class ComponentsAdapter private constructor(
     }
 
     fun getSessionStateForSession(session: Session?): SessionState? {
-        return store.state.tabs.firstOrNull() {
+        return store.state.tabs.firstOrNull {
             it.id == session?.id
         }
     }

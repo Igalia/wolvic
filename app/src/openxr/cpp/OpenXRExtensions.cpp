@@ -1,5 +1,7 @@
 #include "OpenXRExtensions.h"
 #include "OpenXRHelpers.h"
+#include "DeviceUtils.h"
+#include "OpenXRInputMappings.h"
 
 namespace crow {
 
@@ -10,7 +12,6 @@ PFN_xrCreateSwapchainAndroidSurfaceKHR OpenXRExtensions::sXrCreateSwapchainAndro
 PFN_xrCreateHandTrackerEXT OpenXRExtensions::sXrCreateHandTrackerEXT = nullptr;
 PFN_xrDestroyHandTrackerEXT OpenXRExtensions::sXrDestroyHandTrackerEXT = nullptr;
 PFN_xrLocateHandJointsEXT OpenXRExtensions::sXrLocateHandJointsEXT = nullptr;
-PFN_xrGetHandMeshFB OpenXRExtensions::sXrGetHandMeshFB = nullptr;
 PFN_xrPerfSettingsSetPerformanceLevelEXT OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT = nullptr;
 PFN_xrEnumerateDisplayRefreshRatesFB OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB = nullptr;
 PFN_xrRequestDisplayRefreshRateFB OpenXRExtensions::sXrRequestDisplayRefreshRateFB = nullptr;
@@ -18,6 +19,8 @@ PFN_xrCreatePassthroughFB OpenXRExtensions::sXrCreatePassthroughFB = nullptr;
 PFN_xrDestroyPassthroughFB OpenXRExtensions::sXrDestroyPassthroughFB = nullptr;
 PFN_xrCreatePassthroughLayerFB OpenXRExtensions::sXrCreatePassthroughLayerFB = nullptr;
 PFN_xrDestroyPassthroughLayerFB OpenXRExtensions::sXrDestroyPassthroughLayerFB = nullptr;
+PFN_xrCreateHandMeshSpaceMSFT OpenXRExtensions::sXrCreateHandMeshSpaceMSFT = nullptr;
+PFN_xrUpdateHandMeshMSFT OpenXRExtensions::sXrUpdateHandMeshMSFT = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -32,9 +35,18 @@ void OpenXRExtensions::Initialize() {
         sSupportedExtensions.insert(extension.extensionName);
     }
 #ifdef LYNX
-    // Lynx incorrectly advertises this extension as supported but in reality it does not work.
+    // Lynx incorrectly advertises these extensions as supported but in reality they don't work.
     sSupportedExtensions.erase(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME);
+    sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
+#elif PICOXR
+    // Pico incorrectly advertises this extension as supported but it makes Wolvic not work.
+    sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
 #endif
+
+    // Adding this check here is ugly but required to have a working build for VRX. With the current
+    // runtime the controller poses freeze (always report same pose) if hand tracking is enabled.
+    if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoVRX)
+        sSupportedExtensions.erase(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
 
     // API layers.
     uint32_t apiLayersCount;
@@ -77,9 +89,12 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyHandTrackerEXT)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLocateHandJointsEXT",
                                         reinterpret_cast<PFN_xrVoidFunction *>(&sXrLocateHandJointsEXT)));
-        if (IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME)) {
-            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrGetHandMeshFB",
-                                            reinterpret_cast<PFN_xrVoidFunction *>(&sXrGetHandMeshFB)));
+
+        if (IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateHandMeshSpaceMSFT",
+                                              reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreateHandMeshSpaceMSFT)));
+            CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrUpdateHandMeshMSFT",
+                                              reinterpret_cast<PFN_xrVoidFunction *>(&sXrUpdateHandMeshMSFT)));
         }
     }
 

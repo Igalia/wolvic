@@ -1,7 +1,6 @@
 package com.igalia.wolvic;
 
-import android.app.Fragment;
-import android.content.Context;
+import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,21 +21,16 @@ public class PrivacyPolicyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.privacy_policy_title);
+            toolbar.hideOverflowMenu();
+        }
+
         view.findViewById(R.id.button_decline).setOnClickListener(
                 button -> getActivity().finish());
 
         view.findViewById(R.id.button_accept).setOnClickListener(
                 button -> SettingsStore.getInstance(getContext()).setPrivacyPolicyAccepted(true));
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.privacy_policy_title);
-            toolbar.hideOverflowMenu();
-        }
     }
 }

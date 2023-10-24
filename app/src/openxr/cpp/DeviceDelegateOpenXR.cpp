@@ -7,6 +7,7 @@
 #include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "BrowserEGLContext.h"
+#include "HandMeshRenderer.h"
 #include "VRBrowser.h"
 #include "VRLayer.h"
 
@@ -24,6 +25,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <assert.h>
 #include <cstdlib>
 #include <unistd.h>
 #include <sstream>
@@ -45,6 +47,12 @@
 #include "OpenXRPassthroughStrategy.h"
 
 namespace crow {
+
+struct HandMeshPropertiesMSFT {
+    uint32_t indexCount = 0;
+    uint32_t vertexCount = 0;
+};
+typedef std::unique_ptr<HandMeshPropertiesMSFT> HandMeshPropertiesMSFTPtr;
 
 struct DeviceDelegateOpenXR::State {
   vrb::RenderContextWeak context;
@@ -75,7 +83,6 @@ struct DeviceDelegateOpenXR::State {
   OpenXRLayerCubePtr cubeLayer;
   OpenXRLayerEquirectPtr equirectLayer;
   std::vector<OpenXRLayerPtr> uiLayers;
-  OpenXRSwapChainPtr crearColorSwapChain;
   device::RenderMode renderMode = device::RenderMode::StandAlone;
   vrb::CameraEyePtr cameras[2];
   FramePrediction framePrediction = FramePrediction::NO_FRAME_AHEAD;
@@ -104,31 +111,15 @@ struct DeviceDelegateOpenXR::State {
   bool reorientRequested { false };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
   PassthroughStrategyPtr passthroughStrategy;
+  XrEnvironmentBlendMode defaultBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
+  XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
+  HandMeshRendererPtr handMeshRenderer = nullptr;
+  HandMeshPropertiesMSFTPtr handMeshProperties;
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
       CHECK(instance != XR_NULL_HANDLE);
       return systemProperties.trackingProperties.positionTracking == XR_TRUE;
-  }
-
-  // This might require more sophisticated code to properly detect specific hardware. That was
-  // easy to do with propietary SDKs but it's a bit more difficult with OpenXR.
-  void InitializeDeviceType() {
-#if OCULUSVR
-      // FIXME: this is fragile. Meta Quest Pro incorrectly advertises itself as "Oculus Quest2"
-      // so the only way we have to properly identify it is by checking extensions that are not
-      // supported in Quest2 but available for Quest Pro.
-      deviceType = OpenXRExtensions::IsExtensionSupported("XR_META_local_dimming") ? device::MetaQuestPro : device::OculusQuest2;
-#elif HVR
-      deviceType = IsPositionTrackingSupported() ? device::HVR6DoF : device::HVR3DoF;
-#elif PICOXR
-      deviceType = device::PicoXR;
-#elif LYNX
-      deviceType = device::LynxR1;
-#elif SPACES
-      deviceType = device::LenovoA3;
-#endif
-      VRB_LOG("Initializing device %s from vendor %d. Device type %d", systemProperties.systemName, systemProperties.vendorId, deviceType);
   }
 
   void Initialize() {
@@ -173,8 +164,8 @@ struct DeviceDelegateOpenXR::State {
         if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME)) {
             extensions.push_back(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
         }
-        if (OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME)) {
-            extensions.push_back(XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME);
+        if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+            extensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
         }
     }
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME)) {
@@ -197,6 +188,12 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
       extensions.push_back(XR_FB_PASSTHROUGH_EXTENSION_NAME);
     }
+
+    if (OpenXRExtensions::IsExtensionSupported(XR_ML_ML2_CONTROLLER_INTERACTION_EXTENSION_NAME))
+        extensions.push_back(XR_ML_ML2_CONTROLLER_INTERACTION_EXTENSION_NAME);
+
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME))
+        extensions.push_back(XR_EXTX_OVERLAY_EXTENSION_NAME);
 
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
@@ -226,6 +223,8 @@ struct DeviceDelegateOpenXR::State {
     CHECK_XRCMD(xrGetSystem(instance, &systemInfo, &system));
     CHECK_MSG(system != XR_NULL_SYSTEM_ID, "Failed to initialize XRSystem");
 
+    deviceType = DeviceUtils::GetDeviceTypeFromSystem(IsPositionTrackingSupported());
+
     // If hand tracking extension is present, query whether the runtime actually supports it
     XrSystemHandTrackingPropertiesEXT handTrackingProperties{XR_TYPE_SYSTEM_HAND_TRACKING_PROPERTIES_EXT};
     handTrackingProperties.supportsHandTracking = XR_FALSE;
@@ -242,6 +241,13 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &passthroughProperties;
     }
 
+    XrSystemHandTrackingMeshPropertiesMSFT handMeshPropertiesMSFT{ XR_TYPE_SYSTEM_HAND_TRACKING_MESH_PROPERTIES_MSFT };
+    handMeshPropertiesMSFT.supportsHandTrackingMesh = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME)) {
+        handMeshPropertiesMSFT.next = systemProperties.next;
+        systemProperties.next = &handMeshPropertiesMSFT;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
@@ -253,19 +259,23 @@ struct DeviceDelegateOpenXR::State {
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
     VRB_LOG("OpenXR runtime %s FB passthrough extension", passthroughProperties.supportsPassthrough ? "does support" : "doesn't support");
 
+    InitializeBlendModes();
     if (passthroughProperties.supportsPassthrough) {
         passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyFBExtension>();
     } else {
-#if defined(LYNX)
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
-#elif defined(SPACES)
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyNoSkybox>();
-#else
-        passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
-#endif
+        CHECK(passthroughBlendMode != XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM);
+        if (passthroughBlendMode == XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND)
+            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyBlendMode>();
+        else
+            passthroughStrategy = std::make_unique<OpenXRPassthroughStrategyUnsupported>();
     }
 
-    InitializeDeviceType();
+    if (handMeshPropertiesMSFT.supportsHandTrackingMesh) {
+        handMeshProperties = std::make_unique<HandMeshPropertiesMSFT>();
+        handMeshProperties->vertexCount = handMeshPropertiesMSFT.maxHandMeshVertexCount;
+        handMeshProperties->indexCount = handMeshPropertiesMSFT.maxHandMeshIndexCount;
+        VRB_LOG("OpenXR runtime supports XR_MSFT_hand_tracking_mesh");
+    }
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -325,6 +335,35 @@ struct DeviceDelegateOpenXR::State {
       eyeSwapChains.push_back(swapChain);
     }
     VRB_DEBUG("OpenXR available views: %d", (int)eyeSwapChains.size());
+  }
+
+  void InitializeBlendModes() {
+      CHECK(instance != XR_NULL_HANDLE);
+      CHECK(system != 0);
+
+      uint32_t count;
+      XrViewConfigurationType viewConfigurationType = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+      CHECK_XRCMD(xrEnumerateEnvironmentBlendModes(instance, system, viewConfigurationType, 0, &count, nullptr));
+      CHECK(count > 0);
+
+      std::vector<XrEnvironmentBlendMode> blendModes(count);
+      CHECK_XRCMD(xrEnumerateEnvironmentBlendModes(instance, system, viewConfigurationType, count, &count, blendModes.data()));
+      VRB_LOG("OpenXR: %d supported blend mode%c", count, count > 1 ? 's' : ' ');
+      for (const auto& blendMode : blendModes)
+          VRB_LOG("\t%s", to_string(blendMode));
+
+      auto blendMode = XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      const auto supportsOpaqueBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      blendMode = XR_ENVIRONMENT_BLEND_MODE_ADDITIVE;
+      const auto supportsAdditiveBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      blendMode = XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND;
+      const auto supportsAlphaBlendMode = std::find(blendModes.begin(), blendModes.end(), blendMode) != blendModes.end();
+      CHECK(supportsOpaqueBlendMode || supportsAdditiveBlendMode || supportsAlphaBlendMode);
+
+      passthroughBlendMode = supportsAdditiveBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ADDITIVE : (supportsAlphaBlendMode ? XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND : XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
+      defaultBlendMode = supportsOpaqueBlendMode ? XR_ENVIRONMENT_BLEND_MODE_OPAQUE : passthroughBlendMode;
+      VRB_LOG("OpenXR: selected default blend mode %s", to_string(defaultBlendMode));
+      VRB_LOG("OpenXR: selected passthrough blend mode %s", to_string(passthroughBlendMode));
   }
 
   void InitializeImmersiveDisplay() {
@@ -638,15 +677,12 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void Shutdown() {
-    // Release swapChains
-    for (OpenXRSwapChainPtr swapChain: eyeSwapChains) {
-      swapChain->Destroy();
-    }
-
-    if (passthroughLayer != nullptr) {
-        passthroughLayer->Destroy();
-        passthroughLayer = nullptr;
-    }
+    // Release swapChains before destroying the instance. Note that layers are backed by swapchains.
+    eyeSwapChains.clear();
+    uiLayers.clear();
+    cubeLayer.reset();
+    equirectLayer.reset();
+    passthroughLayer.reset();
 
     // Release spaces
     if (viewSpace != XR_NULL_HANDLE) {
@@ -689,6 +725,10 @@ struct DeviceDelegateOpenXR::State {
       instance = XR_NULL_HANDLE;
     }
 
+    // Hand mesh properties
+    if (handMeshProperties)
+        handMeshProperties.reset();
+
     // TODO: Check if activity globarRef needs to be released
   }
 
@@ -704,7 +744,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   bool IsPassthroughLayerReady() {
-    if (!passthroughStrategy->isReady() || passthroughLayer == nullptr || passthroughLayer->xrLayer == XR_NULL_HANDLE)
+    if (!passthroughStrategy->isReady() || passthroughLayer == nullptr || !passthroughLayer->IsValid())
       return false;
 
     return true;
@@ -867,16 +907,20 @@ DeviceDelegateOpenXR::ProcessEvents() {
       case XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB: {
         auto result = m.passthroughStrategy->handleEvent(*ev);
         if (result == OpenXRPassthroughStrategy::HandleEventResult::NonRecoverableError) {
-            if (m.passthroughLayer->xrLayer != XR_NULL_HANDLE) {
+            if (m.passthroughLayer->IsValid())
                 m.passthroughLayer->Destroy();
-                m.passthroughLayer->xrLayer = XR_NULL_HANDLE;
-            }
         } else if (result == OpenXRPassthroughStrategy::HandleEventResult::NeedsReinit) {
             // TODO: return a bool with the initialization result?
             m.passthroughStrategy->initializePassthrough(m.session);
             vrb::RenderContextPtr ctx = m.context.lock();
             m.passthroughLayer->Init(m.javaContext->env, m.session, ctx);
         }
+        break;
+      }
+      case XR_TYPE_EVENT_DATA_MAIN_SESSION_VISIBILITY_CHANGED_EXTX: {
+        assert(OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME));
+        const auto &event = *reinterpret_cast<const XrEventDataMainSessionVisibilityChangedEXTX *>(ev);
+        VRB_LOG("OpenXR main session is now %s", event.visible == XR_TRUE ? "visible" : "not visible");
         break;
       }
       default: {
@@ -1105,11 +1149,11 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   layers.clear();
 
   // This limit is valid at least for Pico and Meta.
-  auto submitEndFrame = [&layers, displayTime, session = m.session, isPassthroughEnabled = mIsPassthroughEnabled, passthroughStrategy = m.passthroughStrategy.get()]() {
+  auto submitEndFrame = [&layers, displayTime, session = m.session, blendMode = mIsPassthroughEnabled ? m.passthroughBlendMode : m.defaultBlendMode]() {
       static int i = 0;
       XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
       frameEndInfo.displayTime = displayTime;
-      frameEndInfo.environmentBlendMode = isPassthroughEnabled ? passthroughStrategy->environmentBlendModeForPassthrough() : XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+      frameEndInfo.environmentBlendMode = blendMode;
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
       CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
@@ -1128,13 +1172,8 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   // Add skybox or passthrough layer
   if (mIsPassthroughEnabled) {
       if (m.passthroughLayer && m.passthroughLayer->IsDrawRequested() && m.IsPassthroughLayerReady()) {
-          XrCompositionLayerPassthroughFB passthroughCompLayer = {
-                  .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
-                  .flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT,
-                  .space = XR_NULL_HANDLE,
-                  .layerHandle = m.passthroughLayer->xrLayer,
-          };
-          layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&passthroughCompLayer));
+          m.passthroughLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
+          layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&m.passthroughLayer->xrCompositionLayer));
           m.passthroughLayer->ClearRequestDraw();
       }
   } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
@@ -1406,6 +1445,23 @@ int32_t DeviceDelegateOpenXR::GetHandTrackingJointIndex(const HandTrackingJoints
 }
 
 void
+DeviceDelegateOpenXR::UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+               const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {
+  if (!m.handMeshRenderer)
+    return;
+
+  HandMeshBufferPtr buffer = m.input->GetNextHandMeshBuffer(aControllerIndex);
+  m.handMeshRenderer->Update(aControllerIndex, handJointTransforms, aRoot, buffer, aEnabled, leftHanded);
+}
+
+void
+DeviceDelegateOpenXR::DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera& aCamera) {
+  if (!m.handMeshRenderer)
+    return;
+  m.handMeshRenderer->Draw(aControllerIndex, aCamera);
+}
+
+void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Reset reorientation after Enter VR
   m.reorientMatrix = vrb::Matrix::Identity();
@@ -1431,6 +1487,18 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   XrSessionCreateInfo createInfo{XR_TYPE_SESSION_CREATE_INFO};
   createInfo.next = reinterpret_cast<const XrBaseInStructure*>(&m.graphicsBinding);
   createInfo.systemId = m.system;
+
+  if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME)) {
+    XrSessionCreateInfoOverlayEXTX overlayInfo {
+      .type = XR_TYPE_SESSION_CREATE_INFO_OVERLAY_EXTX,
+      .createFlags = 0,
+      .sessionLayersPlacement = 0
+    };
+    auto oldNext = createInfo.next;
+    createInfo.next = &overlayInfo;
+    overlayInfo.next = oldNext;
+  }
+
   CHECK_XRCMD(xrCreateSession(m.instance, &createInfo, &m.session));
   CHECK(m.session != XR_NULL_HANDLE);
   VRB_LOG("OpenXR session created succesfully");
@@ -1442,12 +1510,6 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.passthroughStrategy->initializePassthrough(m.session);
 
-#if OCULUSVR
-  // See InitialiceDeviceType(). We overwrite the system name so that we load the proper input
-  // mapping for the Quest Pro, as it incorrectly advertises itself as "Oculus Quest2"
-  if (m.deviceType == device::MetaQuestPro)
-      strcpy(m.systemProperties.systemName, "Meta Quest Pro");
-#endif
   m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
   ProcessEvents();
   if (m.controllersReadyCallback && m.input && m.input->AreControllersReady()) {
@@ -1455,8 +1517,28 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.controllersReadyCallback = nullptr;
   }
 
-  // Initialize layers if needed
   vrb::RenderContextPtr context = m.context.lock();
+
+  // Lazily create hand mesh renderer
+  if (m.mHandTrackingSupported && !m.handMeshRenderer) {
+    auto& create = context->GetRenderThreadCreationContext();
+    if (m.handMeshProperties) {
+      m.handMeshRenderer = HandMeshRendererGeometry::Create(create);
+      m.input->SetHandMeshBufferSizes(m.handMeshProperties->indexCount, m.handMeshProperties->vertexCount);
+    } else {
+#if defined(PICOXR)
+      // Due to unreliable hand-tracking orientation data on Pico devices running system
+      // versions earlier than 5.7.1, we use the Spheres strategy.
+      if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
+        m.handMeshRenderer = HandMeshRendererSpheres::Create(create);
+#endif
+    }
+
+    if (!m.handMeshRenderer)
+      m.handMeshRenderer = HandMeshRendererSkinned::Create(create);
+  }
+
+  // Initialize layers if needed
   for (OpenXRLayerPtr& layer: m.uiLayers) {
     layer->Init(m.javaContext->env, m.session, context);
   }
@@ -1495,6 +1577,7 @@ DeviceDelegateOpenXR::IsInVRMode() const {
 
 bool
 DeviceDelegateOpenXR::ExitApp() {
+  xrRequestExitSession(m.session);
   return true;
 }
 

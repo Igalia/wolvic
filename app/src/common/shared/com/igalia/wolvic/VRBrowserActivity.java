@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -48,6 +47,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Accounts;
@@ -119,16 +119,6 @@ import java.util.function.Consumer;
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if((intent.getAction() != null) && intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
-                Intent crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
-                handleContentCrashIntent(crashIntent);
-            }
-        }
-    };
-
     public static String STARTIMMERSIVE_ACTION = "com.wolvic.SVR_START_IMMERSIVE";
 
     public BroadcastReceiver startImmersiveReceiver = new BroadcastReceiver() {
@@ -163,12 +153,36 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             findTheWebXrButtonAtAllCosts(findWebXrButton);
         }
     };
+          
+    private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if((intent.getAction() != null) && intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
+                Intent crashIntent;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG, Intent.class);
+                } else {
+                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
+                }
+                handleContentCrashIntent(crashIntent);
+            }
+        }
+    };    
 
-    private final LifecycleRegistry mLifeCycle;
+    private LifecycleRegistry mLifeCycle;
 
     @NonNull
     @Override
     public Lifecycle getLifecycle() {
+        // Ensure that mLifeCycle is initialized, because this method
+        // may be called early by a superclass at construction time.
+        return getLifecycleRegistry();
+    }
+
+    private LifecycleRegistry getLifecycleRegistry() {
+        if (mLifeCycle == null) {
+            mLifeCycle = new LifecycleRegistry(this);
+        }
         return mLifeCycle;
     }
 
@@ -181,8 +195,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     public VRBrowserActivity() {
-        mLifeCycle = new LifecycleRegistry(this);
-        mLifeCycle.setCurrentState(Lifecycle.State.INITIALIZED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.INITIALIZED);
 
         mViewModelStore = new ViewModelStore();
     }
@@ -209,6 +222,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final long RESET_CRASH_COUNT_DELAY = 5000;
     static final int UPDATE_NATIVE_WIDGETS_DELAY = 50; // milliseconds
 
+    // Passthrough was enabled on Pico version 5.7.1, via XR_FB_passthrough extension
+    static final String kPicoVersionPassthroughUpdate = "5.7.1";
+
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -217,7 +233,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     FrameLayout mWidgetContainer;
     int mLastGesture;
     SwipeRunnable mLastRunnable;
-    Handler mHandler = new Handler();
+    Handler mHandler = new Handler(Looper.getMainLooper());
     Runnable mAudioUpdateRunnable;
     Windows mWindows;
     RootWidget mRootWidget;
@@ -287,7 +303,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(), 0));
+        mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(Looper.getMainLooper()), 0));
         mFragmentController.attachHost(null);
         mFragmentController.dispatchActivityCreated();
 
@@ -401,7 +417,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the deprecated version dialog, if needed.
 //        showDeprecatedVersionDialogIfNeeded();
 
-        mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.CREATED);
     }
 
     public static boolean mHideVisuals = false;
@@ -622,15 +638,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
         mFragmentController.dispatchStart();
-        mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.STARTED);
         if (mTray == null) {
             Log.e(LOGTAG, "Failed to start Tray clock");
         } else {
             mTray.start(this);
-        }
-        // TODO: Too early for runtimes using the passthrough layer.
-        if (DeviceType.isSnapdragonSpaces()) {
-            togglePassthrough();
         }
     }
 
@@ -707,7 +719,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         ((VRBrowserApplication)getApplicationContext()).getAccounts().pollForEventsAsync();
 
         super.onResume();
-        mLifeCycle.setCurrentState(Lifecycle.State.RESUMED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.RESUMED);
     }
 
     @Override
@@ -748,7 +760,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
 
         super.onDestroy();
-        mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
+        getLifecycleRegistry().setCurrentState(Lifecycle.State.DESTROYED);
         mViewModelStore.clear();
         // Always exit to work around https://github.com/MozillaReality/FirefoxReality/issues/3363
         finish();
@@ -772,15 +784,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void onConfigurationChanged(Configuration newConfig) {
         Language language = LocaleUtils.getDisplayLanguage(this);
         newConfig.setLocale(language.getLocale());
+        // TODO: Deprecated updateConfiguration(Configuration,DisplayMetrics),
+        //  see https://github.com/Igalia/wolvic/issues/797
         getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
 
         LocaleUtils.update(this, language);
 
-        mFragmentController.dispatchConfigurationChanged(newConfig);
-
         SessionStore.get().onConfigurationChanged(newConfig);
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
         SendTabDialogWidget.getInstance(this).onConfigurationChanged(newConfig);
+
+        SearchEngineWrapper s = SearchEngineWrapper.get(this);
+        s.setupPreferredSearchEngine();
+        s.setCurrentSearchEngine(null);
 
         super.onConfigurationChanged(newConfig);
     }
@@ -818,7 +834,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (DeviceType.isOculusBuild()) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String cmd = (String) bundle.get("intent_cmd");
+                String cmd = bundle.getString("intent_cmd");
                 if ((cmd != null) && (cmd.length() > 0)) {
                     try {
                         JSONObject object = new JSONObject(cmd);
@@ -939,18 +955,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mAllowExitWebxr = !extras.containsKey("ALLOW_EXIT_WEBXR");
         }
 
-        // In some variants Wolvic will always open in kiosk mode.
-        if (BuildConfig.KIOSK_MODE_ALWAYS) {
-            openInKioskMode = true;
-            if (targetUri == null) {
-                // If we don't have a target URI we will load the default homepage in kiosk mode,
-                // unless we are already showing a website in kiosk mode.
-                WindowWidget window = mWindows.getFocusedWindow();
-                if (window == null || !window.isKioskMode() || window.isCurrentUriBlank())
-                    targetUri = Uri.parse(getString(R.string.homepage_url));
-            }
-        }
-
         // If there is a target URI we open it
         if (targetUri != null) {
             Log.d(LOGTAG, "Loading URI from intent: " + targetUri);
@@ -966,7 +970,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 } else if (openInBackground) {
                     location = Windows.OPEN_IN_BACKGROUND;
                 }
-                mWindows.openNewTabAfterRestore(targetUri.toString(), location);
+                if (location == Windows.OPEN_IN_FOREGROUND) {
+                    mWindows.findTabAndSelect(targetUri.toString());
+                } else {
+                    mWindows.openNewTabAfterRestore(targetUri.toString(), location);
+                }
             }
         } else if (mWindows.getFocusedWindow().isCurrentUriBlank()) {
             mWindows.getFocusedWindow().loadHome();
@@ -1021,6 +1029,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
 
         // Determine which lifecycle or system event was raised.
         switch (level) {
@@ -1044,8 +1053,23 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    private void showAppExitDialog() {
+        mWindows.getFocusedWindow().showConfirmPrompt(
+            getString(R.string.app_name),
+            getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
+                new String[]{
+                        getString(R.string.exit_confirm_dialog_button_cancel),
+                        getString(R.string.exit_confirm_dialog_button_quit),
+                }, (index, isChecked) -> {
+                    if (index == PromptDialogWidget.POSITIVE) {
+                        VRBrowserActivity.super.onBackPressed();
+                        finishAndRemoveTask();
+                    }
+                });
+    }
 
     @Override
+    @Deprecated
     public void onBackPressed() {
         if (mIsPresentingImmersive) {
             if(mAllowExitWebxr)
@@ -1059,22 +1083,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         if (!mWindows.handleBack()) {
-            if (DeviceType.isHVRBuild()) {
-                mWindows.getFocusedWindow().showConfirmPrompt(
-                        getString(R.string.app_name),
-                        getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
-                        new String[]{
-                                getString(R.string.exit_confirm_dialog_button_cancel),
-                                getString(R.string.exit_confirm_dialog_button_quit),
-                        }, (index, isChecked) -> {
-                            if (index == PromptDialogWidget.POSITIVE) {
-                                VRBrowserActivity.super.onBackPressed();
-                            }
-                        });
-
-            } else {
-                super.onBackPressed();
-            }
+            showAppExitDialog();
         }
     }
 
@@ -1352,12 +1361,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (!isWidgetInputEnabled(widget)) {
                 return;
             }
-            if (widget != null) {
-                float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
-                MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
-            } else {
-                Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
+            if (widget == null) {
+                if (getNavigationBar().isInVRVideo()) {
+                    widget = getNavigationBar().getMediaControlsWidget();
+                } else {
+                    Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
+                    return;
+                }
             }
+            float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
+            MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
         });
     }
 
@@ -1402,6 +1415,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
             dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+        });
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    @Keep
+    void handleAppExit() {
+        runOnUiThread(() -> {
+            showAppExitDialog();
         });
     }
 
@@ -1582,6 +1603,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    public void checkTogglePassthrough() {
+        if (mSettings.isStartWithPassthroughEnabled() && !mIsPassthroughEnabled) {
+            runOnUiThread(this::togglePassthrough);
+        }
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     public boolean areLayersEnabled() {
         return SettingsStore.getInstance(this).getLayersEnabled();
     }
@@ -1601,7 +1630,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
-        runOnUiThread(() -> DeviceType.setType(aType));
+        DeviceType.setType(aType);
     }
 
     @Keep
@@ -2079,6 +2108,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    @Deprecated
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -2111,7 +2141,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
     @Override
     public boolean isPassthroughSupported() {
-        return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces();
+        return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces() ||
+               (DeviceType.isPicoXR() && Build.ID.compareTo(kPicoVersionPassthroughUpdate) >= 0);
     }
 
     @Override
@@ -2124,6 +2155,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mWindows != null && aDensity == 0.0f && mWindows.getWindowsCount() > 1) {
             return;
         }
+        setCylinderDensityForce(aDensity);
+    }
+
+    @Override
+    public void setCylinderDensityForce(final float aDensity) {
         mCurrentCylinderDensity = aDensity;
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
@@ -2157,6 +2193,35 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void openNewTabForeground(@NonNull String uri) {
         mWindows.addTab(mWindows.getFocusedWindow(), uri);
+    }
+
+    private boolean openNewTabNoInterrupt(@NonNull WindowWidget window, @NonNull String uri) {
+        if (window.getSession() == null || window.getSession().getActiveVideo() != null) {
+            return false;
+        }
+
+        mWindows.addTab(window, uri);
+        mWindows.focusWindow(window);
+        return true;
+    }
+    @Override
+    public void openNewPageNoInterrupt(@NonNull String uri) {
+        if (openNewTabNoInterrupt(mWindows.getFocusedWindow(), uri)) { return; }
+
+        // If we have video playing in current window, ensure we don't open a new tab
+        // in a window that has active video
+        if (mWindows.getWindowsCount() > 1) {
+            for (WindowWidget window : mWindows.getCurrentWindows()) {
+                if (openNewTabNoInterrupt(window, uri)) { return; }
+            }
+        }
+        // All the current opened Windows have video playing, so we have to open uri in a new window.
+        // If we have maximum window number, then open the uri as a new tab in current window.
+        if (canOpenNewWindow()) {
+            openNewWindow(uri);
+        } else {
+            openNewTabForeground(uri);
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@ import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WRuntimeSettings;
 import com.igalia.wolvic.browser.api.WWebExtensionController;
 
-import org.mozilla.gecko.CrashHandler;
+import org.mozilla.geckoview.CrashHandler;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoRuntime;
@@ -49,12 +49,12 @@ public class RuntimeImpl implements WRuntime {
                         .enhancedTrackingProtectionLevel(ContentBlockingDelegateImpl.toGeckoEtpLevel(settings.getContentBlocking().getEnhancedTrackingProtectionLevel()))
                         .cookieBehavior(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getContentBlocking().getCookieBehavior()))
                         .cookieBehaviorPrivateMode(ContentBlockingDelegateImpl.toGeckoCookieBehavior(settings.getContentBlocking().getCookieBehaviorPrivate()))
-                        .cookieLifetime(ContentBlockingDelegateImpl.toGeckoCookieLifetime(settings.getContentBlocking().getCookieLifetime()))
                         .safeBrowsing(ContentBlockingDelegateImpl.toGeckoSafeBrowsing(settings.getContentBlocking().getSafeBrowsing()))
                         .build())
                 .displayDensityOverride(settings.getDisplayDensityOverride())
                 .remoteDebuggingEnabled(settings.isRemoteDebugging())
                 .displayDpiOverride(settings.getDisplayDpiOverride())
+                .enterpriseRootsEnabled(settings.isEnterpriseRootsEnabled())
                 .screenSizeOverride(settings.getScreenWidthOverride(), settings.getScreenHeightOverride())
                 .inputAutoZoomEnabled(settings.isInputAutoZoomEnabled())
                 .doubleTapZoomingEnabled(settings.isDoubleTapZoomingEnabled())
@@ -105,7 +105,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public Client createFetchClient(Context context) {
-        return GeckoViewFetchClient.create(context, mExecutor);
+        return GeckoViewFetchClient.create(mExecutor);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class RuntimeImpl implements WRuntime {
     public Thread.UncaughtExceptionHandler createCrashHandler(Context appContext, Class<? extends Service> handlerService) {
         return new CrashHandler(appContext, handlerService) {
             @Override
-            protected Bundle getCrashExtras(final Thread thread, final Throwable exc) {
+            public Bundle getCrashExtras(final Thread thread, final Throwable exc) {
                 final Bundle extras = super.getCrashExtras(thread, exc);
                 if (extras == null) {
                     return null;

@@ -3,6 +3,7 @@
 #include <vrb/Logger.h>
 #include "OpenXRExtensions.h"
 #include "OpenXRHelpers.h"
+#include <assert.h>
 
 namespace crow {
 
@@ -68,12 +69,5 @@ OpenXRLayerPassthroughPtr
 OpenXRPassthroughStrategyFBExtension::createLayerIfSupported(VRLayerPassthroughPtr vrLayer) const {
     return OpenXRLayerPassthrough::Create(vrLayer, passthroughHandle);
 }
-
-XrEnvironmentBlendMode
-OpenXRPassthroughStrategyUnsupported::environmentBlendModeForPassthrough() const {
-    VRB_ERROR("should not be called when passthrough is not available");
-    return XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
-};
-
 
 } // namespace crow

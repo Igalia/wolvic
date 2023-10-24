@@ -15,6 +15,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.igalia.wolvic.R
 import com.igalia.wolvic.VRBrowserApplication
 import com.igalia.wolvic.telemetry.TelemetryService
+import com.igalia.wolvic.telemetry.TelemetryService.FxA
 import com.igalia.wolvic.utils.BitmapCache
 import com.igalia.wolvic.utils.SystemUtils
 import com.igalia.wolvic.utils.ViewUtils
@@ -294,7 +295,7 @@ class Accounts constructor(val context: Context) {
     fun authUrlAsync(): CompletableFuture<String?>? {
         TelemetryService.FxA.signIn()
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.beginAuthentication()
+            services.accountManager.beginAuthentication(null, FxA())
         }
     }
 
@@ -312,7 +313,7 @@ class Accounts constructor(val context: Context) {
 
     fun updateProfileAsync(): CompletableFuture<Profile?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.fetchProfile()
+            services.accountManager.accountProfile()
         }
     }
 

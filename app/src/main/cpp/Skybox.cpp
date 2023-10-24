@@ -253,10 +253,18 @@ FileDoesNotExist (const std::string& aName) {
 
 std::string
 Skybox::ValidateCustomSkyboxAndFindFileExtension(const std::string& aBasePath) {
+#if defined(PICOXR) || (defined(OPENXR) && defined(OCULUSVR))
+  const std::string& colorSpace = "_srgb";
+#else
+  const std::string& colorSpace = "";
+#endif
+  auto path = [&](const std::string& name, const std::string& extension) {
+      return aBasePath + "/" + name + colorSpace + extension;
+  };
   for (const std::string& ext: sFileExt) {
      int32_t fileCount = 0;
      for (const std::string& baseName: sBaseNameList) {
-       const std::string file = aBasePath + "/" + baseName + ext;
+       const std::string file = path(baseName, ext);
        if (FileDoesNotExist(file)) {
          if (fileCount > 0) {
            VRB_ERROR("Custom skybox file missing: %s", file.c_str());

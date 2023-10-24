@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -32,11 +34,10 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
     private MediaControlsBinding mBinding;
     private Media mMedia;
     private Runnable mBackHandler;
-    private boolean mPlayOnSeekEnd;
     private Rect mOffsetViewBounds;
     private VideoProjectionMenuWidget mProjectionMenu;
     static long VOLUME_SLIDER_CHECK_DELAY = 1000;
-    private Handler mVolumeCtrlHandler = new Handler();
+    private Handler mVolumeCtrlHandler = new Handler(Looper.getMainLooper());
     private boolean mHideVolumeSlider = false;
     private Runnable mVolumeCtrlRunnable;
 
@@ -89,19 +90,9 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             mBinding.mediaPlayButton.requestFocusFromTouch();
         });
 
-        mBinding.mediaSeekBackwardButton.setOnClickListener(v -> {
-            mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
-            mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
-        });
+        mBinding.mediaSeekBackwardButton.setOnClickListener(v -> seekBackward());
 
-        mBinding.mediaSeekForwardButton.setOnClickListener(v -> {
-            double t = mMedia.getCurrentTime() + 30;
-            if (mMedia.getDuration() > 0) {
-                t = Math.min(mMedia.getDuration(), t);
-            }
-            mMedia.seek(t);
-            mBinding.mediaSeekForwardButton.requestFocusFromTouch();
-        });
+        mBinding.mediaSeekForwardButton.setOnClickListener(v -> seekForward());
 
         mBinding.mediaProjectionButton.setOnClickListener(v -> {
             WidgetPlacement placement = mProjectionMenu.getPlacement();
@@ -126,6 +117,7 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
                 mMedia.setMuted(true);
                 mBinding.volumeControl.setVolume(0);
             }
+            mBinding.setMuted(mMedia.isMuted());
             mBinding.mediaVolumeButton.requestFocusFromTouch();
         });
 
@@ -136,12 +128,18 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             mBinding.mediaBackButton.requestFocusFromTouch();
         });
 
+        mBinding.mediaControlSeekBar.getLeftTextView().setOnClickListener(v -> {
+            mMedia.seek(0);
+        });
+
+        mBinding.mediaControlSeekBar.getRightTextView().setOnClickListener(v -> {
+            mMedia.seek(mMedia.getDuration());
+        });
+
         mBinding.mediaControlSeekBar.setDelegate(new MediaSeekBar.Delegate() {
             @Override
             public void onSeekDragStart() {
-                mPlayOnSeekEnd = mMedia.isPlaying();
                 mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
-                mMedia.pause();
                 mBinding.mediaControlSeekBar.requestFocusFromTouch();
             }
 
@@ -152,9 +150,6 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
 
             @Override
             public void onSeekDragEnd() {
-                if (mPlayOnSeekEnd) {
-                    mMedia.play();
-                }
                 mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
             }
 
@@ -170,14 +165,23 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
 
             @Override
             public void onSeekPreview(String aText, double aRatio) {
+                final int padding = WidgetPlacement.dpDimension(getContext(), R.dimen.media_controls_seek_bar_padding);
                 mBinding.mediaControlSeekLabel.setText(aText);
                 View childView = mBinding.mediaControlSeekBar.getSeekBarView();
                 childView.getDrawingRect(mOffsetViewBounds);
                 MediaControlsWidget.this.offsetDescendantRectToMyCoords(childView, mOffsetViewBounds);
 
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mBinding.mediaControlSeekLabel.getLayoutParams();
-                params.setMarginStart(mOffsetViewBounds.left + (int) (aRatio * mOffsetViewBounds.width()) - mBinding.mediaControlSeekLabel.getMeasuredWidth() / 2);
+                params.setMarginStart(mOffsetViewBounds.left + padding +
+                        (int) (aRatio * (mOffsetViewBounds.width() - 2 * padding)) -
+                        mBinding.mediaControlSeekLabel.getMeasuredWidth() / 2);
                 mBinding.mediaControlSeekLabel.setLayoutParams(params);
+
+                if (aRatio < 0 || aRatio > 1) {
+                    mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
+                } else {
+                    mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -219,6 +223,11 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             return false;
         });
         mBinding.mediaVolumeButton.setOnHoverListener((v, event) -> {
+            // Only show the volume control when it's supported
+            if (!mMedia.canCtrlVolume()) {
+                return false;
+            }
+
             float startY = v.getY();
             float maxY = startY + v.getHeight();
             //for this we only hide on the left side of volume button or outside y area of button
@@ -247,6 +256,36 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
             }
             return false;
         });
+    }
+
+    private void seekForward() {
+        double t = mMedia.getCurrentTime() + 30;
+        if (mMedia.getDuration() > 0) {
+            t = Math.min(mMedia.getDuration(), t);
+        }
+        mMedia.seek(t);
+        mBinding.mediaSeekForwardButton.requestFocusFromTouch();
+    }
+
+    private void seekBackward() {
+        mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
+        mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
+    }
+
+    @Override
+    public void handleHoverEvent(MotionEvent aEvent) {
+        if (aEvent.getAction() == MotionEvent.ACTION_SCROLL) {
+            setVisible(true);
+
+            final float aX = aEvent.getAxisValue(MotionEvent.AXIS_HSCROLL);
+            final float aY = aEvent.getAxisValue(MotionEvent.AXIS_VSCROLL);
+
+            if (aX > 0) {
+                seekForward();
+            } else {
+                seekBackward();
+            }
+        }
     }
 
     @Override
@@ -311,7 +350,6 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
         mBinding.mediaControlSeekBar.setCurrentTime(mMedia.getCurrentTime());
         mBinding.setPlaying(mMedia.isPlaying());
         mBinding.mediaControlSeekBar.setSeekable(mMedia.canSeek());
-        mBinding.mediaVolumeButton.setEnabled(false);
 
         mMedia.addMediaListener(this);
     }

@@ -110,6 +110,7 @@ class BookmarksStore constructor(val context: Context) {
         notifyListeners()
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun getBookmarks(guid: String): CompletableFuture<List<BookmarkNode>?> = GlobalScope.future {
         when (guid) {
             BookmarkRoot.Mobile.id -> {
@@ -122,7 +123,8 @@ class BookmarksStore constructor(val context: Context) {
                         title = titles[DESKTOP_ROOT],
                         children = emptyList(),
                         position = null,
-                        url = null
+                        url = null,
+                        dateAdded = java.util.Date().time
                     )
                 )
                 // Append all of the bookmarks in the mobile root.
@@ -143,6 +145,7 @@ class BookmarksStore constructor(val context: Context) {
         }
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun addBookmark(aURL: String, aTitle: String) = GlobalScope.future {
         storage.addItem(BookmarkRoot.Mobile.id, aURL, aTitle, null)
         notifyAddedListeners()
@@ -165,6 +168,7 @@ class BookmarksStore constructor(val context: Context) {
         getBookmarkByUrl(aURL) != null
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun getTree(guid: String, recursive: Boolean): CompletableFuture<List<BookmarkNode>?> = GlobalScope.future {
         storage.getTree(guid, recursive)?.children
                 ?.map { it.copy(title = titles[it.guid]) }

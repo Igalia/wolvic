@@ -33,6 +33,12 @@ function redirect(details) {
     })
 
     if (found) {
+        // We should not add the app param to the timedtext requests (captions),
+        // otherwise they will fail.
+        if (uri.href.includes(".com/api/timedtext?")) {
+            return { };
+        }
+
         if (!uri.searchParams.has("app")) {
             uri.searchParams.append('app', 'desktop');
             return { redirectUrl: uri.href };

@@ -1,8 +1,7 @@
 <resources>
-    <string name="app_name" translatable="false">Wolvic VR Browser</string>
+    <string name="app_name" translatable="false">Wolvic</string>
     <string name="bug_report_url" translatable="false">github.com/Igalia/wolvic/issues</string>
     <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
-    <string name="homepage_url" translatable="false">https://wolvic.com/start</string>
     <string name="settings_key_homepage" translatable="false">settings_homepage</string>
     <string name="settings_key_crash" translatable="false">settings_crash</string>
     <string name="settings_key_locale" translatable="false">settings_locale</string>
@@ -10,6 +9,8 @@
     <string name="settings_key_geolocation_data" translatable="false">geolocation_data</string>
     <string name="settings_key_remote_debugging" translatable="false">settings_remote_debugging</string>
     <string name="settings_key_console_logs" translatable="false">settings_console_logs</string>
+    <string name="settings_key_system_root_ca" translatable="false">settings_system_root_ca</string>
+    <string name="settings_key_start_with_passthrough" translatable="false">settings_start_with_passthrough</string>
     <string name="settings_key_environment_override" translatable="false">settings_environment_override</string>
     <string name="settings_key_performance_monitor" translatable="false">settings_performance_monitor</string>
     <string name="settings_key_servo" translatable="false">settings_environment_servo</string>
@@ -213,10 +214,11 @@
 
     <!-- Settings Survey link -->
     <string name="survey_link" translatable="false">https://github.com/Igalia/wolvic/issues/</string>
+    <string name="feedback_link" translatable="false">https://wolvic.com/en/feedback/index.html?version=%1$s&amp;device=%2$d</string>
 
     <!-- Phone UI links -->
     <string name="hvr_learn_more_url" translatable="false">https://consumer.huawei.com/cn/wearables/vr-glass/</string>
-    <string name="landing_page_url" translatable="false">https://wolvic.com/en/welcome/</string>
+    <string name="landing_page_url" translatable="false">https://wolvic.com/welcome/</string>
 
     <!-- Shared preferences key to store the list of installed Web apps (JSON string) -->
     <string name="settings_key_web_apps_data" translatable="false">settings_key_web_apps_data</string>

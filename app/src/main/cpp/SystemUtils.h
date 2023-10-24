@@ -7,11 +7,17 @@
 namespace crow {
 
 #define ANDROID_OS_BUILD_ID "ro.build.id"
+#define ANDROID_OS_MODEL_ID "ro.product.vendor.model"
 
 // Get the Build ID of the current Android system.
 inline const char* GetBuildIdString(char* out) {
   __system_property_get(ANDROID_OS_BUILD_ID, out);
   return out;
+}
+
+// Retrieves the model name from Android OS. Returns the amount of chars of the model.
+inline int PopulateDeviceModelString(char* model) {
+  return __system_property_get(ANDROID_OS_MODEL_ID, model);
 }
 
 // Parse a version string into an array of integers of size resultSize.

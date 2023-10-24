@@ -136,7 +136,6 @@ public class SessionStore implements
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
         WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime, context.getString(R.string.app_name));
         mWebChannelsFeature = new FxaWebChannelFeature(
-                mContext,
                 null,
                 mWebExtensionRuntime,
                 ComponentsAdapter.get().getStore(),
@@ -291,6 +290,10 @@ public class SessionStore implements
 
     public @Nullable Session getSession(String aId) {
         return mSessions.stream().filter(session -> session.getId().equals(aId)).findFirst().orElse(null);
+    }
+
+    public @Nullable Session getSessionByUri(String uri) {
+        return mSessions.stream().filter(session -> session.getCurrentUri().equals(uri)).findFirst().orElse(null);
     }
 
     public @Nullable Session getSession(WSession aSession) {

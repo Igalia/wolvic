@@ -28,6 +28,8 @@ const char* const kHandleMoveEndName = "handleMoveEnd";
 const char* const kHandleMoveEndSignature = "(IFFFF)V";
 const char* const kHandleBackEventName = "handleBack";
 const char* const kHandleBackEventSignature = "()V";
+const char* const kHandleAppExitEventName = "handleAppExit";
+const char* const kHandleAppExitEventSignature = "()V";
 const char* const kRegisterExternalContextName = "registerExternalContext";
 const char* const kRegisterExternalContextSignature = "(J)V";
 const char* const kOnEnterWebXRName = "onEnterWebXR";
@@ -44,6 +46,8 @@ const char* const kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 const char* const kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 const char* const kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
 const char* const kIsOverrideEnvPathEnabledSignature = "()Z";
+const char* const kCheckTogglePassthrough = "checkTogglePassthrough";
+const char* const kCheckTogglePassthroughSignature = "()V";
 const char* const kGetActiveEnvironment = "getActiveEnvironment";
 const char* const kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 const char* const kGetPointerColor = "getPointerColor";
@@ -79,6 +83,7 @@ jmethodID sHandleGesture = nullptr;
 jmethodID sHandleResize = nullptr;
 jmethodID sHandleMoveEnd = nullptr;
 jmethodID sHandleBack = nullptr;
+jmethodID sHandleAppExit = nullptr;
 jmethodID sRegisterExternalContext = nullptr;
 jmethodID sOnEnterWebXR = nullptr;
 jmethodID sOnExitWebXR = nullptr;
@@ -87,6 +92,7 @@ jmethodID sOnWebXRRenderStateChange = nullptr;
 jmethodID sRenderPointerLayer = nullptr;
 jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
+jmethodID sCheckTogglePassthrough = nullptr;
 jmethodID sGetActiveEnvironment = nullptr;
 jmethodID sGetPointerColor = nullptr;
 jmethodID sAreLayersEnabled = nullptr;
@@ -126,6 +132,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandleResize = FindJNIMethodID(sEnv, sBrowserClass, kHandleResizeName, kHandleResizeSignature);
   sHandleMoveEnd = FindJNIMethodID(sEnv, sBrowserClass, kHandleMoveEndName, kHandleMoveEndSignature);
   sHandleBack = FindJNIMethodID(sEnv, sBrowserClass, kHandleBackEventName, kHandleBackEventSignature);
+  sHandleAppExit = FindJNIMethodID(sEnv, sBrowserClass, kHandleAppExitEventName, kHandleAppExitEventSignature);
   sRegisterExternalContext = FindJNIMethodID(sEnv, sBrowserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sOnEnterWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnEnterWebXRName, kOnEnterWebXRSignature);
   sOnExitWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnExitWebXRName, kOnExitWebXRSignature);
@@ -134,6 +141,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sRenderPointerLayer = FindJNIMethodID(sEnv, sBrowserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
+  sCheckTogglePassthrough = FindJNIMethodID(sEnv, sBrowserClass, kCheckTogglePassthrough, kCheckTogglePassthroughSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
@@ -173,6 +181,7 @@ VRBrowser::ShutdownJava() {
   sHandleResize = nullptr;
   sHandleMoveEnd = nullptr;
   sHandleBack = nullptr;
+  sHandleAppExit = nullptr;
   sRegisterExternalContext = nullptr;
   sOnAppFocusChanged = nullptr;
   sOnEnterWebXR = nullptr;
@@ -182,6 +191,7 @@ VRBrowser::ShutdownJava() {
   sRenderPointerLayer = nullptr;
   sGetStorageAbsolutePath = nullptr;
   sIsOverrideEnvPathEnabled = nullptr;
+  sCheckTogglePassthrough = nullptr;
   sGetActiveEnvironment = nullptr;
   sGetPointerColor = nullptr;
   sAreLayersEnabled = nullptr;
@@ -263,6 +273,13 @@ VRBrowser::HandleBack() {
 }
 
 void
+VRBrowser::HandleAppExit() {
+  if (!ValidateMethodID(sEnv, sActivity, sHandleAppExit, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHandleAppExit);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
 VRBrowser::RegisterExternalContext(jlong aContext) {
   if (!ValidateMethodID(sEnv, sActivity, sRegisterExternalContext, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sRegisterExternalContext, aContext);
@@ -337,6 +354,13 @@ VRBrowser::isOverrideEnvPathEnabled() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return jBool;
+}
+
+void
+VRBrowser::CheckTogglePassthrough() {
+  if (!ValidateMethodID(sEnv, sActivity, sCheckTogglePassthrough, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sCheckTogglePassthrough);
+  CheckJNIException(sEnv, __FUNCTION__);
 }
 
 std::string

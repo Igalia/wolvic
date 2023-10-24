@@ -41,7 +41,7 @@
                 android:layout_marginStart="2dp"
                 android:addStatesFromChildren="true"
                 android:orientation="horizontal"
-                app:visibleGone="@{!viewmodel.isFocused &amp;&amp; viewmodel.isUrlBarButtonsVisible}">
+                app:visibleGone="@{!viewmodel.isFindInPage &amp;&amp; !viewmodel.isFocused &amp;&amp; viewmodel.isUrlBarButtonsVisible}">
 
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/tracking"
@@ -146,8 +146,7 @@
 
                 <View
                     android:layout_width="4dp"
-                    android:layout_height="match_parent"
-                    app:visibleGone="@{!viewmodel.isUrlBarIconsVisible}"/>
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <View
@@ -165,14 +164,6 @@
                 android:layout_toEndOf="@id/padding"
                 android:layout_centerVertical="true"
                 app:visibleGone="@{viewmodel.isUrlBarIconsVisible &amp;&amp; !viewmodel.isFocused}">
-                <ImageView
-                    android:id="@+id/loadingView"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:paddingEnd="5dp"
-                    android:contentDescription="Loading animation"
-                    android:src="@drawable/loading_shape"
-                    app:visibleGone="@{viewmodel.isLoading}" />
                 <ImageView
                     android:id="@+id/insecureIcon"
                     android:layout_width="24dp"
@@ -208,7 +199,18 @@
                 android:textIsSelectable="true"
                 android:textSize="16sp"
                 android:text="@{viewmodel.navigationBarUrl}"
+                app:visibleGone="@{!viewmodel.isFindInPage}"
                 app:autocompleteBackgroundColor="@color/azure" />
+
+            <mozilla.components.feature.findinpage.view.FindInPageBar
+                android:id="@+id/find_in_page"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:padding="4dp"
+                app:visibleGone="@{viewmodel.isFindInPage}"
+                app:findInPageButtonsTint="@color/white"
+                app:findInPageResultCountTextColor="@color/white"
+                app:findInPageNoMatchesTextColor="@color/fire"/>
 
             <LinearLayout
                 android:id="@+id/endButtonsLayout"
@@ -220,6 +222,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_marginEnd="2dp"
+                app:visibleGone="@{!viewmodel.isFindInPage}"
                 android:orientation="horizontal">
 
                 <com.igalia.wolvic.ui.views.UIButton

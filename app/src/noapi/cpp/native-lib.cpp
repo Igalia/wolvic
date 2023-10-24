@@ -8,10 +8,10 @@
 
 #include "BrowserWorld.h"
 #include "DeviceDelegateNoAPI.h"
+#include "VRBrowser.h"
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
-
-static crow::DeviceDelegateNoAPIPtr sDevice;
+#include "JNIUtil.h"
 
 using namespace crow;
 
@@ -19,12 +19,22 @@ using namespace crow;
   JNIEXPORT return_type JNICALL              \
     Java_com_igalia_wolvic_PlatformActivity_##method_name
 
+namespace {
+struct AppContext {
+    crow::DeviceDelegateNoAPIPtr mDevice;
+    JavaContext mJavaContext;
+};
+typedef std::shared_ptr<AppContext> AppContextPtr;
+
+AppContextPtr sAppContext;
+}
+
 extern "C" {
 
 JNI_METHOD(void, activityPaused)
 (JNIEnv*, jobject) {
-  if (sDevice) {
-    sDevice->Pause();
+  if (sAppContext->mDevice) {
+    sAppContext->mDevice->Pause();
   }
   BrowserWorld::Instance().Pause();
   BrowserWorld::Instance().ShutdownGL();
@@ -32,8 +42,8 @@ JNI_METHOD(void, activityPaused)
 
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
-  if (sDevice) {
-    sDevice->Resume();
+  if (sAppContext->mDevice) {
+    sAppContext->mDevice->Resume();
   }
   BrowserWorld::Instance().InitializeGL();
   BrowserWorld::Instance().Resume();
@@ -41,20 +51,25 @@ JNI_METHOD(void, activityResumed)
 
 JNI_METHOD(void, activityCreated)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
-  if (!sDevice) {
-    sDevice = crow::DeviceDelegateNoAPI::Create(BrowserWorld::Instance().GetRenderContext());
-  }
-  sDevice->Resume();
-  sDevice->InitializeJava(aEnv, aActivity);
-  BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
+  sAppContext->mJavaContext.activity = aEnv->NewGlobalRef(aActivity);
+  sAppContext->mJavaContext.env = aEnv;
+  sAppContext->mJavaContext.vm->AttachCurrentThread(&sAppContext->mJavaContext.env, nullptr);
+
+  crow::VRBrowser::InitializeJava(aEnv, aActivity);
+
+  sAppContext->mDevice = crow::DeviceDelegateNoAPI::Create(BrowserWorld::Instance().GetRenderContext());
+  sAppContext->mDevice->Resume();
+  sAppContext->mDevice->InitializeJava(aEnv, aActivity);
+
+  BrowserWorld::Instance().RegisterDeviceDelegate(sAppContext->mDevice);
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
   BrowserWorld::Instance().InitializeGL();
 }
 
 JNI_METHOD(void, updateViewport)
 (JNIEnv*, jobject, jint aWidth, jint aHeight) {
-  if (sDevice) {
-    sDevice->SetViewport(aWidth, aHeight);
+  if (sAppContext->mDevice) {
+    sAppContext->mDevice->SetViewport(aWidth, aHeight);
   } else {
     VRB_LOG("FAILED TO SET VIEWPORT");
   }
@@ -65,9 +80,9 @@ JNI_METHOD(void, activityDestroyed)
   BrowserWorld::Instance().ShutdownJava();
   BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
   BrowserWorld::Destroy();
-  if (sDevice) {
-    sDevice->ShutdownJava();
-    sDevice = nullptr;
+  if (sAppContext->mDevice) {
+    sAppContext->mDevice->ShutdownJava();
+    sAppContext->mDevice = nullptr;
   }
 }
 
@@ -78,35 +93,40 @@ JNI_METHOD(void, drawGL)
 
 JNI_METHOD(void, moveAxis)
 (JNIEnv*, jobject, jfloat aX, jfloat aY, jfloat aZ) {
-  sDevice->MoveAxis(aX, aY, aZ);
+  sAppContext->mDevice->MoveAxis(aX, aY, aZ);
 }
 
 JNI_METHOD(void, rotateHeading)
 (JNIEnv*, jobject, jfloat aHeading) {
-  sDevice->RotateHeading(aHeading);
+  sAppContext->mDevice->RotateHeading(aHeading);
 }
 
 JNI_METHOD(void, rotatePitch)
 (JNIEnv*, jobject, jfloat aPitch) {
-  sDevice->RotatePitch(aPitch);
+  sAppContext->mDevice->RotatePitch(aPitch);
 }
 
 JNI_METHOD(void, touchEvent)
 (JNIEnv*, jobject, jboolean aDown, jfloat aX, jfloat aY) {
-  sDevice->TouchEvent(aDown, aX, aY);
+  sAppContext->mDevice->TouchEvent(aDown, aX, aY);
 }
 
 JNI_METHOD(void, controllerButtonPressed)
 (JNIEnv*, jobject, jboolean aDown) {
-  sDevice->ControllerButtonPressed(aDown);
+  sAppContext->mDevice->ControllerButtonPressed(aDown);
 }
 
-jint JNI_OnLoad(JavaVM*, void*) {
+jint JNI_OnLoad(JavaVM* aVm, void*) {
+  if (sAppContext) {
+    return JNI_VERSION_1_6;
+  }
+  sAppContext = std::make_shared<AppContext>();
+  sAppContext->mJavaContext.vm = aVm;
   return JNI_VERSION_1_6;
 }
 
 void JNI_OnUnload(JavaVM*, void*) {
-  sDevice = nullptr;
+  sAppContext.reset();
 }
 
 } // extern "C"

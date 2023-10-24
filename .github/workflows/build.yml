@@ -1,0 +1,80 @@
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle?learn=continuous_integration&learnProduct=actions
+# Using gradle-build-action. See https://github.com/gradle/gradle-build-action
+
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      flavour:
+        description: 'Build flavour'
+        required: true
+        type: string
+      internal:
+        description: 'Internal build'
+        required: false
+        type: boolean
+        default: false
+      jdk_version:
+        description: 'JDK version'
+        required: false
+        type: string
+        default: "17"
+      jdk_distribution:
+        description: 'JDK distribution'
+        required: false
+        type: string
+        default: "adopt"
+      gradle_version:
+        description: 'Gradle version'
+        required: false
+        type: string
+        default: "7.5"
+
+jobs:
+  build:
+    name: Build Wolvic ${{ inputs.flavour }} Flavour
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Wolvic
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      # Inspired by https://stackoverflow.com/questions/60679609/github-action-to-simply-cat-a-file-to-an-output
+      - name: Read wolvic third parties SHA
+        if: inputs.internal == true
+        run: echo "third_party_sha=$(cat third_party_hash)" >> $GITHUB_ENV
+
+      - name: Checkout third parties
+        if: inputs.internal == true
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.third_party_sha }}
+          repository: Igalia/wolvic-third-parties
+          token: ${{ secrets.THIRD_PARTY_PAT }}
+          submodules: 'true'
+          path: 'third_party'
+
+      - name: Set up JDK ${{ inputs.jdk_version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.jdk_version }}
+          distribution: ${{ inputs.jdk_distribution }}
+
+      - name: Setup Gradle ${{ inputs.gradle_version }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: ${{ inputs.gradle_version }}
+
+      - name: Build ${{ inputs.flavour }} Flavour
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: ${{ inputs.flavour }}
+
+      - name: Upload APK (without WebXR support) to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.flavour }}_no_webxr
+          path: app/build/outputs/apk/

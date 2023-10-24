@@ -161,7 +161,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     // If this ever happens, we mark the item as unavailable.
                     binding.thumbnail.setImageResource(R.drawable.ic_error_circle);
                 } else {
-                    ThumbnailAsyncTask task = new ThumbnailAsyncTask(binding.layout.getContext(), fileUri,
+                    TaskRunner taskRunner = new TaskRunner();
+                    ThumbnailTask thumbnailTask = new ThumbnailTask(binding.layout.getContext(), fileUri,
                             bitmap -> {
                                 if (bitmap == null || binding.getItem() == null || !Objects.equals(fileUri, binding.getItem().getOutputFileUri()))
                                     binding.thumbnail.setImageResource(R.drawable.ic_generic_file);
@@ -169,7 +170,9 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     binding.thumbnail.setImageBitmap(bitmap);
                             }
                     );
-                    task.execute();
+                    taskRunner.executeAsync(thumbnailTask, (data) -> {
+                        thumbnailTask.onPostExecute(data);
+                    });
                 }
                 break;
             }

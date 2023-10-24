@@ -1041,6 +1041,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     private AccountObserver mAccountObserver = new AccountObserver() {
         @Override
+        public void onReady(@Nullable OAuthAccount oAuthAccount) {
+
+        }
+
+        @Override
         public void onLoggedOut() {
 
         }
@@ -1374,6 +1379,15 @@ public void selectTab(@NonNull Session aTab) {
                  */
                 SettingsStore.getInstance(mContext).setTabAfterRestore(aUri);
             }
+        }
+    }
+
+    public void findTabAndSelect(@NonNull String aUri) {
+        Session selectedSession = SessionStore.get().getSessionByUri(aUri);
+        if (selectedSession != null) {
+            onTabSelect(selectedSession);
+        } else {
+            openNewTabAfterRestore(aUri, Windows.OPEN_IN_FOREGROUND);
         }
     }
 

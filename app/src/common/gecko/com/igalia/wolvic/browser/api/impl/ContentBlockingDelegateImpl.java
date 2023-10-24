@@ -218,30 +218,4 @@ class ContentBlockingDelegateImpl implements ContentBlocking.Delegate {
 
         throw new RuntimeException("Unreachable code");
     }
-
-    static int toGeckoCookieLifetime(@WContentBlocking.CBCookieLifetime int flags) {
-        switch (flags) {
-            case WContentBlocking.CookieLifetime.DAYS:
-                return ContentBlocking.CookieLifetime.DAYS;
-            case WContentBlocking.CookieLifetime.NORMAL:
-                return ContentBlocking.CookieLifetime.NORMAL;
-            case WContentBlocking.CookieLifetime.RUNTIME:
-                return ContentBlocking.CookieLifetime.RUNTIME;
-        }
-
-        throw new RuntimeException("Unreachable code");
-    }
-
-    static int fromGeckoCookieLifetime( int flags) {
-        switch (flags) {
-            case ContentBlocking.CookieLifetime.DAYS:
-                return WContentBlocking.CookieLifetime.DAYS;
-            case ContentBlocking.CookieLifetime.NORMAL:
-                return WContentBlocking.CookieLifetime.NORMAL;
-            case ContentBlocking.CookieLifetime.RUNTIME:
-                return WContentBlocking.CookieLifetime.RUNTIME;
-        }
-
-        throw new RuntimeException("Unreachable code");
-    }
 }

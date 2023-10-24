@@ -39,6 +39,18 @@
                     android:src="@drawable/ic_icon_move"
                     android:scaleType="fitCenter"
                     android:background="@drawable/keyboard_button_background"/>
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/keyboardVoiceButton"
+                    android:layout_width="@dimen/keyboard_key_width"
+                    android:layout_height="@dimen/keyboard_key_width"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
+                    android:layout_marginTop="4dp"
+                    app:tintColorList="@drawable/main_button_icon_color"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_icon_microphone"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/keyboard_button_background"/>
             </LinearLayout>
 
             <RelativeLayout

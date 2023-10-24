@@ -134,8 +134,8 @@ public class ChoicePromptWidget extends PromptWidget {
     }
 
     @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
+    public void show(@ShowFlags int aShowFlags, boolean addLast) {
+        super.show(aShowFlags, addLast);
         for (int i = 0; i < mListItems.length; i++) {
             mList.setItemChecked(i, mListItems[i].mChoice.selected());
         }

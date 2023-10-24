@@ -73,10 +73,10 @@
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-    <string name="settings_crash_reporting">Informe de fallos</string>
+    <string name="settings_crash_reporting">Enviar informes de error</string>
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
-    <string name="settings_telemetry">Telemetry</string>
+    <string name="settings_telemetry">Telemetría</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Privacidad y seguridad</string>
@@ -111,7 +111,7 @@
      when there are no exceptions. -->
     <string name="settings_privacy_policy_tracking_empty_description">Cuando permites que un sitio web rastree tu actividad, aparecerán aquí.</string>
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
-    <string name="settings_privacy_policy_tracking_reset">Restablecer las excepciones para la protección mejorada contra el rastreo</string>
+    <string name="settings_privacy_policy_tracking_reset">Restablecer las excepciones para la protección contra rastreo mejorada.</string>
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_login_exceptions_title">Excepciones de inicio de sesión</string>
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
@@ -128,13 +128,13 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Opciones de desarrollador</string>
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Iniciar sesión en cuenta</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Administrar cuenta</string>
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Cerrar sesión</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Volver a conectar</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -306,11 +306,11 @@
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Envíanos tus comentarios</string>
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Iniciar sesión</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Cerrar sesión</string>
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Volver a conectar</string>
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -538,7 +538,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
-    <string name="security_options_drm_content_v1"><![CDATA[Permitir que los sitios identifiquen automáticamente el dispositivo para reproducir contenido controlado por DRM. (<a href="%1$s">Saber más</a>)]]></string>
+    <string name="security_options_drm_content_v1">Permitir que los sitios identifiquen automáticamente el dispositivo para reproducir contenido controlado por DRM. (&lt;a href=%1$s&gt;Saber más&lt;/a&gt;)</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Restaurar pestañas y ventanas después de reiniciar</string>
@@ -553,12 +553,12 @@
      and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
     <string name="security_options_login_autofill">Autocompletado</string>
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Sincronizar inicios de sesión con cuentas de Firefox</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Sincronizar inicios de sesión con cuentas de Mozilla</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
-    <string name="security_options_login_fxa">Cuenta...</string>
+     that when clicked opens the Mozilla Accounts settings panel. -->
+    <string name="security_options_login_fxa">Cuenta…</string>
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
     <string name="security_options_login_saved">Inicios de sesión guardados…</string>
@@ -627,24 +627,23 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_crash_reports_send_data">Permitir que %1$s envíe en tu nombre informes de fallos registrados
-</string>
+    <string name="security_options_crash_reports_send_data">Permitir que %1$s envíe en tu nombre informes de error</string>
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">Activado</string>
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Desactivado</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Sincronizar</string>
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">No sincronizar</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">¿Qué te gustaría buscar en la Web?</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">Ejemplo: Di "vídeos de 360, clima, noticias..."</string>
+    <string name="voice_search_example">Ejemplo: Di “vídeos de 360, clima, noticias…”</string>
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Buscando…</string>
@@ -656,7 +655,7 @@
     <string name="voice_search_try_again">Vuelve a intentarlo.</string>
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
-    <string name="voice_search_permission_after_decline">Permita el acceso al micrófono para usar la búsqueda por voz.</string>
+    <string name="voice_search_permission_after_decline">Permite el acceso al micrófono para usar la búsqueda por voz.</string>
     <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
     <string name="voice_search_close">Cerrar</string>
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
@@ -671,10 +670,10 @@
     <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Atrás</string>
     <!-- This string is displayed in a dialog after an application crash. -->
-    <string name="crash_dialog_heading">Hubo un problema y se cerró</string>
+    <string name="crash_dialog_heading">Hubo un problema y se cerró la aplicación</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[Ayuda a Mozilla a mejorar %1$s enviando tu informe de fallos.]]></string>
+    <string name="crash_dialog_message">Ayuda a Mozilla a mejorar %1$s enviando tu informe de error. &lt;a href=more&gt;Learn More&lt;/a&gt;</string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Enviar siempre la información sin preguntar</string>
@@ -783,7 +782,7 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Mostrar todos los marcadores</string>
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Sincronizar</string>
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Historial</string>
@@ -932,12 +931,12 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">Saber más sobre permisos</string>
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Sincronizar</string>
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Sincronizando…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">¿Salir de tu cuenta Firefox?</string>
+    <string name="fxa_signout_confirmation_title">¿Salir de tu cuenta Mozilla?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">Cuando cierres la sesión, no podrás enviar ni recibir pestañas de otros dispositivos. Tus marcadores e historial también dejarán de sincronizarse.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -986,10 +985,6 @@
          the more button is pressed in a downloads item. It deletes the selected item from the downloads list
          and also from disk. -->
     <string name="download_context_delete">Eliminar</string>
-    <!-- This string is displayed is the downloads context menu that is displayed when
-     the more button is pressed in a downloads item. It creates a copy of the selected item
-     in the public Downloads folder so it may be used by other apps. -->
-    <string name="download_context_copy_to_content_uri">Compartir con otras aplicaciones</string>
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Restablecer los ajustes de visualización</string>
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
@@ -1022,7 +1017,7 @@
     <string name="privacy_options_saved_login_delete">Eliminar</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking"><![CDATA[Protección mejorada contra el rastreo. (<a href="%1$s">Saber más</a>)]]></string>
+    <string name="privacy_options_tracking">Protección contra rastreo mejorada. (&lt;a href=%1$s&gt;Saber más&lt;/a&gt;)</string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
@@ -1287,6 +1282,12 @@
     <string name="before_unload_prompt_stay">Permanecer en la página</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Abandonar la página</string>
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">Confirmar reenvío del formulario</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">La página que buscas ha utilizado la información que has especificado. Volver a la página podría provocar la repetición de alguna acción. ¿Quieres continuar?</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">Continuar</string>
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Desbloquear página</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1389,6 +1390,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          it opens the window resize panel -->
     <string name="hamburger_menu_resize">Cambiar tamaño de ventana</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the find in page option -->
+    <string name="hamburger_menu_find_in_page">Buscar en la página</string>
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">Complementos</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
@@ -1413,12 +1417,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">Inicia sesión para enviar pestañas</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Firefox para enviar pestañas desde Firefox en tu ordenador de escritorio o dispositivo móvil a tus auriculares.</string>
+    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Mozilla para enviar pestañas desde Firefox en tu ordenador de escritorio o dispositivo móvil a tus auriculares.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">La cuenta de Firefox también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
+    <string name="whats_new_body_sub_1">La cuenta de Mozilla también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Iniciar sesión</string>
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
@@ -1550,21 +1554,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_status_unavailable">No disponible</string>
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Error desconocido</string>
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_title">¿Copiar archivo?</string>
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_body">Se creará una copia del archivo en la carpeta de Descarga del sistema, donde podrá ser utilizada por otras aplicaciones.\n\n¿Deseas continuar?</string>
-    <!-- This string is displayed in the title of the download error dialog. -->
-    <string name="download_copy_to_content_uri_success_title">Fichero copiado</string>
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_success_body">El archivo se copió con éxito y está disponible en las Descargas del sistema.</string>
-    <!-- This string is displayed in the title of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_title">Error durante la copia</string>
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_body">Se ha producido un error mientras se copiaba el archivo.</string>
-    <!-- This string is displayed in the body of the copy downloaded file error dialog.
-     '%1$s' will be replaced at runtime with the name of the downloaded file. -->
-    <string name="download_copy_to_content_uri_error_body_v1">Ha sucedido un error mientras se copiaba %1$s</string>
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->
     <string name="environment_download_permission_error_body">Para descargar el entorno es necesario tener permiso de escritura en el almacenamiento externo.</string>
@@ -1683,7 +1672,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         \n\t\u2022 Para capturar y traducir la voz a texto, los datos sonoros del usuario son enviados a los servidores titularidad de la empresa responsable de cada plataforma, a través de una API al efecto: como por ejemplo, en Oculus, de Facebook, un servicio que se envía a Oculus Voice SDK. En ningún momento dichos datos son tratados, accedidos ni incorporados a los servidores titularidad de IGALIA. Los datos que se recopilen serán responsabilidad exclusiva de las empresas titulares de cada plataforma (en adelante, los Terceros) las cuales pueden estar ubicadas fuera de la Unión Europea y sometidas a un régimen jurídico menos protector de la privacidad del usuario. Le recomendamos leer atentamente la política de privacidad y condiciones de uso de cada una de dichas plataformas externas antes de aceptar y utilizar sus servicios. IGALIA no será directa ni indirectamente responsable del tratamiento de datos personales por parte de dichos Terceros.
         \n\t\u2022 Se podrá obtener información de localización geográfica del navegador, en lugar del utilizado por el sistema. Sin embargo, para ello usted debe aceptar los permisos de localización de su dispositivo a través de un aviso específico al respecto e IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados en el punto anterior sí podrían hacerlo, en su caso. Preste atención a sus términos legales.
         \n\t\u2022 IGALIA no accederá ni almacenará, en modo alguno, las direcciones ni las URLs visitadas por usted.
-        \n\t\u2022 En caso de integración de los servicios Cloud para cuentas de Terceros, como Firefox Accounts o Google Accounts, para sincronizar datos como su historia de navegación o sus bookmarks de usuario, IGALIA no accederá ni tratará en modo alguno dicha información ni pasará por sus servidores.
+        \n\t\u2022 En caso de integración de los servicios Cloud para cuentas de Terceros, como Mozilla Accounts o Google Accounts, para sincronizar datos como su historia de navegación o sus bookmarks de usuario, IGALIA no accederá ni tratará en modo alguno dicha información ni pasará por sus servidores.
         \n\n Asimismo, usted observará que la aplicación le solicitará una serie de permisos especiales respecto a su dispositivo que, a continuación, aclaramos en cuanto a su función y finalidad:
         \n\n\t\u2022 Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Meetkai cuya política de provacidad se puede consultar aquí: https://meetkai.com/privacy
         \n\n\t\u2022 Permiso para la captación de fotos y vídeos: Es posible que se solicite debido a que el dispositivo del usuario utilice cámaras para ver el entorno y situar al usuario en el espacio físico mediante sistemas de trazado o “tracking”. IGALIA no accede ni trata dicha información.
@@ -1750,7 +1739,34 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_dialog_body">¿Quieres instalar la siguiente aplicación web\? Estará disponible en tu biblioteca.</string>
     <string name="web_apps_description">Pulsa el botón Guardar aplicación web... cuando estés en una página para añadirla a tus aplicaciones web.</string>
     <string name="web_apps_loading">Cargando aplicaciones web</string>
-    <string name="web_apps_saved_notification">Aplicación web añadida!</string>
+    <string name="web_apps_saved_notification">¡Aplicación web añadida!</string>
     <string name="download_addon_install">Instalar complemento</string>
     <string name="settings_language_portuguese">Portugués</string>
+    <string name="deprecated_version_dialog_info_button">Más información…</string>
+    <string name="deprecated_version_dialog_store_button">Instalar…</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic sólo puede obtener tu ubicación aproximada. Esto se puede cambiar en la configuración del sistema.</string>
+    <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="user_feedback_tooltip">Compartir ideas y opiniones</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Política de privacidad</string>
+    <string name="rCN_first_launch_agree">Aceptar</string>
+    <string name="rCN_first_launch_disagree">No estoy de acuerdo</string>
+    <string name="rCN_first_launch_confirmation_body">\\Si seleccionas \"No estoy de acuerdo\", lamentablemente ya no podremos brindarle los servicios.
+\n
+\nPuede leer el Acuerdo de usuario y la Política de privacidad completos.</string>
+    <string name="rCN_first_launch_confirmation_agree">Aceptar y continuar</string>
+    <string name="rCN_first_launch_title">Acuerdo del usuario y la notificación de la política de privacidad</string>
+    <string name="rCN_first_launch_clickable_terms_text">Acuerdo del Usuario</string>
+    <string name="rCN_first_launch_body">¡Bienvenidos a “Wolvic”!
+\n
+\nRegistrarte y usar \"Wolvic\" requiere que aceptes el Acuerdo del usuario y la Política de privacidad, o de lo contrario no podemos brindarle los servicios. Lee detenidamente la información y haz clic en \"Aceptar\" para continuar. Si hazes clic en \"No estoy de acuerdo\", no podrás continuar usando \"Wolvic\".
+\n
+\nPuedes leer el Acuerdo de usuario y la Política de privacidad completos.</string>
+    <string name="rCN_first_launch_confirmation_disagree">No estar de acuerdo y renunciar</string>
+    <string name="keyboardview_keycode_cancel">Cancelar</string>
+    <string name="keyboardview_keycode_delete">Borrar</string>
+    <string name="keyboardview_keycode_done">Hecho</string>
+    <string name="keyboardview_keycode_mode_change">Cambio de modo</string>
+    <string name="keyboardview_keycode_enter">Intro</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
 </resources>

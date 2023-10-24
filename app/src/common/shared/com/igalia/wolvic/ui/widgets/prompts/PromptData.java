@@ -41,6 +41,10 @@ public class PromptData {
         return checkboxText;
     }
 
+    public int getTitleGravity() {
+        return titleGravity;
+    }
+
     public int getBodyGravity() {
         return bodyGravity;
     }
@@ -73,6 +77,7 @@ public class PromptData {
     private String body;
     @Nullable
     private String checkboxText;
+    private int titleGravity;
     private int bodyGravity;
     @Nullable
     private String[] btnMsg;
@@ -86,6 +91,7 @@ public class PromptData {
         title = builder.title;
         body = builder.body;
         checkboxText = builder.checkboxText;
+        titleGravity = builder.titleGravity;
         bodyGravity = builder.bodyGravity;
         btnMsg = builder.btnMsg;
         callback = builder.callback;
@@ -99,6 +105,7 @@ public class PromptData {
         @Nullable String title = null;
         @Nullable String body = null;
         @Nullable String checkboxText;
+        int titleGravity = Gravity.NO_GRAVITY;
         int bodyGravity = Gravity.NO_GRAVITY;
         @Nullable String[] btnMsg = null;
         @Nullable PromptDialogWidget.Delegate callback;
@@ -113,6 +120,11 @@ public class PromptData {
 
         public Builder withBody(@NonNull String body) {
             this.body = body;
+            return this;
+        }
+
+        public Builder withTitleGravity(int gravity) {
+            this.titleGravity = gravity;
             return this;
         }
 

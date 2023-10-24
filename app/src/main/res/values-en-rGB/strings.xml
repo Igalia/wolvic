@@ -167,16 +167,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Developer Options</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Sign Into Account</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Manage Account</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Sign Out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Reconnect</string>
 
@@ -390,19 +390,27 @@
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Send us Your Feedback</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Sign in</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Sign out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Reconnect</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">What’s New</string>
+
+    <!-- This string is the title of a dialog box shown to the user when
+         user wants the application to clear all user data. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_title">Clear %1$s User Data</string>
+
+    <!-- This string is the text displayed in the clear user data dialog box explaining what
+         will happen. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_text">%1$s will be reset. All the data, including saved logins, history and bookmarks, will get permanently deleted if haven\'t been synced. %1$s will close automatically after the reset is complete. Do you want to continue?</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -427,6 +435,10 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
+
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we use passthrough mode when the app starts. -->
+    <string name="display_options_start_with_passthrough">Start with Passthrough Mode</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -473,6 +485,10 @@
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">Cached Web Content</string>
+
+    <!-- The string labels the description text for the clear user data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_user_data_description">All User Data</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">Clear Data</string>
@@ -719,12 +735,12 @@
     <string name="security_options_login_autofill">Autofill</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Synchronise logins with Firefox Accounts</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Synchronise logins with Mozilla Accounts</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Account…</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
@@ -783,6 +799,10 @@
          blocking. -->
     <string name="security_options_block_pup_up_windows">Block Pop-Up Windows</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables the use of
+         system root CA for certificate. -->
+    <string name="security_options_use_system_root_ca">Use System Trusted Root Certificates</string>
+
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Advanced</string>
@@ -824,16 +844,20 @@
     <string name="off">Off</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Synchronise</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Don’t Synchronise</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">What would you like to search on the Web?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">What would you like to input?</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -913,6 +937,9 @@
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D Side by Side</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
@@ -1035,7 +1062,7 @@
     <string name="bookmarks_show_all">Show All Bookmarks</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Synchronise</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
@@ -1242,14 +1269,14 @@
     <string name="addons_permissions_learn_more">Learn more about permissions</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Synchronise</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchronising…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Sign out of your Firefox Account?</string>
+    <string name="fxa_signout_confirmation_title">Sign out of your Mozilla Account?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">When you sign out, you won\'t be able to send or receive tabs from other devices. Your bookmarks and history will also stop synchronising.</string>
@@ -1718,6 +1745,13 @@
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Leave Page</string>
 
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">Confirm Form Resubmission</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">The page that you\'re looking for used information that you entered. Returning to that page might cause any action that you took to be repeated. Do you want to continue?</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">Continue</string>
+
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Unblock Page</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1854,6 +1888,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_resize">Window Resize</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the find in page option -->
+    <string name="hamburger_menu_find_in_page">Find in Page</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">Addons</string>
 
@@ -1888,14 +1926,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Sign in or create a new Firefox Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
+    <string name="whats_new_body_1">Sign in or create a new Mozilla Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox Account also lets you synchronise bookmarks and history across all your devices.</string>
+    <string name="whats_new_body_sub_1">Mozilla Account also lets you synchronise bookmarks and history across all your devices.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Sign In</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated

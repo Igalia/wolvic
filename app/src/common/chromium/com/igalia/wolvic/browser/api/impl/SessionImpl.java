@@ -1,11 +1,13 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.Matrix;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -15,8 +17,16 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
+import com.igalia.wolvic.browser.api.WWebResponse;
+import org.chromium.content_public.browser.WebContents;
+import org.chromium.wolvic.DownloadManagerBridge;
 
-public class SessionImpl implements WSession {
+import java.io.InputStream;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     RuntimeImpl mRuntime;
     SettingsImpl mSettings;
     ContentDelegate mContentDelegate;
@@ -26,17 +36,16 @@ public class SessionImpl implements WSession {
     ScrollDelegate mScrollDelegate;
     HistoryDelegate mHistoryDelegate;
     WContentBlocking.Delegate mContentBlockingDelegate;
-    PromptDelegate mPromptDelegate;
+    PromptDelegateImpl mPromptDelegate;
     SelectionActionDelegate mSelectionActionDelegate;
     WMediaSession.Delegate mMediaSessionDelegate;
-    DisplayImpl mDisplay;
     TextInputImpl mTextInput;
     PanZoomControllerImpl mPanZoomController;
     private String mInitialUri;
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
 
-    private class ReadyCallback implements BrowserInitializer.Callback {
+    private class ReadyCallback implements RuntimeImpl.Callback {
         @Override
         public void onReady() {
             assert mTab == null;
@@ -57,6 +66,7 @@ public class SessionImpl implements WSession {
     private void init() {
         mTextInput = new TextInputImpl(this);
         mPanZoomController = new PanZoomControllerImpl(this);
+        DownloadManagerBridge.get().setDelegate(this);
     }
 
     @Override
@@ -87,18 +97,32 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setActive(boolean active) {
-        // TODO: Implement
+        if (mTab == null)
+            return;
+
+        assert mTab.getContentView() != null;
+        WebContents webContents = mTab.getContentView().getWebContents();
+        if (active) {
+            webContents.onShow();
+        } else {
+            webContents.onHide();
+            webContents.suspendAllMediaPlayers();
+        }
+        webContents.setAudioMuted(!active);
     }
 
     @Override
     public void setFocused(boolean focused) {
-        // TODO: Implement
+        if (mTab == null)
+            return;
+        assert mTab.getContentView() != null;
+        mTab.getContentView().getWebContents().setFocus(focused);
     }
 
     @Override
     public void open(@NonNull WRuntime runtime) {
         mRuntime = (RuntimeImpl) runtime;
-        mRuntime.getBrowserInitializer().registerCallback(mReadyCallback);
+        mRuntime.registerCallback(mReadyCallback);
     }
 
     @Override
@@ -108,7 +132,7 @@ public class SessionImpl implements WSession {
 
     @Override
     public void close() {
-        mRuntime.getBrowserInitializer().unregisterCallback(mReadyCallback);
+        mRuntime.unregisterCallback(mReadyCallback);
         mTab = null;
     }
 
@@ -143,8 +167,14 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public String getDefaultUserAgent(int mode) {
-        // TODO: implement
-        return "";
+        return mSettings.getDefaultUserAgent(mode);
+    }
+
+    @Nullable
+    @Override
+    public SessionFinder getSessionFinder() {
+        // TODO: Implement session finder
+        return null;
     }
 
     @Override
@@ -155,17 +185,20 @@ public class SessionImpl implements WSession {
     @NonNull
     @Override
     public WDisplay acquireDisplay() {
-        assert mDisplay == null;
-        mDisplay = new DisplayImpl(this, mTab.getCompositorView());
-        mRuntime.addViewToBrowserContainer(mTab.getCompositorView());
+        SettingsStore settings = SettingsStore.getInstance(mRuntime.getContext());
+        WDisplay display = new DisplayImpl(this, mTab.getCompositorView());
+        mRuntime.getContainerView().addView(mTab.getCompositorView(),
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
+        mRuntime.getContainerView().addView(getContentView(),
+                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
         getTextInput().setView(getContentView());
-        return mDisplay;
+        return display;
     }
 
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
-        assert mDisplay != null;
-        mDisplay = null;
+        mRuntime.getContainerView().removeView(mTab.getCompositorView());
+        mRuntime.getContainerView().removeView(getContentView());
         getTextInput().setView(null);
     }
 
@@ -296,14 +329,16 @@ public class SessionImpl implements WSession {
 
     @Override
     public void setPromptDelegate(@Nullable PromptDelegate delegate) {
-        // TODO: Implement bridge
-        mPromptDelegate = delegate;
+        if (getPromptDelegate() == delegate) {
+            return;
+        }
+        mPromptDelegate = new PromptDelegateImpl(delegate, this);
     }
 
     @Nullable
     @Override
     public PromptDelegate getPromptDelegate() {
-        return mPromptDelegate;
+        return mPromptDelegate == null ? null : mPromptDelegate.getDelegate();
     }
 
     @Override
@@ -327,6 +362,52 @@ public class SessionImpl implements WSession {
     @Override
     public SelectionActionDelegate getSelectionActionDelegate() {
         return mSelectionActionDelegate;
+    }
+
+    @Override
+    public void newDownload(String url) {
+        // Since we only have the URL, we have to use default values for the rest of the web
+        // response data.
+        mContentDelegate.onExternalResponse(this, new WWebResponse() {
+            @NonNull
+            @Override
+            public String uri() {
+                return url;
+            }
+
+            @NonNull
+            @Override
+            public Map<String, String> headers() {
+                return new HashMap<>();
+            }
+
+            @Override
+            public int statusCode() {
+                return 200;
+            }
+
+            @Override
+            public boolean redirected() {
+                return false;
+            }
+
+            @Override
+            public boolean isSecure() {
+                return true;
+            }
+
+            @Nullable
+            @Override
+            public X509Certificate certificate() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public InputStream body() {
+                return null;
+            }
+        });
     }
 
     public TabImpl getTab() {

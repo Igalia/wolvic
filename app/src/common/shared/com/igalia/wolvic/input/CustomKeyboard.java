@@ -8,7 +8,7 @@ package com.igalia.wolvic.input;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.inputmethodservice.Keyboard;
+import com.igalia.wolvic.input.Keyboard;
 import android.view.KeyEvent;
 
 import java.lang.reflect.Field;
@@ -91,6 +91,7 @@ public class CustomKeyboard extends Keyboard {
             getKeys().add(key);
             Object keysObj = getFieldObject(mRows[rowIndex], "mKeys");
             if (keysObj != null && getFieldObject(mRows[rowIndex], "mKeys") instanceof ArrayList) {
+                @SuppressWarnings("unchecked")
                 ArrayList<Key> mKeys = (ArrayList<Key>) keysObj;
                 if (mKeys != null) {
                     mKeys.add(key);

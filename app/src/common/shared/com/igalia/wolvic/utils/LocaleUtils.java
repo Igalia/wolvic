@@ -159,6 +159,7 @@ public class LocaleUtils {
         // We can't us stream here because an Android 24/25 bug the makes the stream implementation not top respect the order when iterating
         // https://android.googlesource.com/platform/libcore/+/7ae7ae73754c8b82a2e396098e35553d404c69ef%5E%21/#F0
         List<String> savedLanguageIds = SettingsStore.getInstance(aContext).getContentLocales();
+        getLanguages(aContext);
         List<Language> preferredLanguages = getLanguagesForIds(savedLanguageIds);
         preferredLanguages.forEach(language -> language.setPreferred(true));
 
@@ -238,7 +239,7 @@ public class LocaleUtils {
 
     public static Language getDisplayLanguage(@NonNull Context aContext) {
         String languageId = getDisplayLanguageId(aContext);
-        Language language = mSupportedLanguagesCache.get(languageId);
+        Language language = getSupportedLocalizedLanguages(aContext).get(languageId);
         if (language == null) {
             language = mSupportedLanguagesCache.get(FALLBACK_LANGUAGE_TAG);
         }
@@ -266,7 +267,7 @@ public class LocaleUtils {
 
     public static Locale getLocale(@NonNull Resources res) {
         Configuration config = res.getConfiguration();
-        return (Build.VERSION.SDK_INT >= N) ? config.getLocales().get(0) : config.locale;
+        return config.getLocales().get(0);
     }
 
     public static String mapToMozillaSpeechLocales(@NonNull String locale) {
@@ -327,9 +328,9 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String[] getSupportedLocalizedLanguages() {
+    public static String[] getSupportedLocalizedLanguagesStringArray(@NonNull Context context) {
         List<String> result = new ArrayList<>();
-        mSupportedLanguagesCache.forEach((id, language) -> {
+        getSupportedLocalizedLanguages(context).forEach((id, language) -> {
             result.add(language.getDisplayName());
         });
 

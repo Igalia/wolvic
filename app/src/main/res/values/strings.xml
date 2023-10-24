@@ -179,16 +179,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Developer Options</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_in">Sign Into Account</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_manage">Manage Account</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
     <string name="settings_fxa_account_sign_out">Sign Out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">Reconnect</string>
 
@@ -431,19 +431,31 @@
          a the survey web site in opened in the currently focused window -->
     <string name="settings_send_your_feedback">Send us Your Feedback</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
     <string name="settings_accounts_sign_in">Sign in</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
     <string name="settings_accounts_sign_out">Sign out</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Reconnect</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Release Notes web site for the current app version. -->
     <string name="settings_whats_new">What’s New</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the User Feedback' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="user_feedback_tooltip">Share ideas and feedback</string>
+
+    <!-- This string is the title of a dialog box shown to the user when
+         user wants the application to clear all user data. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_title">Clear %1$s User Data</string>
+
+    <!-- This string is the text displayed in the clear user data dialog box explaining what
+         will happen. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="clear_user_data_dialog_text">%1$s will be reset. All the data, including saved logins, history and bookmarks, will get permanently deleted if haven\'t been synced. %1$s will close automatically after the reset is complete. Do you want to continue?</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -468,6 +480,10 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
+
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we use passthrough mode when the app starts. -->
+    <string name="display_options_start_with_passthrough">Start with Passthrough Mode</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -514,6 +530,10 @@
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
     <string name="developer_options_clear_cache_web_content_description">Cached Web Content</string>
+
+    <!-- The string labels the description text for the clear user data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_user_data_description">All User Data</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">Clear Data</string>
@@ -759,12 +779,12 @@
     <string name="security_options_login_autofill">Autofill</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Firefox Account. If disabled the logins
-     won't be synced with the Firefox Account. -->
-    <string name="security_options_login_sync">Sync logins with Firefox Accounts</string>
+     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
+     won't be synced with the Mozilla Account. -->
+    <string name="security_options_login_sync">Sync logins with Mozilla Accounts</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
-     that when clicked opens the Firefox Accounts settings panel. -->
+     that when clicked opens the Mozilla Accounts settings panel. -->
     <string name="security_options_login_fxa">Account…</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
@@ -827,6 +847,10 @@
          blocking. -->
     <string name="security_options_block_pup_up_windows">Block Pop-Up Windows</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables the use of
+         system root CA for certificate. -->
+    <string name="security_options_use_system_root_ca">Use System Trusted Root Certificates</string>
+
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Advanced</string>
@@ -868,16 +892,20 @@
     <string name="off">Off</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="sync">Sync</string>
 
     <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
-         i.e. The history switch for Firefox account syncing-->
+         i.e. The history switch for Mozilla account syncing-->
     <string name="do_not_sync">Don’t Sync</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">What would you like to search on the Web?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Input. -->
+    <string name="voice_input_start">What would you like to input?</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -969,6 +997,9 @@
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D Side by Side</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
@@ -1091,7 +1122,7 @@
     <string name="bookmarks_show_all">Show All Bookmarks</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Firefox account. -->
+         bookmarks are synced with the Mozilla account. -->
     <string name="bookmarks_sync">Sync</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
@@ -1301,14 +1332,14 @@
     <string name="addons_permissions_learn_more">Learn more about permissions</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Firefox account. -->
+         history is synced with the Mozilla account. -->
     <string name="fxa_sync">Sync</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Syncing…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Sign out of your Firefox Account?</string>
+    <string name="fxa_signout_confirmation_title">Sign out of your Mozilla Account?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">When you sign out, you won’t be able to send or receive tabs from other devices. Your bookmarks and history will also stop syncing.</string>
@@ -1373,11 +1404,6 @@
          the more button is pressed in a downloads item. It deletes the selected item from the downloads list
          and also from disk. -->
     <string name="download_context_delete">Delete</string>
-
-    <!-- This string is displayed is the downloads context menu that is displayed when
-         the more button is pressed in a downloads item. It creates a copy of the selected item
-         in the public Downloads folder so it may be used by other apps. -->
-    <string name="download_context_copy_to_content_uri">Share with other apps</string>
 
     <!-- This string is displayed as the title of the System Notifications List, which contains
          the notifications received by the system (similar to Android's Notification Center). -->
@@ -1832,6 +1858,13 @@
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Leave Page</string>
 
+    <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
+    <string name="repost_confirm_title">Confirm Form Resubmission</string>
+    <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
+    <string name="repost_confirm_message">The page that you\'re looking for used information that you entered. Returning to that page might cause any action that you took to be repeated. Do you want to continue?</string>
+    <!-- This string is displayed in the resend button for post warning -->
+    <string name="repost_confirm_continue">Continue</string>
+
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Unblock Page</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1968,6 +2001,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_resize">Window Resize</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the find in page option -->
+    <string name="hamburger_menu_find_in_page">Find in Page</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">Addons</string>
 
@@ -2010,24 +2047,24 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Sign in or create a new Firefox Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
+    <string name="whats_new_body_1">Sign in or create a new Mozilla Account to send tabs from Firefox on your desktop or mobile device to your headset.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox Account also lets you sync bookmarks and history across all your devices.</string>
+    <string name="whats_new_body_sub_1">Mozilla Account also lets you sync bookmarks and history across all your devices.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
-         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
     <string name="whats_new_button_sign_in">Sign In</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Start Browsing</string>
 
-    <string name="deprecated_version_dialog_title">Recommended update</string>
-    <string name="deprecated_version_dialog_body">You are currently running an \"App Lab\" development version of Wolvic.
-        \n\nPlease install the newest version of Wolvic from the Oculus Store.
-        \n\nIMPORTANT: unless you use Firefox Sync, the new Wolvic app will not have your bookmarks and tabs.</string>
+    <string name="deprecated_version_dialog_title">Support ending soon</string>
+    <string name="deprecated_version_dialog_body">This \"App Lab\" version of Wolvic will be removed by the end of October 2023.
+        \n\nPlease install the latest version of Wolvic from the Meta Quest Store.
+        \n\nIMPORTANT: unless you use Sync, the new Wolvic app will not have your bookmarks and tabs.</string>
     <string name="deprecated_version_dialog_info_button">Learn more…</string>
     <string name="deprecated_version_dialog_info_url" translatable="false">https://wolvic.com/support/firefox-sync/</string>
     <string name="deprecated_version_dialog_store_button">Install…</string>
@@ -2225,28 +2262,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the body of the error dialog shown when downloaded addon installation is blocked. -->
     <string name="download_addon_install_blocked_body">Allow local addon installation in Developer Options to proceed.</string>
 
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_title">Copy file?</string>
-
-    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_copy_to_content_uri_confirm_body">This will create a copy of this file on the system\'s Downloads folder, where it can be accessed by other apps.\n\nDo you want to continue?</string>
-
-    <!-- This string is displayed in the title of the download error dialog. -->
-    <string name="download_copy_to_content_uri_success_title">Successfully copied</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_success_body">The file was copied successfully and is available in the system\'s Downloads.</string>
-
-    <!-- This string is displayed in the title of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_title">Copy error</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog. -->
-    <string name="download_copy_to_content_uri_error_body">An error occurred while copying the downloaded file.</string>
-
-    <!-- This string is displayed in the body of the copy downloaded file error dialog.
-         '%1$s' will be replaced at runtime with the name of the downloaded file. -->
-    <string name="download_copy_to_content_uri_error_body_v1">An error occurred while copying %1$s</string>
-
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->
     <string name="environment_download_permission_error_body">Permission to write the external storage is required to download the environment.</string>
@@ -2338,6 +2353,25 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          '%1$s' Will be replaced at runtime with the uri. -->
     <string name="external_open_uri_error_security_exception_body">SecurityException when starting intent for %1$s</string>
 
+    <!-- These strings are used in the first-run flow on the phone UI in mainland China. -->
+    <string name="rCN_first_launch_title">User Agreement &amp; Privacy Policy Notification</string>
+    <string name="rCN_first_launch_body">
+        Welcome to “Wolvic”!
+        \n
+        \nRegistering and using “Wolvic” requires you to agree to the User Agreement and Privacy Policy, or else we cannot provide services to you. Please carefully read the documents and click on “Agree” to continue. If you click “Disagree”, you will not be able to continue using “Wolvic”.
+        \n
+        \nYou can read the complete User Agreement and Privacy Policy.</string>
+    <string name="rCN_first_launch_clickable_terms_text">User Agreement</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Privacy Policy</string>
+    <string name="rCN_first_launch_agree">Agree</string>
+    <string name="rCN_first_launch_disagree">Disagree</string>
+    <string name="rCN_first_launch_confirmation_body">
+        \nIf you select “Disagree”, unfortunately we will no longer be able to provide services for you.
+        \n
+        \nYou can read the complete User Agreement and Privacy Policy.</string>
+    <string name="rCN_first_launch_confirmation_agree">Agree and Continue</string>
+    <string name="rCN_first_launch_confirmation_disagree">Disagree and Quit</string>
+
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
          This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">Connect your HUAWEI VR Glass to use this app</string>
@@ -2405,7 +2439,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         \n\t\u2022 In order to capture and translate the voice into text, the user’s sound data is sent to the servers owned by the third party company responsible for each platform, through an API for this purpose: for example, in Oculus, from Facebook, a service that sends it to Oculus Voice SDK. At no time is the aforementioned data processed, accessed, or incorporated into the servers owned by IGALIA. The data transmitted will be the exclusive responsibility of the third party companies that own each platform (hereinafter, the Third Parties), which may be located outside the European Union and subject to a legal regime that is less protective of user privacy. We recommend that you carefully read the privacy policy and terms of use of each of these external platforms before accepting and using their services. IGALIA will not be directly or indirectly responsible for the processing of personal data by said Third Parties.
         \n\t\u2022 Geographic location information maybe be obtained from the browser, instead of the one used by the system. However, in order to do so, you must set the location permissions of your device through a specific notice in this regard and IGALIA will in no way link the aforementioned information to you as an identified or identifiable person, although the Third Parties mentioned in the previous point could do so, if applicable. We recommend you to pay attention to their legal terms.
         \n\t\u2022 IGALIA will not access or store, in any way, the addresses or URLs visited by you.
-        \n\t\u2022 Integration with Cloud services (such as Firefox Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
+        \n\t\u2022 Integration with Cloud services (such as Mozilla Accounts or Google Accounts) to synchronize data such as your browsing history or your user bookmarks may be possible. In this case, IGALIA will not access or process any information in any way, nor will it pass through IGALIA’s servers.
         \n\nWe remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
         \n\n\t\u2022 Google: https://policies.google.com/privacy
         \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
@@ -2437,5 +2471,24 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string labels a checkbox in the permissions dialog. When checked, the user will no longer
      be prompted for that specific permission in that same web page. -->
     <string name="permissions_dialog_remember_choice">Remember this decision</string>
+
+    <!-- KeyboardView - accessibility support -->
+    <!-- Description of the Alt button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <!-- Description of the Cancel button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_cancel">Cancel</string>
+    <!-- Description of the Delete button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_delete">Delete</string>
+    <!-- Description of the Done button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_done">Done</string>
+    <!-- Description of the Mode change button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_mode_change">Mode change</string>
+    <!-- Description of the Shift button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <!-- Description of the Enter button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_enter">Enter</string>
+
+    <!-- Shown in the tray wifi icon popup when SSID cannot be retrieved -->
+    <string name="tray_wifi_unavailable_ssid">SSID unavailable</string>
 
 </resources>

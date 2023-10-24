@@ -140,17 +140,17 @@ class LoginEditOptionsView extends SettingsView {
         mBinding.usernameEdit.setOnClickListener(mUsernameListener);
         final Login newLogin = mLogin.copy(
                 mLogin.getGuid(),
+                username,
+                mLogin.getPassword(),
                 mLogin.getOrigin(),
                 mLogin.getFormActionOrigin(),
                 mLogin.getHttpRealm(),
-                username,
-                mLogin.getPassword(),
+                mLogin.getUsernameField(),
+                mLogin.getPasswordField(),
                 mLogin.getTimesUsed(),
                 mLogin.getTimeCreated(),
                 mLogin.getTimeLastUsed(),
-                mLogin.getTimePasswordChanged(),
-                mLogin.getUsernameField(),
-                mLogin.getPasswordField()
+                mLogin.getTimePasswordChanged()
         );
         mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
                 .thenAcceptAsync(unit -> mBinding.usernameEdit.setFirstText(username), mUIThreadExecutor)
@@ -172,17 +172,17 @@ class LoginEditOptionsView extends SettingsView {
             mBinding.passwordEdit.setOnClickListener(mPasswordListener);
             final Login newLogin = mLogin.copy(
                     mLogin.getGuid(),
+                    mLogin.getUsername(),
+                    password,
                     mLogin.getOrigin(),
                     mLogin.getFormActionOrigin(),
                     mLogin.getHttpRealm(),
-                    mLogin.getUsername(),
-                    password,
+                    mLogin.getUsernameField(),
+                    mLogin.getPasswordField(),
                     mLogin.getTimesUsed(),
                     mLogin.getTimeCreated(),
                     mLogin.getTimeLastUsed(),
-                    mLogin.getTimePasswordChanged(),
-                    mLogin.getUsernameField(),
-                    mLogin.getPasswordField()
+                    mLogin.getTimePasswordChanged()
             );
             mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
                     .thenAcceptAsync(unit -> mBinding.passwordEdit.setFirstText(password), mUIThreadExecutor)

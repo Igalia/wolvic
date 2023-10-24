@@ -1,5 +1,5 @@
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.26"
+    id "com.jetbrains.python.envs" version "0.0.31"
 }
 
 apply plugin: 'com.android.application'
@@ -12,7 +12,7 @@ if (getGradle().getStartParameter().getTaskRequests().toString() =~ /(h|H)vr/) {
     apply plugin: 'com.huawei.agconnect'
 }
 
-deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
+deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-native-forUnitTests:$project.ext.glean_version"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -53,9 +53,9 @@ def getOpenXRFlags = { ->
 
 def getOpenXRCMakeFlags = { ->
     if (gradle.hasProperty("userProperties.openxr")) {
-        return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : ""
+        return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : "-DOPENXR=OFF"
     }
-    return ""
+    return "-DOPENXR=OFF"
 }
 
 def getHVRAppId = { ->
@@ -89,14 +89,14 @@ def getMKApiKey = { ->
 }
 
 def isChromiumAvailable = {
-    if (gradle.hasProperty("userProperties.chromium_aar")) {
+    if (gradle.hasProperty("localProperties.chromium_aar")) {
         return true
     }
     return false
 }
 
 def isWebKitAvailable = {
-    if (gradle.hasProperty("userProperties.webkit_aar")) {
+    if (gradle.hasProperty("localProperties.webkit_aar")) {
         return true
     }
     return false
@@ -112,22 +112,28 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 90
-        versionName "1.4"
+        versionCode 110
+        versionName "1.5"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
+        buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
-        buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
                          " -I" + file("src/main/cpp").absolutePath +
-                         " -I" + file("src/main/cpp/vrb/include").absolutePath
+                         " -I" + file("src/main/cpp/vrb/include").absolutePath +
+                         // CMake 3.10+ needs "-DANDROID" flag, since ANDROID
+                         // flag has been removed in favor of __ANDROID__. But
+                         // vrb still uses "#if defined(ANDROID)"
+                         " -DANDROID"
+
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
@@ -147,6 +153,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+            pickFirsts += ['**/libxul.so']
+        }
     }
 
     kotlinOptions {
@@ -175,16 +188,14 @@ android {
         }
     }
 
-    lintOptions {
-        disable "ExtraTranslation"
-    }
 
-    flavorDimensions "platform", "abi", "country", "backend", "store"
+    flavorDimensions "platform", "abi", "backend", "store"
 
     productFlavors {
         // Supported platforms
         oculusvr {
             dimension "platform"
+            targetSdkVersion build_versions.target_sdk_oculusvr
             externalNativeBuild {
                 cmake {
                     cppFlags "-DOCULUSVR" + getOpenXRFlags()
@@ -252,6 +263,17 @@ android {
             }
         }
 
+        aosp {
+            dimension "platform"
+            targetSdkVersion build_versions.target_sdk_aosp
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DAOSP -DOPENXR -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DAOSP=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         hvr {
             dimension "platform"
             externalNativeBuild {
@@ -265,16 +287,7 @@ android {
             buildConfigField "String", "MK_API_KEY", "\"\""
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
-        }
-
-        cn {
-            dimension "country"
-            buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
-            buildConfigField "Boolean", "KIOSK_MODE_ALWAYS", "true"
-        }
-
-        world {
-            dimension "country"
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
         }
 
         noapi {
@@ -295,7 +308,7 @@ android {
             }
         }
 
-        x86_64 {
+        x64 {
             dimension "abi"
             ndk {
                 abiFilters "x86_64"
@@ -350,21 +363,29 @@ android {
                 }
             }
         }
+
+        mainlandChina {
+            applicationId "com.cn.igalia.wolvic"
+            dimension "store"
+            buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
+            buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
+            buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
+            resValue 'string', 'HOMEPAGE_URL', 'about:blank'
+        }
     }
 
     variantFilter { variant ->
         def platform = variant.getFlavors().get(0).name
         def abi = variant.getFlavors().get(1).name
-        def country = variant.getFlavors().get(2).name
-        def backend = variant.getFlavors().get(3).name
-        def store = variant.getFlavors().get(4).name
+        def backend = variant.getFlavors().get(2).name
+        def store = variant.getFlavors().get(3).name
 
-        // Create x86_64 variants only for noapi platform
-        if (abi == 'x86_64')
-            variant.setIgnore(platform != 'noapi');
+        // Create x64 variants only for noapi and aosp platforms
+        if (abi == 'x64')
+            variant.setIgnore(platform != 'noapi' && platform !='aosp');
 
-        // Create variants for China only for HVR platforms
-        if (country == 'cn' && !platform.startsWith('hvr'))
+        // Create variants for China only for HVR and Pico platforms
+        if (store == 'mainlandChina' && !(platform.startsWith('hvr') || platform.startsWith('picoxr')))
             variant.setIgnore(true);
 
         // Create variants for chromium/webkit, only when they are available
@@ -407,6 +428,27 @@ android {
                     'src/wavevr/res'
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/jni"]
+            packagingOptions {
+                jniLibs.pickFirsts.add("lib/**/libwvr_api.so")
+                jniLibs.pickFirsts.add("lib/**/liboverlay_api.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
+                jniLibs.pickFirsts.add("lib/**/libdummy.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
+                jniLibs.pickFirsts.add("lib/**/libdummy.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
+                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
+                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
+                jniLibs.pickFirsts.add("lib/**/libsvrapi.so")
+            }
         }
 
         wavevrStore {
@@ -421,6 +463,27 @@ android {
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/jni"]
             manifest.srcFile "src/wavevr/AndroidManifest.xml"
+            packagingOptions {
+                jniLibs.pickFirsts.add("lib/**/libwvr_api.so")
+                jniLibs.pickFirsts.add("lib/**/liboverlay_api.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
+                jniLibs.pickFirsts.add("lib/**/libdummy.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
+                jniLibs.pickFirsts.add("lib/**/libdummy.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
+                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
+                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
+                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
+                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
+                jniLibs.pickFirsts.add("lib/**/libsvrapi.so")
+            }
         }
 
         hvr {
@@ -441,6 +504,10 @@ android {
 
         spaces {
             manifest.srcFile "src/spaces/AndroidManifest.xml"
+        }
+
+        aosp {
+            manifest.srcFile "src/aosp/AndroidManifest.xml"
         }
 
         noapi {
@@ -487,7 +554,14 @@ android {
         unitTests.includeAndroidResources = true
     }
 
-    aaptOptions {
+
+    buildFeatures {
+        viewBinding true
+        prefab true // enable prefab support for various SDK AAR
+        dataBinding true
+    }
+    namespace 'com.igalia.wolvic'
+    androidResources {
         noCompress 'ja'
         // TODO: This statement should be moved under 'chromium' dimension or removed. So far, these
         // options are affected to every variants when`isChromiumAvailable()` is true.
@@ -497,11 +571,8 @@ android {
             noCompress 'pak'
         }
     }
-
-    buildFeatures {
-        viewBinding true
-        prefab true // enable prefab support for various SDK AAR
-        dataBinding true
+    lint {
+        disable 'ExtraTranslation'
     }
 }
 
@@ -511,15 +582,8 @@ configurations {
     x86Implementation
 }
 
-repositories {
-    flatDir {
-        dirs 'aars'
-    }
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation deps.openwnn
 
     // Common
     implementation deps.lifecycle.runtime
@@ -540,11 +604,13 @@ dependencies {
 
     // Android Components
     implementation deps.android_components.browser_errorpages
-    implementation deps.android_components.browser_search
     implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.browser_icons
+    implementation deps.android_components.feature_findinpage
+    implementation deps.android_components.feature_search
+    implementation deps.android_components.feature_toolbar
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location
@@ -562,6 +628,7 @@ dependencies {
     implementation deps.android_components.feature_webcompat_reporter
     implementation deps.android_components.feature_addons
     implementation deps.android_components.glean
+    implementation deps.android_components.preference
     implementation deps.app_services.rustlog
 
     // Kotlin dependency
@@ -585,6 +652,7 @@ dependencies {
 
     // Testing
     androidTestImplementation deps.atsl.runner
+    androidTestImplementation deps.atsl.junit
     androidTestImplementation deps.espresso.core
     testImplementation deps.junit
     testImplementation deps.atsl.core
@@ -599,14 +667,14 @@ dependencies {
 
     // MeetKai
     implementation fileTree(dir: "${project.rootDir}/libs/meetkai/", include: ['*.aar'])
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'net.lingala.zip4j:zip4j:1.3.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'net.lingala.zip4j:zip4j:2.11.5'
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
-    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
+    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.6.5.300'
     hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
@@ -618,52 +686,58 @@ dependencies {
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
 
+    // HTC Vive
+    if (!gradle.startParameter.taskNames.isEmpty() &&
+            gradle.startParameter.taskNames.get(0).toLowerCase().contains("wavevr")) {
+        configurations.maybeCreate("default")
+        artifacts.add("default", file('wvr_client.aar'))
+
+        def aarFilename = "wvr_client"
+
+        // unzip aar
+        def unzipDir = file("${rootDir}/third_party/wavesdk/build/${aarFilename}-${versions.wavevr}")
+        def aarFile = file("${rootDir}/third_party/wavesdk/${aarFilename}.aar")
+        if (aarFile != null) {
+            copy {
+                println 'unzip ' + aarFile
+                from zipTree(aarFile)
+                into unzipDir
+            }
+            wavevrImplementation fileTree(dir: "${rootDir}/third_party/wavesdk/", include: ['*.aar'])
+            wavevrStoreImplementation fileTree(dir: "${rootDir}/third_party/wavesdk/", include: ['*.aar'])
+        }
+    }
+
     // gecko
-    def branch = "nightly" // "nightly" or "beta"
+    def branch = "nightly" // "release", "nightly" or "beta"
     geckoImplementation deps.gecko_view."${branch}_x86_64"
     geckoImplementation deps.gecko_view."${branch}_arm64"
     configurations.all {
-        // TODO(jfernandez): Instead of solving the conflicts this way, we would need to determine which packages
-        // are the culprit and define their dependencies so that we can let gradle to resolve them automatically.
-        // See https://docs.gradle.org/current/userguide/dependency_resolution.html for details.
-         resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'org.jetbrains.kotlin'
-                    && details.requested.name.contains('kotlin-stdlib')) {
-                details.useVersion '1.4.10';
-            } else if (details.requested.group == 'org.jetbrains.kotlinx'
-                    && details.requested.name.contains('coroutines')) {
-                details.useVersion '1.4.2'
-            }
-         }
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
-            def abi = getName().toLowerCase().contains('x86_64') ? 'x86_64' : 'arm64'
-            def candidate = "geckoview-${branch}-${abi}"
+            def abi = getName().toLowerCase().contains('x64') ? 'x86_64' : 'arm64'
+            def candidate = branch == "release" ? "geckoview-${abi}" : "geckoview-${branch}-${abi}"
             select(candidates.find { it.id.module.contains(candidate) })
         }
     }
 
     // chromium
     if (isChromiumAvailable()) {
-        chromiumImplementation fileTree(dir: gradle."userProperties.chromium_aar", include: ['*.aar'])
+        chromiumImplementation fileTree(dir: gradle."localProperties.chromium_aar", include: ['*.aar'])
         chromiumImplementation 'androidx.fragment:fragment:1.4.1'
     }
 
     // webkit
     if (isWebKitAvailable()) {
-        webkitImplementation fileTree(dir: gradle."userProperties.webkit_aar", include: ['*.aar'])
+        webkitImplementation fileTree(dir: gradle."localProperties.webkit_aar", include: ['*.aar'])
     }
+
+    // openwnn (bundled because it is not published outside of JCenter, which is deprecated)
+    implementation fileTree(dir: "${project.rootDir}/libs/openwnn/", include: ['*.aar'])
 }
 
 if (findProject(':servo')) {
     dependencies {
       oculusvrImplementation project(':servo')
-    }
-}
-
-if (findProject(':wavesdk')) {
-    dependencies {
-        wavevrImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
-        wavevrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/wavesdk/", include: ['*.aar'])
     }
 }
 
@@ -678,20 +752,14 @@ if(gradle.hasProperty("userProperties.openxr") && !gradle.startParameter.taskNam
 }
 
 if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
-    if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
+    if (getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains('x64')
+            && gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdirX64')) {
+        ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdirX64"
+    } else if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
         ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
     }
     ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
-}
-
-androidComponents {
-    onVariants(selector().all(), { variant ->
-        // HVR packages for China must use different applicationIds.
-        def hvrChinaBuildPattern = ~/hvr\p{Alnum}+Cn\p{Alnum}+(Release|Debug)/
-        if (hvrChinaBuildPattern.matcher(variant.name).matches())
-            variant.applicationId = variant.applicationId.get().replace('com.igalia','com.cn.igalia')
-    })
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -710,15 +778,10 @@ android.applicationVariants.all { variant ->
         println("X_X")
     }
 
-    def platform = variant.productFlavors.get(0).name
-    def country = variant.productFlavors.get(2).name
-
     // HVR packages for mainland china must only use HVR speech recognition system.
-    // HVR packages for overseas should have 2D phone UI enabled.
-    if (platform.toLowerCase().startsWith('hvr')) {
-        if (country != 'cn')
-            variant.buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
-        else
-            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
+    def platform = variant.productFlavors.get(0).name
+    def store = variant.productFlavors.get(3).name
+    if (platform.toLowerCase().startsWith('hvr') && store == "mainlandChina") {
+        variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
     }
 }

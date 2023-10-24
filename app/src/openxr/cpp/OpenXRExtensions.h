@@ -24,7 +24,6 @@ namespace crow {
     static PFN_xrCreateHandTrackerEXT sXrCreateHandTrackerEXT;
     static PFN_xrDestroyHandTrackerEXT sXrDestroyHandTrackerEXT;
     static PFN_xrLocateHandJointsEXT sXrLocateHandJointsEXT;
-    static PFN_xrGetHandMeshFB sXrGetHandMeshFB;
 
     static PFN_xrPerfSettingsSetPerformanceLevelEXT sXrPerfSettingsSetPerformanceLevelEXT;
     static PFN_xrEnumerateDisplayRefreshRatesFB sXrEnumerateDisplayRefreshRatesFB;
@@ -34,6 +33,9 @@ namespace crow {
     static PFN_xrDestroyPassthroughFB sXrDestroyPassthroughFB;
     static PFN_xrCreatePassthroughLayerFB sXrCreatePassthroughLayerFB;
     static PFN_xrDestroyPassthroughLayerFB sXrDestroyPassthroughLayerFB;
+
+    static PFN_xrCreateHandMeshSpaceMSFT sXrCreateHandMeshSpaceMSFT;
+    static PFN_xrUpdateHandMeshMSFT sXrUpdateHandMeshMSFT;
   private:
      static std::unordered_set<std::string> sSupportedExtensions;
      static std::unordered_set<std::string> sSupportedApiLayers;

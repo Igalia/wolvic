@@ -99,6 +99,12 @@
                     app:description="@string/security_options_restore_tabs" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/useSystemRootCASwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_use_system_root_ca" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/popUpsBlockingSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,6 +158,13 @@
                     android:layout_height="wrap_content"
                     app:buttonText="@string/developer_options_clear_cache"
                     app:description="@string/developer_options_clear_cache_web_content_description" />
+
+                <com.igalia.wolvic.ui.views.settings.ButtonSetting
+                    android:id="@+id/clearUserData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/developer_options_clear_cache"
+                    app:description="@string/developer_options_clear_user_data_description" />
 
                 <TextView
                     android:id="@+id/permissionsTitle"

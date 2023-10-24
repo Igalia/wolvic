@@ -222,13 +222,20 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::OculusQuest2:
       result = mozilla::gfx::VRControllerType::OculusTouch3;
       break;
+    case device::MetaQuest3:
+      result = mozilla::gfx::VRControllerType::MetaQuest3;
+      break;
     case device::MetaQuestPro:
       // FIXME: GeckoView does not support Quest Pro yet. Pretend to be the Quest2
       result = mozilla::gfx::VRControllerType::OculusTouch3;
           break;
+    case device::HVR3DoF:
+    case device::HVR6DoF:
     case device::ViveFocus:
       result = mozilla::gfx::VRControllerType::HTCViveFocus;
       break;
+    // FIXME: Gecko does not support VRX. Controllers look similar to ViveFocusPlus
+    case device::LenovoVRX:
     case device::ViveFocusPlus:
       result = mozilla::gfx::VRControllerType::HTCViveFocusPlus;
       break;
@@ -245,11 +252,20 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
       result = mozilla::gfx::VRControllerType::PicoNeo2;
       break;
     case device::PicoXR:
-      result = mozilla::gfx::VRControllerType::PicoNeo2;
+      result = mozilla::gfx::VRControllerType::Pico4;
+      break;
+    case device::MagicLeap2:
+      // FIXME: Gecko does not support ML2 device yet, so let's use a similar one for WebXR.
+      result = mozilla::gfx::VRControllerType::OculusGo;
+      break;
+    case device::LynxR1:
+      // FIXME: Gecko does not support LynxR1 device yet, so let's use a similar one for WebXR.
+      result = mozilla::gfx::VRControllerType::OculusTouch3;
       break;
     case device::UnknownType:
     default:
       result = mozilla::gfx::VRControllerType::_empty;
+      assert(!"Unknown controller type.");
       VRB_LOG("Unknown controller type.");
       break;
   }
@@ -542,6 +558,25 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     immersiveController.selectActionStopFrameId = controller.selectActionStopFrameId;
     immersiveController.squeezeActionStartFrameId = controller.squeezeActionStartFrameId;
     immersiveController.squeezeActionStopFrameId = controller.squeezeActionStopFrameId;
+
+#if CHROMIUM
+    // WebXR hand-tracking support
+    if (controller.mode == ControllerMode::Hand) {
+      immersiveController.hasHandTrackingData = true;
+
+      // While XR_EXT_hand_tracking extension specifies 26 joints, WebXR Hand input defines only
+      // 25, being the palm joint the one omitted.
+      // See https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#convention-of-hand-joints
+      // vs. https://www.w3.org/TR/webxr-hand-input-1/#skeleton-joints-section.
+      // Since the palm joint is at index zero, we pass joints from 1 to 25 (omitting the palm).
+      assert(controller.handJointTransforms.size() == mozilla::gfx::kHandTrackingNumJoints + 1);
+      for (int j = 0; j < mozilla::gfx::kHandTrackingNumJoints; j++) {
+        memcpy(&immersiveController.handTrackingData.handJointData[j].transform,
+               &controller.handJointTransforms[j + 1], sizeof(vrb::Matrix));
+        immersiveController.handTrackingData.handJointData[j].radius = controller.handJointRadii[j + 1];
+      }
+    }
+#endif
   }
 
   m.system.sensorState.timestamp = aTimestamp;
@@ -567,7 +602,7 @@ ExternalVR::WaitFrameResult() {
       return true; // Do not block to show loading screen until the first frame arrives.
     }
     // VRB_LOG("RequestFrame ABOUT TO WAIT FOR FRAME %llu %llu",m.browser.layerState[0].layer_stereo_immersive.frameId, m.lastFrameId);
-    const float kConditionTimeout = 0.1f;
+    const float kConditionTimeout = 0.25f;
     // Wait causes the current thread to block until the condition variable is notified or the timeout happens.
     // Waiting for the condition variable releases the mutex atomically. So GV can modify the browser data.
     if (!wait.DoWait(kConditionTimeout)) {

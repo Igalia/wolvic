@@ -1,0 +1,20 @@
+name: CI External
+
+on:
+  workflow_dispatch:  # Allow manual triggers
+  pull_request:
+
+jobs:
+  build-external:
+    name: External Build
+    uses: ./.github/workflows/build.yml
+    with:
+      flavour: ${{ matrix.flavour }}
+    strategy:
+      fail-fast: false
+      matrix:
+        flavour: [
+          assembleNoapiArm64GeckoGeneric,
+          assembleNoapiX64GeckoGeneric,
+        ]
+    secrets: inherit

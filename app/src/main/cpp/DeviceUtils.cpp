@@ -12,6 +12,8 @@
 
 namespace crow {
 
+std::unordered_map<std::string, device::DeviceType> DeviceUtils::deviceNamesMap;
+
 vrb::Matrix
 DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
   const float kPitchUpThreshold = 0.2f;
@@ -90,16 +92,56 @@ vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context
 
     for (int r = 0; r < rings; r++) {
         for (int s = 0; s < sectors; s++) {
-            indices.push_back(r * sectors + s);
-            indices.push_back(r * sectors + (s+1));
-            indices.push_back((r+1) * sectors + (s+1));
-            indices.push_back((r+1) * sectors + s);
-            geometry->AddFace(indices, indices, indices);
-            indices.clear();
+            if (r != 0) {
+                indices.push_back(r * sectors + s);
+                indices.push_back((r + 1) * sectors + s);
+                indices.push_back(r * sectors + (s + 1));
+                geometry->AddFace(indices, indices, indices);
+                indices.clear();
+            }
+
+            if (r != rings - 1) {
+                indices.push_back(r * sectors + (s + 1));
+                indices.push_back((r + 1) * sectors + s);
+                indices.push_back((r + 1) * sectors + (s + 1));
+                geometry->AddFace(indices, indices, indices);
+                indices.clear();
+            }
         }
     }
 
     return std::move(geometry);
+}
+
+device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
+    char model[128];
+    int length = PopulateDeviceModelString(model);
+
+#ifdef HVR
+    // Huawei glasses can be attached to multiple different phones, so we basically cannot filter
+    // by device type in this case.
+    return is6DoF ? device::HVR6DoF : device::HVR3DoF;
+#endif
+
+    if (deviceNamesMap.empty()) {
+        deviceNamesMap.emplace("Quest", device::OculusQuest);
+        deviceNamesMap.emplace("Quest 2", device::OculusQuest2);
+        deviceNamesMap.emplace("Quest 3", device::MetaQuest3);
+        // So far no need to differentiate between Pico4 and Pico4E
+        deviceNamesMap.emplace("A8110", device::PicoXR);
+        deviceNamesMap.emplace("Lynx-R1", device::LynxR1);
+        deviceNamesMap.emplace("motorola edge 30 pro", device::LenovoA3);
+        deviceNamesMap.emplace("Quest Pro", device::MetaQuestPro);
+        deviceNamesMap.emplace("VRX", device::LenovoVRX);
+        deviceNamesMap.emplace("Magic Leap 2", device::MagicLeap2);
+    }
+
+    auto device = deviceNamesMap.find(model);
+    if (device == deviceNamesMap.end()) {
+        VRB_WARN("Device %s is not supported", model);
+        return device::UnknownType;
+    }
+    return device->second;
 }
 
 }
