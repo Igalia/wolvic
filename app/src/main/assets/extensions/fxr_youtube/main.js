@@ -2,6 +2,7 @@
 const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/11.1.0.1.64.238873877 SamsungBrowser/4.0 Chrome/84.0.4147.125 Mobile VR Safari/537.36';
 const LOGTAG = '[firefoxreality:webcompat:youtube]';
 const VIDEO_PROJECTION_PARAM = 'mozVideoProjection';
+const SUBTITLE_SELECT_ID = 'fxr-yt-subtitle-select';
 const YT_SELECTORS = {
   player: '#movie_player',
   embedPlayer: '.html5-video-player',
@@ -11,14 +12,21 @@ const YT_SELECTORS = {
   description: '.style-scope .ytd-expander',
   queueHandle: 'ytd-playlist-panel-video-renderer',
   playbackControls: '.ytp-chrome-bottom',
-  overlays: '.videowall-endscreen, .ytp-upnext, .ytp-ce-element'
+  overlays: '.videowall-endscreen, .ytp-upnext, .ytp-ce-element',
+  letfControls: 'ytp-left-controls',
+  subtitlesButton: 'ytp-subtitles-button ytp-button',
+  captionWindow: 'ytp-caption-window-container',
+  captionsText: 'captions-text',
+  pressed: 'aria-pressed'
 };
+const CAPTION_WINDOW_COPY_ID = YT_SELECTORS.captionWindow + "-copy";
 const ENABLE_LOGS = true;
 const logDebug = (...args) => ENABLE_LOGS && console.log(LOGTAG, ...args);
 const logError = (...args) => ENABLE_LOGS && console.error(LOGTAG, ...args);
 const CHROME_CONTROLS_MIN_WIDTH = 480;
 
 let hasLeftInitialPage = false;
+let globalSubtitlesObserver = null;
 
 class YoutubeExtension {
     // We set a custom UA to force Youtube to display the most optimal
@@ -160,6 +168,173 @@ class YoutubeExtension {
             logDebug(`Video is flat, no projection selected`);
         }
         this.updateURL(qs);
+        if (projection !== null) {
+            this.updateSubtitle3DSelect();
+        }
+    }
+
+    updateSubtitle3DSelect() {
+        const selectContainer = document.getElementById(SUBTITLE_SELECT_ID);
+        if (selectContainer) {
+            const qs = new URLSearchParams(window.location.search);
+            switch(qs.get(VIDEO_PROJECTION_PARAM)) {
+                case '3dtb_auto':
+                    selectContainer.value = '3dtb';
+                    break;
+                case '3d_auto':
+                    selectContainer.value = '3dsbs';
+                    break;
+                default:
+                    selectContainer.value = '2d';
+                    break;
+            }
+        }
+    }
+
+    removeSubtitle3DFix() {
+        const subtitlesButton = document.getElementsByClassName(YT_SELECTORS.subtitlesButton);
+        for (const button of subtitlesButton) {
+            button.removeEventListener('click', this.onSubtitlesButtonClick);
+        }
+        let selectContainer = document.getElementById(SUBTITLE_SELECT_ID);
+        if (selectContainer) {
+            selectContainer.value = '2d';
+            selectContainer.remove();
+        }
+        if (globalSubtitlesObserver) {
+            globalSubtitlesObserver.disconnect();
+            globalSubtitlesObserver = null;
+        }
+        const oldCaptionWindowCopy = document.getElementById(CAPTION_WINDOW_COPY_ID)
+        if (oldCaptionWindowCopy) {
+            oldCaptionWindowCopy.remove();
+        }
+    }
+
+    subtitle3DFix() {
+        this.removeSubtitle3DFix();
+        const selectContainer = document.createElement('select');
+        selectContainer.id = SUBTITLE_SELECT_ID;
+
+        const option2D = document.createElement('option');
+        option2D.value = '2d';
+        option2D.text = 'Subtitles: 2D';
+        selectContainer.appendChild(option2D);
+
+        const option3DSBS = document.createElement('option');
+        option3DSBS.value = '3dsbs';
+        option3DSBS.text = '3D Side By Side';
+        selectContainer.appendChild(option3DSBS);
+
+        const option3DTB = document.createElement('option');
+        option3DTB.value = '3dtb';
+        option3DTB.text = '3D Top Bottom';
+        selectContainer.appendChild(option3DTB);
+
+        // Append the container to the document
+        document.getElementsByClassName(YT_SELECTORS.letfControls)[0].appendChild(selectContainer);
+
+        selectContainer.addEventListener('change', this.onSubtitlesButtonClick);
+
+        const subtitlesButton = document.getElementsByClassName(YT_SELECTORS.subtitlesButton);
+        if (subtitlesButton.length > 0) {
+            subtitlesButton[0].removeEventListener('click', this.onSubtitlesButtonClick);
+            subtitlesButton[0].addEventListener('click', this.onSubtitlesButtonClick);
+            if (subtitlesButton[0].getAttribute(YT_SELECTORS.pressed) === "true") {
+                selectContainer.hidden = false;
+                return;
+            }
+        }
+        selectContainer.hidden = true;
+    }
+
+    onSubtitlesButtonClick(event) {
+        let doubleSubtitles = true;
+        const selectContainer = document.getElementById(SUBTITLE_SELECT_ID)
+        if (event) {
+            const target = event.target;
+            if (target.tagName.toLowerCase() === 'button') {
+                if (target.getAttribute(YT_SELECTORS.pressed) === "false") {
+                    selectContainer.hidden = true;
+                    doubleSubtitles = false;
+                } else {
+                    selectContainer.hidden = false;
+                }
+            }
+        }
+
+        let width = '100%';
+        let height = '100%';
+        let top = '0';
+        let left = '0';
+        let copyTop = '0';
+        let copyLeft = '0';
+
+        switch(selectContainer.value) {
+            case '3dsbs':
+                width = '50%';
+                height = '100%';
+                top = '0';
+                left = '0';
+                copyTop = '0';
+                copyLeft = '50%';
+                break;
+            case '3dtb':
+                width = '100%';
+                height = '50%';
+                top = '50%';
+                left = '0';
+                copyTop = '0';
+                copyLeft = '0';
+                break;
+            default:
+                doubleSubtitles = false;
+                break;
+        }
+
+        const captionWindow = document.getElementById(YT_SELECTORS.captionWindow);
+        captionWindow.style.setProperty('width', width);
+        captionWindow.style.setProperty('height', height);
+        captionWindow.style.setProperty('top', top);
+        captionWindow.style.setProperty('left', left);
+
+        let removeCaptionWindowCopy = () => {
+            const oldCaptionWindowCopy = document.getElementById(CAPTION_WINDOW_COPY_ID)
+            if (oldCaptionWindowCopy) {
+                oldCaptionWindowCopy.remove();
+            }
+        }
+
+        if (globalSubtitlesObserver) {
+            globalSubtitlesObserver.disconnect();
+            globalSubtitlesObserver = null;
+        }
+
+        if (doubleSubtitles) {
+            const onSubtitlesChange = () => {
+                removeCaptionWindowCopy();
+                const copyCaptionWindow = captionWindow.cloneNode(true);
+                copyCaptionWindow.id = CAPTION_WINDOW_COPY_ID;
+                copyCaptionWindow.style.setProperty('width', width);
+                copyCaptionWindow.style.setProperty('height', height);
+                copyCaptionWindow.style.setProperty('top', copyTop);
+                copyCaptionWindow.style.setProperty('left', copyLeft);
+                captionWindow.parentElement.appendChild(copyCaptionWindow);
+                // Disable the captions animation so that it works in 3D
+                for (const element of document.getElementsByClassName(YT_SELECTORS.captionsText)) {
+                    element.style.removeProperty('display');
+                }
+            }
+            onSubtitlesChange();
+            globalSubtitlesObserver = new MutationObserver(onSubtitlesChange);
+            globalSubtitlesObserver.observe(captionWindow, { childList: true, attributes: true, subtree: true, characterData: true });
+        } else {
+            removeCaptionWindowCopy();
+            // Re-enable the captions animation
+            for (const element of document.getElementsByClassName(YT_SELECTORS.captionsText)) {
+                element.style.setProperty('display', 'block');
+            }
+        }
     }
 
     updateVideoStyle() {
@@ -261,7 +436,9 @@ class YoutubeExtension {
     }
 
     playerFixes() {
+        this.subtitle3DFix();
         this.overrideVideoProjection();
+        this.updateSubtitle3DSelect();
         this.overrideQualityRetry();
         this.hideOverlaysFix();
         this.queueContextMenuFix();
@@ -394,7 +571,10 @@ document.addEventListener("fullscreenchange", () => youtube.playerControlsMargin
 window.addEventListener('click', event => youtube.overrideClick(event));
 window.addEventListener('mouseup', event => youtube.queueContextMenuFix());
 // Reset the projection when navigating to a new page.
-window.addEventListener("yt-navigate-start", () => hasLeftInitialPage = true);
+window.addEventListener("yt-navigate-start", () => {
+    hasLeftInitialPage = true;
+    youtube.removeSubtitle3DFix();
+});
 window.addEventListener("yt-update-title", () => {
     logDebug('page navigated and title updated');
     if (youtube.isWatchingPage()) {
