@@ -748,4 +748,6 @@
     <string name="upload_button">Enviar</string>
     <string name="upload_list_empty">Non hai arquivos dispoñibles para enviar</string>
     <string name="settings_language_portuguese">Portugués</string>
+    <string name="user_feedback_tooltip">Comparte ideas e comentarios</string>
+    <string name="clear_user_data_dialog_title">Borralos datos do usuario %1$s</string>
 </resources>
