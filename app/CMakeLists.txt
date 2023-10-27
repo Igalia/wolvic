@@ -95,7 +95,6 @@ if(OPENXR)
     if (OCULUSVR)
         include_directories(
             ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
-            ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Include
         )
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
