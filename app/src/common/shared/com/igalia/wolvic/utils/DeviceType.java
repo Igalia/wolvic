@@ -45,6 +45,7 @@ public class DeviceType {
                 break;
             case MetaQuestPro:
                 name = "Meta Quest Pro";
+                break;
             case ViveFocus:
                 name = "Vive Focus";
                 break;
@@ -80,6 +81,7 @@ public class DeviceType {
                 break;
             default:
                 name = "Unknown Type";
+                break;
         }
         Log.d("VRB", "Setting device type to: " + name);
         mType = aType;
