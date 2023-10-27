@@ -77,6 +77,7 @@ public class DeviceType {
                 break;
             case MetaQuest3:
                 name = "Meta Quest 3";
+                break;
             default:
                 name = "Unknown Type";
         }
