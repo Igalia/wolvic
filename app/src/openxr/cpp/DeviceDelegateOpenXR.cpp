@@ -35,9 +35,6 @@
 
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
-#ifdef OCULUSVR
-#include <openxr/openxr_oculus.h>
-#endif
 #include "OpenXRHelpers.h"
 #include "OpenXRSwapChain.h"
 #include "OpenXRInput.h"
