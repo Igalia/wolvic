@@ -36,6 +36,10 @@ namespace crow {
 
     static PFN_xrCreateHandMeshSpaceMSFT sXrCreateHandMeshSpaceMSFT;
     static PFN_xrUpdateHandMeshMSFT sXrUpdateHandMeshMSFT;
+
+    static PFN_xrCreateKeyboardSpaceFB xrCreateKeyboardSpaceFB;
+    static PFN_xrQuerySystemTrackedKeyboardFB xrQuerySystemTrackedKeyboardFB;
+
   private:
      static std::unordered_set<std::string> sSupportedExtensions;
      static std::unordered_set<std::string> sSupportedApiLayers;
