@@ -112,6 +112,7 @@ struct DeviceDelegateOpenXR::State {
   XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
   HandMeshRendererPtr handMeshRenderer = nullptr;
   HandMeshPropertiesMSFTPtr handMeshProperties;
+  bool keyboardTrackingSupported { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -192,6 +193,9 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME))
         extensions.push_back(XR_EXTX_OVERLAY_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME))
+        extensions.push_back(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME);
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;
@@ -245,6 +249,14 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &handMeshPropertiesMSFT;
     }
 
+    // If XR_FB_keyboard_tracking is present, query whether the runtime actually supports it
+    XrSystemKeyboardTrackingPropertiesFB kbdTrackingPropertiesFB{ XR_TYPE_SYSTEM_KEYBOARD_TRACKING_PROPERTIES_FB};
+    kbdTrackingPropertiesFB.supportsKeyboardTracking = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME)) {
+        kbdTrackingPropertiesFB.next = systemProperties.next;
+        systemProperties.next = &kbdTrackingPropertiesFB;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
@@ -272,6 +284,11 @@ struct DeviceDelegateOpenXR::State {
         handMeshProperties->vertexCount = handMeshPropertiesMSFT.maxHandMeshVertexCount;
         handMeshProperties->indexCount = handMeshPropertiesMSFT.maxHandMeshIndexCount;
         VRB_LOG("OpenXR runtime supports XR_MSFT_hand_tracking_mesh");
+    }
+
+    if (kbdTrackingPropertiesFB.supportsKeyboardTracking) {
+        keyboardTrackingSupported = true;
+        VRB_LOG("OpenXR runtime supports XR_FB_keyboard_tracking");
     }
   }
 

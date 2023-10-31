@@ -21,6 +21,8 @@ PFN_xrCreatePassthroughLayerFB OpenXRExtensions::sXrCreatePassthroughLayerFB = n
 PFN_xrDestroyPassthroughLayerFB OpenXRExtensions::sXrDestroyPassthroughLayerFB = nullptr;
 PFN_xrCreateHandMeshSpaceMSFT OpenXRExtensions::sXrCreateHandMeshSpaceMSFT = nullptr;
 PFN_xrUpdateHandMeshMSFT OpenXRExtensions::sXrUpdateHandMeshMSFT = nullptr;
+PFN_xrCreateKeyboardSpaceFB OpenXRExtensions::xrCreateKeyboardSpaceFB = nullptr;
+PFN_xrQuerySystemTrackedKeyboardFB OpenXRExtensions::xrQuerySystemTrackedKeyboardFB = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -107,6 +109,13 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                           reinterpret_cast<PFN_xrVoidFunction *>(&sXrCreatePassthroughLayerFB)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrDestroyPassthroughLayerFB",
                                           reinterpret_cast<PFN_xrVoidFunction *>(&sXrDestroyPassthroughLayerFB)));
+    }
+
+    if (IsExtensionSupported(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME)) {
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrCreateKeyboardSpaceFB",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&xrCreateKeyboardSpaceFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance,"xrQuerySystemTrackedKeyboardFB",
+                                        reinterpret_cast<PFN_xrVoidFunction *>(&xrQuerySystemTrackedKeyboardFB)));
     }
 }
 
