@@ -23,7 +23,19 @@ typedef std::shared_ptr<HandMeshBuffer> HandMeshBufferPtr;
 
 class OpenXRInput {
 private:
+  struct KeyboardTrackingFB {
+    XrKeyboardTrackingDescriptionFB description;
+    XrSpace space = XR_NULL_HANDLE;
+    XrSpaceLocation location;
+    ~KeyboardTrackingFB() {
+      if (space != XR_NULL_HANDLE)
+        xrDestroySpace(space);
+    }
+  };
+  typedef std::unique_ptr<KeyboardTrackingFB> KeyboardTrackingFBPtr;
+
   OpenXRInput(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
+  void UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace baseSpace);
 
   OpenXRInputMapping* GetActiveInputMapping() const;
 
@@ -32,6 +44,7 @@ private:
   XrSystemProperties mSystemProperties;
   std::vector<OpenXRInputSourcePtr> mInputSources;
   OpenXRActionSetPtr mActionSet;
+  KeyboardTrackingFBPtr keyboardTrackingFB { nullptr };
 
 public:
   static OpenXRInputPtr Create(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
@@ -43,6 +56,7 @@ public:
   bool AreControllersReady() const;
   void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
   HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
+  void SetKeyboardTrackingEnabled(bool enabled);
   ~OpenXRInput();
 };
 

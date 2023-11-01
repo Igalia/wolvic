@@ -2,6 +2,7 @@
 #include "OpenXRHelpers.h"
 #include "OpenXRInputSource.h"
 #include "OpenXRActionSet.h"
+#include "OpenXRExtensions.h"
 #include <vector>
 
 namespace crow {
@@ -80,6 +81,10 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
     input->Update(frameState, baseSpace, head, offsets, renderMode, delegate);
   }
 
+  // Update tracked keyboard
+  if (keyboardTrackingFB != nullptr)
+    UpdateTrackedKeyboard(frameState, baseSpace);
+
   return XR_SUCCESS;
 }
 
@@ -142,7 +147,70 @@ HandMeshBufferPtr OpenXRInput::GetNextHandMeshBuffer(const int32_t aControllerIn
   return mInputSources.at(aControllerIndex)->GetNextHandMeshBuffer();
 }
 
+void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace baseSpace) {
+  CHECK(keyboardTrackingFB != nullptr);
+  CHECK(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB != nullptr);
+  CHECK(OpenXRExtensions::xrCreateKeyboardSpaceFB != nullptr);
+
+  XrKeyboardTrackingQueryFB queryInfo = {
+    .type = XR_TYPE_KEYBOARD_TRACKING_QUERY_FB,
+    .flags = XR_KEYBOARD_TRACKING_QUERY_LOCAL_BIT_FB,
+  };
+  XrKeyboardTrackingDescriptionFB kbdDesc;
+  CHECK_XRCMD(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB(mSession, &queryInfo, &kbdDesc));
+
+  // Check if keyboard disappeared or changed, and clear up state if so
+  if ((kbdDesc.flags & XR_KEYBOARD_TRACKING_EXISTS_BIT_FB) == 0 ||
+       kbdDesc.trackedKeyboardId != keyboardTrackingFB->description.trackedKeyboardId) {
+    if (keyboardTrackingFB->space != XR_NULL_HANDLE) {
+      xrDestroySpace(keyboardTrackingFB->space);
+      keyboardTrackingFB->space = XR_NULL_HANDLE;
+    }
+    bzero(&keyboardTrackingFB->description, sizeof(keyboardTrackingFB->description));
+  }
+
+  // Bail-out if no keyboard exists
+  if ((kbdDesc.flags & XR_KEYBOARD_TRACKING_EXISTS_BIT_FB) == 0)
+    return;
+
+  keyboardTrackingFB->description = kbdDesc;
+
+  // Create the XrSpace to track the keyboard, if not done already
+  if (keyboardTrackingFB->space == XR_NULL_HANDLE) {
+    VRB_LOG("XR_FB_keyboard_tracking: Keyboard detected: %s", kbdDesc.name);
+
+    XrKeyboardSpaceCreateInfoFB createInfo{
+      .type = XR_TYPE_KEYBOARD_SPACE_CREATE_INFO_FB,
+      .trackedKeyboardId = kbdDesc.trackedKeyboardId,
+    };
+    CHECK_XRCMD(OpenXRExtensions::xrCreateKeyboardSpaceFB(mSession, &createInfo,
+                                                          &keyboardTrackingFB->space));
+  }
+
+  // If keyboard is active, query and store the keyboard's pose
+  if (kbdDesc.flags & XR_KEYBOARD_TRACKING_CONNECTED_BIT_FB) {
+    CHECK(keyboardTrackingFB->space != XR_NULL_HANDLE);
+
+    keyboardTrackingFB->location.type = XR_TYPE_SPACE_LOCATION;
+    CHECK_XRCMD(xrLocateSpace(keyboardTrackingFB->space, baseSpace, frameState.predictedDisplayTime,
+                              &keyboardTrackingFB->location));
+  }
+}
+
+void OpenXRInput::SetKeyboardTrackingEnabled(bool enabled) {
+  if (enabled && keyboardTrackingFB == nullptr) {
+    keyboardTrackingFB = std::make_unique<KeyboardTrackingFB>();
+  } else if (!enabled && keyboardTrackingFB != nullptr) {
+    keyboardTrackingFB.reset();
+    keyboardTrackingFB = nullptr;
+  }
+}
+
 OpenXRInput::~OpenXRInput() {
+  if (keyboardTrackingFB != nullptr) {
+    keyboardTrackingFB.reset();
+    keyboardTrackingFB = nullptr;
+  }
 }
 
 } // namespace crow
