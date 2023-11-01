@@ -1530,6 +1530,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.controllersReadyCallback();
     m.controllersReadyCallback = nullptr;
   }
+  m.input->SetKeyboardTrackingEnabled(m.keyboardTrackingSupported);
 
   vrb::RenderContextPtr context = m.context.lock();
 
