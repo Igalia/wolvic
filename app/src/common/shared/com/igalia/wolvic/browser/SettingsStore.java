@@ -89,6 +89,8 @@ public class SettingsStore {
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
     public final static int DISPLAY_DPI_DEFAULT = 96;
+    public final static int DISPLAY_DPI_MIN = 70;
+    public final static int DISPLAY_DPI_MAX = 400;
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
@@ -430,11 +432,15 @@ public class SettingsStore {
     }
 
     public int getDisplayDpi() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_display_dpi), DISPLAY_DPI_DEFAULT);
+        return Math.max(Math.min(mPrefs.getInt(
+                mContext.getString(R.string.settings_key_display_dpi), DISPLAY_DPI_DEFAULT), DISPLAY_DPI_MAX), DISPLAY_DPI_MIN);
     }
 
     public void setDisplayDpi(int aDpi) {
+        // Reject non-valid value
+        if (aDpi > DISPLAY_DPI_MAX || aDpi < DISPLAY_DPI_MIN) {
+            return;
+        }
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_display_dpi), aDpi);
         editor.commit();
