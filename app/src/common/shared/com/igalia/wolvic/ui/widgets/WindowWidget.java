@@ -251,7 +251,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aPlacement.density = getBrowserDensity();
         aPlacement.visible = true;
         aPlacement.cylinder = true;
-        aPlacement.textureScale = 1.0f;
         aPlacement.name = "Window";
         // Check Windows.placeWindow method for remaining placement set-up
     }

@@ -32,9 +32,7 @@ public class WidgetPlacement {
         density = aContext.getResources().getDisplayMetrics().density;
         // Default value
         cylinderMapRadius = Math.abs(WidgetPlacement.floatDimension(aContext, R.dimen.window_world_z));
-        if (DeviceType.isHVRBuild()) {
-            textureScale = 1.0f;
-        }
+        textureScale = SettingsStore.getInstance(aContext).getDisplayDpi() / 100.0f;
     }
 
     public float density;
@@ -60,7 +58,7 @@ public class WidgetPlacement {
     public boolean layer = true;
     public int layerPriority = 0; // Used for depth sorting
     public boolean proxifyLayer = false;
-    public float textureScale = 0.7f;
+    public float textureScale = SettingsStore.DISPLAY_DPI_DEFAULT / 100.0f;
     // Widget will be curved if enabled.
     public boolean cylinder = true;
     public int tintColor = 0xFFFFFFFF;

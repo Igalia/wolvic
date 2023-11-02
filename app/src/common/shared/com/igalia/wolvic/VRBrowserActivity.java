@@ -1094,7 +1094,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 widget = null; // Fallback to mRootWidget in order to allow world clicks to dismiss UI.
             }
 
-            float scale = widget != null ? widget.getPlacement().textureScale : 1.0f;
+            float scale = widget != null ? widget.getPlacement().textureScale : SettingsStore.getInstance(this).getDisplayDpi() / 100.0f;
+            // WindowWidget is an exception to handle coordinates correctly.
+            if (widget instanceof WindowWidget) {
+                scale = 1.0f;
+            }
             final float x = aX / scale;
             final float y = aY / scale;
 
