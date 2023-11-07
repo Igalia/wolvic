@@ -42,13 +42,11 @@
 
     <!-- Environments Options -->
     <string-array name="developer_options_ua_modes" translatable="false">
-        <item>@string/developer_options_ua_mobile</item>
         <item>@string/developer_options_ua_desktop</item>
-        <item>@string/developer_options_ua_vr</item>
+        <item>@string/developer_options_ua_mobile</item>
     </string-array>
 
     <integer-array name="developer_options_ua_mode_values" translatable="false">
-        <item>0</item>
         <item>1</item>
         <item>2</item>
     </integer-array>
