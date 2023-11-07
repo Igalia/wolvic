@@ -2440,6 +2440,9 @@ public interface WSession {
     @AnyThread
     void reload(final @LoadFlags int flags);
 
+    default int getLastLoadFlag() {
+        return WSession.LOAD_FLAGS_NONE;
+    }
 
     /** Stop loading. */
     @AnyThread

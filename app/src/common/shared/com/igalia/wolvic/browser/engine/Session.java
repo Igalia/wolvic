@@ -70,6 +70,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
+    private static UriOverride sCacheOverrides;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
     private transient CopyOnWriteArrayList<WSession.NavigationDelegate> mNavigationListeners;
@@ -201,6 +202,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (sDesktopModeOverrides == null) {
             sDesktopModeOverrides = new UriOverride("desktop mode");
             sDesktopModeOverrides.loadOverridesFromAssets((Activity)mContext, "desktopModeOverrides.json");
+        }
+        if (sCacheOverrides == null) {
+            sCacheOverrides = new UriOverride("cache");
+            sCacheOverrides.loadOverridesFromAssets((Activity)mContext, "cacheOverrides.json");
         }
     }
 
@@ -1046,6 +1051,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         mState.mParentId = parentSession.getId();
     }
 
+    public UriOverride getCacheOverride() {
+        return sCacheOverrides;
+    }
+
     // NavigationDelegate
 
     @Override
@@ -1079,9 +1088,14 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             mState.mWebAppManifest = null;
         }
 
+        int loadFlag = WSession.LOAD_FLAGS_NONE;
+        if (sCacheOverrides.lookupOverride(aUri) != null) {
+            loadFlag = WSession.LOAD_FLAGS_BYPASS_CACHE;
+        }
+
         // The homepage finishes loading after the region has been updated
         if (mState.mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
-            aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
+            aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');", loadFlag);
         } else if ((getUaMode() != WSessionSettings.USER_AGENT_MODE_DESKTOP) && !Objects.equals(mState.mPreviousUri, mState.mUri)) {
             // The URL check above allows users to switch to mobile mode even for overriding sites.
             if (sDesktopModeOverrides.lookupOverride(aUri) != null) {
@@ -1089,8 +1103,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
                 String overrideUri = checkForMobileSite(aUri);
                 if (overrideUri == null)
                     overrideUri = aUri;
-                aSession.loadUri(overrideUri);
+                aSession.loadUri(overrideUri, loadFlag);
             }
+        } else if (loadFlag != WSession.LOAD_FLAGS_NONE && aSession.getLastLoadFlag() != loadFlag) {
+            aSession.reload(loadFlag);
         }
     }
 

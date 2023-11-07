@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 public class SessionImpl implements WSession {
     private @NonNull GeckoSession mSession;
     private WSessionSettings mSettings;
+    private int mLastLoadFlag = WSession.LOAD_FLAGS_NONE;
     private WSession.ContentDelegate mContentDelegate;
     private WSession.SelectionActionDelegate mSelectionActionDelegate;
     private WSession.PermissionDelegate mPermissionDelegate;
@@ -62,6 +63,7 @@ public class SessionImpl implements WSession {
         mSession.load(new GeckoSession.Loader()
                 .uri(uri)
                 .flags(toGeckoFlags(flags)));
+        mLastLoadFlag = flags;
     }
 
     @Override
@@ -73,6 +75,11 @@ public class SessionImpl implements WSession {
     @Override
     public void reload(int flags) {
         mSession.reload(toGeckoFlags(flags));
+        mLastLoadFlag = flags;
+    }
+
+    public int getLastLoadFlag() {
+        return mLastLoadFlag;
     }
 
     @Override
