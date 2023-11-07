@@ -646,6 +646,7 @@ struct DeviceDelegateOpenXR::State {
 
     float suggestedRefreshRate = 0.0;
     switch (deviceType) {
+      case device::MetaQuest3:
       case device::OculusQuest2:
       case device::MetaQuestPro:
       // PicoXR default is 72hz, but has an experimental setting to set it to 90hz. If the setting
