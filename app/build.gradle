@@ -389,7 +389,7 @@ android {
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
-            resValue 'string', 'HOMEPAGE_URL', 'https://wolvic.com/welcome/'
+            resValue 'string', 'HOMEPAGE_URL', 'https://wolvic.com/zh/start/pico.html'
         }
     }
 
