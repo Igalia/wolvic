@@ -8,6 +8,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import org.chromium.blink.mojom.DisplayMode;
 import org.chromium.components.embedder_support.delegate.WebContentsDelegateAndroid;
 import org.chromium.content_public.browser.InvalidateTypes;
+import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.url.GURL;
 
@@ -72,6 +73,14 @@ public class TabWebContentsDelegate extends WebContentsDelegateAndroid {
 
     @Override
     public void onUpdateUrl(GURL url) {
+        GURL newUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        // If mobile Youtube URL is detected, redirect to the desktop version.
+        if (!url.equals(newUrl)) {
+            LoadUrlParams params = new LoadUrlParams(newUrl);
+            mWebContents.getNavigationController().loadUrl(params);
+            return;
+        }
+
         WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate != null) {
             delegate.onLocationChange(mSession, mWebContents.getVisibleUrl().getSpec());
