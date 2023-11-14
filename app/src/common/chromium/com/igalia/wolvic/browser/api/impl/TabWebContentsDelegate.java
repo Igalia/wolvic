@@ -73,9 +73,9 @@ public class TabWebContentsDelegate extends WebContentsDelegateAndroid {
 
     @Override
     public void onUpdateUrl(GURL url) {
-        GURL newUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        String newUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
         // If mobile Youtube URL is detected, redirect to the desktop version.
-        if (!url.equals(newUrl)) {
+        if (!url.getSpec().equals(newUrl)) {
             LoadUrlParams params = new LoadUrlParams(newUrl);
             mWebContents.getNavigationController().loadUrl(params);
             return;

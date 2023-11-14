@@ -1,7 +1,15 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.net.Uri;
+import android.util.Log;
+
+import com.igalia.wolvic.utils.SystemUtils;
+
+import java.net.URI;
+
 import org.chromium.url.GURL;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -9,43 +17,29 @@ import java.util.ArrayList;
  * videos correctly. This helper class implements the method to add this parameter to URL.
  */
 public class YoutubeUrlHelper {
-    public static GURL maybeRewriteYoutubeURL(GURL url) {
+    public static String maybeRewriteYoutubeURL(GURL url) {
         if (!url.domainIs("youtube.com") && !url.domainIs("youtube-nocookie.com")) {
-            return url;
+            return url.getSpec();
         }
 
         if (!url.getPath().equals("/watch")) {
-            return url;
+            return url.getSpec();
         }
-        
-        // Java version of GURL doesn't expose the same ReplaceComponents functionality as the
-        // native version, so we have to use string concatenation here.
-        return new GURL(url.getScheme() + "://" + url.getHost() + url.getPath() + "?" +
-                ensureAppIsSetToDesktop(url.getQuery()));
+
+        return ensureAppIsSetToDesktop(Uri.parse(url.getSpec())).toString();
     }
 
-    private static String ensureAppIsSetToDesktop(String query) {
-        ArrayList<String> result = new ArrayList<>();
-        String[] keyValuePairs = query.split("&");
-        boolean foundAppKey = false;
-        for (String param : keyValuePairs) {
-            String[] keyValue = param.split("=");
-            if (!keyValue[0].equals("app")) {
-                result.add(param);
+    private static Uri ensureAppIsSetToDesktop(Uri uri) {
+        Uri.Builder builder = uri.buildUpon().clearQuery();
+        for (String param : uri.getQueryParameterNames()) {
+            if (param.equals("app")) {
+                // skip existing app parameter, because we'll rewrite it later
                 continue;
             }
-
-            if (foundAppKey) {
-                // Do not add "app=desktop" twice
-                continue;
-            }
-
-            foundAppKey = true;
-            result.add("app=desktop");
+            builder.appendQueryParameter(param, uri.getQueryParameter(param));
         }
-        if (!foundAppKey) {
-            result.add("app=desktop");
-        }
-        return String.join("&", result);
+
+        builder.appendQueryParameter("app", "desktop");
+        return builder.build();
     }
 }
