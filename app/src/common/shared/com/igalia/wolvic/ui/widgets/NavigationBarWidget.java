@@ -15,8 +15,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.net.Uri;
-import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -33,6 +31,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
@@ -266,6 +265,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             getSession().loadUri(getSession().getHomeUri());
+
+            // Revert desktop mode
+            final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
+            if (mHamburgerMenu != null) {
+                mHamburgerMenu.setUAMode(defaultUaMode);
+            }
+            if (mAttachedWindow.getSession() != null) {
+                mAttachedWindow.getSession().setUaMode(defaultUaMode, true);
+            }
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
