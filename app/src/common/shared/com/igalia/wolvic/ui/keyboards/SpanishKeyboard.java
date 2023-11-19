@@ -11,9 +11,9 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class SpanishKeyboard extends BaseKeyboard {
-    private CustomKeyboard mKeyboard;
+public class SpanishKeyboard extends BaseLatinKeyboard {
     private final Locale mSpanishLocale = new Locale("es", "");
+    private CustomKeyboard mKeyboard;
 
     public SpanishKeyboard(Context aContext) {
         super(aContext);
@@ -24,14 +24,9 @@ public class SpanishKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_spanish);
+            loadDatabase("es_wordlist.db");
         }
         return mKeyboard;
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override

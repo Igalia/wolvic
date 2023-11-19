@@ -12,10 +12,10 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class FinnishKeyboard extends BaseKeyboard {
+public class FinnishKeyboard extends BaseLatinKeyboard {
+    private final Locale mLocale;
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
-    private Locale mLocale;
 
     public FinnishKeyboard(Context aContext) {
         super(aContext);
@@ -27,6 +27,7 @@ public class FinnishKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_finnish);
+            loadDatabase("fi_wordlist.db");
         }
         return mKeyboard;
     }
@@ -43,12 +44,6 @@ public class FinnishKeyboard extends BaseKeyboard {
     @Override
     public float getAlphabeticKeyboardWidth() {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_finnish);
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override

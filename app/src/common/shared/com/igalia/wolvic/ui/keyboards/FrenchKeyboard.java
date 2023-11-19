@@ -11,7 +11,7 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class FrenchKeyboard extends BaseKeyboard {
+public class FrenchKeyboard extends BaseLatinKeyboard {
     private CustomKeyboard mKeyboard;
 
     public FrenchKeyboard(Context aContext) {
@@ -23,14 +23,9 @@ public class FrenchKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_french);
+            loadDatabase("fr_wordlist.db");
         }
         return mKeyboard;
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override
