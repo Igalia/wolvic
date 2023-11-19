@@ -85,14 +85,20 @@ public class SettingsStore {
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
-    public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
-    public final static int WINDOW_WIDTH_DEFAULT = 800;
-    public final static int WINDOW_HEIGHT_DEFAULT = 450;
-    public final static int DISPLAY_DPI_DEFAULT = 96;
+
+    // Default DPI: the resolution of the texture is twice the world size of the window.
+    public final static int DISPLAY_DPI_DEFAULT = 192;
     public final static int DISPLAY_DPI_MIN = 70;
     public final static int DISPLAY_DPI_MAX = 400;
+    // Default density: this value gives a logical width of 1024 CSS pixels for the default window.
+    public final static float DISPLAY_DENSITY_DEFAULT = 1.5f;
+    // World size: multiply by density to get the available resolution for the Web engine.
+    public final static int WINDOW_WIDTH_DEFAULT = 800;
+    public final static int WINDOW_HEIGHT_DEFAULT = 450;
+    // The maximum size is computed so the resulting texture fits within 2560x2560.
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 675;
+
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
