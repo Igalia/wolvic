@@ -12,10 +12,10 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class PolishKeyboard extends BaseKeyboard {
+public class PolishKeyboard extends BaseLatinKeyboard {
+    private final Locale mLocale;
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
-    private Locale mLocale;
 
     public PolishKeyboard(Context aContext) {
         super(aContext);
@@ -27,6 +27,7 @@ public class PolishKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_polish);
+            loadDatabase("pl_wordlist.db");
         }
         return mKeyboard;
     }
@@ -43,12 +44,6 @@ public class PolishKeyboard extends BaseKeyboard {
     @Override
     public float getAlphabeticKeyboardWidth() {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width);
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override

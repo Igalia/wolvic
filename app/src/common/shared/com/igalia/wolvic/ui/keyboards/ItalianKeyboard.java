@@ -11,7 +11,7 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class ItalianKeyboard extends BaseKeyboard {
+public class ItalianKeyboard extends BaseLatinKeyboard {
     private CustomKeyboard mKeyboard;
 
     public ItalianKeyboard(Context aContext) {
@@ -23,14 +23,9 @@ public class ItalianKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_italian);
+            loadDatabase("it_wordlist.db");
         }
         return mKeyboard;
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override

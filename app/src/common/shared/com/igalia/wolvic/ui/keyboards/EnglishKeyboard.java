@@ -3,7 +3,6 @@ package com.igalia.wolvic.ui.keyboards;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.input.CustomKeyboard;
@@ -11,7 +10,7 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class EnglishKeyboard extends BaseKeyboard {
+public class EnglishKeyboard extends BaseLatinKeyboard {
     private CustomKeyboard mKeyboard;
 
     public EnglishKeyboard(Context aContext) {
@@ -23,14 +22,9 @@ public class EnglishKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty);
+            loadDatabase("en_wordlist.db");
         }
         return mKeyboard;
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override
@@ -42,6 +36,7 @@ public class EnglishKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.ENGLISH;
     }
+
     @Override
     public String getSpaceKeyText(String aComposingText) {
 

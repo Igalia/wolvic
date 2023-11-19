@@ -12,10 +12,10 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class RussianKeyboard extends BaseKeyboard {
+public class RussianKeyboard extends BaseLatinKeyboard {
+    private final Locale mLocale;
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
-    private Locale mLocale;
 
     public RussianKeyboard(Context aContext) {
         super(aContext);
@@ -27,6 +27,7 @@ public class RussianKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_russian);
+            loadDatabase("ru_wordlist.db");
         }
         return mKeyboard;
     }
@@ -43,12 +44,6 @@ public class RussianKeyboard extends BaseKeyboard {
     @Override
     public float getAlphabeticKeyboardWidth() {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_extra_column);
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override

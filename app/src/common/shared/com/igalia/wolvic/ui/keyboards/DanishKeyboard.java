@@ -12,10 +12,10 @@ import com.igalia.wolvic.utils.StringUtils;
 
 import java.util.Locale;
 
-public class DanishKeyboard extends BaseKeyboard {
+public class DanishKeyboard extends BaseLatinKeyboard {
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
-    private Locale mLocale;
+    private final Locale mLocale;
 
     public DanishKeyboard(Context aContext) {
         super(aContext);
@@ -27,6 +27,7 @@ public class DanishKeyboard extends BaseKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_danish);
+            loadDatabase("da_wordlist.db");
         }
         return mKeyboard;
     }
@@ -43,12 +44,6 @@ public class DanishKeyboard extends BaseKeyboard {
     @Override
     public float getAlphabeticKeyboardWidth() {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_danish);
-    }
-
-    @Nullable
-    @Override
-    public CandidatesResult getCandidates(String aText) {
-        return null;
     }
 
     @Override
