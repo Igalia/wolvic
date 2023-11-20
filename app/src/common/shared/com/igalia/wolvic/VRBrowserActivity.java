@@ -1096,9 +1096,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
 
             float scale = widget != null ? widget.getPlacement().textureScale : SettingsStore.getInstance(this).getDisplayDpi() / 100.0f;
-            // WindowWidget is an exception to handle coordinates correctly.
+            // We shouldn't divide the scale factor when we pass the motion event to gecko
             if (widget instanceof WindowWidget) {
-                scale = 1.0f;
+                WindowWidget windowWidget = (WindowWidget) widget;
+                if (!windowWidget.isLibraryVisible()) {
+                    scale = 1.0f;
+                }
             }
             final float x = aX / scale;
             final float y = aY / scale;
