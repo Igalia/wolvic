@@ -465,6 +465,9 @@ public interface WSession {
             return null;
         }
 
+        public interface OnNewSessionCallback {
+            void onNewSession(WSession session);
+        }
         /**
          * A request has been made to open a new session. The URI is provided only for informational
          * purposes. Do not call ISession.load here. Additionally, the returned ISession must be
@@ -472,6 +475,8 @@ public interface WSession {
          *
          * @param session The ISession that initiated the callback.
          * @param uri The URI to be loaded.
+         * @param callback A callback with extra work that will be performed after creating the
+         *                 session but before notifying the observers/clients.
          * @return A {@link WResult} which holds the returned ISession. May be null, in which
          *     case the request for a new window by web content will fail. e.g., <code>window.open()
          *     </code> will return null. The implementation of onNewSession is responsible for
@@ -481,7 +486,7 @@ public interface WSession {
         @UiThread
         default @Nullable
         WResult<WSession> onNewSession(
-                @NonNull final WSession session, @NonNull final String uri) {
+                @NonNull final WSession session, @NonNull final String uri, OnNewSessionCallback callback) {
             return null;
         }
 
