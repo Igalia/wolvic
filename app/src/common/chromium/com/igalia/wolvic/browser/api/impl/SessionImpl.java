@@ -422,4 +422,15 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     public ViewGroup getContentView() {
         return mTab != null ? mTab.getContentView() : null;
     }
+
+    // The onReadyCallback() mechanism is really limited because it heavily depends on renderers
+    // being created by the client (Wolvic). There are cases in which the renderer is created by the
+    // web engine (like target=_blank navigations) so we need to explicitly call onReady ourselves.
+    public void invokeOnReady(RuntimeImpl runtime, String uri) {
+        assert !isOpen();
+        mRuntime = runtime;
+        mInitialUri = uri;
+        mReadyCallback.onReady();
+    }
+
 }
