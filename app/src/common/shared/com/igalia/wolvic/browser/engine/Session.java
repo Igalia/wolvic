@@ -1198,13 +1198,18 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     @Override
-    public WResult<WSession> onNewSession(@NonNull WSession aSession, @NonNull String aUri) {
+    public WResult<WSession> onNewSession(@NonNull WSession aSession, @NonNull String aUri, OnNewSessionCallback callback) {
         mKeepAlive = System.currentTimeMillis() + KEEP_ALIVE_DURATION_MS;
         Log.d(LOGTAG, "onNewSession: " + aUri);
 
         Session session = SessionStore.get().createSession(mState.mSettings, SESSION_DO_NOT_OPEN);
         session.mState.mParentId = mState.mId;
         session.mKeepAlive = mKeepAlive;
+
+        if (callback != null) {
+            callback.onNewSession((WSession) session.mState.mSession);
+        }
+
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onStackSession(session);
         }
