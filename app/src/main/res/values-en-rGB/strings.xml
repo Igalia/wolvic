@@ -1916,6 +1916,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
 
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it toogles Head Lock from enabled to disabled and vice versa -->
+    <string name="hamburger_menu_toggle_head_lock">Head Lock</string>
+
     <!-- This string is displayed in the title of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_title">Send Tab to Device</string>
 

@@ -50,7 +50,9 @@ public class HamburgerMenuWidget extends UIWidget implements
         void onAddons();
         void onSaveWebApp();
         void onPassthrough();
+        void onHeadLock();
         boolean isPassthroughEnabled();
+        boolean isHeadLockEnabled();
     }
 
     public static final int SWITCH_ITEM_ID = 0;
@@ -310,6 +312,20 @@ public class HamburgerMenuWidget extends UIWidget implements
                     })
                     .withTitle(getContext().getString(R.string.hamburger_menu_toggle_passthrough))
                     .withIcon(mDelegate != null && mDelegate.isPassthroughEnabled() ? R.drawable.baseline_visibility_24 : R.drawable.baseline_visibility_off_24)
+                    .build());
+        }
+
+        if (mWidgetManager != null) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onHeadLock();
+                        }
+                        return null;
+                    })
+                    .withTitle(getContext().getString(R.string.hamburger_menu_toggle_head_lock))
+                    .withIcon(mDelegate != null && mDelegate.isHeadLockEnabled() ? R.drawable.ic_icon_lock : R.drawable.ic_icon_unlock)
                     .build());
         }
 

@@ -2032,6 +2032,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it toogles Head Lock from enabled to disabled and vice versa -->
+    <string name="hamburger_menu_toggle_head_lock">Head Lock</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it saves the Web App provided by the current page -->
     <string name="hamburger_menu_save_web_app">Save Web app…</string>
 

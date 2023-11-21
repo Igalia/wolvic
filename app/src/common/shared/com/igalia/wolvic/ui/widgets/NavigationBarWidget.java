@@ -1337,8 +1337,20 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
 
             @Override
+            public void onHeadLock() {
+                mWidgetManager.toggleHeadLock();
+
+                hideMenu();
+            }
+
+            @Override
             public boolean isPassthroughEnabled() {
                 return mWidgetManager.isPassthroughEnabled();
+            }
+
+            @Override
+            public boolean isHeadLockEnabled() {
+                return mWidgetManager.isHeadLockEnabled();
             }
 
             @Override

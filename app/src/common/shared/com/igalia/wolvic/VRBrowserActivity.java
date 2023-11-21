@@ -230,6 +230,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
     private boolean mIsPassthroughEnabled = false;
+    private boolean mIsHeadLockEnabled = false;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1920,6 +1921,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void toggleHeadLock() {
+        mIsHeadLockEnabled = !mIsHeadLockEnabled;
+        queueRunnable(() -> toggleHeadLockNative());
+    }
+
+    @Override
+    public boolean isHeadLockEnabled() {
+        return mIsHeadLockEnabled;
+    }
+
+    @Override
     public void recenterUIYaw(@YawTarget int aTarget) {
         queueRunnable(() -> recenterUIYawNative(aTarget));
     }
@@ -2054,6 +2066,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
     private native void togglePassthroughNative();
+    private native void toggleHeadLockNative();
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);

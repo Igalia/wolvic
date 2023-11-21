@@ -2013,6 +2013,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="security_options_permission_fine_location_warning">Wolvic 只可以获取您的大致位置。 您可在系统设置菜单更改设置。</string>
     <string name="upload_list_empty">无可上载文档</string>
     <string name="hamburger_menu_toggle_passthrough">通过</string>
+    <string name="hamburger_menu_toggle_head_lock">头部锁定</string>
     <string name="deprecated_version_dialog_body">您当前在运行一Wolvic \"试验应用\" 开发版本。它将在2023年10月底停止使用。
 \n
 \n请安装 Meta Quest 商店的Wolvic最新版本。

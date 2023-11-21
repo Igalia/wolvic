@@ -88,6 +88,8 @@ public interface WidgetManagerDelegate {
     void togglePassthrough();
     boolean isPassthroughEnabled();
     boolean isPassthroughSupported();
+    void toggleHeadLock();
+    boolean isHeadLockEnabled();
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     void setCylinderDensityForce(float aDensity);
