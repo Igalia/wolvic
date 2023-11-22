@@ -181,7 +181,9 @@ public class WidgetPlacement {
     }
 
     public static float worldToWindowRatio(Context aContext){
-        return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT)/ WORLD_DPI_RATIO;
+        SettingsStore settingStore = SettingsStore.getInstance(aContext);
+        return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT /
+                (settingStore.getDisplayDpi() / 100.0f) / settingStore.getDisplayDensity()) / WORLD_DPI_RATIO;
     }
 
     public static float worldToDpRatio(Context aContext){

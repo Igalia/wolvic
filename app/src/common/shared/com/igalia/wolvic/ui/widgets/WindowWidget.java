@@ -2102,7 +2102,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             float ratio = WidgetPlacement.worldToWindowRatio(getContext());
             selectionRect = new RectF(
                     clientRect.left * ratio,
-                    clientRect.top* ratio,
+                    clientRect.top * ratio,
                     clientRect.right * ratio,
                     clientRect.bottom * ratio
             );
