@@ -1662,11 +1662,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_info_button">Läs mer…</string>
     <string name="deprecated_version_dialog_store_button">Installera…</string>
     <string name="settings_language_portuguese">Portugisiska</string>
-    <string name="deprecated_version_dialog_body">Du kör för närvarande en \"App Lab\"-utvecklingsversion av Wolvic.
+    <string name="deprecated_version_dialog_body">Denna \"App Lab\"-version av Wolvic kommer snart att tas bort.
 \n
-\nInstallera den senaste versionen av Wolvic från Oculus Store.
+\nInstallera den senaste versionen av Wolvic från Meta Store.
 \n
-\nVIKTIGT: om du inte använder Mozilla Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
+\nVIKTIGT: om du inte använder Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
     <string name="external_open_uri_error_security_exception_body">SecurityException vid start av intent för %1$s</string>
     <string name="user_feedback_tooltip">Dela idéer och feedback</string>
     <string name="hamburger_menu_toggle_passthrough">Passera genom</string>
@@ -1790,4 +1790,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="keyboardview_keycode_enter">Enter</string>
     <string name="keyboardview_keycode_cancel">Avbryt</string>
     <string name="keyboardview_keycode_done">Klart</string>
+    <string name="developer_options_clear_user_data_description">All användardata</string>
+    <string name="clear_user_data_dialog_title">Rensa %1$s användardata</string>
+    <string name="clear_user_data_dialog_text">%1$s kommer att återställas. All data, inklusive sparade inloggningar, historik och bokmärken, kommer att raderas permanent om de inte har synkroniserats. %1$s stängs automatiskt efter att återställningen är klar. Vill du fortsätta\?</string>
+    <string name="tray_wifi_unavailable_ssid">SSID otillgängligt</string>
+    <string name="security_options_use_system_root_ca">Använd systembetrodda rotcertifikat</string>
+    <string name="video_mode_3d_top_bottom">3D Översta Nedersta</string>
+    <string name="display_options_start_with_passthrough">Starta med passera genom läge</string>
+    <string name="voice_input_start">Vad skulle du vilja mata in?</string>
 </resources>
