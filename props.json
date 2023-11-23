@@ -1,4 +1,39 @@
 {
+  "1.5.2": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.5.2",
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      },
+      {
+        "value": "autumnforest",
+        "title": "Autumn Forest by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.zip"
+      },
+      {
+        "value": "basicsky",
+        "title": "Basic Sky by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.zip"
+      },
+      {
+        "value": "bcnrooftop",
+        "title": "Barcelona Rooftops by MozillaHubs (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.zip"
+      },
+      {
+        "value": "nightforest",
+        "title": "Night Forest With Aurora Sky by Architecture_Interior (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.zip"
+      }
+    ]
+  },
   "1.5.1": {
     "whatsNewUrl": "https://wolvic.com/blog/release_1.5.1",
     "environments": [
