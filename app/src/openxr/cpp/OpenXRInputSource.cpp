@@ -535,6 +535,18 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
         mHasHandJoints = true;
 #endif
 
+    // Even if the SDK reports the hand tracking as active we still need to check the validity
+    // of the joint positions to determine if we should render the hands or not. Some SDKs return
+    // isActive as TRUE even if the joints are not valid.
+    auto hasAtLeastOneValidJoint = [](const XrHandJointLocationsEXT& jointLocations) {
+        for (int i = 0; i < XR_HAND_JOINT_COUNT_EXT; ++i) {
+            if (jointLocations.jointLocations[i].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT)
+                return true;
+        }
+        return false;
+    };
+    mHasHandJoints = mHasHandJoints && hasAtLeastOneValidJoint(jointLocations);
+
     // Rest of the method deal with XR_MSFT_hand_tracking_mesh extension
 
     if (!OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME) || !mHasHandJoints)
