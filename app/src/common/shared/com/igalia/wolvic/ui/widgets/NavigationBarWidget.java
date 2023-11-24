@@ -710,6 +710,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         hideMenu();
         hideAllNotifications();
 
+        mBinding.navigationBarFullscreen.brightnessButton.setVisibility(mWidgetManager.isPassthroughEnabled() ? GONE : VISIBLE);
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
 
         mWidgetManager.setControllersVisible(false);
