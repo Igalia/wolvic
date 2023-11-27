@@ -920,13 +920,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
             }
 
-//            if (extras.containsKey("hide_webxr_interstitial")) {
-//                mHideWebXRIntersitial = extras.getBoolean("hide_webxr_interstitial", false);
-//                if (mHideWebXRIntersitial) {
-//                    mWebXRInterstitial.onDismissWebXRInterstitial();
-//                    setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
-//                }
-//            }
+            if (extras.containsKey("hide_webxr_interstitial")) {
+                mHideWebXRIntersitial = extras.getBoolean("hide_webxr_interstitial", false);
+                if (mHideWebXRIntersitial) {
+                    mWebXRInterstitial.onDismissWebXRInterstitial();
+                    setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
+                }
+            }
 
             if (extras.containsKey("hide_whats_new") || mHideVisuals) {
                 boolean hideWhatsNew = extras.getBoolean("hide_whats_new", false) || mHideVisuals;
@@ -936,11 +936,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
 
             openInKioskMode = extras.getBoolean("kiosk", false);
-            mHideWebXRIntersitial = openInKioskMode;
-            if (mHideWebXRIntersitial) {
-                mWebXRInterstitial.onDismissWebXRInterstitial();
-                setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
-            }
 
             mBlockLaunchDialogs = extras.getBoolean("HIDE_TOS_AND_PRIVACY_DIALOG", false);
 
