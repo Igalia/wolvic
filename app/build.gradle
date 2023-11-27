@@ -300,6 +300,16 @@ android {
             }
         }
 
+        visionglass {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DVISIONGLASS"
+                    arguments "-DVISIONGLASS=ON"
+                }
+            }
+        }
+
         // Supported ABIs
         arm64 {
             dimension "abi"
@@ -516,6 +526,12 @@ android {
             ]
         }
 
+        visionglass {
+            java.srcDirs = [
+                    'src/visionglass/java'
+            ]
+        }
+
         gecko {
             java.srcDirs = [
                     'src/common/gecko'
@@ -685,6 +701,9 @@ dependencies {
 
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
+
+    // Vission Glass
+    visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/aliceimu/", include: ['*.aar'])
 
     // HTC Vive
     if (!gradle.startParameter.taskNames.isEmpty() &&
