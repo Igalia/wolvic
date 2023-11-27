@@ -263,6 +263,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Set<String> mPoorPerformanceAllowList;
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
+    private boolean mBlockLaunchDialogs = false;
+    private boolean mBlockDeprecatedVersionDialog = false;
     private FragmentController mFragmentController;
     private LinkedHashMap<Integer, WidgetPlacement> mPendingNativeWidgetUpdates = new LinkedHashMap<>();
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
@@ -380,6 +382,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         initializeWidgets();
 
+        loadFromIntent(getIntent());
         //Give everything a bit to finish initializing, otherwise websites dont always recognize the device as webxr capable
         new Timer().schedule(new TimerTask() {
             @Override
@@ -387,7 +390,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        loadFromIntent(getIntent());
                         if(mAutoEnterWebxr) {
                             showLoadingWebXRDialog();
                         }
@@ -408,14 +410,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         checkForCrash();
 
         //Show the launch dialogs, if needed.
-//        if (!showTermsServiceDialogIfNeeded()) {
-//            if (!showPrivacyDialogIfNeeded()) {
-//                showWhatsNewDialogIfNeeded();
-//            }
-//        }
+        if(!mBlockLaunchDialogs) {
+            if (!showTermsServiceDialogIfNeeded()) {
+                if (!showPrivacyDialogIfNeeded()) {
+                    showWhatsNewDialogIfNeeded();
+                }
+            }
+        }
 
-        // Show the deprecated version dialog, if needed.
-//        showDeprecatedVersionDialogIfNeeded();
+        if(!mBlockDeprecatedVersionDialog) {
+            // Show the deprecated version dialog, if needed.
+            showDeprecatedVersionDialogIfNeeded();
+        }
 
         getLifecycleRegistry().setCurrentState(Lifecycle.State.CREATED);
     }
@@ -935,6 +941,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mWebXRInterstitial.onDismissWebXRInterstitial();
                 setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
             }
+
+            mBlockLaunchDialogs = extras.getBoolean("HIDE_TOS_AND_PRIVACY_DIALOG", false);
+
+            mBlockDeprecatedVersionDialog = extras.getBoolean("HIDE_UPDATE_DIALOG", false);
 
             if(extras.containsKey("AUTO_ENTER_WEBXR"))
             {
