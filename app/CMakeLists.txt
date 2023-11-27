@@ -64,6 +64,13 @@ target_sources(
     ${CMAKE_SOURCE_DIR}/src/noapi/cpp/native-lib.cpp
     ${CMAKE_SOURCE_DIR}/src/noapi/cpp/DeviceDelegateNoAPI.cpp
     )
+elseif(VISIONGLASS)
+target_sources(
+        native-lib
+        PUBLIC
+        ${CMAKE_SOURCE_DIR}/src/visionglass/cpp/native-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/visionglass/cpp/DeviceDelegateVisionGlass.cpp
+)
 elseif(HVR)
     target_sources(
             native-lib

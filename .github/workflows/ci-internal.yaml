@@ -38,5 +38,6 @@ jobs:
           assembleLynxArm64GeckoGeneric,
           assembleSpacesArm64GeckoGeneric,
           assembleAospX64GeckoGeneric,
+          assembleVisionGlassArm64GeckoGeneric,
         ]
     secrets: inherit
