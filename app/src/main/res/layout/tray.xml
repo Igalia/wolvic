@@ -75,6 +75,24 @@
                     android:scaleType="fitCenter"
                     app:visibleGone="@{traymodel.wifiConnected}"/>
             </FrameLayout>
+
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/moveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_icon_move"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:padding="0dp"
+                android:tint="@color/concrete"
+                android:tooltipText="@string/move_tooltip"
+                android:layout_toEndOf="@id/wifi"
+                android:layout_toStartOf="@id/left_controller"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
+
             <LinearLayout
                 android:id="@+id/left_controller"
                 android:layout_width="wrap_content"

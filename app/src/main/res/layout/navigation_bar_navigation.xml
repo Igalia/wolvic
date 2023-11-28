@@ -135,6 +135,7 @@
                 android:background="@drawable/downloads_badge"/>
         </RelativeLayout>
 
+        <!-- remove -->
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/moveButton"
             style="?attr/navigationBarButtonStyle"

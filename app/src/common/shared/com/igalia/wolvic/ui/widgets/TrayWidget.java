@@ -7,6 +7,7 @@ package com.igalia.wolvic.ui.widgets;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -152,6 +153,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void updateUI() {
         removeAllViews();
 
@@ -245,6 +247,25 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             }
 
             return false;
+        });
+
+        mBinding.moveButton.setOnTouchListener((view, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_POINTER_DOWN:
+                case MotionEvent.ACTION_DOWN:
+                    view.setPressed(true);
+                    mWidgetManager.startWidgetMove(mWidgetManager.getWindows().getFrontWindow(), WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_SNAP);
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    view.setPressed(false);
+                    mWidgetManager.finishWidgetMove();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
         });
 
         mBinding.leftController.setOnHoverListener((view, motionEvent) -> {

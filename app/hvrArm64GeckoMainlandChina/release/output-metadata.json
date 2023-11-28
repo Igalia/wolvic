@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.cn.igalia.wolvic",
+  "variantName": "hvrArm64GeckoMainlandChinaRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 224,
+      "versionName": "1.5.1-hvr",
+      "outputFile": "Wolvic-hvr-arm64-gecko-mainlandChina-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

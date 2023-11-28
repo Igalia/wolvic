@@ -326,7 +326,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
-        mBinding.navigationBarNavigation.moveButton.setOnTouchListener(new MoveTouchListener());
+        mBinding.navigationBarNavigation.moveButton.setOnTouchListener(new MoveTouchListener()); // remove
         mBinding.navigationBarFullscreen.fullScreenMoveButton.setOnTouchListener(new MoveTouchListener());
 
         mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {
