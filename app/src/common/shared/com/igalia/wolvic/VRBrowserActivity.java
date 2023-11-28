@@ -445,6 +445,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public static boolean mHideVisuals = false;
     public static boolean mAutoEnterWebxr = false;
     public static boolean mAllowExitWebxr = false;
+    public static boolean mHideFirstTimeControllerDialog = false;
 
     protected void initializeWidgets() {
         UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
@@ -984,6 +985,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
 
             mAllowExitWebxr = !extras.containsKey("BLOCK_EXIT_WEBXR");
+            mHideFirstTimeControllerDialog = extras.containsKey("HIDE_FIRSTXR_CONTROLLERS");
         }
 
         // If there is a target URI we open it

@@ -163,7 +163,9 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         }
         if (firstEnterXR) {
             firstEnterXR = false;
-            //showControllers();
+            if(!VRBrowserActivity.mHideFirstTimeControllerDialog) {
+                showControllers();
+            }
             // Add some delay to duplicated input detection conflicts with the EnterVR button.
             postDelayed(() -> {
                 if (mWidgetManager != null && !mWidgetManager.isWebXRIntersitialHidden()) {
