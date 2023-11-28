@@ -32,6 +32,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private MutableLiveData<String> propsVersionName;
     private MutableLiveData<Map<String, RemoteProperties>> props;
     private MutableLiveData<ObservableBoolean> isWhatsNewVisible;
+    private MutableLiveData<ObservableBoolean> isWindowMovementEnabled;
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
@@ -43,6 +44,7 @@ public class SettingsViewModel extends AndroidViewModel {
         propsVersionName = new MutableLiveData<>();
         props = new MutableLiveData<>(Collections.emptyMap());
         isWhatsNewVisible = new MutableLiveData<>(new ObservableBoolean(false));
+        isWindowMovementEnabled = new MutableLiveData<>(new ObservableBoolean(false));
 
         propsVersionName.observeForever(props -> isWhatsNewVisible());
         props.observeForever(versionName -> isWhatsNewVisible());
@@ -64,6 +66,9 @@ public class SettingsViewModel extends AndroidViewModel {
 
         String appVersionName = SettingsStore.getInstance(getApplication().getBaseContext()).getRemotePropsVersionName();
         propsVersionName.postValue(appVersionName);
+
+        boolean windowMovementVisible = SettingsStore.getInstance(getApplication().getBaseContext()).isWindowMovementEnabled();
+        isWindowMovementEnabled.postValue(new ObservableBoolean(windowMovementVisible));
     }
 
     private void isWhatsNewVisible() {
@@ -103,6 +108,14 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public MutableLiveData<ObservableBoolean> getIsWebXREnabled() {
         return isWebXREnabled;
+    }
+
+    public void setWindowMovementEnabled(boolean isEnabled) {
+        this.isWindowMovementEnabled.setValue(new ObservableBoolean(isEnabled));
+    }
+
+    public MutableLiveData<ObservableBoolean> isWindowMovementEnabled() {
+        return isWindowMovementEnabled;
     }
 
     public void setPropsVersionName(String appVersionName) {

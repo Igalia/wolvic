@@ -4,12 +4,12 @@ import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1057,20 +1057,29 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (!Objects.equals(key, mContext.getString(R.string.settings_key_window_distance)))
-                return;
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (Objects.equals(key, mContext.getString(R.string.settings_key_window_distance))) {
+                        WindowWidget frontWindow = getFrontWindow();
+                        if (frontWindow != null) {
+                            frontWindow.getPlacement().translationZ = WidgetPlacement.getWindowWorldZMeters(mContext);
+                            mWidgetManager.updateWidgetsPlacementTranslationZ();
+                            updateViews();
+                        }
+                    } else if (Objects.equals(key, mContext.getString(R.string.settings_key_window_movement))) {
+                        WindowWidget frontWindow = getFrontWindow();
+                        boolean isWindowMovementEnabled = sharedPreferences.getBoolean(key, SettingsStore.WINDOW_MOVEMENT_DEFAULT);
 
-            WindowWidget frontWindow = getFrontWindow();
-            if (frontWindow != null) {
-                frontWindow.getPlacement().translationZ = WidgetPlacement.getWindowWorldZMeters(mContext);
-                mWidgetManager.updateWidgetsPlacementTranslationZ();
-                updateViews();
-            }
-        }
-    };
+                        // Reset the position of the windows when the setting becomes disabled.
+                        if (frontWindow != null && !isWindowMovementEnabled) {
+                            placeWindow(frontWindow, WindowPlacement.FRONT);
+                        }
+                        updateViews();
+                    }
+                }
+            };
 
     private AccountObserver mAccountObserver = new AccountObserver() {
         @Override
