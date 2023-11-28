@@ -983,7 +983,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }, enterxrWaitTime);
             }
 
-            mAllowExitWebxr = !extras.containsKey("ALLOW_EXIT_WEBXR");
+            mAllowExitWebxr = !extras.containsKey("BLOCK_EXIT_WEBXR");
         }
 
         // If there is a target URI we open it
