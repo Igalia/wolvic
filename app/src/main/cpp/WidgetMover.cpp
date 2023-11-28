@@ -16,8 +16,9 @@ namespace crow {
 
 // Should match the values defined in WidgetManagerDelegate.WidgetMoveBehaviourFlags
 enum class WidgetMoveBehaviour {
-  GENERAL = 0,
-  KEYBOARD = 1
+    GENERAL = 0,
+    KEYBOARD = 1,
+    SNAP = 2
 };
 
 struct WidgetMover::State {
@@ -162,9 +163,14 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
     const float minX = -maxX;
     const float maxY = 3.0f;
     const float minY = -maxY;
+    // Snap behaviour
+    float snapThreshold = 0.2f;
+
     vrb::Vector translation = m.initialPlacement->translation;
-    float x = translation.x() * WidgetPlacement::kWorldDPIRatio + delta.x();
-    float y = translation.y() * WidgetPlacement::kWorldDPIRatio + delta.y();
+    float initialX = translation.x() * WidgetPlacement::kWorldDPIRatio;
+    float initialY = translation.y() * WidgetPlacement::kWorldDPIRatio;
+    float x = initialX + delta.x();
+    float y = initialY + delta.y();
 
     float w, h;
     m.widget->GetWorldSize(w, h);
@@ -173,6 +179,13 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
 
     x = fmax(fmin(x, maxX + dx), minX - dx);
     y = fmax(fmin(y, maxY + dy), minY - dy);
+
+    if (m.moveBehaviour == WidgetMoveBehaviour::SNAP) {
+      if (x > initialX - snapThreshold && x < initialX + snapThreshold)
+        x = initialX;
+      if (y > initialY - snapThreshold && y < initialY + snapThreshold)
+        y = initialY;
+    }
 
     m.movePlacement->translation.x() = x / WidgetPlacement::kWorldDPIRatio;
     m.movePlacement->translation.y() = y / WidgetPlacement::kWorldDPIRatio;
