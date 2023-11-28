@@ -119,14 +119,25 @@ import java.util.function.Consumer;
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static String STARTIMMERSIVE_ACTION = "com.wolvic.SVR_START_IMMERSIVE";
+    public static final String STARTIMMERSIVE_ACTION = "com.wolvic.START_IMMERSIVE";
+    public static final String ENTERXR_X_INTENT_KEY = "ENTERXR_X";
+    public static final String ENTERXR_Y_INTENT_KEY = "ENTERXR_Y";
 
     public BroadcastReceiver startImmersiveReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             Timer tryStartImmersiveTimer = new Timer();
+            float x = null;
+            float y = null;
 
+            if(intent.getExtras() != null && intent.hasExtra(ENTERXR_X_INTENT_KEY) && intent.hasExtra(ENTERXR_Y_INTENT_KEY)) {
+                x = intent.getFloatExtra(ENTERXR_X_INTENT_KEY);
+                y = intent.getFloatExtra(ENTERXR_Y_INTENT_KEY);
+            }
+
+            final finalX = x;
+            final finalY = y;
             Runnable findWebXrButton = new Runnable() {
                 @Override
                 public void run() {
@@ -144,7 +155,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                             {
                                 return;
                             }
-                            findTheWebXrButtonAtAllCosts(r);
+                            if(finalX != null && finalY != null) {
+                                simulateBrowserWindowTouchEvent(finalX, finalY);
+                            } else {
+                                findTheWebXrButtonAtAllCosts(r);
+                            }
                         }
                     }, 1000L);
                 }
@@ -821,14 +836,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
     Timer enterWebXRTimer = new Timer();
 
-    void tryEnterWebXRLooped()
+    void tryEnterWebXRLooped(@Nullable float enterxrX, @Nullable float enterxrY)
     {
         if(mIsPresentingImmersive)
         {
             return;
         }
 
-        sendBroadcast(new Intent(STARTIMMERSIVE_ACTION));
+        Intent enterWebXRAction = new Intent(STARTIMMERSIVE_ACTION);
+        if(enterxrX != null) enterWebXRAction.putExtra(ENTERXR_X_INTENT_KEY, enterxrX);
+        if(enterxrY != null) enterWebXRAction.putExtra(ENTERXR_Y_INTENT_KEY, enterxrY);
+        sendBroadcast(enterWebXRAction);
     }
 
     void loadFromIntent(final Intent intent) {
@@ -941,6 +959,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
             mBlockDeprecatedVersionDialog = extras.getBoolean("HIDE_UPDATE_DIALOG", false);
 
+            float enterxrX = extras.containsKey(ENTERXR_X_INTENT_KEY) ? extras.getFloat(ENTERXR_X_INTENT_KEY) : null;
+            float enterxrY = extras.containsKey(ENTERXR_Y_INTENT_KEY) ? extras.getFloat(ENTERXR_Y_INTENT_KEY) : null;
+
             if(extras.containsKey("AUTO_ENTER_WEBXR"))
             {
                 mAutoEnterWebxr = true;
@@ -950,7 +971,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                tryEnterWebXRLooped();
+                                tryEnterWebXRLooped(enterxrX, enterxrY);
                             }
                         });
                     }
