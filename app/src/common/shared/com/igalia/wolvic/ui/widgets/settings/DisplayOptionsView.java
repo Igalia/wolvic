@@ -85,6 +85,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
         setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
 
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
+        setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled());
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -162,9 +165,12 @@ class DisplayOptionsView extends SettingsView {
         setSoundEffect(enabled, true);
     };
 
-
     private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
         setHeadLock(value);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mWindowMovementListener = (compoundButton, enabled, apply) -> {
+        setWindowMovement(enabled);
     };
 
     private OnClickListener mHomepageListener = (view) -> {
@@ -230,6 +236,7 @@ class DisplayOptionsView extends SettingsView {
         setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
+        setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -298,6 +305,14 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setAudioEnabled(value);
             AudioEngine.fromContext(getContext()).setEnabled(value);
         }
+    }
+
+    private void setWindowMovement(boolean value) {
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(null);
+        mBinding.windowMovementSwitch.setValue(value, false);
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
+
+        SettingsStore.getInstance(getContext()).setWindowMovementEnabled(value);
     }
 
     private void setHomepage(String newHomepage) {
