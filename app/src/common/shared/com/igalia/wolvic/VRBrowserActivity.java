@@ -399,7 +399,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         initializeWidgets();
 
         loadFromIntent(getIntent());
-        //Give everything a bit to finish initializing, otherwise websites dont always recognize the device as webxr capable
+        // show a popup we are entering webxr so the user knows something is happening
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
