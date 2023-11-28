@@ -122,6 +122,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public static final String STARTIMMERSIVE_ACTION = "com.wolvic.START_IMMERSIVE";
     public static final String ENTERXR_X_INTENT_KEY = "ENTERXR_X";
     public static final String ENTERXR_Y_INTENT_KEY = "ENTERXR_Y";
+    public static final String ENTERXR_WAITTIME_INTENT_KEY = "ENTERXR_WAITTIME";
 
     public BroadcastReceiver startImmersiveReceiver = new BroadcastReceiver() {
         @Override
@@ -962,6 +963,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             float enterxrX = extras.containsKey(ENTERXR_X_INTENT_KEY) ? extras.getFloat(ENTERXR_X_INTENT_KEY) : null;
             float enterxrY = extras.containsKey(ENTERXR_Y_INTENT_KEY) ? extras.getFloat(ENTERXR_Y_INTENT_KEY) : null;
 
+            // some webxr pages take some time to load on their own/load after the page itself has finished loading
+            // if the user knows how long the page load may take we can allow them to set the time before
+            // trying to auto enter via intent extra
+            long enterxrWaitTime == extras.containsKey(ENTERXR_WAITTIME_INTENT_KEY) ? extras.getLong(ENTERXR_WAITTIME_INTENT_KEY) : 5000L;
             if(extras.containsKey("AUTO_ENTER_WEBXR"))
             {
                 mAutoEnterWebxr = true;
@@ -975,7 +980,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                             }
                         });
                     }
-                }, 5000L);
+                }, enterxrWaitTime);
             }
 
             mAllowExitWebxr = !extras.containsKey("ALLOW_EXIT_WEBXR");
