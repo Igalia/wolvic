@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.StrictMode;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -111,6 +111,7 @@ public class SettingsStore {
     public final static boolean CENTER_WINDOWS_DEFAULT = false;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
+    public final static boolean HEAD_LOCK_DEFAULT = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = BuildConfig.DEBUG;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
     public final static boolean WEBXR_ENABLED_DEFAULT = true;
@@ -325,6 +326,17 @@ public class SettingsStore {
     public void setStartWithPassthroughEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_start_with_passthrough), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isHeadLockEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_head_lock), shouldStartWithPassthrougEnabled());
+    }
+
+    public void setHeadLockEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
         editor.commit();
     }
 

@@ -208,6 +208,7 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
+  bool inHeadLockMode = false;
   VRLayerPassthroughPtr layerPassthrough;
 #if HVR
   bool wasButtonAppPressed = false;
@@ -1144,6 +1145,10 @@ BrowserWorld::StartFrame() {
     bool relayoutWidgets = false;
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
+    if (m.inHeadLockMode) {
+      OnReorient();
+      m.device->Reorient();
+    }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
     if (relayoutWidgets) {
@@ -1216,6 +1221,12 @@ BrowserWorld::TogglePassthrough() {
     // Make environment changes during pass through mode on to take effect
     UpdateEnvironment();
   }
+}
+
+void
+BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+  ASSERT_ON_RENDER_THREAD();
+  m.inHeadLockMode = isEnabled;
 }
 
 void
@@ -2043,6 +2054,11 @@ JNI_METHOD(void, setTemporaryFilePath)
 JNI_METHOD(void, togglePassthroughNative)
 (JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().TogglePassthrough();
+}
+
+JNI_METHOD(void, setHeadLockEnabledNative)
+(JNIEnv*, jobject, jboolean isEnabled) {
+  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
 }
 
 JNI_METHOD(void, exitImmersiveNative)
