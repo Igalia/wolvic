@@ -129,16 +129,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         public void onReceive(Context context, Intent intent) {
 
             Timer tryStartImmersiveTimer = new Timer();
-            float x = null;
-            float y = null;
+            float x = -1f;
+            float y = -1f;
 
             if(intent.getExtras() != null && intent.hasExtra(ENTERXR_X_INTENT_KEY) && intent.hasExtra(ENTERXR_Y_INTENT_KEY)) {
-                x = intent.getFloatExtra(ENTERXR_X_INTENT_KEY);
-                y = intent.getFloatExtra(ENTERXR_Y_INTENT_KEY);
+                x = intent.getFloatExtra(ENTERXR_X_INTENT_KEY, -1f);
+                y = intent.getFloatExtra(ENTERXR_Y_INTENT_KEY, -1f);
             }
 
-            final finalX = x;
-            final finalY = y;
+            final float finalX = x;
+            final float finalY = y;
             Runnable findWebXrButton = new Runnable() {
                 @Override
                 public void run() {
@@ -156,7 +156,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                             {
                                 return;
                             }
-                            if(finalX != null && finalY != null) {
+                            if(finalX > 0f && finalY > 0f) {
                                 simulateBrowserWindowTouchEvent(finalX, finalY);
                             } else {
                                 findTheWebXrButtonAtAllCosts(r);
@@ -967,7 +967,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // some webxr pages take some time to load on their own/load after the page itself has finished loading
             // if the user knows how long the page load may take we can allow them to set the time before
             // trying to auto enter via intent extra
-            long enterxrWaitTime == extras.containsKey(ENTERXR_WAITTIME_INTENT_KEY) ? extras.getLong(ENTERXR_WAITTIME_INTENT_KEY) : 5000L;
+            long enterxrWaitTime = extras.containsKey(ENTERXR_WAITTIME_INTENT_KEY) ? extras.getLong(ENTERXR_WAITTIME_INTENT_KEY) : 5000L;
             if(extras.containsKey("AUTO_ENTER_WEBXR"))
             {
                 mAutoEnterWebxr = true;
