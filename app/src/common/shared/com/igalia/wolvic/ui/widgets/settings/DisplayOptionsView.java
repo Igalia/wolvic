@@ -294,6 +294,12 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
 
         SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
+
+        if (value) {
+            // Disable window movement if head lock is enabled,
+            // otherwise the windows might be moved out of the user's reach.
+            setWindowMovement(false);
+        }
     }
 
     private void setSoundEffect(boolean value, boolean doApply) {
@@ -313,6 +319,12 @@ class DisplayOptionsView extends SettingsView {
         mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
 
         SettingsStore.getInstance(getContext()).setWindowMovementEnabled(value);
+
+        if (value) {
+            // Disable head lock if window movement is enabled,
+            // otherwise the windows might be moved out of the user's reach.
+            setHeadLock(false);
+        }
     }
 
     private void setHomepage(String newHomepage) {
