@@ -77,6 +77,7 @@ public interface WidgetManagerDelegate {
     void pushWorldBrightness(Object aKey, float aBrightness);
     void setWorldBrightness(Object aKey, float aBrightness);
     void popWorldBrightness(Object aKey);
+    void triggerHapticFeedback();
     void setControllersVisible(boolean visible);
     void setWindowSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
@@ -87,9 +88,11 @@ public interface WidgetManagerDelegate {
     void togglePassthrough();
     boolean isPassthroughEnabled();
     boolean isPassthroughSupported();
+    void setHeadLockEnabled(boolean isHeadLockEnabled);
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     void setCylinderDensityForce(float aDensity);
+    void setCenterWindows(boolean isCenterWindows);
     float getCylinderDensity();
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);

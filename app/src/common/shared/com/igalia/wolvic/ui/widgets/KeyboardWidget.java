@@ -559,6 +559,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     public void onPress(int primaryCode) {
         Log.d(LOGTAG, "Keyboard onPress " + primaryCode);
+        mWidgetManager.triggerHapticFeedback();
     }
 
     @Override
@@ -607,6 +608,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             handleDomainLongPress();
             mIsLongPress = true;
         }
+        mWidgetManager.triggerHapticFeedback();
     }
 
     public void onMultiTap(Keyboard.Key key) {

@@ -46,17 +46,17 @@
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <com.igalia.wolvic.ui.views.UIButton
-                android:id="@+id/projectionButton"
+                android:id="@+id/brightnessButton"
                 style="@style/fullScreenButtonTheme"
-                android:src="@drawable/ic_icon_vr_projection"
-                android:tooltipText="@string/video_mode_tooltip"
+                android:src="@drawable/ic_icon_brightness"
+                android:tooltipText="@string/brightness_mode_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <com.igalia.wolvic.ui.views.UIButton
-                android:id="@+id/brightnessButton"
+                android:id="@+id/projectionButton"
                 style="@style/fullScreenLastButtonTheme"
-                android:src="@drawable/ic_icon_brightness"
-                android:tooltipText="@string/brightness_mode_tooltip"
+                android:src="@drawable/ic_icon_vr_projection"
+                android:tooltipText="@string/video_mode_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
         </LinearLayout>
     </FrameLayout>

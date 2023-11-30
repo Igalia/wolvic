@@ -509,7 +509,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         aPlacement.rotationAxisX = 1.0f;
         aPlacement.rotation = (float)Math.toRadians(-45);
         aPlacement.cylinder = false;
-        aPlacement.textureScale = 1.0f;
+        aPlacement.textureScale *= aPlacement.worldWidth;
     }
 
     @Override

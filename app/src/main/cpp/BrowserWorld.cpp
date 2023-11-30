@@ -208,6 +208,7 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
+  bool inHeadLockMode = false;
   VRLayerPassthroughPtr layerPassthrough;
 #if HVR
   bool wasButtonAppPressed = false;
@@ -1144,6 +1145,10 @@ BrowserWorld::StartFrame() {
     bool relayoutWidgets = false;
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
+    if (m.inHeadLockMode) {
+      OnReorient();
+      m.device->Reorient();
+    }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
     if (relayoutWidgets) {
@@ -1174,6 +1179,21 @@ BrowserWorld::EndFrame() {
 }
 
 void
+BrowserWorld::TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity) {
+  if (!m.controllers) {
+    return;
+  }
+
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (!controller.focused || !m.controllers->GetHapticCount(controller.index)) {
+      continue;
+    }
+    m.controllers->SetHapticFeedback(controller.index, controller.inputFrameID + 1, aPulseDuration, aPulseIntensity);
+    return;
+  }
+}
+
+void
 BrowserWorld::Draw(device::Eye aEye) {
   ASSERT_ON_RENDER_THREAD();
   if (m.drawHandler) {
@@ -1201,6 +1221,12 @@ BrowserWorld::TogglePassthrough() {
     // Make environment changes during pass through mode on to take effect
     UpdateEnvironment();
   }
+}
+
+void
+BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+  ASSERT_ON_RENDER_THREAD();
+  m.inHeadLockMode = isEnabled;
 }
 
 void
@@ -1513,12 +1539,21 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
   // Widget anchor point
   translation -= vrb::Vector(anchorX, anchorY, 0.0f);
 
-  // Parent anchor point
+  // Parent anchor point, taking the gravity into account.
   if (parent) {
-    translation += vrb::Vector(
-        parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
-        parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
-        0.0f);
+    float parentTranslationX, parentTranslationY;
+    if (aPlacement->parentAnchorGravity & WidgetPlacement::kParentAnchorGravityCenterX) {
+      parentTranslationX = (parentWorldWith - worldWidth) / 2.0f;
+    } else {
+      parentTranslationX = parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f;
+    }
+    if (aPlacement->parentAnchorGravity & WidgetPlacement::kParentAnchorGravityCenterY) {
+      parentTranslationY = (parentWorldHeight - worldHeight) / 2.0f - parentWorldHeight * 0.5f;
+    } else {
+      parentTranslationY =
+              parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f;
+    }
+    translation += vrb::Vector(parentTranslationX, parentTranslationY, 0.0f);
   }
 
   transform.TranslateInPlace(translation);
@@ -2003,6 +2038,11 @@ JNI_METHOD(void, setWorldBrightnessNative)
   crow::BrowserWorld::Instance().SetBrightness(aBrightness);
 }
 
+JNI_METHOD(void, triggerHapticFeedbackNative)
+(JNIEnv*, jobject, jfloat aPulseDuration, jfloat aPulseIntensity) {
+  crow::BrowserWorld::Instance().TriggerHapticFeedback(aPulseDuration, aPulseIntensity);
+}
+
 JNI_METHOD(void, setTemporaryFilePath)
 (JNIEnv* aEnv, jobject, jstring aPath) {
   const char *nativeString = aEnv->GetStringUTFChars(aPath, nullptr);
@@ -2014,6 +2054,11 @@ JNI_METHOD(void, setTemporaryFilePath)
 JNI_METHOD(void, togglePassthroughNative)
 (JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().TogglePassthrough();
+}
+
+JNI_METHOD(void, setHeadLockEnabledNative)
+(JNIEnv*, jobject, jboolean isEnabled) {
+  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
 }
 
 JNI_METHOD(void, exitImmersiveNative)

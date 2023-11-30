@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.SessionChangeListener;
@@ -652,7 +653,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     public CompletableFuture<Void> captureBackgroundBitmap(int displayWidth, int displayHeight) {
-        if (mState.mSession == null || !mFirstContentfulPaint) {
+        // FIXME: calling acquireDisplay() is not well supported in the Chromium backend because
+        // that method incorrectly does some extra work handling widgets. Disable the bitmap
+        // capture in the meantime (it was not working anyway yet).
+        if (mState.mSession == null || !mFirstContentfulPaint || BuildConfig.FLAVOR_backend == "chromium") {
             return CompletableFuture.completedFuture(null);
         }
         Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);
@@ -1194,13 +1198,18 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     @Override
-    public WResult<WSession> onNewSession(@NonNull WSession aSession, @NonNull String aUri) {
+    public WResult<WSession> onNewSession(@NonNull WSession aSession, @NonNull String aUri, OnNewSessionCallback callback) {
         mKeepAlive = System.currentTimeMillis() + KEEP_ALIVE_DURATION_MS;
         Log.d(LOGTAG, "onNewSession: " + aUri);
 
         Session session = SessionStore.get().createSession(mState.mSettings, SESSION_DO_NOT_OPEN);
         session.mState.mParentId = mState.mId;
         session.mKeepAlive = mKeepAlive;
+
+        if (callback != null) {
+            callback.onNewSession((WSession) session.mState.mSession);
+        }
+
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onStackSession(session);
         }

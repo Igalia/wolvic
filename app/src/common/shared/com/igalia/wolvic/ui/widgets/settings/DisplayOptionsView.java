@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsDisplayBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
@@ -55,6 +56,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
         setCurvedDisplay(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f, false);
 
+        mBinding.centerWindowsSwitch.setOnCheckedChangeListener(mCenterWindowsListener);
+        setCenterWindows(SettingsStore.getInstance(getContext()).isCenterWindows(), false);
+
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
         mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
         setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
@@ -74,6 +78,12 @@ class DisplayOptionsView extends SettingsView {
         } else {
             mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
         }
+
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), true);
+
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
 
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
@@ -148,6 +158,15 @@ class DisplayOptionsView extends SettingsView {
         setStartWithPassthrough(value);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mSoundEffectListener = (compoundButton, enabled, apply) -> {
+        setSoundEffect(enabled, true);
+    };
+
+
+    private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
+        setHeadLock(value);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -188,6 +207,9 @@ class DisplayOptionsView extends SettingsView {
     private SwitchSetting.OnCheckedChangeListener mCurvedDisplayListener = (compoundButton, enabled, apply) ->
             setCurvedDisplay(enabled, true);
 
+    private SwitchSetting.OnCheckedChangeListener mCenterWindowsListener = (compoundButton, enabled, apply) ->
+            setCenterWindows(enabled, true);
+
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
 
@@ -205,6 +227,9 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
+        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
+        setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
+        setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -227,6 +252,17 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
+    private void setCenterWindows(boolean value, boolean doApply) {
+        mBinding.centerWindowsSwitch.setOnCheckedChangeListener(null);
+        mBinding.centerWindowsSwitch.setValue(value, false);
+        mBinding.centerWindowsSwitch.setOnCheckedChangeListener(mCenterWindowsListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setCenterWindows(value);
+            mWidgetManager.setCenterWindows(value);
+        }
+    }
+
     private void setAutoplay(boolean value, boolean doApply) {
         mBinding.autoplaySwitch.setOnCheckedChangeListener(null);
         mBinding.autoplaySwitch.setValue(value, false);
@@ -243,6 +279,25 @@ class DisplayOptionsView extends SettingsView {
         mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
 
         SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
+    }
+
+    private void setHeadLock(boolean value) {
+        mBinding.headLockSwitch.setOnCheckedChangeListener(null);
+        mBinding.headLockSwitch.setValue(value, false);
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+
+        SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
+    }
+
+    private void setSoundEffect(boolean value, boolean doApply) {
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(null);
+        mBinding.soundEffectSwitch.setValue(value, false);
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setAudioEnabled(value);
+            AudioEngine.fromContext(getContext()).setEnabled(value);
+        }
     }
 
     private void setHomepage(String newHomepage) {
@@ -292,7 +347,7 @@ class DisplayOptionsView extends SettingsView {
         mBinding.dpiEdit.setOnClickListener(null);
         boolean restart = false;
         int prevDensity = SettingsStore.getInstance(getContext()).getDisplayDpi();
-        if (newDpi <= 0) {
+        if (newDpi < SettingsStore.DISPLAY_DPI_MIN || newDpi > SettingsStore.DISPLAY_DPI_MAX) {
             newDpi = prevDensity;
 
         } else if (prevDensity != newDpi) {

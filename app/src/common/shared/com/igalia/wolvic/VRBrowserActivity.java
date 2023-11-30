@@ -49,6 +49,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
+import com.igalia.wolvic.audio.AndroidMediaPlayer;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.Media;
@@ -307,6 +308,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         @Override
         public void onGlobalFocusChanged(View oldFocus, View newFocus) {
             Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
+            triggerHapticFeedback();
             for (FocusChangeListener listener: mFocusChangeListeners) {
                 listener.onGlobalFocusChanged(oldFocus, newFocus);
             }
@@ -375,7 +377,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runtime.setContainerView(mWidgetContainer);
         mPermissionDelegate = new PermissionDelegate(this, this);
 
-        mAudioEngine = new AudioEngine(this, null);
+        mAudioEngine = new AudioEngine(this, new AndroidMediaPlayer(getBaseContext()));
         mAudioEngine.setEnabled(SettingsStore.getInstance(this).isAudioEnabled());
         mAudioEngine.preloadAsync(() -> {
             Log.i(LOGTAG, "AudioEngine sounds preloaded!");
@@ -425,6 +427,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
+        setHeadLockEnabled(mSettings.isHeadLockEnabled());
+      
         //Show the launch dialogs, if needed.
         if(!mBlockLaunchDialogs) {
             if (!showTermsServiceDialogIfNeeded()) {
@@ -831,6 +835,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 SpeechRecognizer speechRecognizer =
                         SpeechServices.getInstance(this, SettingsStore.getInstance(this).getVoiceSearchService());
                 ((VRBrowserApplication) getApplication()).setSpeechRecognizer(speechRecognizer);
+            } else if (key.equals(getString(R.string.settings_key_head_lock))) {
+                setHeadLockEnabled(SettingsStore.getInstance(this).isHeadLockEnabled());
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -1369,19 +1375,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 widget = null; // Fallback to mRootWidget in order to allow world clicks to dismiss UI.
             }
 
-            float scale = widget != null ? widget.getPlacement().textureScale : 1.0f;
+            float scale = widget != null ? widget.getPlacement().textureScale : SettingsStore.getInstance(this).getDisplayDpi() / 100.0f;
+            // We shouldn't divide the scale factor when we pass the motion event to the web engine
+            if (widget instanceof WindowWidget) {
+                WindowWidget windowWidget = (WindowWidget) widget;
+                if (!windowWidget.isLibraryVisible()) {
+                    scale = 1.0f;
+                }
+            }
             final float x = aX / scale;
             final float y = aY / scale;
 
             if (widget == null) {
-                MotionEventGenerator.dispatch(mRootWidget, aDevice, aFocused, aPressed, x, y);
+                MotionEventGenerator.dispatch(this, mRootWidget, aDevice, aFocused, aPressed, x, y);
 
             } else if (widget.getBorderWidth() > 0) {
                 final int border = widget.getBorderWidth();
-                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x - border, y - border);
+                MotionEventGenerator.dispatch(this, widget, aDevice, aFocused, aPressed, x - border, y - border);
 
             } else {
-                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x, y);
+                MotionEventGenerator.dispatch(this, widget, aDevice, aFocused, aPressed, x, y);
             }
         });
     }
@@ -2101,6 +2114,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void triggerHapticFeedback() {
+        SettingsStore settings = SettingsStore.getInstance(this);
+        if (settings.isHapticFeedbackEnabled()) {
+            queueRunnable(() -> triggerHapticFeedbackNative(settings.getHapticPulseDuration(), settings.getHapticPulseIntensity()));
+        }
+    }
+
+    @Override
     public void setControllersVisible(final boolean aVisible) {
         queueRunnable(() -> setControllersVisibleNative(aVisible));
     }
@@ -2179,6 +2200,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setHeadLockEnabled(boolean isHeadLockEnabled) {
+        queueRunnable(() -> {
+            setHeadLockEnabledNative(isHeadLockEnabled);
+            if (!isHeadLockEnabled) {
+                recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
+            }
+        });
+    }
+
+    @Override
     public void recenterUIYaw(@YawTarget int aTarget) {
         queueRunnable(() -> recenterUIYawNative(aTarget));
     }
@@ -2197,6 +2228,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
             mWindows.updateCurvedMode(false);
+        }
+    }
+
+    @Override
+    public void setCenterWindows(boolean isCenterWindows) {
+        if (mWindows != null) {
+            mWindows.setCenterWindows(isCenterWindows);
+            updateVisibleWidgets();
         }
     }
 
@@ -2304,6 +2343,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void startWidgetMoveNative(int aHandle, int aMoveBehaviour);
     private native void finishWidgetMoveNative();
     private native void setWorldBrightnessNative(float aBrightness);
+    private native void triggerHapticFeedbackNative(float aPulseDuration, float aPulseIntensity);
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
@@ -2312,6 +2352,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
     private native void togglePassthroughNative();
+    private native void setHeadLockEnabledNative(boolean isEnabled);
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);

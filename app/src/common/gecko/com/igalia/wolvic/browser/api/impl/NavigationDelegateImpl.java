@@ -53,7 +53,7 @@ class NavigationDelegateImpl implements GeckoSession.NavigationDelegate {
     @Nullable
     @Override
     public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession session, @NonNull String uri) {
-        GeckoResult<WSession> result = ResultImpl.from(mDelegate.onNewSession(mSession, uri));
+        GeckoResult<WSession> result = ResultImpl.from(mDelegate.onNewSession(mSession, uri, null));
         if (result == null) {
             return null;
         }

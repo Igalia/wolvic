@@ -2,6 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <import type="com.igalia.wolvic.BuildConfig"/>
+        <import type="android.view.View" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -72,6 +77,13 @@
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autoplay" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/soundEffectSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{BuildConfig.FLAVOR_backend == &quot;chromium&quot; ? View.VISIBLE : View.GONE}"
+                    app:description="@string/display_options_sound_effect" />
+
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"
@@ -103,6 +115,18 @@
                     app:description="@string/developer_options_display_dpi"
                     app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/center_windows_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_center_windows" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/headLockSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_head_lock" />
 
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>

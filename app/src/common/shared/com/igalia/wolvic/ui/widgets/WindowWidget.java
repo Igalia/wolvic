@@ -105,6 +105,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public static final int DEACTIVATE_CURRENT_SESSION = 0;
     public static final int LEAVE_CURRENT_SESSION_ACTIVE = 1;
 
+    private final float DEFAULT_SCALE = 1.0f;
+    private final float MAX_SCALE = 3.0f;
+
     private Surface mSurface;
     private int mWidth;
     private int mHeight;
@@ -200,6 +203,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setUrl(mSession.getCurrentUri());
         mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
+        // re-center the front window when its height changes
+        mViewModel.getHeight().observe((VRBrowserActivity) getContext(), observableInt -> centerFrontWindowIfNeeded());
+
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mListeners = new CopyOnWriteArrayList<>();
@@ -251,7 +257,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aPlacement.density = getBrowserDensity();
         aPlacement.visible = true;
         aPlacement.cylinder = true;
-        aPlacement.textureScale = 1.0f;
         aPlacement.name = "Window";
         // Check Windows.placeWindow method for remaining placement set-up
     }
@@ -981,7 +986,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
         int width = getWindowWidth(aWorldWidth);
         float aspect = aWorldWidth / aWorldHeight;
-        int height = (int) Math.floor((float)width / aspect);
+        int height = (int) Math.floor((float) width / aspect);
         mWidgetPlacement.width = width + mBorderWidth * 2;
         mWidgetPlacement.height = height + mBorderWidth * 2;
         mWidgetPlacement.worldWidth = aWorldWidth;
@@ -990,6 +995,21 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mViewModel.setWidth(mWidgetPlacement.width);
         mViewModel.setHeight(mWidgetPlacement.height);
+    }
+
+    private void centerFrontWindowIfNeeded() {
+        if (!SettingsStore.getInstance(getContext()).isCenterWindows())
+            return;
+
+        if (mWindowPlacement != Windows.WindowPlacement.FRONT)
+            return;
+
+        // default position
+        mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+        // center vertically relative to the default position
+        mWidgetPlacement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - mWidgetPlacement.height) / 2.0f;
+        mWidgetManager.updateWidget(this);
+        mWidgetManager.updateVisibleWidgets();
     }
 
     @Override
@@ -1501,11 +1521,27 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
-        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) *
-                (float)SettingsStore.getInstance(getContext()).getWindowWidth() / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
-        float worldHeight = worldWidth / aAspect;
-        float area = worldWidth * worldHeight * aScale;
-        float targetWidth = (float) Math.sqrt(area * aAspect);
+        final float defaultWorldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        final float maxWidthWorld = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWorldWidth/SettingsStore.WINDOW_WIDTH_DEFAULT);
+        float targetWidth;
+
+        if (aScale < DEFAULT_SCALE) {
+            // Reduce the area of the window according to the desired scale.
+            float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+            float worldHeight = worldWidth / aAspect;
+            float targetArea = worldWidth * worldHeight * aScale;
+            targetWidth = (float) Math.sqrt(targetArea * aAspect);
+        } else if (aScale == DEFAULT_SCALE) {
+            // Default window size.
+            targetWidth = defaultWorldWidth;
+        } else if (aScale >= MAX_SCALE) {
+            // Maximum window size.
+            targetWidth = maxWidthWorld;
+        } else {
+            // Proportional between the default and maximum sizes.
+            targetWidth = defaultWorldWidth + (maxWidthWorld - defaultWorldWidth) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
+        }
+
         float targetHeight = targetWidth / aAspect;
         return Pair.create(targetWidth, targetHeight);
     }
@@ -2087,7 +2123,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             float ratio = WidgetPlacement.worldToWindowRatio(getContext());
             selectionRect = new RectF(
                     clientRect.left * ratio,
-                    clientRect.top* ratio,
+                    clientRect.top * ratio,
                     clientRect.right * ratio,
                     clientRect.bottom * ratio
             );

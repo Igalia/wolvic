@@ -300,6 +300,16 @@ android {
             }
         }
 
+        visionglass {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DVISIONGLASS"
+                    arguments "-DVISIONGLASS=ON"
+                }
+            }
+        }
+
         // Supported ABIs
         arm64 {
             dimension "abi"
@@ -370,7 +380,7 @@ android {
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
-            resValue 'string', 'HOMEPAGE_URL', 'about:blank'
+            resValue 'string', 'HOMEPAGE_URL', 'https://wolvic.com/welcome/'
         }
     }
 
@@ -513,6 +523,12 @@ android {
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
+            ]
+        }
+
+        visionglass {
+            java.srcDirs = [
+                    'src/visionglass/java'
             ]
         }
 
@@ -685,6 +701,9 @@ dependencies {
 
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
+
+    // Vission Glass
+    visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/aliceimu/", include: ['*.aar'])
 
     // HTC Vive
     if (!gradle.startParameter.taskNames.isEmpty() &&

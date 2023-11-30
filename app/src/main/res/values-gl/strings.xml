@@ -173,6 +173,7 @@
     <string name="settings_accounts_reconnect">Reconectar</string>
     <string name="settings_whats_new">Novidades</string>
     <string name="developer_options_curved_display">Activar display curvo</string>
+    <string name="developer_options_center_windows">Centrar verticalmente as ventanas</string>
     <string name="developer_options_remote_debugging">Activar depuración remota</string>
     <string name="developer_options_debug_logging">Activar logging de depuración</string>
     <string name="hardware_acceleration_switch">Activar aceleración hardware da interface</string>

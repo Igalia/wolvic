@@ -1,7 +1,6 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.Matrix;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -20,6 +19,7 @@ import com.igalia.wolvic.browser.api.WTextInput;
 import com.igalia.wolvic.browser.api.WWebResponse;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.DownloadManagerBridge;
+import org.chromium.wolvic.PermissionManagerBridge;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -41,6 +41,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     WMediaSession.Delegate mMediaSessionDelegate;
     TextInputImpl mTextInput;
     PanZoomControllerImpl mPanZoomController;
+    private PermissionManagerBridge.Delegate mChromiumPermissionDelegate;
     private String mInitialUri;
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
@@ -257,8 +258,12 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     @Override
     public void setPermissionDelegate(@Nullable PermissionDelegate delegate) {
-        // TODO: Implement bridge
+        if (mPermissionDelegate == delegate) {
+            return;
+        }
+
         mPermissionDelegate = delegate;
+        mChromiumPermissionDelegate = new ChromiumPermissionDelegate(this, delegate);
     }
 
     @Nullable
@@ -417,4 +422,15 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     public ViewGroup getContentView() {
         return mTab != null ? mTab.getContentView() : null;
     }
+
+    // The onReadyCallback() mechanism is really limited because it heavily depends on renderers
+    // being created by the client (Wolvic). There are cases in which the renderer is created by the
+    // web engine (like target=_blank navigations) so we need to explicitly call onReady ourselves.
+    public void invokeOnReady(RuntimeImpl runtime, String uri) {
+        assert !isOpen();
+        mRuntime = runtime;
+        mInitialUri = uri;
+        mReadyCallback.onReady();
+    }
+
 }

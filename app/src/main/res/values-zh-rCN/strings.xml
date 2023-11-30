@@ -343,6 +343,12 @@
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use passthrough mode when the app starts. -->
     <string name="display_options_start_with_passthrough">启动时使用直通模式</string>
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we use sound effects when interacting with app. -->
+    <string name="display_options_sound_effect">使用音效</string>
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if head lock should be enabled in the app. -->
+    <string name="display_options_head_lock">头部锁定</string>
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
     <string name="developer_options_env_override">启用环境覆盖</string>
@@ -468,6 +474,9 @@
          "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
          motion of user input. -->
     <string name="developer_options_scroll_direction_reversed">反向</string>
+    <!-- This string is used to label the switch that allow the user to enable/disable
+         haptic feedback of the remote controller. -->
+    <string name="controller_options_haptic_feedback">触觉反馈</string>
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">重置开发者设置</string>
@@ -508,6 +517,8 @@
     <string name="developer_options_homepage">主页</string>
     <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
     <string name="fxa_account_options_account">账户</string>
+    <!-- This string is used to in the FxA account manage panel as a description of the device name edit. -->
+    <string name="fxa_account_options_device_name">设备名称</string>
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">同步设置</string>
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
@@ -1268,6 +1279,9 @@
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="homepage_hint">%1$s 主页（默认）</string>
+    <!-- This string is displayed in mozilla account's device name.
+         '%1$s' will be replaced at runtime with the app's name while '%2$s' will be replaced with the actual device name. -->
+    <string name="device_name">%2$s 上的 %1$s</string>
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">需要验证身份</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->

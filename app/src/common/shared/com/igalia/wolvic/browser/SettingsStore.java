@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.StrictMode;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -85,20 +85,33 @@ public class SettingsStore {
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
-    public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
+
+    // Default DPI: the resolution of the texture is twice the world size of the window.
+    public final static int DISPLAY_DPI_DEFAULT = 192;
+    public final static int DISPLAY_DPI_MIN = 70;
+    public final static int DISPLAY_DPI_MAX = 400;
+    // Default density: this value gives a logical width of 1024 CSS pixels for the default window.
+    public final static float DISPLAY_DENSITY_DEFAULT = 1.5f;
+    // World size: multiply by density to get the available resolution for the Web engine.
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
-    public final static int DISPLAY_DPI_DEFAULT = 96;
+    // The maximum size is computed so the resulting texture fits within 2560x2560.
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 675;
+
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
-    public final static boolean AUDIO_ENABLED = false;
+    public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
+    public final static float HAPTIC_PULSE_DURATION_DEFAULT = 10.0f;
+    public final static float HAPTIC_PULSE_INTENSITY_DEFAULT = 1.0f;
+    public final static boolean HAPTIC_FEEDBACK_ENABLED = false;
+    public final static boolean CENTER_WINDOWS_DEFAULT = false;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
+    public final static boolean HEAD_LOCK_DEFAULT = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = BuildConfig.DEBUG;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
     public final static boolean WEBXR_ENABLED_DEFAULT = true;
@@ -316,6 +329,17 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public boolean isHeadLockEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_head_lock), shouldStartWithPassthrougEnabled());
+    }
+
+    public void setHeadLockEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
+        editor.commit();
+    }
+
     public boolean isEnvironmentOverrideEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_environment_override), ENV_OVERRIDE_DEFAULT);
@@ -415,12 +439,27 @@ public class SettingsStore {
         return (float)getWindowWidth() / (float)getWindowHeight();
     }
 
+    public String getDeviceName() {
+        return mPrefs.getString(
+                mContext.getString(R.string.settings_key_device_name), DeviceType.getDeviceName(mContext));
+    }
+
+    public void setDeviceName(String aDeviceName) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_device_name), aDeviceName);
+        editor.commit();
+    }
+
     public int getDisplayDpi() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_display_dpi), DISPLAY_DPI_DEFAULT);
+        return Math.max(Math.min(mPrefs.getInt(
+                mContext.getString(R.string.settings_key_display_dpi), DISPLAY_DPI_DEFAULT), DISPLAY_DPI_MAX), DISPLAY_DPI_MIN);
     }
 
     public void setDisplayDpi(int aDpi) {
+        // Reject non-valid value
+        if (aDpi > DISPLAY_DPI_MAX || aDpi < DISPLAY_DPI_MIN) {
+            return;
+        }
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_display_dpi), aDpi);
         editor.commit();
@@ -581,6 +620,47 @@ public class SettingsStore {
 
     public boolean isCurvedModeEnabled() {
         return getCylinderDensity() > 0;
+    }
+
+    public float getHapticPulseDuration() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_haptic_pulse_duration), HAPTIC_PULSE_DURATION_DEFAULT);
+    }
+
+    public void setHapticPulseDuration(float aPulseDuration) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_duration), aPulseDuration);
+        editor.commit();
+    }
+
+    public float getHapticPulseIntensity() {
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_haptic_pulse_intensity), HAPTIC_PULSE_INTENSITY_DEFAULT);
+    }
+
+    public void setHapticPulseIntensity(float aPulseIntensity) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_intensity), aPulseIntensity);
+        editor.commit();
+    }
+
+    public void setHapticFeedbackEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isHapticFeedbackEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), HAPTIC_FEEDBACK_ENABLED);
+    }
+
+    public boolean isCenterWindows() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_center_windows), CENTER_WINDOWS_DEFAULT);
+    }
+
+    public void setCenterWindows(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_center_windows), isEnabled);
+        editor.commit();
     }
 
     public void setSelectedKeyboard(Locale aLocale) {

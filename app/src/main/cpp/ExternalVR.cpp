@@ -262,6 +262,9 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
       // FIXME: Gecko does not support LynxR1 device yet, so let's use a similar one for WebXR.
       result = mozilla::gfx::VRControllerType::OculusTouch3;
       break;
+    case device::VisionGlass:
+      result = mozilla::gfx::VRControllerType::_empty;
+      break;
     case device::UnknownType:
     default:
       result = mozilla::gfx::VRControllerType::_empty;
@@ -648,10 +651,6 @@ ExternalVR::SetHapticState(ControllerContainerPtr aControllerContainer) const {
                 m.browser.hapticState[j].pulseIntensity);
         break;
       }
-    }
-    // All hapticState has already been reset to zero, so it can't be match.
-    if (j == mozilla::gfx::kVRHapticsMaxCount) {
-      aControllerContainer->SetHapticFeedback(i, 0, 0.0f, 0.0f);
     }
   }
 }

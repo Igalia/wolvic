@@ -53,6 +53,7 @@ This repo is only available to Igalia members. If you have access to the relevan
  - `third_party/lynx` [for Lynx](https://portal.lynx-r.com)(should contain a `loader-release.aar` file)
  - `third_party/snapdragon-spaces` [for Snapdragon Spaces](https://spaces.qualcomm.com/)(should contain `libopenxr_loader.aar` and `qxrclients.aar` files)
  - `third_party/OpenXR-SDK/` [OpenXR-SDK](https://github.com/KhronosGroup/OpenXR-SDK) (should contain an `include` folder)
+ - `third_party/aliceimu/` for [Huawei Vision Glass](https://consumer.huawei.com/cn/wearables/vision-glass/) (should contain an `.aar` file with the IMU library for the glasses)
 
 The [repo in `third_party`](https://github.com/Igalia/wolvic-third-parties) can be updated like so:
 
@@ -76,6 +77,7 @@ You can build for different devices:
 - **`picoxr`**: Pico 4 and (untested) Pico Neo 3
 - **`lynx`**: Lynx R1
 - **`spaces`**: Lenovo A3
+- **`visionglass`**: Huawei Vision Glass
 
 For testing on a non-VR device:
 

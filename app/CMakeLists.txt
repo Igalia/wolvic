@@ -64,6 +64,13 @@ target_sources(
     ${CMAKE_SOURCE_DIR}/src/noapi/cpp/native-lib.cpp
     ${CMAKE_SOURCE_DIR}/src/noapi/cpp/DeviceDelegateNoAPI.cpp
     )
+elseif(VISIONGLASS)
+target_sources(
+        native-lib
+        PUBLIC
+        ${CMAKE_SOURCE_DIR}/src/visionglass/cpp/native-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/visionglass/cpp/DeviceDelegateVisionGlass.cpp
+)
 elseif(HVR)
     target_sources(
             native-lib
@@ -95,7 +102,6 @@ if(OPENXR)
     if (OCULUSVR)
         include_directories(
             ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
-            ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Include
         )
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
@@ -213,20 +219,7 @@ if (AOSP)
     set(lib_build_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/build)
     file(MAKE_DIRECTORY ${lib_build_DIR})
 
-    # We use the ExternalProject utility just to patch OpenXR-SDK, we don't use it for anything else
-    # TODO: unapply the patch. As we don't use it for building we cannot currently use _Add_Step
-    # to specify a cleanup step depending on the build step.
-    include(ExternalProject)
-    ExternalProject_Add(EXTOpenXRLoader
-            SOURCE_DIR ${lib_src_DIR}
-            BINARY_DIR ${lib_build_DIR}
-            PATCH_COMMAND git reset --hard && git apply ${CMAKE_SOURCE_DIR}/../third_party/patches/0001-Fix-some-missing-field-initializer-warnings.patch
-            STEP_TARGETS patch
-            EXCLUDE_FROM_ALL TRUE
-            )
-
     add_subdirectory(${lib_src_DIR} ${lib_build_DIR})
-    add_dependencies(openxr_loader EXTOpenXRLoader-patch)
     target_link_libraries(native-lib openxr_loader)
 endif()
 
