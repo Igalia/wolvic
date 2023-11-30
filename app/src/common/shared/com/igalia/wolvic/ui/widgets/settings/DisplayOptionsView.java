@@ -82,6 +82,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
         setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), true);
 
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -159,6 +162,11 @@ class DisplayOptionsView extends SettingsView {
         setSoundEffect(enabled, true);
     };
 
+
+    private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
+        setHeadLock(value);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -219,6 +227,7 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
+        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
 
@@ -270,6 +279,14 @@ class DisplayOptionsView extends SettingsView {
         mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
 
         SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
+    }
+
+    private void setHeadLock(boolean value) {
+        mBinding.headLockSwitch.setOnCheckedChangeListener(null);
+        mBinding.headLockSwitch.setValue(value, false);
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+
+        SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
     }
 
     private void setSoundEffect(boolean value, boolean doApply) {

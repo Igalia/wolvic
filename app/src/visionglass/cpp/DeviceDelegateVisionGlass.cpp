@@ -168,6 +168,11 @@ DeviceDelegateVisionGlass::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
+DeviceDelegateVisionGlass::Reorient() {
+  // Ignore reorient
+}
+
+void
 DeviceDelegateVisionGlass::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

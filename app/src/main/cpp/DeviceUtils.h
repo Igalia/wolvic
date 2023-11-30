@@ -18,6 +18,7 @@ namespace crow {
 class DeviceUtils {
 public:
   static vrb::Matrix CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition);
+  static vrb::Matrix CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition);
   static void GetTargetImmersiveSize(const uint32_t aRequestedWidth, const uint32_t  aRequestedHeight,
                                      const uint32_t aRecommendedWidth, const uint32_t aRecommendedHeight,
                                      uint32_t& aTargetWidth, uint32_t& aTargetHeight) {
@@ -32,6 +33,8 @@ public:
   static device::DeviceType GetDeviceTypeFromSystem(bool is6DoF);
 
 private:
+  static vrb::Matrix CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition,
+                                                               const float kPitchUpThreshold, const float kPitchDownThreshold, const float kRollThreshold);
   static std::unordered_map<std::string, device::DeviceType> deviceNamesMap;
   VRB_NO_DEFAULTS(DeviceUtils)
 };
