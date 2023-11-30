@@ -846,8 +846,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         Intent enterWebXRAction = new Intent(STARTIMMERSIVE_ACTION);
-        if(enterxrX != null) enterWebXRAction.putExtra(ENTERXR_X_INTENT_KEY, enterxrX);
-        if(enterxrY != null) enterWebXRAction.putExtra(ENTERXR_Y_INTENT_KEY, enterxrY);
+        if(enterxrX > 0f) enterWebXRAction.putExtra(ENTERXR_X_INTENT_KEY, enterxrX);
+        if(enterxrY > 0f) enterWebXRAction.putExtra(ENTERXR_Y_INTENT_KEY, enterxrY);
         sendBroadcast(enterWebXRAction);
     }
 
