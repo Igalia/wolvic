@@ -353,6 +353,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
+        setHeadLockEnabled(mSettings.isHeadLockEnabled());
+
         // Show the launch dialogs, if needed.
         if (!showTermsServiceDialogIfNeeded()) {
             if (!showPrivacyDialogIfNeeded()) {
@@ -719,6 +721,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 SpeechRecognizer speechRecognizer =
                         SpeechServices.getInstance(this, SettingsStore.getInstance(this).getVoiceSearchService());
                 ((VRBrowserApplication) getApplication()).setSpeechRecognizer(speechRecognizer);
+            } else if (key.equals(getString(R.string.settings_key_head_lock))) {
+                setHeadLockEnabled(SettingsStore.getInstance(this).isHeadLockEnabled());
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -1915,6 +1919,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setHeadLockEnabled(boolean isHeadLockEnabled) {
+        queueRunnable(() -> {
+            setHeadLockEnabledNative(isHeadLockEnabled);
+            if (!isHeadLockEnabled) {
+                recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
+            }
+        });
+    }
+
+    @Override
     public void recenterUIYaw(@YawTarget int aTarget) {
         queueRunnable(() -> recenterUIYawNative(aTarget));
     }
@@ -2057,6 +2071,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
     private native void togglePassthroughNative();
+    private native void setHeadLockEnabledNative(boolean isEnabled);
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);

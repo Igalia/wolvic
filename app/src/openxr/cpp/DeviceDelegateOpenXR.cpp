@@ -823,6 +823,12 @@ DeviceDelegateOpenXR::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
+DeviceDelegateOpenXR::Reorient() {
+  vrb::Matrix head = GetHeadTransform();
+  m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
+}
+
+void
 DeviceDelegateOpenXR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

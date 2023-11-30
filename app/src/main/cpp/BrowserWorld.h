@@ -49,6 +49,7 @@ public:
   void EndFrame();
   void TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity);
   void TogglePassthrough();
+  void SetHeadLockEnabled(const bool isEnabled);
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
   void UpdatePointerColor();

@@ -34,6 +34,7 @@ public:
   const vrb::Matrix& GetHeadTransform() const override;
   const vrb::Matrix& GetReorientTransform() const override;
   void SetReorientTransform(const vrb::Matrix& aMatrix) override;
+  void Reorient() override;
   void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
   void SetControllerDelegate(ControllerDelegatePtr& aController) override;

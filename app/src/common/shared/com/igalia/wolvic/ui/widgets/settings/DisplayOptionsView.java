@@ -78,6 +78,9 @@ class DisplayOptionsView extends SettingsView {
             mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
         }
 
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -151,6 +154,10 @@ class DisplayOptionsView extends SettingsView {
         setStartWithPassthrough(value);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
+        setHeadLock(value);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -211,6 +218,7 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
+        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
@@ -261,6 +269,14 @@ class DisplayOptionsView extends SettingsView {
         mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
 
         SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
+    }
+
+    private void setHeadLock(boolean value) {
+        mBinding.headLockSwitch.setOnCheckedChangeListener(null);
+        mBinding.headLockSwitch.setValue(value, false);
+        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
+
+        SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
     }
 
     private void setHomepage(String newHomepage) {

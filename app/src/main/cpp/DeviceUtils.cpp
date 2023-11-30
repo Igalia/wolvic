@@ -16,10 +16,16 @@ std::unordered_map<std::string, device::DeviceType> DeviceUtils::deviceNamesMap;
 
 vrb::Matrix
 DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
-  const float kPitchUpThreshold = 0.2f;
-  const float kPitchDownThreshold = 0.5f;
-  const float kRollThreshold = 0.35f;
+  return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.2f, 0.5f, 0.35f);
+}
 
+vrb::Matrix
+DeviceUtils::CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
+  return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.0f, 0.0f, 0.0f);
+}
+
+vrb::Matrix
+DeviceUtils::CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition, const float kPitchUpThreshold, const float kPitchDownThreshold, const float kRollThreshold) {
   float rx, ry, rz;
   vrb::Quaternion quat(aHeadTransform);
   quat.ToEulerAngles(rx, ry, rz);
