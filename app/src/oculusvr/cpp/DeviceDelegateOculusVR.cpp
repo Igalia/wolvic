@@ -792,6 +792,12 @@ DeviceDelegateOculusVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
+DeviceDelegateOculusVR::Reorient() {
+  vrb::Matrix head = GetHeadTransform();
+  m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixTracking(head, kAverageHeight);
+}
+
+void
 DeviceDelegateOculusVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }
