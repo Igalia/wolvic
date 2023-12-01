@@ -210,6 +210,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             if (mAttachedWindow != null &&
                     mViewModel.getAutoEnteredVRVideo().getValue().get()) {
                 mAttachedWindow.setIsFullScreen(false);
+            } else {
+                mAttachedWindow.reCenterFrontWindow();
             }
         };
 
@@ -688,6 +690,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
             }
         }
+        mAttachedWindow.reCenterFrontWindow();
     }
 
     @Override
@@ -723,6 +726,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 exitVRVideo();
             }
             exitFullScreenMode();
+            mAttachedWindow.centerFrontWindowIfNeeded();
         }
     }
 
@@ -763,6 +767,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 if (mViewModel.getIsInVRVideo().getValue().get()) {
                     if (projection == VIDEO_PROJECTION_NONE) {
                         exitVRVideo();
+                        mAttachedWindow.reCenterFrontWindow();
                     } else {
                         // Reproject while reproducing VRVideo
                         mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
@@ -969,6 +974,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mMediaControlsWidget.setMedia(mFullScreenMedia);
         mMediaControlsWidget.setParentWidget(mAttachedWindow.getHandle());
         mMediaControlsWidget.setProjectionSelectorEnabled(true);
+        mAttachedWindow.reCenterFrontWindow();
         mWidgetManager.updateWidget(mMediaControlsWidget);
         mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), aProjection);
     }
@@ -999,6 +1005,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setAutoEnteredVRVideo(false);
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
+        mAttachedWindow.centerFrontWindowIfNeeded();
         mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);

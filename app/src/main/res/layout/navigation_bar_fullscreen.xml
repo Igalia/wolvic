@@ -51,7 +51,7 @@
                 android:src="@drawable/ic_icon_move"
                 android:tooltipText="@string/move_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"
-                app:visibleGone="@{settingsmodel.isWindowMovementEnabled}" />
+                app:visibleGone="@{settingsmodel.isWindowMovementEnabled &amp;&amp; viewmodel.isCurved}" />
 
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/brightnessButton"
