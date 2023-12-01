@@ -998,7 +998,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setHeight(mWidgetPlacement.height);
     }
 
-    private void centerFrontWindowIfNeeded() {
+    public void reCenterFrontWindow() {
+        if (mWindowPlacement != Windows.WindowPlacement.FRONT)
+            return;
+
+        // default position
+        mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+        mWidgetManager.updateWidget(this);
+        mWidgetManager.updateVisibleWidgets();
+    }
+
+    public void centerFrontWindowIfNeeded() {
         if (!SettingsStore.getInstance(getContext()).isCenterWindows())
             return;
 
