@@ -337,6 +337,9 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
      and is used to enable or disable curved display. -->
     <string name="developer_options_curved_display">启用曲面显示</string>
+    <!-- This string labels an On/Off switch in the 'Display' dialog
+     and is used to align the windows vertically to the bottom or the center. -->
+    <string name="developer_options_center_windows">垂直居中窗口</string>
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">启用远程调试</string>
