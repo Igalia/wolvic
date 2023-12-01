@@ -343,6 +343,9 @@
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use passthrough mode when the app starts. -->
     <string name="display_options_start_with_passthrough">启动时使用直通模式</string>
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog and is used to
+         customize if windows can be moved. Enabling it adds a Move button to the navigation bar. -->
+    <string name="display_options_windows_can_move">拖拽移动窗口</string>
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
     <string name="display_options_head_lock">头部锁定</string>
@@ -1429,6 +1432,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_switch_to_desktop">桌面模式</string>
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">菜单</string>
+    <!-- This string is displayed in the tooltip that is displayed when the user hovers the move icon -->
+    <string name="move_tooltip">移动</string>
     <!-- This string is displayed in the title of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_title">发送标签页到设备</string>
     <!-- This string is displayed in the description of the Send Tab to device dialog. -->

@@ -81,6 +81,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
         setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
 
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
+        setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled());
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -158,6 +161,10 @@ class DisplayOptionsView extends SettingsView {
         setHeadLock(value);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mWindowMovementListener = (compoundButton, enabled, apply) -> {
+        setWindowMovement(enabled);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -220,6 +227,7 @@ class DisplayOptionsView extends SettingsView {
         setCurvedDisplay(false, true);
         setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
+        setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -277,6 +285,26 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
 
         SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
+
+        if (value) {
+            // Disable window movement if head lock is enabled,
+            // otherwise the windows might be moved out of the user's reach.
+            setWindowMovement(false);
+        }
+    }
+
+    private void setWindowMovement(boolean value) {
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(null);
+        mBinding.windowMovementSwitch.setValue(value, false);
+        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
+
+        SettingsStore.getInstance(getContext()).setWindowMovementEnabled(value);
+
+        if (value) {
+            // Disable head lock if window movement is enabled,
+            // otherwise the windows might be moved out of the user's reach.
+            setHeadLock(false);
+        }
     }
 
     private void setHomepage(String newHomepage) {

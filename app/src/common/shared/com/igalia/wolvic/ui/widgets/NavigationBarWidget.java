@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -134,6 +135,29 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private WidgetPlacement mBeforeFullscreenPlacement;
     private float mSavedCylinderDensity = 0.0f;
     private Animation mAnimation;
+
+    private class MoveTouchListener implements OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_POINTER_DOWN:
+                case MotionEvent.ACTION_DOWN:
+                    v.setPressed(true);
+                    mWidgetManager.startWidgetMove(mWidgetManager.getWindows().getFrontWindow(), WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_WINDOW);
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.setPressed(false);
+                    mWidgetManager.finishWidgetMove();
+                    break;
+                default:
+                    return false;
+
+            }
+            return true;
+        }
+    }
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -300,6 +324,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
+
+        mBinding.navigationBarNavigation.moveButton.setOnTouchListener(new MoveTouchListener());
+        mBinding.navigationBarFullscreen.fullScreenMoveButton.setOnTouchListener(new MoveTouchListener());
 
         mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();

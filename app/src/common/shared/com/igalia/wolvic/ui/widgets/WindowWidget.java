@@ -944,6 +944,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mViewModel.getIsFullscreen().getValue().get();
     }
 
+    public void setIsCurved(boolean isCurved) {
+        mViewModel.setIsCurved(isCurved);
+    }
+
     public void setKioskMode(boolean isKioskMode) {
         if (mViewModel.getIsKioskMode().getValue().get() == isKioskMode)
             return;

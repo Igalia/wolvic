@@ -104,6 +104,7 @@ public class SettingsStore {
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
+    public final static boolean WINDOW_MOVEMENT_DEFAULT = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     public final static float HAPTIC_PULSE_DURATION_DEFAULT = 10.0f;
     public final static float HAPTIC_PULSE_INTENSITY_DEFAULT = 1.0f;
@@ -338,6 +339,19 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
         editor.commit();
+    }
+
+    public boolean isWindowMovementEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_window_movement), WINDOW_MOVEMENT_DEFAULT);
+    }
+
+    public void setWindowMovementEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_window_movement), isEnabled);
+        editor.commit();
+
+        mSettingsViewModel.setWindowMovementEnabled(isEnabled);
     }
 
     public boolean isEnvironmentOverrideEnabled() {

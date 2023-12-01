@@ -39,10 +39,11 @@ public interface WidgetManagerDelegate {
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
 
-    @IntDef(value = { WIDGET_MOVE_BEHAVIOUR_GENERAL, WIDGET_MOVE_BEHAVIOUR_KEYBOARD})
+    @IntDef(value = { WIDGET_MOVE_BEHAVIOUR_GENERAL, WIDGET_MOVE_BEHAVIOUR_KEYBOARD, WIDGET_MOVE_BEHAVIOUR_WINDOW})
     public @interface WidgetMoveBehaviourFlags {}
     public static final int WIDGET_MOVE_BEHAVIOUR_GENERAL = 0;
     public static final int WIDGET_MOVE_BEHAVIOUR_KEYBOARD = 1;
+    public static final int WIDGET_MOVE_BEHAVIOUR_WINDOW = 2;
 
     @IntDef(value = { CPU_LEVEL_NORMAL, CPU_LEVEL_HIGH})
     @interface CPULevelFlags {}

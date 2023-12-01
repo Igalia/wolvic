@@ -3,11 +3,13 @@ package com.igalia.wolvic.ui.widgets;
 import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,6 +50,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
@@ -121,6 +124,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private Context mContext;
+    private SharedPreferences mPrefs;
     private WidgetManagerDelegate mWidgetManager;
     private Delegate mDelegate;
     private ArrayList<WindowWidget> mRegularWindows;
@@ -202,6 +206,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mConnectivityReceived.addListener(mConnectivityDelegate);
 
         mDownloadsManager = mWidgetManager.getServicesProvider().getDownloadsManager();
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mPrefs.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
         mIsRestoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
         mWindowsState = restoreState();
@@ -538,6 +545,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mAccounts.removeAccountListener(mAccountObserver);
         mServices.setTabReceivedDelegate(null);
         mConnectivityReceived.removeListener(mConnectivityDelegate);
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mPreferencesListener);
     }
 
     public boolean isInPrivateMode() {
@@ -746,7 +754,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Nullable
-    private WindowWidget getFrontWindow() {
+    public WindowWidget getFrontWindow() {
         return getFrontWindow(mPrivateMode);
     }
 
@@ -869,6 +877,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition, boolean curvedMode, boolean centerWindow) {
         WidgetPlacement placement = aWindow.getPlacement();
         aWindow.setWindowPlacement(aPosition);
+        aWindow.setIsCurved(curvedMode);
         switch (aPosition) {
             case FRONT:
                 placement.anchorX = 0.5f;
@@ -1048,6 +1057,23 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
         }
     }
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (Objects.equals(key, mContext.getString(R.string.settings_key_window_movement))) {
+                        WindowWidget frontWindow = getFrontWindow();
+                        boolean isWindowMovementEnabled = sharedPreferences.getBoolean(key, SettingsStore.WINDOW_MOVEMENT_DEFAULT);
+
+                        // Reset the position of the windows when the setting becomes disabled.
+                        if (frontWindow != null && !isWindowMovementEnabled) {
+                            placeWindow(frontWindow, WindowPlacement.FRONT);
+                        }
+                        updateViews();
+                    }
+                }
+            };
 
     private AccountObserver mAccountObserver = new AccountObserver() {
         @Override

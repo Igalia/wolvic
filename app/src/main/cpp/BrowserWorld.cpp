@@ -1423,10 +1423,15 @@ BrowserWorld::FinishWidgetResize(int32_t aHandle) {
 }
 
 void
-BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
+BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehaviour) {
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
+    return;
+  }
+
+  if (((WidgetMoveBehaviour) aMoveBehaviour == WidgetMoveBehaviour::WINDOW) && !widget->GetCylinder()) {
+    // Windows only move in the horizontal direction, and only when positioned on a cylinder.
     return;
   }
 
@@ -1440,7 +1445,7 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
       continue;
     }
 
-    if (controller.pointer && controller.focused && controller.pointer->GetHitWidget() == widget) {
+    if (controller.pointer && controller.focused) {
       controllerIndex = controller.index;
       start = controller.StartPoint();
       direction = controller.Direction();
@@ -1461,7 +1466,7 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
   if (widget->GetPlacement()->parentHandle) {
     parent = m.GetWidget(widget->GetPlacement()->parentHandle);
   }
-  m.movingWidget->StartMoving(widget, parent, aMoveBehavour, controllerIndex, start, direction, anchorPoint);
+  m.movingWidget->StartMoving(widget, parent, aMoveBehaviour, controllerIndex, start, direction, anchorPoint);
 }
 
 void
