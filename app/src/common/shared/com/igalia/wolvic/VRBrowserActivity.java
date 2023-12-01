@@ -159,6 +159,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                             }
                             if(finalX > 0f && finalY > 0f) {
                                 simulateBrowserWindowTouchEvent(finalX, finalY);
+                                r.run();
                             } else {
                                 findTheWebXrButtonAtAllCosts(r);
                             }
@@ -167,7 +168,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
             };
 
-            findTheWebXrButtonAtAllCosts(findWebXrButton);
+            if(finalX > 0f && finalY > 0f) {
+                simulateBrowserWindowTouchEvent(finalX, finalY);
+                findWebXrButton.run();
+            } else {
+                findTheWebXrButtonAtAllCosts(findWebXrButton);
+            }
         }
     };
           
