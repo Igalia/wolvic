@@ -14,12 +14,6 @@
 
 namespace crow {
 
-// Should match the values defined in WidgetManagerDelegate.WidgetMoveBehaviourFlags
-enum class WidgetMoveBehaviour {
-  GENERAL = 0,
-  KEYBOARD = 1
-};
-
 struct WidgetMover::State {
   WidgetPtr widget;
   WidgetPtr parentWidget;
@@ -150,17 +144,21 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
   hitPoint = m.GetMovePoint(aStart, aDirection);
 
   vrb::Vector delta = hitPoint - m.initialPoint;
-  delta.y() = hitPoint.y() - m.initialPoint.y();
   delta.x() = hitPoint.x() - m.initialPoint.x();
-
+  delta.y() = hitPoint.y() - m.initialPoint.y();
 
   if (m.moveBehaviour == WidgetMoveBehaviour::KEYBOARD) {
     return m.HandleKeyboardMove(delta);
   } else {
+    // Windows only move in the horizontal direction, and only when positioned on a cylinder.
+    if (m.moveBehaviour == WidgetMoveBehaviour::WINDOW) {
+      delta.y() = 0.0f;
+    }
+
     // General case
     const float maxX = 1.5f;
     const float minX = -maxX;
-    const float maxY = 3.0f;
+    const float maxY = 1.0f;
     const float minY = -maxY;
     vrb::Vector translation = m.initialPlacement->translation;
     float x = translation.x() * WidgetPlacement::kWorldDPIRatio + delta.x();

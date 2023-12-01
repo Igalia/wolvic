@@ -38,6 +38,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<Windows.WindowPlacement> placement;
     private MutableLiveData<ObservableBoolean> isOnlyWindow;
     private MutableLiveData<ObservableBoolean> isFullscreen;
+    private MutableLiveData<ObservableBoolean> isCurved;
     private MutableLiveData<ObservableBoolean> isKioskMode;
     private MutableLiveData<ObservableBoolean> isDesktopMode;
     private MediatorLiveData<ObservableBoolean> isTopBarVisible;
@@ -91,6 +92,7 @@ public class WindowViewModel extends AndroidViewModel {
         placement = new MutableLiveData<>(Windows.WindowPlacement.FRONT);
         isOnlyWindow = new MutableLiveData<>(new ObservableBoolean(false));
         isFullscreen = new MutableLiveData<>(new ObservableBoolean(false));
+        isCurved = new MutableLiveData<>(new ObservableBoolean(false));
         isKioskMode = new MutableLiveData<>(new ObservableBoolean(false));
         isDesktopMode = new MutableLiveData<>(new ObservableBoolean(false));
         isResizeMode = new MutableLiveData<>(new ObservableBoolean(false));
@@ -467,6 +469,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsFullscreen(boolean isFullscreen) {
         this.isFullscreen.postValue(new ObservableBoolean(isFullscreen));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsCurved() {
+        return isCurved;
+    }
+
+    public void setIsCurved(boolean isCurved) {
+        this.isCurved.postValue(new ObservableBoolean(isCurved));
     }
 
     @NonNull
