@@ -46,6 +46,14 @@
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/fullScreenMoveButton"
+                style="@style/fullScreenButtonTheme"
+                android:src="@drawable/ic_icon_move"
+                android:tooltipText="@string/move_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"
+                app:visibleGone="@{settingsmodel.isWindowMovementEnabled}" />
+
+            <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/brightnessButton"
                 style="@style/fullScreenButtonTheme"
                 android:src="@drawable/ic_icon_brightness"

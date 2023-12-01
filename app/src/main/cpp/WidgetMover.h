@@ -23,6 +23,13 @@ typedef std::shared_ptr<Widget> WidgetPtr;
 typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 typedef std::shared_ptr<WidgetMover> WidgetMoverPtr;
 
+// Should match the values defined in WidgetManagerDelegate.WidgetMoveBehaviourFlags
+enum class WidgetMoveBehaviour {
+    GENERAL = 0,
+    KEYBOARD = 1,
+    WINDOW = 2
+};
+
 class WidgetMover {
 public:
   static WidgetMoverPtr Create();

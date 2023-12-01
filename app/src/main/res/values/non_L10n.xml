@@ -12,6 +12,7 @@
     <string name="settings_key_system_root_ca" translatable="false">settings_system_root_ca</string>
     <string name="settings_key_start_with_passthrough" translatable="false">settings_start_with_passthrough</string>
     <string name="settings_key_head_lock" translatable="false">settings_head_lock</string>
+    <string name="settings_key_window_movement" translatable="false">settings_window_movement</string>
     <string name="settings_key_environment_override" translatable="false">settings_environment_override</string>
     <string name="settings_key_performance_monitor" translatable="false">settings_performance_monitor</string>
     <string name="settings_key_servo" translatable="false">settings_environment_servo</string>
