@@ -417,6 +417,8 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">显示像素密度（DPI）：</string>
+    <!-- This string is used to label the experimental features. -->
+    <string name="experimental_features">实验性功能</string>
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">多重采样抗锯齿（MSAA）</string>

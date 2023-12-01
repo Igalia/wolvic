@@ -116,33 +116,47 @@
                     app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
-                <com.igalia.wolvic.ui.views.settings.SliderSetting
-                    android:id="@+id/window_distance_slider"
+                <LinearLayout android:orientation="vertical"
+                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/display_options_windows_distance"
-                    app:stepSize="0.1"
-                    app:valueFrom="0.0"
-                    app:valueTo="1.0" />
+                    android:background="@drawable/settings_group_borders">
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/center_windows_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_center_windows" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/photonRed40"
+                        android:text="@string/experimental_features"/>
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/headLockSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/display_options_head_lock" />
+                    <com.igalia.wolvic.ui.views.settings.SliderSetting
+                        android:id="@+id/window_distance_slider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:description="@string/display_options_windows_distance"
+                        app:stepSize="0.1"
+                        app:valueFrom="0.0"
+                        app:valueTo="1.0" />
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/windowMovementSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/display_options_windows_can_move" />
+                    <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                        android:id="@+id/center_windows_switch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:description="@string/developer_options_center_windows" />
 
+                    <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                        android:id="@+id/headLockSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:description="@string/display_options_head_lock" />
+
+                    <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                        android:id="@+id/windowMovementSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:description="@string/display_options_windows_can_move" />
+
+                </LinearLayout>
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 
