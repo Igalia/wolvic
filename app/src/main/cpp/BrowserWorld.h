@@ -61,7 +61,7 @@ public:
   void RecreateWidgetSurface(int32_t aHandle);
   void StartWidgetResize(int32_t aHandle, const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize);
   void FinishWidgetResize(int32_t aHandle);
-  void StartWidgetMove(int32_t aHandle, const int32_t aMoveBehavour);
+  void StartWidgetMove(int32_t aHandle, const int32_t aMoveBehaviour);
   void FinishWidgetMove();
   void UpdateVisibleWidgets();
   void LayoutWidget(int32_t aHandle);

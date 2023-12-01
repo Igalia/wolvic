@@ -877,6 +877,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition, boolean curvedMode, boolean centerWindow) {
         WidgetPlacement placement = aWindow.getPlacement();
         aWindow.setWindowPlacement(aPosition);
+        aWindow.setIsCurved(curvedMode);
         switch (aPosition) {
             case FRONT:
                 placement.anchorX = 0.5f;
