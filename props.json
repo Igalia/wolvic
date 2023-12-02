@@ -44,6 +44,56 @@
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.png",
         "payload": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.zip"
       }
+    ],
+    "dictionaries": [
+      {
+        "lang": "da_DK",
+        "payload": "https://igalia.github.io/wolvic/dics/da_wordlist.db"
+      },
+      {
+        "lang": "es",
+        "payload": "https://igalia.github.io/wolvic/dics/es_wordlist.db"
+      },
+      {
+        "lang": "it",
+        "payload": "https://igalia.github.io/wolvic/dics/it_wordlist.db"
+      },
+      {
+        "lang": "pl_PL",
+        "payload": "https://igalia.github.io/wolvic/dics/pl_wordlist.db"
+      },
+      {
+        "lang": "de",
+        "payload": "https://igalia.github.io/wolvic/dics/de_wordlist.db"
+      },
+      {
+        "lang": "fi_FI",
+        "payload": "https://igalia.github.io/wolvic/dics/fi_wordlist.db"
+      },
+      {
+        "lang": "nb_NO",
+        "payload": "https://igalia.github.io/wolvic/dics/nb_wordlist.db"
+      },
+      {
+        "lang": "ru_RU",
+        "payload": "https://igalia.github.io/wolvic/dics/ru_wordlist.db"
+      },
+      {
+        "lang": "fr",
+        "payload": "https://igalia.github.io/wolvic/dics/fr_wordlist.db"
+      },
+      {
+        "lang": "nl_NL",
+        "payload": "https://igalia.github.io/wolvic/dics/nl_wordlist.db"
+      },
+      {
+        "lang": "en",
+        "payload": "https://igalia.github.io/wolvic/dics/en_wordlist.db"
+      },
+      {
+        "lang": "sv_SE",
+        "payload": "https://igalia.github.io/wolvic/dics/sv_wordlist.db"
+      }
     ]
   },
   "1.5.1": {
