@@ -23,7 +23,7 @@ public class FrenchKeyboard extends BaseLatinKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_french);
-            loadDatabase("fr_wordlist.db");
+            loadDatabase();
         }
         return mKeyboard;
     }

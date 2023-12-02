@@ -12,8 +12,8 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
-import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     private CustomKeyboard mSymbolsKeyboard;
     private SymbolList mSymbolsConverter;  // For Emoji characters.
     private List<Words> mEmojiList = null;
-    private DBHelper mDB;
+    private File mDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
     private HashMap<String, KeyMap> mExtraKeymaps = new HashMap<>();
 
@@ -68,7 +68,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     @Nullable
     @Override
     public CandidatesResult getCandidates(String aComposingText) {
-        if (StringUtils.isEmpty(aComposingText)) {
+        if (!usesComposingText() || StringUtils.isEmpty(aComposingText)) {
             return null;
         }
 
@@ -252,13 +252,18 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     }
 
     @Override
+    public boolean needsDatabase() {
+        return true;
+    }
+
+    @Override
     public boolean supportsAutoCompletion() {
         return true;
     }
 
     @Override
     public boolean usesComposingText() {
-        return true;
+        return mDB.exists();
     }
 
     @Override
@@ -302,7 +307,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
     private void loadDatabase() {
         try {
-            mDB = new DBHelper(mContext);
+            mDB = mContext.getDatabasePath("google_pinyin.db");
             addExtraKeyMaps();
         }
         catch (Exception ex) {
@@ -358,7 +363,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     private final String[] sqliteArgs = new String[1];
 
     private void loadKeymapTable(String aKey) {
-        SQLiteDatabase reader = mDB.getReadableDatabase();
+        SQLiteDatabase reader = SQLiteDatabase.openDatabase(mDB.getPath(), null, SQLiteDatabase.OPEN_READONLY);
         sqliteArgs[0] = aKey;
         try (Cursor cursor = reader.rawQuery("SELECT keymap, display, candidates FROM keymaps where keymap = ? ORDER BY _id ASC", sqliteArgs)) {
             if (!cursor.moveToFirst()) {
@@ -374,7 +379,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     }
 
     private void loadAutoCorrectTable(String aKey) {
-        SQLiteDatabase reader = mDB.getReadableDatabase();
+        SQLiteDatabase reader = SQLiteDatabase.openDatabase(mDB.getPath(), null, SQLiteDatabase.OPEN_READONLY);
         sqliteArgs[0] = aKey;
         try  (Cursor cursor = reader.rawQuery("SELECT inputcode, displaycode, display FROM autocorrect where inputcode = ? ORDER BY _id ASC", sqliteArgs)) {
             if (!cursor.moveToFirst()) {
@@ -472,16 +477,6 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     class KeyMap {
         ArrayList<Words> displays = new ArrayList<>();
         ArrayList<Words> candidates = new ArrayList<>();
-    }
-
-
-    class DBHelper extends SQLiteAssetHelper {
-        private static final String DATABASE_NAME = "google_pinyin.db";
-        private static final int DATABASE_VERSION = 1;
-
-        public DBHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
     }
 
     @Override

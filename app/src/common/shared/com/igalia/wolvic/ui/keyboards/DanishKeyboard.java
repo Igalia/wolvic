@@ -27,7 +27,7 @@ public class DanishKeyboard extends BaseLatinKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_danish);
-            loadDatabase("da_wordlist.db");
+            loadDatabase();
         }
         return mKeyboard;
     }

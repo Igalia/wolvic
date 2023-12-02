@@ -29,6 +29,7 @@ import com.igalia.wolvic.ui.widgets.AppServicesProvider;
 import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.EnvironmentsManager;
+import com.igalia.wolvic.utils.DictionariesManager;
 import com.igalia.wolvic.utils.LocaleUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
@@ -43,6 +44,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private DownloadsManager mDownloadsManager;
     private SpeechRecognizer mSpeechRecognizer;
     private EnvironmentsManager mEnvironmentsManager;
+    private DictionariesManager mDictionariesManager;
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
 
@@ -64,6 +66,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
         mEnvironmentsManager.init();
+        mDictionariesManager = new DictionariesManager(activityContext);
+        mDictionariesManager.init();
         mAddons = new Addons(activityContext, mSessionStore);
 
         try {
@@ -78,6 +82,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mConnectivityManager.end();
         mDownloadsManager.end();
         mEnvironmentsManager.end();
+        mDictionariesManager.end();
     }
 
     @Override
@@ -139,6 +144,11 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public EnvironmentsManager getEnvironmentsManager() {
         return mEnvironmentsManager;
+    }
+
+    @Override
+    public DictionariesManager getDictionariesManager() {
+        return mDictionariesManager;
     }
 
     @Override
