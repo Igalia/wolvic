@@ -44,6 +44,56 @@
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.png",
         "payload": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.zip"
       }
+    ],
+    "dictionaries": [
+      {
+        "lang": "da_DK",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/da_wordlist.db"
+      },
+      {
+        "lang": "es",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/es_wordlist.db"
+      },
+      {
+        "lang": "it",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/it_wordlist.db"
+      },
+      {
+        "lang": "pl_PL",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/pl_wordlist.db"
+      },
+      {
+        "lang": "de",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/de_wordlist.db"
+      },
+      {
+        "lang": "fi_FI",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/fi_wordlist.db"
+      },
+      {
+        "lang": "nb_NO",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/nb_wordlist.db"
+      },
+      {
+        "lang": "ru_RU",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/ru_wordlist.db"
+      },
+      {
+        "lang": "fr",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/fr_wordlist.db"
+      },
+      {
+        "lang": "nl_NL",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/nl_wordlist.db"
+      },
+      {
+        "lang": "en",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/en_wordlist.db"
+      },
+      {
+        "lang": "sv_SE",
+        "payload": "https://raw.githubusercontent.com/Igalia/wolvic/gh-pages-dics/dics/sv_wordlist.db"
+      }
     ]
   },
   "1.5.1": {
