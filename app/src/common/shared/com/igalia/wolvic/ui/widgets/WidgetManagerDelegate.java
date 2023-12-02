@@ -85,6 +85,7 @@ public interface WidgetManagerDelegate {
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();
+    void updateKeyboardDictionary();
     void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
     void hideVRVideo();
     void togglePassthrough();

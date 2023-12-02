@@ -896,6 +896,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         updateCandidates();
     }
 
+    public void updateDictionary() {
+        if (!mCurrentKeyboard.needsDatabase()) {
+            return;
+        }
+        mWidgetManager.getServicesProvider().getDictionariesManager().getOrDownloadDictionary(mCurrentKeyboard.getLocale().toString());
+    }
+
     enum Remember {
         YES,
         NO;
@@ -904,6 +911,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         cleanComposingText();
 
         mCurrentKeyboard = aKeyboard;
+
+        updateDictionary();
 
         // For the case when switching from a symbol keyboard to a alphabetic keyboard.
         float currentHeight = 0.0f;

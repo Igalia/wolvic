@@ -1891,6 +1891,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void updateKeyboardDictionary() {
+        mKeyboard.updateDictionary();
+    }
+
+    @Override
     public void updatePointerColor() {
         queueRunnable(this::updatePointerColorNative);
     }

@@ -661,9 +661,6 @@ dependencies {
     implementation deps.kotlin.coroutines
     implementation deps.kotlin.coroutines_jdk8
 
-    // SQLite helper to handle DBs from assets
-    implementation deps.sqlite.sqlite
-
     // DiskLRUCache used to cache snapshots
     implementation deps.disklrucache.disklrucache
 

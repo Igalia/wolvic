@@ -13,8 +13,8 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
-import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +34,8 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     private CustomKeyboard mSymbolsKeyboard;
     private SymbolList mSymbolsConverter;  // For Emoji characters.
     private List<Words> mEmojiList = null;
-    private DBWordHelper mWordDB;
-    private DBPhraseHelper mPhraseDB;
+    private File mWordDB;
+    private File mPhraseDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
     private HashMap<String, Words> mKeyCodes = new HashMap<>();
     private final String[] sqliteArgs = new String[2];
@@ -70,7 +70,7 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     @Nullable
     @Override
     public CandidatesResult getCandidates(String aComposingText) {
-        if (aComposingText == null) {
+        if (!usesComposingText() || aComposingText == null) {
             return null;
         }
 
@@ -182,13 +182,18 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     }
 
     @Override
+    public boolean needsDatabase() {
+        return true;
+    }
+
+    @Override
     public boolean supportsAutoCompletion() {
         return true;
     }
 
     @Override
     public boolean usesComposingText() {
-        return true;
+        return mWordDB.exists() && mPhraseDB.exists();
     }
 
     @Override
@@ -257,8 +262,8 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
 
     private void loadDatabase() {
         try {
-            mWordDB = new DBWordHelper(mContext);
-            mPhraseDB = new DBPhraseHelper(mContext);
+            mWordDB = mContext.getDatabasePath("zhuyin_words.db");
+            mPhraseDB = mContext.getDatabasePath("zhuyin_phrases.db");
             addExtraKeyMaps();
         }
         catch (Exception ex) {
@@ -335,7 +340,7 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     }
 
     private void loadKeymapTable(String aKey) {
-        SQLiteDatabase reader = mWordDB.getReadableDatabase();
+        SQLiteDatabase reader = SQLiteDatabase.openDatabase(mWordDB.getPath(), null, SQLiteDatabase.OPEN_READONLY);
         String transCode = aKey;
         int limit = 50;
         boolean exactQuery = false;
@@ -391,7 +396,7 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         }
 
         // Query phrase
-        reader = mPhraseDB.getReadableDatabase();
+        reader = SQLiteDatabase.openDatabase(mPhraseDB.getPath(), null, SQLiteDatabase.OPEN_READONLY);
         sqliteArgs[0] = transCode + '%';
         sqliteArgs[1] = "" + limit;
         try (Cursor cursor = reader.rawQuery("SELECT code, word FROM phrases_" + transCode.substring(0, 2)
@@ -460,24 +465,6 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
 
     class KeyMap {
         ArrayList<Words> displays = new ArrayList<>();
-    }
-
-    class DBWordHelper extends SQLiteAssetHelper {
-        private static final String DATABASE_NAME = "zhuyin_words.db";
-        private static final int DATABASE_VERSION = 1;
-
-        public DBWordHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-    }
-
-    class DBPhraseHelper extends SQLiteAssetHelper {
-        private static final String DATABASE_NAME = "zhuyin_phrases.db";
-        private static final int DATABASE_VERSION = 1;
-
-        public DBPhraseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.utils.BitmapCache;
 import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.EnvironmentsManager;
+import com.igalia.wolvic.utils.DictionariesManager;
 
 public interface AppServicesProvider {
 
@@ -28,6 +29,7 @@ public interface AppServicesProvider {
     DownloadsManager getDownloadsManager();
     SpeechRecognizer getSpeechRecognizer();
     EnvironmentsManager getEnvironmentsManager();
+    DictionariesManager getDictionariesManager();
     LoginStorage getLoginStorage();
     Addons getAddons();
     ConnectivityReceiver getConnectivityReceiver();

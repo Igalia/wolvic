@@ -23,7 +23,7 @@ public class ItalianKeyboard extends BaseLatinKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_italian);
-            loadDatabase("it_wordlist.db");
+            loadDatabase();
         }
         return mKeyboard;
     }

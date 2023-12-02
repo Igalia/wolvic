@@ -27,7 +27,7 @@ public class PolishKeyboard extends BaseLatinKeyboard {
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
             mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_polish);
-            loadDatabase("pl_wordlist.db");
+            loadDatabase();
         }
         return mKeyboard;
     }

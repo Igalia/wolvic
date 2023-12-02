@@ -146,10 +146,6 @@ atsl.rules = "androidx.test:rules:$versions.atsl_rules"
 atsl.junit = "androidx.test.ext:junit:$versions.atsl_junit"
 deps.atsl = atsl
 
-def sqlite = [:]
-sqlite.sqlite = 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
-deps.sqlite = sqlite
-
 def disklrucache = [:]
 disklrucache.disklrucache = 'com.jakewharton:disklrucache:2.0.2'
 deps.disklrucache = disklrucache

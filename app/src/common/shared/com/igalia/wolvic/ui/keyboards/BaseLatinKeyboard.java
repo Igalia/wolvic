@@ -7,10 +7,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.utils.DictionaryUtils;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
-import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Set;
 public abstract class BaseLatinKeyboard extends BaseKeyboard {
     private static final String LOGTAG = SystemUtils.createLogtag(EnglishKeyboard.class);
     private final HashMap<String, ArrayList<Words>> mKeymaps = new HashMap<>();
-    private DBHelper mDB;
+    private File mDB;
 
     public BaseLatinKeyboard(Context aContext) {
         super(aContext);
@@ -92,13 +93,18 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
     }
 
     @Override
+    public boolean needsDatabase() {
+        return true;
+    }
+
+    @Override
     public boolean supportsAutoCompletion() {
         return true;
     }
 
     @Override
     public boolean usesComposingText() {
-        return true;
+        return mDB.exists();
     }
 
     private List<Words> getDisplays(String aKey) {
@@ -110,12 +116,8 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
         return mKeymaps.get(aKey);
     }
 
-    protected void loadDatabase(String dbName) {
-        try {
-            mDB = new DBHelper(mContext, dbName);
-        } catch (Exception ex) {
-            Log.e(LOGTAG, "Error reading database: " + ex.getMessage());
-        }
+    protected void loadDatabase() {
+        mDB = mContext.getDatabasePath(DictionaryUtils.getExternalDicFullName(getLocale().toString()));
     }
 
     private void loadKeymapIfNotLoaded(String aKey) {
@@ -126,7 +128,7 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
     }
 
     private void loadAutoCorrectTable(String aKey) {
-        SQLiteDatabase reader = mDB.getReadableDatabase();
+        SQLiteDatabase reader = SQLiteDatabase.openDatabase(mDB.getPath(), null, SQLiteDatabase.OPEN_READONLY);;
         String[] sqliteArgs = new String[1];
         sqliteArgs[0] = aKey.toLowerCase() + "%";
         try (Cursor cursor = reader.rawQuery("SELECT word FROM autocorrect where LOWER(word) LIKE ? ORDER BY originalFreq DESC LIMIT 20", sqliteArgs)) {
@@ -159,13 +161,5 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
             return null;
         }
         return aCursor.getString(aIndex);
-    }
-
-    static class DBHelper extends SQLiteAssetHelper {
-        private static final int DATABASE_VERSION = 1;
-
-        public DBHelper(Context context, String dbName) {
-            super(context, dbName, null, DATABASE_VERSION);
-        }
     }
 }
