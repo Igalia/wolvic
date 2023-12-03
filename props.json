@@ -31,6 +31,18 @@
         "title": "Night Forest With Aurora Sky by Architecture_Interior (CC BY)",
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.png",
         "payload": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.zip"
+      },
+      {
+        "value": "pretville_cinema",
+        "title": "Pretville Cinema by D. Savva and J. Guest (CC0)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.zip"
+      },
+      {
+        "value": "winternight",
+        "title": "Winter Night City by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.zip"
       }
     ]
   },
