@@ -103,6 +103,7 @@
     <string name="private_browsing_body"><![CDATA[<p>Cando navegas nunha xanela privada, %1$s <strong>non garda</strong>:</p><ul class="two-column"><li>Páxinas visitadas</li><li>Buscas</li><li>Cookies</li><li>Arquivos temporais</li></ul><p>A navegación privada <strong>non garante o anonimato</strong> en Internet. O empregador ou o servizo que proporciona conexión a Internet pode saber que páxinas foron visitadas.</p><p class="about-info">Saber máis sobre <a id="learnMore">navegación privada</a>.</p>]]></string>
     <string name="voice_samples_collect_dialog_description2"><![CDATA[Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a>]]></string>
     <string name="hamburger_menu_tooltip">Menú</string>
+    <string name="move_tooltip">Mover</string>
     <string name="hamburger_menu_switch_to_desktop">Modo escritorio</string>
     <string name="whats_new_body_1">Inicie sesión ou cree unha nova Mozilla Account para enviar pestanas dende o escritorio ou móbil ao dispositivo XR.</string>
     <string name="tracking_dialog_message"><![CDATA[A protección mellorada de seguimento está %1$s para esta páxina web. <a href="%2$s">Saber máis</a>]]></string>
@@ -215,6 +216,8 @@
     <string name="fxa_account_last_no_synced">Non sincronizado aínda</string>
     <string name="fxa_account_syncing_off">Sincronización desactivada</string>
     <string name="fxa_account_last_synced">Última sincronización fai %1$d minutos</string>
+    <string name="fxa_account_options_device_name">Nome do dispositivo</string>
+    <string name="device_name">%1$s en %2$s</string>
     <string name="security_options_restore_tabs">Restaurar pestanas e xanelas ao reiniciar</string>
     <string name="security_options_autocomplete">Autocompletado na barra de enderezos</string>
     <string name="security_options_login_autofill">Autocompletado</string>
@@ -329,6 +332,13 @@
     <string name="history_context_add_bookmarks">Engadir aos marcadores</string>
     <string name="history_context_remove_bookmarks">Eliminar dos marcadores</string>
     <string name="download_context_delete">Borrar</string>
+    <string name="display_options_start_with_passthrough">Iniciar no modo Passthrough</string>
+    <string name="display_options_windows_can_move">As ventanas poden moverse</string>
+    <string name="display_options_sound_effect">Usar efectos de sonido</string>
+    <string name="display_options_head_lock">Fixar a ventana no teu campo visual</string>
+    <string name="display_options_windows_distance">Distancia das ventanas</string>
+    <string name="experimental_features">Funcionalidades experimentais</string>
+    <string name="controller_options_haptic_feedback">Feedback táctil</string>
     <string name="display_options_reset">Restablecer configuración de display</string>
     <string name="privacy_options_reset">Restablecer configuración de privacidade e seguridade</string>
     <string name="privacy_options_saved_logins_list_header">Inicios de sesión gardados:</string>
