@@ -523,6 +523,9 @@
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Display DPI:</string>
 
+    <!-- This string is used to label the experimental features. -->
+    <string name="experimental_features">Experimental Features</string>
+
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">MSAA</string>
