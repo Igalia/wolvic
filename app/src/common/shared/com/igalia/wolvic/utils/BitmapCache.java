@@ -16,6 +16,10 @@ import com.jakewharton.disklrucache.DiskLruCache;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -31,6 +35,28 @@ public class BitmapCache {
     private SurfaceTexture mCaptureSurfaceTexture;
     private Surface mCaptureSurface;
     private boolean mCapturedAcquired;
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
+    private String hashKey(@NonNull String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return bytesToHex(digest.digest(input.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(LOGTAG, Objects.requireNonNull(e.getMessage()));
+            return input;
+        }
+    }
 
     public static BitmapCache getInstance(Context aContext) {
         return ((VRBrowserApplication)aContext.getApplicationContext()).getBitmapCache();
@@ -75,11 +101,12 @@ public class BitmapCache {
     }
 
     public void addBitmap(@NonNull String aKey, @NonNull Bitmap aBitmap) {
-        mMemoryCache.put(aKey, aBitmap);
+        String finalKey = hashKey(aKey);
+        mMemoryCache.put(finalKey, aBitmap);
         runIO(() -> {
             DiskLruCache.Editor editor = null;
             try {
-                editor = mDiskCache.edit(aKey);
+                editor = mDiskCache.edit(finalKey);
                 if (editor != null) {
                     aBitmap.compress(Bitmap.CompressFormat.PNG, 80, editor.newOutputStream(0));
                     editor.commit();
@@ -100,21 +127,22 @@ public class BitmapCache {
     }
 
     public @NonNull CompletableFuture<Bitmap> getBitmap(@NonNull String aKey) {
-        Bitmap cached = mMemoryCache.get(aKey);
+        String finalKey = hashKey(aKey);
+        Bitmap cached = mMemoryCache.get(finalKey);
         if (cached != null) {
             return CompletableFuture.completedFuture(cached);
         } else {
             CompletableFuture<Bitmap> result = new CompletableFuture<>();
             runIO(() -> {
-                try (DiskLruCache.Snapshot snapshot = mDiskCache.get(aKey)){
+                try (DiskLruCache.Snapshot snapshot = mDiskCache.get(finalKey)){
                     if (snapshot != null) {
                         Bitmap bitmap = BitmapFactory.decodeStream(snapshot.getInputStream(0));
                         if (bitmap != null) {
                             mMainThreadExecutor.execute(() -> {
-                                if (mMemoryCache.get(aKey) == null) {
+                                if (mMemoryCache.get(finalKey) == null) {
                                     // Do not update cache if it already contains a value
                                     // A tab could have saved a new image while we were loading the cached disk image.
-                                    mMemoryCache.put(aKey, bitmap);
+                                    mMemoryCache.put(finalKey, bitmap);
                                 }
                                 result.complete(bitmap);
                             });
@@ -135,10 +163,11 @@ public class BitmapCache {
     }
 
     public void removeBitmap(@NonNull String aKey) {
-        mMemoryCache.remove(aKey);
+        String finalKey = hashKey(aKey);
+        mMemoryCache.remove(finalKey);
         runIO(() -> {
             try {
-                mDiskCache.remove(aKey);
+                mDiskCache.remove(finalKey);
             } catch (Exception ex) {
                 Log.e(LOGTAG, "Failed to remove Bitmap from DiskLruCache:" + ex.getMessage());
             }
@@ -146,7 +175,7 @@ public class BitmapCache {
     }
 
     public boolean hasBitmap(@NonNull String aKey) {
-        return mMemoryCache.get(aKey) != null;
+        return mMemoryCache.get(hashKey(aKey)) != null;
     }
 
     private void runIO(Runnable aRunnable) {
