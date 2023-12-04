@@ -88,12 +88,15 @@ public class SettingsStore {
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
 
-    // Default DPI: the resolution of the texture is twice the world size of the window.
-    public final static int DISPLAY_DPI_DEFAULT = 192;
+    // The default density is defined at build time.
+    public final static float DISPLAY_DENSITY_DEFAULT = BuildConfig.DEFAULT_DENSITY;
+    // The DPI is calculated so the default window has a logical width of 1024 CSS pixels.
+    // For a density of 1.0, the DPI is 128 and the texture matches the logical size of the webpage.
+    // For a density of 1.5, the DPI of 192 and the resolution of the texture is twice the world size of the window.
+    public final static int DISPLAY_DPI_BASE = 128;
+    public final static int DISPLAY_DPI_DEFAULT = (int) (DISPLAY_DENSITY_DEFAULT * DISPLAY_DPI_BASE);
     public final static int DISPLAY_DPI_MIN = 70;
     public final static int DISPLAY_DPI_MAX = 400;
-    // Default density: this value gives a logical width of 1024 CSS pixels for the default window.
-    public final static float DISPLAY_DENSITY_DEFAULT = 1.5f;
     // World size: multiply by density to get the available resolution for the Web engine.
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;

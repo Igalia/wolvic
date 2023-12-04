@@ -122,6 +122,7 @@ android {
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
+        buildConfigField "Float", "DEFAULT_DENSITY", "1.5f"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
         externalNativeBuild {
@@ -288,6 +289,7 @@ android {
             buildConfigField "String[]", "SPEECH_SERVICES", "${getHVRMLSpeechServices()}"
             buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
+            buildConfigField "Float", "DEFAULT_DENSITY", "1.0f"
         }
 
         noapi {
