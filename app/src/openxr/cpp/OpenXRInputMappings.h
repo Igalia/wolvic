@@ -375,7 +375,7 @@ namespace crow {
             "/interaction_profiles/ml/ml2_controller",
             IS_6DOF,
             "",
-            "",
+            "vr_controller_magicleap2.obj",
             device::MagicLeap2,
             std::vector<OpenXRInputProfile> { "magicleap-one", "generic-trigger-squeeze-touchpad" },
             std::vector<OpenXRButton> {

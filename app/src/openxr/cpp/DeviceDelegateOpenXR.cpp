@@ -551,6 +551,8 @@ struct DeviceDelegateOpenXR::State {
 #elif PICOXR
       return Pico4.path;
 #else
+      if (deviceType == device::MagicLeap2)
+          return MagicLeap2.path;
       return KHRSimple.path;
 #endif
   }
