@@ -78,6 +78,7 @@ public class SettingsStore {
     public final static boolean SYSTEM_ROOT_CA_DEFAULT = false;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
+    public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_MAGIC_LEAP_2 = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static int TRACKING_DEFAULT = WContentBlocking.EtpLevel.DEFAULT;
@@ -374,6 +375,10 @@ public class SettingsStore {
         boolean defaultValue = UI_HARDWARE_ACCELERATION_DEFAULT;
         if (DeviceType.isWaveBuild()) {
             defaultValue = UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR;
+        } else if (DeviceType.getType() == DeviceType.MagicLeap2) {
+            // Hardware acceleration causes several UI glitches when rendering widgets and
+            // also locks un the UI thread for several seconds.
+            defaultValue = UI_HARDWARE_ACCELERATION_DEFAULT_MAGIC_LEAP_2;
         }
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_ui_hardware_acceleration), defaultValue);

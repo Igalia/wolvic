@@ -370,7 +370,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     protected void initializeWidgets() {
-        UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
         UISurfaceTextureRenderer.setRenderActive(true);
 
         // Empty widget just for handling focus on empty space
@@ -1397,10 +1396,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return SettingsStore.getInstance(this).getPointerColor();
     }
 
+    private void setUseHardwareAcceleration() {
+        UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
+    }
+
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
         DeviceType.setType(aType);
+        setUseHardwareAcceleration();
     }
 
     @Keep

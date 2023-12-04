@@ -18,6 +18,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsDeveloperBinding;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.utils.DeviceType;
 
 class DeveloperOptionsView extends SettingsView {
 
@@ -160,6 +161,7 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(null);
         mBinding.hardwareAccelerationSwitch.setValue(value, false);
         mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
+        mBinding.hardwareAccelerationSwitch.setVisibility(DeviceType.getType() == DeviceType.MagicLeap2 ? View.GONE : View.VISIBLE);
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
