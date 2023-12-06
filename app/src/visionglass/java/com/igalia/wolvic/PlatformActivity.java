@@ -6,25 +6,39 @@
 package com.igalia.wolvic;
 
 import androidx.activity.ComponentActivity;
+
+import androidx.annotation.Keep;
+
+import android.app.Presentation;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.hardware.display.DisplayManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.hardware.usb.UsbDevice;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Keep;
 
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.VisionGlass;
-
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -33,8 +47,11 @@ import java.util.HashMap;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class PlatformActivity extends ComponentActivity {
+public class PlatformActivity extends ComponentActivity implements SensorEventListener {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
+    private DisplayManager mDisplayManager;
+    private Display mPresentationDisplay;
+    private VisionGlassPresentation mActivePresentation;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -55,12 +72,8 @@ public class PlatformActivity extends ComponentActivity {
         return null;
     }
 
-    private GLSurfaceView mView;
-    private TextView mFrameRate;
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();
-    private boolean mSurfaceCreated = false;
-    private int mFrameCount;
-    private long mLastFrameTime = System.currentTimeMillis();
+    private SensorManager mSensorManager;
 
     final Object mRenderLock = new Object();
 
@@ -77,7 +90,6 @@ public class PlatformActivity extends ComponentActivity {
             mRenderLock.notifyAll();
         }
     };
-    private int count = 0;
     private final Runnable activityResumedRunnable = this::activityResumed;
 
     @Override
@@ -87,25 +99,27 @@ public class PlatformActivity extends ComponentActivity {
 
         VisionGlass.getInstance().init(getApplication());
 
+        mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         boolean wasImuStarted = false;
         boolean isAskingForPermission = false;
         do {
             if (VisionGlass.getInstance().isConnected()) {
-                if (isAskingForPermission) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
                 if (VisionGlass.getInstance().hasUsbPermission()) {
                     Log.d(LOGTAG, "Device has USB permission -> registering callback for startImu");
                     wasImuStarted = true;
                     VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
                 } else {
-                    Log.w(LOGTAG, "Device does not have USB permission -> asking");
-                    VisionGlass.getInstance().requestUsbPermission();
-                    isAskingForPermission = true;
+                    if (isAskingForPermission) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.w(LOGTAG, "Device does not have USB permission -> asking");
+                        VisionGlass.getInstance().requestUsbPermission();
+                        isAskingForPermission = true;
+                    }
                 }
             } else {
                 // TODO: show a dialog asking the user to put on the glasses
@@ -113,82 +127,92 @@ public class PlatformActivity extends ComponentActivity {
             }
         } while (!wasImuStarted);
 
+
         VisionGlass.getInstance().setDisplayMode(DisplayMode.vr2d, new DisplayModeCallback() {
             @Override
             public void onSuccess(DisplayMode displayMode) { Log.d(LOGTAG, "Successfully switched to 2D mode"); }
 
             @Override
-            public void onError(String s, int i) { Log.d(LOGTAG, "Error " + i + " failed to switch to 2D mode " + s); }
+            public void onError(String s, int i) {
+                Log.d(LOGTAG, "Error " + i + " failed to switch to 2D mode " + s);
+            }
         });
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
         setContentView(R.layout.visionglass_layout);
-        mFrameRate = findViewById(R.id.frame_rate_text);
-        mView = findViewById(R.id.gl_view);
-        mView.setEGLContextClientVersion(3);
-        mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
-        mView.setPreserveEGLContextOnPause(true);
 
-        mView.setRenderer(
-                new GLSurfaceView.Renderer() {
-                    @Override
-                    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                        Log.d(LOGTAG, "In onSurfaceCreated");
-                        activityCreated(getAssets());
-                        mSurfaceCreated = true;
-                        notifyPendingEvents();
-                    }
+        View touchpad = findViewById(R.id.touchpad);
+        // Make touchpad square.
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) touchpad.getLayoutParams();
+        layoutParams.height = getResources().getDisplayMetrics().widthPixels;
+        touchpad.setLayoutParams(layoutParams);
 
-                    @Override
-                    public void onSurfaceChanged(GL10 gl, int width, int height) {
-                        Log.d(LOGTAG, "In onSurfaceChanged");
-                        // There is no way to actually get these values from the device so we have
-                        // to hardcode them. The width and height we get here are from device's
-                        // screen (the phone display), not the glasses' screen.
-                        final int VISION_GLASS_WIDTH = 3840;
-                        final int VISION_GLASS_HEIGHT = 1080;
-                        updateViewport(VISION_GLASS_WIDTH, VISION_GLASS_HEIGHT);
-                    }
+        touchpad.setOnClickListener((View.OnClickListener) v -> {
+            // We don't really need the coordinates of the click because we use the position
+            // of the aim in the 3D environment.
+            queueRunnable(() -> touchEvent(false, 0, 0));
+        });
 
-                    @Override
-                    public void onDrawFrame(GL10 gl) {
-                        mFrameCount++;
-                        long ctime = System.currentTimeMillis();
-                        if ((ctime - mLastFrameTime) >= 1000) {
-                            final int value =  Math.round(mFrameCount / ((ctime - mLastFrameTime) / 1000.0f));
-                            mLastFrameTime = ctime;
-                            mFrameCount = 0;
-                            runOnUiThread(() -> mFrameRate.setText(String.valueOf(value)));
-                        }
-                        drawGL();
-                    }
-                });
+        touchpad.setOnTouchListener((view, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                    // We don't really need the coordinates of the click because we use the position
+                    // of the aim in the 3D environment.
+                    queueRunnable(() -> touchEvent(true, 0, 0));
+                    break;
+                case MotionEvent.ACTION_UP:
+                    // We'd emit the touchEvent in the onClick listener of the view. This way both
+                    // user and system activated clicks (e.g. a11y) will work.
+                    view.performClick();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        });
+
+        // Find the buttons by their id
+        Button backButton = findViewById(R.id.back_button);
+        Button homeButton = findViewById(R.id.home_button);
+
+        // Set click listeners for the buttons
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle home button click
+                Log.d(LOGTAG, "Home button clicked");
+            }
+        });
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    // SensorEventListener overrides
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // retrieve the device orientation from sensorevent in the form of quaternion
+        if (event.sensor.getType() != Sensor.TYPE_GAME_ROTATION_VECTOR)
+            return;
+
+        float[] quaternion = new float[4];
+        SensorManager.getQuaternionFromVector(quaternion, event.values);
+        // The quaternion is returned in the form [w, x, z, y] but we use it as [x, y, z, w].
+        // See https://developer.android.com/reference/android/hardware/Sensor#TYPE_ROTATION_VECTOR
+        queueRunnable(() -> setControllerOrientation(quaternion[1], quaternion[3], quaternion[2], quaternion[0]));
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent aEvent) {
-        if (aEvent.getActionIndex() != 0) {
-            Log.e(LOGTAG,"aEvent.getActionIndex()=" + aEvent.getActionIndex());
-            return false;
-        }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-        int action = aEvent.getAction();
-        boolean down;
-        if (action == MotionEvent.ACTION_DOWN) {
-            down = true;
-        } else if (action == MotionEvent.ACTION_UP) {
-            down = false;
-        } else if (action == MotionEvent.ACTION_MOVE) {
-            down = true;
-        } else {
-            return false;
-        }
-
-        final boolean isDown = down;
-
-        final float xx = aEvent.getX(0);
-        final float yy = aEvent.getY(0);
-        queueRunnable(() -> touchEvent(isDown, xx, yy));
-        return true;
     }
 
     @Override
@@ -211,6 +235,7 @@ public class PlatformActivity extends ComponentActivity {
     @Override
     protected void onPause() {
         Log.d(LOGTAG, "PlatformActivity onPause");
+        super.onPause();
         synchronized (mRenderLock) {
             queueRunnable(activityPausedRunnable);
             try {
@@ -219,17 +244,31 @@ public class PlatformActivity extends ComponentActivity {
                 Log.e(LOGTAG, "activityPausedRunnable interrupted: " + e.toString());
             }
         }
-        mView.onPause();
-        super.onPause();
+        if (mActivePresentation != null)
+            mActivePresentation.mGLView.onPause();
+
+        // Unregister from the display manager.
+        mDisplayManager.unregisterDisplayListener(mDisplayListener);
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
     protected void onResume() {
         Log.d(LOGTAG, "PlatformActivity onResume");
         super.onResume();
-        mView.onResume();
+
+        updateDisplays();
+        showPresentation();
+
+        if (mActivePresentation != null && mActivePresentation.mGLView != null)
+            mActivePresentation.mGLView.onResume();
+
         queueRunnable(activityResumedRunnable);
         setImmersiveSticky();
+
+        // Register to receive events from the display manager.
+        mDisplayManager.registerDisplayListener(mDisplayListener, null);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -268,13 +307,13 @@ public class PlatformActivity extends ComponentActivity {
     }
 
     void queueRunnable(Runnable aRunnable) {
-        if (mSurfaceCreated) {
-            mView.queueEvent(aRunnable);
+        if (mActivePresentation != null) {
+            mActivePresentation.mGLView.queueEvent(aRunnable);
         } else {
             synchronized (mPendingEvents) {
                 mPendingEvents.add(aRunnable);
             }
-            if (mSurfaceCreated) {
+            if (mActivePresentation != null) {
                 notifyPendingEvents();
             }
         }
@@ -283,10 +322,122 @@ public class PlatformActivity extends ComponentActivity {
     private void notifyPendingEvents() {
         synchronized (mPendingEvents) {
             for (Runnable runnable: mPendingEvents) {
-                mView.queueEvent(runnable);
+                mActivePresentation.mGLView.queueEvent(runnable);
             }
             mPendingEvents.clear();
         }
+    }
+
+    private void updateDisplays() {
+        Display[] displays = mDisplayManager.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
+        if (displays.length == 0) {
+            mPresentationDisplay = null;
+            return;
+        }
+
+        mPresentationDisplay = displays[0];
+    }
+
+    private final DisplayManager.DisplayListener mDisplayListener =
+            new DisplayManager.DisplayListener() {
+                @Override
+                public void onDisplayAdded(int displayId) {
+                    updateDisplays();
+                }
+
+                @Override
+                public void onDisplayChanged(int displayId) {
+                    updateDisplays();
+                }
+
+                @Override
+                public void onDisplayRemoved(int displayId) {
+                    updateDisplays();
+                }
+            };
+
+    private final DialogInterface.OnDismissListener mOnDismissListener =
+            new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mActivePresentation = null;
+                }
+            };
+
+    private void showPresentation() {
+        if (mActivePresentation != null) {
+            return;
+        }
+        if (mPresentationDisplay == null) {
+            Log.e(LOGTAG, "No suitable displays found");
+            return;
+        }
+        VisionGlassPresentation presentation = new VisionGlassPresentation(this, mPresentationDisplay);
+        Display.Mode [] modes = mPresentationDisplay.getSupportedModes();
+        presentation.setPreferredDisplayMode(modes[0].getModeId());
+        presentation.show();
+        presentation.setOnDismissListener(mOnDismissListener);
+        mActivePresentation = presentation;
+    }
+
+    private final class VisionGlassPresentation extends Presentation {
+
+        private GLSurfaceView mGLView;
+
+        public VisionGlassPresentation(Context context, Display display) {
+            super(context, display);
+        }
+
+        /**
+         * Sets the preferred display mode id for the presentation.
+         */
+        public void setPreferredDisplayMode(int modeId) {
+            WindowManager.LayoutParams params = getWindow().getAttributes();
+            params.preferredDisplayModeId = modeId;
+            getWindow().setAttributes(params);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            // Be sure to call the super class.
+            super.onCreate(savedInstanceState);
+
+            // Get the resources for the context of the presentation.
+            // Notice that we are getting the resources from the context of the presentation.
+            Resources r = getContext().getResources();
+
+            // Inflate the layout.
+            setContentView(R.layout.visionglass_presentation_layout);
+
+            mGLView = findViewById(R.id.gl_presentation_view);
+            mGLView.setEGLContextClientVersion(3);
+            mGLView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
+            mGLView.setPreserveEGLContextOnPause(true);
+
+            mGLView.setRenderer(new GLSurfaceView.Renderer() {
+                @Override
+                public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+                    activityCreated(getAssets());
+                    notifyPendingEvents();
+                }
+
+                @Override
+                public void onSurfaceChanged(GL10 gl, int width, int height) {
+                    updateViewport(width, height);
+                }
+
+                @Override
+                public void onDrawFrame(GL10 gl) {
+                    drawGL();
+                }
+            });
+        }
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void setRenderMode(final int aMode) {
+        runOnUiThread(() -> setImmersiveSticky());
     }
 
     private native void activityCreated(Object aAssetManager);
@@ -297,4 +448,5 @@ public class PlatformActivity extends ComponentActivity {
     private native void drawGL();
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void setHead(double x, double y, double z, double w);
+    private native void setControllerOrientation(double x, double y, double z, double w);
 }

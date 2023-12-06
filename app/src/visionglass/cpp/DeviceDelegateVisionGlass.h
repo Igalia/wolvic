@@ -50,6 +50,7 @@ public:
   void TouchEvent(const bool aDown, const float aX, const float aY);
   void ControllerButtonPressed(const bool aDown);
   void setHead(const float aX, const float aY, const float aZ, const float aW);
+  void setControllerOrientation(const float aX, const float aY, const float aZ, const float aW);
 protected:
   struct State;
   DeviceDelegateVisionGlass(State& aState);

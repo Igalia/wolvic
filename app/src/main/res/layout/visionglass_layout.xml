@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.opengl.GLSurfaceView
-        android:id="@+id/gl_view"
+    <View
+        android:id="@+id/touchpad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="#333333" />
 
-    <TextView
-        android:id="@+id/frame_rate_text"
+    <Button
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:background="#000000"
-        app:layout_constraintStart_toStartOf="@+id/gl_view"
-        app:layout_constraintTop_toTopOf="@+id/gl_view" />
+        android:text="@string/back_button"
+        android:drawableStart="@drawable/ic_icon_back"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
+    <Button
+        android:id="@+id/home_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_tooltip"
+        android:drawableStart="@drawable/ic_icon_home"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
