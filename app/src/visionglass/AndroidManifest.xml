@@ -7,8 +7,7 @@
 
     <application>
         <activity
-            android:name=".VRBrowserActivity"
-            android:screenOrientation="landscape">
+            android:name=".VRBrowserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
