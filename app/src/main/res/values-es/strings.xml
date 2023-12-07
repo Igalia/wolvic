@@ -672,7 +672,7 @@
     <string name="fxa_account_options_logins_sync">Inicios de sesión</string>
 
     <!-- This string is used to in the FxA account manage panel as a description of the device name edit. -->
-    <string name="fxa_account_options_device_name">Nome del dispositivo</string>
+    <string name="fxa_account_options_device_name">Nombre del dispositivo</string>
 
     <!-- This string is displayed in mozilla account's device name.
          '%1$s' will be replaced at runtime with the app's name while '%2$s' will be replaced with the actual device name. -->
@@ -1331,7 +1331,7 @@
     <string name="download_context_delete">Eliminar</string>
 
     <!-- This string is used to label the experimental features. -->
-    <string name="experimental_features">Funcionalidades Experimentais</string>
+    <string name="experimental_features">Funcionalidades experimentales</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use passthrough mode when the app starts. -->
@@ -1339,19 +1339,19 @@
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog and is used to
          customize if windows can be moved. Enabling it adds a Move button to the navigation bar. -->
-    <string name="display_options_windows_can_move">As janelas podem ser movidas</string>
+    <string name="display_options_windows_can_move">Las ventanas pueden moverse</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use sound effects when interacting with app. -->
-    <string name="display_options_sound_effect">Usar efeitos sonoros</string>
+    <string name="display_options_sound_effect">Usar efectos sonoros</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
-    <string name="display_options_head_lock">Fixar a janela no seu campo de visão</string>
+    <string name="display_options_head_lock">Fijar la ventana en tu campo de visión</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize the windows distance. -->
-    <string name="display_options_windows_distance">Distância das janelas</string>
+    <string name="display_options_windows_distance">Distancia de las ventanas</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Restablecer los ajustes de visualización</string>
@@ -1919,7 +1919,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_tooltip">Menú</string>
 
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the move icon -->
-    <string name="move_tooltip">Mover a janela</string>
+    <string name="move_tooltip">Mover</string>
 
     <!-- This string is displayed in the title of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_title">Enviar pestaña al dispositivo</string>
