@@ -20,6 +20,7 @@ import com.igalia.wolvic.browser.api.WWebResponse;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.DownloadManagerBridge;
 import org.chromium.wolvic.PermissionManagerBridge;
+import org.chromium.wolvic.UserDialogManagerBridge;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -338,6 +339,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
             return;
         }
         mPromptDelegate = new PromptDelegateImpl(delegate, this);
+        UserDialogManagerBridge.get().setDelegate(mPromptDelegate);
     }
 
     @Nullable
