@@ -380,13 +380,14 @@ Cylinder::SetTransform(const vrb::Matrix& aTransform) {
 static const float kEpsilon = 0.00000001f;
 
 bool
-Cylinder::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const {
+Cylinder::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, const vrb::Vector& aScale, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const {
   aDistance = -1.0f;
   if (!m.root->IsEnabled(*m.transform)) {
     return false;
   }
 
   vrb::Matrix worldTransform = m.transform->GetWorldTransform();
+  worldTransform = worldTransform.ScaleInPlace(aScale);
   vrb::Matrix modelView = worldTransform.AfineInverse();
   vrb::Vector start = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);

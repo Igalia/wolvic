@@ -440,12 +440,13 @@ Quad::GetLayer() const {
 static const float kEpsilon = 0.00000001f;
 
 bool
-Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const {
+Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, const vrb::Vector& aScale, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const {
   aDistance = -1.0f;
   if (!m.root->IsEnabled(*m.transform)) {
     return false;
   }
   vrb::Matrix worldTransform = m.transform->GetWorldTransform();
+  worldTransform = worldTransform.ScaleInPlace(aScale);
   vrb::Matrix modelView = worldTransform.AfineInverse();
   vrb::Vector point = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);

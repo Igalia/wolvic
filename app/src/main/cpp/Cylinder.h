@@ -49,7 +49,7 @@ public:
   VRLayerCylinderPtr GetLayer() const;
   vrb::TransformPtr GetTransformNode() const;
   void SetTransform(const vrb::Matrix& aTransform);
-  bool TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const;
+  bool TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, const vrb::Vector& aScale, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const;
   void ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const;
   void ConvertFromQuadCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal);
   float DistanceToBackPlane(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection) const;

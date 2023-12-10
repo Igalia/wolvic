@@ -342,6 +342,13 @@ Widget::GetWorldSize(float& aWidth, float& aHeight) const {
 bool
 Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal,
                                    const bool aClamp, bool& aIsInWidget, float& aDistance) const {
+  const vrb::Vector scale(1.0f, 1.0f, 1.0f);
+  return TestControllerIntersectionScale(aStartPoint, aDirection, scale, aResult, aNormal, aClamp, aIsInWidget, aDistance);
+}
+
+bool
+Widget::TestControllerIntersectionScale(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, const vrb::Vector& aScale,
+                                        vrb::Vector& aResult, vrb::Vector& aNormal, const bool aClamp, bool& aIsInWidget, float& aDistance) const {
   aDistance = -1.0f;
   if (!m.root->IsEnabled(*m.transformContainer)) {
     return false;
@@ -349,9 +356,9 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
 
   bool result;
   if (m.quad) {
-    result = m.quad->TestIntersection(aStartPoint, aDirection, aResult, aNormal, aClamp, aIsInWidget, aDistance);
+    result = m.quad->TestIntersection(aStartPoint, aDirection, aScale, aResult, aNormal, aClamp, aIsInWidget, aDistance);
   } else {
-    result = m.cylinder->TestIntersection(aStartPoint, aDirection, aResult, aNormal, aClamp, aIsInWidget, aDistance);
+    result = m.cylinder->TestIntersection(aStartPoint, aDirection, aScale, aResult, aNormal, aClamp, aIsInWidget, aDistance);
   }
   if (result && m.resizing && m.resizer && !aIsInWidget) {
     // Handle extra intersections while resizing

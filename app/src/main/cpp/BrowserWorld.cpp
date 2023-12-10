@@ -642,6 +642,28 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       if (togglePressed != toggleWasPressed) {
         VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) togglePressed, 0.0f, 0.0f);
       }
+    } else if (controller.focused && pressed && !isResizing && !isDragging && !inHeadLockMode) {
+      bool doReorient = true;
+      for (const WidgetPtr& widget: widgets) {
+        vrb::Vector result;
+        vrb::Vector normal;
+        float distance = 0.0f;
+        bool isInWidget = false;
+        const bool clamp = !widget->IsResizing() && !movingWidget;
+        // Scale the widget in place, test if the controller intersect with the scaled widget
+        // So that we only do reorient when user moves away from the widget a little bit to avoid accidental trigger
+        const vrb::Vector scale(3.0f, 4.0f, 1.0f);
+        if (widget->TestControllerIntersectionScale(start, direction, scale, result, normal, clamp, isInWidget, distance)) {
+          if (isInWidget && (distance < hitDistance)) {
+            doReorient = false;
+            break;
+          }
+        }
+      }
+      if (doReorient) {
+        reorientRequested = true;
+        device->Reorient();
+      }
     }
     controller.lastButtonState = controller.buttonState;
   }
@@ -756,10 +778,11 @@ BrowserWorld::State::ComputeNormalizedZ(const Widget& aWidget) const {
   vrb::Vector normal;
   bool inside = false;
   float distance;
+  const vrb::Vector scale(1.0f, 1.0f, 1.0f);
   if (aWidget.GetQuad()) {
-    aWidget.GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+    aWidget.GetQuad()->TestIntersection(headPosition, headDirection, scale, hitPoint, normal, true, inside, distance);
   } else if (aWidget.GetCylinder()) {
-    aWidget.GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+    aWidget.GetCylinder()->TestIntersection(headPosition, headDirection, scale, hitPoint, normal, true, inside, distance);
   }
 
   const vrb::Matrix& projection = device->GetCamera(device::Eye::Left)->GetPerspective();
