@@ -13,6 +13,7 @@ import org.chromium.content.browser.input.SelectPopupItem;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
 import java.util.ArrayList;
@@ -23,8 +24,12 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
     private final WSession.PromptDelegate mDelegate;
     private final SessionImpl mSession;
 
-    private static class PromptResponseImpl implements WSession.PromptDelegate.PromptResponse {
+    public static class PromptResponseImpl implements WSession.PromptDelegate.PromptResponse {
         public PromptResponseImpl() {
+        }
+
+        public WAllowOrDeny allowOrDeny() {
+            return WAllowOrDeny.DENY;
         }
     }
 
@@ -58,6 +63,10 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
     @Override
     public void onBeforeUnloadDialog(UserDialogManagerBridge.DialogCallback dialogCallback) {
         mDelegate.onBeforeUnloadPrompt(mSession, new BeforeUnloadPrompt(dialogCallback));
+    }
+
+    public WResult<PromptResponseImpl> onRepostConfirmWarningDialog() {
+        return mDelegate.onRepostConfirmPrompt(mSession, new RepostConfirmPrompt()).then(result -> WResult.fromValue((PromptResponseImpl) result));
     }
 
     public static class BasePromptImpl implements WSession.PromptDelegate.BasePrompt {
@@ -205,6 +214,19 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             }
             markComplete();
             return new PromptResponseImpl();
+        }
+    }
+
+    private static class RepostConfirmPrompt extends BasePromptImpl implements WSession.PromptDelegate.RepostConfirmPrompt {
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@Nullable WAllowOrDeny allowOrDeny) {
+            return new PromptResponseImpl() {
+                @Override
+                public WAllowOrDeny allowOrDeny() {
+                    return allowOrDeny;
+                }
+            };
         }
     }
 
