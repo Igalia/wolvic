@@ -504,7 +504,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
     if (controller.focused && (!hitWidget || !hitWidget->IsResizing()) && resizingWidget) {
       resizingWidget->HoverExitResize();
-      resizingWidget.reset();
     }
 
     if (controller.pointer) {
@@ -1148,7 +1147,7 @@ BrowserWorld::StartFrame() {
     bool relayoutWidgets = false;
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
-    if (m.inHeadLockMode) {
+    if (m.inHeadLockMode && !(m.resizingWidget && m.resizingWidget->IsResizing())) {
       OnReorient();
       m.device->Reorient();
     }
@@ -1504,7 +1503,7 @@ BrowserWorld::UpdateVisibleWidgets() {
   });
 
   for (const WidgetPtr& widget: widgets) {
-    if (widget->IsVisible() && !widget->IsResizing()) {
+    if (widget->IsVisible()) {
       UpdateWidget(widget->GetHandle(), widget->GetPlacement());
     }
   }
