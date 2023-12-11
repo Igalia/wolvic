@@ -348,6 +348,11 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         return mPromptDelegate == null ? null : mPromptDelegate.getDelegate();
     }
 
+    @Nullable
+    public PromptDelegateImpl getChromiumPromptDelegate() {
+        return mPromptDelegate;
+    }
+
     @Override
     public void setSelectionActionDelegate(@Nullable SelectionActionDelegate delegate) {
         // TODO: Implement bridge
