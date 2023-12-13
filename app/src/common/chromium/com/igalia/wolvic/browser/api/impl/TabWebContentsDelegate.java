@@ -3,6 +3,8 @@ package com.igalia.wolvic.browser.api.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
 import org.chromium.base.task.PostTask;
@@ -116,5 +118,17 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         if (delegate != null) {
             delegate.onLocationChange(mSession, mWebContents.getVisibleUrl().getSpec());
         }
+    }
+
+    @Override
+    public void showRepostFormWarningDialog() {
+        mSession.getChromiumPromptDelegate().onRepostConfirmWarningDialog().then(result -> {
+            if (result.allowOrDeny() == WAllowOrDeny.ALLOW) {
+                mWebContents.getNavigationController().continuePendingReload();
+            } else {
+                mWebContents.getNavigationController().cancelPendingReload();
+            }
+            return WResult.fromValue(null);
+        });
     }
 }

@@ -10,26 +10,26 @@ import androidx.annotation.UiThread;
 import org.chromium.base.Callback;
 import org.chromium.content.browser.input.SelectPopup;
 import org.chromium.content.browser.input.SelectPopupItem;
+import org.chromium.wolvic.UserDialogManagerBridge;
 
+import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class PromptDelegateImpl {
-    WSession.PromptDelegate mDelegate;
-    SessionImpl mSession;
+class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
+    private final WSession.PromptDelegate mDelegate;
+    private final SessionImpl mSession;
 
-    public class SelectPopupFactory implements SelectPopup.Factory {
-        public SelectPopup.Ui create(Context windowContext, Callback<int[]> selectionChangedCallback,
-                List<SelectPopupItem> items, boolean multiple, int[] selected) {
-            return new ChoicePromptBridge(windowContext, selectionChangedCallback, items, multiple, selected);
-        }
-    }
-
-    private static class PromptResponseImpl implements WSession.PromptDelegate.PromptResponse {
+    public static class PromptResponseImpl implements WSession.PromptDelegate.PromptResponse {
         public PromptResponseImpl() {
+        }
+
+        public WAllowOrDeny allowOrDeny() {
+            return WAllowOrDeny.DENY;
         }
     }
 
@@ -42,9 +42,36 @@ class PromptDelegateImpl {
 
     public WSession.PromptDelegate getDelegate() { return this.mDelegate; }
 
-    public class BasePromptImpl implements WSession.PromptDelegate.BasePrompt {
+    @Override
+    public void onAlertDialog(@NonNull String message,
+                              UserDialogManagerBridge.DialogCallback dialogCallback) {
+        mDelegate.onAlertPrompt(mSession, new AlertPrompt(dialogCallback, message));
+    }
+
+    @Override
+    public void onConfirmDialog(@NonNull String message,
+                                UserDialogManagerBridge.DialogCallback dialogCallback) {
+        mDelegate.onButtonPrompt(mSession, new ButtonPrompt(dialogCallback, message));
+    }
+
+    @Override
+    public void onTextDialog(@NonNull String message, @NonNull String defaultUserInput,
+                             UserDialogManagerBridge.DialogCallback dialogCallback) {
+        mDelegate.onTextPrompt(mSession, new TextPrompt(dialogCallback, message, defaultUserInput));
+    }
+
+    @Override
+    public void onBeforeUnloadDialog(UserDialogManagerBridge.DialogCallback dialogCallback) {
+        mDelegate.onBeforeUnloadPrompt(mSession, new BeforeUnloadPrompt(dialogCallback));
+    }
+
+    public WResult<PromptResponseImpl> onRepostConfirmWarningDialog() {
+        return mDelegate.onRepostConfirmPrompt(mSession, new RepostConfirmPrompt()).then(result -> WResult.fromValue((PromptResponseImpl) result));
+    }
+
+    public static class BasePromptImpl implements WSession.PromptDelegate.BasePrompt {
         private WSession.PromptDelegate.PromptInstanceDelegate mDelegate;
-        boolean mIsCompleted;
+        protected boolean mIsCompleted;
 
         @Override
         @Nullable
@@ -53,7 +80,7 @@ class PromptDelegateImpl {
         @NonNull
         @Override
         public WSession.PromptDelegate.PromptResponse dismiss() {
-            confirm();
+            markComplete();
             return new PromptResponseImpl();
         }
 
@@ -76,9 +103,137 @@ class PromptDelegateImpl {
             return mIsCompleted;
         }
 
-        public WSession.PromptDelegate.PromptResponse confirm() {
+        public void markComplete() {
             mIsCompleted = true;
+        }
+    }
+
+    public static class JavascriptPrompt extends BasePromptImpl {
+        protected final UserDialogManagerBridge.DialogCallback mCallback;
+
+        public JavascriptPrompt(UserDialogManagerBridge.DialogCallback callback) {
+            this.mCallback = callback;
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse dismiss() {
+            mCallback.dismiss();
+            markComplete();
             return new PromptResponseImpl();
+        }
+    }
+
+    private static class AlertPrompt extends JavascriptPrompt implements WSession.PromptDelegate.AlertPrompt {
+        private final String mMessage;
+
+        private AlertPrompt(UserDialogManagerBridge.DialogCallback callback, String message) {
+            super(callback);
+            mMessage = message;
+        }
+
+        @Nullable
+        @Override
+        public String message() {
+            return mMessage;
+        }
+    }
+
+
+    private static class ButtonPrompt extends JavascriptPrompt implements WSession.PromptDelegate.ButtonPrompt {
+        private final String mMessage;
+
+        private ButtonPrompt(UserDialogManagerBridge.DialogCallback callback, String message) {
+            super(callback);
+            mMessage = message;
+        }
+
+        @Nullable
+        @Override
+        public String message() {
+            return mMessage;
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(int selection) {
+            if (selection == Type.POSITIVE) {
+                mCallback.confirm(null);
+            } else {
+                mCallback.dismiss();
+            }
+            markComplete();
+            return new PromptResponseImpl();
+        }
+    }
+
+    private static class TextPrompt extends JavascriptPrompt implements WSession.PromptDelegate.TextPrompt {
+        private final String mMessage;
+        private final String mDefaultUserInput;
+
+        private TextPrompt(UserDialogManagerBridge.DialogCallback callback, String message,
+                           String defaultUserInput) {
+            super(callback);
+            this.mMessage = message;
+            this.mDefaultUserInput = defaultUserInput;
+        }
+
+        @Nullable
+        @Override
+        public String message() {
+            return mMessage;
+        }
+
+        @Nullable
+        @Override
+        public String defaultValue() {
+            return mDefaultUserInput;
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull String text) {
+            mCallback.confirm(text);
+            markComplete();
+            return new PromptResponseImpl();
+        }
+    }
+
+    private static class BeforeUnloadPrompt extends JavascriptPrompt implements WSession.PromptDelegate.BeforeUnloadPrompt {
+        private BeforeUnloadPrompt(UserDialogManagerBridge.DialogCallback callback) {
+            super(callback);
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@Nullable WAllowOrDeny allowOrDeny) {
+            if (allowOrDeny == WAllowOrDeny.ALLOW) {
+                mCallback.confirm(null);
+            } else {
+                mCallback.dismiss();
+            }
+            markComplete();
+            return new PromptResponseImpl();
+        }
+    }
+
+    private static class RepostConfirmPrompt extends BasePromptImpl implements WSession.PromptDelegate.RepostConfirmPrompt {
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@Nullable WAllowOrDeny allowOrDeny) {
+            return new PromptResponseImpl() {
+                @Override
+                public WAllowOrDeny allowOrDeny() {
+                    return allowOrDeny;
+                }
+            };
+        }
+    }
+
+    public class SelectPopupFactory implements SelectPopup.Factory {
+        public SelectPopup.Ui create(Context windowContext, Callback<int[]> selectionChangedCallback,
+                                     List<SelectPopupItem> items, boolean multiple, int[] selected) {
+            return new ChoicePromptBridge(windowContext, selectionChangedCallback, items, multiple, selected);
         }
     }
 
@@ -217,7 +372,8 @@ class PromptDelegateImpl {
         public WSession.PromptDelegate.PromptResponse confirm(final int[] selectedIds) {
             if (!isComplete())
                 mSelectionChangedCallback.onResult(selectedIds);
-            return super.confirm();
+            markComplete();
+            return new PromptResponseImpl();
         }
 
         @UiThread
@@ -325,15 +481,12 @@ class PromptDelegateImpl {
                 final WSession.PromptDelegate delegate = mSession.getPromptDelegate();
                 delegate.onChoicePrompt(mSession, mChoicePrompt);
             } catch (WindowManager.BadTokenException e) {
-                mChoicePrompt.confirm();
+                mChoicePrompt.markComplete();
             }
         }
 
         @Override
         public void hide(boolean sendsCancelMessage) {
-            if (!sendsCancelMessage) {
-                mChoicePrompt.confirm();
-            }
             mChoicePrompt.dismiss();
         }
     }
