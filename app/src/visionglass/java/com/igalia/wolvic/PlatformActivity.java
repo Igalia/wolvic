@@ -21,9 +21,10 @@ import android.widget.TextView;
 
 import androidx.annotation.Keep;
 
-import com.huawei.tool.Glass;
-import com.huawei.usblib.GlassDisplayMode;
-import com.huawei.usblib.IMUDevice;
+import com.huawei.usblib.DisplayMode;
+import com.huawei.usblib.DisplayModeCallback;
+import com.huawei.usblib.VisionGlass;
+
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -31,8 +32,6 @@ import java.util.HashMap;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import com.huawei.usblib.IMUManager;
 
 public class PlatformActivity extends ComponentActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
@@ -86,14 +85,12 @@ public class PlatformActivity extends ComponentActivity {
         Log.d(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
-        IMUManager.init(getApplication());
-        HashMap<String, UsbDevice> a = IMUManager.getManager().getImuDevice().getUsbManager().getDeviceList();
-        a.forEach((key, value) -> Log.d(LOGTAG, "Found device " + key));
-        IMUDevice imuDevice = IMUManager.getManager().getImuDevice();
+        VisionGlass.getInstance().init(getApplication());
+
         boolean wasImuStarted = false;
         boolean isAskingForPermission = false;
         do {
-            if (imuDevice.isConnected()) {
+            if (VisionGlass.getInstance().isConnected()) {
                 if (isAskingForPermission) {
                     try {
                         Thread.sleep(100);
@@ -101,24 +98,24 @@ public class PlatformActivity extends ComponentActivity {
                         e.printStackTrace();
                     }
                 }
-                if (imuDevice.hasUsbPermission()) {
+                if (VisionGlass.getInstance().hasUsbPermission()) {
                     Log.d(LOGTAG, "Device has USB permission -> registering callback for startImu");
                     wasImuStarted = true;
-                    Glass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
+                    VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
                 } else {
                     Log.w(LOGTAG, "Device does not have USB permission -> asking");
-                    imuDevice.requestUsbPermission();
+                    VisionGlass.getInstance().requestUsbPermission();
                     isAskingForPermission = true;
                 }
             } else {
                 // TODO: show a dialog asking the user to put on the glasses
-                Log.e(LOGTAG, "Device not connected" + (imuDevice.hasUsbPermission() ? " and does NOT have USB permissions" : ""));
+                Log.e(LOGTAG, "Device not connected" + (VisionGlass.getInstance().hasUsbPermission() ? " and does NOT have USB permissions" : ""));
             }
         } while (!wasImuStarted);
 
-        IMUManager.getManager().switchDisplayMode(GlassDisplayMode.Vr2d, new IMUManager.SwitchModeCallback() {
+        VisionGlass.getInstance().setDisplayMode(DisplayMode.vr2d, new DisplayModeCallback() {
             @Override
-            public void switchSuccess() { Log.d(LOGTAG, "Successfully switched to 2D mode"); }
+            public void onSuccess(DisplayMode displayMode) { Log.d(LOGTAG, "Successfully switched to 2D mode"); }
 
             @Override
             public void onError(String s, int i) { Log.d(LOGTAG, "Error " + i + " failed to switch to 2D mode " + s); }
