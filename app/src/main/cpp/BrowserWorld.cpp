@@ -935,6 +935,9 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   VRB_LOG("BrowserWorld::InitializeJava");
   if (m.context) {
     m.context->InitializeJava(aEnv, aActivity, aAssetManager);
+    // This must be initialized after initializing Java but before using Gecko. Gecko could fail to
+    // detect XR runtimes if we try to load some URL before setting the external context.
+    VRBrowser::RegisterExternalContext((jlong)m.externalVR->GetSharedData());
   }
   m.env = aEnv;
   if (!m.env) {
@@ -1691,9 +1694,6 @@ BrowserWorld::Create() {
   result->m.self = result;
   result->m.surfaceObserver = std::make_shared<SurfaceObserver>(result->m.self);
   result->m.context->GetSurfaceTextureFactory()->AddGlobalObserver(result->m.surfaceObserver);
-  // This must be initialized before using Gecko. Gecko could fail to detect XR runtimes if
-  // we try to load some URL before setting the external context for example.
-  VRBrowser::RegisterExternalContext((jlong)result->m.externalVR->GetSharedData());
   return result;
 }
 
