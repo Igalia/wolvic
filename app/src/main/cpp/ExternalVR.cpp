@@ -268,8 +268,9 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::UnknownType:
     default:
       result = mozilla::gfx::VRControllerType::_empty;
+#ifndef NOAPI
       assert(!"Unknown controller type.");
-      VRB_LOG("Unknown controller type.");
+#endif
       break;
   }
   return  result;
