@@ -296,7 +296,7 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -DVRBROWSER_NO_VR_API"
+                    cppFlags " -DNOAPI"
                     arguments "-DNOAPI=ON"
                 }
             }
