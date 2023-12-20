@@ -343,6 +343,7 @@ android {
 
         chromium {
             dimension "backend"
+            resValue "string", "app_name", "Wolvic Chromium"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DCHROMIUM"
