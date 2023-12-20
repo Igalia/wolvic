@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Wolvic</string>
     <string name="bug_report_url" translatable="false">github.com/Igalia/wolvic/issues</string>
     <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
     <string name="settings_key_homepage" translatable="false">settings_homepage</string>
