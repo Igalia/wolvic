@@ -305,6 +305,8 @@ android {
 
         visionglass {
             dimension "platform"
+            applicationIdSuffix ".visionglass"
+            resValue "string", "app_name", "Wolvic VisionGlass"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DVISIONGLASS"
