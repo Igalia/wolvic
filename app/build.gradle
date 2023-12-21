@@ -295,6 +295,8 @@ android {
 
         noapi {
             dimension "platform"
+            applicationIdSuffix ".noapi"
+            resValue "string", "app_name", "Wolvic NoAPI"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DNOAPI"
