@@ -49,11 +49,9 @@ public class CustomKeyboard extends Keyboard {
         int mDefaultHorizontalGap = getParentFieldInt(this, "mDefaultHorizontalGap");
         int mDefaultVerticalGap = verticalGap >= 0 ? verticalGap : getParentFieldInt(this, "mDefaultVerticalGap");
         int mDisplayWidth = getParentFieldInt(this, "mDisplayWidth");
-        ArrayList<Row> rows = null;
         Object rowsObj = getParentFieldObject(this, "rows");
-        if (rowsObj != null && rowsObj instanceof ArrayList) {
-            rows = (ArrayList<Row>)rowsObj;
-        }
+        @SuppressWarnings("unchecked")
+        ArrayList<Row> rows = rowsObj instanceof ArrayList ? (ArrayList<Row>) rowsObj : null;
 
         int rowsNum = (int)Math.ceil((characters.length()+0.1)/columns);
         final int maxColumns = columns == -1 ? Integer.MAX_VALUE : columns;
