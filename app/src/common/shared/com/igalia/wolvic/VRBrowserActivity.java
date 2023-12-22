@@ -32,6 +32,7 @@ import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -72,6 +73,7 @@ import com.igalia.wolvic.ui.adapters.Language;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
 import com.igalia.wolvic.ui.widgets.KeyboardWidget;
 import com.igalia.wolvic.ui.widgets.NavigationBarWidget;
+import com.igalia.wolvic.ui.widgets.NotificationManager;
 import com.igalia.wolvic.ui.widgets.RootWidget;
 import com.igalia.wolvic.ui.widgets.TrayWidget;
 import com.igalia.wolvic.ui.widgets.UISurfaceTextureRenderer;
@@ -104,8 +106,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -115,6 +120,63 @@ import java.util.function.Consumer;
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String STARTIMMERSIVE_ACTION = "com.wolvic.START_IMMERSIVE";
+    public static final String ENTERXR_X_INTENT_KEY = "ENTERXR_X";
+    public static final String ENTERXR_Y_INTENT_KEY = "ENTERXR_Y";
+    public static final String ENTERXR_WAITTIME_INTENT_KEY = "ENTERXR_WAITTIME";
+
+    public BroadcastReceiver startImmersiveReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Timer tryStartImmersiveTimer = new Timer();
+            float x = -1f;
+            float y = -1f;
+
+            if(intent.getExtras() != null && intent.hasExtra(ENTERXR_X_INTENT_KEY) && intent.hasExtra(ENTERXR_Y_INTENT_KEY)) {
+                x = intent.getFloatExtra(ENTERXR_X_INTENT_KEY, -1f);
+                y = intent.getFloatExtra(ENTERXR_Y_INTENT_KEY, -1f);
+            }
+
+            final float finalX = x;
+            final float finalY = y;
+            Runnable findWebXrButton = new Runnable() {
+                @Override
+                public void run() {
+                    if(mIsPresentingImmersive)
+                    {
+                        tryStartImmersiveTimer.cancel();
+                        return;
+                    }
+
+                    final Runnable r = this;
+                    tryStartImmersiveTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if(mIsPresentingImmersive)
+                            {
+                                return;
+                            }
+                            if(finalX > 0f && finalY > 0f) {
+                                simulateBrowserWindowTouchEvent(finalX, finalY);
+                                r.run();
+                            } else {
+                                findTheWebXrButtonAtAllCosts(r);
+                            }
+                        }
+                    }, 1000L);
+                }
+            };
+
+            if(finalX > 0f && finalY > 0f) {
+                simulateBrowserWindowTouchEvent(finalX, finalY);
+                findWebXrButton.run();
+            } else {
+                findTheWebXrButtonAtAllCosts(findWebXrButton);
+            }
+        }
+    };
+          
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -128,7 +190,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 handleContentCrashIntent(crashIntent);
             }
         }
-    };
+    };    
 
     private LifecycleRegistry mLifeCycle;
 
@@ -224,6 +286,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Set<String> mPoorPerformanceAllowList;
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
+    private boolean mBlockLaunchDialogs = false;
+    private boolean mBlockDeprecatedVersionDialog = false;
     private FragmentController mFragmentController;
     private LinkedHashMap<Integer, WidgetPlacement> mPendingNativeWidgetUpdates = new LinkedHashMap<>();
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
@@ -288,6 +352,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (DeviceType.isOculusBuild()) {
             workaroundGeckoSigAction();
         }
+
         mUiThread = Thread.currentThread();
 
         BitmapCache.getInstance(this).onCreate();
@@ -299,6 +364,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CrashReporterService.CRASH_ACTION);
         registerReceiver(mCrashReceiver, intentFilter, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name), null);
+        registerReceiver(startImmersiveReceiver, new IntentFilter(STARTIMMERSIVE_ACTION));
 
         mLastGesture = NoGesture;
         mWidgetUpdateListeners = new LinkedList<>();
@@ -315,7 +381,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mWidgetContainer = new FrameLayout(this);
         runtime.setContainerView(mWidgetContainer);
-
         mPermissionDelegate = new PermissionDelegate(this, this);
 
         mAudioEngine = new AudioEngine(this, new AndroidMediaPlayer(getBaseContext()));
@@ -342,6 +407,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         initializeWidgets();
 
         loadFromIntent(getIntent());
+        // show a popup we are entering webxr so the user knows something is happening
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mAutoEnterWebxr) {
+                            showLoadingWebXRDialog();
+                        }
+                    }
+                });
+            }
+        }, 500L);
 
         // Setup the search engine
         mSearchEngineWrapper = SearchEngineWrapper.get(this);
@@ -355,19 +434,28 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         checkForCrash();
 
         setHeadLockEnabled(mSettings.isHeadLockEnabled());
-
-        // Show the launch dialogs, if needed.
-        if (!showTermsServiceDialogIfNeeded()) {
-            if (!showPrivacyDialogIfNeeded()) {
-                showWhatsNewDialogIfNeeded();
+      
+        //Show the launch dialogs, if needed.
+        if(!mBlockLaunchDialogs) {
+            if (!showTermsServiceDialogIfNeeded()) {
+                if (!showPrivacyDialogIfNeeded()) {
+                    showWhatsNewDialogIfNeeded();
+                }
             }
         }
 
-        // Show the deprecated version dialog, if needed.
-        showDeprecatedVersionDialogIfNeeded();
+        if(!mBlockDeprecatedVersionDialog) {
+            // Show the deprecated version dialog, if needed.
+            showDeprecatedVersionDialogIfNeeded();
+        }
 
         getLifecycleRegistry().setCurrentState(Lifecycle.State.CREATED);
     }
+
+    public static boolean mHideVisuals = false;
+    public static boolean mAutoEnterWebxr = false;
+    public static boolean mAllowExitWebxr = false;
+    public static boolean mHideFirstTimeControllerDialog = false;
 
     protected void initializeWidgets() {
         UISurfaceTextureRenderer.setRenderActive(true);
@@ -377,6 +465,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mRootWidget.setClickCallback(() -> {
             for (WorldClickListener listener: mWorldClickListeners) {
                 listener.onWorldClick();
+
             }
         });
 
@@ -389,12 +478,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Create the WebXR interstitial
         mWebXRInterstitial = new WebXRInterstitialWidget(this);
 
-        // Windows
+        mHideVisuals = getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean("hide_visuals", false);
+
+            // Windows
         mWindows = new Windows(this);
+        if(mHideVisuals) {
+            mWindows.getFocusedWindow().setVisible(false);
+        }
+
         mWindows.setDelegate(new Windows.Delegate() {
             @Override
             public void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow) {
                 attachToWindow(aFocusedWindow, aPrevFocusedWindow);
+                if(mHideVisuals) {
+                    aFocusedWindow.setVisible(false);
+                }
                 mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
                 mNavigationBar.hideAllNotifications();
             }
@@ -431,7 +529,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
         attachToWindow(mWindows.getFocusedWindow(), null);
 
-        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
+        List<Widget> widgets = Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial);
+
+        if(mHideVisuals) {
+            widgets.forEach(w ->
+            {
+                w.setVisible(false);
+            });
+        }
+
+        addWidgets(widgets);
 
         mWindows.restoreSessions();
     }
@@ -509,6 +616,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
         termsServiceDialog.attachToWindow(mWindows.getFocusedWindow());
         termsServiceDialog.show(UIWidget.REQUEST_FOCUS);
+        return true;
+    }
+
+    private boolean showLoadingWebXRDialog() {
+        NotificationManager.Notification n = new NotificationManager.Builder(mTray)
+                .withCurved(true)
+                .withString("Loading WebXR...")
+                .withAutoHide(false)
+                .withDuration(999)
+                .build();
+
+        NotificationManager.show(99, n);
         return true;
     }
 
@@ -728,6 +847,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             e.printStackTrace();
         }
     }
+    Timer enterWebXRTimer = new Timer();
+
+    void tryEnterWebXRLooped(@Nullable float enterxrX, @Nullable float enterxrY)
+    {
+        if(mIsPresentingImmersive)
+        {
+            return;
+        }
+
+        Intent enterWebXRAction = new Intent(STARTIMMERSIVE_ACTION);
+        if(enterxrX > 0f) enterWebXRAction.putExtra(ENTERXR_X_INTENT_KEY, enterxrX);
+        if(enterxrY > 0f) enterWebXRAction.putExtra(ENTERXR_Y_INTENT_KEY, enterxrY);
+        sendBroadcast(enterWebXRAction);
+    }
 
     void loadFromIntent(final Intent intent) {
         if (getCrashReportIntent().action_crashed.equals(intent.getAction())) {
@@ -821,18 +954,49 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (extras.containsKey("hide_webxr_interstitial")) {
                 mHideWebXRIntersitial = extras.getBoolean("hide_webxr_interstitial", false);
                 if (mHideWebXRIntersitial) {
+                    mWebXRInterstitial.onDismissWebXRInterstitial();
                     setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
                 }
             }
 
-            if (extras.containsKey("hide_whats_new")) {
-                boolean hideWhatsNew = extras.getBoolean("hide_whats_new", false);
+            if (extras.containsKey("hide_whats_new") || mHideVisuals) {
+                boolean hideWhatsNew = extras.getBoolean("hide_whats_new", false) || mHideVisuals;
                 if (hideWhatsNew && mWhatsNewWidget != null) {
                     mWhatsNewWidget.hide(REMOVE_WIDGET);
                 }
             }
 
             openInKioskMode = extras.getBoolean("kiosk", false);
+
+            mBlockLaunchDialogs = extras.getBoolean("HIDE_TOS_AND_PRIVACY_DIALOG", false);
+
+            mBlockDeprecatedVersionDialog = extras.getBoolean("HIDE_UPDATE_DIALOG", false);
+
+            float enterxrX = extras.containsKey(ENTERXR_X_INTENT_KEY) ? extras.getFloat(ENTERXR_X_INTENT_KEY) : null;
+            float enterxrY = extras.containsKey(ENTERXR_Y_INTENT_KEY) ? extras.getFloat(ENTERXR_Y_INTENT_KEY) : null;
+
+            // some webxr pages take some time to load on their own/load after the page itself has finished loading
+            // if the user knows how long the page load may take we can allow them to set the time before
+            // trying to auto enter via intent extra
+            long enterxrWaitTime = extras.containsKey(ENTERXR_WAITTIME_INTENT_KEY) ? extras.getLong(ENTERXR_WAITTIME_INTENT_KEY) : 5000L;
+            if(extras.containsKey("AUTO_ENTER_WEBXR"))
+            {
+                mAutoEnterWebxr = true;
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tryEnterWebXRLooped(enterxrX, enterxrY);
+                            }
+                        });
+                    }
+                }, enterxrWaitTime);
+            }
+
+            mAllowExitWebxr = !extras.containsKey("BLOCK_EXIT_WEBXR");
+            mHideFirstTimeControllerDialog = extras.containsKey("HIDE_FIRSTXR_CONTROLLERS");
         }
 
         // If there is a target URI we open it
@@ -952,7 +1116,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Deprecated
     public void onBackPressed() {
         if (mIsPresentingImmersive) {
-            queueRunnable(this::exitImmersiveNative);
+            if(mAllowExitWebxr)
+            {
+                queueRunnable(this::exitImmersiveNative);
+            }
             return;
         }
         if (mBackHandlers.size() > 0) {
@@ -1018,6 +1185,121 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mWaitLock.wait();
             } catch (InterruptedException e) {
                 Log.e(LOGTAG, "Waiting for exit immersive onPause interrupted");
+            }
+        }
+    }
+
+    //Send a pressed motion event followed by an unpressed motion event
+    //aHandle=6 represents the widget handle for the WindowWidget (i.e. the browser window)
+    //This should be updated soon to get the actual WindowWidget instead of assuming its handle is always 6
+    void simulateBrowserWindowTouchEvent(float x, float y)
+    {
+        handleMotionEvent(6, 0, true, true, x, y);
+        handleMotionEvent(6, 0, true, false, x, y);
+    }
+
+    Timer buttonPressTimer = new Timer();
+    //https://i.kym-cdn.com/photos/images/newsfeed/000/930/949/fb4.gif
+    void findTheWebXrButtonAtAllCosts(Runnable onFailedToFind) {
+
+        //6 is handle for window
+        Widget widget = mWidgets.get(6);
+
+        final float maxSizeX = widget.getPlacement().width;
+        final float maxSizeY = widget.getPlacement().height;
+        final float interval = 15f;
+
+        Runnable lowerRight = new Runnable() {
+            @Override
+            public void run() {
+                float lowerRightMinX = maxSizeX / 2;
+                float lowerRightMinY = maxSizeY / 2;
+
+                simulateTouchesOverArea(lowerRightMinX, lowerRightMinY, maxSizeX, maxSizeY, interval, onFailedToFind);
+            }
+        };
+
+        lowerRight.run();
+    }
+
+    float currentX = 0;
+    float currentY = 0;
+
+    public void simulateTouchesOverArea(float minSizeX, float minSizeY, float maxSizeX, float maxSizeY, float interval, Runnable failedRunnable)
+    {
+        currentX = minSizeX;
+        currentY = maxSizeY;
+
+        Runnable runTouch = new Runnable() {
+            @Override
+            public void run() {
+                if(mIsPresentingImmersive) {
+                    //Mission accomplished
+                    return;
+                }
+
+                final Runnable r = this;
+
+                simulateBrowserWindowTouchEvent(currentX, currentY);
+
+                if(currentX < maxSizeX) {
+                    currentX += interval;
+                }
+                else if(currentY >= minSizeY)
+                {
+                    currentX = minSizeX;
+                    currentY -= interval;
+                }
+                else
+                {
+                    failedRunnable.run();
+                    return;
+                }
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        simulateBrowserWindowTouchEvent(732.26f, 423.5f); // Common Enter VR button location
+
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                simulateBrowserWindowTouchEvent(997.6f, 566.17f); // Common Enter VR button location
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        r.run();
+                                    }
+                                }, 100L);
+                            }
+                        }, 100L);
+                    }
+                }, 100L);
+            }
+        };
+
+        runTouch.run();
+
+        if(mIsPresentingImmersive) // Already found the Enter VR button
+            return;
+
+        for(float y = maxSizeY; y > minSizeY; y-=interval)
+        {
+            for(float x = maxSizeX; x > minSizeX; x-=interval)
+            {
+                if(mIsPresentingImmersive) {
+                    //Mission accomplished
+                    return;
+                }
+
+                simulateBrowserWindowTouchEvent(x, y);
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -1644,7 +1926,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         boolean visible = aWidget.getPlacement().visible;
 
-        if (visible != (view.getVisibility() == View.VISIBLE)) {
+        if (visible != (view.getVisibility() == View.VISIBLE) && !mHideVisuals) {
             view.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
 
