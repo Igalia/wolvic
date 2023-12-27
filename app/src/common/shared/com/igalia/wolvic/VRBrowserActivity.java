@@ -115,6 +115,18 @@ import java.util.function.Consumer;
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String CUSTOM_URI_SCHEME = "wolvic";
+    public static final String CUSTOM_URI_HOST = "com.igalia.wolvic";
+    public static final String EXTRA_INTENT_CMD = "intent_cmd";
+    public static final String JSON_OVR_SOCIAL_LAUNCH = "ovr_social_launch";
+    public static final String JSON_DEEPLINK_MESSAGE = "deeplink_message";
+    public static final String EXTRA_URL = "url";
+    public static final String EXTRA_OPEN_IN_BACKGROUND = "background";
+    public static final String EXTRA_CREATE_NEW_WINDOW = "create_new_window";
+    public static final String EXTRA_HIDE_WEBXR_INTERSTITIAL = "hide_webxr_interstitial";
+    public static final String EXTRA_HIDE_WHATS_NEW = "hide_whats_new";
+    public static final String EXTRA_KIOSK = "kiosk";
+
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -738,12 +750,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (DeviceType.isOculusBuild()) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String cmd = bundle.getString("intent_cmd");
+                String cmd = bundle.getString(EXTRA_INTENT_CMD);
                 if ((cmd != null) && (cmd.length() > 0)) {
                     try {
                         JSONObject object = new JSONObject(cmd);
-                        JSONObject launch = object.getJSONObject("ovr_social_launch");
-                        String msg = launch.getString("deeplink_message");
+                        JSONObject launch = object.getJSONObject(JSON_OVR_SOCIAL_LAUNCH);
+                        String msg = launch.getString(JSON_DEEPLINK_MESSAGE);
                         Log.d(LOGTAG, "deeplink message: " + msg);
                         onAppLink(msg);
                         return;
@@ -762,7 +774,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         Uri targetUri = null;
         Bundle extras;
 
-        if (dataUri != null && dataUri.getScheme().equals("wolvic") && dataUri.getHost().equals("com.igalia.wolvic")) {
+        if (dataUri != null && dataUri.getScheme().equals(CUSTOM_URI_SCHEME) && dataUri.getHost().equals(CUSTOM_URI_HOST)) {
             Log.d(LOGTAG, "Parsing custom URI from intent: " + dataUri);
 
             extras = new Bundle();
@@ -774,7 +786,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
                 // all supported parameters are booleans, except "url"
                 String lowerCaseKey = key.toLowerCase();
-                if (lowerCaseKey.equals("url"))
+                if (lowerCaseKey.equals(EXTRA_URL))
                     extras.putString(lowerCaseKey, queryParameter);
                 else
                     extras.putBoolean(lowerCaseKey, Boolean.parseBoolean(queryParameter));
@@ -787,8 +799,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (extras != null) {
             // targetUri will be null here if the data URI is empty or contains a custom URI;
             // in that case, we will use the "url" parameter if it exists
-            if (targetUri == null && extras.containsKey("url")) {
-                targetUri = Uri.parse(extras.getString("url"));
+            if (targetUri == null && extras.containsKey(EXTRA_URL)) {
+                targetUri = Uri.parse(extras.getString(EXTRA_URL));
             }
             // SEND Actions received WebBrowser share dialogs
             if (targetUri == null && extras.containsKey(Intent.EXTRA_TEXT)) {
@@ -803,36 +815,36 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
 
             // Open the tab in background/foreground, if there is no URL provided we just open the homepage
-            if (extras.containsKey("background")) {
-                openInBackground = extras.getBoolean("background", false);
+            if (extras.containsKey(EXTRA_OPEN_IN_BACKGROUND)) {
+                openInBackground = extras.getBoolean(EXTRA_OPEN_IN_BACKGROUND, false);
                 if (targetUri == null) {
                     targetUri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
                 }
             }
 
             // Open the provided URL in a new window, if there is no URL provided we just open the homepage
-            if (extras.containsKey("create_new_window")) {
-                openInWindow = extras.getBoolean("create_new_window", false);
+            if (extras.containsKey(EXTRA_CREATE_NEW_WINDOW)) {
+                openInWindow = extras.getBoolean(EXTRA_CREATE_NEW_WINDOW, false);
                 if (targetUri == null) {
                     targetUri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
                 }
             }
 
-            if (extras.containsKey("hide_webxr_interstitial")) {
-                mHideWebXRIntersitial = extras.getBoolean("hide_webxr_interstitial", false);
+            if (extras.containsKey(EXTRA_HIDE_WEBXR_INTERSTITIAL)) {
+                mHideWebXRIntersitial = extras.getBoolean(EXTRA_HIDE_WEBXR_INTERSTITIAL, false);
                 if (mHideWebXRIntersitial) {
                     setWebXRIntersitialState(WEBXR_INTERSTITIAL_HIDDEN);
                 }
             }
 
-            if (extras.containsKey("hide_whats_new")) {
-                boolean hideWhatsNew = extras.getBoolean("hide_whats_new", false);
+            if (extras.containsKey(EXTRA_HIDE_WHATS_NEW)) {
+                boolean hideWhatsNew = extras.getBoolean(EXTRA_HIDE_WHATS_NEW, false);
                 if (hideWhatsNew && mWhatsNewWidget != null) {
                     mWhatsNewWidget.hide(REMOVE_WIDGET);
                 }
             }
 
-            openInKioskMode = extras.getBoolean("kiosk", false);
+            openInKioskMode = extras.getBoolean(EXTRA_KIOSK, false);
         }
 
         // If there is a target URI we open it
@@ -1459,7 +1471,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(() -> {
             try {
                 JSONObject object = new JSONObject(aJSON);
-                String uri = object.optString("url");
+                String uri = object.optString(EXTRA_URL);
                 Session session = SessionStore.get().getActiveSession();
                 if (!StringUtils.isEmpty(uri) && session != null) {
                     session.loadUri(uri);
