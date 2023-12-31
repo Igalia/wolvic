@@ -97,7 +97,7 @@ public class SettingsStore {
     public final static int DISPLAY_DPI_BASE = 128;
     public final static int DISPLAY_DPI_DEFAULT = (int) (DISPLAY_DENSITY_DEFAULT * DISPLAY_DPI_BASE);
     public final static int DISPLAY_DPI_MIN = 70;
-    public final static int DISPLAY_DPI_MAX = 400;
+    public final static int DISPLAY_DPI_MAX = 300;
     // World size: multiply by density to get the available resolution for the Web engine.
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
