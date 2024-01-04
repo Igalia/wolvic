@@ -74,7 +74,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public static final int OPEN_IN_BACKGROUND = 1;
     public static final int OPEN_IN_NEW_WINDOW = 2;
 
-
+    // this is the windows state file, maybe we need a different one for each installed app?
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
 
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
@@ -136,6 +136,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private WindowWidget mFullscreenWindow;
     private WindowPlacement mRegularWindowPlacement;
     private WindowPlacement mPrivateWindowPlacement;
+    private boolean mKioskMode = false;
     private boolean mStoredCurvedMode = false;
     private boolean mForcedCurvedMode = false;
     private boolean mCenterWindows;
@@ -215,6 +216,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         restoreWindows();
     }
 
+    // this is where the state of the open windows is saved
+    // we should save the state of kiosk mode separately
     public void saveState() {
         File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
         try (Writer writer = new FileWriter(file)) {
@@ -228,8 +231,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                         sessionState.mUri != null && sessionState.mUri.startsWith(uri)
                     ))
                     .collect(Collectors.toCollection(ArrayList::new));
+
+            if (mKioskMode) {
+                // don't overwrite the old file?
+            }
+
             for (WindowWidget window : mRegularWindows) {
-                if (window.getSession() != null) {
+                if (window.getSession() != null && mKioskMode) {
                     WindowState windowState = new WindowState();
                     windowState.load(window, state, state.tabs.indexOf(window.getSession().getSessionState()));
                     state.regularWindowsState.add(windowState);
@@ -1356,7 +1364,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     @Override
     public void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {
-        // TODO
+        mKioskMode = isKioskMode;
     }
 
 public void selectTab(@NonNull Session aTab) {
@@ -1449,7 +1457,9 @@ public void selectTab(@NonNull Session aTab) {
     }
 
     public void openInKioskMode(@NonNull String aUri) {
-        Session session = SessionStore.get().createSuspendedSession(aUri, true);
+        // is it enough to set it to false?
+        Session session = SessionStore.get().createSuspendedSession(aUri, false);
+        // this needs to be a new session
         setFirstPaint(mFocusedWindow, session);
         mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         mFocusedWindow.setKioskMode(true);

@@ -17,7 +17,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import androidx.preference.PreferenceManager;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;
@@ -37,6 +36,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -1998,6 +1998,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
 
         // Check if we want this type of url.
+        // Maybe here we should check if we are in kiosk mode
         if (!shouldStoreUri(url)) {
             return WResult.fromValue(false);
         }
@@ -2052,6 +2053,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
      * See https://dxr.mozilla.org/mozilla-central/source/mobile/android/components/build/nsAndroidHistory.cpp#326
      */
     private boolean shouldStoreUri(@NonNull String uri) {
+        // In kiosk mode, we don't add entries to the general history.
+        if (isKioskMode()) {
+            return false;
+        }
+
         Uri parsedUri = Uri.parse(uri);
         String scheme = parsedUri.getScheme();
         if (scheme == null) {

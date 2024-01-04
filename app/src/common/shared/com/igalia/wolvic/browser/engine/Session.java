@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -22,6 +21,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
@@ -1637,6 +1637,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     @Nullable
     @Override
     public WResult<Boolean> onVisited(@NonNull WSession aSession, @NonNull String url, @Nullable String lastVisitedURL, int flags) {
+        // this is where history items are saved
         if (mState.mSession == aSession) {
             if (mHistoryDelegate != null) {
                 return mHistoryDelegate.onVisited(aSession, url, lastVisitedURL, flags);

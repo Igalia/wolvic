@@ -843,6 +843,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
             if (openInKioskMode) {
                 // FIXME this might not work as expected if the app was already running
+                // this needs to work as if it was a different profile, so it operates as a PWA
+                // but it can not update the history, for example
                 mWindows.openInKioskMode(targetUri.toString());
             } else {
                 if (openInWindow) {
