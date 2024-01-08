@@ -20,9 +20,9 @@
         android:background="#00000000"
         android:padding="5dp">
 
-        <!-- Left Controller -->
+        <!-- Pico4/Pico4E Left Controller -->
         <RelativeLayout
-            app:visibleGone="@{hand == WebXRInterstitialController.HAND_LEFT}"
+            app:visibleGone="@{model == DeviceType.Pico4x &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
             tools:visibility="gone"
             android:layout_width="200dp"
             android:layout_height="130dp"
@@ -61,9 +61,50 @@
                 android:text="@string/webxr_interstitial_exit_webxr"/>
         </RelativeLayout>
 
-        <!-- Right Controller -->
+        <!-- Pico Neo3 Left Controller -->
         <RelativeLayout
-            app:visibleGone="@{hand == WebXRInterstitialController.HAND_RIGHT}"
+            app:visibleGone="@{model == DeviceType.PicoNeo3 &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
+            tools:visibility="gone"
+            android:layout_width="200dp"
+            android:layout_height="130dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/vr_controller_piconeo3_left"
+                tools:ignore="RtlHardcoded" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="52dp"
+                android:layout_marginTop="44dp"
+                android:paddingBottom="16dp"
+                android:rotation="-30"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                android:tint="@color/window_border_hover"
+                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="100dp"
+                android:layout_marginTop="23dp"
+                android:layout_alignParentTop="true"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                android:text="@string/webxr_interstitial_exit_webxr"/>
+        </RelativeLayout>
+
+        <!-- Pico4/Pico4E Right Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.Pico4x &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
             tools:visibility="gone"
             android:layout_width="200dp"
             android:layout_height="130dp"
@@ -75,6 +116,23 @@
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/vr_controller_pico4_right"
+                tools:ignore="RtlHardcoded" />
+        </RelativeLayout>
+
+        <!-- Pico Neo 3 Right Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.PicoNeo3 &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
+            tools:visibility="gone"
+            android:layout_width="200dp"
+            android:layout_height="130dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/vr_controller_piconeo3_right"
                 tools:ignore="RtlHardcoded" />
         </RelativeLayout>
 
