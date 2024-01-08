@@ -140,6 +140,7 @@ device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
         deviceNamesMap.emplace("Quest Pro", device::MetaQuestPro);
         deviceNamesMap.emplace("VRX", device::LenovoVRX);
         deviceNamesMap.emplace("Magic Leap 2", device::MagicLeap2);
+        deviceNamesMap.emplace("Pico Neo 3", device::PicoNeo3);
     }
 
     auto device = deviceNamesMap.find(model);

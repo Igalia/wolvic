@@ -268,6 +268,31 @@ namespace crow {
             },
     };
 
+    const OpenXRInputMapping PicoNeo3 {
+            "/interaction_profiles/pico/neo3_controller",
+            IS_6DOF,
+            "vr_controller_piconeo3_left.obj",
+            "vr_controller_piconeo3_right.obj",
+            device::PicoNeo3,
+            std::vector<OpenXRInputProfile> { "pico-neo3", "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Back, kPathBack, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     // HVR 3DOF: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-trigger-touchpad.json
     const OpenXRInputMapping Hvr3DOF {
             "/interaction_profiles/huawei/controller",
@@ -383,8 +408,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 10> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, KHRSimple
+    const std::array<OpenXRInputMapping, 11> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, KHRSimple
     };
 
 } // namespace crow
