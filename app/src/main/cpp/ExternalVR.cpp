@@ -251,7 +251,7 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::PicoNeo3:
       result = mozilla::gfx::VRControllerType::PicoNeo2;
       break;
-    case device::PicoXR:
+    case device::Pico4x:
       result = mozilla::gfx::VRControllerType::Pico4;
       break;
     case device::MagicLeap2:

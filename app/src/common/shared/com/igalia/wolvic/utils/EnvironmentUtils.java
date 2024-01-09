@@ -211,7 +211,7 @@ public class EnvironmentUtils {
     public static String getEnvironmentPayload(Environment env) {
         if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
             String payload = env.getPayload();
-            String format = DeviceType.isOculusBuild() ? "_ktx" : "_misc"; // PicoXR doesn't support 'ktx'
+            String format = DeviceType.isOculusBuild() ? "_ktx" : "_misc"; // Pico4x doesn't support 'ktx'
             int at = payload.lastIndexOf(".");
             return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
         }
