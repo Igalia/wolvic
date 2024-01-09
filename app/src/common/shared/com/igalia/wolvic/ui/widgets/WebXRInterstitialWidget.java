@@ -109,9 +109,9 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
         } else if (deviceType == DeviceType.PicoNeo3) {
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.PicoNeo3, WebXRInterstitialController.HAND_RIGHT);
-        } else if (deviceType == DeviceType.PicoXR) {
-            addController(DeviceType.PicoXR, WebXRInterstitialController.HAND_LEFT);
-            addController(DeviceType.PicoXR, WebXRInterstitialController.HAND_RIGHT);
+        } else if (deviceType == DeviceType.Pico4x) {
+            addController(DeviceType.Pico4x, WebXRInterstitialController.HAND_LEFT);
+            addController(DeviceType.Pico4x, WebXRInterstitialController.HAND_RIGHT);
         } else if (DeviceType.isHVRBuild()) {
             if (PlatformActivity.isPositionTrackingSupported()) {
                 addController(DeviceType.HVR6DoF, WebXRInterstitialController.HAND_LEFT);

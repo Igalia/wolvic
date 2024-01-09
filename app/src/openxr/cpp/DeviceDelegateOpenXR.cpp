@@ -549,7 +549,7 @@ struct DeviceDelegateOpenXR::State {
 #if OCULUSVR
       return OculusTouch.path;
 #elif PICOXR
-      return Pico4.path;
+      return Pico4x.path;
 #else
       if (deviceType == device::MagicLeap2)
           return MagicLeap2.path;
@@ -648,9 +648,9 @@ struct DeviceDelegateOpenXR::State {
       case device::MetaQuest3:
       case device::OculusQuest2:
       case device::MetaQuestPro:
-      // PicoXR default is 72hz, but has an experimental setting to set it to 90hz. If the setting
+      // Pico4x default is 72hz, but has an experimental setting to set it to 90hz. If the setting
       // is disabled we'll select 72hz which is the only one advertised by OpenXR in that case.
-      case device::PicoXR:
+      case device::Pico4x:
         suggestedRefreshRate = 90.0;
         break;
       case device::OculusQuest:
