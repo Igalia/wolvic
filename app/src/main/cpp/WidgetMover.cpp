@@ -149,14 +149,12 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
 
   if (m.moveBehaviour == WidgetMoveBehaviour::KEYBOARD) {
     return m.HandleKeyboardMove(delta);
-  } else {
+  } else if (m.moveBehaviour == WidgetMoveBehaviour::WINDOW && m.widget->GetCylinder()) {
     // Windows only move in the horizontal direction, and only when positioned on a cylinder.
-    if (m.moveBehaviour == WidgetMoveBehaviour::WINDOW) {
-      delta.y() = 0.0f;
-    }
+    delta.y() = 0.0f;
 
-    // General case
-    const float maxX = 1.5f;
+    // set a fixed movement range: the width of one default window
+    const float maxX = 4.0f;
     const float minX = -maxX;
     const float maxY = 1.0f;
     const float minY = -maxY;
@@ -164,13 +162,8 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
     float x = translation.x() * WidgetPlacement::kWorldDPIRatio + delta.x();
     float y = translation.y() * WidgetPlacement::kWorldDPIRatio + delta.y();
 
-    float w, h;
-    m.widget->GetWorldSize(w, h);
-    const float dx = w * (m.anchorPoint.x() - 0.5f);
-    const float dy = h * m.anchorPoint.y();
-
-    x = fmax(fmin(x, maxX + dx), minX - dx);
-    y = fmax(fmin(y, maxY + dy), minY - dy);
+    x = fmax(fmin(x, maxX), minX);
+    y = fmax(fmin(y, maxY), minY);
 
     m.movePlacement->translation.x() = x / WidgetPlacement::kWorldDPIRatio;
     m.movePlacement->translation.y() = y / WidgetPlacement::kWorldDPIRatio;
@@ -179,6 +172,7 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
 
     return m.movePlacement;
   }
+  return nullptr;
 }
 
 void
