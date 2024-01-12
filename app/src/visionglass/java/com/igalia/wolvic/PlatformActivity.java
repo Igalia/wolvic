@@ -128,13 +128,13 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         } while (!wasImuStarted);
 
 
-        VisionGlass.getInstance().setDisplayMode(DisplayMode.vr2d, new DisplayModeCallback() {
+        VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
             @Override
-            public void onSuccess(DisplayMode displayMode) { Log.d(LOGTAG, "Successfully switched to 2D mode"); }
+            public void onSuccess(DisplayMode displayMode) { Log.d(LOGTAG, "Successfully switched to 3D mode"); }
 
             @Override
             public void onError(String s, int i) {
-                Log.d(LOGTAG, "Error " + i + " failed to switch to 2D mode " + s);
+                Log.d(LOGTAG, "Error " + i + " failed to switch to 3D mode " + s);
             }
         });
 

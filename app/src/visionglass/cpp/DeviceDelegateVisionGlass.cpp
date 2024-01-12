@@ -217,18 +217,12 @@ DeviceDelegateVisionGlass::ProcessEvents() {}
 void
 DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
-  VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
-  VRB_GL_CHECK(glEnable(GL_CULL_FACE));
-  VRB_GL_CHECK(glEnable(GL_BLEND));
   VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   mShouldRender = true;
 
-  const float IPD = 0.064f;
   auto headTransform = m.headingMatrix.Translate(kAverageHeight);
   m.cameras[0]->SetHeadTransform(headTransform);
   m.cameras[1]->SetHeadTransform(headTransform);
-  m.cameras[0]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-IPD * 0.5f, 0.f, 0.f)));
-  m.cameras[1]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(IPD * 0.5f, 0.f, 0.f)));
   m.immersiveDisplay->SetEyeTransform(device::Eye::Left, m.cameras[0]->GetEyeTransform());
   m.immersiveDisplay->SetEyeTransform(device::Eye::Right, m.cameras[1]->GetEyeTransform());
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
@@ -249,7 +243,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
 
 void
 DeviceDelegateVisionGlass::BindEye(const device::Eye aEye) {
-  // noop
+  VRB_GL_CHECK(glViewport(aEye == device::Eye::Left ? 0 : m.glWidth / 2, 0, m.glWidth / 2, m.glHeight));
 }
 
 void
