@@ -17,6 +17,7 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.zip.UnzipCallback;
 import com.igalia.wolvic.utils.zip.UnzipTask;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,32 +115,41 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
     private void downloadEnvironment(@NonNull String envId) {
         final Environment environment = EnvironmentUtils.getExternalEnvironmentById(mContext, envId);
-        final String payload = EnvironmentUtils.getEnvironmentPayload(environment);
-        if (environment != null) {
-            // Check if the env is being downloaded or has been already downloaded.
-            // The download item will be removed in 2 situations:
-            //   1- the user selects another env before the download is completed (see setOrDownloadEnvironment)
-            //   2- when the unzip task is completed successfully.
-            Download envItem = mDownloadManager.getDownloads().stream()
-                    .filter(item -> item.getUri().equals(payload))
-                    .findFirst().orElse(null);
+        if (environment == null) {
+            return;
+        }
 
-            if (envItem == null) {
-                // If the env has not been downloaded, start downloading it
-                String outputPath = mContext.getExternalFilesDir(null).getAbsolutePath();
-                DownloadJob job = DownloadJob.create(payload);
-                job.setOutputPath(outputPath + "/" + job.getFilename());
-                mDownloadManager.startDownload(job);
-            } else if (envItem.getStatus() == Download.SUCCESSFUL) {
-                Log.w(LOGTAG, "The unzip task failed for unknown reasons");
-                mEnvDownloadId = -1;
-                mDownloadManager.removeDownload(envItem.getId(), true);
-            } else  {
-                // The 'downloadEnvironment' method is called either by 'setOrDownloadEnvironment' when the user changes the selected
-                // option in the radiobuttons widget (this cause the download item to be removed) or by the 'setOrDownloadEnvironment'
-                // method during the java initialization invoked by the VRBrowser native code.
-                Log.w(LOGTAG, "Download is still in progress; we shouldn't reach this code.");
-            }
+        final String payload = EnvironmentUtils.getEnvironmentPayload(environment);
+        try {
+            new URL(payload).toURI();
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Invalid URI in payload for environment " + envId + ": " + e.getMessage());
+            return;
+        }
+    
+        // Check if the env is being downloaded or has been already downloaded.
+        // The download item will be removed in 2 situations:
+        //   1- the user selects another env before the download is completed (see setOrDownloadEnvironment)
+        //   2- when the unzip task is completed successfully.
+        Download envItem = mDownloadManager.getDownloads().stream()
+                .filter(item -> item.getUri().equals(payload))
+                .findFirst().orElse(null);
+
+        if (envItem == null) {
+            // If the env has not been downloaded, start downloading it
+            String outputPath = mContext.getExternalFilesDir(null).getAbsolutePath();
+            DownloadJob job = DownloadJob.create(payload);
+            job.setOutputPath(outputPath + "/" + job.getFilename());
+            mDownloadManager.startDownload(job);
+        } else if (envItem.getStatus() == Download.SUCCESSFUL) {
+            Log.w(LOGTAG, "The unzip task failed for unknown reasons");
+            mEnvDownloadId = -1;
+            mDownloadManager.removeDownload(envItem.getId(), true);
+        } else  {
+            // The 'downloadEnvironment' method is called either by 'setOrDownloadEnvironment' when the user changes the selected
+            // option in the radiobuttons widget (this cause the download item to be removed) or by the 'setOrDownloadEnvironment'
+            // method during the java initialization invoked by the VRBrowser native code.
+            Log.w(LOGTAG, "Download is still in progress; we shouldn't reach this code.");
         }
     }
 
