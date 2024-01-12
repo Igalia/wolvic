@@ -36,11 +36,9 @@ namespace crow {
 
 static const float kHorizontalFOV = 36.0f;
 static const float kVerticalFOV = 21.0f;
+const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
+const vrb::Vector kControllerAverageHeight = kAverageHeight * 2/3;
 static const int32_t kControllerIndex = 0;
-static const vrb::Vector& GetHomePosition() {
-  static vrb::Vector homePosition(0.0f, 1.55f, 3.0f);
-  return homePosition;
-}
 
 struct DeviceDelegateVisionGlass::State {
   vrb::RenderContextWeak context;
@@ -50,7 +48,6 @@ struct DeviceDelegateVisionGlass::State {
   vrb::CameraEyePtr cameras[2];
   vrb::Color clearColor;
   vrb::Matrix headingMatrix;
-  vrb::Vector position;
   vrb::Quaternion controllerOrientation;
   bool clicked;
   GLsizei glWidth, glHeight;
@@ -58,7 +55,6 @@ struct DeviceDelegateVisionGlass::State {
   State()
       : renderMode(device::RenderMode::StandAlone)
       , headingMatrix(vrb::Matrix::Identity())
-      , position(GetHomePosition())
       , clicked(false)
       , glWidth(0)
       , glHeight(0)
@@ -123,12 +119,8 @@ DeviceDelegateVisionGlass::SetRenderMode(const device::RenderMode aMode) {
     sEnv->CallVoidMethod(sActivity, sSetRenderMode, (aMode == device::RenderMode::Immersive ? 1 : 0));
     CheckJNIException(sEnv, __FUNCTION__);
   }
-  if (aMode != device::RenderMode::StandAlone) {
-    m.position = vrb::Vector();
-  } else {
-    // recenter when leaving immersive mode.
+  if (aMode == device::RenderMode::Immersive)
     RecenterView();
-  }
 }
 
 device::RenderMode
@@ -232,13 +224,14 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   mShouldRender = true;
 
   const float IPD = 0.064f;
-  auto headTransform = m.headingMatrix.Translate(m.position);
+  auto headTransform = m.headingMatrix.Translate(kAverageHeight);
   m.cameras[0]->SetHeadTransform(headTransform);
   m.cameras[1]->SetHeadTransform(headTransform);
   m.cameras[0]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-IPD * 0.5f, 0.f, 0.f)));
   m.cameras[1]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(IPD * 0.5f, 0.f, 0.f)));
   m.immersiveDisplay->SetEyeTransform(device::Eye::Left, m.cameras[0]->GetEyeTransform());
   m.immersiveDisplay->SetEyeTransform(device::Eye::Right, m.cameras[1]->GetEyeTransform());
+  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
 
   // Update controller
   if (!m.controller)
@@ -248,7 +241,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
     float level = 100.0 - std::fmod(context->GetTimestamp(), 100.0);
     m.controller->SetBatteryLevel(kControllerIndex, (int32_t)level);
   }
-  auto transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation);
+  auto transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation).Translate(kControllerAverageHeight);
   m.controller->SetTransform(kControllerIndex, transformMatrix);
   m.controller->SetBeamTransform(kControllerIndex, vrb::Matrix::Identity());
   m.controller->SetImmersiveBeamTransform(kControllerIndex, vrb::Matrix::Identity());
@@ -316,7 +309,6 @@ DeviceDelegateVisionGlass::Resume() {
 
 void
 DeviceDelegateVisionGlass::RecenterView() {
-  m.position = m.renderMode == device::RenderMode::Immersive ? m.position = vrb::Vector() : GetHomePosition();
   m.headingMatrix = vrb::Matrix::Identity();
 }
 
