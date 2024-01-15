@@ -455,6 +455,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         }
         handleShift(false);
+        cleanComposingText();
         updateCandidates();
     }
 
