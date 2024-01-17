@@ -110,8 +110,7 @@ class SessionSettings {
 
         public Builder withDefaultSettings(Context context) {
             int ua = SettingsStore.getInstance(context).getUaMode();
-            int viewport = ua == WSessionSettings.USER_AGENT_MODE_DESKTOP ?
-                    WSessionSettings.VIEWPORT_MODE_DESKTOP : WSessionSettings.VIEWPORT_MODE_MOBILE;
+            int viewport = WSessionSettings.VIEWPORT_MODE_MOBILE;
 
             TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
             return new SessionSettings.Builder()
