@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.utils.DictionaryUtils;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -94,17 +95,17 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
 
     @Override
     public boolean needsDatabase() {
-        return true;
+        return supportsAutoCompletion();
     }
 
     @Override
     public boolean supportsAutoCompletion() {
-        return true;
+        return SettingsStore.getInstance(mContext).isLatinAutoCompleteEnabled();
     }
 
     @Override
     public boolean usesComposingText() {
-        return mDB.exists();
+        return supportsAutoCompletion() && mDB.exists();
     }
 
     private List<Words> getDisplays(String aKey) {

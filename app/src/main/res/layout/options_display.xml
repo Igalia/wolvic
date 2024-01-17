@@ -68,6 +68,12 @@
                     android:visibility="@{BuildConfig.FLAVOR_backend == &quot;chromium&quot; ? View.VISIBLE : View.GONE}"
                     app:description="@string/display_options_sound_effect" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/latinAutoCompleteSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_latin_auto_complete" />
+
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/ua_radio"
                     android:layout_width="match_parent"

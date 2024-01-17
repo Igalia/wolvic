@@ -110,6 +110,7 @@ public class SettingsStore {
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
+    public final static boolean LATIN_AUTO_COMPLETE_ENABLED = false;
     public final static boolean WINDOW_MOVEMENT_DEFAULT = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     public final static float HAPTIC_PULSE_DURATION_DEFAULT = 10.0f;
@@ -333,6 +334,17 @@ public class SettingsStore {
     public void setStartWithPassthroughEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_start_with_passthrough), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isLatinAutoCompleteEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_latin_auto_complete), LATIN_AUTO_COMPLETE_ENABLED);
+    }
+
+    public void setLatinAutoComplete(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_latin_auto_complete), isEnabled);
         editor.commit();
     }
 

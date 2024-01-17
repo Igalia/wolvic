@@ -169,7 +169,8 @@ public class DictionariesManager implements DownloadsManager.DownloadsListener, 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if (s.equals(mContext.getString(R.string.settings_key_remote_props))) {
+        if (s.equals(mContext.getString(R.string.settings_key_remote_props)) ||
+            s.equals(mContext.getString(R.string.settings_key_latin_auto_complete))) {
             mApplicationDelegate.updateKeyboardDictionary();
         }
     }
