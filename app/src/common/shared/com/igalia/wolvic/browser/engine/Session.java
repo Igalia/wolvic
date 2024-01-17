@@ -1008,11 +1008,6 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
         mState.mSettings.setUserAgentMode(mode);
         mState.mSession.getSettings().setUserAgentMode(mode);
-        if (mode == WSessionSettings.USER_AGENT_MODE_DESKTOP) {
-            mState.mSettings.setViewportMode(WSessionSettings.VIEWPORT_MODE_DESKTOP);
-        } else {
-            mState.mSettings.setViewportMode(WSessionSettings.VIEWPORT_MODE_MOBILE);
-        }
         mState.mSession.getSettings().setViewportMode(mState.mSettings.getViewportMode());
         return true;
     }
