@@ -498,6 +498,10 @@
     <string name="display_options_sound_effect">Use Sound Effects</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we auto complete the text input when typing with Latin Keyboard. -->
+    <string name="display_options_latin_auto_complete">Latin Keyboard Input Auto-complete</string>
+
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
     <string name="display_options_head_lock">Enable Head Lock</string>
 

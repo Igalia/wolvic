@@ -87,6 +87,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
         setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), true);
 
+        mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
+        setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
+
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
         setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
 
@@ -174,6 +177,10 @@ class DisplayOptionsView extends SettingsView {
         setSoundEffect(enabled, true);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mLatinAutoCompleteListener = (compoundButton, enabled, apply) -> {
+        setLatinAutoComplete(enabled, true);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
         setHeadLock(value);
     };
@@ -244,6 +251,7 @@ class DisplayOptionsView extends SettingsView {
         setCurvedDisplay(false, true);
         setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
+        setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
         setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT);
         setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
@@ -296,6 +304,16 @@ class DisplayOptionsView extends SettingsView {
         mBinding.startWithPassthroughSwitch.setOnCheckedChangeListener(mStartWithPassthroughListener);
 
         SettingsStore.getInstance(getContext()).setStartWithPassthroughEnabled(value);
+    }
+
+    private void setLatinAutoComplete(boolean value, boolean doApply) {
+        mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(null);
+        mBinding.latinAutoCompleteSwitch.setValue(value, false);
+        mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setLatinAutoComplete(value);
+        }
     }
 
     private void setHeadLock(boolean value) {

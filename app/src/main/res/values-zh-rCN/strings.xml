@@ -353,6 +353,9 @@
          and is used to customize if we use sound effects when interacting with app. -->
     <string name="display_options_sound_effect">使用音效</string>
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
+         and is used to customize if we auto complete the text input when typing with Latin Keyboard. -->
+    <string name="display_options_latin_auto_complete">拉丁字母键盘输入自动补全</string>
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
     <string name="display_options_head_lock">头部锁定</string>
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
