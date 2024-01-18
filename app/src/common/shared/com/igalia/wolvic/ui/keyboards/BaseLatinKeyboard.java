@@ -41,6 +41,10 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
         final boolean autocompose = ("" + lastChar).matches("[^\\p{L}]");
 
         aComposingText = aComposingText.replaceAll("\\s", "");
+        // We still need the space if we actually pressed space for auto compose
+        if (lastChar == ' ') {
+            aComposingText += ' ';
+        }
         if (aComposingText.isEmpty()) {
             return null;
         }
