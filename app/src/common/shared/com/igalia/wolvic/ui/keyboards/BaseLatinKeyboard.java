@@ -134,10 +134,15 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
         sqliteArgs[0] = aKey.toLowerCase() + "%";
         try (Cursor cursor = reader.rawQuery("SELECT word FROM autocorrect where LOWER(word) LIKE ? ORDER BY originalFreq DESC LIMIT 20", sqliteArgs)) {
             if (!cursor.moveToFirst()) {
+                addToKeyMap(aKey, null);
                 return;
             }
             do {
                 String word = getString(cursor, 0);
+                if (word == null || word.isEmpty()) {
+                    Log.e(LOGTAG, "code is null for " + aKey);
+                    continue;
+                }
                 addToKeyMap(aKey, word);
             } while (cursor.moveToNext());
         }
@@ -148,13 +153,11 @@ public abstract class BaseLatinKeyboard extends BaseKeyboard {
             Log.e(LOGTAG, "key is null");
             return;
         }
-        if (aCode == null || aCode.isEmpty()) {
-            Log.e(LOGTAG, "code is null");
-            return;
-        }
         ArrayList<Words> keyMap = mKeymaps.computeIfAbsent(aKey, k -> new ArrayList<>());
 
-        keyMap.add(new Words(1, aKey, aCode + " "));
+        if (aCode != null && !aCode.isEmpty()) {
+            keyMap.add(new Words(1, aKey, aCode + " "));
+        }
     }
 
     private String getString(Cursor aCursor, int aIndex) {
