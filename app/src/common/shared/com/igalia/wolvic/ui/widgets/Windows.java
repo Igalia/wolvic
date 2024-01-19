@@ -1059,6 +1059,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    public void resetWindowsPosition() {
+        WindowWidget frontWindow = getFrontWindow();
+        if (frontWindow != null) {
+            placeWindow(frontWindow, WindowPlacement.FRONT);
+        }
+        updateViews();
+    }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -1066,13 +1074,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                     WindowWidget frontWindow = getFrontWindow();
 
                     if (Objects.equals(key, mContext.getString(R.string.settings_key_window_movement))) {
-                        boolean isWindowMovementEnabled = sharedPreferences.getBoolean(key, SettingsStore.WINDOW_MOVEMENT_DEFAULT);
-
                         // Reset the position of the windows when the setting becomes disabled.
-                        if (frontWindow != null && !isWindowMovementEnabled) {
-                            placeWindow(frontWindow, WindowPlacement.FRONT);
+                        if (!sharedPreferences.getBoolean(key, SettingsStore.WINDOW_MOVEMENT_DEFAULT)) {
+                            resetWindowsPosition();
                         }
-                        updateViews();
                     }
 
                     if (!Objects.equals(key, mContext.getString(R.string.settings_key_window_distance)))
