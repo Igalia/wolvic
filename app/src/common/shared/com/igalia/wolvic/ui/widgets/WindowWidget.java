@@ -1540,29 +1540,35 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
-        final float defaultWorldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        final float maxWidthWorld = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWorldWidth/SettingsStore.WINDOW_WIDTH_DEFAULT);
-        float targetWidth;
+        float defaultWorldSize = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        float maxWorldSize = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWorldSize/SettingsStore.WINDOW_WIDTH_DEFAULT);
+        float targetSize;
+
+        boolean isHorizontal = aAspect >= 1.0;
+        if (!isHorizontal) {
+            defaultWorldSize = defaultWorldSize * aAspect;
+            maxWorldSize = SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT * (defaultWorldSize/SettingsStore.WINDOW_HEIGHT_DEFAULT);
+        }
 
         if (aScale < DEFAULT_SCALE) {
             // Reduce the area of the window according to the desired scale.
-            float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-            float worldHeight = worldWidth / aAspect;
-            float targetArea = worldWidth * worldHeight * aScale;
-            targetWidth = (float) Math.sqrt(targetArea * aAspect);
+            float worldSize = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+            float worldOrthogonalSize = isHorizontal ? worldSize / aAspect : worldSize * aAspect;
+            float targetArea = worldSize * worldOrthogonalSize * aScale;
+            targetSize = (float) Math.sqrt(targetArea * aAspect);
         } else if (aScale == DEFAULT_SCALE) {
             // Default window size.
-            targetWidth = defaultWorldWidth;
+            targetSize = defaultWorldSize;
         } else if (aScale >= MAX_SCALE) {
             // Maximum window size.
-            targetWidth = maxWidthWorld;
+            targetSize = maxWorldSize;
         } else {
             // Proportional between the default and maximum sizes.
-            targetWidth = defaultWorldWidth + (maxWidthWorld - defaultWorldWidth) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
+            targetSize = defaultWorldSize + (maxWorldSize - defaultWorldSize) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
         }
 
-        float targetHeight = targetWidth / aAspect;
-        return Pair.create(targetWidth, targetHeight);
+        float targetOrthogonalSize = isHorizontal ? targetSize / aAspect : targetSize * aAspect;
+        return isHorizontal ? Pair.create(targetSize, targetOrthogonalSize) : Pair.create(targetOrthogonalSize, targetSize);
     }
 
     private int getWindowWidth(float aWorldWidth) {
