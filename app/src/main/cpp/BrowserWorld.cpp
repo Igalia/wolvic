@@ -1973,6 +1973,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 
 void BrowserWorld::OnReorient() {
   m.reorientRequested = true;
+  VRBrowser::ResetWindowsPosition();
 }
 
 } // namespace crow
