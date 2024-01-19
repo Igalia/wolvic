@@ -48,6 +48,8 @@ const char* const kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
 const char* const kIsOverrideEnvPathEnabledSignature = "()Z";
 const char* const kCheckTogglePassthrough = "checkTogglePassthrough";
 const char* const kCheckTogglePassthroughSignature = "()V";
+const char* const kResetWindowsPosition = "resetWindowsPosition";
+const char* const kResetWindowsPositionSignature = "()V";
 const char* const kGetActiveEnvironment = "getActiveEnvironment";
 const char* const kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 const char* const kGetPointerColor = "getPointerColor";
@@ -93,6 +95,7 @@ jmethodID sRenderPointerLayer = nullptr;
 jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
 jmethodID sCheckTogglePassthrough = nullptr;
+jmethodID sResetWindowsPosition = nullptr;
 jmethodID sGetActiveEnvironment = nullptr;
 jmethodID sGetPointerColor = nullptr;
 jmethodID sAreLayersEnabled = nullptr;
@@ -142,6 +145,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
   sCheckTogglePassthrough = FindJNIMethodID(sEnv, sBrowserClass, kCheckTogglePassthrough, kCheckTogglePassthroughSignature);
+  sResetWindowsPosition = FindJNIMethodID(sEnv, sBrowserClass, kResetWindowsPosition, kResetWindowsPositionSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
@@ -192,6 +196,7 @@ VRBrowser::ShutdownJava() {
   sGetStorageAbsolutePath = nullptr;
   sIsOverrideEnvPathEnabled = nullptr;
   sCheckTogglePassthrough = nullptr;
+  sResetWindowsPosition = nullptr;
   sGetActiveEnvironment = nullptr;
   sGetPointerColor = nullptr;
   sAreLayersEnabled = nullptr;
@@ -360,6 +365,13 @@ void
 VRBrowser::CheckTogglePassthrough() {
   if (!ValidateMethodID(sEnv, sActivity, sCheckTogglePassthrough, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sCheckTogglePassthrough);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::ResetWindowsPosition() {
+  if (!ValidateMethodID(sEnv, sActivity, sResetWindowsPosition, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sResetWindowsPosition);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

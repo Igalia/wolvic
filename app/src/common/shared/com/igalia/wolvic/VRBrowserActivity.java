@@ -1411,6 +1411,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    public void resetWindowsPosition() {
+        // Reset the position of the windows when we are not in headlock and window movement is enabled.
+        if (!mSettings.isHeadLockEnabled() && mSettings.isWindowMovementEnabled()) {
+            runOnUiThread(() -> mWindows.resetWindowsPosition());
+        }
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     public boolean areLayersEnabled() {
         return SettingsStore.getInstance(this).getLayersEnabled();
     }
