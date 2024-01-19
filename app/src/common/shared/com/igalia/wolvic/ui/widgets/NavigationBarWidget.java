@@ -706,8 +706,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     @Override
                     public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
                         WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                        assert getSession().getActiveVideo() != null;
-                        onEnterFullScreen(aWindow);
+                        // User can exit the full screen and play the video afterwards,
+                        // so we have to make sure we are still in full screen
+                        if (aWindow.isFullScreen()) {
+                            assert getSession().getActiveVideo() != null;
+                            onEnterFullScreen(aWindow);
+                        }
                         mAttachedWindow.removeWindowListener(this);
                     }
                     @Override
