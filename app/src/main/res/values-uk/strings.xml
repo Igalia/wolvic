@@ -26,12 +26,12 @@
     <string name="notifications_empty">Ваш список сповіщень порожній</string>
     <string name="security_options_permission_location">Розташування</string>
     <string name="security_options_permission_storage">Накопичувач</string>
-    <string name="security_options_permission_fine_location_warning">Wolvic може отримати лише ваше приблизне розташування. Це можна змінити в налаштуваннях системи.</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic може отримати лише ваше приблизне розташування. Це можна змінити в параметрах системи.</string>
     <string name="notifications_title">Сповіщення</string>
     <string name="download_error_external_storage">Для завантаження файлів на зовнішній накопичувач потрібен дозвіл на запис</string>
     <string name="developer_options_env_cave">Печерне</string>
     <string name="developer_options_pointer_purple">Пурпурний</string>
-    <string name="privacy_options_popups_reset">Скидання параметрів блокування спливаючих вікон</string>
+    <string name="privacy_options_popups_reset">Скинути параметри блокування спливаючих вікон</string>
     <string name="developer_options_pointer_white">Білий</string>
     <string name="privacy_options_popups_list_empty_first">Під час відкриття веб-сайту, що використовує зі вспливаючі вікна, ви побачите діалогове вікно, яке дозволяє вам заблокувати вспливаючі вікна.</string>
     <string name="developer_options_homepage">Домашня сторінка</string>
@@ -50,7 +50,7 @@
     <string name="bookmarks_description">Натисніть на іконку @, коли ви знаходитесь на сторінці, щоб додати її до закладок.</string>
     <string name="fxa_signout_confirmation_body">Після виходу з облікового запису, ви більше не зможете відправляти або отримувати вкладки з пристроїв. Ваші закладки та історія також припинять синхронізуватися.</string>
     <string name="privacy_options_saved_logins_list_empty_first">Якщо можна зберегти логін, ви побачите діалогове вікно, де зможете зробити це.</string>
-    <string name="security_options_block_pup_up_settings">Розширений</string>
+    <string name="security_options_block_pup_up_settings">Розширені налаштування</string>
     <string name="security_options_speech_data_collection_title">Збір та використання даних %1$s</string>
     <string name="security_options_speech_data_collect">Дозволити %1$s збирати голосові дані</string>
     <string name="security_options_crash_reports_send_data">Дозволити %1$s надсилати від вашого імені накопичені повідомлення про падіння</string>
@@ -65,7 +65,7 @@
     <string name="voice_search_example">Приклад: Будь ласка, скажіть: \"360 відео, погода, новини…\"</string>
     <string name="voice_search_decoding">Пошук…</string>
     <string name="voice_search_start">Що б ви хотіли знайти в Інтернеті?</string>
-    <string name="keyboard_send_label">ВІДПРАВКА</string>
+    <string name="keyboard_send_label">НАДІСЛАТИ</string>
     <string name="keyboard_next_label">ДАЛІ</string>
     <string name="keyboard_go_label">ПЕРЕЙТИ</string>
     <string name="keyboard_search_label">ПОШУК</string>
@@ -77,7 +77,7 @@
     <string name="pop_up_site_switch_block">Заблокувати</string>
     <string name="settings_fxa_account_sign_in">Увійти в обліковий запис</string>
     <string name="settings_language_settings">Параметри мови</string>
-    <string name="settings_language_choose_language_voice_search">Оберіть мову для голосового пошуку</string>
+    <string name="settings_language_choose_language_voice_search">Оберіть бажану мову для голосового пошуку</string>
     <string name="settings_language_choose_language_voice_search_title">Мова голосового пошуку</string>
     <string name="settings_language_english">Англійська (США)</string>
     <string name="settings_language_japanese">Японська</string>
@@ -111,7 +111,7 @@
     <string name="developer_options_msaa_disabled">Вимкнено</string>
     <string name="developer_options_msaa_2">2x</string>
     <string name="developer_options_ua_mode">User-Agent</string>
-    <string name="developer_options_ua_desktop">Компьютер</string>
+    <string name="developer_options_ua_desktop">Комп\'ютер</string>
     <string name="developer_options_ua_mobile">Мобільний</string>
     <string name="developer_options_ua_vr">VR</string>
     <string name="privacy_options_downloads_storage_internal">Внутрішнє</string>
@@ -147,7 +147,7 @@
     <string name="security_options_block_pup_up_windows">Блокувати вспливаючі вікна</string>
     <string name="security_options_use_system_root_ca">Використовувати довірені кореневі сертифікати системи</string>
     <string name="security_options_permission_webxr">Пристрої віртуальної реальності (WebXR)</string>
-    <string name="security_options_webxr_settings">Розширений</string>
+    <string name="security_options_webxr_settings">Розширені налаштування</string>
     <string name="security_options_telemetry_send_data">Дозволити %1$s надсилати технічні дані та дані взаємодії до Mozilla</string>
     <string name="on">Увімкнено</string>
     <string name="sync">Синхронізувати</string>
@@ -166,14 +166,14 @@
     <string name="settings_privacy_policy_webxr_title">Дозволи для віртуальної реальності</string>
     <string name="settings_privacy_policy_popups_description">Ви можете вказати, яким сайтам дозволено показувати вспливаючі вікна</string>
     <string name="settings_privacy_policy_webxr_empty_description">Під час відкриття веб-сайту, що використовує WebXR, ви можете відкрити діалогове вікно та заборонити йому використання WebXR.</string>
-    <string name="settings_privacy_policy_webxr_reset">Очистити список сайтів, яким заборонено доступ до пристроїв віртуальної реальності.</string>
+    <string name="settings_privacy_policy_webxr_reset">Скинути список сайтів, яким заборонено доступ до пристроїв віртуальної реальності.</string>
     <string name="settings_privacy_policy_tracking_title">Винятки для вдосконаленого захисту від відстеження</string>
     <string name="settings_language">Мова</string>
     <string name="settings_privacy_policy_tracking_description">Ви вимкнули захист на цих веб-сайтах.</string>
     <string name="settings_language_choose_display_language_title">Мова відобрадення для %1$s</string>
     <string name="settings_language_choose_language_voice_search_service_title">Сервіс голосового пошуку</string>
-    <string name="settings_language_choose_language_webpage_content">Оберіть мову для відображення сторінок</string>
-    <string name="settings_language_choose_language_voice_search_description">Оберіть мову для голосового пошуку.</string>
+    <string name="settings_language_choose_language_webpage_content">Оберіть бажану мову для відображення сторінок</string>
+    <string name="settings_language_choose_language_voice_search_description">Оберіть бажану мову для голосового пошуку.</string>
     <string name="settings_privacy_policy_tracking_reset">Скинути винятки для вдосконаленого захисту від відстеження.</string>
     <string name="settings_privacy_policy_login_exceptions_title">Винятки для логінів</string>
     <string name="settings_fxa_account_manage">Управління обліковими засобами</string>
@@ -196,7 +196,7 @@
     <string name="settings_language_spanish">Іспанська</string>
     <string name="settings_language_korean">Корейська</string>
     <string name="settings_language_italian">Італійська</string>
-    <string name="settings_language_choose_language_voice_search_service_description">Оберіть онлайн-сервіс для голосового пошуку.</string>
+    <string name="settings_language_choose_language_voice_search_service_description">Оберіть бажаний онлайн-сервіс для голосового пошуку.</string>
     <string name="settings_language_choose_language_display_description">Оберіть мову для відображення меню, повідомлень і сповіщень.</string>
     <string name="settings_report_issue">Повідомити про помилку</string>
     <string name="settings_language_norwegian_bokmaal">Норвегія (букмол)</string>
@@ -218,13 +218,13 @@
     <string name="permission_persistent_storage">Надати доступ %1$s до постійного накопичувача?</string>
     <string name="settings_telemetry">Телеметрія</string>
     <string name="settings_privacy_saved_logins">Збережені логіни</string>
-    <string name="settings_privacy_security">Приватність та безпека</string>
+    <string name="settings_privacy_security">Конфіденційність та безпека</string>
     <string name="settings_privacy_choose_search_engine_description">Оберіть бажану пошукову систему.</string>
     <string name="settings_privacy_logins">Логіни та паролі</string>
     <string name="settings_privacy_policy">Політика приватності</string>
     <string name="settings_terms_service">Умови використання</string>
     <string name="settings_privacy_search_engine_title">Пошукова система</string>
-    <string name="settings_privacy_choose_search_engine_reset">Скидання налаштувань пошукової системи</string>
+    <string name="settings_privacy_choose_search_engine_reset">Скинути параметри пошукової системи</string>
     <string name="clear_user_data_dialog_text">%1$s буде скинуто. Всі дані, включаючи збережені логіни, історію та закладки, будуть безповоротно видалені, якщо вони не були синхронізовані. %1$s буде вимкнено після завершення скидання. Ви хочете продовжити?</string>
     <string name="restart_dialog_text">Ви повинні перезапустити %1$s, щоб завершити зміни. Бажаєте зробити це зараз?</string>
     <string name="developer_options_curved_display">Увімкнути вигнутий дисплей</string>
@@ -232,7 +232,7 @@
     <string name="developer_options_remote_debugging">Увімкнути віддалене зневадження</string>
     <string name="hardware_acceleration_switch">Увімкнути апаратне прискорення інтерфейсу</string>
     <string name="bypass_cache_on_reload_switch">Скидати кеш при оновленні сторінки</string>
-    <string name="developer_options_servo">Увімкнути сервопривід</string>
+    <string name="developer_options_servo">Увімкнути Servo</string>
     <string name="security_options_downloads_storage">Сховище завантажень за замовчуванням</string>
     <string name="developer_options_clear_user_data_description">Всі дані користувача</string>
     <string name="developer_options_msaa_4">4x</string>
@@ -240,4 +240,534 @@
     <string name="developer_options_edit">Змінити</string>
     <string name="developer_options_display_density">Щільність дисплею:</string>
     <string name="developer_options_save">Зберегти</string>
+    <string name="tabs_counter_plural">Вкладок: %1$s</string>
+    <string name="addons_remove_error_dialog_ok">Гаразд</string>
+    <string name="addons_permissions_learn_more">Докладніше про дозволи</string>
+    <string name="fxa_signout_confirmation_signout">Вийти</string>
+    <string name="history_clear_range_last_week">За тиждень</string>
+    <string name="history_context_remove_bookmarks">Видалити з закладок</string>
+    <string name="history_clear_time_range">Очистити за обраний діапазон:</string>
+    <string name="history_context_menu_new_tab">Відкрити в новій вкладці</string>
+    <string name="downloads_delete">Видалити все</string>
+    <string name="privacy_options_popups_list_empty_second">Тут з\'явиться список сайтів що мають дозволи.</string>
+    <string name="language_options_voice_search_language_title">Мова голосового пошуку:</string>
+    <string name="language_options_display_language_title">Мова відображення програми:</string>
+    <string name="col_url">Розташування</string>
+    <string name="back_tooltip">Назад</string>
+    <string name="forward_tooltip">Вперед</string>
+    <string name="media_pause_tooltip">Пауза</string>
+    <string name="clear_tooltip">Очистити</string>
+    <string name="drm_enabled_tooltip">DRM дозволено</string>
+    <string name="site_info_tooltip">Показати інформацію про сайт.</string>
+    <string name="webxr_allowed_tooltip">WebXR Дозволено</string>
+    <string name="tracking_allowed_tooltip">Захист від відстеження ввімкнено</string>
+    <string name="context_menu_open_new_window_1">Відкрити в новому вікні</string>
+    <string name="context_menu_open_new_tab_1">Відкрити в новій вкладці</string>
+    <string name="context_menu_open_link_new_window_1">Відкрийте посилання в новому вікні</string>
+    <string name="context_menu_open_link_new_tab_1">Відкрийте посилання в новій вкладці</string>
+    <string name="voice_search_try_again">Будь ласка, спробуйте ще раз.</string>
+    <string name="voice_search_permission_after_decline">Будь ласка, увімкніть мікрофон, щоб користуватись голосовим пошуком.</string>
+    <string name="voice_search_close">Закрити</string>
+    <string name="search_placeholder">Знайдіть в Інтернеті або введіть адресу</string>
+    <string name="cancel_button">Скасувати</string>
+    <string name="upload_list_empty">Немає файлів для вивантаження</string>
+    <string name="back_button">Назад</string>
+    <string name="ok_button">OK</string>
+    <string name="crash_dialog_message">Будь ласка, допоможіть Mozilla покращити %1$s, надіславши дані про збій &lt;a href=more&gt;Докладніше&lt;/a&gt;</string>
+    <string name="brightness_mode_void">Пустотна</string>
+    <string name="context_menu_view_audio">Переглянути аудіо</string>
+    <string name="context_menu_copy_audio_location">Скопіювати посилання на аудіо</string>
+    <string name="video_controls_seek_backward">Перемотати на -%1$s секунд</string>
+    <string name="bookmarks_desktop_toolbar_title">Панель закладок</string>
+    <string name="bookmarks_desktop_unfiled_title">Інші закладки</string>
+    <string name="bookmarks_saved_notification">Збережено в закладки!</string>
+    <string name="history_title">Історія</string>
+    <string name="web_apps_dialog_title">Встановити веб-додаток</string>
+    <string name="web_apps_dialog_body">Бажаєте встановити веб-додаток? Він буде доступний у бібліотеці.</string>
+    <string name="web_apps_saved_notification">Веб-додаток додано!</string>
+    <string name="downloads_loading">Завантаження завантажень</string>
+    <string name="addons_loading">Завантаження додатків</string>
+    <string name="addons_downloading_dialog_title">Завантаження та перевірка додатку…</string>
+    <string name="stop_tooltip">Зупинити завантаження</string>
+    <string name="hamburger_menu_save_web_app">Зберегти веб-додаток…</string>
+    <string name="downloads_empty">Ваш список завантажень порожній</string>
+    <string name="context_menu_download_link">Завантажити за посиланням</string>
+    <string name="context_menu_download_audio">Завантажити аудіо</string>
+    <string name="context_menu_copy_link">Копіювати посилання</string>
+    <string name="context_menu_download_image">Завантажити зображення</string>
+    <string name="language_options_content_language_title">Обрана мова для відображення веб-сайтів:</string>
+    <string name="context_menu_cut_text">Вирізати</string>
+    <string name="context_menu_copy_text">Копіювати</string>
+    <string name="bookmark_tooltip">Додати цю сторінку в закладки</string>
+    <string name="context_menu_paste_text">Вставити</string>
+    <string name="downloads_sort">Сортувати за</string>
+    <string name="context_menu_web_search">Шукати за допомогою %1$s</string>
+    <string name="downloads_filename_sort_az">Назвою (від А до Я)</string>
+    <string name="downloads_filename_sort_za">Назвою (від Я до А)</string>
+    <string name="close_bookmarks_tooltip">Закрити закладки</string>
+    <string name="new_window_tooltip">Відкрити нове вікно</string>
+    <string name="downloads_sort_download_date_asc">Часом (від старіших)</string>
+    <string name="bookmarks_tooltip">Закладки</string>
+    <string name="downloads_sort_download_date_desc">Часом (від новіших)</string>
+    <string name="addons_title">Додатки</string>
+    <string name="web_extensions_title">Веб-розширення</string>
+    <string name="open_history_tooltip">Відкрити історію</string>
+    <string name="open_downloads_tooltip">Відкрити завантаження</string>
+    <string name="addons_description">Опис додатків</string>
+    <string name="close_downloads_tooltip">Закрити завантаження</string>
+    <string name="addons_authors_title">Автори</string>
+    <string name="addons_version_title">Версія</string>
+    <string name="close_library_tooltip">Закрити бібліотеку</string>
+    <string name="whats_new_tooltip">Що нового</string>
+    <string name="addons_homepage_title">Домашня сторінка</string>
+    <string name="remove_all">Видалити все</string>
+    <string name="addons_rating_title">Рейтинг</string>
+    <string name="private_browsing_title">Приватний перегляд</string>
+    <string name="addons_details_enabled">Увімкнено</string>
+    <string name="addons_install_dialog_cancel">Скасувати</string>
+    <string name="homepage_hint">%1$s Домівка (за замовчуванням)</string>
+    <string name="authentication_username">Ім\'я користувача:</string>
+    <string name="no_internet_title">Втрачено зв\'язок з Інтернетом</string>
+    <string name="no_internet_message">Перевірте конфігурацію вашого пристрою, щоб вирішити проблему.</string>
+    <string name="max_windows_msg">Не більні ніж %1$s вікон може бути відкрито одночасно. Закрийте одне, щоб відкрити інше.</string>
+    <string name="not_entitled_title">Не вдалося запустити</string>
+    <string name="before_unload_prompt_stay">Залишатися на сторінці</string>
+    <string name="repost_confirm_message">Сторінка, яку ви шукаєте, містить уже введену вами інформацію. Повернення на цю сторінку може призвести до повторення будь-якої дії, яку ви виконали. Ви хочете продовжити?</string>
+    <string name="performance_unblock_page">Розблокувати сторінку</string>
+    <string name="voice_samples_collect_data_dialog_title">Дозволити %1$s збирати зразки голосу для досліджень?</string>
+    <string name="addons_install_dialog_title">Додати %1$s?</string>
+    <string name="addons_download_success_dialog_title">%1$s було додано до %2$s</string>
+    <string name="voice_samples_collect_dialog_description2">Для покращення розпізнавання мови та інших сервісів нам необхідно збирати зразки голосу для досліджень. Ми зберігаємо ваші дані надійно і без персональної інформації. Ви завжди зможете використовувати голосовий пошук, навіть якщо ви не дозволяєте збір інформації. &lt;a href=&gt;Докладніше&lt;/a&gt;</string>
+    <string name="addons_download_success_dialog_ok">Гаразд, зрозуміло</string>
+    <string name="addons_remove_error_dialog_title">Під час видалення %1$s сталась помилка</string>
+    <string name="addons_download_error_dialog_title">Під час завантаження сталася помилка. Будь ласка, спробуйте ще раз.</string>
+    <string name="addons_remove_success_dialog_title">Успішно видалено %1$s</string>
+    <string name="addons_download_error_dialog_ok">Гаразд</string>
+    <string name="voice_samples_collect_dialog_do_not_allow">Не дозволяти</string>
+    <string name="download_error_body">Під час завантаження %1$s виникла помилка. Будь ласка, спробуйте ще раз.</string>
+    <string name="url_library_title">Бібліотека</string>
+    <string name="privacy_options_saved_logins_reset">Скинути параметри збережених логінів</string>
+    <string name="popup_block_checkbox">Не запитуйте більше про на цьому сайті</string>
+    <string name="popup_block_button_cancel">Скасувати</string>
+    <string name="display_language_options_reset">Скинути мову дисплею</string>
+    <string name="all_language_options_reset">Скинути всі мовні параметри</string>
+    <string name="settings_tooltip">Параметри</string>
+    <string name="tabs_close_all">Закрити все</string>
+    <string name="fxa_signout_confirmation_checkbox_v1">Очистити історію, закладки і логіни з цього пристрою</string>
+    <string name="privacy_options_saved_logins_list_header">Збережені логіни:</string>
+    <string name="tabs_tray_tooltip">Переглянути вкладки</string>
+    <string name="tabs_selected_counter_plural">Вибрано вкладок: %1$s</string>
+    <string name="hamburger_menu_resize">Зміна розміру вікна</string>
+    <string name="hamburger_menu_find_in_page">Знайти на сторінці</string>
+    <string name="hamburger_menu_tooltip">Меню</string>
+    <string name="whats_new_button_sign_in">Увійти</string>
+    <string name="whats_new_button_start_browsing">Почати перегляд</string>
+    <string name="slow_script_dialog_title">Повільне виконання сценарію</string>
+    <string name="slow_script_dialog_description">Веб-сторінка сповільнює роботу вашого браузера (%1$s). Що ви бажаєте зробити?</string>
+    <string name="slow_script_dialog_action_stop">Зупинити сторінку</string>
+    <string name="send_tab_dialog_button">Надіслати</string>
+    <string name="whats_new_body_sub_1">Обліковий запис Firefox також дозволяє синхронізувати закладки та історію на всіх ваших пристроях.</string>
+    <string name="slow_script_dialog_action_wait">Почекати</string>
+    <string name="download_status_pending">Очікується</string>
+    <string name="webxr_permission_dialog_message">WebXR %1$s для цього сайта. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="webxr_dialog_button_off">Вимкнено</string>
+    <string name="drm_first_use_body_v2">Увімкнення DRM дозволяє сайтам ідентифікувати цей пристрій щоразу, коли ви його відвідуєте. &lt;a href=%1$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="drm_first_use_allow">Дозволити</string>
+    <string name="drm_first_use_do_not_allow">Не дозволяти</string>
+    <string name="exit_confirm_dialog_button_cancel">Скасувати</string>
+    <string name="download_open_file_error_title">Помилка</string>
+    <string name="download_open_file_error_body">Не знайдено жодної програми для роботи з цим типом файлів.</string>
+    <string name="download_confirm_title">Бажаєте завантажити цей файл?</string>
+    <string name="download_confirm_cancel">Скасувати</string>
+    <string name="download_confirm_download">Завантажити</string>
+    <string name="download_open_file_unsupported_body">Файл не відтворюється, Ви хочете відкрити його за допомогою зовнішньої програми?</string>
+    <string name="download_open_file_unsupported_open">Відкрити</string>
+    <string name="download_delete_file_confirm_title">Видалити файл</string>
+    <string name="download_status_unavailable">Недоступно</string>
+    <string name="download_delete_all_confirm_title">Видалити всі завантажені файли</string>
+    <string name="download_delete_all_confirm_body">Ви впевнені, що хочете видалити всі завантажені файли?</string>
+    <string name="download_delete_all_confirm_checkbox">Також видалити файли з диска</string>
+    <string name="download_delete_confirm_cancel">Скасувати</string>
+    <string name="download_delete_confirm_delete">Видалити</string>
+    <string name="download_status_failed">Не вдалося</string>
+    <string name="download_addon_install_confirm_install">Встановити</string>
+    <string name="environment_error_title">Помилка середовища</string>
+    <string name="autofill_dialog_save_title">Зберегти цей логін?</string>
+    <string name="autofill_dialog_save_button_text">Зберегти</string>
+    <string name="autofill_dialog_never_save_button_text">Ніколи не зберігати</string>
+    <string name="login_edit_dialog_password_description">Пароль</string>
+    <string name="password_hint">пароль</string>
+    <string name="tray_wifi_no_connection">Немає підключення</string>
+    <string name="external_open_uri_error_title">Помилка запуску зовнішньої програми</string>
+    <string name="rCN_first_launch_title">Повідомлення про Угоду користувача та Політику конфіденційності</string>
+    <string name="external_open_uri_error_no_activity_body">Не знайдено програми для обробки %1$s</string>
+    <string name="external_open_uri_error_security_exception_body">SecurityException при запуску intent для %1$s</string>
+    <string name="rCN_first_launch_body">Ласкаво просимо до \"Wolvic\"!
+\n
+\nРеєстрація та використання \"Wolvic\" вимагає від вас згоди з Угодою про використання та Політикою конфіденційності, інакше ми не зможемо надавати вам послуги. Будь ласка, уважно прочитайте документи і натисніть \"Погоджуюсь\", щоб продовжити. Якщо ви натиснете \"Не погоджуюсь\", ви не зможете продовжити використання \"Wolvic\".
+\n
+\nВи можете прочитати повну Угоду користувача та Політику конфіденційності.</string>
+    <string name="rCN_first_launch_confirmation_body">\\f ви обираєте \"Не погоджуюсб\", на жаль, ми більше не зможемо надавати вам послуги.
+\n
+\nВи можете прочитати повну Угоду про використання та Політику конфіденційності.</string>
+    <string name="privacy_dialog_message">Ваша конфіденційність важлива для нас. Для того, щоб запустити браузер, будь ласка, прийміть наші умови надання послуг та політику конфіденційності. Дякуємо за використання Wolvic!</string>
+    <string name="privacy_dialog_agree">Погодитись</string>
+    <string name="privacy_dialog_disagree">Закрити Wolvic</string>
+    <string name="terms_service_title">Умови надання послуг</string>
+    <string name="privacy_policy_section_1">Ця програма розроблена компанією Igalia, SL (далі IGALIA) з юридичною адресою: Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia (Іспанія), контактні дані якої наведені нижче:
+\n
+\n\t- Номер телефону +34 981 913991;
+\n\t- Електронна пошта: info@igalia.com
+\n
+\nВміст та елементи, що складають додаток, були впроваджені та/або розроблені IGALIA на основі ліцензій з відкритим вихідним кодом і захищені, зокрема, законами про інтелектуальну та промислову власність Королівства Іспанії, а також міжнародними договорами та угодами, які можуть виникнути в результаті використання додатку.</string>
+    <string name="privacy_policy_section_3">Ця Політика конфіденційності регулюється іспанським законодавством. Мова Політики конфіденційності цієї програми - іспанська. З цієї причини будь-які можливі розбіжності між оригінальною версією іспанською мовою та її перекладом на іншу мову вважатимуться переважною версією іспанською мовою, яку можна знайти тут: https://wolvic.com/es/legal/privacy/ .</string>
+    <string name="privacy_options_tracking">Вдосконалений захист від відстеження. (&lt;a href=%1$s&gt;Докладніше&lt;/a&gt;)</string>
+    <string name="tracking_dialog_message">Вдосконалений захист від відстеження %1$s для цього сайту. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="language_service_options_reset">Скинути параметри сервісу голосового пошуку</string>
+    <string name="addons_details_private_mode">Працює в режимі приватного перегляду</string>
+    <string name="private_browsing_exit_tooltip">Вийти з режиму приватного перегляду</string>
+    <string name="private_browsing_enter_tooltip">Увійти до приватного перегляду</string>
+    <string name="private_browsing_body">&lt;р&gt;При перегляді в режимі Приватного перегляду, %1$s &lt;strong&gt;не зберігає&lt;/strong&gt;:&lt;/р&gt; &lt;ul class=two-column&gt; &lt;li&gt;відвідані сторінки&lt;/li&gt; &lt;li&gt;пошукові запити&lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;тимчасові файли&lt;/li&gt; &lt;/ul&gt; &lt;р&gt;Приватний перегляд &lt;strong&gt;не робить вас анонімними&lt;/strong&gt; в Інтернеті. Ваш роботодавець чи Інтернет-провайдер все ще може знати, яку сторінку ви відвідуєте.&lt;/р&gt; &lt;р class=about-info&gt;Докладніше про &lt;а id=learnMore&gt;Приватний перегляд&lt;/a&gt;.&lt;/р&gt;</string>
+    <string name="drm_dialog_message">Деякі аудіо та відео на цьому сайті використовують захист DRM, що може обмежувати можливості %1$s. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="drm_dialog_button_off">Вимкнено</string>
+    <string name="upload_button">Вивантажити</string>
+    <string name="crash_dialog_heading">У нас виникла неполадка та збій</string>
+    <string name="crash_dialog_send_data">Завжди надсилати дані без запиту</string>
+    <string name="learn_more_button">Докладніше</string>
+    <string name="do_not_sent_button">Не надсилати</string>
+    <string name="send_data_button">Надіслати дані</string>
+    <string name="brightness_mode_tooltip">Яскравість</string>
+    <string name="brightness_mode_normal">Нормальна</string>
+    <string name="brightness_mode_dark">Похмура</string>
+    <string name="video_mode_tooltip">Відео-проекція</string>
+    <string name="video_mode_3d_side">3D біч-о-біч</string>
+    <string name="video_mode_360">360°</string>
+    <string name="video_mode_3d_top_bottom">3D зверху вниз</string>
+    <string name="video_mode_360_stereo">360° стерео</string>
+    <string name="video_mode_180">180°</string>
+    <string name="video_mode_180_left_right">Стерео 180° зліва направо</string>
+    <string name="video_mode_180_top_bottom">Стерео 180° зверху вниз</string>
+    <string name="video_mode_2d">2D</string>
+    <string name="video_controls_play">Відтворити</string>
+    <string name="video_controls_exit">Вихід</string>
+    <string name="video_controls_pause">Пауза</string>
+    <string name="video_controls_mute">Вимкнути звук</string>
+    <string name="video_controls_unmute">Відновити звук</string>
+    <string name="video_controls_volume">Гучність</string>
+    <string name="video_controls_projection">Відео-проекція</string>
+    <string name="video_controls_seek_forward">Перемотати на +%1$s секунд</string>
+    <string name="video_controls_live">НАЖИВО</string>
+    <string name="bookmarks_title">Закладки</string>
+    <string name="bookmarks_empty">Ваш список закладок порожній</string>
+    <string name="bookmarks_loading">Завантаження закладок</string>
+    <string name="bookmarks_mobile_folder_title">Мобільні закладки</string>
+    <string name="bookmarks_desktop_folder_title">Комп\'ютерні закладки</string>
+    <string name="bookmarks_desktop_menu_title">Меню закладок</string>
+    <string name="bookmarks_remove">Видалити закладку</string>
+    <string name="download_completed_notification">%1$s завантажено</string>
+    <string name="download_error_protocol">Підтримуються лише завантаження через http/https</string>
+    <string name="download_error_output">Не можливо створити файл для завантаження</string>
+    <string name="bookmarks_edit">Змінити цю закладку</string>
+    <string name="bookmarks_search">Пошук в закладках</string>
+    <string name="bookmarks_bookmark">Додати цю сторінку до закладок</string>
+    <string name="bookmarks_recent">Нещодавно додані до закладок</string>
+    <string name="bookmarks_show_all">Показати всі закладки</string>
+    <string name="bookmarks_sync">Синхронізувати</string>
+    <string name="history_empty">Ваша історія порожня</string>
+    <string name="history_description">Ви можете переглянути історію переглядів тут</string>
+    <string name="history_loading">Завантаження історію</string>
+    <string name="history_section_today">Сьогодні</string>
+    <string name="history_section_yesterday">Вчора</string>
+    <string name="history_section_last_week">Минулий тиждень</string>
+    <string name="history_section_older">Попередні</string>
+    <string name="downloads_title">Завантаження</string>
+    <string name="history_clear">Очистити історію</string>
+    <string name="downloads_description">Ви можете переглянути історію завантажень тут</string>
+    <string name="downloads_sort_download_size_asc">Розміром (від менших)</string>
+    <string name="downloads_sort_download_size_desc">Розміром (від більших)</string>
+    <string name="addons_experimental_section_title">Експериментальні</string>
+    <string name="addons_no_description">Опис відсутній</string>
+    <string name="addons_no_authors">Автори відсутні</string>
+    <string name="addons_last_updated_title">Останнє оновлення</string>
+    <string name="addons_close_tooltip">Закрити додаток</string>
+    <string name="addons_details_disabled">Вимкнено</string>
+    <string name="addons_details_settings">Параметри</string>
+    <string name="addons_details_details">Подробиці</string>
+    <string name="addons_details_permissions">Дозволи</string>
+    <string name="addons_details_remove">Видалити додаток</string>
+    <string name="addons_install_dialog_body">&lt;p ALIGN=LEFT&gt;Потрібен ваш дозвіл на:&lt;ul&gt;%1$s&lt;/ul&gt;&lt;/p&gt;</string>
+    <string name="addons_install_dialog_add">Додати</string>
+    <string name="addons_downloading_dialog_cancel">Скасувати</string>
+    <string name="addons_download_success_dialog_body">Відкрийте його в меню</string>
+    <string name="addons_download_success_dialog_checkbox">Дозволити роботу в режимі приватного перегляду</string>
+    <string name="addons_remove_success_dialog_ok">Гаразд</string>
+    <string name="fxa_syncing">Синхронізація…</string>
+    <string name="fxa_sync">Синхронізувати</string>
+    <string name="fxa_signout_confirmation_title">Вийти зі свого облікового запису Firefox?</string>
+    <string name="fxa_signout_confirmation_cancel">Скасувати</string>
+    <string name="history_clear_cancel">Скасувати</string>
+    <string name="history_clear_now">Очистити зараз</string>
+    <string name="history_clear_range_today">За день</string>
+    <string name="history_clear_range_yesterday">За два дні</string>
+    <string name="history_clear_range_everything">За весь час</string>
+    <string name="history_context_menu_new_window">Відкрити в новому вікні</string>
+    <string name="history_context_add_bookmarks">Додати в закладки</string>
+    <string name="download_context_delete">Видалити</string>
+    <string name="web_apps_title">Веб-додатки</string>
+    <string name="web_apps_empty">Ваш список веб-додатків порожній</string>
+    <string name="web_apps_loading">Завантаження веб-додатків</string>
+    <string name="display_options_reset">Скинути параметрів дисплею</string>
+    <string name="web_apps_dialog_title_parameter">Встановлення %1$s</string>
+    <string name="web_apps_dialog_install">Встановити</string>
+    <string name="web_apps_dialog_cancel">Скасувати</string>
+    <string name="privacy_options_reset">Скинути параметри конфіденційності та безпеки</string>
+    <string name="privacy_options_popups_clear_all">Очистити все</string>
+    <string name="privacy_options_saved_logins_list_empty_second">Тут з\'явиться список збережених логінів.</string>
+    <string name="privacy_options_saved_logins_clear_all">Очистити все</string>
+    <string name="privacy_options_saved_login_delete">Видалити</string>
+    <string name="privacy_options_logins_button">Розширені налаштування</string>
+    <string name="privacy_options_tracking_exceptions_v1">Розширені налаштування</string>
+    <string name="privacy_options_logins">Логіни та паролі</string>
+    <string name="environment_options_reset">Скинути параметри оточення</string>
+    <string name="controller_options_reset">Скинути параметри контролера</string>
+    <string name="content_language_options_reset">Скинути обрані мови веб-сайту</string>
+    <string name="language_options_reset">Скинути параметри мови голосового пошуку</string>
+    <string name="language_options_voice_search_service_title">Сервіс голосового пошуку</string>
+    <string name="language_options_preferred_languages">Обрані мови</string>
+    <string name="language_options_available_languages">Доступні мови</string>
+    <string name="col_name">Назва</string>
+    <string name="col_tags">Теги</string>
+    <string name="col_most_recent_visit">Останнє відвідування</string>
+    <string name="col_date_added">Додана</string>
+    <string name="col_date_last_modified">Останнє редагування</string>
+    <string name="refresh_tooltip">Оновити</string>
+    <string name="media_resume_tooltip">Відновити</string>
+    <string name="home_tooltip">Домівка</string>
+    <string name="voice_search_tooltip">Голосовий пошук</string>
+    <string name="request_dekstop_site_tooltip">Версія для комп\'ютера</string>
+    <string name="drm_disabled_tooltip">DRM не дозволено</string>
+    <string name="servo_tooltip">Використовувати Servo</string>
+    <string name="resize_tooltip">Змінити розмір</string>
+    <string name="webxr_blocked_tooltip">WebXR заблоковано</string>
+    <string name="webxr_interstitial_exit_webxr">Вихід з
+\nWebXR</string>
+    <string name="webxr_interstitial_how_to_continue_1">Натисніть будь-яку іншу кнопку, щоб продовжити</string>
+    <string name="tracking_disabled_tooltip">Захист від відстеження вимкнено</string>
+    <string name="context_menu_view_image">Переглянути зображення</string>
+    <string name="context_menu_view_video">Переглянути відео</string>
+    <string name="context_menu_download_video">Завантажити відео</string>
+    <string name="context_menu_copy_image_location">Скопіювати посилання на зображення</string>
+    <string name="context_menu_copy_video_location">Скопіювати посилання на відео</string>
+    <string name="context_menu_select_all_text">Вибрати все</string>
+    <string name="context_menu_unselect">Зняти виділення</string>
+    <string name="remove_bookmark_tooltip">Видалити з закладок</string>
+    <string name="open_bookmarks_tooltip">Відкрити закладки</string>
+    <string name="close_history_tooltip">Закрити історію</string>
+    <string name="open_library_tooltip">Відкрити бібліотеку</string>
+    <string name="authentication_required">Потрібна автентифікація</string>
+    <string name="authentication_password">Пароль:</string>
+    <string name="authentication_show_password">Показати пароль:</string>
+    <string name="max_windows_button">OK</string>
+    <string name="not_entitled_message">%1$s не має дозволу на запуск на цьому пристрої і буде закритий.</string>
+    <string name="before_unload_prompt_title">Покинути сторінку?</string>
+    <string name="before_unload_prompt_message">На цій сторінці вас просять підтвердити, що ви хочете покинути її. Дані, які ви ввели, можуть не зберегтися.</string>
+    <string name="before_unload_prompt_leave">Покинути сторінку</string>
+    <string name="repost_confirm_title">Підтвердити повторне надсилання форми</string>
+    <string name="repost_confirm_continue">Продовжити</string>
+    <string name="performance_title">Низька продуктивність сайту</string>
+    <string name="performance_message">Спробуйте зменшити розмір вікна, щоб покращити продуктивність. Розблокування цієї сторінки може призвести до аварійного завершення роботи програми.</string>
+    <string name="voice_samples_collect_dialog_allow">Дозволити</string>
+    <string name="language_default">За замовчуванням</string>
+    <string name="url_home_title">%1$s Домівка</string>
+    <string name="url_bookmarks_title">Закладки</string>
+    <string name="url_history_title">Історія</string>
+    <string name="url_downloads_title">Завантаження</string>
+    <string name="url_addons_title">Додатки</string>
+    <string name="private_clear_button">Очистити</string>
+    <string name="popup_block_description_v1">Ви хочете їх все одно показати?</string>
+    <string name="popup_block_button_show">Показати</string>
+    <string name="tabs_select">Виберати</string>
+    <string name="tabs_select_done">Готово</string>
+    <string name="tabs_select_all">Вибрати все</string>
+    <string name="tabs_close_selected">Закрити вкладки</string>
+    <string name="tabs_unselect">Зняти виділення з усього</string>
+    <string name="tabs_counter_singular">Вкладок: 1</string>
+    <string name="tabs_selected_counter_singular">Вибрано вкладок: 1</string>
+    <string name="tabs_selected_counter_none">Вибрано вкладок: 0</string>
+    <string name="tab_added_notification">Додано нову вкладку!</string>
+    <string name="tab_sent_notification">Вкладку надіслано!</string>
+    <string name="hamburger_menu_send_tab">Надіслати вкладку до пристрою</string>
+    <string name="hamburger_menu_addons">Додатки</string>
+    <string name="hamburger_menu_toggle_passthrough">Наскрізний режим</string>
+    <string name="hamburger_menu_switch_to_desktop">Режим комп\'ютера</string>
+    <string name="send_tab_dialog_title">Надіслати вкладку до пристрою</string>
+    <string name="send_tab_dialog_description">Виберіть пристрій для надсилання вкладки.</string>
+    <string name="send_tab_dialog_options_header">Доступні пристрої:</string>
+    <string name="send_tab_dialog_no_devices">Пристрої не підключено.</string>
+    <string name="whats_new_title_1">Sign in to send tabs</string>
+    <string name="whats_new_body_1">Увійдіть або створіть новий обліковий запис Firefox, щоб надсилати вкладки з Firefox на вашому комп\'ютері або мобільному пристрої на гарнітуру.</string>
+    <string name="deprecated_version_dialog_title">Підтримка скоро закінчиться</string>
+    <string name="deprecated_version_dialog_info_button">Докладніше…</string>
+    <string name="deprecated_version_dialog_body">Ця версія Wolvic для \"App Lab\" буде видалена найближчим часом.
+\n
+\nБудь ласка, встановіть останню версію Wolvic з Meta Store.
+\n
+\nВАЖЛИВО: якщо ви не використовуєте синхронізацію, новий додаток Wolvic не матиме ваших закладок і вкладок.</string>
+    <string name="deprecated_version_dialog_store_button">Встановлення…</string>
+    <string name="popup_permission_dialog_message">Блокування вспливаючих вікон %1$s для цього сайту.</string>
+    <string name="popup_dialog_button_off">Вимкнено</string>https://wolvic.com/support/firefox-sync/
+
+    <string name="tracking_dialog_button_off">Вимкнено</string>
+    <string name="drm_first_use_title_v1">Цей сайт містить вміст із захистом DRM.</string>
+    <string name="tracking_dialog_button_disable">Вимкнути</string>
+    <string name="exit_confirm_dialog_body">Ви впевнені, що хочете вийти з %1$s?</string>
+    <string name="exit_confirm_dialog_button_quit">Вийти</string>
+    <string name="download_open_file_unsupported_title">Непідтримуваний тип файлу</string>
+    <string name="download_open_file_unsupported_cancel">Скасувати</string>
+    <string name="download_open_file_open_unsupported_body">Тип файлу не підтримується.</string>
+    <string name="download_delete_file_confirm_body">Ви впевнені, що хочете видалити цей файл?</string>
+    <string name="download_delete_file_confirm_checkbox">Також видалити файл з диска</string>
+    <string name="download_error_title_v1">Помилка при завантаженні</string>
+    <string name="download_error_ok">Гаразд</string>
+    <string name="download_status_paused">Призупинено</string>
+    <string name="download_status_unknown_error">Невідома помилка</string>
+    <string name="download_addon_install">Встановити додаток</string>
+    <string name="download_addon_install_cancel">Скасувати</string>
+    <string name="environment_download_unzip_error_body">Під час розпакування оточення виникла помилка.</string>
+    <string name="download_addon_install_blocked">Встановлення локального доповнення заблоковано</string>
+    <string name="download_addon_install_blocked_body">Дозвольте встановлення локальних доповнень у параметрах розробника щоб продовження.</string>
+    <string name="autofill_dialog_save_username_text">Ім\'я користувача</string>
+    <string name="autofill_dialog_save_password_text">Пароль</string>
+    <string name="autofill_dialog_use_login_settings_button">Параметри…</string>
+    <string name="autofill_dialog_use_login_title_text">Використовувати збережений логін</string>
+    <string name="autofill_item_autogenerated">Автогенерований</string>
+    <string name="login_edit_dialog_site_button">Відкрити</string>
+    <string name="login_edit_dialog_site_description">Сайт</string>
+    <string name="login_edit_dialog_username_description">Ім\'я користувача</string>
+    <string name="login_edit_password_empty_error">Пароль не повинен бути порожнім</string>
+    <string name="username_hint">ім\'я користувача</string>
+    <string name="tray_status_left_controller">Лівий контролер: %1$s</string>
+    <string name="tray_status_right_controller">Правий контролер: %1$s</string>
+    <string name="tray_status_headset">Гарнітура: %1$s</string>
+    <string name="external_open_uri_error_bad_uri_body">Неправильний url %1$s</string>
+    <string name="rCN_first_launch_clickable_terms_text">Угода про використання</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Політика конфіденційності</string>
+    <string name="rCN_first_launch_agree">Погоджуюсь</string>
+    <string name="rCN_first_launch_disagree">Не погоджуюсь</string>
+    <string name="rCN_first_launch_confirmation_agree">Погодитись та продовжити</string>
+    <string name="rCN_first_launch_confirmation_disagree">Не погодитись та вийти</string>
+    <string name="hvr_connect_glass_message">Підключіть окуляри HUAWEI VR Glass, щоб використовувати цю програму</string>
+    <string name="privacy_dialog_title">Конфіденційність</string>
+    <string name="hvr_enter_vr">Увійти до VR</string>
+    <string name="terms_service_section_1">Wolvic - це безкоштовне програмне забезпечення з відкритим вихідним кодом, створене багатотисячною спільнотою з усього світу. Є кілька речей, які вам слід знати:
+\n
+\n\t• Wolvic надається вам на умовах Публічної ліцензії Mozilla. Це означає, що ви можете використовувати, копіювати та розповсюджувати Wolvic. Ви також можете змінювати вихідний код Wolvic для задоволення ваших потреб. Публічна ліцензія Mozilla також надає вам право поширювати ваші модифіковані версії.
+\n
+\n\t• Вам не надаються жодні права на торгові марки або ліцензії на торгові марки Igalia або будь-якої сторони, включаючи, але не обмежуючись назвою та логотипом Wolvic.
+\n
+\n\t• Деякі функції Wolvic, такі як Crash Reporter, дають вам можливість надати Igalia зворотній зв\'язок. Вирішивши надіслати відгук, ви даєте Igalia дозвіл використовувати його для покращення наших продуктів, публікувати анонімні відгуки на своїх веб-сайтах та розповсюджувати анонімні відгуки.
+\n
+\n\t• Як ми використовуємо вашу особисту інформацію та відгуки, надані Igalia через Wolvic, описано в Політиці конфіденційності Wolvic.
+\n
+\n\t• Деякі функції Wolvic використовують інформаційні веб-сервіси, однак ми не можемо гарантувати, що вони є на 100% точними та безпомилковими. Більш детальну інформацію, включаючи інформацію про те, як вимкнути функції, що використовують ці сервіси, можна знайти в умовах надання послуг (нижче).</string>
+    <string name="terms_service_subtitle_2">Інформаційні веб-сервіси Wolvic</string>
+    <string name="privacy_policy_title">Загальна політика конфіденційності</string>
+    <string name="privacy_policy_subtitle_1">Загальна інформація</string>
+    <string name="privacy_policy_subtitle_2">Захист даних</string>
+    <string name="privacy_policy_section_2">IGALIA зобов\'язується дотримуватися правових норм щодо захисту персональних даних: Регламенту (ЄС) 2016/679 Європейського Парламенту та Ради від 27 квітня 2016 року про захист фізичних осіб у зв\'язку з обробкою персональних даних і про вільний рух таких даних та про скасування Директиви 95/46/ЄС (Загальний регламент про захист даних), а також Органічного закону 3/2018 від 5 грудня про захист даних і гарантії цифрових прав (LOPDGDD).
+\nIGALIA не збирає персональні дані таким чином, щоб можна було ідентифікувати користувача. Таким чином, ви можете користуватися додатком, консультуватися і переглядати середовище віртуальної реальності, не розкриваючи свою особу і не надаючи IGALIA персональні дані, ні прямо, ні опосередковано; отже, IGALIA не несе відповідальності за будь-які дані, які вводяться в WOLVIC.
+\nЄдині дані та інформація, які IGALIA отримає для використання цього додатку, і які ніколи не будуть індивідуально пов\'язані з користувачем, є наступними:
+\n
+\n\t• Аналітичні, суто статистичні та неідентифікуючі дані.
+\n\t• Для того, щоб захопити і перевести голос в текст, звукові дані користувача надсилаються на сервери, що належать сторонній компанії, відповідальній за певну платформу, через відповідний API: наприклад, в Oculus - від Facebook, сервісу, який надсилає їх до Oculus Voice SDK. Вищезгадані дані в жодному разі не обробляються, не отримують доступ до них і не включаються до серверів, що належать IGALIA. За передані дані несуть виключну відповідальність сторонні компанії, які володіють кожною платформою (далі - Треті особи), які можуть знаходитися за межами Європейського Союзу і підпорядковуватися правовому режиму, який менш захищений щодо конфіденційності користувачів. Ми рекомендуємо вам уважно ознайомитися з політикою конфіденційності та умовами використання кожної з цих зовнішніх платформ, перш ніж приймати і використовувати їхні послуги. IGALIA не несе прямої або опосередкованої відповідальності за обробку персональних даних зазначеними третіми особами.
+\n\t• Інформація про географічне розташування може бути отримана з браузера, а не з системи. Однак для цього ви повинні встановити дозволи на визначення місцезнаходження вашого пристрою за допомогою спеціального повідомлення про це, і IGALIA жодним чином не буде пов\'язувати вищезазначену інформацію з вами як ідентифікованою або ідентифікованою особою, хоча Треті особи, згадані в попередньому пункті, можуть це зробити, якщо це можливо. Ми рекомендуємо вам звернути увагу на їх юридичні умови.
+\n\t• IGALIA не отримує доступ і не зберігає жодним чином адреси або URL-адреси, які ви відвідуєте.
+\n\t• Можлива інтеграція з хмарними сервісами (такими як Firefox Accounts або Google Accounts) для синхронізації даних, таких як історія переглядів або закладки користувача. У цьому випадку IGALIA не матиме доступу до будь-якої інформації, не оброблятиме її та не передаватиме через сервери IGALIA.
+\n
+\nМи ще раз нагадуємо вам, що платформи третіх осіб, до яких ви отримуєте доступ або використовуєте цей додаток, можуть збирати ці або інші ідентифікаційні дані про вас, заповнюючи їх добровільно чи недобровільно та/або свідомо чи несвідомо, можливо, поза межами дії європейського законодавства про захист даних. Тому ми рекомендуємо вам бути поінформованими та звертати особливу увагу на юридичні умови зазначених Третіх осіб, такі як, наприклад, наведені нижче:
+\n
+\n\t• Google: https://policies.google.com/privacy
+\n\t• Facebook: https://www.facebook.com/about/privacy/update
+\n\t• MeetKai: https://meetkai.com/privacy
+\n
+\nТакож IGALIA повідомляє, що при використанні функції розпізнавання голосу в браузері, Meetkai зберігатиме повністю анонімні розшифровки вашого голосу з метою покращення сервісу, який вони надають. Ваш голос не зберігатиметься і не буде жодним чином пов\'язувати транскрипції з вашою особистістю. Більше інформації про політику конфіденційності MeetKai за наступним посиланням: https://meetkai.com/es/privacy. IGALIA не зацікавлена в тому, щоб пов\'язувати транскрипції з будь-яким користувачем або впливати на його конфіденційність; отже, IGALIA просить, щоб ніяка особиста або конфіденційна інформація будь-якого роду не була включена в їхні звукові голосові адреси.
+\nУ будь-якому випадку, IGALIA гарантує зацікавленим сторонам здійснення прав на доступ, виправлення, видалення, заперечення, обмеження обробки та перенесення щодо їхніх персональних даних.
+\nДля цих цілей IGALIA встановила внутрішній протокол/процедуру для їх здійснення.
+\n
+\nЗацікавлена сторона може скористатися своїми правами наступним чином: надіславши запит на фізичну адресу IGALIA: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: \"Захист даних\"; або на електронну адресу: info@igalia.com.
+\nВ обох випадках зацікавлена особа повинна додати копію свого національного посвідчення особи, паспорта або іншого документа, що посвідчує особу.
+\nВідповідальний за захист даних або відділ, якому доручено управління правами, буде реєструвати здійснення прав у формі, доступній для цієї мети, в якій будуть записані наступні дані:
+\n
+\n\t• Номер заяви: кожній з отриманих заяв буде присвоєно номер.
+\n\t• Штаб-квартира: якщо відповідальна особа має кілька штаб-квартир, буде вказана штаб-квартира, до якої надійшла заява.
+\n\t• Канал для подання претензій: буде вказано канал, через який було отримано запит: фізична поштова адреса, електронна пошта тощо.
+\n\t• Дата подачі: вказується дата, коли запит був поданий.
+\n\t• Реалізовані права: тип права, яким скористалася особа.
+\n\t• День надання відповіді: день, коли відповідь була надіслана зацікавленій особі.
+\n
+\nСупровідна документація (квитанція про отримання запиту/відповіді, повідомлення тощо) буде архівуватися з метою доведення правильності управління запитом.
+\n
+\nТакож нагадуємо, що ви маєте право подати скаргу до Іспанського агентства із захисту даних.</string>
+    <string name="privacy_policy_subtitle_3">Право, що застосовується, та мова оригіналу</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_huawei_asr">Автоматичне розпізнавання голосу Huawei</string>
+    <string name="permissions_dialog_remember_choice">Запам\'ятате це рішення</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_cancel">Скасувати</string>
+    <string name="keyboardview_keycode_delete">Видалити</string>
+    <string name="keyboardview_keycode_done">Готово</string>
+    <string name="keyboardview_keycode_mode_change">Зміна режиму</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_enter">Введення</string>
+    <string name="tray_wifi_unavailable_ssid">SSID недоступний</string>
+    <string name="terms_service_section_2">Wolvic використовує інформаційні веб-сервіси (\"Сервіси\") для надання деяких функцій, що надаються для використання з цією бінарною версією Wolvic на умовах, описаних нижче.
+\n
+\n\t• Igalia та її учасники, ліцензіари і партнери працюють над тим, щоб надавати найточніші та найактуальніші Сервіси. Однак ми не можемо гарантувати, що ця інформація є вичерпною і безпомилковою. Наприклад, Сервіс безпечного перегляду може не визначати деякі ризиковані сайти і може помилково визначати деякі безпечні сайти, а в Сервісі визначення місцезнаходження всі місцезнаходження, повернуті нашими постачальниками послуг, є лише оціночними, і ні ми, ні наші постачальники послуг не гарантуємо точність наданих місцезнаходжень.
+\n
+\n\t• Igalia може припинити або змінити Послуги на свій розсуд.
+\n
+\n\t• Ви можете використовувати ці Послуги разом із супровідною версією Wolvic, і компанія Igalia надає вам на це свої права. Igalia та її ліцензіари залишають за собою всі інші права на Сервіси. Ці умови не призначені для обмеження будь-яких прав, наданих за ліцензіями з відкритим вихідним кодом, що застосовуються до Wolvic і відповідних версій вихідного коду Wolvic.
+\n
+\n\t• Сервіси надаються \"як є\". Igalia, її учасники, ліцензіари та дистриб\'ютори відмовляються від усіх гарантій, явних чи неявних, включаючи, але не обмежуючись, гарантіями на те, що Сервіси придатні для використання і відповідають вашим конкретним цілям. Ви несете весь ризик щодо вибору Послуг для ваших цілей, а також щодо якості та продуктивності Послуг.
+\n
+\n\t• За винятком випадків, передбачених законом, Igalia, її учасники, ліцензіари та дистриб\'ютори не несуть відповідальності за будь-які непрямі, спеціальні, випадкові, побічні, штрафні або штрафні збитки, що виникають внаслідок або будь-яким чином пов\'язані з використанням Wolvic та Сервісів. Колективна відповідальність за цими умовами не перевищує $500 (п\'ятсот доларів). Деякі юрисдикції не допускають виключення або обмеження певних збитків, тому це виключення і обмеження може не поширюватися на вас.
+\n
+\n\t• Igalia може час від часу оновлювати ці умови за необхідності. Ці умови не можуть бути змінені або скасовані без письмової згоди Igalia.
+\n
+\n\t• Ці умови регулюються законодавством Іспанії, за винятком колізійних норм. Якщо будь-яка частина цих умов буде визнана недійсною або такою, що не підлягає виконанню, інші частини залишатимуться в повній мірі чинними. У разі виникнення розбіжностей між перекладеною версією цих Умов та версією іспанською мовою, переважну силу має версія іспанською мовою.
+\n
+\n\t• Якщо ви не бажаєте користуватися однією або кількома Службами або якщо вищезазначені умови є неприйнятними, ви можете вимкнути відповідну функцію або Службу(и). Інструкції про те, як вимкнути певну функцію або Сервіс, можна знайти нижче. Інші функції та Сервіси можна вимкнути в налаштуваннях програми.
+\n
+\n\t\t• Безпечний перегляд увімкнено за замовчуванням. Не рекомендується вимикати функцію безпечного перегляду, оскільки це може призвести до переходу на небезпечні сайти. Якщо ви хочете повністю вимкнути цю функцію, виконайте такі дії:
+\n
+\n\t\t\t• У рядку URL-адреси введіть about:config
+\n
+\n\t\t\t• Введіть browser.safebrowsing.malware.enabled
+\n
+\n\t\t\t• Двічі клацніть на параметрі browser.safebrowsing.malware.enabled
+\n
+\n\t\t\t• Введіть browser.safebrowsing.phishing.enabled
+\n
+\n\t\t\t• Двічі клацніть по параметру browser.safebrowsing.phishing.enabled
+\n
+\n\t\t\t• Безпечний перегляд тепер вимкнено
+\n
+\n
+\n\t• Перегляд з урахуванням місцезнаходження: завжди ввімкнено. Інформація про ваше місцезнаходження ніколи не надсилається без вашого дозволу. Якщо ви хочете повністю вимкнути цю функцію, виконайте такі дії:
+\n
+\n\t\t\t• У рядку URL-адреси введіть about:config
+\n
+\n\t\t\t• Введіть geo.enabled
+\n
+\n\t\t\t• Двічі клацніть по параметру geo.enabled
+\n
+\n\t\t\t• Перегляд з урахуванням місцезнаходження тепер вимкнено
+\n
+\n\t•Вдосконалений захист від відстеження у Wolvic автоматично захищає вашу конфіденційність під час перегляду веб-сторінок. Він блокує трекери, які стежать за вами в Інтернеті, щоб збирати інформацію про ваші звички та інтереси, не порушуючи функціональність сайту. Він також включає захист від шкідливих скриптів, таких як шкідливе програмне забезпечення, що розряджає ваш акумулятор. Існує три режими захисту від відстеження: Стандартний, Суворий і Вимкнено. Якщо ви хочете вимкнути його, виконайте такі дії:
+\n
+\n\t\t\t• Перейдіть до налаштувань \"Конфіденційність і безпека\".
+\n
+\n\t\t\t• Натисніть перемикач \"Вимкнути\".
+\n
+\n\t\t\t• Вдосконалений захист від відстеження тепер вимкнено.</string>
 </resources>
