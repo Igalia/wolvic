@@ -70,6 +70,7 @@ import com.igalia.wolvic.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
@@ -93,6 +94,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private RelativeLayout mKeyboardContainer;
     private WindowWidget mAttachedWindow;
     private InputConnection mInputConnection;
+    private CompletableFuture<Void> mPostInputCmd;
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
     private AutoCompletionView mAutoCompletionView;
@@ -1159,12 +1161,25 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (handler != null) {
             handler.post(aRunnable);
         } else {
-            aRunnable.run();
+            if (mPostInputCmd == null || mPostInputCmd.isDone()) {
+                mPostInputCmd = CompletableFuture.runAsync(aRunnable);
+            } else {
+                mPostInputCmd = mPostInputCmd.thenRunAsync(aRunnable);
+            }
         }
     }
 
     private void postUICommand(Runnable aRunnable) {
         ((Activity)getContext()).runOnUiThread(aRunnable);
+    }
+
+    private void postDisplayCommand(Runnable aRunnable) {
+        Handler handler = mInputConnection.getHandler();
+        if (handler != null) {
+            aRunnable.run();
+        } else {
+            postUICommand(aRunnable);
+        }
     }
 
     private void updateCandidates() {
@@ -1250,24 +1265,26 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         DO_NOT_FINISH
     }
     private void displayComposingText(String aText, ComposingAction aAction) {
-        if (mInputConnection == null) {
-            return;
-        }
-        boolean succeeded = mInputConnection.setComposingText(aText, 1);
-        if (!succeeded) {
-            // Fix for InlineAutocompleteEditText failed setComposingText() calls
-            String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
-            String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
-            if (beforeText.endsWith(mComposingDisplayText)) {
-                mInternalDeleteHint = true;
-                mInputConnection.deleteSurroundingText(mComposingDisplayText.length(), 0);
+        postDisplayCommand(()-> {
+            if (mInputConnection == null) {
+                return;
             }
-            mInputConnection.setComposingText(aText, 1);
-        }
-        mComposingDisplayText = aText;
-        if (aAction == ComposingAction.FINISH) {
-            mInputConnection.finishComposingText();
-        }
+            boolean succeeded = mInputConnection.setComposingText(aText, 1);
+            if (!succeeded) {
+                // Fix for InlineAutocompleteEditText failed setComposingText() calls
+                String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
+                String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
+                if (beforeText.endsWith(mComposingDisplayText)) {
+                    mInternalDeleteHint = true;
+                    mInputConnection.deleteSurroundingText(mComposingDisplayText.length(), 0);
+                }
+                mInputConnection.setComposingText(aText, 1);
+            }
+            mComposingDisplayText = aText;
+            if (aAction == ComposingAction.FINISH) {
+                mInputConnection.finishComposingText();
+            }
+        });
     }
 
     private void moveCursor(final int direction) {
