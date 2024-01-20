@@ -371,7 +371,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
 
-        updateCandidates();
+        updateCandidates(ResetComposingText.Yes);
     }
 
     @Override
@@ -413,7 +413,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mAttachedWindow != null) {
             mAttachedWindow.removeWindowListener(this);
         }
-        
+
         if (mSession != null) {
             mSession.removeTextInputListener(this);
             mSession = null;
@@ -458,7 +458,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         handleShift(false);
         cleanComposingText();
-        updateCandidates();
+        updateCandidates(ResetComposingText.No);
     }
 
     private boolean isAttachToWindowWidget() {
@@ -497,7 +497,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
 
         mCurrentKeyboard.clear();
-        updateCandidates();
+        updateCandidates(ResetComposingText.No);
         updateSpecialKeyLabels();
     }
 
@@ -821,7 +821,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     mComposingText = mComposingText.substring(0, mComposingText.length() - 1);
                     mComposingText = mComposingText.trim();
                 }
-                postUICommand(KeyboardWidget.this::updateCandidates);
+                postUICommand(() -> KeyboardWidget.this.updateCandidates(ResetComposingText.Yes));
                 return;
             }
 
@@ -895,7 +895,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         disableShift(getSymbolsKeyboard());
         handleShift(false);
         hideOverlays();
-        updateCandidates();
+        updateCandidates(ResetComposingText.No);
     }
 
     public void updateDictionary() {
@@ -963,7 +963,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mIsCapsLock = false;
         handleShift(false);
         hideOverlays();
-        updateCandidates();
+        updateCandidates(ResetComposingText.No);
 
         String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText).toUpperCase();
         mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
@@ -999,7 +999,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mComposingText = "";
             postInputCommand(() -> {
                 displayComposingText(StringUtils.removeSpaces(mComposingDisplayText), ComposingAction.FINISH);
-                postUICommand(this::updateCandidates);
+                postUICommand(() -> updateCandidates(ResetComposingText.Yes));
             });
             return;
         }
@@ -1116,7 +1116,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             handleShift(false);
         }
 
-        updateCandidates();
+        updateCandidates(ResetComposingText.Yes);
     }
 
     private void handleVoiceInput() {
@@ -1182,7 +1182,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
     }
 
-    private void updateCandidates() {
+    enum ResetComposingText {
+        Yes,
+        No
+    };
+
+    private void updateCandidates(ResetComposingText resetComposingText) {
         if (mInputConnection == null || !mCurrentKeyboard.supportsAutoCompletion()) {
             setAutoCompletionVisible(false);
             updateSpecialKeyLabels();
@@ -1201,7 +1206,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     onAutoCompletionItemClick(candidates.words.get(0));
                 } else if (candidates != null) {
                      displayComposingText(candidates.composing, ComposingAction.DO_NOT_FINISH);
-                } else {
+                } else if (resetComposingText == ResetComposingText.Yes) {
                     mComposingText = "";
                     displayComposingText("", ComposingAction.FINISH);
                 }
@@ -1434,7 +1439,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
             postInputCommand(() -> {
                 displayComposingText(aItem.value, ComposingAction.FINISH);
-                postUICommand(KeyboardWidget.this::updateCandidates);
+                postUICommand(() -> KeyboardWidget.this.updateCandidates(ResetComposingText.Yes));
             });
 
         } else {
@@ -1469,7 +1474,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             // Text has been cleared externally (e.g. URLBar text clear button)
             mComposingText = "";
             mCurrentKeyboard.clear();
-            updateCandidates();
+            updateCandidates(ResetComposingText.Yes);
         }
         mInternalDeleteHint = false;
     }
