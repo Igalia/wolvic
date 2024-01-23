@@ -997,7 +997,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void setResizePreset(float aMultiplier) {
-        final float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
+        final float aspect = (float) mAttachedWindow.getWindowWidth() / (float) mAttachedWindow.getWindowHeight();
         mAttachedWindow.resizeByMultiplier(aspect, aMultiplier);
     }
 
@@ -1307,9 +1307,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
     private void startWidgetResize() {
         if (mAttachedWindow != null) {
-            Pair<Float, Float> maxSize = mAttachedWindow.getSizeForScale(mAttachedWindow.getMaxWindowScale());
-            Pair<Float, Float> minSize = mAttachedWindow.getSizeForScale(0.5f);
-            mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, 4.5f, minSize.first, minSize.second);
+            final float aspect = (float) mAttachedWindow.getWindowWidth() / (float) mAttachedWindow.getWindowHeight();
+            Pair<Float, Float> maxSize = mAttachedWindow.getSizeForScale(mAttachedWindow.getMaxWindowScale(), aspect);
+            Pair<Float, Float> minSize = mAttachedWindow.getSizeForScale(0.5f, aspect);
+            mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, maxSize.second, minSize.first, minSize.second);
         }
     }
 
