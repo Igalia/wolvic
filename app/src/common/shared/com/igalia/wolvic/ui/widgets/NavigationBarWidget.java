@@ -913,10 +913,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         // Remember the cylinder density before we enter VR video
         mSavedCylinderDensity = mWidgetManager.getCylinderDensity();
-        // We have to disable curved display temporary if we are playing front facing VR videos
-        if (isFrontFacingVRProjection(aProjection)) {
-            mWidgetManager.setCylinderDensityForce(0.0f);
-        }
+        // Disable curved display temporary
+        mWidgetManager.setCylinderDensityForce(0.0f);
 
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
