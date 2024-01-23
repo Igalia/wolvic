@@ -109,6 +109,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private final float MAX_SCALE = 3.0f;
 
     private Surface mSurface;
+    private int mSurfaceWidth;
+    private int mSurfaceHeight;
     private int mWidth;
     private int mHeight;
     private int mHandle;
@@ -744,8 +746,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 setWillNotDraw(true);
                 return;
             }
-            mWidth = aWidth;
-            mHeight = aHeight;
+            mSurfaceWidth = aWidth;
+            mSurfaceHeight = aHeight;
+            mWidth = (int) (aWidth / getPlacement().textureScale);
+            mHeight = (int) (aHeight / getPlacement().textureScale);
             mTexture = aTexture;
             aTexture.setDefaultBufferSize(aWidth, aHeight);
             mSurface = new Surface(aTexture);
@@ -759,8 +763,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             super.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
 
         } else {
-            mWidth = aWidth;
-            mHeight = aHeight;
+            mSurfaceWidth = aWidth;
+            mSurfaceHeight = aHeight;
+            mWidth = (int) (aWidth / getPlacement().textureScale);
+            mHeight = (int) (aHeight / getPlacement().textureScale);
             mSurface = aSurface;
             mFirstDrawCallback = aFirstDrawCallback;
             if (mSurface != null) {
@@ -773,7 +779,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private void callSurfaceChanged() {
         if (mSession != null && mSurface != null) {
-            mSession.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mWidth - mBorderWidth * 2, mHeight - mBorderWidth * 2);
+            mSession.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mSurfaceWidth - mBorderWidth * 2, mSurfaceHeight - mBorderWidth * 2);
             mSession.updateLastUse();
         }
     }
@@ -784,8 +790,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             super.resizeSurface(aWidth, aHeight);
         }
 
-        mWidth = aWidth;
-        mHeight = aHeight;
+        mSurfaceWidth = aWidth;
+        mSurfaceHeight = aHeight;
+        mWidth = (int) (aWidth / getPlacement().textureScale);
+        mHeight = (int) (aHeight / getPlacement().textureScale);
         if (mTexture != null) {
             mTexture.setDefaultBufferSize(aWidth, aHeight);
         }
