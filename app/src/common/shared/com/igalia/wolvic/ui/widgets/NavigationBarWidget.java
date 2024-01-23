@@ -663,7 +663,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setIsFullScreen(false);
     }
 
-    private void onEnterFullScreen(@NonNull WindowWidget aWindow) {
+    private void onEnterFullScreen() {
         enterFullScreenMode();
 
         mBeforeFullscreenPlacement = mWidgetPlacement.clone();
@@ -693,30 +693,33 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.reCenterFrontWindow();
     }
 
+    private final WindowWidget.WindowListener onFullscreenVideoWindowListener =
+            new WindowWidget.WindowListener() {
+                @Override
+                public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                    assert getSession().getActiveVideo() != null;
+                    onEnterFullScreen();
+                    mAttachedWindow.removeWindowListener(this);
+                }
+
+                @Override
+                public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+                    assert getSession().getFullScreenVideo() != null;
+                    onEnterFullScreen();
+                    mAttachedWindow.removeWindowListener(this);
+                }
+            };
+
     @Override
     public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
             if (getSession().getFullScreenVideo() != null) {
-                onEnterFullScreen(aWindow);
+                onEnterFullScreen();
             } else {
                 // No active fullscreen video. There might be two reasons for that:
                 // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
                 // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-                    @Override
-                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                        assert getSession().getActiveVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                    @Override
-                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                        assert getSession().getFullScreenVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                });
+                mAttachedWindow.addWindowListener(onFullscreenVideoWindowListener);
             }
         } else {
             mWidgetPlacement = mBeforeFullscreenPlacement;
@@ -726,6 +729,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 exitVRVideo();
             }
             exitFullScreenMode();
+            mAttachedWindow.removeWindowListener(onFullscreenVideoWindowListener);
             mAttachedWindow.centerFrontWindowIfNeeded();
         }
     }
@@ -1285,6 +1289,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
                 }
             }
+        } else {
+            // Ensure that the controllers are visible, just in case.
+            mWidgetManager.setControllersVisible(true);
         }
         closeFloatingMenus();
     }
