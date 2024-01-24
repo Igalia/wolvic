@@ -6,10 +6,6 @@ You can find us in [wolvic.com](https://www.wolvic.com), Mastodon [@WolvicXR](ht
 
 Want to learn more about Wolvic? Read our [FAQ](https://wolvic.com/en/faq)!
 
-## Locale support
-
-For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see our [localization wiki page](https://github.com/Igalia/wolvic/wiki/Localization).
-
 ## Setup instructions
 
 ### GeckoView local substitution
@@ -131,12 +127,15 @@ npm install
 npm run compress
 ```
 
-## Enable OpenXR builds
+## Enable OpenXR builds for Meta devices
 You can enable OpenXR API for Oculus by adding this property to your `user.properties` file:
 
 ```ini
 openxr=true
 ```
+## Locale support
+
+For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see our [localization wiki page](https://github.com/Igalia/wolvic/wiki/Localization).
 
 ## Development troubleshooting
 
