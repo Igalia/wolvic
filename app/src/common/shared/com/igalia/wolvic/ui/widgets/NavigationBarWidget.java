@@ -663,71 +663,47 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setIsFullScreen(false);
     }
 
-    private void onEnterFullScreen(@NonNull WindowWidget aWindow) {
-        enterFullScreenMode();
-
-        mBeforeFullscreenPlacement = mWidgetPlacement.clone();
-        mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
-        updateWidget();
-
-        if (mAttachedWindow.isResizing()) {
-            exitResizeMode(ResizeAction.KEEP_SIZE);
-        }
-        AtomicBoolean autoEnter = new AtomicBoolean(false);
-        if (getSession().getFullScreenVideo() == null) {
-            mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
-            autoEnter.set(false);
-        } else {
-            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
-        }
-
-        if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
-            mViewModel.setAutoEnteredVRVideo(true);
-            postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
-        } else {
-            mViewModel.setAutoEnteredVRVideo(false);
-            if (mProjectionMenu != null) {
-                mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
-            }
-        }
-        mAttachedWindow.reCenterFrontWindow();
-    }
-
     @Override
-    public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
+    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
         if (aFullScreen) {
-            if (getSession().getFullScreenVideo() != null) {
-                onEnterFullScreen(aWindow);
-            } else {
-                // No active fullscreen video. There might be two reasons for that:
-                // 1. The video is not active yet -> wait for onVideoAvailabilityChanged
-                // 2. The video is active but not in fullscreen -> wait for onMediaFullscreen
-                mAttachedWindow.addWindowListener(new WindowWidget.WindowListener() {
-                    @Override
-                    public void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                        WindowWidget.WindowListener.super.onVideoAvailabilityChanged(aWindow);
-                        assert getSession().getActiveVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                    @Override
-                    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
-                        assert getSession().getFullScreenVideo() != null;
-                        onEnterFullScreen(aWindow);
-                        mAttachedWindow.removeWindowListener(this);
-                    }
-                });
-            }
-        } else {
-            mWidgetPlacement = mBeforeFullscreenPlacement;
-            updateWidget();
+            // The content fullscreen event might have arrived before the media fullscreen event
+            if (!mAttachedWindow.isFullScreen())
+                enterFullScreenMode();
 
-            if (mViewModel.getIsInVRVideo().getValue().get()) {
+            AtomicBoolean autoEnter = new AtomicBoolean(false);
+            if (getSession().getFullScreenVideo() == null) {
+                mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
+                autoEnter.set(false);
+            } else {
+                mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+            }
+
+            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
+                mViewModel.setAutoEnteredVRVideo(true);
+                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+            } else {
+                mViewModel.setAutoEnteredVRVideo(false);
+                if (mProjectionMenu != null) {
+                    mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
+                }
+            }
+            mAttachedWindow.reCenterFrontWindow();
+        } else {
+            // This can be called by content's fullscreen event later but will be a noop.
+            exitFullScreenMode();
+
+            if (isInVRVideo()) {
                 exitVRVideo();
             }
-            exitFullScreenMode();
-            mAttachedWindow.centerFrontWindowIfNeeded();
         }
+   }
+
+    @Override
+    public void onContentFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
+        if (aFullScreen)
+            enterFullScreenMode();
+        else
+            exitFullScreenMode();
     }
 
     public boolean isInVRVideo() {
@@ -747,13 +723,21 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void enterFullScreenMode() {
+        assert !mAttachedWindow.isFullScreen();
         hideMenu();
         hideAllNotifications();
+
+        mBeforeFullscreenPlacement = mWidgetPlacement.clone();
+        mWidgetPlacement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
+        updateWidget();
+
+        if (mAttachedWindow.isResizing()) {
+            exitResizeMode(ResizeAction.KEEP_SIZE);
+        }
 
         mBinding.navigationBarFullscreen.brightnessButton.setVisibility(mWidgetManager.isPassthroughEnabled() ? GONE : VISIBLE);
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
 
-        mWidgetManager.setControllersVisible(false);
         AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
 
         mTrayViewModel.setShouldBeVisible(false);
@@ -788,6 +772,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void exitFullScreenMode() {
+        mWidgetPlacement = mBeforeFullscreenPlacement;
+        updateWidget();
+
         hideMenu();
         hideAllNotifications();
 
@@ -815,6 +802,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
+        mAttachedWindow.centerFrontWindowIfNeeded();
     }
 
     private void enterResizeMode() {
@@ -1003,7 +991,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setAutoEnteredVRVideo(false);
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
-        mAttachedWindow.centerFrontWindowIfNeeded();
         mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);

@@ -284,7 +284,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mFullscreenWindow != null) {
             mFullscreenWindow.getSession().exitFullScreen();
-            onFullScreen(mFullscreenWindow, false);
+            onContentFullScreen(mFullscreenWindow, false);
         }
 
         WindowWidget frontWindow = getFrontWindow();
@@ -1328,7 +1328,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Override
-    public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
+    public void onContentFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
         if (aFullScreen) {
             mFullscreenWindow = aWindow;
             aWindow.saveBeforeFullscreenPlacement();
