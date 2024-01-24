@@ -772,6 +772,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void exitFullScreenMode() {
+        mWidgetPlacement = mBeforeFullscreenPlacement;
+        updateWidget();
+
         hideMenu();
         hideAllNotifications();
 
@@ -799,6 +802,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isKioskMode());
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
+        mAttachedWindow.centerFrontWindowIfNeeded();
     }
 
     private void enterResizeMode() {
@@ -987,7 +991,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setAutoEnteredVRVideo(false);
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
-        mAttachedWindow.centerFrontWindowIfNeeded();
         mWidgetManager.setCylinderDensityForce(mSavedCylinderDensity);
         // Reposition UI in front of the user when exiting a VR video.
         mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
