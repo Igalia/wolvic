@@ -663,38 +663,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mAttachedWindow.setIsFullScreen(false);
     }
 
-    private void createProjectionMenuIfNeeded() {
-        if (mProjectionMenu != null)
-            return;
-
-        mProjectionMenu = new VideoProjectionMenuWidget(getContext());
-        mProjectionMenu.setParentWidget(this);
-        mProjectionMenuPlacement = new WidgetPlacement(getContext());
-        mWidgetManager.addWidget(mProjectionMenu);
-        mProjectionMenu.setDelegate((projection)-> {
-            if (mViewModel.getIsInVRVideo().getValue().get()) {
-                if (projection == VIDEO_PROJECTION_NONE) {
-                    exitVRVideo();
-                    mAttachedWindow.reCenterFrontWindow();
-                } else {
-                    // Reproject while reproducing VRVideo
-                    mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
-                }
-                closeFloatingMenus();
-            } else {
-                enterVRVideo(projection);
-            }
-        });
-    }
-
     @Override
     public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
         if (aFullScreen) {
             // The content fullscreen event might have arrived before the media fullscreen event
             if (!mAttachedWindow.isFullScreen())
                 enterFullScreenMode();
-
-            createProjectionMenuIfNeeded();
 
             AtomicBoolean autoEnter = new AtomicBoolean(false);
             if (getSession().getFullScreenVideo() == null) {
@@ -768,6 +742,26 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mTrayViewModel.setShouldBeVisible(false);
 
+        if (mProjectionMenu == null) {
+            mProjectionMenu = new VideoProjectionMenuWidget(getContext());
+            mProjectionMenu.setParentWidget(this);
+            mProjectionMenuPlacement = new WidgetPlacement(getContext());
+            mWidgetManager.addWidget(mProjectionMenu);
+            mProjectionMenu.setDelegate((projection)-> {
+                if (mViewModel.getIsInVRVideo().getValue().get()) {
+                    if (projection == VIDEO_PROJECTION_NONE) {
+                        exitVRVideo();
+                        mAttachedWindow.reCenterFrontWindow();
+                    } else {
+                        // Reproject while reproducing VRVideo
+                        mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
+                    }
+                    closeFloatingMenus();
+                } else {
+                    enterVRVideo(projection);
+                }
+            });
+        }
         if (mBrightnessWidget == null) {
             mBrightnessWidget = new BrightnessMenuWidget(getContext());
             mBrightnessWidget.setParentWidget(this);
@@ -778,11 +772,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     private void exitFullScreenMode() {
+        hideMenu();
+        hideAllNotifications();
+
         if (mAttachedWindow == null || !mAttachedWindow.isFullScreen()) {
             return;
         }
-        hideMenu();
-        hideAllNotifications();
 
         mWidgetManager.setControllersVisible(true);
 
@@ -794,8 +789,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         }, 50);
 
-        this.setVisible(!mAttachedWindow.isKioskMode());
-        mWidgetManager.updateWidget(this);
         mWidgetManager.updateWidget(mAttachedWindow);
 
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
@@ -910,9 +903,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
-        this.setVisible(false);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
+        this.setVisible(false);
 
         mFullScreenMedia = getSession().getFullScreenVideo();
         // This should not happen, but Gecko does not notify about fullscreen changes in media if
