@@ -910,6 +910,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
+        this.setVisible(false);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
@@ -985,6 +986,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         closeFloatingMenus();
         mWidgetManager.setControllersVisible(true);
 
+        this.setVisible(!mAttachedWindow.isKioskMode());
         mAttachedWindow.disableVRVideoMode();
         mAttachedWindow.setVisible(true);
         mMediaControlsWidget.setVisible(false);
