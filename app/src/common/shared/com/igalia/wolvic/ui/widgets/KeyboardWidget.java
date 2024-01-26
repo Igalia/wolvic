@@ -828,7 +828,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             CharSequence selectedText = connection.getSelectedText(0);
             if (selectedText != null && selectedText.length() > 0) {
                 // Delete the selected text
-                connection.commitText("", 1);
+                postDisplayCommand(() -> connection.commitText("", 1));
                 return;
             }
 
@@ -837,13 +837,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
                 if (newBeforeText != null) {
                     // Replace whole before text
-                    connection.deleteSurroundingText(beforeText.length(), 0);
-                    connection.commitText(newBeforeText, 1);
+                    postDisplayCommand(() -> {
+                        connection.deleteSurroundingText(beforeText.length(), 0);
+                        connection.commitText(newBeforeText, 1);
+                    });
                     return;
                 }
             }
             // Remove the character before the cursor.
-            connection.deleteSurroundingText(1, 0);
+            postDisplayCommand(() -> connection.deleteSurroundingText(1, 0));
         });
     }
 
@@ -987,7 +989,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mCurrentKeyboard.usesComposingText() && mComposingText.length() == 0) {
             // Do not compose text when space is clicked on an empty composed text
             final InputConnection connection = mInputConnection;
-            postInputCommand(() -> connection.commitText(" ", 1));
+            postInputCommand(() -> postDisplayCommand(() -> connection.commitText(" ", 1)));
         } else {
             handleText(" ");
         }
@@ -1005,7 +1007,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         final InputConnection connection = mInputConnection;
         final int action = mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION;
-        postInputCommand(() -> connection.performEditorAction(action));
+        postInputCommand(() -> postDisplayCommand(() -> connection.performEditorAction(action)));
 
         boolean hide = (action == EditorInfo.IME_ACTION_DONE) || (action == EditorInfo.IME_ACTION_GO) ||
                 (action == EditorInfo.IME_ACTION_SEARCH) || (action == EditorInfo.IME_ACTION_SEND);
@@ -1096,16 +1098,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             postInputCommand(() -> {
                 String beforeText = getTextBeforeCursor(connection);
                 String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
-                if (newBeforeText != null) {
-                    connection.deleteSurroundingText(beforeText.length(), 0);
-                    connection.commitText(newBeforeText, 1);
-                } else {
-                    connection.commitText(text, 1);
-                }
+                postDisplayCommand(() -> {
+                    if (newBeforeText != null) {
+                        connection.deleteSurroundingText(beforeText.length(), 0);
+                        connection.commitText(newBeforeText, 1);
+                    } else {
+                        connection.commitText(text, 1);
+                    }
+                });
             });
         } else {
             try {
-                postInputCommand(() -> connection.commitText(text, 1));
+                postInputCommand(() -> postDisplayCommand(
+                        () -> connection.commitText(text, 1)));
             } catch (IndexOutOfBoundsException e) {
                 // Workaround to fix crash when type in time picker dialog
                 Log.e("handleText", text + ": " + e.toString());
