@@ -22,6 +22,7 @@ import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.adapter.ComponentsAdapter;
+import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.components.WolvicEngineSession;
 import com.igalia.wolvic.browser.engine.Session;
@@ -1325,6 +1326,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mDelegate != null) {
             mDelegate.onWindowVideoAvailabilityChanged(aWindow);
         }
+    }
+
+    @Override
+    public void onMediaFullScreen(@NonNull WMediaSession mediaSession, boolean aFullScreen) {
+        if (!aFullScreen)
+            return;
+
+        assert mFullscreenWindow != null;
+        setFullScreenSize(mFullscreenWindow);
     }
 
     @Override
