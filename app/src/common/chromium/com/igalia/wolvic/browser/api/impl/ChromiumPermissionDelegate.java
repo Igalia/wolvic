@@ -72,6 +72,9 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
     private WResult<PermissionManagerBridge.PermissionStatus> requestPermission(
             PermissionManagerBridge.PermissionType permissionType, String url,
             boolean isOffTheRecord) {
+        if (mPermissionDelegate == null) {
+            return WResult.fromValue(PermissionManagerBridge.PermissionStatus.PROMPT);
+        }
         // Automatically deny any Chromium permissions that are not supported by Wolvic.
         if (permissionType == PermissionManagerBridge.PermissionType.NOT_SUPPORTED) {
             return WResult.fromValue(PermissionManagerBridge.PermissionStatus.DENY);
