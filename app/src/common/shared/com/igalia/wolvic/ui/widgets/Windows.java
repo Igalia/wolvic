@@ -1027,6 +1027,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             window = new WindowWidget(mContext, newWindowId, mPrivateMode);
         }
 
+        // By now the session shouldn't be null anyway
+        assert window.getSession() != null;
+        setFirstPaint(window, window.getSession());
+
         window.addWindowListener(this);
         getCurrentWindows().add(window);
         window.getTopBar().setDelegate(this);
@@ -1391,9 +1395,8 @@ public void selectTab(@NonNull Session aTab) {
             targetWindow.setSession(moveFrom, WindowWidget.SESSION_DO_NOT_RELEASE_DISPLAY, WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE);
             windowToMove.setActiveWindow(false);
             targetWindow.setActiveWindow(true);
-
+            setFirstPaint(windowToMove, moveTo);
         } else {
-            setFirstPaint(targetWindow, aTab);
             // The Web Extensions require an active target session so we need to make sure we always keep the
             // Web Extension target session active when switching tabs.
             Session currentWindowSession = targetWindow.getSession();
@@ -1410,6 +1413,7 @@ public void selectTab(@NonNull Session aTab) {
                             WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE :
                             WindowWidget.DEACTIVATE_CURRENT_SESSION);
         }
+        setFirstPaint(targetWindow, aTab);
     }
 
     public void addTab(WindowWidget targetWindow) {
@@ -1468,11 +1472,11 @@ public void selectTab(@NonNull Session aTab) {
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {
         Session session = SessionStore.get().createSuspendedSession(aUri, targetWindow.getSession().isPrivateMode());
         session.setParentSession(targetWindow.getSession());
-        setFirstPaint(targetWindow, session);
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
             session.loadHomePage();
         }
+        setFirstPaint(targetWindow, session);
     }
 
     public void addBackgroundTab(WindowWidget targetWindow, String aUri) {

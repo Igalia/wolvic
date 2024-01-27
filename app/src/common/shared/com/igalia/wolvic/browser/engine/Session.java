@@ -628,7 +628,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     public void captureBitmap() {
-        if (mState.mDisplay == null || !mFirstContentfulPaint) {
+        if (mState.mDisplay == null) {
             return;
         }
         try {
