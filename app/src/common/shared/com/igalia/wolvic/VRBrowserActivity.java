@@ -644,6 +644,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         ((VRBrowserApplication)getApplicationContext()).getAccounts().pollForEventsAsync();
 
         super.onResume();
+        ((VRBrowserApplication)getApplication()).setCurrentActivity(this);
         getLifecycleRegistry().setCurrentState(Lifecycle.State.RESUMED);
     }
 
