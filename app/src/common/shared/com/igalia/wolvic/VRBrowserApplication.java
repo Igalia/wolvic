@@ -5,6 +5,7 @@
 
 package com.igalia.wolvic;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -47,6 +48,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private DictionariesManager mDictionariesManager;
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
+    private Activity mCurrentActivity;
 
     protected void onActivityCreate(@NonNull Context activityContext) {
         onConfigurationChanged(activityContext.getResources().getConfiguration());
@@ -165,4 +167,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     public ConnectivityReceiver getConnectivityReceiver() {
         return mConnectivityManager;
     }
+
+    public Activity getCurrentActivity() { return mCurrentActivity; }
+
+    public void setCurrentActivity(Activity activity) { mCurrentActivity = activity; }
 }
