@@ -39,6 +39,7 @@ import android.widget.TextView;
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.VisionGlass;
+import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -91,6 +92,24 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }
     };
     private final Runnable activityResumedRunnable = this::activityResumed;
+
+
+    private interface PhoneUIButtonsCallback {
+        void onButtonClicked(VRBrowserActivity activity);
+    };
+
+    /**
+     * Use this method to run callbacks for phone UI buttons. It provides access to the Windows
+     * object in VRBrowserActivity. It's a bit ugly but it's the best we can do with the current
+     * architecture where there are multiple PlatformActivity's.
+    */
+    private void runPhoneUICallback(PhoneUIButtonsCallback callback) {
+        Context context = getApplicationContext();
+        assert context instanceof VRBrowserApplication;
+        assert ((VRBrowserApplication)context).getCurrentActivity() instanceof VRBrowserActivity;
+
+        callback.onButtonClicked((VRBrowserActivity)((VRBrowserApplication)context).getCurrentActivity());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,20 +197,15 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         Button homeButton = findViewById(R.id.home_button);
 
         // Set click listeners for the buttons
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+        backButton.setOnClickListener(v -> onBackPressed());
+        homeButton.setOnClickListener(v -> runPhoneUICallback((activity) -> {
+            Windows windows = activity.getWindows();
+            if (windows == null) {
+                Log.e(LOGTAG, "Cannot load homepage because Windows object is null");
+                return;
             }
-        });
-
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle home button click
-                Log.d(LOGTAG, "Home button clicked");
-            }
-        });
+            windows.getFocusedWindow().loadHome();
+        }));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
