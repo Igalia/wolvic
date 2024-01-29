@@ -25,7 +25,6 @@
         android:text="@string/home_tooltip"
         android:drawableStart="@drawable/ic_icon_home"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:visibility="gone"/>
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>
