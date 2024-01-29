@@ -85,7 +85,7 @@ class DisplayOptionsView extends SettingsView {
         }
 
         mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
-        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), true);
+        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), false);
 
         mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
         setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
