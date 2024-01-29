@@ -64,12 +64,12 @@ jobs:
           distribution: ${{ inputs.jdk_distribution }}
 
       - name: Setup Gradle ${{ inputs.gradle_version }}
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           gradle-version: ${{ inputs.gradle_version }}
 
       - name: Build ${{ inputs.flavour }} Flavour
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: ${{ inputs.flavour }}
 
