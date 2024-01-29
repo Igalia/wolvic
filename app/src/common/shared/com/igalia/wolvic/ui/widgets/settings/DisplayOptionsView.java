@@ -91,10 +91,10 @@ class DisplayOptionsView extends SettingsView {
         setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
 
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
-        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled());
+        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled(), false);
 
         mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
-        setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled());
+        setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled(), false);
 
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
@@ -182,11 +182,11 @@ class DisplayOptionsView extends SettingsView {
     };
 
     private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
-        setHeadLock(value);
+        setHeadLock(value, true);
     };
 
     private SwitchSetting.OnCheckedChangeListener mWindowMovementListener = (compoundButton, enabled, apply) -> {
-        setWindowMovement(enabled);
+        setWindowMovement(enabled, true);
     };
 
     private OnClickListener mHomepageListener = (view) -> {
@@ -249,11 +249,11 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
-        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT);
+        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT, true);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
-        setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT);
+        setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT, true);
         setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
@@ -316,17 +316,20 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
-    private void setHeadLock(boolean value) {
+    private void setHeadLock(boolean value, boolean doApply) {
         mBinding.headLockSwitch.setOnCheckedChangeListener(null);
         mBinding.headLockSwitch.setValue(value, false);
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
 
-        SettingsStore.getInstance(getContext()).setHeadLockEnabled(value);
+        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
+        if (doApply) {
+            settingsStore.setHeadLockEnabled(value);
+        }
 
-        if (value) {
+        if (value && settingsStore.isWindowMovementEnabled()) {
             // Disable window movement if head lock is enabled,
             // otherwise the windows might be moved out of the user's reach.
-            setWindowMovement(false);
+            setWindowMovement(false, true);
         }
     }
 
@@ -341,17 +344,20 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
-    private void setWindowMovement(boolean value) {
+    private void setWindowMovement(boolean value, boolean doApply) {
         mBinding.windowMovementSwitch.setOnCheckedChangeListener(null);
         mBinding.windowMovementSwitch.setValue(value, false);
         mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
 
-        SettingsStore.getInstance(getContext()).setWindowMovementEnabled(value);
+        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
+        if (doApply) {
+            settingsStore.setWindowMovementEnabled(value);
+        }
 
-        if (value) {
+        if (value && settingsStore.isHeadLockEnabled()) {
             // Disable head lock if window movement is enabled,
             // otherwise the windows might be moved out of the user's reach.
-            setHeadLock(false);
+            setHeadLock(false, true);
         }
     }
 
