@@ -733,4 +733,35 @@
     <string name="web_apps_dialog_body">Deseja instalar o seguinte Aplicativo Web\? Ele estará disponível na Biblioteca.</string>
     <string name="hamburger_menu_save_web_app">Salvar aplicativo Web…</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="user_feedback_tooltip">Compartilhe ideias e feedback</string>
+    <string name="clear_user_data_dialog_title">Limpar %1$s Dados do usuário</string>
+    <string name="developer_options_clear_user_data_description">Todos dados de usuário</string>
+    <string name="security_options_use_system_root_ca">Usar \"Trusted Root Certificates\" do sistema</string>
+    <string name="voice_input_start">O que gostaria de fazer?</string>
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
+    <string name="rCN_first_launch_title">Contrato de Usuário e Política de Privacidade</string>
+    <string name="rCN_first_launch_clickable_terms_text">Licença de Usuário</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Política de Privacidade</string>
+    <string name="rCN_first_launch_agree">Aceitar</string>
+    <string name="rCN_first_launch_disagree">Discordar</string>
+    <string name="rCN_first_launch_confirmation_body">\\f você seleciona “Discordar”, infelizmente não poderemos mais fornecer serviços para você.
+\n
+\nVocê pode ler o Licença de Usuário completo e a Política de Privacidade.</string>
+    <string name="rCN_first_launch_confirmation_agree">Aceitar e Continuar</string>
+    <string name="rCN_first_launch_confirmation_disagree">Discordar e Sair</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_delete">Excluir</string>
+    <string name="keyboardview_keycode_cancel">Cancelar</string>
+    <string name="keyboardview_keycode_mode_change">Mudança de modo</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_done">Feito</string>
+    <string name="keyboardview_keycode_enter">Entrar</string>
+    <string name="tray_wifi_unavailable_ssid">SSID indisponível</string>
+    <string name="rCN_first_launch_body">Bem-vindo ao “Wolvic”!
+\n
+\nRegistrar e usar o “Wolvic” exige que você concorde com o Contrato de Usuário e Política de Privacidade, ou então não podemos fornecer serviços para você. Leia cuidadosamente os documentos e clique em “Aceitar” para continuar. Se você clicar em “Discordar”, você não será capaz de continuar usando o “Wolvic”.
+\n
+\nVocê pode ler o Contrato de Usuário completo e Política de Privacidade.</string>
+    <string name="clear_user_data_dialog_text">%1$s será redefinido. Todos os dados, incluindo logins salvos, histórico e marcadores, serão excluídos permanentemente se não forem sincronizados. %1$s fechará automaticamente após a reinicialização ser concluída. Deseja continuar?</string>
+    <string name="display_options_start_with_passthrough">Comece no modo Passthrough</string>
 </resources>
