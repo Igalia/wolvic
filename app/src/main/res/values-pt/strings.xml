@@ -738,11 +738,11 @@
     <string name="download_addon_install_blocked_body">Permita a instalação de Complemento local nas Opções do Programador para continuar.</string>
     <string name="deprecated_version_dialog_title">Suporte a terminar brevemente</string>
     <string name="clear_user_data_dialog_title">Limpar dados do usuário do %1$s</string>
-    <string name="clear_user_data_dialog_text">O %1$s será redefinido. Todos os dados, incluindo logins salvos, histórico e favoritos, serão excluídos permanentemente se não tiverem sido sincronizados. O %1$s fechará automaticamente após a redefinição ser concluída. Você quer continuar?</string>
+    <string name="clear_user_data_dialog_text">O %1$s será redefinido. Todos os dados, incluindo logins salvos, histórico e favoritos, serão removidos permanentemente se não tiverem sido sincronizados. O %1$s fechará automaticamente após a conclusão da redefinição. Você quer continuar?</string>
     <string name="display_options_start_with_passthrough">Iniciar com modo Passthrough</string>
     <string name="developer_options_clear_user_data_description">Todos os dados do usuário</string>
-    <string name="security_options_permission_fine_location_warning">O Wolvic só pode obter a sua localização aproximada. Isso pode ser alterado nas configurações do sistema.</string>
-    <string name="security_options_use_system_root_ca">Usar Certificados Raiz Confiáveis do sistema</string>
+    <string name="security_options_permission_fine_location_warning">O Wolvic só pode obter a sua localização aproximada. Isto pode ser alterado nas configurações do sistema.</string>
+    <string name="security_options_use_system_root_ca">Usar Certificados Raiz Confiáveis do Sistema</string>
     <string name="voice_input_start">O que gostaria de introduzir?</string>
     <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
@@ -750,15 +750,15 @@
 \n
 \nPor favor, instale a última versão de Wolvic da Meta Store.
 \n
-\nIMPORTANTE: a menos que você use o Sync, o novo aplicativo Wolvic não terá seus favoritos e guias.</string>
+\nIMPORTANTE: a menos que você use o Sync, o novo aplicativo Wolvic não terá seus favoritos e abas.</string>
     <string name="deprecated_version_dialog_info_button">Saiba mais…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="rCN_first_launch_clickable_privacy_text">Política de Privacidade</string>
     <string name="rCN_first_launch_agree">Concordar</string>
     <string name="rCN_first_launch_disagree">Não concordar</string>
-    <string name="rCN_first_launch_confirmation_disagree">Não concordar e sair</string>
+    <string name="rCN_first_launch_confirmation_disagree">Não concordar e Sair</string>
     <string name="keyboardview_keycode_delete">Eliminar</string>
-    <string name="keyboardview_keycode_done">Feito</string>
+    <string name="keyboardview_keycode_done">Completo</string>
     <string name="keyboardview_keycode_alt">Alt</string>
     <string name="keyboardview_keycode_cancel">Cancelar</string>
     <string name="keyboardview_keycode_mode_change">Mudança de modo</string>
@@ -767,7 +767,7 @@
     <string name="tray_wifi_unavailable_ssid">SSID indisponível</string>
     <string name="rCN_first_launch_title">Notificação de Acordo de Usuário e Política de Privacidade</string>
     <string name="rCN_first_launch_clickable_terms_text">Acordo de Usuário</string>
-    <string name="user_feedback_tooltip">Compartilhar ideias e opiniões</string>
+    <string name="user_feedback_tooltip">Partilhar ideias e opiniões</string>
     <string name="rCN_first_launch_confirmation_body">Se selecionar “Não concordar”, infelizmente não poderemos continuar a prestar-lhe serviços.
 \n
 \nPode ler o Acordo de Usuário e a Política de Privacidade completos.</string>
