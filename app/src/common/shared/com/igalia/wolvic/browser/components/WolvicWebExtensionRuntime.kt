@@ -54,10 +54,10 @@ class WolvicWebExtensionRuntime(
      * See [Engine.installWebExtension].
      */
     override fun installWebExtension(
-            id: String,
             url: String,
-            onSuccess: ((WebExtension) -> Unit),
-            onError: ((String, Throwable) -> Unit)
+            installationMethod: InstallationMethod?,
+            onSuccess: (WebExtension) -> Unit,
+            onError: (Throwable) -> Unit
     ): CancellableOperation {
 
         val onInstallSuccess: ((WebExtension) -> Unit) = {
@@ -67,26 +67,14 @@ class WolvicWebExtensionRuntime(
             onSuccess(it)
         }
 
-        val result = if (url.isResourceUrl()) {
-            runtime.webExtensionController.ensureBuiltIn(url, id).apply {
-                then({
-                    onInstallSuccess(it!!)
-                    WResult.create<Void>()
-                }, { throwable ->
-                    onError(id, throwable)
-                    WResult.create<Void>()
-                })
-            }
-        } else {
-            runtime.webExtensionController.install(url).apply {
-                then({
-                    onInstallSuccess(it!!)
-                    WResult.create<Void>()
-                }, { throwable ->
-                    onError(id, throwable)
-                    WResult.create<Void>()
-                })
-            }
+        val result = runtime.webExtensionController.install(url).apply {
+            then({
+                onInstallSuccess(it!!)
+                WResult.create<Void>()
+            }, { throwable ->
+                onError(throwable)
+                WResult.create<Void>()
+            })
         }
         return result.asCancellableOperation()
     }

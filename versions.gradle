@@ -24,16 +24,16 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view_release = "121.0.20240108143603"
-versions.gecko_view_nightly = "121.0.20231120095246"
-versions.gecko_view_beta = "121.0.20231208091859"
-versions.android_components = "121.1.0"
+versions.gecko_view_release = "122.0.20240129192822"
+versions.gecko_view_nightly = "124.0.20240130045011"
+versions.gecko_view_beta = "123.0.20240129091730"
+versions.android_components = "122.0.1"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
 // The version number below tracks the application-services version
 // that we depend on directly for its rustlog package, and it's important
 // that it be kept insync with the version used by android-components above.
-versions.mozilla_appservices = "120.0.2"
+versions.mozilla_appservices = "122.0.1"
 versions.room = "2.5.2"
 versions.lifecycle = "2.6.2"
 versions.cardview = "1.0.0"
@@ -45,7 +45,7 @@ versions.atsl_runner = "1.5.2"
 versions.atsl_rules = "1.5.0"
 versions.atsl_junit = "1.1.5"
 versions.espresso = "3.5.1"
-versions.android_gradle_plugin = "8.2.1"
+versions.android_gradle_plugin = "8.2.2"
 versions.kotlin = "1.9.21"
 versions.kotlin_coroutines = "1.7.3"
 versions.snakeyaml = "2.0"
