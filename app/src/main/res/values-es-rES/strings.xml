@@ -1749,22 +1749,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="security_options_permission_fine_location_warning">Wolvic sólo puede obtener tu ubicación aproximada. Esto se puede cambiar en la configuración del sistema.</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
-    <string name="user_feedback_tooltip">Compartir ideas y opiniones</string>
+    <string name="user_feedback_tooltip">Compartir ideas y comentarios</string>
     <string name="rCN_first_launch_clickable_privacy_text">Política de privacidad</string>
     <string name="rCN_first_launch_agree">Aceptar</string>
-    <string name="rCN_first_launch_disagree">No estoy de acuerdo</string>
-    <string name="rCN_first_launch_confirmation_body">\\Si seleccionas \"No estoy de acuerdo\", lamentablemente ya no podremos brindarle los servicios.
+    <string name="rCN_first_launch_disagree">No aceptar</string>
+    <string name="rCN_first_launch_confirmation_body">\\Si seleccionas \"No aceptar\", lamentablemente ya no podremos brindarle los servicios.
 \n
 \nPuede leer el Acuerdo de usuario y la Política de privacidad completos.</string>
     <string name="rCN_first_launch_confirmation_agree">Aceptar y continuar</string>
-    <string name="rCN_first_launch_title">Acuerdo del usuario y la notificación de la política de privacidad</string>
+    <string name="rCN_first_launch_title">Notificación de Acuerdo del usuario y Política de privacidad</string>
     <string name="rCN_first_launch_clickable_terms_text">Acuerdo del Usuario</string>
     <string name="rCN_first_launch_body">¡Bienvenidos a “Wolvic”!
 \n
-\nRegistrarte y usar \"Wolvic\" requiere que aceptes el Acuerdo del usuario y la Política de privacidad, o de lo contrario no podemos brindarle los servicios. Lee detenidamente la información y haz clic en \"Aceptar\" para continuar. Si hazes clic en \"No estoy de acuerdo\", no podrás continuar usando \"Wolvic\".
+\nRegistrarte y usar \"Wolvic\" requiere que aceptes el Acuerdo del usuario y la Política de privacidad, o de lo contrario no podemos brindarle servicios. Lee detenidamente la información y haz clic en \"Aceptar\" para continuar. Si hazes clic en \"No estoy de acuerdo\", no podrás continuar usando \"Wolvic\".
 \n
 \nPuedes leer el Acuerdo de usuario y la Política de privacidad completos.</string>
-    <string name="rCN_first_launch_confirmation_disagree">No estar de acuerdo y renunciar</string>
+    <string name="rCN_first_launch_confirmation_disagree">No aceptar y salir</string>
     <string name="keyboardview_keycode_cancel">Cancelar</string>
     <string name="keyboardview_keycode_delete">Borrar</string>
     <string name="keyboardview_keycode_done">Hecho</string>
@@ -1774,11 +1774,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="keyboardview_keycode_shift">Shift</string>
     <string name="developer_options_clear_user_data_description">Todos los datos del usuario</string>
     <string name="security_options_use_system_root_ca">Utilizar los certificados raíz de confianza del sistema</string>
-    <string name="video_mode_3d_top_bottom">Pantalla superior e inferior en 3D</string>
-    <string name="clear_user_data_dialog_title">Borrar %1$s datos de usuario</string>
-    <string name="clear_user_data_dialog_text">%1$s se restablecerá. Todos los datos, incluidos los inicios de sesión guardados, el historial y los marcadores, se eliminarán permanentemente si no se han sincronizado. %1$s se cerrará automáticamente una vez finalizado el restablecimiento. ¿Quieres continuar\?</string>
-    <string name="display_options_start_with_passthrough">Empezar en modo Passthrough</string>
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
+    <string name="clear_user_data_dialog_title">Borrar datos del usuario de %1$s</string>
+    <string name="clear_user_data_dialog_text">%1$s se restablecerá. Todos los datos, incluidos los inicios de sesión guardados, el historial y los marcadores, se eliminarán permanentemente si no se han sincronizado. %1$s se cerrará automáticamente una vez finalizado el restablecimiento. ¿Quieres continuar?</string>
+    <string name="display_options_start_with_passthrough">Usar el modo Passthrough al iniciar</string>
     <string name="display_options_head_lock">Fijar la ventana en tu campo visual</string>
     <string name="tray_wifi_unavailable_ssid">SSID no disponible</string>
-    <string name="voice_input_start">¿Qué te gustaría decir?</string>
+    <string name="voice_input_start">¿Qué te gustaría introducir?</string>
 </resources>
