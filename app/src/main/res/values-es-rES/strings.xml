@@ -1736,7 +1736,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_blocked_body">Permitir la instalación de complementos locales en las Opciones de Desarrollador para proceder.</string>
     <string name="addons_experimental_section_title">Experimental</string>
     <string name="download_addon_install_blocked">La instalación del complemento ha sido bloqueada</string>
-    <string name="upload_button">Enviar</string>
+    <string name="upload_button">Subir</string>
     <string name="upload_list_empty">No hay archivos disponibles para enviar</string>
     <string name="web_apps_title">Aplicaciones web</string>
     <string name="web_apps_dialog_body">¿Quieres instalar la siguiente aplicación web\? Estará disponible en tu biblioteca.</string>
