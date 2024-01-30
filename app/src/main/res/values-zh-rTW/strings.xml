@@ -888,7 +888,6 @@
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Input. -->
     <string name="voice_input_start">您想輸入何種內容？</string>
-
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_example">範例: 可說「360 度影片、天氣、新聞…」</string>
@@ -969,7 +968,6 @@
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_top_bottom">3D 上下畫面</string>
-
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
 
@@ -1921,7 +1919,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the find in page option -->
     <string name="hamburger_menu_find_in_page">在網頁中尋找</string>
-
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the addons panel -->
     <string name="hamburger_menu_addons">附加元件</string>
@@ -2230,7 +2227,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_portuguese_br">葡萄牙語（巴西）</string>
     <string name="voice_search_server_error">現在不能使用語音搜尋服務。</string>
     <string name="settings_terms_service">服務條款</string>
+<<<<<<< HEAD
     <string name="settings_language_choose_language_voice_search_service_description">選擇你偏好的線上語音搜尋服務。</string>
+=======
+    <string name="settings_language_choose_language_voice_search_service_description">選擇你偏好的線上語音搜尋服務.</string>
+>>>>>>> 197b9cc9 (Translated using Weblate (Chinese (Traditional)))
     <string name="settings_privacy_choose_search_engine_description">選擇你喜歡的搜尋引擎。</string>
     <string name="settings_language_choose_language_voice_search_service_title">語音搜尋服務</string>
     <string name="settings_language_galician">加利西亞語</string>
@@ -2299,16 +2300,26 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permissions_dialog_remember_choice">記住這個決定</string>
     <string name="privacy_dialog_agree">同意</string>
     <string name="hvr_enter_vr">進入虛擬現實</string>
+<<<<<<< HEAD
     <string name="voice_search_unsupported">你的語言不支持語音搜尋服務。</string>
+=======
+    <string name="voice_search_unsupported">您的語言不支援語音搜尋。</string>
+>>>>>>> 197b9cc9 (Translated using Weblate (Chinese (Traditional)))
     <string name="notifications_empty">您的通知清單為空</string>
     <string name="upload_list_empty">沒有可供上傳的文件</string>
     <string name="terms_service_subtitle_2">Wolvic 網路為基礎的資訊服務</string>
     <string name="download_addon_install_blocked_body">允許在開發人員選項中繼續進行本機插件安裝。</string>
     <string name="external_open_uri_error_title">開啟外部應用程式時出錯</string>
     <string name="language_service_options_reset">重置語音搜尋服務設置</string>
+<<<<<<< HEAD
     <string name="deprecated_version_dialog_body">Wolvic 的本「App Lab」版本將于2023 年 10 月底刪除。
 \n
 \n請從 Meta Quest Store 安裝最新版本的 Wolvic。
+=======
+    <string name="deprecated_version_dialog_body">Wolvic 的本「App Lab」版本很快就會被刪除。
+\n
+\n請從 Meta Store 安裝最新版本的 Wolvic。
+>>>>>>> 197b9cc9 (Translated using Weblate (Chinese (Traditional)))
 \n
 \n重要提示：除非您使用同步，否則新的 Wolvic 應用程式將不會有您的書籤和選項卡。</string>
     <string name="external_open_uri_error_no_activity_body">找不到可以處理%1$s的應用程式</string>
@@ -2332,6 +2343,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t• Wolvic 的一些功能是利用網路為基礎的資訊服務；但是，我們不能保證它們 100% 準確或沒有錯誤。更多詳細信息，包括有關如何停用使用這些服務的功能的信息，可以在服務條款（如下）中找到。</string>
     <string name="privacy_policy_section_3">本隱私權政策受西班牙法律管轄。該應用程式的隱私權政策語言是西班牙語。因此，西班牙語原始版本與其翻譯成其他語言之間的任何可能的差異都將被視為西班牙語版本中的主要差異，可以在此處找到：https://wolvic.com/es/legal/privacy /。</string>
     <string name="voice_service_huawei_asr">華為自動語音識別</string>
+<<<<<<< HEAD
     <string name="terms_service_section_2">Wolvic 使用網路為基礎的資訊服務（「服務」）來提供一些功能，請您根據下述條款使用此二進位版本的 Wolvic。
 \n
 \n\t• Igalia 及其貢獻者、授權人和合作夥伴致力於提供最準確和最新的服務。然而，我們不能保證這些資訊是全面且無錯誤的。例如，安全瀏覽服務可能無法識別一些有風險的網站，並且可能會錯誤地識別一些安全網站，而在位置感知服務中，我們的服務提供者返回的所有位置僅是估計值，我們和我們的服務提供者都不保證這些位置的準確性。
@@ -2414,3 +2426,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n支援文件（請求/回應的收據、通訊等）將存檔，以證明其管理正確。
 \n同樣，我們提醒您，您有權向西班牙資料保護局提出索賠。</string>
 </resources>
+=======
+</resources>
+>>>>>>> 197b9cc9 (Translated using Weblate (Chinese (Traditional)))
