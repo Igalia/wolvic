@@ -1756,13 +1756,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_dialog_title_parameter">%1$s 설치</string>
     <string name="web_apps_dialog_install">설치</string>
     <string name="hamburger_menu_toggle_passthrough">패스스루</string>
-    <string name="deprecated_version_dialog_title">권장 업데이트</string>
+    <string name="deprecated_version_dialog_title">지원이 곧 종료됨</string>
     <string name="security_options_permission_fine_location_warning">울빅은 당신의 대략적인 위치만 알 수 있습니다. 이는 시스템 설정에서 변경할 수 있습니다.</string>
-    <string name="deprecated_version_dialog_body">현재 울빅의 개발 버전인 \"App Lab\"을 실행하고 있습니다.2023년 10월 말에 중단될 예정입니다.
+    <string name="deprecated_version_dialog_body">이 울빅의 \"App Lab\" 버전은 곧 삭제 될 예정입니다.
 \n
-\n오큘러스 스토어에서 최신 버전의 울빅을 설치하세요.
+\n메타 스토어에서 가장 최신 버전의 울빅을 설치하세요.
 \n
-\n중요: Mozilla 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
+\n중요: 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
     <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
     <string name="deprecated_version_dialog_info_button">자세히 알아보기…</string>
     <string name="deprecated_version_dialog_store_button">설치…</string>
@@ -1789,4 +1789,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="keyboardview_keycode_shift">Shift</string>
     <string name="keyboardview_keycode_alt">Alt</string>
     <string name="keyboardview_keycode_delete">삭제</string>
+    <string name="clear_user_data_dialog_title">%1$s 사용자 데이터 삭제</string>
+    <string name="display_options_start_with_passthrough">패스스루 모드로 시작</string>
+    <string name="developer_options_clear_user_data_description">모든 사용자 데이터</string>
+    <string name="voice_input_start">무엇을 입력하시겠습니까?</string>
+    <string name="tray_wifi_unavailable_ssid">사용할 수 없는 SSID</string>
+    <string name="video_mode_3d_top_bottom">3D 상하화면</string>
+    <string name="clear_user_data_dialog_text">%1$s이 초기화 됩니다. 동기화하지 않은 경우, 저장된 로그인 정보, 방문 기록과 북마크를 포함한 모든 데이터가 완전히 삭제됩니다. %1$s은 초기화가 완료된 후 자동으로 종료됩니다. 계속하시겠습니까?</string>
+    <string name="security_options_use_system_root_ca">시스템에서 신뢰할 수 있는 루트 인증서 사용</string>
 </resources>
