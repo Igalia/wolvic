@@ -282,9 +282,7 @@ BrowserWorld::State::CheckBackButton() {
           continue;
       }
 
-    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
-        (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
-        (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
+    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP))) {
           SimulateBack();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
@@ -425,16 +423,13 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.pointer->Load(device);
     }
 
-    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) ||
-      (!(controller.lastButtonState & ControllerDelegate::BUTTON_B) && (controller.buttonState & ControllerDelegate::BUTTON_B)) ||
-      (!(controller.lastButtonState & ControllerDelegate::BUTTON_Y) && (controller.buttonState & ControllerDelegate::BUTTON_Y))) {
+    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP))) {
       if (controller.handActionEnabled && !controller.leftHanded) {
           VRBrowser::HandleAppExit();
       } else {
           SimulateBack();
       }
     }
-
 
     const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
                          controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD ||
