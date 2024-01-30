@@ -17,6 +17,7 @@
 #include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
 #include "JNIUtil.h"
+#include "DeviceUtils.h"
 
 #include <vector>
 #include <cassert>
@@ -52,6 +53,7 @@ struct DeviceDelegateVisionGlass::State {
   bool clicked;
   GLsizei glWidth, glHeight;
   float near, far;
+  vrb::Matrix reorientMatrix;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , headingMatrix(vrb::Matrix::Identity())
@@ -60,6 +62,7 @@ struct DeviceDelegateVisionGlass::State {
       , glHeight(0)
       , near(0.1f)
       , far(1000.0f)
+      , reorientMatrix(vrb::Matrix::Identity())
   {
   }
 
@@ -154,18 +157,18 @@ DeviceDelegateVisionGlass::GetHeadTransform() const {
 
 const vrb::Matrix&
 DeviceDelegateVisionGlass::GetReorientTransform() const {
-  static vrb::Matrix identity(vrb::Matrix::Identity());
-  return identity;
+  return m.reorientMatrix;
 }
 
 void
 DeviceDelegateVisionGlass::SetReorientTransform(const vrb::Matrix& aMatrix) {
-  // Ignore reorient transform
+  m.reorientMatrix = aMatrix;
 }
 
 void
 DeviceDelegateVisionGlass::Reorient() {
-  // Ignore reorient
+    vrb::Matrix head = GetHeadTransform();
+    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
 }
 
 void
