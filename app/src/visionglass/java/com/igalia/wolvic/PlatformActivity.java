@@ -36,6 +36,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
@@ -199,6 +200,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 return;
             }
             windows.getFocusedWindow().loadHome();
+        }));
+
+        ToggleButton headlockButton = findViewById(R.id.headlock_toggle_button);
+        headlockButton.setOnClickListener(v -> runPhoneUICallback((activity) -> {
+            activity.setHeadLockEnabled(headlockButton.isChecked());
         }));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

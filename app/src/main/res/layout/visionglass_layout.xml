@@ -16,6 +16,17 @@
             android:layout_weight="0.10"
             android:orientation="horizontal">
 
+            <ToggleButton
+                android:id="@+id/headlock_toggle_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/headlock_toggle_button_states"
+                android:checked="false"
+                android:text="ToggleButton"
+                android:textOff=""
+                android:textOn="" />
+
             <ImageButton
                 android:id="@+id/voice_button"
                 android:layout_width="0dp"
