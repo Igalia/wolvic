@@ -228,7 +228,7 @@
     <string name="security_options_permissions_title">Permisos (Permitir a %1$s acceder a)</string>
     <string name="security_options_permissions_reject_message">Este permiso só se pode desactivar nos permisos do sistema</string>
     <string name="security_options_permission_location">Localización</string>
-    <string name="security_options_permission_fine_location_warning">Wolvic só pode acceder á tua ubicación aproximada. Podes cambiar isto nos axustes do sistema.</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic só pode acceder á túa ubicación aproximada. Podes mudar isto nos axustes do sistema.</string>
     <string name="security_options_permission_storage">Almacenamento</string>
     <string name="security_options_permission_camera_and_microphone">Cámara e micrófono</string>
     <string name="security_options_block_pup_up_windows">Bloquear xanelas pop-up</string>
@@ -696,9 +696,11 @@
     <string name="hamburger_menu_addons">Complementos</string>
     <string name="whats_new_button_start_browsing">Comezar a navegar</string>
     <string name="deprecated_version_dialog_title">Actualización necesaria</string>
-    <string name="deprecated_version_dialog_body">Esta versión de desenrolo de Wolvic deixará de estar dispoñible a finais de Outubro de 2023.
-        \n\nPor favor, instala a versión máis actual de Wolvic dende a Meta Quest Store.
-        \n\nIMPORTANTE: a menos que uses Mozilla Sync, a nova app de Wolvic non terá os teus marcadores nen as tuas páxinas abertas.</string>
+    <string name="deprecated_version_dialog_body">Esta versión de desenvolvemento de Wolvic deixará de estar dispoñible en breve.
+\n
+\nPor favor, instala a versión máis recente de Wolvic dende la tenda de Oculus.
+\n
+\nIMPORTANTE: a menos que uses Firefox Sync, a nova app de Wolvic non terá os teus marcadores nin as tuas páxinas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender máis…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="webxr_dialog_button_on">Activado</string>
@@ -748,4 +750,36 @@
     <string name="upload_button">Enviar</string>
     <string name="upload_list_empty">Non hai arquivos dispoñibles para enviar</string>
     <string name="settings_language_portuguese">Portugués</string>
+    <string name="user_feedback_tooltip">Comparte ideas e comentarios</string>
+    <string name="clear_user_data_dialog_title">Borrar os datos do usuario %1$s</string>
+    <string name="keyboardview_keycode_mode_change">Cambio de modo</string>
+    <string name="display_options_start_with_passthrough">Iniciar co modo Passthrough</string>
+    <string name="security_options_use_system_root_ca">Usar System Trusted root Certificates</string>
+    <string name="voice_input_start">Que queres introducir?</string>
+    <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
+    <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_cancel">Cancelar</string>
+    <string name="keyboardview_keycode_delete">Borrar</string>
+    <string name="keyboardview_keycode_done">Listo</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="rCN_first_launch_clickable_terms_text">Acordo de usuario</string>
+    <string name="rCN_first_launch_confirmation_body">Se escolles \"Non aceptar\", non poderemos proporcionar servizos.
+\n
+\nPodes ler o Acordo de Usuario e a Política de Privacidade completos.</string>
+    <string name="rCN_first_launch_confirmation_agree">Aceptar e continuar</string>
+    <string name="rCN_first_launch_agree">Aceptar</string>
+    <string name="rCN_first_launch_confirmation_disagree">Non aceptar e saír</string>
+    <string name="clear_user_data_dialog_text">%1$s será reiniciado. Todos os datos, incluídos os logins gardados, a historia e os marcadores, serán borrados permanentemente se non foron sincronizados. %1$s pecharase automáticamente cando o borrado finalice. Desexas continuar?</string>
+    <string name="developer_options_clear_user_data_description">Todos os datos de usuario</string>
+    <string name="rCN_first_launch_title">Notificación do acordo co usuario e a política de privacidade</string>
+    <string name="rCN_first_launch_body">Benvido a \"Wolvic\"!
+\n
+\nPara rexistrarse e usar \"Wolvic\" é necesario aceptar o Acordo de Usuario e a Política de Privacidade, ou non poderemos proporcionar servizos. Por favor lea coidadosamente os documentos e prema en \"Aceptar\" para continuar. Se premes en \"Non aceptar\", non poderás continuar usando \"Wolvic\".
+\n
+\nPodes ler o Acordo de Usuario e a Política de Privacidade completos.</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Política de Privacidade</string>
+    <string name="rCN_first_launch_disagree">Non aceptar</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="tray_wifi_unavailable_ssid">SSID non dispoñible</string>
 </resources>
