@@ -1282,14 +1282,12 @@
     <string name="before_unload_prompt_stay">Rester sur la page</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
     <string name="before_unload_prompt_leave">Quitter la page</string>
-
     <!-- This string is displayed in the title for dialog that warns users about a navigation that results in a repost. -->
     <string name="repost_confirm_title">Confirmer le nouvel envoi du formulaire</string>
     <!-- This string is displayed in the message for re-navigation to page that leads to HTTP POST. -->
-    <string name="repost_confirm_message">La page que vous recherchez a utilisé des informations que vous avez envoyées. Si vous revenez sur cette page, chaque action précédemment effectuée sera répétée. Souhaitez-vous continuer ?</string>
+    <string name="repost_confirm_message">La page que vous recherchez a utilisé des informations que vous avez envoyées. Si vous revenez sur cette page, chaque action précédemment effectuée sera répétée. Souhaitez-vous continuer ?</string>
     <!-- This string is displayed in the resend button for post warning -->
     <string name="repost_confirm_continue">Continuer</string>
-
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Débloquer la page</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
@@ -1759,16 +1757,16 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_blocked_body">Pour continuer, autorisez l\'installation de l\'extension locale dans les Options pour les développeurs.</string>
     <string name="web_apps_dialog_body">Souhaitez-vous installer l\'application Web suivante \? Elle sera disponible dans la librairie.</string>
     <string name="settings_language_portuguese">Portugais</string>
-    <string name="deprecated_version_dialog_title">Mise à jour nécessaire</string>
+    <string name="deprecated_version_dialog_title">Fin de maintenance proche</string>
     <string name="deprecated_version_dialog_info_button">En savoir plus…</string>
     <string name="deprecated_version_dialog_store_button">Installer…</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
-    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic sera discontinuée à la fin d\'octobre 2023.
+    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic ne sera bientôt plus maintenue.
 \n
 \nVeuillez installer la nouvelle version de Wolvic à partir de la Meta Quest Store.
 \n
-\nIMPORTANT : hormis si vous utilisez Mozilla Sync, la nouvelle application Wolvic n’aura ni vos marque-pages ni vos onglets.</string>
-    <string name="rCN_first_launch_body">Bienvenue dans « Wolvic » !
+\nIMPORTANT : hormis si vous utilisez Firefox Sync, la nouvelle application Wolvic n’aura ni vos marque-pages ni vos onglets.</string>
+    <string name="rCN_first_launch_body">Bienvenue dans « Wolvic » !
 \n
 \nAfin de vous enregistrer et d’utiliser « Wolvic », vous devez accepter les conditions d’utilisation et la politique de confidentialité, ou nous ne pourrons pas vous fournir de services. Veuillez lire attentivement les documents et cliquer sur « Accepter » pour continuer. Si vous cliquez « Refuser », vous ne pourrez pas continuer à utiliser « Wolvic ».
 \n
@@ -1784,4 +1782,19 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="rCN_first_launch_title">Notification de conditions d’utilisation et politique de confidentialité</string>
     <string name="rCN_first_launch_clickable_terms_text">Conditions d\'utilisation</string>
     <string name="rCN_first_launch_confirmation_agree">Accepter et Continuer</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="display_options_start_with_passthrough">Démarrer avec le mode Passthrough</string>
+    <string name="developer_options_clear_user_data_description">Toutes les données utilisateur</string>
+    <string name="security_options_use_system_root_ca">Utiliser les Certificats Racine Approuvés du système</string>
+    <string name="voice_input_start">Que souhaitez-vous entrer ?</string>
+    <string name="keyboardview_keycode_cancel">Annuler</string>
+    <string name="keyboardview_keycode_delete">Supprimer</string>
+    <string name="keyboardview_keycode_done">Fait</string>
+    <string name="keyboardview_keycode_mode_change">Changement de mode</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="keyboardview_keycode_enter">Entrée</string>
+    <string name="tray_wifi_unavailable_ssid">SSID non disponible</string>
+    <string name="clear_user_data_dialog_title">Supprimer les données utilisateur de %1$s</string>
+    <string name="clear_user_data_dialog_text">%1$s va être réinitialisé. Toutes les données, y compris les identifiants enregistrés, l’historique et les marque-pages, seront définitivement supprimés, s’ils n’ont pas été synchronisés. %1$s sera fermé automatiquement après la fin de la réinitialisation. Souhaitez-vous continuer ?</string>
+    <string name="video_mode_3d_top_bottom">3D en haut et en bas</string>
 </resources>
