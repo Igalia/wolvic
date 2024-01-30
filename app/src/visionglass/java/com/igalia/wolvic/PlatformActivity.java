@@ -33,6 +33,7 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -162,12 +163,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         setContentView(R.layout.visionglass_layout);
 
         View touchpad = findViewById(R.id.touchpad);
-        // Make touchpad square.
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) touchpad.getLayoutParams();
-        layoutParams.height = getResources().getDisplayMetrics().widthPixels;
-        touchpad.setLayoutParams(layoutParams);
-
-        touchpad.setOnClickListener((View.OnClickListener) v -> {
+        touchpad.setOnClickListener(v -> {
             // We don't really need the coordinates of the click because we use the position
             // of the aim in the 3D environment.
             queueRunnable(() -> touchEvent(false, 0, 0));
@@ -192,11 +188,9 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             return true;
         });
 
-        // Find the buttons by their id
-        Button backButton = findViewById(R.id.back_button);
-        Button homeButton = findViewById(R.id.home_button);
+        ImageButton backButton = findViewById(R.id.back_button);
+        ImageButton homeButton = findViewById(R.id.home_button);
 
-        // Set click listeners for the buttons
         backButton.setOnClickListener(v -> onBackPressed());
         homeButton.setOnClickListener(v -> runPhoneUICallback((activity) -> {
             Windows windows = activity.getWindows();

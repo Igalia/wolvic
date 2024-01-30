@@ -3,28 +3,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/touchpad"
+    <LinearLayout
+        android:background="@color/cardview_dark_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#333333" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back_button"
-        android:drawableStart="@drawable/ic_icon_back"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/home_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/home_tooltip"
-        android:drawableStart="@drawable/ic_icon_home"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"/>
+            <ImageButton
+                android:id="@+id/voice_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/voice_search_tooltip"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_icon_microphone"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+        <View
+            android:background="@android:drawable/btn_default"
+            android:id="@+id/touchpad"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:contentDescription="@string/back_tooltip"
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.75"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_icon_back" />
+
+            <ImageButton
+                android:contentDescription="@string/home_tooltip"
+                android:id="@+id/home_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_icon_home" />
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
