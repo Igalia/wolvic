@@ -1,6 +1,7 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.annotation.UiThread;
 import org.chromium.base.Callback;
 import org.chromium.content.browser.input.SelectPopup;
 import org.chromium.content.browser.input.SelectPopupItem;
+import org.chromium.wolvic.ColorChooserManager;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
@@ -38,6 +40,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         this.mSession = mSession;
 
         SelectPopup.setFactory(new SelectPopupFactory());
+        ColorChooserManager.setFactory(new ColorChooserFactory());
     }
 
     public WSession.PromptDelegate getDelegate() { return this.mDelegate; }
@@ -237,7 +240,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
     }
 
-    public class ChoicePrompt extends BasePromptImpl implements  WSession.PromptDelegate.ChoicePrompt {
+    public class ChoicePrompt extends BasePromptImpl implements WSession.PromptDelegate.ChoicePrompt {
         public class Choice implements WSession.PromptDelegate.ChoicePrompt.Choice {
             public final boolean disabled;
             public final @Nullable String icon;
@@ -249,7 +252,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
             /* package */ Choice(SelectPopupItem item, int id, boolean selected) {
                 this.disabled = !item.isEnabled();
-                this.id =  String.valueOf(id);
+                this.id = String.valueOf(id);
                 this.icon = null;
                 this.label = item.getLabel();
                 this.separator = false;
@@ -293,7 +296,6 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             @Override
             @Nullable
             public Choice[] items() { return this.choices; }
-
         }
         public final @Nullable String message;
 
@@ -319,7 +321,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             Choice choice = new Choice(item, position[0], isSelected);
             if (item.isGroupHeader()) {
                 ArrayList<Choice> choices = new ArrayList<>();
-                int nextPosition = position[0]+1;
+                int nextPosition = position[0] + 1;
                 while (items.size() > nextPosition) {
                     SelectPopupItem childItem = items.get(nextPosition);
                     if (childItem.isGroupHeader())
@@ -329,7 +331,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
                     Choice child = createChoice(items, position, selected, selectedIndex);
                     assert child != null;
                     choices.add(child);
-                    nextPosition = position[0]+1;
+                    nextPosition = position[0] + 1;
                 }
                 choice.choices = choices.toArray(new Choice[choices.size()]);
             }
@@ -382,7 +384,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String selectedId) {
             try {
                 int id = Integer.parseInt(selectedId);
-                return confirm(new int[] {id});
+                return confirm(new int[]{id});
             } catch (NumberFormatException nfe) {
                 return confirm((int[]) null);
             }
@@ -461,7 +463,8 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
 
         @Override
-        @ChoiceType public int type() {
+        @ChoiceType
+        public int type() {
             return this.type;
         }
     }
@@ -488,6 +491,68 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @Override
         public void hide(boolean sendsCancelMessage) {
             mChoicePrompt.dismiss();
+        }
+    }
+
+    public class ColorChooserFactory implements ColorChooserManager.Factory {
+        public ColorChooserManager.Bridge create(int initialColor, ColorChooserManager.Listener listener) {
+            return new ColorPromptBridge(initialColor, listener);
+        }
+    }
+
+    public class ColorPromptBridge implements ColorChooserManager.Bridge {
+
+        private final ColorPrompt mColorPrompt;
+
+        public ColorPromptBridge(int initialColor, ColorChooserManager.Listener listener) {
+            mColorPrompt = new ColorPrompt(initialColor, listener);
+        }
+
+        @Override
+        public void show() {
+            try {
+                final WSession.PromptDelegate delegate = mSession.getPromptDelegate();
+                delegate.onColorPrompt(mSession, mColorPrompt);
+            } catch (WindowManager.BadTokenException e) {
+                mColorPrompt.markComplete();
+            }
+        }
+
+        @Override
+        public void close() {
+            if (!mColorPrompt.isComplete())
+                mColorPrompt.dismiss();
+        }
+    }
+
+    public static class ColorPrompt extends BasePromptImpl implements WSession.PromptDelegate.ColorPrompt {
+        private final String mDefaultColor;
+        private final ColorChooserManager.Listener mListener;
+
+        public ColorPrompt(int defaultColor, ColorChooserManager.Listener listener) {
+            mDefaultColor = "#" + Integer.toHexString(defaultColor);
+            mListener = listener;
+        }
+
+        @Nullable
+        @Override
+        public String defaultValue() { return mDefaultColor; }
+
+        @UiThread
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String color) {
+            markComplete();
+            mListener.onColorChanged(Color.parseColor(color));
+            return new PromptResponseImpl();
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse dismiss() {
+            if (!isComplete())
+                mListener.onColorChanged(Color.parseColor(mDefaultColor));
+            return new PromptResponseImpl();
         }
     }
 }
