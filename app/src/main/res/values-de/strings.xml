@@ -1913,11 +1913,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Lossurfen</string>
 
-    <string name="deprecated_version_dialog_title">Support endet bald</string>
-    <string name="deprecated_version_dialog_body">Diese \"App Lab\"-Version von Wolvic wird bis Ende Oktober 2023 entfernt.
-        \n\nBitte installieren Sie die neueste Version von Wolvic aus dem Meta Quest Store.
-        \n\nWICHTIG: Wenn Sie Sync nicht verwenden, wird die neue Wolvic-App Ihre Lesezeichen und Tabs nicht haben.</string>
-
     <!-- This string is displayed in the title of the slow script dialog. -->
     <string name="slow_script_dialog_title">Langsames Skript</string>
 
