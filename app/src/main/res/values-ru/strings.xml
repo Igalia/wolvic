@@ -1667,4 +1667,59 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_confirm_install">Установить</string>
     <string name="download_addon_install_blocked">Установка локального дополнения заблокирована</string>
     <string name="voice_service_metkai">MeetKai</string>
+    <string name="developer_options_center_windows">Центрировать окна по вертикали</string>
+    <string name="display_options_windows_can_move">Передвигать окна перетаскиванием</string>
+    <string name="display_options_sound_effect">Использовать звуковые эффекты</string>
+    <string name="display_options_start_with_passthrough">Начинать в режиме Passthrough</string>
+    <string name="display_options_latin_auto_complete">Автодополнение слов для латинской клавиатуры</string>
+    <string name="display_options_head_lock">Включить Head Lock</string>
+    <string name="display_options_windows_distance">Расстояние между окнами</string>
+    <string name="fxa_account_options_device_name">Название устройства</string>
+    <string name="security_options_use_system_root_ca">Использовать системные доверенные корневые сертификаты</string>
+    <string name="voice_input_start">Что бы вы хотели ввести?</string>
+    <string name="video_mode_3d_top_bottom">3D Вертикальная стереопара</string>
+    <string name="deprecated_version_dialog_body">Данная версия Wolvic \"App Lab\" будет удалена в конце октября 2023 года.
+\n
+\nПожалуйста, установите последнюю версию Wolvic из каталога Meta Quest Store.
+\n
+\nВАЖНО: если вы не используете синхронизацию, новое приложение Wolvic не получит ваши вкладки и закладки.</string>
+    <string name="rCN_first_launch_confirmation_body">Если вы выбрали «Не соглашаюсь», к сожалению, мы не сможем предоставлять вам наши услуги.
+\n
+\nВы можете прочитать полный текст пользовательского соглашения и политики конфиденциальности.</string>
+    <string name="rCN_first_launch_confirmation_agree">Согласиться и продолжить</string>
+    <string name="rCN_first_launch_confirmation_disagree">Не согласиться и выйти</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_cancel">Cancel</string>
+    <string name="keyboardview_keycode_delete">Delete</string>
+    <string name="keyboardview_keycode_done">Done</string>
+    <string name="keyboardview_keycode_mode_change">Mode change</string>
+    <string name="keyboardview_keycode_enter">Enter</string>
+    <string name="tray_wifi_unavailable_ssid">SSID недоступен</string>
+    <string name="clear_user_data_dialog_title">Очистить данные пользователя %1$s</string>
+    <string name="clear_user_data_dialog_text">%1$s будет сброшен. Все данные, включая сохранённые логины, историю и закладки, будут безвозвратно удалены, если они не были ранее синхронизированы. %1$s будет автоматически закрыт после завершения сброса. Продолжить?</string>
+    <string name="developer_options_clear_user_data_description">Все данные пользователя</string>
+    <string name="experimental_features">Экспериментальные функции</string>
+    <string name="controller_options_haptic_feedback">Тактильная обратная связь</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic может получать только приблизительные координаты. Это можно изменить в системных настройках.</string>
+    <string name="device_name">%1$s на %2$s</string>
+    <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="move_tooltip">Переместить</string>
+    <string name="deprecated_version_dialog_title">Поддержка скоро прекратится</string>
+    <string name="rCN_first_launch_title">Пользовательское соглашение и уведомление о политике конфиденциальности</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="rCN_first_launch_clickable_terms_text">Пользовательское соглашение</string>
+    <string name="rCN_first_launch_agree">Соглашаюсь</string>
+    <string name="rCN_first_launch_disagree">Не соглашаюсь</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Политика конфиденциальности</string>
+    <string name="user_feedback_tooltip">Делитесь идеями и обратной связью</string>
+    <string name="privacy_policy_subtitle_3">Применимые законы и исходный язык</string>
+    <string name="upload_list_empty">Нет файлов для загрузки</string>
+    <string name="deprecated_version_dialog_info_button">Узнать больше…</string>
+    <string name="deprecated_version_dialog_store_button">Установить…</string>
+    <string name="rCN_first_launch_body">Добро пожаловать в Wolvic!
+\n
+\nЧтобы зарегистрировать и начать пользоваться Wolvic, вы должны принять пользовательское соглашение и политику конфиденциальности. Внимательно прочитайте документы и нажмите «Соглашаюсь», чтобы продолжить. Если вы нажмёте «Не соглашаюсь», вы не сможете пользоваться Wolvic.
+\n
+\nВы можете ознакомиться с полным текстом пользовательского соглашения и политики конфиденциальности.</string>
+    <string name="privacy_policy_section_3">Эта политика конфиденциальности регулируется законодательством Испании. Оригинальный язык политики — испанский. Любые возможные отличия между оригинальной версией и переводами на другие языки будут трактоваться в соответствии с испанской версией, которая доступна по адресу: https://wolvic.com/es/legal/privacy/ .</string>
 </resources>
