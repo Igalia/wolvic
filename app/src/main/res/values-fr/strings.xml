@@ -938,7 +938,7 @@
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchronisation…</string>
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Vous déconnecter de votre compte Mozilla ?</string>
+    <string name="fxa_signout_confirmation_title">Vous déconnecter de votre compte Mozilla ?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">SI vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
@@ -1797,4 +1797,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="clear_user_data_dialog_title">Supprimer les données utilisateur de %1$s</string>
     <string name="clear_user_data_dialog_text">%1$s va être réinitialisé. Toutes les données, y compris les identifiants enregistrés, l’historique et les marque-pages, seront définitivement supprimés, s’ils n’ont pas été synchronisés. %1$s sera fermé automatiquement après la fin de la réinitialisation. Souhaitez-vous continuer ?</string>
     <string name="video_mode_3d_top_bottom">3D en haut et en bas</string>
+    <string name="move_tooltip">Déplacer</string>
+    <string name="display_options_sound_effect">Utiliser les effets sonores</string>
+    <string name="display_options_latin_auto_complete">Autocomplétion avec le clavier latin</string>
+    <string name="display_options_head_lock">Activer le Head Lock</string>
+    <string name="display_options_windows_distance">Distance des fenêtres</string>
+    <string name="experimental_features">Fonctionnalités expérimentales</string>
+    <string name="controller_options_haptic_feedback">Retour haptique</string>
+    <string name="developer_options_center_windows">Centrer les fenêtres verticalement</string>
+    <string name="display_options_windows_can_move">Glisser pour déplacer les fenêtres</string>
+    <string name="fxa_account_options_device_name">Nom de l\'appareil</string>
+    <string name="device_name">%1$s sur %2$s</string>
 </resources>
