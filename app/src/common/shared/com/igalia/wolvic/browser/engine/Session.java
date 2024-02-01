@@ -275,7 +275,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private void dumpState(WSession.ProgressDelegate aListener) {
         if (mState.mIsLoading) {
             aListener.onPageStart(mState.mSession, mState.mUri);
+            aListener.onProgressChange(mState.mSession, 0);
         } else {
+            aListener.onProgressChange(mState.mSession, 100);
             aListener.onPageStop(mState.mSession, true);
         }
 
@@ -1249,6 +1251,16 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
         for (WSession.ProgressDelegate listener : mProgressListeners) {
             listener.onPageStop(aSession, b);
+        }
+    }
+
+    @Override
+    public void onProgressChange(@NonNull WSession aSession, int progress) {
+        if (mState.mSession != aSession) {
+            return;
+        }
+        for (WSession.ProgressDelegate listener : mProgressListeners) {
+            listener.onProgressChange(aSession, progress);
         }
     }
 
