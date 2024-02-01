@@ -1889,6 +1889,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsLoading(false);
     }
 
+    @Override
+    public void onProgressChange(@NonNull WSession aSession, int progress) {
+        // Pages that are completely loaded from cache don't trigger onFirstContentfulPaint so we
+        // force it here to the get page properly rendered.
+        if (!mAfterFirstPaint)
+            mSession.onFirstContentfulPaint(aSession);
+    }
+
     public void captureImage() {
         mSession.captureBitmap();
     }
