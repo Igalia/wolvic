@@ -764,4 +764,15 @@
 \nVocê pode ler o Contrato de Usuário completo e Política de Privacidade.</string>
     <string name="clear_user_data_dialog_text">%1$s será redefinido. Todos os dados, incluindo logins salvos, histórico e marcadores, serão excluídos permanentemente se não forem sincronizados. %1$s fechará automaticamente após a reinicialização ser concluída. Deseja continuar?</string>
     <string name="display_options_start_with_passthrough">Comece no modo Passthrough</string>
+    <string name="fxa_account_options_device_name">Nome do dispositivo</string>
+    <string name="device_name">%1$s em %2$s</string>
+    <string name="move_tooltip">Mover</string>
+    <string name="developer_options_center_windows">Centralizar Janelas Verticalmente</string>
+    <string name="display_options_windows_can_move">Arraste para mover janelas</string>
+    <string name="display_options_sound_effect">Usar efeitos sonoros</string>
+    <string name="display_options_latin_auto_complete">Teclado em Latim com Autocompletar</string>
+    <string name="display_options_head_lock">Habilitar bloqueio de cabeça</string>
+    <string name="display_options_windows_distance">Distância das Janelas</string>
+    <string name="experimental_features">Características Experimentais</string>
+    <string name="controller_options_haptic_feedback">Feedback háptico</string>
 </resources>
