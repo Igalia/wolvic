@@ -752,7 +752,7 @@
     <string name="user_feedback_tooltip">Comparte ideas e comentarios</string>
     <string name="clear_user_data_dialog_title">Borrar os datos do usuario %1$s</string>
     <string name="keyboardview_keycode_mode_change">Cambio de modo</string>
-    <string name="display_options_start_with_passthrough">Iniciar co modo Passthrough</string>
+    <string name="display_options_start_with_passthrough">Iniciar no modo Passthrough</string>
     <string name="security_options_use_system_root_ca">Usar System Trusted root Certificates</string>
     <string name="voice_input_start">Que queres introducir?</string>
     <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
