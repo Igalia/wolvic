@@ -174,7 +174,7 @@
     <string name="settings_accounts_reconnect">Reconectar</string>
     <string name="settings_whats_new">Novidades</string>
     <string name="developer_options_curved_display">Activar display curvo</string>
-    <string name="developer_options_center_windows">Centrar verticalmente as ventanas</string>
+    <string name="developer_options_center_windows">Centrar verticalmente as xanelas</string>
     <string name="developer_options_remote_debugging">Activar depuración remota</string>
     <string name="developer_options_debug_logging">Activar logging de depuración</string>
     <string name="hardware_acceleration_switch">Activar aceleración hardware da interface</string>
@@ -318,7 +318,7 @@
     <string name="addons_remove_error_dialog_title">Ocorreu un erro ao eliminar %1$s</string>
     <string name="addons_permissions_learn_more">Saber máis sobre permisos</string>
     <string name="addons_remove_error_dialog_ok">Ok</string>
-    <string name="fxa_signout_confirmation_title">Pechar a sesión de Mozilla Accounts\?</string>
+    <string name="fxa_signout_confirmation_title">Pechar a sesión de Mozilla Accounts?</string>
     <string name="fxa_signout_confirmation_body">Cando peche a sesión, non vai poder enviar ou recibir pestanas doutros dispositivos. O seu historial e os marcadores tamén deixarán de sincronizarse.</string>
     <string name="fxa_signout_confirmation_checkbox_v1">Limpar historial, marcadores e inicios de sesión neste dispositivo</string>
     <string name="fxa_signout_confirmation_signout">Pechar sesión</string>
@@ -332,11 +332,10 @@
     <string name="history_context_add_bookmarks">Engadir aos marcadores</string>
     <string name="history_context_remove_bookmarks">Eliminar dos marcadores</string>
     <string name="download_context_delete">Borrar</string>
-    <string name="display_options_start_with_passthrough">Iniciar no modo Passthrough</string>
-    <string name="display_options_windows_can_move">As ventanas poden moverse</string>
-    <string name="display_options_sound_effect">Usar efectos de sonido</string>
-    <string name="display_options_head_lock">Fixar a ventana no teu campo visual</string>
-    <string name="display_options_windows_distance">Distancia das ventanas</string>
+    <string name="display_options_windows_can_move">As xanelas poden moverse</string>
+    <string name="display_options_sound_effect">Usar efectos de son</string>
+    <string name="display_options_head_lock">Activar Head Lock</string>
+    <string name="display_options_windows_distance">Distancia das xanelas</string>
     <string name="experimental_features">Funcionalidades experimentais</string>
     <string name="controller_options_haptic_feedback">Feedback táctil</string>
     <string name="display_options_reset">Restablecer configuración de display</string>
@@ -696,9 +695,9 @@
     <string name="hamburger_menu_addons">Complementos</string>
     <string name="whats_new_button_start_browsing">Comezar a navegar</string>
     <string name="deprecated_version_dialog_title">Actualización necesaria</string>
-    <string name="deprecated_version_dialog_body">Esta versión de desenvolvemento de Wolvic deixará de estar dispoñible en breve.
+    <string name="deprecated_version_dialog_body">Esta versión de desenvolvemento de Wolvic deixará de estar dispoñible a finais de outubre de 2023.
 \n
-\nPor favor, instala a versión máis recente de Wolvic dende la tenda de Oculus.
+\nPor favor, instala a versión máis recente de Wolvic dende la tenda de Meta.
 \n
 \nIMPORTANTE: a menos que uses Firefox Sync, a nova app de Wolvic non terá os teus marcadores nin as tuas páxinas abertas.</string>
     <string name="deprecated_version_dialog_info_button">Aprender máis…</string>
@@ -782,4 +781,5 @@
     <string name="rCN_first_launch_disagree">Non aceptar</string>
     <string name="keyboardview_keycode_enter">Enter</string>
     <string name="tray_wifi_unavailable_ssid">SSID non dispoñible</string>
+    <string name="display_options_latin_auto_complete">Autocompletado co teclado latino</string>
 </resources>
