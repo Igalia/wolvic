@@ -39,7 +39,7 @@
     <string name="developer_options_reset">Redefinir Configurações do Programador</string>
     <string name="fxa_account_last_synced">Última sincronização %1$d minutos atrás</string>
     <string name="fxa_account_options_device_name">Nome do Dispositivo</string>
-    <string name="device_name">%1$s en %2$s</string>
+    <string name="device_name">%1$s em %2$s</string>
     <string name="security_options_login_saved">Logins salvos…</string>
     <string name="security_options_permission_location">Localização</string>
     <string name="security_options_block_pup_up_windows">Bloquear janelas Pop-Up</string>
@@ -222,7 +222,7 @@
 \n• A IGALIA não acessará nem armazenará, de forma alguma, os endereços ou URLs visitados por si.
 \n• Pode ser possível a integração com serviços em nuvem (como Contas Mozilla ou Contas do Google) para sincronizar dados como seu histórico de navegação ou os seus favoritos de utilizador. Neste caso, a IGALIA não acessará ou processará qualquer informação de forma alguma, nem passará pelos servidores da IGALIA.
 \n
-\nLembramos novamente que as plataformas de Terceiros que acessa ou usa com esta aplicação podem coletar esses ou outros dados de identificação sobre si, preenchendo-os de forma voluntária ou involuntária e/ou consciente ou inconscientemente, possivelmente fora do escopo da legislação europeia de proteção de dados . Portanto, recomendamos que se informe e preste atenção especial aos termos legais dos referidos Terceiros, como, por exemplo, o seguinte:
+\nLembramos novamente que as plataformas de Terceiros que acessa ou usa com esta aplicação podem recolher esses ou outros dados de identificação sobre si, preenchendo-os de forma voluntária ou involuntária e/ou consciente ou inconscientemente, possivelmente fora do âmbito da legislação europeia de proteção de dados . Portanto, recomendamos que se informe e preste atenção especial aos termos legais dos referidos Terceiros, como, por exemplo, o seguinte:
 \n
 \n• Google: https://policies.google.com/privacy
 \n• Facebook: https://www.facebook.com/about/privacy/update
@@ -433,12 +433,12 @@
     <string name="developer_options_msaa_disabled">Desativado</string>
     <string name="settings_accounts_sign_out">Sair</string>
     <string name="display_options_start_with_passthrough">Iniciar no modo Passthrough</string>
-    <string name="developer_options_center_windows">Center Windows Vertically</string>
-    <string name="display_options_windows_can_move">As janelas podem ser movidas</string>
+    <string name="developer_options_center_windows">Centralizar as Janelas Verticalmente</string>
+    <string name="display_options_windows_can_move">Arrastar para mover janelas</string>
     <string name="display_options_sound_effect">Usar efeitos sonoros</string>
     <string name="display_options_windows_distance">Distância das janelas</string>
     <string name="experimental_features">Funcionalidades experimentais</string>
-    <string name="controller_options_haptic_feedback">Haptic Feedback</string>
+    <string name="controller_options_haptic_feedback">Feedback háptico</string>
     <string name="display_options_head_lock">Fixar a janela no seu campo visual</string>
     <string name="display_options_reset">Redefinir configurações de exibição</string>
     <string name="settings_privacy_policy">Política de Privacidade</string>
