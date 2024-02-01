@@ -1804,7 +1804,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="move_tooltip">이동</string>
     <string name="developer_options_center_windows">창 수직으로 정렬하기</string>
     <string name="experimental_features">실험 기능</string>
-    <string name="display_options_head_lock">시점고정 활성화</string>
+    <string name="display_options_head_lock">머리 고정(헤드락) 기능 활성화</string>
     <string name="display_options_sound_effect">음향 효과 사용</string>
     <string name="fxa_account_options_device_name">디바이스 이름</string>
     <string name="device_name">%2$s 의 %1$s</string>
