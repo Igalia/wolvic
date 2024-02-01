@@ -268,6 +268,7 @@
                     android:layout_marginStart="40dp"
                     app:on_text="@string/permission_allow"
                     app:off_text="@string/permission_reject"
+                    app:visibleGone="@{DeviceType.isHVRBuild()}"
                     app:description="@{String.format(@string/security_options_telemetry_send_data, @string/app_name)}" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
@@ -275,6 +276,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
+                    android:visibility="gone"
                     app:on_text="@string/permission_allow"
                     app:off_text="@string/permission_reject"
                     app:description="@{String.format(@string/security_options_crash_reports_send_data, @string/app_name)}" />
