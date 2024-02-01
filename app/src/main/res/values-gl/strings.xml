@@ -236,7 +236,7 @@
     <string name="security_options_permission_webxr">Dispositivos de realidade virtual (WebXR)</string>
     <string name="security_options_webxr_settings">Avanzado</string>
     <string name="security_options_crash_reports_send_data">Permitir a %1$s enviar informes de erros automáticos</string>
-    <string name="security_options_telemetry_send_data">Permitir a %1$s enviar datos técnicos e de interacción a Mozilla</string>
+    <string name="security_options_telemetry_send_data">Permitir a %1$s enviar datos técnicos e de interacción a Huawei</string>
     <string name="sync">Sincronización</string>
     <string name="on">Activado</string>
     <string name="off">Desactivado</string>

@@ -622,7 +622,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">技術的な対話データを Mozilla へ送信することを %1$s に許可する
+    <string name="security_options_telemetry_send_data">技術的な対話データを Huawei へ送信することを %1$s に許可する
  </string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.

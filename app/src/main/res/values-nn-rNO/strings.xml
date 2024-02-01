@@ -810,7 +810,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske data og data for bruk til Mozilla
+    <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske data og data for bruk til Huawei
  </string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog

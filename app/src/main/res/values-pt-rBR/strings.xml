@@ -400,7 +400,7 @@
     <string name="security_options_webxr_settings">Avançado</string>
     <string name="security_options_speech_data_collection_title">%1$s Coleta e Uso de Dados</string>
     <string name="security_options_speech_data_collect">Permitir que %1$s colete dados de fala</string>
-    <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para a Mozilla</string>
+    <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para a Huawei</string>
     <string name="on">Ligado</string>
     <string name="off">Desligado</string>
     <string name="sync">Sincronizar</string>
