@@ -1666,39 +1666,48 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         \n\n El contenido y elementos que integran la aplicación han sido implementados y/o desarrollados por IGALIA bajo licencias de código abierto, estando protegidos, sin limitaciones, por las leyes de propiedad intelectual e industrial del Reino de España y por los Tratados y Convenios internacionales que resultasen de aplicación.
     </string>
     <string name="privacy_policy_subtitle_2">Protección de datos</string>
-    <string name="privacy_policy_section_2">
-        IGALIA esta comprometida con el cumplimiento de las previsiones legales en materia de protección de datos personales: Reglamento (UE)2016/679, del Parlamento Europeo y del Consejo, de 27/4/2016 relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos (RGPD) y en la Ley Orgánica 3/2018, de 5 de diciembre, de protección de datos y garantía de los derechos digitales (LOPDGDD).
-        \n Los datos personales se definen legalmente como aquella información vinculada a una persona física identificada o identificable, siempre que su identidad pueda determinarse, directa o indirectamente, en particular mediante un identificador, como por ejemplo un nombre, un número de identificación, datos de localización, un identificador en línea o uno o varios elementos propios de la identidad física, fisiológica, genética, psíquica, económica, cultural o social de dicha persona.
-        \n IGALIA no recaba datos personales de forma que el usuario pueda ser identificado. Por ello, usted puede utilizar la aplicación, consultar y navegar por el entorno de realidad virtual sin revelar su identidad ni proporcionar datos de carácter personal a IGALIA, ya sea directa o indirectamente, por ello IGALIA no puede asumir ninguna responsabilidad por lo datos que se depositen en la misma.
-        \n Los únicos datos e información que obtendrá IGALIA por el uso de esta App, que en ningún momento se vincularán individualmente con el usuario, son los siguientes:
-        \n\n\t\u2022 Datos analíticos, puramente estadísticos y no identificativos.
-        \n\t\u2022 Para capturar y traducir la voz a texto, los datos sonoros del usuario son enviados a los servidores titularidad de la empresa responsable de cada plataforma, a través de una API al efecto: como por ejemplo, en Oculus, de Facebook, un servicio que se envía a Oculus Voice SDK. En ningún momento dichos datos son tratados, accedidos ni incorporados a los servidores titularidad de IGALIA. Los datos que se recopilen serán responsabilidad exclusiva de las empresas titulares de cada plataforma (en adelante, los Terceros) las cuales pueden estar ubicadas fuera de la Unión Europea y sometidas a un régimen jurídico menos protector de la privacidad del usuario. Le recomendamos leer atentamente la política de privacidad y condiciones de uso de cada una de dichas plataformas externas antes de aceptar y utilizar sus servicios. IGALIA no será directa ni indirectamente responsable del tratamiento de datos personales por parte de dichos Terceros.
-        \n\t\u2022 Se podrá obtener información de localización geográfica del navegador, en lugar del utilizado por el sistema. Sin embargo, para ello usted debe aceptar los permisos de localización de su dispositivo a través de un aviso específico al respecto e IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados en el punto anterior sí podrían hacerlo, en su caso. Preste atención a sus términos legales.
-        \n\t\u2022 IGALIA no accederá ni almacenará, en modo alguno, las direcciones ni las URLs visitadas por usted.
-        \n\t\u2022 En caso de integración de los servicios Cloud para cuentas de Terceros, como Mozilla Accounts o Google Accounts, para sincronizar datos como su historia de navegación o sus bookmarks de usuario, IGALIA no accederá ni tratará en modo alguno dicha información ni pasará por sus servidores.
-        \n\n Asimismo, usted observará que la aplicación le solicitará una serie de permisos especiales respecto a su dispositivo que, a continuación, aclaramos en cuanto a su función y finalidad:
-        \n\n\t\u2022 Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Meetkai cuya política de provacidad se puede consultar aquí: https://meetkai.com/privacy
-        \n\n\t\u2022 Permiso para la captación de fotos y vídeos: Es posible que se solicite debido a que el dispositivo del usuario utilice cámaras para ver el entorno y situar al usuario en el espacio físico mediante sistemas de trazado o “tracking”. IGALIA no accede ni trata dicha información.
-        \n\n\t\u2022 Permiso para obtener información de localización basada en fuentes como el GPS, estaciones de telefonía o WIFI: Si usted autoriza esto, se utilizará para mostrar en todo momento un icono del tipo de conexión en su aplicación así como, en su caso, la citada función de localización geográfica mencionada anteriormente. IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados anteriormente sí podrían hacerlo, en su caso. Preste atención a sus términos legales. En concreto, en los dispositivos de Huawei también se accede a la información del GPS para informar a un servicio propio de dicha compañía denominado “LocationService”.
-        \n\n\t\u2022 Permiso para leer, modificar o borrar fotos, contenido multimedia y ficheros en la tarjeta de memoria: esto es necesario para que el navegador pueda guardar información local en el dispositivo como los archivos de caché, ajustes, páginas visitadas y favoritas, etc. IGALIA no accede ni trata dicha información.
-        \n\n Recordamos nuevamente que las plataformas de Terceros a los que acceda o con los que utilice la presente aplicación, sí podrían recabar estos u otros datos identificativos sobre usted, en el caso de que los cumplimente o no de forma voluntaria y/o consciente, incluso fuera del ámbito de la legislación europea de protección de datos. Por ello, le recomendamos que se informe y preste especial atención a los términos legales de dichos Terceros como, por ejemplo, los siguientes:
-        \n\n\t\u2022 Google: https://policies.google.com/privacy
-        \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
-        \n\t\u2022 MeetKai: https://meetkai.com/privacy
-        \n\n Asimismo, IGALIA le informa de que si usted utiliza la opción de reconocimiento de voz del navegador, las transmisiones sonoras de su voz no serán conservadas ni vinculadas de modo alguno con usted, aunque sí se conservará el texto generado de manera totalmente anonimizada a efectos de mejora del servicio por parte de la empresa Meetkai (más información en el siguiente link: https://meetkai.com/es/privacy). Como es interés de IGALIA la no vinculación a ningún usuario y la no afectación de su privacidad, se ruega al usuario que no incluya ninguna información personal ni confidencial, de ningún tipo, en sus alocuciones sonoras de voz.
-        \n En cualquier caso, IGALIA garantiza el adecuado ejercicio por los interesados de los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, respecto de sus datos personales. A tal efecto, IGALIA ha establecido un protocolo/procedimiento interno para llevarlos a efecto.
-        \n La forma en que los interesados pueden ejercer sus derechos son: mediante solicitud a IGALIA en la dirección física: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referencia: “Protección de Datos” o en la dirección de correo electrónico: info@igalia.com
-        \n En ambos casos, el interesado deberá adjuntar copia de su DNI o documento identificativo para acreditar su identidad.
-        \n El Responsable de protección de datos o departamento al que se haya encomendado la gestión de los derechos, registrará los ejercicios de derechos en el formulario disponible al efecto, en el que se consignarán los siguientes datos:
-        \n\n\t\u2022 Nº de solicitud: se asignará un número a cada una de las solicitudes recibidas
-        \n\t\u2022 Sede: Si el responsable dispone de varias sedes, se hará constar la sede en la cual se recibió la solicitud
-        \n\t\u2022 Canal de reclamación: se indicará el canal por el cual se recibió la solicitud: dirección de correo física, mail, etc.
-        \n\t\u2022 Día de entrada: se indicará la fecha de entrada de la solicitud.
-        \n\t\u2022 Derechos ejercidos: En este apartado se consignará el tipo de derecho ejercido
-        \n\t\u2022 Día de respuesta: se indicará el día en el cual se remitió respuesta al interesado.
-        \n\n La documentación acreditativa (recepción de solicitud/contestación, comunicaciones, etc.) se archivará a efectos de acreditar su correcta gestión.
-        \n Asimismo, se le recuerda que usted tiene derecho a presentar una reclamación ante La Agencia Española de Protección de Datos.
-    </string>
+    <string name="privacy_policy_section_2">IGALIA esta comprometida con el cumplimiento de las previsiones legales en materia de protección de datos personales: Reglamento (UE)2016/679, del Parlamento Europeo y del Consejo, de 27/4/2016 relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos (RGPD) y en la Ley Orgánica 3/2018, de 5 de diciembre, de protección de datos y garantía de los derechos digitales (LOPDGDD).
+\n Los datos personales se definen legalmente como aquella información vinculada a una persona física identificada o identificable, siempre que su identidad pueda determinarse, directa o indirectamente, en particular mediante un identificador, como por ejemplo un nombre, un número de identificación, datos de localización, un identificador en línea o uno o varios elementos propios de la identidad física, fisiológica, genética, psíquica, económica, cultural o social de dicha persona.
+\n IGALIA no recaba datos personales de forma que el usuario pueda ser identificado. Por ello, usted puede utilizar la aplicación, consultar y navegar por el entorno de realidad virtual sin revelar su identidad ni proporcionar datos de carácter personal a IGALIA, ya sea directa o indirectamente, por ello IGALIA no puede asumir ninguna responsabilidad por lo datos que se depositen en la misma.
+\n Los únicos datos e información que obtendrá IGALIA por el uso de esta App, que en ningún momento se vincularán individualmente con el usuario, son los siguientes:
+\n
+\n\t• Datos analíticos, puramente estadísticos y no identificativos.
+\n\t• Para capturar y traducir la voz a texto, los datos sonoros del usuario son enviados a los servidores titularidad de la empresa responsable de cada plataforma, a través de una API al efecto: como por ejemplo, en Oculus, de Facebook, un servicio que se envía a Oculus Voice SDK. En ningún momento dichos datos son tratados, accedidos ni incorporados a los servidores titularidad de IGALIA. Los datos que se recopilen serán responsabilidad exclusiva de las empresas titulares de cada plataforma (en adelante, los Terceros) las cuales pueden estar ubicadas fuera de la Unión Europea y sometidas a un régimen jurídico menos protector de la privacidad del usuario. Le recomendamos leer atentamente la política de privacidad y condiciones de uso de cada una de dichas plataformas externas antes de aceptar y utilizar sus servicios. IGALIA no será directa ni indirectamente responsable del tratamiento de datos personales por parte de dichos Terceros.
+\n\t• Se podrá obtener información de localización geográfica del navegador, en lugar del utilizado por el sistema. Sin embargo, para ello usted debe aceptar los permisos de localización de su dispositivo a través de un aviso específico al respecto e IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados en el punto anterior sí podrían hacerlo, en su caso. Preste atención a sus términos legales.
+\n\t• IGALIA no accederá ni almacenará, en modo alguno, las direcciones ni las URLs visitadas por usted.
+\n\t• En caso de integración de los servicios Cloud para cuentas de Terceros, como Mozilla Accounts o Google Accounts, para sincronizar datos como su historia de navegación o sus bookmarks de usuario, IGALIA no accederá ni tratará en modo alguno dicha información ni pasará por sus servidores.
+\n
+\n Asimismo, usted observará que la aplicación le solicitará una serie de permisos especiales respecto a su dispositivo que, a continuación, aclaramos en cuanto a su función y finalidad:
+\n
+\n\t• Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Meetkai cuya política de provacidad se puede consultar aquí: https://meetkai.com/privacy
+\n
+\n\t• Permiso para la captación de fotos y vídeos: Es posible que se solicite debido a que el dispositivo del usuario utilice cámaras para ver el entorno y situar al usuario en el espacio físico mediante sistemas de trazado o “tracking”. IGALIA no accede ni trata dicha información.
+\n
+\n\t• Permiso para obtener información de localización basada en fuentes como el GPS, estaciones de telefonía o WIFI: Si usted autoriza esto, se utilizará para mostrar en todo momento un icono del tipo de conexión en su aplicación así como, en su caso, la citada función de localización geográfica mencionada anteriormente. IGALIA en modo alguno vinculará dicha información con usted como persona identificada o identificable, aunque los Terceros citados anteriormente sí podrían hacerlo, en su caso. Preste atención a sus términos legales. En concreto, en los dispositivos de Huawei también se accede a la información del GPS para informar a un servicio propio de dicha compañía denominado “LocationService”.
+\n
+\n\t• Permiso para leer, modificar o borrar fotos, contenido multimedia y ficheros en la tarjeta de memoria: esto es necesario para que el navegador pueda guardar información local en el dispositivo como los archivos de caché, ajustes, páginas visitadas y favoritas, etc. IGALIA no accede ni trata dicha información.
+\n
+\n Recordamos nuevamente que las plataformas de Terceros a los que acceda o con los que utilice la presente aplicación, sí podrían recabar estos u otros datos identificativos sobre usted, en el caso de que los cumplimente o no de forma voluntaria y/o consciente, incluso fuera del ámbito de la legislación europea de protección de datos. Por ello, le recomendamos que se informe y preste especial atención a los términos legales de dichos Terceros como, por ejemplo, los siguientes:
+\n
+\n\t• Google: https://policies.google.com/privacy
+\n\t• Facebook: https://www.facebook.com/about/privacy/update
+\n\t• MeetKai: https://meetkai.com/privacy
+\n
+\n Asimismo, IGALIA le informa de que si usted utiliza la opción de reconocimiento de voz del navegador, las transmisiones sonoras de su voz no serán conservadas ni vinculadas de modo alguno con usted, aunque sí se conservará el texto generado de manera totalmente anonimizada a efectos de mejora del servicio por parte de la empresa Meetkai (más información en el siguiente link: https://meetkai.com/es/privacy). Como es interés de IGALIA la no vinculación a ningún usuario y la no afectación de su privacidad, se ruega al usuario que no incluya ninguna información personal ni confidencial, de ningún tipo, en sus alocuciones sonoras de voz.
+\n En cualquier caso, IGALIA garantiza el adecuado ejercicio por los interesados de los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, respecto de sus datos personales. A tal efecto, IGALIA ha establecido un protocolo/procedimiento interno para llevarlos a efecto.
+\n La forma en que los interesados pueden ejercer sus derechos son: mediante solicitud a IGALIA en la dirección física: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referencia: “Protección de Datos” o en la dirección de correo electrónico: info@igalia.com
+\n En ambos casos, el interesado deberá adjuntar copia de su DNI o documento identificativo para acreditar su identidad.
+\n El Responsable de protección de datos o departamento al que se haya encomendado la gestión de los derechos, registrará los ejercicios de derechos en el formulario disponible al efecto, en el que se consignarán los siguientes datos:
+\n
+\n\t• Nº de solicitud: se asignará un número a cada una de las solicitudes recibidas
+\n\t• Sede: Si el responsable dispone de varias sedes, se hará constar la sede en la cual se recibió la solicitud
+\n\t• Canal de reclamación: se indicará el canal por el cual se recibió la solicitud: dirección de correo física, mail, etc.
+\n\t• Día de entrada: se indicará la fecha de entrada de la solicitud.
+\n\t• Derechos ejercidos: En este apartado se consignará el tipo de derecho ejercido
+\n\t• Día de respuesta: se indicará el día en el cual se remitió respuesta al interesado.
+\n
+\n La documentación acreditativa (recepción de solicitud/contestación, comunicaciones, etc.) se archivará a efectos de acreditar su correcta gestión.
+\n Asimismo, se le recuerda que usted tiene derecho a presentar una reclamación ante La Agencia Española de Protección de Datos.</string>
     <string name="privacy_policy_subtitle_3">Derecho aplicable e idioma original</string>
     <string name="privacy_policy_section_3">
         La presente Política de Privacidad está sometida al derecho español. El idioma de Política de Privacidad de esta aplicación es el español. Por ello, cualquier posible divergencia entre la versión original en español y su traducción a otro idioma será considerada como preponderante la versión española.
@@ -1778,7 +1787,22 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="clear_user_data_dialog_title">Borrar datos del usuario de %1$s</string>
     <string name="clear_user_data_dialog_text">%1$s se restablecerá. Todos los datos, incluidos los inicios de sesión guardados, el historial y los marcadores, se eliminarán permanentemente si no se han sincronizado. %1$s se cerrará automáticamente una vez finalizado el restablecimiento. ¿Quieres continuar?</string>
     <string name="display_options_start_with_passthrough">Usar el modo Passthrough al iniciar</string>
-    <string name="display_options_head_lock">Fijar la ventana en tu campo visual</string>
     <string name="tray_wifi_unavailable_ssid">SSID no disponible</string>
     <string name="voice_input_start">¿Qué te gustaría introducir?</string>
+    <string name="display_options_windows_can_move">Las ventanas se pueden mover</string>
+    <string name="display_options_latin_auto_complete">Autocompletado con el teclado latino</string>
+    <string name="display_options_head_lock">Activar Head Lock</string>
+    <string name="controller_options_haptic_feedback">Feedback táctil</string>
+    <string name="move_tooltip">Mover</string>
+    <string name="deprecated_version_dialog_title">El soporte finaliza pronto</string>
+    <string name="display_options_sound_effect">Usar efectos de sonido</string>
+    <string name="display_options_windows_distance">Distancia de las ventanas</string>
+    <string name="experimental_features">Funcionalidades experimentales</string>
+    <string name="device_name">%1$s en %2$s</string>
+    <string name="fxa_account_options_device_name">Nombre del dispositivo</string>
+    <string name="deprecated_version_dialog_body">Esta versión de desarrollo de Wolvic dejará de estar disponible a finales de octubre de 2023.
+\n
+\nPor favor, instala una versión reciente de Wolvic desde la tienda de Meta.
+\n
+\nIMPORTANTE: a no ser que tengas activado Firefox Sync, le nueva versión de Wolvic no tendrá tus marcadores ni tus páginas abiertas.</string>
 </resources>
