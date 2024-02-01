@@ -1758,9 +1758,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_toggle_passthrough">패스스루</string>
     <string name="deprecated_version_dialog_title">지원이 곧 종료됨</string>
     <string name="security_options_permission_fine_location_warning">울빅은 당신의 대략적인 위치만 알 수 있습니다. 이는 시스템 설정에서 변경할 수 있습니다.</string>
-    <string name="deprecated_version_dialog_body">이 울빅의 \"App Lab\" 버전은 곧 삭제 될 예정입니다.
+    <string name="deprecated_version_dialog_body">이 울빅의 \"App Lab\" 버전은 2023년 10월 말에 삭제 될 예정입니다.
 \n
-\n메타 스토어에서 가장 최신 버전의 울빅을 설치하세요.
+\n메타 퀘스트 스토어에서 가장 최신 버전의 울빅을 설치하세요.
 \n
 \n중요: 동기화를 사용하지 않는한, 새로운 울빅 앱은 당신의 북마크와 탭을 갖고 있지 않습니다.</string>
     <string name="upload_list_empty">업로드 할 수 있는 파일이 없습니다</string>
@@ -1797,4 +1797,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="video_mode_3d_top_bottom">3D 상하 화면</string>
     <string name="clear_user_data_dialog_text">%1$s이 초기화 됩니다. 동기화하지 않은 경우, 저장된 로그인 정보, 방문 기록과 북마크를 포함한 모든 데이터가 완전히 삭제됩니다. %1$s은 초기화가 완료된 후 자동으로 종료됩니다. 계속하시겠습니까?</string>
     <string name="security_options_use_system_root_ca">시스템에서 신뢰할 수 있는 루트 인증서 사용</string>
+    <string name="display_options_windows_can_move">드래그로 창 이동하기</string>
+    <string name="display_options_latin_auto_complete">라틴어 키보드 입력 시 자동 완성</string>
+    <string name="display_options_windows_distance">창 간 거리</string>
+    <string name="controller_options_haptic_feedback">햅틱 피드백</string>
+    <string name="move_tooltip">이동</string>
+    <string name="developer_options_center_windows">창 수직으로 정렬하기</string>
+    <string name="experimental_features">실험 기능</string>
+    <string name="display_options_head_lock">시점고정 활성화</string>
+    <string name="display_options_sound_effect">음향 효과 사용</string>
+    <string name="fxa_account_options_device_name">디바이스 이름</string>
+    <string name="device_name">%2$s 의 %1$s</string>
 </resources>
