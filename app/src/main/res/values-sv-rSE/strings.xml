@@ -1662,9 +1662,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="deprecated_version_dialog_info_button">Läs mer…</string>
     <string name="deprecated_version_dialog_store_button">Installera…</string>
     <string name="settings_language_portuguese">Portugisiska</string>
-    <string name="deprecated_version_dialog_body">Denna \"App Lab\"-version av Wolvic kommer snart att tas bort.
+    <string name="deprecated_version_dialog_body">Denna \"App Lab\"-version av Wolvic kommer att tas bort i slutet av oktober 2023.
 \n
-\nInstallera den senaste versionen av Wolvic från Meta Store.
+\nVänligen installera den senaste versionen av Wolvic från Meta Quest Store.
 \n
 \nVIKTIGT: om du inte använder Sync kommer den nya Wolvic-appen inte att ha dina bokmärken och flikar.</string>
     <string name="external_open_uri_error_security_exception_body">SecurityException vid start av intent för %1$s</string>
@@ -1798,4 +1798,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="video_mode_3d_top_bottom">3D Översta Nedersta</string>
     <string name="display_options_start_with_passthrough">Starta med passera genom läge</string>
     <string name="voice_input_start">Vad skulle du vilja mata in?</string>
+    <string name="device_name">%1$s på %2$s</string>
+    <string name="developer_options_center_windows">Centrera fönster vertikalt</string>
+    <string name="experimental_features">Experimentella funktioner</string>
+    <string name="controller_options_haptic_feedback">Haptisk feedback</string>
+    <string name="fxa_account_options_device_name">Enhetsnamn</string>
+    <string name="move_tooltip">Flytta</string>
+    <string name="display_options_windows_can_move">Dra för att flytta fönster</string>
+    <string name="display_options_sound_effect">Använd ljudeffekter</string>
+    <string name="display_options_windows_distance">Fönster distans</string>
+    <string name="display_options_latin_auto_complete">Latinsk tangentbordsinmatning Automatisk komplettering</string>
+    <string name="display_options_head_lock">Aktivera huvudlås</string>
 </resources>
