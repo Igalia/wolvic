@@ -432,7 +432,6 @@
     <string name="developer_options_save">Gravar</string>
     <string name="developer_options_msaa_disabled">Desativado</string>
     <string name="settings_accounts_sign_out">Sair</string>
-    <string name="display_options_start_with_passthrough">Iniciar no modo Passthrough</string>
     <string name="developer_options_center_windows">Centralizar as Janelas Verticalmente</string>
     <string name="display_options_windows_can_move">Arrastar para mover janelas</string>
     <string name="display_options_sound_effect">Usar efeitos sonoros</string>
@@ -497,7 +496,7 @@
     <string name="security_options_login_fxa">Conta…</string>
     <string name="settings_fxa_account_manage">Configurar Conta</string>
     <string name="settings_developer_options">Opções de Programador</string>
-    <string name="security_options_login_sync">Sincronize logins com Firefox Accounts</string>
+    <string name="security_options_login_sync">Sincronizar logins com Contas Mozilla</string>
     <string name="restart_now_dialog_button">Reiniciar Agora</string>
     <string name="keyboard_enter_label">ENTER</string>
     <string name="permission_notification">Permite %1$s enviar notificações?</string>
@@ -589,7 +588,7 @@
     <string name="addons_download_success_dialog_ok">Certo, entendi</string>
     <string name="addons_remove_success_dialog_ok">Ok</string>
     <string name="addons_remove_success_dialog_title">%1$s desinstalado com sucesso</string>
-    <string name="fxa_signout_confirmation_title">Sair da sua Conta Firefox?</string>
+    <string name="fxa_signout_confirmation_title">Sair da sua Conta Mozilla?</string>
     <string name="addons_remove_error_dialog_title">Um erro aconteceu ao remover %1$s</string>
     <string name="fxa_signout_confirmation_checkbox_v1">Apagar histórico, favoritos e logins deste aparelho</string>
     <string name="history_clear_now">Limpe Agora</string>
@@ -681,7 +680,7 @@
     <string name="tab_added_notification">Nova guia adicionada!</string>
     <string name="hamburger_menu_switch_to_desktop">Modo desktop</string>
     <string name="send_tab_dialog_description">Escolha um aparelho para enviar a guia.</string>
-    <string name="whats_new_body_sub_1">A Conta Firefox também permite sincronizar favoritos e histórico em todos os seus aparelhos.</string>
+    <string name="whats_new_body_sub_1">A Conta Mozilla também permite sincronizar favoritos e histórico em todos os seus aparelhos.</string>
     <string name="slow_script_dialog_description">Uma página da web está deixando seu navegador mais lento (%1$s). O que gostaria de fazer?</string>
     <string name="download_error_body">Ocorreu um erro ao descarregar %1$s. Por favor, tente novamente.</string>
     <string name="download_error_ok">Ok</string>
@@ -746,7 +745,7 @@
     <string name="voice_input_start">O que gostaria de introduzir?</string>
     <string name="video_mode_3d_top_bottom">3D Top Bottom</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
-    <string name="deprecated_version_dialog_body">Esta versão do “App Lab” de Wolvic será removida em breve.
+    <string name="deprecated_version_dialog_body">Esta versão do “App Lab” de Wolvic será removida no final de Outubro de 2023.
 \n
 \nPor favor, instale a última versão de Wolvic da Meta Store.
 \n
@@ -777,4 +776,5 @@
 \nPara se registar e usar o “Wolvic”, tem de concordar com o Acordo de Usuário e a Política de Privacidade, caso contrário não podemos prestar-lhe serviços. Por favor, leia atentamente os documentos e clique em “Concordar” para continuar. Se clicar em “Não concordar”, não poderá continuar a usar o “Wolvic”.
 \n
 \nPode ler o Acordo de Usuário e a Política de Privacidade completos.</string>
+    <string name="display_options_latin_auto_complete">Preenchimento automático de entradas em teclado latino</string>
 </resources>
