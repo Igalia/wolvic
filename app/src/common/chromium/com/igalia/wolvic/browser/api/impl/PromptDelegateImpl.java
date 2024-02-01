@@ -240,7 +240,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
     }
 
-    public class ChoicePrompt extends BasePromptImpl implements WSession.PromptDelegate.ChoicePrompt {
+    public class ChoicePrompt extends BasePromptImpl implements  WSession.PromptDelegate.ChoicePrompt {
         public class Choice implements WSession.PromptDelegate.ChoicePrompt.Choice {
             public final boolean disabled;
             public final @Nullable String icon;
@@ -252,7 +252,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
             /* package */ Choice(SelectPopupItem item, int id, boolean selected) {
                 this.disabled = !item.isEnabled();
-                this.id = String.valueOf(id);
+                this.id =  String.valueOf(id);
                 this.icon = null;
                 this.label = item.getLabel();
                 this.separator = false;
@@ -296,6 +296,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             @Override
             @Nullable
             public Choice[] items() { return this.choices; }
+
         }
         public final @Nullable String message;
 
@@ -321,7 +322,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             Choice choice = new Choice(item, position[0], isSelected);
             if (item.isGroupHeader()) {
                 ArrayList<Choice> choices = new ArrayList<>();
-                int nextPosition = position[0] + 1;
+                int nextPosition = position[0]+1;
                 while (items.size() > nextPosition) {
                     SelectPopupItem childItem = items.get(nextPosition);
                     if (childItem.isGroupHeader())
@@ -331,7 +332,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
                     Choice child = createChoice(items, position, selected, selectedIndex);
                     assert child != null;
                     choices.add(child);
-                    nextPosition = position[0] + 1;
+                    nextPosition = position[0]+1;
                 }
                 choice.choices = choices.toArray(new Choice[choices.size()]);
             }
@@ -384,7 +385,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String selectedId) {
             try {
                 int id = Integer.parseInt(selectedId);
-                return confirm(new int[]{id});
+                return confirm(new int[] {id});
             } catch (NumberFormatException nfe) {
                 return confirm((int[]) null);
             }
@@ -463,8 +464,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
 
         @Override
-        @ChoiceType
-        public int type() {
+        @ChoiceType public int type() {
             return this.type;
         }
     }
@@ -550,8 +550,10 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @NonNull
         @Override
         public WSession.PromptDelegate.PromptResponse dismiss() {
-            if (!isComplete())
+            if (!isComplete()) {
+                markComplete();
                 mListener.onColorChanged(Color.parseColor(mDefaultColor));
+            }
             return new PromptResponseImpl();
         }
     }
