@@ -260,11 +260,12 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     public void stopVoiceSearch() {
-        try {
-            mCurrentSpeechRecognizer.stop();
-        } catch (Exception e) {
-            Log.d(LOGTAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Unknown voice error");
-            e.printStackTrace();
+        if (mCurrentSpeechRecognizer != null) {
+            try {
+                mCurrentSpeechRecognizer.stop();
+            } catch (Exception e) {
+                Log.w(LOGTAG, "Error stopping voice search: " + e);
+            }
         }
 
         mIsSpeechRecognitionRunning = false;

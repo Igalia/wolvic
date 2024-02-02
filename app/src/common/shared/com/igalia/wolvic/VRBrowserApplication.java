@@ -71,13 +71,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mDictionariesManager = new DictionariesManager(activityContext);
         mDictionariesManager.init();
         mAddons = new Addons(activityContext, mSessionStore);
-
-        try {
-            String speechService = SettingsStore.getInstance(activityContext).getVoiceSearchService();
-            setSpeechRecognizer(SpeechServices.getInstance(activityContext, speechService));
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
     }
 
     protected void onActivityDestroy() {

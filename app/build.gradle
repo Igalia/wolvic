@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.31"
 }
@@ -66,8 +68,13 @@ def getHVRAppId = { ->
 }
 
 def getHVRApiKey = { ->
-    if (gradle.hasProperty("userProperties.HVR_API_KEY")) {
-        return gradle."userProperties.HVR_API_KEY"
+    def jsonFile = file('agconnect-services.json')
+
+    if (jsonFile.exists()) {
+        def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+        if (parsedJson.client && parsedJson.client.api_key) {
+            return parsedJson.client.api_key
+        }
     }
     return ""
 }

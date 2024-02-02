@@ -363,6 +363,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         GeolocationWrapper.INSTANCE.update(this);
 
+        initializeSpeechRecognizer();
+
         mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
@@ -463,6 +465,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     WRuntime.CrashReportIntent getCrashReportIntent() {
         return EngineProvider.INSTANCE.getOrCreateRuntime(this).getCrashReportIntent();
+    }
+
+    private void initializeSpeechRecognizer() {
+        try {
+            String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
+            SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
+            ((VRBrowserApplication) getApplication()).setSpeechRecognizer(speechRecognizer);
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Exception creating the speech recognizer: " + e);
+            ((VRBrowserApplication) getApplication()).setSpeechRecognizer(null);
+        }
     }
 
     // A dialog to tell App Lab users to download Wolvic from the Meta store.
@@ -729,17 +742,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        try {
             if (key.equals(getString(R.string.settings_key_voice_search_service))) {
-                SpeechRecognizer speechRecognizer =
-                        SpeechServices.getInstance(this, SettingsStore.getInstance(this).getVoiceSearchService());
-                ((VRBrowserApplication) getApplication()).setSpeechRecognizer(speechRecognizer);
+                initializeSpeechRecognizer();
             } else if (key.equals(getString(R.string.settings_key_head_lock))) {
                 setHeadLockEnabled(SettingsStore.getInstance(this).isHeadLockEnabled());
             }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
     }
 
     void loadFromIntent(final Intent intent) {
