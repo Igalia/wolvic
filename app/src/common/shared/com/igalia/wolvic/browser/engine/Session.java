@@ -273,6 +273,8 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     private void dumpState(WSession.ProgressDelegate aListener) {
+        if (mState.mSession == null)
+            return;
         if (mState.mIsLoading) {
             aListener.onPageStart(mState.mSession, mState.mUri);
             aListener.onProgressChange(mState.mSession, 0);
