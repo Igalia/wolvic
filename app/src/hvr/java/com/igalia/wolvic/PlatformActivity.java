@@ -109,6 +109,8 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
+        initializeAGConnect();
+
         DisplayManager manager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (manager.getDisplays().length < 2) {
             showPhoneUI();
@@ -230,8 +232,6 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
         mView.getHolder().addCallback(this);
         new LibUpdateClient(this).runUpdate();
         nativeOnCreate();
-
-        initializeAGConnect();
     }
 
     private void initializeAGConnect() {
@@ -246,8 +246,9 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
             try {
                 SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
                 ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(speechRecognizer);
-            } catch (ReflectiveOperationException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e(TAG, "Exception creating the speech recognizer: " + e);
+                ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
