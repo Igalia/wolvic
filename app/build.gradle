@@ -119,8 +119,8 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 245
-        versionName "1.6"
+        versionCode 308
+        versionName "1.6.0"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
