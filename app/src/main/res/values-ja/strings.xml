@@ -1654,7 +1654,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_toggle_passthrough">パススルー</string>
     <string name="settings_language_portuguese">ポルトガル語</string>
     <string name="security_options_permission_fine_location_warning">Wolvicはおおよその位置情報のアクセスに限られています。この設定はシステム設定で変更できます。</string>
-    <string name="deprecated_version_dialog_title">推奨アップデート</string>
+    <string name="deprecated_version_dialog_title">サポート期間終了間近</string>
     <string name="deprecated_version_dialog_body">現在「App Lab」開発版のWolvicをご利用されています。2023年10月の終わりまでに廃止される予定です。
 \n
 \nMeta Quest Storeから最新版のWolvicをインストールしてください。
@@ -1663,4 +1663,118 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
     <string name="deprecated_version_dialog_info_button">詳細情報…</string>
     <string name="deprecated_version_dialog_store_button">インストール…</string>
+    <string name="privacy_policy_subtitle_2">データ保護</string>
+    <string name="privacy_policy_section_1">当アプリケーションはIgalia, SL（以下「IGALIA」）が開発しています。IGALIAの登記上のオフィスはBugallal Marchesi, 22 – 1º, 15008, A Coruña, Galicia (Spain)であり、連絡先は下記の通りです：
+\n
+\n\t• 電話番号 +34 981 913991;
+\n\t• メールアドレス: info@igalia.com
+\n
+\nアプリケーションのコンテンツや構成要素はIGALIAによりオープンソースライセンスの下で開発または実地されています。当アプリケーションは、制限無く、スペイン王国の知的財産権や商業財産権、または当該する国際条約など、により保護されています。</string>
+    <string name="rCN_first_launch_body">「Wolvic」へようこそ！
+\n
+\n「Wolvic」の登録または使用にはユーザー契約とプライバシーポリシーへの同意が必要です。同意していただけない場合はサービスを提供できません。書類を読んだ上で同意する場合は「同意」を選択してください。「不同意」を選択した場合は「Wolvic」を使用できません。
+\n
+\nユーザー契約とプライバシーポリシーの全文を読めます。</string>
+    <string name="privacy_policy_section_3">当プライバシーポリシーはスペイン法の対象となっています。当アプリケーションのプライバシーポリシーの原語はスペイン語です。もしスペイン語の原書と他の原語への翻訳が異なった場合、スペイン語の原書が重点されます。スペイン語のプライバシーポリシーは下記のURLにあります：https://wolvic.com/es/legal/privacy/ 。</string>
+    <string name="terms_service_section_1">Wolvicは自由かつオープンソースなソフトウェアで世界中から集まった数千ものコミュニティが開発しています。利用する際は以下の要項を参照してください：
+\n
+\n\t• WolvicはMozilla Public Licenseの下で提供しています。つまりWolvicを自由に使用、複製、または他者への伝達することが可能です。Wolvicのソースコードもニーズに応じて変更できます。Mozilla Public License は変更したバージョンを伝達する権利も与えています。
+\n
+\n\t•当利用規約はIgaliaや他者の商標（Wolvicの商品名やロゴを制限無く含め）の権利やライセンスを付与するものではありません。
+\n
+\n\t•Wolvicの一部の機能（Crash Reporterなど）はIgaliaへフィードバックを送る可能性を含めています。フィードバックを提出する場合Igaliaにそのフィードバックを商品の改善に利用または匿名化してホームページにて公開や匿名化して他者に伝達する権利を付与するものだとします。
+\n
+\n\t•お客様の個人情報やWolvicを通してIgaliaへ提出したフィードバックの管理はWolvicプライバシーポリシーに記述されています。
+\n
+\n\t•Wolvicの一部の機能はウェブ情報サービスを利用しています。そのサービスの信憑性やエラーの有無は保証できません。この機能に関する詳細（ウェブ情報サービスを利用する機能を不有効にする方法なども含み）は以下の利用規約に記述されています。</string>
+    <string name="terms_service_subtitle_2">Wolvicウェブ情報サービス</string>
+    <string name="developer_options_center_windows">ウィンドウを上下中央揃えにする</string>
+    <string name="display_options_windows_can_move">ウィンドウのドラッグを有効にする</string>
+    <string name="display_options_sound_effect">効果音を使う</string>
+    <string name="display_options_latin_auto_complete">ラテン文字キーボード入力の自動補完</string>
+    <string name="display_options_head_lock">ヘッドロックを有効にする</string>
+    <string name="display_options_windows_distance">ウィンドウ間の距離</string>
+    <string name="experimental_features">実験的機能</string>
+    <string name="controller_options_haptic_feedback">感触フィードバック</string>
+    <string name="fxa_account_options_device_name">デバイスの名前</string>
+    <string name="voice_input_start">何を入力しますか？</string>
+    <string name="device_name">%2$sで%1$s</string>
+    <string name="move_tooltip">動かす</string>
+    <string name="rCN_first_launch_confirmation_body">「不同意」を選択した場合お客様にサービスを提供できません。
+\n
+\nユーザー契約とプライバシポリシーの全文を読めます。</string>
+    <string name="user_feedback_tooltip">アイデアやフィードバックを共有する</string>
+    <string name="keyboardview_keycode_alt">Altキー</string>
+    <string name="keyboardview_keycode_mode_change">モード変更</string>
+    <string name="clear_user_data_dialog_title">%1$sユーザーデータを消去</string>
+    <string name="clear_user_data_dialog_text">%1$sをリセットします。同期されていない全てのデータ（セーブされたログイン、履歴、やブックマークを含む）が削除されます。リセットが完了次第%1$sは自動的に閉じます。リセットを続けますか？</string>
+    <string name="display_options_start_with_passthrough">パススルーモードで開始する</string>
+    <string name="developer_options_clear_user_data_description">全てのユーザーデータ</string>
+    <string name="security_options_use_system_root_ca">システムが信頼しているルート証明書を使う</string>
+    <string name="video_mode_3d_top_bottom">３次元上下</string>
+    <string name="rCN_first_launch_title">ユーザー契約とプライバシーポリシーの通知</string>
+    <string name="rCN_first_launch_clickable_terms_text">ユーザー契約</string>
+    <string name="rCN_first_launch_clickable_privacy_text">プライバシーポリシー</string>
+    <string name="rCN_first_launch_disagree">不同意</string>
+    <string name="rCN_first_launch_confirmation_agree">同意して続ける</string>
+    <string name="rCN_first_launch_confirmation_disagree">不同意して終了する</string>
+    <string name="terms_service_section_2">Wolvicは当バイナリーの一部の機能を提供するためにウェブ情報サービス（以下「サービス」）の下記の規約下で使用しています。
+\n
+\n\t•Igaliaとその貢献者、ライセンサー、またはパートナーは可能な限り正確かつ最新のサービスを提供することを心がけています。ですがその情報が完全かつエラーの無いものだと保証はできません。例としてSafe Browsing Serviceは全ての危ないサイトを特定できないまたは安全なサイトを誤って特定する可能性があります。またLocation Aware Serviceではサービス提供者が申告する全ての位置は推計であり、当社やサービス提供者はその位置の正確性の保証はできません。
+\n
+\n\t• Igaliaは任意にサービスを廃止または変更する場合があります。
+\n
+\n\t• お客様は付属のWolvicバーションでサービスを自由に利用できます、そしてIgaliaもその権利を付与します。サービスに関する他の権利はIgaliaとそのライセンサーが全て保護しています。当規約はWolvicや該当するソースコード版のWolvicに該当するオープンソースライセンスの権利を制限するものではありません。
+\n
+\n\t• サービスは「あるがまま」で提供しています。Igaliaとその貢献者、ライセンサー、配布者はいかなる種類（明示的や暗示的を問わず、そして制限無くサービスの商品性またはお客様の用途に適切かの保証も含め）の保証も無く提供します。サービスを用途に適するための選択またはサービスのクオリティや性能の全てのリスクはお客様に帰属します。
+\n
+\n\t•法に義務付けられない限りIgaliaとその貢献者、ライセンサー、配布者はWolvicやサービスの利用に基づいたまたは関連する一切の傷害賠償責任（間接的、特殊的、偶然的、必然的、懲罰的、模範的な損害を含む）を有する事は無い。この規約による連帯責任の賠償は５００ドルを超える事は無い。特定の法的管轄では特定の損害の除外や制限を認めていないので上記の除外や制限が適用されない場合もあります。
+\n
+\n\t• Igaliaは必要があれば当規約を更新する可能性があります。Igaliaの書面による同意がない場合この規約の更新や解除は不可能です。
+\n
+\n\t• 当規約は、抵触法の規定を除き、スペイン国法に準拠しています。もし規約の一部が無効または法的強制力がないと判断された場合、本規約の他の規定は引き続き完全な効力と効果を維持するものとします。もし本規約の翻訳版とスペイン語の原語が抵触する場合スペイン語版が統制するものとします。
+\n
+\n\t• サービスの一部を利用したくない場合や上記の規約に不同意の場合は機能やサービスを不有効にできます。各機能やサービスを不有効にする手順は下記の通りです。他の機能やサービスはアプリケーションの設定で不有効にできます。
+\n
+\n\t\t◦ Safe browsingは通常は有効にされています。Safe Browsingの機能を不有効に設定するのは危ないサイトに移動する可能性があり非推奨です。完全に機能を停止する場合は下記の通りに設定してください：
+\n
+\n\t\t\t⁃ URLバーでabout:configと入力する
+\n
+\n\t\t\t⁃ browser.safebrowsing.malware.enabledを入力する
+\n
+\n\t\t\t⁃ browser.safebrowsing.malware.enabledの設定をダブルクリックする
+\n
+\n\t\t\t⁃ browser.safebrowsing.phishing.enabledを入力する
+\n
+\n\t\t\t⁃ browser.safebrowsing.phishing.enabledの設定をダブルクリックする
+\n
+\n\t\t\t⁃ Safe browsingは不有効になりました
+\n
+\n\t\t◦ Location Aware Browsingは必ずオプトインです。位置情報は許可無く送られることはありません。もし機能を完全に停止する場合下記の通りに設定してください：
+\n
+\n\t\t\t⁃ URLバーでabout:configと入力する
+\n
+\n\t\t\t⁃ geo.enabledを入力する
+\n
+\n\t\t\t⁃ geo.enabledの設定をダブルクリックする
+\n
+\n\t\t\t⁃ Location-Aware Browsingは不有効になりました
+\n
+\n\t\t◦ WolvicのEnhanced Tracking Protectionはブラウズする際に自動的にプライバシーを保護します。サイトの機能を妨害しないで個人情報やブラウジングの習慣を集めるためにネットで追跡するトラッカーを制限するものです。危ないスクリプト、例えばバッテリーを消費するマルウェアーなど、を制限する機能もあります。トラッキング保護のモードは三つあります： Standard、Strict と Off。もし不有効にする場合は下記の通りに設定してください：
+\n
+\n\t\t\t⁃ 「プライバシーとセキュリティー」の設定に移動。
+\n
+\n\t\t\t⁃ 「Off」を選択。
+\n
+\n\t\t\t⁃ Enhanced Tracking Protectionは不有効になりました。</string>
+    <string name="privacy_policy_subtitle_1">基本情報</string>
+    <string name="privacy_policy_title">基本プライバシーポリシー</string>
+    <string name="privacy_policy_subtitle_3">当該法と原語</string>
+    <string name="keyboardview_keycode_cancel">キャンセル</string>
+    <string name="keyboardview_keycode_delete">削除</string>
+    <string name="keyboardview_keycode_done">完成</string>
+    <string name="keyboardview_keycode_shift">Shiftキー</string>
+    <string name="keyboardview_keycode_enter">Enterキー</string>
+    <string name="tray_wifi_unavailable_ssid">SSID接続不可</string>
+    <string name="rCN_first_launch_agree">同意</string>
 </resources>
