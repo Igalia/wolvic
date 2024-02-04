@@ -91,8 +91,6 @@ public class OffscreenDisplay {
             Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
 
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
-            // TODO: Deprecated getMetrics(DisplayMetrics), see https://github.com/Igalia/wolvic/issues/799
-            defaultDisplay.getMetrics(mDefaultMetrics);
             WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             WindowMetrics metrics = windowManager.getCurrentWindowMetrics();
             Rect bounds = metrics.getBounds();
