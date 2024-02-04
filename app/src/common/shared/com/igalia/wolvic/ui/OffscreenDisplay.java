@@ -7,6 +7,7 @@ package com.igalia.wolvic.ui;
 
 import android.app.Presentation;
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -20,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -90,6 +93,12 @@ public class OffscreenDisplay {
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
             // TODO: Deprecated getMetrics(DisplayMetrics), see https://github.com/Igalia/wolvic/issues/799
             defaultDisplay.getMetrics(mDefaultMetrics);
+            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            WindowMetrics metrics = windowManager.getCurrentWindowMetrics();
+            Rect bounds = metrics.getBounds();
+            mDefaultMetrics.widthPixels = bounds.width();
+            mDefaultMetrics.heightPixels = bounds.height();
+            mDefaultMetrics.density = metrics.getDensity();
 
             mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews Overlay", mWidth, mHeight,
                     mDefaultMetrics.densityDpi, mSurface, flags);
