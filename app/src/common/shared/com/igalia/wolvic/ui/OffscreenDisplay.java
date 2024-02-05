@@ -91,12 +91,16 @@ public class OffscreenDisplay {
             Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
 
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY;
-            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            WindowMetrics metrics = windowManager.getCurrentWindowMetrics();
-            Rect bounds = metrics.getBounds();
-            mDefaultMetrics.widthPixels = bounds.width();
-            mDefaultMetrics.heightPixels = bounds.height();
-            mDefaultMetrics.density = metrics.getDensity();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                WindowMetrics metrics = windowManager.getCurrentWindowMetrics();
+                Rect bounds = metrics.getBounds();
+                mDefaultMetrics.widthPixels = bounds.width();
+                mDefaultMetrics.heightPixels = bounds.height();
+                mDefaultMetrics.density = metrics.getDensity();
+            } else {
+                defaultDisplay.getMetrics(mDefaultMetrics);
+            }
 
             mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews Overlay", mWidth, mHeight,
                     mDefaultMetrics.densityDpi, mSurface, flags);
