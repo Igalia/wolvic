@@ -205,13 +205,16 @@ DeviceDelegateVisionGlass::ReleaseControllerDelegate() {
 
 int32_t
 DeviceDelegateVisionGlass::GetControllerModelCount() const {
-  return 0;
+  return 1;
+}
+
+bool DeviceDelegateVisionGlass::IsControllerLightEnabled() const {
+  return false;
 }
 
 const std::string
 DeviceDelegateVisionGlass::GetControllerModelName(const int32_t) const {
-  static const std::string name;
-  return name;
+  return "Vision Glass";
 }
 
 void
