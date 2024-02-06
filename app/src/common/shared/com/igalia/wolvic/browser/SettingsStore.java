@@ -85,7 +85,6 @@ public class SettingsStore {
     public final static boolean NOTIFICATIONS_DEFAULT = true;
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
-    public final static float WINDOW_DISTANCE_DEFAULT = 0.0f;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
 
@@ -146,6 +145,9 @@ public class SettingsStore {
     public final static boolean TELEMETRY_DEFAULT = true;
 
     private int mCachedScrollDirection = -1;
+
+    private final static float WINDOW_DISTANCE_DEFAULT = 0.0f;
+    private final static float WINDOW_DISTANCE_DEFAULT_VISION_GLASS = 1.0f;
 
     private boolean mDisableLayers = false;
     public void setDisableLayers(final boolean aDisableLayers) {
@@ -414,8 +416,13 @@ public class SettingsStore {
     }
 
     @FloatRange(from = 0, to = 1)
+    public float getDefaultWindowDistance() {
+        return DeviceType.getType() == DeviceType.VisionGlass ? WINDOW_DISTANCE_DEFAULT_VISION_GLASS : WINDOW_DISTANCE_DEFAULT;
+    }
+
+    @FloatRange(from = 0, to = 1)
     public float getWindowDistance() {
-        return mPrefs.getFloat(mContext.getString(R.string.settings_key_window_distance), WINDOW_DISTANCE_DEFAULT);
+        return mPrefs.getFloat(mContext.getString(R.string.settings_key_window_distance), getDefaultWindowDistance());
     }
 
     public void setWindowDistance(@FloatRange(from = 0, to = 1) float distance) {
