@@ -38,7 +38,6 @@ namespace crow {
 static const float kHorizontalFOV = 36.0f;
 static const float kVerticalFOV = 21.0f;
 const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
-const vrb::Vector kControllerAverageHeight = kAverageHeight * 2/3;
 static const int32_t kControllerIndex = 0;
 
 struct DeviceDelegateVisionGlass::State {
@@ -54,6 +53,7 @@ struct DeviceDelegateVisionGlass::State {
   GLsizei glWidth, glHeight;
   float near, far;
   vrb::Matrix reorientMatrix;
+  crow::ElbowModelPtr elbow;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , headingMatrix(vrb::Matrix::Identity())
@@ -63,6 +63,7 @@ struct DeviceDelegateVisionGlass::State {
       , near(0.1f)
       , far(1000.0f)
       , reorientMatrix(vrb::Matrix::Identity())
+      , elbow(ElbowModel::Create())
   {
   }
 
@@ -95,7 +96,7 @@ struct DeviceDelegateVisionGlass::State {
     immersiveDisplay->SetFieldOfView(device::Eye::Left, left, right, top, bottom);
     immersiveDisplay->SetFieldOfView(device::Eye::Right, left, right, top, bottom);
 
-    immersiveDisplay->SetCapabilityFlags(device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession);
+    immersiveDisplay->SetCapabilityFlags(device::PositionEmulated | device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession);
   }
 };
 
@@ -241,10 +242,9 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
     float level = 100.0 - std::fmod(context->GetTimestamp(), 100.0);
     m.controller->SetBatteryLevel(kControllerIndex, (int32_t)level);
   }
-  auto transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation).Translate(kControllerAverageHeight);
-  m.controller->SetTransform(kControllerIndex, transformMatrix);
-  m.controller->SetBeamTransform(kControllerIndex, vrb::Matrix::Identity());
-  m.controller->SetImmersiveBeamTransform(kControllerIndex, vrb::Matrix::Identity());
+  auto transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation);
+  auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
+  m.controller->SetTransform(kControllerIndex, pointerTransform);
 }
 
 void
