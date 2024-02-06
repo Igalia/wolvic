@@ -61,28 +61,28 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">要允許 %1$s 使用您的麥克風嗎？</string>
+    <string name="permission_microphone">允許 %1$s 使用您的麥克風嗎？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">要允許 %1$s 使用您的攝影機與麥克風嗎？</string>
+    <string name="permission_camera_and_microphone">允許 %1$s 使用您的攝影機與麥克風嗎？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">要允許 %1$s 取得您的所在位置嗎？</string>
+    <string name="permission_location">允許 %1$s 取得您的所在位置嗎？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_notification">要允許 %1$s 傳送通知嗎？</string>
+    <string name="permission_notification">允許 %1$s 傳送通知嗎？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">要允許 %1$s 讀取您的外部儲存空間嗎？</string>
+    <string name="permission_read_external_storage">允許 %1$s 讀取您的外部儲存空間嗎？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
@@ -92,11 +92,11 @@
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-    <string name="settings_crash_reporting">錯誤回報</string>
+    <string name="settings_crash_reporting">崩潰報告</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
-    <string name="settings_telemetry">Telemetry</string>
+    <string name="settings_telemetry">遙測</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
@@ -138,7 +138,7 @@
     <string name="settings_privacy_policy_tracking_title">加強型追蹤保護的例外</string>
 
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
-    <string name="settings_privacy_policy_tracking_description">您已針對下列網站關閉保護。</string>
+    <string name="settings_privacy_policy_tracking_description">您已關閉這些網站的保護。</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
      when there are no exceptions. -->
@@ -148,10 +148,10 @@
     <string name="settings_privacy_policy_tracking_reset">重設對加強型追蹤保護的例外。</string>
 
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
-    <string name="settings_privacy_policy_login_exceptions_title">登入例外</string>
+    <string name="settings_privacy_policy_login_exceptions_title">登录例外</string>
 
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
-    <string name="settings_privacy_policy_login_exceptions_description">不儲存登入資訊的網站將顯示於此處</string>
+    <string name="settings_privacy_policy_login_exceptions_description">不儲存登录資訊的網站將顯示於此處</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
      when there are no exceptions. -->
@@ -170,16 +170,16 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">開發者選項</string>
 
-    <!-- This string is used in the 'Settings' window when user is not signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
     <string name="settings_fxa_account_sign_in">登入帳號</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_manage">管理帳號</string>
 
-    <!-- This string is used in the 'Account' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_sign_out">登出</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_fxa_account_reconnect">重新連結</string>
 
@@ -201,14 +201,14 @@
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
-    <string name="settings_language_choose_language_webpage_content">請選擇瀏覽支援多國語言的網頁時要優先顯示哪種語言</string>
+    <string name="settings_language_choose_language_webpage_content">選擇您首選的頁面顯示語言</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-    <string name="settings_language_choose_language_voice_search">請選擇執行語音搜尋時的優先語言</string>
+    <string name="settings_language_choose_language_voice_search">選擇您喜歡的語音搜尋語言</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Wolvic Display Language' dialog window (accessible from the browser's Settings dialog window).
@@ -263,7 +263,7 @@
     changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
     the keyboard languages panel list. -->
-    <string name="settings_language_traditional_chinese">中文（正體／注音）</string>
+    <string name="settings_language_traditional_chinese">中文（繁體/注音）</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'.
@@ -373,12 +373,12 @@
 
     <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
          On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">回報語音資料</string>
+    <string name="settings_report_speech_data">報告語音數據</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
-    <string name="settings_report_issue">回報問題</string>
+    <string name="settings_report_issue">報告問題</string>
 
     <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
          a developer-build version of the app. -->
@@ -386,19 +386,19 @@
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
-    <string name="settings_help">說明</string>
+    <string name="settings_help">幫助</string>
 
     <!-- This string is displayed in the settings header under the Wolvic logo. When clicked the settings panel is closed
          a the survey web site in opened in the currently focused window -->
-    <string name="settings_send_your_feedback">傳送意見回饋給我們</string>
+    <string name="settings_send_your_feedback">向我們發送您的回饋</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed-out of Mozilla Accounts -->
+    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
     <string name="settings_accounts_sign_in">登入</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account -->
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
     <string name="settings_accounts_sign_out">登出</string>
 
-    <!-- This string is used in the 'Settings' window when user is signed into a Mozilla Account, but needs to re-enter their password.
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">重新連結</string>
 
@@ -440,7 +440,7 @@
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
-    <string name="developer_options_remote_debugging">啟用遠端除錯</string>
+    <string name="developer_options_remote_debugging">啟用遠端偵錯</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use passthrough mode when the app starts. -->
@@ -460,7 +460,7 @@
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
      and is used to customize if head lock should be enabled in the app. -->
-    <string name="display_options_head_lock">頭部鎖定</string>
+    <string name="display_options_head_lock">啟用頭部鎖定</string>
 
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize the windows distance. -->
@@ -480,7 +480,7 @@
          debug logging. Debug logging provides runtime diagnostic information that may be collected
          to help diagnose and fix problems with the application.
     -->
-    <string name="developer_options_debug_logging">開啟除錯紀錄</string>
+    <string name="developer_options_debug_logging">啟用調試日誌記錄</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
      UI render mode. If enables it uses hardware acceleration which should be faster but it may be more unstable.
@@ -747,7 +747,7 @@
          '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
     <string name="fxa_account_last_synced">最近同步: %1$d 分鐘前</string>
 
-        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
     <string name="security_options_drm_content_v1"><![CDATA[自動允許網站偵測您的設備，播放 DRM 保護內容。（<a href="%1$s">了解更多</a>）]]></string>
@@ -770,9 +770,9 @@
     <string name="security_options_login_autofill">自動填寫</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
-     and is used to enable or disable login sync with Mozilla Account. If disabled the logins
-     won't be synced with the Mozilla Account. -->
-    <string name="security_options_login_sync">使用 Mozilla 帳號同步登入資訊</string>
+     and is used to enable or disable login sync with Firefox Account. If disabled the logins
+     won't be synced with the Firefox Account. -->
+    <string name="security_options_login_sync">使用 Mozilla帳號同步登入資訊</string>
 
     <!-- This string labels a button in the Logins And Passwords settings dialog
      that when clicked opens the Mozilla Accounts settings panel. -->
@@ -935,7 +935,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[請傳送您的錯誤資料以協助 Mozilla 改善 %1$s。]]></string>
+    <string name="crash_dialog_message">請傳送您的錯誤資料以協助 Mozilla 改善 %1$s。 &lt;a href=more&gt;了解更多&lt;/a&gt;</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -1094,8 +1094,8 @@
     <string name="bookmarks_show_all">顯示所有書籤</string>
 
     <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
-         bookmarks are synced with the Mozilla account. -->
-    <string name="bookmarks_sync">Sync</string>
+         bookmarks are synced with the Firefox account. -->
+    <string name="bookmarks_sync">同步</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">瀏覽紀錄</string>
@@ -1301,8 +1301,8 @@
     <string name="addons_permissions_learn_more">了解權限的更多資訊</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
-         history is synced with the Mozilla account. -->
-    <string name="fxa_sync">Sync</string>
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">同步</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">同步中…</string>
@@ -1419,7 +1419,7 @@
 
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking"><![CDATA[加強型追蹤保護。（<a href="%1$s">了解更多</a>）]]></string>
+    <string name="privacy_options_tracking">加強型追蹤保護。（&lt;a href=%1$s&gt;了解更多&lt;/a&gt;）</string>
 
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
@@ -1963,11 +1963,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">註冊或登入 Mozilla Account，即可從桌面版或行動版 Firefox 將分頁傳送到 VR 眼鏡。</string>
+    <string name="whats_new_body_1">註冊或登入 Mozilla 帳戶，即可從桌面版或手機版 Firefox 將标签 傳送到耳機。</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Mozilla Account 還可以用來在裝置間同步書籤與上網紀錄。</string>
+    <string name="whats_new_body_sub_1">Mozilla 帐户 還可以用來在裝置間同步書籤與上網紀錄。</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Mozilla Account sign-in page. -->
@@ -2230,5 +2230,190 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- Shown in the tray wifi icon popup when SSID cannot be retrieved -->
     <string name="tray_wifi_unavailable_ssid">SSID不可知</string>
-
+    <string name="settings_language_portuguese_br">葡萄牙語（巴西）</string>
+    <string name="voice_search_server_error">現在不能使用語音搜尋服務。</string>
+    <string name="settings_terms_service">服務條款</string>
+    <string name="settings_language_choose_language_voice_search_service_description">選擇你偏好的線上語音搜尋服務。</string>
+    <string name="settings_privacy_choose_search_engine_description">選擇你喜歡的搜尋引擎。</string>
+    <string name="settings_language_choose_language_voice_search_service_title">語音搜尋服務</string>
+    <string name="settings_language_galician">加利西亞語</string>
+    <string name="upload_button">上傳</string>
+    <string name="settings_privacy_choose_search_engine_reset">重置搜尋引擎設定</string>
+    <string name="settings_privacy_search_engine_title">搜尋引擎</string>
+    <string name="addons_experimental_section_title">實驗性的</string>
+    <string name="privacy_policy_subtitle_2">資料保護</string>
+    <string name="privacy_policy_subtitle_3">適用法律和原文語言</string>
+    <string name="external_open_uri_error_bad_uri_body">無效的网址%1$s</string>
+    <string name="terms_service_title">服務條款</string>
+    <string name="user_feedback_tooltip">分享想法和回饋</string>
+    <string name="web_apps_loading">載入網頁應用程式</string>
+    <string name="web_apps_dialog_body">您想安裝以下 Web 應用程式嗎？它將在库中提供。</string>
+    <string name="web_apps_dialog_cancel">取消</string>
+    <string name="web_apps_saved_notification">新增了網頁應用程式！</string>
+    <string name="download_addon_install">安裝插件</string>
+    <string name="privacy_dialog_disagree">關閉Wolvic</string>
+    <string name="voice_service_metkai">MeetKai</string>
+    <string name="web_apps_dialog_title_parameter">安裝 %1$s</string>
+    <string name="deprecated_version_dialog_info_button">了解更多…</string>
+    <string name="deprecated_version_dialog_store_button">安裝…</string>
+    <string name="rCN_first_launch_title">用戶協議及隱私權政策通知</string>
+    <string name="rCN_first_launch_clickable_terms_text">使用者協定</string>
+    <string name="rCN_first_launch_clickable_privacy_text">隱私權政策</string>
+    <string name="rCN_first_launch_agree">同意</string>
+    <string name="privacy_policy_subtitle_1">基本資訊</string>
+    <string name="keyboardview_keycode_alt">替代键</string>
+    <string name="web_apps_title">網路應用程式</string>
+    <string name="web_apps_dialog_title">安裝網路應用程式</string>
+    <string name="hamburger_menu_save_web_app">儲存網頁應用程式…</string>
+    <string name="download_addon_install_cancel">取消</string>
+    <string name="notifications_title">通知</string>
+    <string name="notifications_loading">載入通知</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic 只能取得您的大概位置。這可以在系統設定中更改。</string>
+    <string name="web_apps_description">當您位於頁面上時，請按一下「儲存 Web 應用程式...」按鈕，將其新增至您的 Web 應用程式。</string>
+    <string name="web_apps_empty">您的網頁應用程式清單為空</string>
+    <string name="web_apps_dialog_install">安裝</string>
+    <string name="language_options_voice_search_service_title">語音搜尋服務</string>
+    <string name="hamburger_menu_toggle_passthrough">直通</string>
+    <string name="deprecated_version_dialog_title">支持即將結束</string>
+    <string name="download_addon_install_confirm_install">安裝</string>
+    <string name="download_addon_install_blocked">本地插件安裝被阻止</string>
+    <string name="external_open_uri_error_security_exception_body">啟動%1$s的意圖時出現</string>
+    <string name="rCN_first_launch_disagree">不同意</string>
+    <string name="rCN_first_launch_confirmation_body">如果您選擇“不同意”，很遺憾我們將無法再為您提供服務。
+\n
+\n您可以閱讀完整的使用者協議和隱私權政策。</string>
+    <string name="rCN_first_launch_confirmation_agree">同意並繼續</string>
+    <string name="rCN_first_launch_confirmation_disagree">不同意並退出</string>
+    <string name="hvr_connect_glass_message">連接您的 HUAWEI VR Glass 使用此應用程式</string>
+    <string name="privacy_dialog_title">隱私</string>
+    <string name="keyboardview_keycode_cancel">取消</string>
+    <string name="keyboardview_keycode_delete">刪除</string>
+    <string name="keyboardview_keycode_done">完畢</string>
+    <string name="keyboardview_keycode_mode_change">模式變更</string>
+    <string name="keyboardview_keycode_shift">Shift键</string>
+    <string name="keyboardview_keycode_enter">回车鍵</string>
+    <string name="settings_language_portuguese">葡萄牙語</string>
+    <string name="privacy_policy_section_1">此應用程式由 Igalia, SL（以下簡稱 IGALIA）開發，註冊辦事處位於 Bugallal Marchesi, 22 – 1°, 15008, A Coruña, Galicia (Spain)，其聯絡方式為：
+\n
+\n\t• 電話號碼 +34 981 913991;
+\n\t• 電子郵件: info@igalia.com
+\n
+\n構成該應用程式的內容和元素已由 IGALIA 根據開源許可證實施和/或開發，並不受限制地受到西班牙王國的智慧財產權和工業產權法以及可能存在的國際條約和協議的保護。</string>
+    <string name="permissions_dialog_remember_choice">記住這個決定</string>
+    <string name="privacy_dialog_agree">同意</string>
+    <string name="hvr_enter_vr">進入虛擬現實</string>
+    <string name="voice_search_unsupported">你的語言不支持語音搜尋服務。</string>
+    <string name="notifications_empty">您的通知清單為空</string>
+    <string name="upload_list_empty">沒有可供上傳的文件</string>
+    <string name="terms_service_subtitle_2">Wolvic 網路為基礎的資訊服務</string>
+    <string name="download_addon_install_blocked_body">允許在開發人員選項中繼續進行本機插件安裝。</string>
+    <string name="external_open_uri_error_title">開啟外部應用程式時出錯</string>
+    <string name="language_service_options_reset">重置語音搜尋服務設置</string>
+    <string name="deprecated_version_dialog_body">Wolvic 的本「App Lab」版本將于2023 年 10 月底刪除。
+\n
+\n請從 Meta Quest Store 安裝最新版本的 Wolvic。
+\n
+\n重要提示：除非您使用同步，否則新的 Wolvic 應用程式將不會有您的書籤和選項卡。</string>
+    <string name="external_open_uri_error_no_activity_body">找不到可以處理%1$s的應用程式</string>
+    <string name="rCN_first_launch_body">歡迎來到“Wolvic”!
+\n
+\n註冊和使用「Wolvic」需要您同意《使用者協議》和《隱私權政策》，否則我們無法為您提供服務。請仔細閱讀文件並點擊「同意」繼續。如果您點擊“不同意”，您將無法繼續使用“Wolvic”。
+\n
+\n您可以閱讀完整的使用者協議和隱私權政策。</string>
+    <string name="privacy_dialog_message">你的隱私對我們很重要。為了運行瀏覽器，請接受我們的服務條款和隱私權政策。感謝您使用Wolvic！</string>
+    <string name="privacy_policy_title">隱私權政策</string>
+    <string name="terms_service_section_1">Wolvic 是免費的開源軟體，由來自世界各地的數千名社群建構。您應該了解以下幾點：
+\n
+\n\t•Wolvic 是根據 Mozilla 公共授權的條款向您提供的。這意味著您可以使用、複製 Wolvic 並將其分發給其他人。也歡迎您根據需要修改 Wolvic 的原始碼。 Mozilla 公共授權也賦予您分發修改版本的權利。
+\n
+\n\t• 您未被授予 Igalia 或任何一方的任何商標權或商標許可，包括但不限於 Wolvic 名稱或標誌。
+\n
+\n\t• Wolvic 中的某些功能（例如崩潰報告器）可讓您選擇向 Igalia 提供回饋。選擇提交回饋，即表示您授予 Igalia 使用回饋來改善其產品、在其網站上發布匿名回饋以及分發匿名回饋的權限。
+\n
+\n\t• Wolvic 隱私權政策中描述了我們如何使用您透過 Wolvic 提交給 Igalia 的個人資訊和回饋。
+\n
+\n\t• Wolvic 的一些功能是利用網路為基礎的資訊服務；但是，我們不能保證它們 100% 準確或沒有錯誤。更多詳細信息，包括有關如何停用使用這些服務的功能的信息，可以在服務條款（如下）中找到。</string>
+    <string name="privacy_policy_section_3">本隱私權政策受西班牙法律管轄。該應用程式的隱私權政策語言是西班牙語。因此，西班牙語原始版本與其翻譯成其他語言之間的任何可能的差異都將被視為西班牙語版本中的主要差異，可以在此處找到：https://wolvic.com/es/legal/privacy /。</string>
+    <string name="voice_service_huawei_asr">華為自動語音識別</string>
+    <string name="terms_service_section_2">Wolvic 使用網路為基礎的資訊服務（「服務」）來提供一些功能，請您根據下述條款使用此二進位版本的 Wolvic。
+\n
+\n\t• Igalia 及其貢獻者、授權人和合作夥伴致力於提供最準確和最新的服務。然而，我們不能保證這些資訊是全面且無錯誤的。例如，安全瀏覽服務可能無法識別一些有風險的網站，並且可能會錯誤地識別一些安全網站，而在位置感知服務中，我們的服務提供者返回的所有位置僅是估計值，我們和我們的服務提供者都不保證這些位置的準確性。
+\n
+\n\t• Igalia 可自行決定終止或變更服務。
+\n
+\n\t• 歡迎您將這些服務與 Wolvic 的隨附版本一起使用，Igalia 授予您這樣做的權利。 Igalia 及其授權人保留服務中的所有其他權利。這些條款無意限制根據適用於 Wolvic 和 Wolvic 相應原始碼版本的開源許可授予的任何權利。
+\n
+\n\t•服務以「現況」提供。 Igalia 及其貢獻者、授權人和經銷商不承擔任何明示或暗示的保證，包括但不限於服務適銷性和適合您的特定目的的保證。您承擔為您的目的選擇服務以及服務的品質和性能的全部風險。
+\n
+\n\t• 除法律要求外，Igalia、其貢獻者、許可方和分銷商對因使用Wolvic 和服務而產生的或以任何方式與之相關的任何間接、特殊、偶然、後果性、懲罰性或懲戒性損害不承擔責任。這些條款項下的集體責任將不超過 500 美元（五百美元）。某些司法管轄區不允許排除或限制某些損害，因此此排除和限制可能不適用於您。
+\n
+\n\t• Igalia 可能會根據需要不時更新這些條款。未經 Igalia 書面同意，不得修改或取消這些條款。
+\n
+\n\t• 這些條款受西班牙法律管轄，不包括其法律衝突條款。如果這些條款的任何部分被認為無效或無法執行，其餘部分將仍然具有完全效力。如果這些條款的翻譯版本與西班牙文版本之間有衝突，則以西班牙文版本為準。
+\n
+\n\t•如果您不想使用一項或多項服務或上述條款不可接受，您可以停用該功能或服務。下面可以找到有關如何停用特定功能或服務的說明。其他功能和服務可以在應用程式首選項中停用。
+\n
+\n\t\t◦ 預設啟用安全瀏覽。不建議停用安全瀏覽功能，因為這可能會導致您造訪不安全的網站。如果您想完全停用該功能，請按照下列步驟操作：
+\n
+\n\t\t\t⁃ 在網址列, 輸入 about:config
+\n
+\n\t\t\t⁃ 輸入browser.safebrowsing.malware.enabled
+\n
+\n\t\t\t⁃ 雙擊 browser.safebrowsing.malware.enabled preference
+\n
+\n\t\t\t⁃ 輸入browser.safebrowsing.phishing.enabled
+\n
+\n\t\t\t⁃ 雙擊 browser.safebrowsing.phishing.enabled preference
+\n
+\n\t\t\t⁃ 安全瀏覽現已停用
+\n
+\n\t\t◦位置感知瀏覽：始終是選擇加入。未經您的許可，不會發送任何位置資訊。如果您想完全停用該功能，請按照下列步驟操作：
+\n
+\n\t\t\t⁃ 在網址列, 輸入 about:config
+\n
+\n\t\t\t⁃ 輸入 geo.enabled
+\n
+\n\t\t\t⁃ 雙擊 geo.enabled preference
+\n
+\n\t\t\t⁃ 位置感知瀏覽現已停用
+\n
+\n\t\t◦ Wolvic 中的增強追蹤保護會在您瀏覽時自動保護您的隱私。它會阻止在線追蹤您的追蹤器，以收集有關您的瀏覽習慣和興趣的信息，而不會破壞網站功能。它還包括針對有害腳本的保護，例如耗盡電池電量的惡意軟體。追蹤保護共有三種模式：標準、嚴格和關閉。如果您想將其關閉，請按照下列步驟操作：
+\n
+\n\t\t\t⁃ 前往 “Privacy &amp; Security” 設定。
+\n
+\n\t\t\t⁃ 選擇“關閉”單選按鈕。
+\n
+\n\t\t\t⁃ 增強追蹤保護現已停用。</string>
+    <string name="privacy_policy_section_2">IGALIA 致力於遵守有關保護個人資料的法律規定：歐洲議會和理事會 2016 年 4 月 27 日頒布的關於在處理個人資料和處理方面保護自然人的法規 (EU) 2016/679關於此類資料的自由流動並廢除第95/46/EC 號指令（一般資料保護條例）以及12 月5 日關於資料保護和數位權利保障(LOPDGDD) 的第3/2018 號組織法。
+\nIGALIA 不會以可識別使用者身分的方式收集個人資料。因此，您可以使用該應用程式、查閱和瀏覽虛擬實境環境，而無需直接或間接透露您的身分或向 IGALIA 提供個人資料；因此，IGALIA 對在 WOLVIC 中輸入的任何資料不承擔任何責任。
+\nIGALIA 為使用本應用程式所取得的如下唯一資料和資訊在任何時候都不會單獨連結到用戶：
+\n
+\n\t• 分析性、純統計性和非識別性資料。
+\n\t• 為了捕獲語音並將其翻譯為文本，用戶的聲音數據透過用於此目的的 API 發送到負責每個平台的第三方公司擁有的伺服器：例如，在 Oculus 中，來自 Facebook 的一項服務將其發送到Oculus Voice SDK。上述資料在任何時候都不會被處理、存取或合併到 IGALIA 擁有的伺服器中。傳輸的資料將由擁有每個平台的第三方公司（以下簡稱「第三方」）獨家負責，這些公司可能位於歐盟之外，並受對用戶隱私保護較少的法律制度的約束。我們建議您在接受和使用這些外部平台的服務之前仔細閱讀其隱私權政策和使用條款。 IGALIA 對上述第三方的個人資料處理不直接或間接負責。
+\n\t• 地理位置資訊可以從瀏覽器獲取，而不是系統使用的資訊。然而，為此，您必須透過這方面的具體通知來設定您設備的位置權限，並且IGALIA 絕不會以任何方式將上述資訊與您作為已識別或可識別的人聯繫起來，儘管第三方在這方面提到了第三方。如果適用的話，上一點可以這樣做。我們建議您注意他們的法律條款。
+\n\t•IGALIA 不會以任何方式存取或儲存您造訪過的位址或 URL。
+\n\t• 可與雲端服務（例如Mozilla 帳戶或 Google 帳戶）整合以同步數據，例如您的瀏覽記錄或使用者書籤。在這種情況下，IGALIA 不會以任何方式存取或處理任何訊息，也不會透過 IGALIA 的伺服器。
+\n
+\n我們再次提醒您，您透過此應用程式存取或使用的第三方平台可能會收集有關您的此或其他識別數據，無論是自願或非自願和/或有意或無意地填寫，這可能超出歐洲數據保護立法的範圍。因此，我們建議您自行了解並特別注意所述第三方的法律條款，例如以下內容：
+\n
+\n\t• Google: https://policies.google.com/privacy
+\n\t• Facebook: https://www.facebook.com/about/privacy/update
+\n\t• MeetKai: https://meetkai.com/privacy
+\n
+\n同樣，IGALIA 通知您，在使用瀏覽器的語音辨識選項時，Meetkai 將保留您語音的完全匿名語音轉錄，以改善他們提供的服務。您的聲音不會被保留，也不會以任何方式將轉錄內容與您的身分連結起來。有關 MeetKai 隱私權政策的更多信息，請訪問以下連結：https://meetkai.com/es/privacy。 Igalia 既沒有興趣將轉錄內容與任何使用者連結起來，也沒有興趣影響他們的隱私；因此，Igalia 要求其聲音地址中不得包含任何類型的個人或機密資訊。
+\n在任何情況下，IGALIA 保證利害關係人對其個人資料行使存取、更正、刪除、反對、限制處理和可攜性的權利。
+\n為此，IGALIA 制定了內部協議/程序來執行它們。
+\n有興趣的各方可以透過以下方式行使自己的權利：透過向 IGALIA 的實際地址發送請求：Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña，參考編號：「資料保護」；或發送至以下電子郵件地址：info@igalia.com。
+\n在這兩種情況下，利害關係人必須附上其國民身分證、護照或身分證明文件的副本以證明其身分。
+\n資料保護官或受委託管理權利的部門將以為此目的可用的表格記錄權利的行使，其中將記錄以下資料：
+\n
+\n\t• 申請編號：每份收到的申請會分配一個編號。
+\n\t• 總部：如果負責人有多個總部，則註明收到請求的總部。
+\n\t• 提出索賠的管道：將註明收到要求的管道：實體郵件地址、郵件等。
+\n\t• 提交日期：將註明提交請求的日期。
+\n\t• 行使的權利：該人行使的權利的類型。
+\n\t• 回覆日：回覆發送給相關方的日期。
+\n
+\n支援文件（請求/回應的收據、通訊等）將存檔，以證明其管理正確。
+\n同樣，我們提醒您，您有權向西班牙資料保護局提出索賠。</string>
 </resources>
