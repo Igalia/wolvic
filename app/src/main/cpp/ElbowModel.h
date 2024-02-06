@@ -17,7 +17,7 @@ typedef std::shared_ptr<ElbowModel> ElbowModelPtr;
 
 class ElbowModel {
 public:
-  enum class HandEnum { Left, Right };
+  enum class HandEnum { Left, Right, None };
   static ElbowModelPtr Create();
   const vrb::Matrix& GetTransform(const HandEnum aHand, const vrb::Matrix& aHeadTransform, const vrb::Matrix& aDeviceRotation);
 protected:
