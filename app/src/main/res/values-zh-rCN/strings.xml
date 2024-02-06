@@ -357,7 +357,7 @@
     <string name="display_options_latin_auto_complete">拉丁字母键盘输入自动补全</string>
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if head lock should be enabled in the app. -->
-    <string name="display_options_head_lock">头部锁定</string>
+    <string name="display_options_head_lock">启用头部锁定</string>
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize the windows distance. -->
     <string name="display_options_windows_distance">窗口距离</string>
@@ -421,7 +421,7 @@
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">显示像素密度（DPI）：</string>
     <!-- This string is used to label the experimental features. -->
-    <string name="experimental_features">实验性功能</string>
+    <string name="experimental_features">试用功能</string>
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">多重采样抗锯齿（MSAA）</string>
@@ -740,7 +740,7 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D 并排</string>
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_3d_top_bottom">3D 上下</string>
+    <string name="video_mode_3d_top_bottom">三维 顶部 底部</string>
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360°</string>
     <!-- This string is displayed when selecting a video playback mode. -->
@@ -1346,7 +1346,7 @@
     <string name="voice_samples_collect_data_dialog_title">允许 %1$s 为研究收集语音样本吗？</string>
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2">为了改善语音识别和其他服务，我们需要收集语音样本进行研究。我们将会安全地存储您的数据，并抹除可识别性信息。即使您拒绝我们收集您的语音作样本，您仍可正常使用语音搜索。&lt;a href=privacy&gt;详细了解&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2">为了改善语音识别和其他服务，我们需要收集语音样本进行研究。我们将会安全地存储您的数据，无需识别性信息。即使您拒绝我们收集您的语音作样本，您仍可正常使用语音搜索。&lt;a href=privacy&gt;详细了解&lt;/a&gt;</string>
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">允许</string>
@@ -1465,7 +1465,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">登录以发送标签页</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">创建或登录一个 Mozilla 账户，以便您在台式机、笔记本电脑、移动设备向头戴式设备上的 Firefox 发送标签页。</string>
+    <string name="whats_new_body_1">登录或创建一个新的 Mozilla 账户，以便您在台式机、笔记本电脑、移动设备向头戴式设备上的 Firefox 发送标签页。</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
     <string name="whats_new_body_sub_1">Mozilla 账户还可让您在所有设备上同步书签和历史记录。</string>
@@ -1678,7 +1678,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_enter_vr">进入VR</string>
     <!-- This strings are displayed in the privacy dialog on first launch. -->
     <string name="privacy_dialog_title">隐私</string>
-    <string name="privacy_dialog_message">我们尊重您的隐私。在运行浏览器前，请先同意我们的用户协议与隐私政策。感谢使用Wolvic！</string>
+    <string name="privacy_dialog_message">您的隐私很重要。在运行浏览器前，请先同意我们的用户协议与隐私政策。感谢使用Wolvic！</string>
     <string name="privacy_dialog_agree">同意</string>
     <string name="privacy_dialog_disagree">不同意</string>
     <!-- These strings are the content of the Terms of Service. -->
@@ -1995,7 +1995,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_privacy_search_engine_title">搜索引擎</string>
     <string name="settings_privacy_choose_search_engine_reset">重置搜索引擎设置</string>
     <string name="external_open_uri_error_title">外部应用程序打开错误</string>
-    <string name="external_open_uri_error_security_exception_body">启动为 %1$s的 intent 出现安全异常错误</string>
+    <string name="external_open_uri_error_security_exception_body">启动为 %1$s的 意图出现安全异常错误</string>
     <string name="external_open_uri_error_bad_uri_body">非法uri %1$s</string>
     <string name="external_open_uri_error_no_activity_body">无法找到处理%1$s的应用程序</string>
     <string name="language_options_voice_search_service_title">语音搜索服务</string>
@@ -2028,26 +2028,25 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install">安装插件</string>
     <string name="download_addon_install_cancel">取消</string>
     <string name="download_addon_install_blocked_body">要继续安装请在开发者选项中选择允许本地插件安装。</string>
-    <string name="settings_language_portuguese">西班牙语</string>
+    <string name="settings_language_portuguese">葡萄牙语</string>
     <string name="security_options_permission_fine_location_warning">Wolvic 只可以获取您的大致位置。 您可在系统设置菜单更改设置。</string>
     <string name="upload_list_empty">无可上载文档</string>
     <string name="hamburger_menu_toggle_passthrough">通过</string>
-    <string name="deprecated_version_dialog_body">您当前在运行一Wolvic \"试验应用\" 开发版本。它将在2023年10月底停止使用。
+    <string name="deprecated_version_dialog_body">Wolvic 的“App Lab”版本将于2023年10月底删除。
 \n
 \n请安装 Meta Quest 商店的Wolvic最新版本。
 \n
-\n重要提示：除非您用Mozilla同步，新版 Wolvic应用不会有你的书签和标签页。</string>
-    <string name="deprecated_version_dialog_title">建议的更新</string>
+\n重要提示：除非您用同步，新版 Wolvic应用不会有你的书签和标签页。</string>
+    <string name="deprecated_version_dialog_title">支持即将结束</string>
     <string name="deprecated_version_dialog_info_button">了解更多…</string>
     <string name="deprecated_version_dialog_store_button">安装…</string>
     <string name="user_feedback_tooltip">分享想法和反馈</string>
-    <string name="keyboardview_keycode_shift">换档</string>
+    <string name="keyboardview_keycode_shift">换档键</string>
     <string name="keyboardview_keycode_done">完成</string>
     <string name="keyboardview_keycode_delete">删除</string>
-    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_alt">Alt键</string>
     <string name="keyboardview_keycode_cancel">取消</string>
     <string name="keyboardview_keycode_mode_change">模式转变</string>
     <string name="keyboardview_keycode_enter">回车键</string>
-
-    <string name="tray_wifi_unavailable_ssid">SSID不可知</string>
+    <string name="tray_wifi_unavailable_ssid">服务集标识SSID不可用</string>
 </resources>
