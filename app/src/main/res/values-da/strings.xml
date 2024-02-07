@@ -1656,4 +1656,75 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_loading">Indlæsning af notifikationer</string>
     <string name="notifications_empty">Din notifikationsliste er tom</string>
     <string name="notifications_title">Notifikationer</string>
+    <string name="fxa_account_options_device_name">Enhedsnavn</string>
+    <string name="move_tooltip">Flyt</string>
+    <string name="deprecated_version_dialog_store_button">Installer…</string>
+    <string name="rCN_first_launch_title">Meddelelse om brugeraftale og privatlivspolitik</string>
+    <string name="rCN_first_launch_clickable_privacy_text">Privatlivspolitik</string>
+    <string name="rCN_first_launch_agree">Enig</string>
+    <string name="rCN_first_launch_disagree">Uenig</string>
+    <string name="rCN_first_launch_confirmation_body">Hvis du vælger \"Uenig\", vil vi desværre ikke længere være i stand til at levere tjenester til dig.
+\n
+\nDu kan læse den komplette brugeraftale og privatlivspolitik.</string>
+    <string name="keyboardview_keycode_cancel">Annuller</string>
+    <string name="keyboardview_keycode_delete">Slet</string>
+    <string name="keyboardview_keycode_enter">Indtast</string>
+    <string name="tray_wifi_unavailable_ssid">SSID ikke tilgængelig</string>
+    <string name="user_feedback_tooltip">Del ideer og feedback</string>
+    <string name="upload_list_empty">Ingen filer tilgængelige til upload</string>
+    <string name="deprecated_version_dialog_info_button">Læs mere…</string>
+    <string name="deprecated_version_dialog_body">Denne \"App Lab\"-version af Wolvic vil blive fjernet ved udgangen af oktober 2023.
+\n
+\nInstaller venligst den nyeste version af Wolvic fra Meta Quest Store.
+\n
+\nVIGTIGT: Medmindre du bruger Sync, vil den nye Wolvic-app ikke have dine bogmærker og faner.</string>
+    <string name="developer_options_center_windows">Centrer vinduer vertikalt</string>
+    <string name="display_options_windows_can_move">Træk for at flytte vinduer</string>
+    <string name="controller_options_haptic_feedback">Haptisk feedback</string>
+    <string name="security_options_permission_fine_location_warning">Wolvic kan kun få din omtrentlige placering. Dette kan ændres i systemindstillingerne.</string>
+    <string name="voice_input_start">Hvad vil du gerne have input til?</string>
+    <string name="device_name">%1$s på %2$s</string>
+    <string name="video_mode_3d_top_bottom">3D Top Bund</string>
+    <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
+    <string name="rCN_first_launch_confirmation_agree">Enig og fortsæt</string>
+    <string name="rCN_first_launch_confirmation_disagree">Uenig og afslut</string>
+    <string name="terms_service_section_1">Wolvic er gratis og open source-software, bygget af et fællesskab af tusinder fra hele verden. Der er et par ting, du bør vide:
+\n
+\n\t- Wolvic stilles til rådighed for dig under betingelserne i Mozilla Public License. Det betyder, at du må bruge, kopiere og distribuere Wolvic til andre. Du er også velkommen til at ændre kildekoden til Wolvic, som du vil, for at opfylde dine behov. Mozilla Public License giver dig også ret til at distribuere dine modificerede versioner.
+\n
+\n\t- Du får ikke tildelt nogen varemærkerettigheder eller licenser til varemærker tilhørende Igalia eller nogen anden part, herunder uden begrænsning Wolvic-navnet eller -logoet.
+\n
+\n\t- Nogle funktioner i Wolvic, såsom Crash Reporter, giver dig mulighed for at give feedback til Igalia. Ved at vælge at indsende feedback giver du Igalia tilladelse til at bruge feedbacken til at forbedre sine produkter, til at offentliggøre anonymiseret feedback på sine hjemmesider og til at distribuere den anonymiserede feedback.
+\n
+\n\t- Hvordan vi bruger dine personlige oplysninger og feedback indsendt til Igalia gennem Wolvic, er beskrevet i Wolvics privatlivspolitik.
+\n
+\n\t- Nogle Wolvic-funktioner gør brug af webbaserede informationstjenester; vi kan dog ikke garantere, at de er 100 % nøjagtige eller fejlfri. Flere detaljer, herunder oplysninger om, hvordan du deaktiverer de funktioner, der bruger disse tjenester, kan findes i servicevilkårene (nedenfor).</string>
+    <string name="privacy_policy_section_1">Denne applikation er udviklet af Igalia, SL (herefter IGALIA), med hjemsted på Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia (Spanien), hvis kontaktoplysninger er:
+\n
+\n\t- Telefonnummer +34 981 913991;
+\n\t- E-mail: info@igalia.com
+\n
+\nIndholdet og elementerne, der udgør applikationen, er implementeret og/eller udviklet af IGALIA under open source-licenser og er beskyttet uden begrænsninger af lovgivningen om intellektuel og industriel ejendomsret i Kongeriget Spanien og af de internationale traktater og aftaler, der kan være resultatet af anvendelsen.</string>
+    <string name="keyboardview_keycode_done">Færdig</string>
+    <string name="privacy_policy_section_3">Denne fortrolighedspolitik er underlagt spansk lov. Privatlivspolitikkens sprog i denne applikation er spansk. Af denne grund vil enhver mulig afvigelse mellem den originale version på spansk og dens oversættelse til et andet sprog blive betragtet som fremherskende i den spanske version, der kan findes her: https://wolvic.com/es/legal/privacy/ .</string>
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <string name="keyboardview_keycode_mode_change">Ændring af tilstand</string>
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <string name="clear_user_data_dialog_title">Ryd %1$s brugerdata</string>
+    <string name="clear_user_data_dialog_text">%1$s vil blive nulstillet. Alle data, inklusive gemte logins, historik og bogmærker, vil blive slettet permanent, hvis de ikke er blevet synkroniseret. %1$s lukker automatisk, når nulstillingen er fuldført. Ønsker du at fortsætte?</string>
+    <string name="developer_options_clear_user_data_description">Alle brugerdata</string>
+    <string name="security_options_use_system_root_ca">Brug rodcertifikater, som systemet har tillid til</string>
+    <string name="rCN_first_launch_body">Velkommen til \"Wolvic\"!
+\n
+\nRegistrering og brug af \"Wolvic\" kræver, at du accepterer brugeraftalen og privatlivspolitikken, ellers kan vi ikke levere tjenester til dig. Læs venligst dokumenterne omhyggeligt og klik på \"Enig\" for at fortsætte. Hvis du klikker på \"Uenig\", vil du ikke kunne fortsætte med at bruge \"Wolvic\".
+\n
+\nDu kan læse den komplette brugeraftale og privatlivspolitik.</string>
+    <string name="rCN_first_launch_clickable_terms_text">Brugeraftale</string>
+    <string name="deprecated_version_dialog_title">Support slutter snart</string>
+    <string name="display_options_sound_effect">Brug lydeffekter</string>
+    <string name="display_options_latin_auto_complete">Automatisk udfyldning af latinsk tastaturinput</string>
+    <string name="display_options_head_lock">Aktivér hovedlås</string>
+    <string name="display_options_windows_distance">Windows Afstand</string>
+    <string name="experimental_features">Eksperimentelle funktioner</string>
+    <string name="display_options_start_with_passthrough">Start med Passthrough-tilstand</string>
 </resources>
