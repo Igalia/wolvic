@@ -126,7 +126,7 @@
     <string name="performance_unblock_page">Desbloquear página</string>
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar a sua app.</string>
-    <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s colete amostras de voz para pesquisa?</string>
+    <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s recolha amostras de voz para pesquisa?</string>
     <string name="voice_samples_collect_dialog_description2">Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem informações de identificação. Sempre poderá usar a pesquisa por voz, mesmo que não permita a coleta. &lt;a href=&gt;Saiba mais&lt;/a&gt;</string>
     <string name="voice_samples_collect_dialog_do_not_allow">Não permitir</string>
     <string name="url_home_title">%1$s Início</string>
