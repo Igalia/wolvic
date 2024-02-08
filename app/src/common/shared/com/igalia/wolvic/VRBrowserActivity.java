@@ -126,6 +126,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public static final String EXTRA_HIDE_WEBXR_INTERSTITIAL = "hide_webxr_interstitial";
     public static final String EXTRA_HIDE_WHATS_NEW = "hide_whats_new";
     public static final String EXTRA_KIOSK = "kiosk";
+    private static final long BATTERY_UPDATE_INTERVAL = 60 * 1_000_000_000L; // 60 seconds
 
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
@@ -242,6 +243,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
     private boolean mIsPassthroughEnabled = false;
+    private long mLastBatteryUpdate = System.nanoTime();
+    private int mLastBatteryLevel = -1;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1513,12 +1516,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private void updateBatterLevels(final int leftLevel, final int rightLevel) {
-        BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
-        int battery = bm == null ? 100 : bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        long currentTime = System.nanoTime();
+        if (((currentTime - mLastBatteryUpdate) >= BATTERY_UPDATE_INTERVAL) || mLastBatteryLevel == -1) {
+            mLastBatteryUpdate = currentTime;
+            BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
+            mLastBatteryLevel = bm == null ? 100 : bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        }
+
         Intent intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int plugged = intent == null ? -1 : intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         boolean isCharging = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB || plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
-        mTray.setBatteryLevels(battery, isCharging, leftLevel, rightLevel);
+        mTray.setBatteryLevels(mLastBatteryLevel, isCharging, leftLevel, rightLevel);
     }
 
     @Keep
