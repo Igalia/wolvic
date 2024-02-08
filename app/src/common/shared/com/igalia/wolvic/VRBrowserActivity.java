@@ -1512,10 +1512,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void updateControllerBatteryLevels(final int leftLevel, final int rightLevel) {
-        runOnUiThread(() -> updateBatterLevels(leftLevel, rightLevel));
+        runOnUiThread(() -> updateBatteryLevels(leftLevel, rightLevel));
     }
 
-    private void updateBatterLevels(final int leftLevel, final int rightLevel) {
+    private void updateBatteryLevels(final int leftLevel, final int rightLevel) {
         long currentTime = System.nanoTime();
         if (((currentTime - mLastBatteryUpdate) >= BATTERY_UPDATE_INTERVAL) || mLastBatteryLevel == -1) {
             mLastBatteryUpdate = currentTime;
