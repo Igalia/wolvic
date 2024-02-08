@@ -308,7 +308,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
                         .withString(getContext().getString(
-                                R.string.tray_status_headset,
+                                DeviceType.isTetheredDevice() ? R.string.tray_status_phone : R.string.tray_status_headset,
                                 String.format(
                                         LocaleUtils.getDisplayLanguage(
                                                 getContext()).getLocale(),
