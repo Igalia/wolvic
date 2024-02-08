@@ -161,4 +161,8 @@ public class DeviceType {
         }
         return aContext.getString(R.string.device_name, appName, deviceName);
     }
+
+    public static boolean isTetheredDevice() {
+        return mType == HVR3DoF || mType == HVR6DoF || mType == VisionGlass || mType == LenovoA3;
+    }
 }

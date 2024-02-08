@@ -2532,5 +2532,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- Shown in the tray wifi icon popup when SSID cannot be retrieved -->
     <string name="tray_wifi_unavailable_ssid">SSID unavailable</string>
+    <!-- Tooltip for the battery level when using a tethered device instead of a headset -->
+    <string name="tray_status_phone">Phone: %1$s</string>
 
 </resources>
