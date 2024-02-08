@@ -241,11 +241,6 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   if (!m.controller)
     return;
 
-  if (auto context = m.context.lock()) {
-    float level = 100.0 - std::fmod(context->GetTimestamp(), 100.0);
-    m.controller->SetBatteryLevel(kControllerIndex, (int32_t)level);
-  }
-
   vrb::Matrix transformMatrix;
   if (auto context = m.context.lock()) {
     float* filteredOrientation = m.orientationFilter->filter(context->GetTimestamp() * 1000000000, m.controllerOrientation.Data());
