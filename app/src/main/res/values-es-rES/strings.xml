@@ -1420,7 +1420,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_title_1">Inicia sesión para enviar pestañas</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Mozilla para enviar pestañas desde Firefox en tu ordenador de escritorio o dispositivo móvil a tus auriculares.</string>
+    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Mozilla para enviar pestañas desde Firefox en tu ordenador de escritorio o dispositivo móvil a tu casco.</string>
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
     <string name="whats_new_body_sub_1">La cuenta de Mozilla también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
@@ -1606,7 +1606,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_right_controller">Controlador derecho: %1$s</string>
     <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
     '%1$s' Will be replaced at runtime with headset battery level. -->
-    <string name="tray_status_headset">Auriculares: %1$s</string>
+    <string name="tray_status_headset">Casco: %1$s</string>
     <!-- This string is displayed in the 2D phone screen when the user starts the app without an available device.
      This message is shown until the user correctly setups the device. -->
     <string name="hvr_connect_glass_message">Conecte sus HUAWEI VR Glass para usar esta aplicación</string>
