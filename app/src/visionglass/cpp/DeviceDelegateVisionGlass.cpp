@@ -18,6 +18,7 @@
 #include "vrb/Vector.h"
 #include "JNIUtil.h"
 #include "DeviceUtils.h"
+#include "OneEuroFilter.h"
 
 #include <vector>
 #include <cassert>
@@ -54,6 +55,7 @@ struct DeviceDelegateVisionGlass::State {
   float near, far;
   vrb::Matrix reorientMatrix;
   crow::ElbowModelPtr elbow;
+  std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , headingMatrix(vrb::Matrix::Identity())
@@ -65,6 +67,7 @@ struct DeviceDelegateVisionGlass::State {
       , reorientMatrix(vrb::Matrix::Identity())
       , elbow(ElbowModel::Create())
   {
+      orientationFilter = std::make_unique<OneEuroFilterQuaternion>(0.1, 0.5, 1.0);
   }
 
   void Initialize() {
@@ -242,7 +245,14 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
     float level = 100.0 - std::fmod(context->GetTimestamp(), 100.0);
     m.controller->SetBatteryLevel(kControllerIndex, (int32_t)level);
   }
-  auto transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation);
+
+  vrb::Matrix transformMatrix;
+  if (auto context = m.context.lock()) {
+    float* filteredOrientation = m.orientationFilter->filter(context->GetTimestamp() * 1000000000, m.controllerOrientation.Data());
+    transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
+  } else {
+    transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation);
+  }
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
   m.controller->SetTransform(kControllerIndex, pointerTransform);
 }
