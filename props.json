@@ -1,4 +1,27 @@
 {
+  "1.6.0": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.6",
+    "environments": [
+      {
+        "value": "meadow",
+        "title": "Meadow by Sergej Majboroda (CC0)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/meadow/meadow.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/meadow/meadow.zip"
+      },
+      {
+        "value": "abovetheclouds",
+        "title": "Above The Clouds by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/abovetheclouds/abovetheclouds.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/abovetheclouds/abovetheclouds.zip"
+      },
+      {
+        "value": "milkyway2020",
+        "title": "Milky Way (2020) by NASA",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.zip"
+      }
+    ]
+  },
   "1.5.2": {
     "whatsNewUrl": "https://wolvic.com/blog/release_1.5.2",
     "environments": [
