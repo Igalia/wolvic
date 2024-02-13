@@ -3,6 +3,12 @@
     "whatsNewUrl": "https://wolvic.com/blog/release_1.6",
     "environments": [
       {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      },
+      {
         "value": "meadow",
         "title": "Meadow by Sergej Majboroda (CC0)",
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/meadow/meadow.png",
@@ -19,6 +25,92 @@
         "title": "Milky Way (2020) by NASA",
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.png",
         "payload": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.zip"
+      },
+      {
+        "value": "autumnforest",
+        "title": "Autumn Forest by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.zip"
+      },
+      {
+        "value": "basicsky",
+        "title": "Basic Sky by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.zip"
+      },
+      {
+        "value": "bcnrooftop",
+        "title": "Barcelona Rooftops by MozillaHubs (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.zip"
+      },
+      {
+        "value": "nightforest",
+        "title": "Night Forest With Aurora Sky by Architecture_Interior (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.zip"
+      },
+      {
+        "value": "pretville_cinema",
+        "title": "Pretville Cinema by D. Savva and J. Guest (CC0)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.zip"
+      },
+      {
+        "value": "winternight",
+        "title": "Winter Night by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.zip"
+      }
+    ],
+    "dictionaries": [
+      {
+        "lang": "da_DK",
+        "payload": "https://igalia.github.io/wolvic/dics/da_wordlist.db"
+      },
+      {
+        "lang": "es",
+        "payload": "https://igalia.github.io/wolvic/dics/es_wordlist.db"
+      },
+      {
+        "lang": "it",
+        "payload": "https://igalia.github.io/wolvic/dics/it_wordlist.db"
+      },
+      {
+        "lang": "pl_PL",
+        "payload": "https://igalia.github.io/wolvic/dics/pl_wordlist.db"
+      },
+      {
+        "lang": "de",
+        "payload": "https://igalia.github.io/wolvic/dics/de_wordlist.db"
+      },
+      {
+        "lang": "fi_FI",
+        "payload": "https://igalia.github.io/wolvic/dics/fi_wordlist.db"
+      },
+      {
+        "lang": "nb_NO",
+        "payload": "https://igalia.github.io/wolvic/dics/nb_wordlist.db"
+      },
+      {
+        "lang": "ru_RU",
+        "payload": "https://igalia.github.io/wolvic/dics/ru_wordlist.db"
+      },
+      {
+        "lang": "fr",
+        "payload": "https://igalia.github.io/wolvic/dics/fr_wordlist.db"
+      },
+      {
+        "lang": "nl_NL",
+        "payload": "https://igalia.github.io/wolvic/dics/nl_wordlist.db"
+      },
+      {
+        "lang": "en",
+        "payload": "https://igalia.github.io/wolvic/dics/en_wordlist.db"
+      },
+      {
+        "lang": "sv_SE",
+        "payload": "https://igalia.github.io/wolvic/dics/sv_wordlist.db"
       }
     ]
   },
