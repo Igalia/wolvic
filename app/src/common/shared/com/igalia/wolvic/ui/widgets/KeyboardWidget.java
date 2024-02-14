@@ -1318,7 +1318,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     return false;
                 } else {
                     connection.sendKeyEvent(event);
-                    hide(UIWidget.KEEP_WIDGET);
+                    dismiss();
                 }
                 return true;
             }
