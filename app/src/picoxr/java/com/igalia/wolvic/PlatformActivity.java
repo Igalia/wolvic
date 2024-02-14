@@ -17,8 +17,8 @@ public class PlatformActivity extends NativeActivity {
     }
 
     public static boolean isNotSpecialKey(KeyEvent event) {
-        // Dummy implementation.
-        return true;
+        // Recognize PICO's screenshot button.
+        return event.getKeyCode() != KeyEvent.KEYCODE_CAMERA;
     }
 
     public static boolean isPositionTrackingSupported() {
