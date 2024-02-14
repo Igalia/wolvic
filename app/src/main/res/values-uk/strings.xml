@@ -407,7 +407,7 @@
 \nРеєстрація та використання \"Wolvic\" вимагає від вас згоди з Угодою про використання та Політикою конфіденційності, інакше ми не зможемо надавати вам послуги. Будь ласка, уважно прочитайте документи і натисніть \"Погоджуюсь\", щоб продовжити. Якщо ви натиснете \"Не погоджуюсь\", ви не зможете продовжити використання \"Wolvic\".
 \n
 \nВи можете прочитати повну Угоду користувача та Політику конфіденційності.</string>
-    <string name="rCN_first_launch_confirmation_body">\\f ви обираєте \"Не погоджуюсб\", на жаль, ми більше не зможемо надавати вам послуги.
+    <string name="rCN_first_launch_confirmation_body">\\f ви обираєте \"Не погоджуюсь\", на жаль, ми більше не зможемо надавати вам послуги.
 \n
 \nВи можете прочитати повну Угоду про використання та Політику конфіденційності.</string>
     <string name="privacy_dialog_message">Ваша конфіденційність важлива для нас. Для того, щоб запустити браузер, будь ласка, прийміть наші умови надання послуг та політику конфіденційності. Дякуємо за використання Wolvic!</string>
@@ -604,7 +604,7 @@
     <string name="send_tab_dialog_description">Виберіть пристрій для надсилання вкладки.</string>
     <string name="send_tab_dialog_options_header">Доступні пристрої:</string>
     <string name="send_tab_dialog_no_devices">Пристрої не підключено.</string>
-    <string name="whats_new_title_1">Sign in to send tabs</string>
+    <string name="whats_new_title_1">Увійти, щоб надіслати вкладки</string>
     <string name="whats_new_body_1">Увійдіть або створіть новий обліковий запис Firefox, щоб надсилати вкладки з Firefox на вашому комп\'ютері або мобільному пристрої на гарнітуру.</string>
     <string name="deprecated_version_dialog_title">Підтримка скоро закінчиться</string>
     <string name="deprecated_version_dialog_info_button">Докладніше…</string>
