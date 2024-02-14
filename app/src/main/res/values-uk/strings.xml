@@ -16,7 +16,7 @@
     <string name="fxa_account_last_synced">Остання синхронізація %1$d хвилин(у) тому</string>
     <string name="security_options_drm_content_v1">Автоматично дозволяти сайтам ідентифікувати ваш пристрій для відтворення DRM вмісту. (&lt;a href=%1$s&gt;Докладніше&lt;/a&gt;)</string>
     <string name="security_options_login_save">Зберігати логіни та паролі</string>
-    <string name="security_options_login_sync">Синхронізувати логіни з акаунтом Firefox</string>
+    <string name="security_options_login_sync">Синхронізувати логіни з акаунтом Mozilla</string>
     <string name="send_tab_dialog_syncing">Синхронізація…</string>
     <string name="security_options_login_exceptions">Винятки…</string>
     <string name="security_options_permission_camera">Камера</string>
@@ -366,7 +366,7 @@
     <string name="slow_script_dialog_description">Веб-сторінка сповільнює роботу вашого браузера (%1$s). Що ви бажаєте зробити?</string>
     <string name="slow_script_dialog_action_stop">Зупинити сторінку</string>
     <string name="send_tab_dialog_button">Надіслати</string>
-    <string name="whats_new_body_sub_1">Обліковий запис Firefox також дозволяє синхронізувати закладки та історію на всіх ваших пристроях.</string>
+    <string name="whats_new_body_sub_1">Обліковий запис Mozilla також дозволяє синхронізувати закладки та історію на всіх ваших пристроях.</string>
     <string name="slow_script_dialog_action_wait">Почекати</string>
     <string name="download_status_pending">Очікується</string>
     <string name="webxr_permission_dialog_message">WebXR %1$s для цього сайта. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
@@ -503,7 +503,7 @@
     <string name="addons_remove_success_dialog_ok">Гаразд</string>
     <string name="fxa_syncing">Синхронізація…</string>
     <string name="fxa_sync">Синхронізувати</string>
-    <string name="fxa_signout_confirmation_title">Вийти зі свого облікового запису Firefox?</string>
+    <string name="fxa_signout_confirmation_title">Вийти зі свого облікового запису Mozilla?</string>
     <string name="fxa_signout_confirmation_cancel">Скасувати</string>
     <string name="history_clear_cancel">Скасувати</string>
     <string name="history_clear_now">Очистити зараз</string>
@@ -605,10 +605,10 @@
     <string name="send_tab_dialog_options_header">Доступні пристрої:</string>
     <string name="send_tab_dialog_no_devices">Пристрої не підключено.</string>
     <string name="whats_new_title_1">Увійти, щоб надіслати вкладки</string>
-    <string name="whats_new_body_1">Увійдіть або створіть новий обліковий запис Firefox, щоб надсилати вкладки з Firefox на вашому комп\'ютері або мобільному пристрої на гарнітуру.</string>
+    <string name="whats_new_body_1">Увійдіть або створіть новий обліковий запис Mozilla, щоб надсилати вкладки з Firefox на вашому комп\'ютері або мобільному пристрої на гарнітуру.</string>
     <string name="deprecated_version_dialog_title">Підтримка скоро закінчиться</string>
     <string name="deprecated_version_dialog_info_button">Докладніше…</string>
-    <string name="deprecated_version_dialog_body">Ця версія Wolvic для \"App Lab\" буде видалена найближчим часом.
+    <string name="deprecated_version_dialog_body">Ця версія Wolvic для \"App Lab\" буде видалена до кінця жовтня 2023 року.
 \n
 \nБудь ласка, встановіть останню версію Wolvic з Meta Store.
 \n
@@ -682,7 +682,7 @@
 \n\t• Для того, щоб захопити і перевести голос в текст, звукові дані користувача надсилаються на сервери, що належать сторонній компанії, відповідальній за певну платформу, через відповідний API: наприклад, в Oculus - від Facebook, сервісу, який надсилає їх до Oculus Voice SDK. Вищезгадані дані в жодному разі не обробляються, не отримують доступ до них і не включаються до серверів, що належать IGALIA. За передані дані несуть виключну відповідальність сторонні компанії, які володіють кожною платформою (далі - Треті особи), які можуть знаходитися за межами Європейського Союзу і підпорядковуватися правовому режиму, який менш захищений щодо конфіденційності користувачів. Ми рекомендуємо вам уважно ознайомитися з політикою конфіденційності та умовами використання кожної з цих зовнішніх платформ, перш ніж приймати і використовувати їхні послуги. IGALIA не несе прямої або опосередкованої відповідальності за обробку персональних даних зазначеними третіми особами.
 \n\t• Інформація про географічне розташування може бути отримана з браузера, а не з системи. Однак для цього ви повинні встановити дозволи на визначення місцезнаходження вашого пристрою за допомогою спеціального повідомлення про це, і IGALIA жодним чином не буде пов\'язувати вищезазначену інформацію з вами як ідентифікованою або ідентифікованою особою, хоча Треті особи, згадані в попередньому пункті, можуть це зробити, якщо це можливо. Ми рекомендуємо вам звернути увагу на їх юридичні умови.
 \n\t• IGALIA не отримує доступ і не зберігає жодним чином адреси або URL-адреси, які ви відвідуєте.
-\n\t• Можлива інтеграція з хмарними сервісами (такими як Firefox Accounts або Google Accounts) для синхронізації даних, таких як історія переглядів або закладки користувача. У цьому випадку IGALIA не матиме доступу до будь-якої інформації, не оброблятиме її та не передаватиме через сервери IGALIA.
+\n\t• Можлива інтеграція з хмарними сервісами (такими як Mozilla Accounts або Google Accounts) для синхронізації даних, таких як історія переглядів або закладки користувача. У цьому випадку IGALIA не матиме доступу до будь-якої інформації, не оброблятиме її та не передаватиме через сервери IGALIA.
 \n
 \nМи ще раз нагадуємо вам, що платформи третіх осіб, до яких ви отримуєте доступ або використовуєте цей додаток, можуть збирати ці або інші ідентифікаційні дані про вас, заповнюючи їх добровільно чи недобровільно та/або свідомо чи несвідомо, можливо, поза межами дії європейського законодавства про захист даних. Тому ми рекомендуємо вам бути поінформованими та звертати особливу увагу на юридичні умови зазначених Третіх осіб, такі як, наприклад, наведені нижче:
 \n
@@ -770,4 +770,15 @@
 \n\t\t\t• Натисніть перемикач \"Вимкнути\".
 \n
 \n\t\t\t• Вдосконалений захист від відстеження тепер вимкнено.</string>
+    <string name="developer_options_center_windows">Центрування вікон по вертикалі</string>
+    <string name="display_options_latin_auto_complete">Автодоповнення введення латинської клавіатури</string>
+    <string name="display_options_head_lock">Фіксування вікон в полі зору</string>
+    <string name="display_options_windows_distance">Відступи між вікнами</string>
+    <string name="controller_options_haptic_feedback">Тактильний зворотний зв\'язок</string>
+    <string name="fxa_account_options_device_name">Найменування пристрою</string>
+    <string name="experimental_features">Експериментальні можливості</string>
+    <string name="move_tooltip">Перемістити</string>
+    <string name="display_options_windows_can_move">Перетягування для переміщення вікон</string>
+    <string name="display_options_sound_effect">Використовувати звукові ефекти</string>
+    <string name="device_name">%1$s на %2$s</string>
 </resources>
