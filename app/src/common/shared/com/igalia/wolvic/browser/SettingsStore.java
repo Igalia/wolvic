@@ -323,7 +323,7 @@ public class SettingsStore {
     }
 
     public static boolean shouldStartWithPassthrougEnabled() {
-        return DeviceType.getType() == DeviceType.LenovoA3;
+        return DeviceType.getType() == DeviceType.LenovoA3 || DeviceType.getType() == DeviceType.VisionGlass;
     }
 
     public boolean isStartWithPassthroughEnabled() {
