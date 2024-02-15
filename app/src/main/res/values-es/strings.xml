@@ -1330,9 +1330,6 @@
          and also from disk. -->
     <string name="download_context_delete">Eliminar</string>
 
-    <!-- This string is used to label the experimental features. -->
-    <string name="experimental_features">Funcionalidades experimentales</string>
-
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use passthrough mode when the app starts. -->
     <string name="display_options_start_with_passthrough">Iniciar en modo Passthrough</string>
