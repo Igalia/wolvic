@@ -2058,6 +2058,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
 
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         the plus & minus buttons, the web page's zoom factor is changed -->
+    <string name="hamburger_menu_zoom">Zoom</string>
+
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the move icon -->
     <string name="move_tooltip">Move</string>
 

@@ -3,6 +3,7 @@ package com.igalia.wolvic.browser.api.impl;
 import android.graphics.Matrix;
 import android.view.ViewGroup;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -238,6 +239,24 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public WTextInput getTextInput() {
         return mTextInput;
+    }
+
+    @AnyThread
+    @Override
+    public void pageZoomIn() {
+        mTab.pageZoomIn();
+    }
+
+    @AnyThread
+    @Override
+    public void pageZoomOut() {
+        mTab.pageZoomOut();
+    }
+
+    @AnyThread
+    @Override
+    public int getCurrentZoomLevel() {
+        return mTab.getCurrentZoomLevel();
     }
 
     @NonNull

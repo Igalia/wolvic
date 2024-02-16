@@ -221,6 +221,15 @@ public class SessionImpl implements WSession {
         return mTextInput;
     }
 
+    @Override
+    public void pageZoomIn() {}
+
+    @Override
+    public void pageZoomOut() {}
+
+    @Override
+    public int getCurrentZoomLevel() { return 0; }
+
     @NonNull
     @Override
     public WPanZoomController getPanZoomController() {

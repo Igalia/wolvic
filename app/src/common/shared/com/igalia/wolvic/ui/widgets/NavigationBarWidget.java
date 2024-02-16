@@ -1396,6 +1396,21 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
                 showSaveWebAppDialog();
             }
+
+            @Override
+            public void onPageZoomIn() {
+                mAttachedWindow.getSession().pageZoomIn();
+            }
+
+            @Override
+            public void onPageZoomOut() {
+                mAttachedWindow.getSession().pageZoomOut();
+            }
+
+            @Override
+            public int getCurrentZoomLevel() {
+                return mAttachedWindow.getSession().getCurrentZoomLevel();
+            }
         });
         boolean isSendTabEnabled = false;
         if (URLUtil.isHttpUrl(mAttachedWindow.getSession().getCurrentUri()) ||

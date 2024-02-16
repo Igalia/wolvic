@@ -22,6 +22,7 @@ import com.igalia.wolvic.browser.Addons;
 import com.igalia.wolvic.databinding.HamburgerMenuAddonItemBinding;
 import com.igalia.wolvic.databinding.HamburgerMenuAddonsSettingsItemBinding;
 import com.igalia.wolvic.databinding.HamburgerMenuItemBinding;
+import com.igalia.wolvic.databinding.HamburgerMenuZoomItemBinding;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.ViewUtils;
 
@@ -41,11 +42,12 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class MenuItem {
 
-        @IntDef(value = { TYPE_DEFAULT, TYPE_ADDON, TYPE_ADDONS_SETTINGS })
+        @IntDef(value = { TYPE_DEFAULT, TYPE_ADDON, TYPE_ADDONS_SETTINGS, TYPE_ZOOM })
         public @interface MenuItemType {}
         public static final int TYPE_DEFAULT = 0;
         public static final int TYPE_ADDON = 1;
         public static final int TYPE_ADDONS_SETTINGS = 2;
+        public static final int TYPE_ZOOM = 3;
 
         @MenuItem.MenuItemType
         int mItemType;
@@ -56,6 +58,8 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
         int mIcon;
         Function<MenuItem, Void> mCallback;
         Action mAction;
+        String mZoomLevel;
+        Function<Boolean, Void> mZoomCallback;
 
         public MenuItem(@NonNull Builder builder) {
             mItemType = builder.mItemType;
@@ -65,6 +69,8 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
             mIcon = builder.mIcon;
             mCallback = builder.mCallback;
             mAction = builder.mAction;
+            mZoomLevel =  builder.mZoomLevel;
+            mZoomCallback = builder.mZoomCallback;;
         }
 
         public int getItemType() {
@@ -107,6 +113,13 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
             mIcon = icon;
         }
 
+        public void setZoomLevel(String zoomLevel) {
+            mZoomLevel = zoomLevel;
+        }
+
+        public String getZoomLevel() { return mZoomLevel; }
+
+
         public static class Builder {
 
             @MenuItem.MenuItemType
@@ -118,6 +131,8 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
             int mIcon;
             Function<MenuItem, Void> mCallback;
             Action mAction;
+            String mZoomLevel;
+            Function<Boolean, Void> mZoomCallback;
 
             public Builder(@MenuItem.MenuItemType int type, @Nullable Function<MenuItem, Void> callback) {
                 this.mItemType = type;
@@ -146,6 +161,12 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             public MenuItem.Builder withAction(@Nullable Action action) {
                 this.mAction = action;
+                return this;
+            }
+
+            public MenuItem.Builder withZoom(@NonNull String zoomLevel, Function<Boolean, Void> callback) {
+                this.mZoomLevel = zoomLevel;
+                this.mZoomCallback = callback;
                 return this;
             }
 
@@ -226,6 +247,11 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
                             parent, false);
 
             return new HamburgerMenuItemAddonsSettingsHolder(binding);
+        } else if (viewType == MenuItem.TYPE_ZOOM) {
+            HamburgerMenuZoomItemBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.hamburger_menu_zoom_item,
+                            parent, false);
+            return new HamburgerMenuZoomItemHolder(binding);
         }
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
@@ -285,6 +311,17 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
             viewHolder.binding.container.setTag(R.string.position_tag, position);
             viewHolder.binding.container.setOnHoverListener(mHoverListener);
             ViewUtils.setStickyClickListener(viewHolder.binding.container, callback);
+            setBackground(viewHolder.binding.container, item, position);
+        } else if (holder instanceof HamburgerMenuZoomItemHolder) {
+            HamburgerMenuZoomItemHolder viewHolder = (HamburgerMenuZoomItemHolder) holder;
+            viewHolder.binding.setItem(item);
+            viewHolder.binding.container.setTag(R.string.position_tag, position);
+            viewHolder.binding.container.findViewById(R.id.zoomOutImage).setOnClickListener(v -> {
+                item.mZoomCallback.apply(true);
+            });
+            viewHolder.binding.container.findViewById(R.id.zoomInImage).setOnClickListener(v -> {
+                item.mZoomCallback.apply(false);
+            });
             setBackground(viewHolder.binding.container, item, position);
         }
     }
@@ -401,4 +438,13 @@ public class HamburgerMenuAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    static class HamburgerMenuZoomItemHolder extends RecyclerView.ViewHolder {
+
+        final HamburgerMenuZoomItemBinding binding;
+
+        HamburgerMenuZoomItemHolder(@NonNull HamburgerMenuZoomItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
 }

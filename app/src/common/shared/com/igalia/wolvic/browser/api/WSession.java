@@ -2769,6 +2769,15 @@ public interface WSession {
     WTextInput getTextInput();
 
 
+    @AnyThread
+    void pageZoomIn();
+
+    @AnyThread
+    void pageZoomOut();
+
+    @AnyThread
+    int getCurrentZoomLevel();
+
     /**
      * Get the PanZoomController instance for this session.
      *
