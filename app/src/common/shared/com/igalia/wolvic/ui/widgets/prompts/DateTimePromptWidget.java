@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets.prompts;
 import android.content.Context;
 import android.icu.util.Calendar;
 import android.text.format.DateFormat;
+import android.view.View;
 import android.widget.Button;
 
 import android.widget.DatePicker;
@@ -104,6 +105,7 @@ public class DateTimePromptWidget extends PromptWidget {
                 datePicker.setMaxDate(maxDate.getTime());
             }
         } else {
+            findViewById(R.id.date_picker).setVisibility(View.GONE);
             datePicker = null;
         }
 
@@ -114,6 +116,7 @@ public class DateTimePromptWidget extends PromptWidget {
             timePicker.setMinute(cal.get(java.util.Calendar.MINUTE));
             timePicker.setIs24HourView(DateFormat.is24HourFormat(aContext));
         } else {
+            findViewById(R.id.time_picker).setVisibility(View.GONE);
             timePicker = null;
         }
 
