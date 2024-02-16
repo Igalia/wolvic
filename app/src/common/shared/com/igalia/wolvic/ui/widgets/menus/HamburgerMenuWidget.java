@@ -51,6 +51,9 @@ public class HamburgerMenuWidget extends UIWidget implements
         void onSaveWebApp();
         void onPassthrough();
         boolean isPassthroughEnabled();
+        void onPageZoomIn();
+        void onPageZoomOut();
+        int getCurrentZoomLevel();
     }
 
     public static final int SWITCH_ITEM_ID = 0;
@@ -310,6 +313,19 @@ public class HamburgerMenuWidget extends UIWidget implements
                     })
                     .withTitle(getContext().getString(R.string.hamburger_menu_toggle_passthrough))
                     .withIcon(mDelegate != null && mDelegate.isPassthroughEnabled() ? R.drawable.baseline_visibility_24 : R.drawable.baseline_visibility_off_24)
+                    .build());
+        }
+
+        if (mWidgetManager != null && mWidgetManager.isPageZoomEnabled() && mDelegate != null) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_ZOOM, null)
+                    .withZoom(Integer.toString(mDelegate.getCurrentZoomLevel()) + "%",
+                            (isZoomOut) -> {
+                        if (isZoomOut) mDelegate.onPageZoomOut();
+                        else mDelegate.onPageZoomIn();
+                        updateItems();
+                        return null;
+                    })
                     .build());
         }
 

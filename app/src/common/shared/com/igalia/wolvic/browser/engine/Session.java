@@ -1049,6 +1049,25 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         mState.mParentId = parentSession.getId();
     }
 
+    public void pageZoomIn() {
+        if (mState.mSession != null) {
+            mState.mSession.pageZoomIn();
+        }
+    }
+
+    public void pageZoomOut() {
+        if (mState.mSession != null) {
+            mState.mSession.pageZoomOut();
+        }
+    }
+
+    public int getCurrentZoomLevel() {
+        if (mState.mSession != null) {
+            return mState.mSession.getCurrentZoomLevel();
+        }
+        return 0;
+    }
+
     // NavigationDelegate
 
     @Override
