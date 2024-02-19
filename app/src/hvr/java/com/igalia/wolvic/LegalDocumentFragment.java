@@ -62,7 +62,7 @@ public class LegalDocumentFragment extends Fragment {
         NestedScrollView contentHolder = view.findViewById(R.id.scrollview);
 
         View content;
-        if (LegalDocument.TERMS_OF_SERVICE.ordinal() == args.getInt(LEGAL_DOCUMENT)) {
+        if (LegalDocument.TERMS_OF_SERVICE == args.getSerializable(LEGAL_DOCUMENT)) {
             toolbar.setTitle(R.string.terms_service_title);
             content = inflater.inflate(R.layout.terms_service_content, contentHolder, false);
         } else {
