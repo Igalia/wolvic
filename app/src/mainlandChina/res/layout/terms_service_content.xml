@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/imageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ff_logo" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/termsServiceTitle"
+            style="@style/policyTitle"
+            android:text="@string/rCN_terms_service_title" />
+
+        <TextView
+            android:id="@+id/termsServiceSection1"
+            style="@style/policyBody"
+            android:text="@string/rCN_terms_service_content" />
+
+    </LinearLayout>
+
+</layout>

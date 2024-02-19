@@ -1,7 +1,5 @@
 package com.igalia.wolvic;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -14,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.igalia.wolvic.browser.SettingsStore;
@@ -78,18 +78,27 @@ public class FirstRunFragment extends Fragment {
 
     private SpannableString createTextWithDocumentLinks(String baseText) {
         String clickableTermsText = getString(R.string.rCN_first_launch_clickable_terms_text);
+        String clickablePrivacyText = getString(R.string.rCN_first_launch_clickable_privacy_text);
+
+        // Ensure that the text contains the substrings that will be clickable.
+        if (!baseText.contains(clickableTermsText)) {
+            baseText += "\n\n" + clickableTermsText;
+        }
+        if (!baseText.contains(clickablePrivacyText)) {
+            baseText += "\n\n" + clickablePrivacyText;
+        }
+
         int startTerms = baseText.lastIndexOf(clickableTermsText);
         int endTerms = startTerms + clickableTermsText.length();
+
+        int startPrivacy = baseText.lastIndexOf(clickablePrivacyText);
+        int endPrivacy = startPrivacy + clickablePrivacyText.length();
 
         ClickableSpan clickableTermsSpan = new ClickableSpan() {
             public void onClick(View view) {
                 showLegalDocument(LegalDocumentFragment.LegalDocument.TERMS_OF_SERVICE);
             }
         };
-
-        String clickablePrivacyText = getString(R.string.rCN_first_launch_clickable_privacy_text);
-        int startPrivacy = baseText.lastIndexOf(clickablePrivacyText);
-        int endPrivacy = startPrivacy + clickablePrivacyText.length();
 
         ClickableSpan clickablePrivacySpan = new ClickableSpan() {
             public void onClick(View view) {
