@@ -1179,6 +1179,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void postDisplayCommand(Runnable aRunnable) {
+        if (mInputConnection == null) {
+            Log.e(LOGTAG, "InputConnection was null, display command not submitted");
+            return;
+        }
+
         Handler handler = mInputConnection.getHandler();
         if (handler != null) {
             aRunnable.run();
