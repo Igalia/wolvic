@@ -396,7 +396,6 @@ android {
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
-            resValue 'string', 'HOMEPAGE_URL', 'https://wolvic.com/zh/start/pico.html'
         }
     }
 
@@ -815,6 +814,17 @@ android.applicationVariants.all { variant ->
     def store = variant.productFlavors.get(3).name
     if (platform.toLowerCase().startsWith('hvr') && store == "mainlandChina") {
         variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
+    }
+
+    // Default homepages for China releases.
+    if (store == "mainlandChina") {
+        if (platform.toLowerCase().startsWith('hvr')) {
+            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/index.html"'
+        } else if (platform.toLowerCase().startsWith('visionglass')) {
+            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/hvg.html"'
+        } else if (platform.toLowerCase().startsWith('picoxr')) {
+            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
+        }
     }
 
     // Append "Dev" to the app name for debug builds. We do it by directly modifying the resource
