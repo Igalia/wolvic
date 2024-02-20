@@ -859,7 +859,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 // Getting the SSID, even if it's just to show it to the user, is considered
                 // "recollection of personal information" by Huawei store in Mainland China so avoid
                 // getting it.
-                if (BuildConfig.FLAVOR_store.toLowerCase().contains("mainlandchina") && DeviceType.isHVRBuild()) {
+                if (DeviceType.isHVRBuild() && DeviceType.getStoreType() == DeviceType.StoreType.MAINLAND_CHINA) {
                     mWifiSSID = getContext().getString(R.string.tray_wifi_unavailable_ssid);
                 } else {
                     WifiInfo currentWifi = wifiManager.getConnectionInfo();
