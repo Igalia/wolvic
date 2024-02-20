@@ -45,6 +45,7 @@ import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.ClearUserDataDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.StringUtils;
 
@@ -202,14 +203,23 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             return view.performClick();
         });
 
-        mBinding.surveyLink.setOnClickListener(v -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
-            exitWholeSettings();
-        });
+        if (DeviceType.getStoreType() == DeviceType.StoreType.MAINLAND_CHINA) {
+            mBinding.chinaLicenseNumber.setOnClickListener(v -> {
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
+                mWidgetManager.openNewTabForeground(getResources().getString(R.string.rCN_license_link));
+                exitWholeSettings();
+            });
+        } else {
+            mBinding.surveyLink.setOnClickListener(v -> {
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
+                mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
+                exitWholeSettings();
+            });
+        }
 
         mBinding.helpButton.setOnClickListener(view -> {
             if (mAudio != null) {
