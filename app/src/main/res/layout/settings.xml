@@ -7,6 +7,7 @@
             name="settingsmodel"
             type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
         <import type="com.igalia.wolvic.BuildConfig"/>
+        <import type="com.igalia.wolvic.utils.DeviceType" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -82,7 +83,23 @@
                 android:textColor="@color/azure"
                 android:autoLink="all"
                 android:textStyle="bold"
-                android:textSize="@dimen/text_smaller_size" />
+                android:textSize="@dimen/text_smaller_size"
+                app:visibleGone="@{DeviceType.getStoreType() != DeviceType.StoreType.MAINLAND_CHINA}" />
+
+            <TextView
+                android:id="@+id/chinaLicenseNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="@string/rCN_license_number"
+                android:textColor="@color/azure"
+                android:textColorHighlight="@android:color/transparent"
+                android:textColorLink="@color/azure"
+                android:textSize="@dimen/text_medium_size"
+                android:textStyle="bold"
+                app:visibleGone="@{DeviceType.getStoreType() == DeviceType.StoreType.MAINLAND_CHINA}" />
 
             <TextView
                 android:id="@+id/buildText"
