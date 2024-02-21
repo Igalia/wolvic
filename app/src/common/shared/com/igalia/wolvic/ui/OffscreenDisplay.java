@@ -133,12 +133,6 @@ public class OffscreenDisplay {
         }
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-
-            super.onCreate(savedInstanceState);
-        }
-
-        @Override
         public boolean dispatchKeyEvent(KeyEvent event) {
             return ((VRBrowserActivity)mContext).dispatchKeyEvent(event);
         }
