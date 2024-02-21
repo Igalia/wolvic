@@ -593,10 +593,9 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             mDatePrompt.setDateTime(type, value, min, max);
 
             try {
-                final WSession.PromptDelegate delegate = mSession.getPromptDelegate();
-                delegate.onDateTimePrompt(mSession, mDatePrompt);
-            } catch (WindowManager.BadTokenException e) {
-                mDatePrompt.markComplete();
+                mDelegate.onDateTimePrompt(mSession, mDatePrompt);
+            } catch (WindowManager.BadTokenException | NullPointerException e) {
+                mDatePrompt.dismiss();
             }
         }
 
