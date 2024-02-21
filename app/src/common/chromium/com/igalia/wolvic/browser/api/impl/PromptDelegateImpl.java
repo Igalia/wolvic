@@ -9,8 +9,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
 import org.chromium.base.Callback;
+import org.chromium.content.browser.input.DateTimeChooserAndroid;
 import org.chromium.content.browser.input.SelectPopup;
 import org.chromium.content.browser.input.SelectPopupItem;
+import org.chromium.content.browser.picker.DateTimeSuggestion;
+import org.chromium.content.browser.picker.InputDialogContainer;
+import org.chromium.content.browser.picker.MonthPicker;
+import org.chromium.content.browser.picker.WeekPicker;
+import org.chromium.ui.base.ime.TextInputType;
 import org.chromium.wolvic.ColorChooserManager;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
@@ -18,9 +24,15 @@ import com.igalia.wolvic.browser.api.WAllowOrDeny;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
     private final WSession.PromptDelegate mDelegate;
@@ -41,6 +53,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
         SelectPopup.setFactory(new SelectPopupFactory());
         ColorChooserManager.setFactory(new ColorChooserFactory());
+        DateTimeChooserAndroid.setFactory(new DateTimeChooserFactory());
     }
 
     public WSession.PromptDelegate getDelegate() { return this.mDelegate; }
@@ -553,6 +566,137 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             if (!isComplete()) {
                 markComplete();
                 mListener.onColorChanged(Color.parseColor(mDefaultColor));
+            }
+            return new PromptResponseImpl();
+        }
+    }
+
+    public class DateTimeChooserFactory implements DateTimeChooserAndroid.Factory {
+        public DateTimeChooserBridge create(Context context, InputDialogContainer.InputActionDelegate delegate) {
+            return new DateTimeChooserBridge(context, delegate);
+        }
+    }
+
+    public class DateTimeChooserBridge extends InputDialogContainer {
+        private final DateTimePrompt mDatePrompt;
+
+        public DateTimeChooserBridge(Context context, InputDialogContainer.InputActionDelegate delegate) {
+            super(context, delegate);
+            mDatePrompt = new DateTimePrompt(delegate);
+        }
+
+        @Override
+        public void showDialog(final int type, final double value,
+                               double min, double max, double step,
+                               DateTimeSuggestion[] suggestions) {
+            // Not implemented for |suggestions| and |step| yet.
+            mDatePrompt.setDateTime(type, value, min, max);
+
+            try {
+                mDelegate.onDateTimePrompt(mSession, mDatePrompt);
+            } catch (WindowManager.BadTokenException | NullPointerException e) {
+                mDatePrompt.dismiss();
+            }
+        }
+
+        @Override
+        public void dismissDialog() {
+            if (!mDatePrompt.isComplete())
+                mDatePrompt.dismiss();
+        }
+    }
+
+    public static class DateTimePrompt extends BasePromptImpl implements WSession.PromptDelegate.DateTimePrompt {
+        private final InputDialogContainer.InputActionDelegate mDelegate;
+        @DatetimeType int mType;
+        String mDefaultValue;
+        String mMinValue;
+        String mMaxValue;
+
+        SimpleDateFormat mFormatter;
+
+        public DateTimePrompt(InputDialogContainer.InputActionDelegate delegate) {
+            mDelegate = delegate;
+        }
+
+        public void setDateTime(int type, double value, double min, double max) {
+            String format;
+            if (type == TextInputType.DATE) {
+                mType = Type.DATE;
+                format = "yyyy-MM-dd";
+            } else if (type == TextInputType.TIME) {
+                mType = Type.TIME;
+                format = "HH:mm";
+            } else if (type == TextInputType.DATE_TIME || type == TextInputType.DATE_TIME_LOCAL) {
+                mType = Type.DATETIME_LOCAL;
+                format = "yyyy-MM-dd'T'HH:mm";
+            } else if (type == TextInputType.MONTH) {
+                mType = Type.MONTH;
+                format = "yyyy-MM";
+                value = MonthPicker.createDateFromValue(value).getTimeInMillis();
+            } else if (type == TextInputType.WEEK) {
+                mType = Type.WEEK;
+                format = "yyyy-'W'ww";
+                value = WeekPicker.createDateFromValue(value).getTimeInMillis();
+            } else {
+                throw new IllegalArgumentException();
+            }
+
+            Date defaultDate;
+            if (Double.isNaN(value)) {
+                defaultDate = new Date(System.currentTimeMillis());
+            } else {
+                defaultDate = new Date((long) value);
+            }
+
+            mFormatter = new SimpleDateFormat(format, Locale.ROOT);
+            mFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            mDefaultValue = mFormatter.format(defaultDate);
+            mMinValue = mFormatter.format(new Date((long) min));
+            mMaxValue = mFormatter.format(new Date((long) max));
+        }
+
+        @Override
+        @DatetimeType
+        public int type() { return mType; }
+
+        @Override
+        @Nullable
+        public String defaultValue() { return mDefaultValue; }
+
+        @Override
+        @Nullable
+        public String minValue() { return mMinValue; }
+
+        @Override
+        @Nullable
+        public String maxValue() { return mMaxValue; }
+
+        @UiThread
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String datetime) {
+            markComplete();
+            try {
+                if (datetime != null && !datetime.isEmpty()) {
+                    Date date = mFormatter.parse(datetime);
+                    Calendar cal = mFormatter.getCalendar();
+                    cal.setTime(date);
+                    mDelegate.replaceDateTime(cal.getTimeInMillis());
+                } else {
+                    mDelegate.replaceDateTime(Double.NaN);
+                }
+            } catch (final ParseException e) {
+            }
+            return new PromptResponseImpl();
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse dismiss() {
+            if (!isComplete()) {
+                markComplete();
+                mDelegate.cancelDateTimeDialog();
             }
             return new PromptResponseImpl();
         }
