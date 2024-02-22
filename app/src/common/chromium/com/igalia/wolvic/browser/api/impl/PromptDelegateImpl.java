@@ -61,27 +61,45 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
     @Override
     public void onAlertDialog(@NonNull String message,
                               UserDialogManagerBridge.DialogCallback dialogCallback) {
-        mDelegate.onAlertPrompt(mSession, new AlertPrompt(dialogCallback, message));
+        if (mDelegate != null) {
+            mDelegate.onAlertPrompt(mSession, new AlertPrompt(dialogCallback, message));
+        } else {
+            dialogCallback.dismiss();
+        }
     }
 
     @Override
     public void onConfirmDialog(@NonNull String message,
                                 UserDialogManagerBridge.DialogCallback dialogCallback) {
-        mDelegate.onButtonPrompt(mSession, new ButtonPrompt(dialogCallback, message));
+        if (mDelegate != null) {
+            mDelegate.onButtonPrompt(mSession, new ButtonPrompt(dialogCallback, message));
+        } else {
+            dialogCallback.dismiss();
+        }
     }
 
     @Override
     public void onTextDialog(@NonNull String message, @NonNull String defaultUserInput,
                              UserDialogManagerBridge.DialogCallback dialogCallback) {
-        mDelegate.onTextPrompt(mSession, new TextPrompt(dialogCallback, message, defaultUserInput));
+        if (mDelegate != null) {
+            mDelegate.onTextPrompt(mSession, new TextPrompt(dialogCallback, message, defaultUserInput));
+        } else {
+            dialogCallback.dismiss();
+        }
     }
 
     @Override
     public void onBeforeUnloadDialog(UserDialogManagerBridge.DialogCallback dialogCallback) {
-        mDelegate.onBeforeUnloadPrompt(mSession, new BeforeUnloadPrompt(dialogCallback));
+        if (mDelegate != null) {
+            mDelegate.onBeforeUnloadPrompt(mSession, new BeforeUnloadPrompt(dialogCallback));
+        } else {
+            dialogCallback.dismiss();
+        }
     }
 
     public WResult<PromptResponseImpl> onRepostConfirmWarningDialog() {
+        if (mDelegate == null)
+            return WResult.fromValue(null);;
         return mDelegate.onRepostConfirmPrompt(mSession, new RepostConfirmPrompt()).then(result -> WResult.fromValue((PromptResponseImpl) result));
     }
 
@@ -494,10 +512,13 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @Override
         public void show() {
             try {
-                final WSession.PromptDelegate delegate = mSession.getPromptDelegate();
-                delegate.onChoicePrompt(mSession, mChoicePrompt);
+                if (mDelegate != null) {
+                    mDelegate.onChoicePrompt(mSession, mChoicePrompt);
+                } else {
+                    mChoicePrompt.dismiss();
+                }
             } catch (WindowManager.BadTokenException e) {
-                mChoicePrompt.markComplete();
+                mChoicePrompt.dismiss();
             }
         }
 
@@ -524,10 +545,13 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @Override
         public void show() {
             try {
-                final WSession.PromptDelegate delegate = mSession.getPromptDelegate();
-                delegate.onColorPrompt(mSession, mColorPrompt);
+                if (mDelegate != null) {
+                    mDelegate.onColorPrompt(mSession, mColorPrompt);
+                } else {
+                    mColorPrompt.dismiss();
+                }
             } catch (WindowManager.BadTokenException e) {
-                mColorPrompt.markComplete();
+                mColorPrompt.dismiss();
             }
         }
 
@@ -593,8 +617,12 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             mDatePrompt.setDateTime(type, value, min, max);
 
             try {
-                mDelegate.onDateTimePrompt(mSession, mDatePrompt);
-            } catch (WindowManager.BadTokenException | NullPointerException e) {
+                if (mDelegate != null) {
+                    mDelegate.onDateTimePrompt(mSession, mDatePrompt);
+                } else {
+                    mDatePrompt.dismiss();
+                }
+            } catch (WindowManager.BadTokenException e) {
                 mDatePrompt.dismiss();
             }
         }
