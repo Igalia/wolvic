@@ -141,6 +141,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         usbPermissionFilter.addAction(HUAWEI_USB_PERMISSION);
         registerReceiver(mUsbPermissionReceiver, usbPermissionFilter);
 
+        initVisionGlassPhoneUI();
+
         VisionGlass.getInstance().init(getApplication());
         VisionGlass.getInstance().setOnConnectionListener(this);
         initVisionGlass();
@@ -160,49 +162,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }
     }
 
-    private void initVisionGlass() {
-        Log.d(LOGTAG, "initVisionGlass");
-
-        if (mWasImuStarted) {
-            Log.d(LOGTAG, "Duplicated call to init the Vision Glass system");
-            updateDisplays();
-            return;
-        }
-
-        if (!VisionGlass.getInstance().isConnected()) {
-            Log.d(LOGTAG, "Glasses not connected yet");
-            return;
-        }
-
-        if (!VisionGlass.getInstance().hasUsbPermission()) {
-            if (!mIsAskingForPermission) {
-                Log.d(LOGTAG, "Asking for USB permission");
-                mIsAskingForPermission = true;
-                VisionGlass.getInstance().requestUsbPermission();
-            }
-            return;
-        }
-
-        Log.d(LOGTAG, "Starting IMU");
-
-        mWasImuStarted = true;
-        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
-
-        VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
-            @Override
-            public void onSuccess(DisplayMode displayMode) {
-                Log.d(LOGTAG, "Successfully switched to 3D mode");
-                updateDisplays();
-            }
-
-            @Override
-            public void onError(String s, int i) {
-                Log.d(LOGTAG, "Error " + i + "; failed to switch to 3D mode: " + s);
-                mWasImuStarted = false;
-                updateDisplays();
-            }
-        });
-
+    private void initVisionGlassPhoneUI() {
         setContentView(R.layout.visionglass_layout);
 
         View touchpad = findViewById(R.id.touchpad);
@@ -250,6 +210,51 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+
+    private void initVisionGlass() {
+        Log.d(LOGTAG, "initVisionGlass");
+
+        if (mWasImuStarted) {
+            Log.d(LOGTAG, "Duplicated call to init the Vision Glass system");
+            updateDisplays();
+            return;
+        }
+
+        if (!VisionGlass.getInstance().isConnected()) {
+            Log.d(LOGTAG, "Glasses not connected yet");
+            return;
+        }
+
+        if (!VisionGlass.getInstance().hasUsbPermission()) {
+            if (!mIsAskingForPermission) {
+                Log.d(LOGTAG, "Asking for USB permission");
+                mIsAskingForPermission = true;
+                VisionGlass.getInstance().requestUsbPermission();
+            }
+            return;
+        }
+
+        Log.d(LOGTAG, "Starting IMU");
+
+        mWasImuStarted = true;
+        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
+
+        VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
+            @Override
+            public void onSuccess(DisplayMode displayMode) {
+                Log.d(LOGTAG, "Successfully switched to 3D mode");
+                updateDisplays();
+            }
+
+            @Override
+            public void onError(String s, int i) {
+                Log.d(LOGTAG, "Error " + i + "; failed to switch to 3D mode: " + s);
+                mWasImuStarted = false;
+                updateDisplays();
+            }
+        });
 
         // Show the app
         if (getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
