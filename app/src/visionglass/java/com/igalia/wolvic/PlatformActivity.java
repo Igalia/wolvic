@@ -29,6 +29,7 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
 import androidx.activity.ComponentActivity;
@@ -40,6 +41,9 @@ import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
 import com.huawei.usblib.VisionGlass;
+import com.igalia.wolvic.browser.Media;
+import com.igalia.wolvic.browser.api.WMediaSession;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -419,6 +423,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
     private class PlatformActivityPluginVisionGlass implements PlatformActivityPlugin {
         private WidgetManagerDelegate mDelegate;
+        private WMediaSession.Delegate mMediaSessionDelegate;
+        private SeekBar mMediaSeekbar;
 
         PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
             mDelegate = delegate;
@@ -428,6 +434,45 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         @Override
         public void onKeyboardVisibilityChange(boolean isVisible) {
             mVoiceSearchButton.setEnabled(isVisible);
+        }
+
+        @Override
+        public void onVideoAvailabilityChange() {
+            boolean isAvailable = mDelegate.getWindows().isVideoAvailable();
+            findViewById(R.id.phoneUIMediaControls).setVisibility(isAvailable ? View.VISIBLE : View.GONE);
+
+            Media media = getActiveMedia();
+            if (!isAvailable) {
+                if (media != null) {
+                    media.removeMediaListener(mMediaSessionDelegate);
+                    mMediaSessionDelegate = null;
+                }
+                return;
+            }
+
+            assert(media != null);
+            media.addMediaListener(new WMediaSession.Delegate() {
+                @Override
+                public void onPlay(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
+                    ((ImageButton) findViewById(R.id.phoneUIPlayButton)).setImageResource(R.drawable.ic_icon_media_pause);
+                }
+
+                @Override
+                public void onPause(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
+                    ((ImageButton) findViewById(R.id.phoneUIPlayButton)).setImageResource(R.drawable.ic_icon_media_play);
+                }
+
+                @Override
+                public void onPositionState(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.PositionState state) {
+                    mMediaSeekbar.setProgress((int) ((state.position / state.duration) * 100), false);
+                }
+            });
+        }
+
+        private Media getActiveMedia() {
+            assert mDelegate.getWindows() != null;
+            assert mDelegate.getWindows().getFocusedWindow() != null;
+            return mDelegate.getWindows().getFocusedWindow().getSession().getActiveVideo();
         }
 
         // Setup the phone UI callbacks that require access to the WindowManagerDelegate.
@@ -441,10 +486,60 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 mDelegate.setHeadLockEnabled(headlockButton.isChecked());
             });
 
+            findViewById(R.id.phoneUIPlayButton).setOnClickListener(v -> {
+                Media media = getActiveMedia();
+                if (media == null)
+                    return;
+                if (media.isPlaying()) {
+                    media.pause();
+                } else {
+                    media.play();
+                }
+            });
+
+            findViewById(R.id.phoneUISeekBackward10Button).setOnClickListener(v -> {
+                Media media = getActiveMedia();
+                if (media == null)
+                    return;
+                media.seek(media.getCurrentTime() - 10);
+            });
+
+            findViewById(R.id.phoneUISeekForward30Button).setOnClickListener(v -> {
+                Media media = getActiveMedia();
+                if (media == null)
+                    return;
+                media.seek(media.getCurrentTime() + 30);
+            });
+
             findViewById(R.id.phoneUIVoiceButton).setOnClickListener(v -> {
                 // Delegate all the voice input handling in the KeyboardWidget which already handles
                 // all the potential voice input cases.
                 mDelegate.getKeyboard().simulateVoiceButtonClick();
+            });
+
+            findViewById(R.id.phoneUIMuteButton).setOnClickListener(v -> {
+                Media media = getActiveMedia();
+                if (media == null)
+                    return;
+                media.setMuted(!media.isMuted());
+                ((ImageButton) findViewById(R.id.phoneUIMuteButton)).setImageResource(!media.isMuted() ? R.drawable.ic_icon_media_volume : R.drawable.ic_icon_media_volume_muted);
+            });
+
+            mMediaSeekbar = findViewById(R.id.phoneUIMediaSeekBar);
+            mMediaSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    Media media = getActiveMedia();
+                    if (media == null || !media.canSeek() || media.getDuration() == 0)
+                        return;
+                    media.seek((seekBar.getProgress() / 100.0) * media.getDuration());
+                }
             });
         }
     }
