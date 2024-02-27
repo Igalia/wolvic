@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {
@@ -122,6 +123,7 @@ public class PlatformActivity extends NativeActivity {
         );
     }
 
+    public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
