@@ -70,6 +70,17 @@
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">您是否要允许 %1$s 持久存储数据？</string>
+
+    <!-- Dialog providing a rationale about why a permission is required. -->
+    <string name="permission_rationale_title">需要额外权限</string>
+    <string name="permission_camera_rationale">拍摄周围世界的图像需要获得使用您的摄像头的权限。</string>
+    <string name="permission_microphone_rationale">进行语音搜索和文本输入需要使用您的麦克风权限。</string>
+    <string name="permission_camera_and_microphone_rationale">提供视频会议等服务需要您的摄像头和麦克风权限。</string>
+    <string name="permission_location_rationale">提供附近的新闻和内容，需要获得访问您位置的权限。</string>
+    <string name="permission_notification_rationale">为了通知您新闻和更新，需要获得发送通知的权限。</string>
+    <string name="permission_read_external_storage_rationale">打开设备上的文件需要获得读取您的外部存储权限。</string>
+    <string name="permission_persistent_storage_rationale">在设备上保存和打开文件，需要获得在持久存储中存储数据的权限。</string>
+
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
