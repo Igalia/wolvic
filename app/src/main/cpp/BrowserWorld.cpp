@@ -1812,7 +1812,7 @@ BrowserWorld::TickImmersive() {
           // Instead, repeat the XR frame and render the spinner while we transition
           // to one frame ahead prediction.
           state = ExternalVR::VRState::Loading;
-      } else {
+      } else if (!aDiscardFrame){
           // Predict poses for one frame ahead and push the data to shmem so Gecko
           // can start the next XR RAF ASAP.
           m.device->StartFrame(framePrediction);
@@ -1841,11 +1841,11 @@ BrowserWorld::TickImmersive() {
             DrawImmersive(aEye);
         };
       }
+      m.frameEndHandler = [=]() {
+        m.device->EndFrame(aDiscardFrame ? DeviceDelegate::FrameEndMode::DISCARD : DeviceDelegate::FrameEndMode::APPLY);
+        m.blitter->EndFrame();
+      };
     }
-    m.frameEndHandler = [=]() {
-      m.device->EndFrame(aDiscardFrame ? DeviceDelegate::FrameEndMode::DISCARD : DeviceDelegate::FrameEndMode::APPLY);
-      m.blitter->EndFrame();
-    };
   } else {
     if (surfaceHandle != 0) {
       m.blitter->CancelFrame(surfaceHandle);

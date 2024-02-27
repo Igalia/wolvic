@@ -544,6 +544,9 @@ struct VRBrowserState {
   bool detectRuntimesOnly;
   bool presentationActive;
   bool navigationTransitionActive;
+#if CHROMIUM
+  bool dropFame;
+#endif
   VRLayerState layerState[kVRLayerMaxCount];
   VRHapticState hapticState[kVRHapticsMaxCount];
 

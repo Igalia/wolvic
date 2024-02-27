@@ -602,6 +602,14 @@ ExternalVR::WaitFrameResult() {
       // VRB_LOG("RequestFrame BREAK %llu",  m.browser.layerState[0].layer_stereo_immersive.frameId);
       break;
     }
+
+#if CHROMIUM
+    if(m.browser.dropFame) {
+       m.system.displayState.droppedFrameCount++;
+       return false;
+    }
+#endif
+
     if (m.firstPresentingFrame || m.waitingForExit) {
       return true; // Do not block to show loading screen until the first frame arrives.
     }
