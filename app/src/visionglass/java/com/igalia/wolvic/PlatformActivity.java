@@ -59,6 +59,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private DisplayManager mDisplayManager;
     private Display mPresentationDisplay;
     private VisionGlassPresentation mActivePresentation;
+    private View mVoiceSearchButton;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -164,6 +165,9 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
     private void initVisionGlassPhoneUI() {
         setContentView(R.layout.visionglass_layout);
+
+        mVoiceSearchButton = findViewById(R.id.phoneUIVoiceButton);
+        mVoiceSearchButton.setEnabled(false);
 
         View touchpad = findViewById(R.id.touchpad);
         touchpad.setOnClickListener(v -> {
@@ -423,6 +427,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         @Override
         public void onKeyboardVisibilityChange(boolean isVisible) {
+            mVoiceSearchButton.setEnabled(isVisible);
         }
 
         // Setup the phone UI callbacks that require access to the WindowManagerDelegate.
@@ -436,6 +441,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 mDelegate.setHeadLockEnabled(headlockButton.isChecked());
             });
 
+            findViewById(R.id.phoneUIVoiceButton).setOnClickListener(v -> {
+                // Delegate all the voice input handling in the KeyboardWidget which already handles
+                // all the potential voice input cases.
+                mDelegate.getKeyboard().simulateVoiceButtonClick();
+            });
         }
     }
 

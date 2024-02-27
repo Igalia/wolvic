@@ -1496,4 +1496,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aOldSession.removeTextInputListener(this);
         aSession.addTextInputListener(this);
     }
+
+    public void simulateVoiceButtonClick() {
+        mKeyboardVoiceButton.performClick();
+    }
+
 }
