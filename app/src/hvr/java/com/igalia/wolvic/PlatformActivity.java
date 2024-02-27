@@ -372,6 +372,8 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
         queueRunnable(this::nativeOnSurfaceDestroyed);
     }
 
+    public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
+
     protected boolean platformExit() {
         return false;
     }
