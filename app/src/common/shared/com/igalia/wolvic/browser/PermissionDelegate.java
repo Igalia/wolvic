@@ -23,6 +23,7 @@ import com.igalia.wolvic.ui.viewmodel.SitePermissionViewModel;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PermissionWidget;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
@@ -113,7 +114,7 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
             }
         }
 
-        mPermissionWidget.showPrompt(aUri, aType, aCallback);
+        mPermissionWidget.showWebsitePermissionsPrompt(aUri, aType, aCallback);
     }
 
     private Observer<List<SitePermission>> mSitePermissionObserver = sites -> {
@@ -154,7 +155,7 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
     }
 
     @Override
-    public void onAndroidPermissionsRequest(WSession aSession, String[] permissions, Callback aCallback) {
+    public void onAndroidPermissionsRequest(@NonNull WSession aSession, String[] permissions, @NonNull Callback aCallback) {
         Log.d(LOGTAG, "onAndroidPermissionsRequest: " + Arrays.toString(permissions));
         ArrayList<String> missingPermissions = new ArrayList<>();
         ArrayList<String> filteredPermissions = new ArrayList<>();
@@ -181,7 +182,31 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
         } else {
             Log.d(LOGTAG, "Request Android permissions: " + missingPermissions);
             mCallback = aCallback;
-            ((Activity)mContext).requestPermissions(missingPermissions.toArray(new String[missingPermissions.size()]), PERMISSION_REQUEST_CODE);
+
+            // Some stores require giving an explanation of why the permission is required.
+            if (DeviceType.isHVRBuild() && DeviceType.getStoreType() == DeviceType.StoreType.MAINLAND_CHINA) {
+                if (mPermissionWidget == null) {
+                    mPermissionWidget = new PermissionWidget(mContext);
+                    mWidgetManager.addWidget(mPermissionWidget);
+                }
+
+                mPermissionWidget.showPermissionsRationalePrompt(missingPermissions, new Callback() {
+                    @Override
+                    public void grant() {
+                        ((Activity) mContext).requestPermissions(missingPermissions.toArray(new String[0]), PERMISSION_REQUEST_CODE);
+                    }
+
+                    @Override
+                    public void reject() {
+                        if (mCallback != null) {
+                            mCallback.reject();
+                            mCallback = null;
+                        }
+                    }
+                });
+            } else {
+                ((Activity) mContext).requestPermissions(missingPermissions.toArray(new String[0]), PERMISSION_REQUEST_CODE);
+            }
         }
     }
 
@@ -275,7 +300,7 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
     }
 
     @Override
-    public void onMediaPermissionRequest(WSession aSession, String aUri, MediaSource[] aVideo, MediaSource[] aAudio, final MediaCallback aMediaCallback) {
+    public void onMediaPermissionRequest(@NonNull WSession aSession, @NonNull String aUri, MediaSource[] aVideo, MediaSource[] aAudio, @NonNull final MediaCallback aMediaCallback) {
         Log.d(LOGTAG, "onMediaPermissionRequest: " + aUri);
 
         final MediaSource video = aVideo != null ? aVideo[0] : null;
@@ -312,16 +337,32 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
     }
 
     // Handle app permissions that the browser doesn't handle itself yet
-    public void onAppPermissionRequest(final WSession aSession, String aUri, final String permission, final Callback callback) {
-        Log.d(LOGTAG, "onAppPermissionRequest: " + aUri);
+    public void onWebsitePermissionRequest(final WSession aSession, String originator, @NonNull final String permission, final Callback callback) {
+        Log.d(LOGTAG, "onWebsitePermissionRequest: " + originator);
 
         // If the permission is already granted we just grant
         if (mContext.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
 
             // Check if we support a rationale for that permission
             PermissionWidget.PermissionType type = null;
-            if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                type = PermissionWidget.PermissionType.ReadExternalStorage;
+
+            switch (permission) {
+                case Manifest.permission.READ_EXTERNAL_STORAGE:
+                    type = PermissionWidget.PermissionType.ReadExternalStorage;
+                    break;
+                case Manifest.permission.CAMERA:
+                    type = PermissionWidget.PermissionType.Camera;
+                    break;
+                case Manifest.permission.RECORD_AUDIO:
+                    type = PermissionWidget.PermissionType.Microphone;
+                    break;
+                case Manifest.permission.ACCESS_FINE_LOCATION:
+                case Manifest.permission.ACCESS_COARSE_LOCATION:
+                    type = PermissionWidget.PermissionType.Location;
+                    break;
+                case Manifest.permission.POST_NOTIFICATIONS:
+                    type = PermissionWidget.PermissionType.Notification;
+                    break;
             }
 
             if (type != null) {

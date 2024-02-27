@@ -61,6 +61,8 @@ public interface WidgetManagerDelegate {
     int YAW_TARGET_ALL = 0; // Targets widgets and VR videos.
     int YAW_TARGET_WIDGETS = 1; // Targets widgets only.
 
+    enum OriginatorType {WEBSITE, APPLICATION}
+
     int newWidgetHandle();
     void addWidget(Widget aWidget);
     void updateWidget(Widget aWidget);
@@ -109,7 +111,7 @@ public interface WidgetManagerDelegate {
     boolean isWebXRIntersitialHidden();
     boolean isWebXRPresenting();
     boolean isPermissionGranted(@NonNull String permission);
-    void requestPermission(String uri, @NonNull String permission, WSession.PermissionDelegate.Callback aCallback);
+    void requestPermission(String originator, @NonNull String permission, OriginatorType originatorType, WSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();
     void openNewWindow(String uri);
     void openNewTab(@NonNull String uri);
