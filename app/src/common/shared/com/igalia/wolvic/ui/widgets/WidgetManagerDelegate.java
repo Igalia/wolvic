@@ -123,4 +123,5 @@ public interface WidgetManagerDelegate {
     void updateLocale(@NonNull Context context);
     @NonNull
     AppServicesProvider getServicesProvider();
+    KeyboardWidget getKeyboard();
 }

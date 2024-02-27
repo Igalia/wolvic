@@ -28,14 +28,13 @@
                 android:textOn="" />
 
             <ImageButton
-                android:id="@+id/voice_button"
+                android:id="@+id/phoneUIVoiceButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="@string/voice_search_tooltip"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_icon_microphone"
-                android:visibility="invisible"/>
+                android:src="@drawable/ic_icon_microphone" />
         </LinearLayout>
 
         <View
