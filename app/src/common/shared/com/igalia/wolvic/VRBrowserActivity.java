@@ -440,6 +440,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                         WidgetManagerDelegate.CPU_LEVEL_NORMAL;
 
                 queueRunnable(() -> setCPULevelNative(cpuLevel));
+
+                if (mPlatformPlugin != null) {
+                    mPlatformPlugin.onVideoAvailabilityChange();
+                }
             }
         });
 

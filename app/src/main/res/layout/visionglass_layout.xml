@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -46,6 +47,61 @@
             android:orientation="vertical"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/phoneUIMediaControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <SeekBar
+                android:id="@+id/phoneUIMediaSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.10"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/phoneUISeekBackward10Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:src="@drawable/ic_icon_media_seek_backward_10" />
+
+                <ImageButton
+                    android:id="@+id/phoneUIPlayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@android:drawable/ic_media_play" />
+
+                <ImageButton
+                    android:id="@+id/phoneUISeekForward30Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:src="@drawable/ic_icon_media_seek_forward_30" />
+
+                <ImageButton
+                    android:id="@+id/phoneUIMuteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:src="@drawable/ic_icon_media_volume" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:gravity="center_vertical"
