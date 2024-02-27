@@ -1914,10 +1914,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void requestPermission(String uri, @NonNull String permission, WSession.PermissionDelegate.Callback aCallback) {
+    public void requestPermission(String originator, @NonNull String permission, boolean isWebsite, WSession.PermissionDelegate.Callback aCallback) {
         Session session = SessionStore.get().getActiveSession();
-        if (uri != null && !uri.isEmpty()) {
-            mPermissionDelegate.onAppPermissionRequest(session.getWSession(), uri, permission, aCallback);
+        if (isWebsite) {
+            mPermissionDelegate.onWebsitePermissionRequest(session.getWSession(), originator, permission, aCallback);
         } else {
             mPermissionDelegate.onAndroidPermissionsRequest(session.getWSession(), new String[]{permission}, aCallback);
         }

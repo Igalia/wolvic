@@ -1978,6 +1978,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mWidgetManager.requestPermission(
                         aRequest.uri,
                         android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        true,
                         new WSession.PermissionDelegate.Callback() {
                             @Override
                             public void grant() {

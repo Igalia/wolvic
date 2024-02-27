@@ -181,7 +181,7 @@ class PrivacyOptionsView extends SettingsView {
             aButton.setChecked(true);
 
         } else {
-            mWidgetManager.requestPermission("", aPermission, new WSession.PermissionDelegate.Callback() {
+            mWidgetManager.requestPermission("", aPermission, false, new WSession.PermissionDelegate.Callback() {
                 @Override
                 public void grant() {
                     aButton.setChecked(true);

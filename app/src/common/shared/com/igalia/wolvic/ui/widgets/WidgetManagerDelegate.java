@@ -109,7 +109,7 @@ public interface WidgetManagerDelegate {
     boolean isWebXRIntersitialHidden();
     boolean isWebXRPresenting();
     boolean isPermissionGranted(@NonNull String permission);
-    void requestPermission(String uri, @NonNull String permission, WSession.PermissionDelegate.Callback aCallback);
+    void requestPermission(String originator, @NonNull String permission, boolean isWebsite, WSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();
     void openNewWindow(String uri);
     void openNewTab(@NonNull String uri);
