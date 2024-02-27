@@ -40,7 +40,7 @@ import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
 import com.huawei.usblib.VisionGlass;
-import com.igalia.wolvic.ui.widgets.Windows;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -192,22 +192,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         });
 
         ImageButton backButton = findViewById(R.id.back_button);
-        ImageButton homeButton = findViewById(R.id.home_button);
-
         backButton.setOnClickListener(v -> onBackPressed());
-        homeButton.setOnClickListener(v -> runPhoneUICallback((activity) -> {
-            Windows windows = activity.getWindows();
-            if (windows == null) {
-                Log.e(LOGTAG, "Cannot load homepage because Windows object is null");
-                return;
-            }
-            windows.getFocusedWindow().loadHome();
-        }));
-
-        ToggleButton headlockButton = findViewById(R.id.headlock_toggle_button);
-        headlockButton.setOnClickListener(v -> runPhoneUICallback((activity) -> {
-            activity.setHeadLockEnabled(headlockButton.isChecked());
-        }));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -422,6 +407,36 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mPresentationDisplay = displays[0];
 
         runOnUiThread(this::showPresentation);
+    }
+
+    public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) {
+        return new PlatformActivityPluginVisionGlass(delegate);
+    }
+
+    private class PlatformActivityPluginVisionGlass implements PlatformActivityPlugin {
+        private WidgetManagerDelegate mDelegate;
+
+        PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
+            mDelegate = delegate;
+            setupPhoneUI();
+        }
+
+        @Override
+        public void onKeyboardVisibilityChange(boolean isVisible) {
+        }
+
+        // Setup the phone UI callbacks that require access to the WindowManagerDelegate.
+        private void setupPhoneUI() {
+            findViewById(R.id.home_button).setOnClickListener(v -> {
+                mDelegate.getWindows().getFocusedWindow().loadHome();
+            });
+
+            ToggleButton headlockButton = findViewById(R.id.headlock_toggle_button);
+            headlockButton.setOnClickListener(v -> {
+                mDelegate.setHeadLockEnabled(headlockButton.isChecked());
+            });
+
+        }
     }
 
     private final DisplayManager.DisplayListener mDisplayListener =

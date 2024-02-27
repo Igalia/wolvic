@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Keep;
 
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -162,6 +163,8 @@ public class PlatformActivity extends ComponentActivity {
         queueRunnable(() -> touchEvent(false, xx, yy));
         return true;
     }
+
+    public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
 
     @Override
     protected void onPause() {

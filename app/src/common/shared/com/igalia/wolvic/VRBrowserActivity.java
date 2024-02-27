@@ -245,6 +245,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private boolean mIsPassthroughEnabled = false;
     private long mLastBatteryUpdate = System.nanoTime();
     private int mLastBatteryLevel = -1;
+    private PlatformActivityPlugin mPlatformPlugin;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -449,6 +450,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         attachToWindow(mWindows.getFocusedWindow(), null);
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
+
+        // Create the platform plugin after widgets are created to be extra safe.
+        mPlatformPlugin = createPlatformPlugin(this);
 
         mWindows.restoreSessions();
     }
@@ -1676,6 +1680,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             view.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
 
+        if (aWidget == mKeyboard && mPlatformPlugin != null) {
+            mPlatformPlugin.onKeyboardVisibilityChange(visible);
+        }
+
         for (UpdateListener listener: mWidgetUpdateListeners) {
             listener.onWidgetUpdate(aWidget);
         }
@@ -1899,6 +1907,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void keyboardDismissed() {
         mNavigationBar.showVoiceSearch();
+        if (mPlatformPlugin != null)
+            mPlatformPlugin.onKeyboardVisibilityChange(false);
     }
 
     @Override
