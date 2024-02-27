@@ -304,13 +304,6 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
             }
         };
 
-        // Temporary fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1621380
-        if ((type == PermissionWidget.PermissionType.Camera ||
-                type == PermissionWidget.PermissionType.CameraAndMicrophone)) {
-            callback.reject();
-            return;
-        }
-
         handlePermission(aUri, type, callback);
     }
 
