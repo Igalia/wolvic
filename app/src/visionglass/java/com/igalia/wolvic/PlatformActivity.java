@@ -12,31 +12,29 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.view.WindowManager;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.ToggleButton;
 
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 
+import com.google.android.material.button.MaterialButton;
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
@@ -168,6 +166,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     }
 
     private void initVisionGlassPhoneUI() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setTheme(R.style.Theme_WolvicPhone);
         setContentView(R.layout.visionglass_layout);
 
         mVoiceSearchButton = findViewById(R.id.phoneUIVoiceButton);
@@ -193,13 +193,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                     // user and system activated clicks (e.g. a11y) will work.
                     view.performClick();
                     break;
-                default:
-                    return false;
             }
-            return true;
+            return false;
         });
 
-        ImageButton backButton = findViewById(R.id.back_button);
+        Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> onBackPressed());
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -454,12 +452,12 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             media.addMediaListener(new WMediaSession.Delegate() {
                 @Override
                 public void onPlay(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
-                    ((ImageButton) findViewById(R.id.phoneUIPlayButton)).setImageResource(R.drawable.ic_icon_media_pause);
+                    ((MaterialButton) findViewById(R.id.phoneUIPlayButton)).setIconResource(R.drawable.ic_icon_media_pause);
                 }
 
                 @Override
                 public void onPause(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
-                    ((ImageButton) findViewById(R.id.phoneUIPlayButton)).setImageResource(R.drawable.ic_icon_media_play);
+                    ((MaterialButton) findViewById(R.id.phoneUIPlayButton)).setIconResource(R.drawable.ic_icon_media_play);
                 }
 
                 @Override
@@ -481,7 +479,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 mDelegate.getWindows().getFocusedWindow().loadHome();
             });
 
-            ToggleButton headlockButton = findViewById(R.id.headlock_toggle_button);
+            MaterialButton headlockButton = findViewById(R.id.headlock_toggle_button);
             headlockButton.setOnClickListener(v -> {
                 mDelegate.setHeadLockEnabled(headlockButton.isChecked());
             });
@@ -522,7 +520,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 if (media == null)
                     return;
                 media.setMuted(!media.isMuted());
-                ((ImageButton) findViewById(R.id.phoneUIMuteButton)).setImageResource(!media.isMuted() ? R.drawable.ic_icon_media_volume : R.drawable.ic_icon_media_volume_muted);
+                ((MaterialButton) findViewById(R.id.phoneUIMuteButton)).setIconResource(!media.isMuted() ? R.drawable.ic_icon_media_volume : R.drawable.ic_icon_media_volume_muted);
             });
 
             mMediaSeekbar = findViewById(R.id.phoneUIMediaSeekBar);
