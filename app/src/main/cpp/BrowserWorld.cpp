@@ -275,6 +275,17 @@ BrowserWorld::State::SimulateBack() {
     VRBrowser::HandleBack();
 }
 
+static bool
+wasGoBackButtonClicked(const Controller& controller, bool isPresenting) {
+    auto WasButtonPressed = [](const Controller& controller, ControllerDelegate::Button button) {
+        return !(controller.lastButtonState & button) && (controller.buttonState & button);
+    };
+
+    return (WasButtonPressed(controller, ControllerDelegate::BUTTON_APP) ||
+           (!isPresenting && (WasButtonPressed(controller, ControllerDelegate::BUTTON_B) ||
+                              WasButtonPressed(controller, ControllerDelegate::BUTTON_Y))));
+};
+
 void
 BrowserWorld::State::CheckBackButton() {
   for (Controller& controller: controllers->GetControllers()) {
@@ -282,7 +293,7 @@ BrowserWorld::State::CheckBackButton() {
           continue;
       }
 
-    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP))) {
+    if (wasGoBackButtonClicked(controller, externalVR->IsPresenting())) {
           SimulateBack();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
@@ -423,7 +434,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       controller.pointer->Load(device);
     }
 
-    if ((!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP))) {
+    if (wasGoBackButtonClicked(controller, externalVR->IsPresenting())) {
       if (controller.handActionEnabled && !controller.leftHanded) {
           VRBrowser::HandleAppExit();
       } else {
