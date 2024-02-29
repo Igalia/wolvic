@@ -148,6 +148,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         initVisionGlassPhoneUI();
 
+        mDisplayManager.registerDisplayListener(mDisplayListener, null);
+
         VisionGlass.getInstance().init(getApplication());
         VisionGlass.getInstance().setOnConnectionListener(this);
         initVisionGlass();
@@ -243,7 +245,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             public void onSuccess(DisplayMode displayMode) {
                 Log.d(LOGTAG, "Successfully switched to 3D mode");
                 mSwitchedTo3DMode = true;
-                updateDisplays();
             }
 
             @Override
@@ -312,8 +313,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             mActivePresentation.mGLView.onPause();
         }
 
-        // Unregister from the display manager.
-        mDisplayManager.unregisterDisplayListener(mDisplayListener);
         mSensorManager.unregisterListener(this);
     }
 
@@ -322,11 +321,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         Log.d(LOGTAG, "PlatformActivity onResume");
         super.onResume();
 
-        // Register to receive events from the display manager.
-        mDisplayManager.registerDisplayListener(mDisplayListener, null);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
 
-        if (VisionGlass.getInstance().isConnected() && VisionGlass.getInstance().hasUsbPermission()) {
+        // Sometimes no display event is emitted so we need to call updateDisplays() from here.
+        if (VisionGlass.getInstance().isConnected() && VisionGlass.getInstance().hasUsbPermission() && mSwitchedTo3DMode && mActivePresentation == null) {
             updateDisplays();
         }
 
@@ -385,19 +383,18 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 mActivePresentation.cancel();
                 mActivePresentation = null;
             }
-            Log.d(LOGTAG, "updateDisplays: could not find a Presentation display");
+            // I've we have already switched to 3D mode but there is no presentation display then
+            // the user has denied presentation permissions. Show a dialog and exit.
+            if (mSwitchedTo3DMode)
+                runOnUiThread(() -> showAlertDialog(getString(R.string.phone_ui_no_presentation_display_alert_dialog_description)));
             return;
         }
 
-        Log.d(LOGTAG, "updateDisplays: found Presentation display");
-        if (mPresentationDisplay != displays[0]) {
-            if (mActivePresentation != null) {
-                mActivePresentation.mGLView.onPause();
-            }
-            mActivePresentation = null;
-        }
-        mPresentationDisplay = displays[0];
+        if (mPresentationDisplay == displays[0])
+            return;
 
+        Log.d(LOGTAG, "updateDisplays: new Presentation display " + displays[0].getDisplayId());
+        mPresentationDisplay = displays[0];
         runOnUiThread(this::showPresentation);
     }
 
@@ -530,22 +527,30 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
     private final DisplayManager.DisplayListener mDisplayListener =
             new DisplayManager.DisplayListener() {
+                private void callUpdateIfIsPresentation(int displayId) {
+                    Display display = mDisplayManager.getDisplay(displayId);
+                    if (display != null && (display.getFlags() & Display.FLAG_PRESENTATION) == 0)
+                        return;
+                    Log.d(LOGTAG, "display listener: calling updateDisplay with " + displayId);
+                    updateDisplays();
+                }
+
                 @Override
                 public void onDisplayAdded(int displayId) {
                     Log.d(LOGTAG, "display listener: onDisplayAdded displayId = " + displayId);
-                    updateDisplays();
+                    callUpdateIfIsPresentation(displayId);
                 }
 
                 @Override
                 public void onDisplayChanged(int displayId) {
                     Log.d(LOGTAG, "display listener: onDisplayChanged displayId = " + displayId);
-                    updateDisplays();
+                    callUpdateIfIsPresentation(displayId);
                 }
 
                 @Override
                 public void onDisplayRemoved(int displayId) {
                     Log.d(LOGTAG, "display listener: onDisplayRemoved displayId = " + displayId);
-                    updateDisplays();
+                    callUpdateIfIsPresentation(displayId);
                 }
             };
 
