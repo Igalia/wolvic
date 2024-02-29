@@ -58,7 +58,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
     public static final String HUAWEI_USB_PERMISSION = "com.huawei.usblib.USB_PERMISSION";
 
-    private boolean mWasImuStarted;
     private boolean mIsAskingForPermission;
     private DisplayManager mDisplayManager;
     private Display mPresentationDisplay;
@@ -127,8 +126,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(LOGTAG, "USB permission broadcast. IMU started: " + mWasImuStarted +
-                    "; waiting for permission: " + mIsAskingForPermission + "; intent: " + intent.toString());
+            Log.d(LOGTAG, "USB permission broadcast; waiting for permission: " + mIsAskingForPermission + "; intent: " + intent.toString());
 
             mIsAskingForPermission = false;
             initVisionGlass();
@@ -163,10 +161,9 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             initVisionGlass();
         } else {
             Log.d(LOGTAG, "onConnectionChange: Device disconnected");
-            if (mWasImuStarted) {
-                Log.d(LOGTAG, "onConnectionChange: Finish activity");
-                finish();
-            }
+            // TODO: ask the user to reconnect the device instead of finishing the activity.
+            Log.d(LOGTAG, "onConnectionChange: Finish activity");
+            finish();
         }
     }
 
@@ -219,12 +216,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private void initVisionGlass() {
         Log.d(LOGTAG, "initVisionGlass");
 
-        if (mWasImuStarted) {
-            Log.d(LOGTAG, "Duplicated call to init the Vision Glass system");
-            updateDisplays();
-            return;
-        }
-
         if (!VisionGlass.getInstance().isConnected()) {
             Log.d(LOGTAG, "Glasses not connected yet");
             return;
@@ -243,11 +234,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             }
             return;
         }
-
-        Log.d(LOGTAG, "Starting IMU");
-
-        mWasImuStarted = true;
-        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
 
         VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
             @Override
@@ -315,7 +301,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         super.onPause();
 
         // This check is needed to prevent a crash when pausing before 3D mode has started.
-        if (mWasImuStarted) {
+        if (mActivePresentation != null) {
             synchronized (mRenderLock) {
                 queueRunnable(activityPausedRunnable);
                 try {
@@ -324,9 +310,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                     Log.e(LOGTAG, "activityPausedRunnable interrupted: " + e);
                 }
             }
-        }
-        if (mActivePresentation != null)
             mActivePresentation.mGLView.onPause();
+        }
 
         // Unregister from the display manager.
         mDisplayManager.unregisterDisplayListener(mDisplayListener);
@@ -397,6 +382,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         Display[] displays = mDisplayManager.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
         if (displays.length == 0) {
             mPresentationDisplay = null;
+            if (mActivePresentation != null) {
+                mActivePresentation.cancel();
+                mActivePresentation = null;
+            }
             Log.d(LOGTAG, "updateDisplays: could not find a Presentation display");
             return;
         }
@@ -573,10 +562,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         if (mActivePresentation != null) {
             return;
         }
-        if (mPresentationDisplay == null) {
-            Log.e(LOGTAG, "No suitable displays found");
-            return;
-        }
+
+        Log.d(LOGTAG, "Starting IMU");
+        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
+
         VisionGlassPresentation presentation = new VisionGlassPresentation(this, mPresentationDisplay);
         Display.Mode [] modes = mPresentationDisplay.getSupportedModes();
         Log.d(LOGTAG, "showPresentation supported modes: " + Arrays.toString(modes));
