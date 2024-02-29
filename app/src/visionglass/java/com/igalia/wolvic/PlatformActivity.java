@@ -33,7 +33,6 @@ import android.widget.SeekBar;
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
 
 import com.google.android.material.button.MaterialButton;
 import com.huawei.usblib.DisplayMode;
@@ -252,11 +251,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 }
             }
         });
-
-        // Show the app
-        if (getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-            updateDisplays();
-        }
     }
 
     // SensorEventListener overrides
