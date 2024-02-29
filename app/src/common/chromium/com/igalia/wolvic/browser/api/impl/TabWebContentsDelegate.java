@@ -14,6 +14,7 @@ import org.chromium.content_public.browser.InvalidateTypes;
 import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.url.GURL;
+import org.chromium.wolvic.Tab;
 import org.chromium.wolvic.WolvicWebContentsDelegate;
 
 public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
@@ -110,6 +111,10 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         // If mobile Youtube URL is detected, redirect to the desktop version.
         if (!url.getSpec().equals(newUrl)) {
             LoadUrlParams params = new LoadUrlParams(newUrl);
+            mWebContents.getNavigationController().setEntryExtraData(
+                    mWebContents.getNavigationController().getLastCommittedEntryIndex(),
+                    Tab.NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY,
+                    Tab.NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE);
             mWebContents.getNavigationController().loadUrl(params);
             return;
         }
