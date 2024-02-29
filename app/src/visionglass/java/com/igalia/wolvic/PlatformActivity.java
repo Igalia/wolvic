@@ -65,6 +65,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private VisionGlassPresentation mActivePresentation;
     private View mVoiceSearchButton;
     private int mDisplayModeRetryCount = 0;
+    private int mUSBPermissionRequestCount = 0;
+
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -230,6 +232,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         if (!VisionGlass.getInstance().hasUsbPermission()) {
             if (!mIsAskingForPermission) {
+                // Note that the system will ask for permissions by itself. This is just a fallback.
+                if (mUSBPermissionRequestCount++ > 1) {
+                    showAlertDialog(getString(R.string.phone_ui_usb_alert_dialog_description));
+                    return;
+                }
                 Log.d(LOGTAG, "Asking for USB permission");
                 mIsAskingForPermission = true;
                 VisionGlass.getInstance().requestUsbPermission();
