@@ -64,7 +64,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private View mVoiceSearchButton;
     private int mDisplayModeRetryCount = 0;
     private int mUSBPermissionRequestCount = 0;
-
+    private boolean mSwitchedTo3DMode = false;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -234,10 +234,15 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             return;
         }
 
+        // Don't try to set the 3D mode if we've already switched to it or if we're retrying.
+        if (mSwitchedTo3DMode || mDisplayModeRetryCount > 1)
+            return;
+
         VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
             @Override
             public void onSuccess(DisplayMode displayMode) {
                 Log.d(LOGTAG, "Successfully switched to 3D mode");
+                mSwitchedTo3DMode = true;
                 updateDisplays();
             }
 
