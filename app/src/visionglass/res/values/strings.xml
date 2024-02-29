@@ -3,4 +3,5 @@
     <!-- Title of an alert dialog in the Phone UI -->
     <string name="phone_ui_alert_dialog_title">Error</string>
     <string name="phone_ui_set3dmode_alert_dialog_description">Failed to switch to 3D mode. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
+    <string name="phone_ui_usb_alert_dialog_description">Failed to get USB permissions. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
 </resources>
