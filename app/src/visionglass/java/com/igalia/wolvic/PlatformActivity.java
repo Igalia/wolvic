@@ -6,6 +6,7 @@
 package com.igalia.wolvic;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Presentation;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,6 +44,7 @@ import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -62,6 +64,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private Display mPresentationDisplay;
     private VisionGlassPresentation mActivePresentation;
     private View mVoiceSearchButton;
+    private int mDisplayModeRetryCount = 0;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -203,6 +206,13 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    private void showAlertDialog(String description) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.phone_ui_alert_dialog_title);
+        builder.setMessage(description);
+        builder.setPositiveButton(R.string.ok_button, (dialog, which) -> finish());
+        builder.show();
+    }
 
     private void initVisionGlass() {
         Log.d(LOGTAG, "initVisionGlass");
@@ -242,8 +252,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             @Override
             public void onError(String s, int i) {
                 Log.d(LOGTAG, "Error " + i + "; failed to switch to 3D mode: " + s);
-                mWasImuStarted = false;
-                updateDisplays();
+                if (++mDisplayModeRetryCount < 3) {
+                    VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, this);
+                } else {
+                    showAlertDialog(getString(R.string.phone_ui_set3dmode_alert_dialog_description));
+                }
             }
         });
 
