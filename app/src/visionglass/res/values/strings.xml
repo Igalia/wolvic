@@ -4,5 +4,8 @@
     <string name="phone_ui_alert_dialog_title">Error</string>
     <string name="phone_ui_set3dmode_alert_dialog_description">Failed to switch to 3D mode. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
     <string name="phone_ui_usb_alert_dialog_description">Failed to get USB permissions. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
-    <string name="phone_ui_no_presentation_display_alert_dialog_description">Failed to present in glasses. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
+    <!-- Instruct the user to connect their Vision Glass -->
+    <string name="vision_glass_disconnected_message">Please connect Vision Glass</string>
+    <!-- Instruct the user to unplug their Vision Glass and try again -->
+    <string name="vision_glass_error_message">An error happened.\nPlease try again.</string>
 </resources>

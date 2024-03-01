@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/midnight"
-    android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
+<layout>
 
-    <LinearLayout
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.igalia.wolvic.PhoneUIViewModel" />
+    </data>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/midnight"
+        android:orientation="vertical"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -19,23 +24,53 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="0dp"
             android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             app:logoAdjustViewBounds="true"
             app:navigationIcon="@drawable/ff_logo_icon_48"
             app:popupTheme="@style/Theme.WolvicPhone.PopupOverlay"
             app:title="@string/app_name" />
 
+        <TextView
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/vision_glass_disconnected_message"
+            android:textAlignment="center"
+            app:visibleGone="@{viewModel.isDisconnected}" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:visibleGone="@{viewModel.isConnecting}">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/vision_glass_error_message"
+            android:textAlignment="center"
+            app:visibleGone="@{viewModel.isError}" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            app:visibleGone="@{viewModel.isActive}">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/headlock_toggle_button"
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_weight="1"
                 android:backgroundTint="@color/bg_button_checkable"
                 android:checkable="true"
                 android:checked="false"
@@ -45,7 +80,6 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/phoneUIVoiceButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +88,6 @@
                 android:id="@+id/phoneUIVoiceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_weight="1"
                 android:backgroundTint="@color/azure"
                 android:checkable="true"
                 android:checked="false"
@@ -64,134 +97,137 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/headlock_toggle_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:id="@+id/touchpad"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/touchpad_ripple_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical" />
-
-        <LinearLayout
-            android:id="@+id/phoneUIMediaControls"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <SeekBar
-                android:id="@+id/phoneUIMediaSeekBar"
+            <View
+                android:id="@+id/touchpad"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="0dp"
+                android:background="@drawable/touchpad_ripple_bg"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toTopOf="@id/phoneUIMediaControls"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/headlock_toggle_button" />
+
+            <LinearLayout
+                android:id="@+id/phoneUIMediaControls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/touchpad"
+                app:visibleGone="@{viewModel.isPlayingMedia}">
+
+                <SeekBar
+                    android:id="@+id/phoneUIMediaSeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/phoneUISeekBackward10Button"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_icon_media_seek_backward_10"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/phoneUIPlayButton"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        app:icon="@android:drawable/ic_media_play"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/phoneUISeekForward30Button"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_icon_media_seek_forward_30"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
+
+                    <Space
+                        android:layout_width="16dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/phoneUIMuteButton"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="64dp"
+                        android:layout_height="match_parent"
+                        app:icon="@drawable/ic_icon_media_volume"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phoneUIMediaControls">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/phoneUISeekBackward10Button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:id="@+id/back_button"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:icon="@drawable/ic_icon_media_seek_backward_10"
-                    app:iconGravity="textStart"
-                    app:iconPadding="0dp"
-                    app:iconTint="@color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/phoneUIPlayButton"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    app:icon="@android:drawable/ic_media_play"
-                    app:iconGravity="textStart"
-                    app:iconPadding="0dp"
-                    app:iconTint="@color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/phoneUISeekForward30Button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:icon="@drawable/ic_icon_media_seek_forward_30"
+                    android:layout_height="64dp"
+                    android:layout_weight="3"
+                    android:backgroundTint="@color/azure"
+                    android:contentDescription="@string/back_tooltip"
+                    android:scaleType="fitCenter"
+                    app:icon="@drawable/ic_icon_back"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
                     app:iconTint="@color/white" />
 
                 <Space
                     android:layout_width="16dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0" />
+                    android:layout_height="0dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/phoneUIMuteButton"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:id="@+id/home_button"
                     android:layout_width="64dp"
-                    android:layout_height="match_parent"
-                    app:icon="@drawable/ic_icon_media_volume"
+                    android:layout_height="64dp"
+                    android:backgroundTint="@color/azure"
+                    android:contentDescription="@string/home_tooltip"
+                    android:scaleType="fitCenter"
+                    app:icon="@drawable/ic_icon_home"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
                     app:iconTint="@color/white" />
+
             </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/back_button"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_weight="3"
-                android:backgroundTint="@color/azure"
-                android:contentDescription="@string/back_tooltip"
-                android:scaleType="fitCenter"
-                app:icon="@drawable/ic_icon_back"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/white" />
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_button"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:backgroundTint="@color/azure"
-                android:contentDescription="@string/home_tooltip"
-                android:scaleType="fitCenter"
-                app:icon="@drawable/ic_icon_home"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/white" />
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
-
-</RelativeLayout>
+</layout>
