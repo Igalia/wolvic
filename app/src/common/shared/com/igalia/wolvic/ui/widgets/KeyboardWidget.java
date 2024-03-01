@@ -1377,9 +1377,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     public void showSoftInput(@NonNull WSession session, View requestView) {
         mExternalFocusedView = requestView;
         if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE || mInputRestarted) {
-            post(() -> {
-                updateFocusedView(mAttachedWindow);
-            });
+            post(() -> updateFocusedView(mAttachedWindow));
         }
         mInputRestarted = false;
     }
@@ -1413,10 +1411,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (mExternalFocusedView == newFocus)
-            updateFocusedView(mAttachedWindow);
-        else
-            updateFocusedView(newFocus);
+        updateFocusedView(mExternalFocusedView == newFocus ? mAttachedWindow : newFocus);
     }
 
 
