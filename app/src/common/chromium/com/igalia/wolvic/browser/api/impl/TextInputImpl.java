@@ -40,7 +40,7 @@ public class TextInputImpl implements WTextInput {
             EditorInfo outAttrs = new EditorInfo();
             view.onCreateInputConnection(outAttrs);
             if (mDelegate != null)
-                mDelegate.showSoftInput(mSession);
+                mDelegate.showSoftInput(mSession, (View) mSession.getContentView());
 
             // We don't take content space for the keyboard, and we report back to the ImeAdapter
             // that the keyboard was always showing.
