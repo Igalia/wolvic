@@ -33,6 +33,8 @@ import android.widget.SeekBar;
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.huawei.usblib.DisplayMode;
@@ -42,8 +44,8 @@ import com.huawei.usblib.VisionGlass;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.databinding.VisionglassLayoutBinding;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
-import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -58,6 +60,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     public static final String HUAWEI_USB_PERMISSION = "com.huawei.usblib.USB_PERMISSION";
 
     private boolean mIsAskingForPermission;
+    private PhoneUIViewModel mViewModel;
+    VisionglassLayoutBinding mBinding;
     private DisplayManager mDisplayManager;
     private Display mPresentationDisplay;
     private VisionGlassPresentation mActivePresentation;
@@ -159,19 +163,36 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     public void onConnectionChange(boolean b) {
         if (VisionGlass.getInstance().isConnected()) {
             Log.d(LOGTAG, "onConnectionChange: Device connected");
+            if (mViewModel.getConnectionState().getValue() == PhoneUIViewModel.ConnectionState.DISCONNECTED) {
+                mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.CONNECTING);
+            }
             initVisionGlass();
         } else {
             Log.d(LOGTAG, "onConnectionChange: Device disconnected");
-            // TODO: ask the user to reconnect the device instead of finishing the activity.
-            Log.d(LOGTAG, "onConnectionChange: Finish activity");
-            finish();
+
+            // reset internal state when the device disconnects
+            mUSBPermissionRequestCount = 0;
+            mDisplayModeRetryCount = 0;
+            mSwitchedTo3DMode = false;
+            mPresentationDisplay = null;
+            mActivePresentation = null;
+
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISCONNECTED);
         }
     }
 
     private void initVisionGlassPhoneUI() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setTheme(R.style.Theme_WolvicPhone);
-        setContentView(R.layout.visionglass_layout);
+
+        mViewModel = new ViewModelProvider(this).get(PhoneUIViewModel.class);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.visionglass_layout);
+        mBinding.setViewModel(mViewModel);
+        mBinding.setLifecycleOwner(this);
+
+        mViewModel.getConnectionState().observe(this, connectionState ->
+                Log.d(LOGTAG, "Connection state updated: " + connectionState));
 
         mVoiceSearchButton = findViewById(R.id.phoneUIVoiceButton);
         mVoiceSearchButton.setEnabled(false);
@@ -210,7 +231,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.phone_ui_alert_dialog_title);
         builder.setMessage(description);
-        builder.setPositiveButton(R.string.ok_button, (dialog, which) -> finish());
+        builder.setPositiveButton(R.string.ok_button, (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
@@ -219,6 +240,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         if (!VisionGlass.getInstance().isConnected()) {
             Log.d(LOGTAG, "Glasses not connected yet");
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISCONNECTED);
             return;
         }
 
@@ -227,18 +249,29 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 // Note that the system will ask for permissions by itself. This is just a fallback.
                 if (mUSBPermissionRequestCount++ > 1) {
                     showAlertDialog(getString(R.string.phone_ui_usb_alert_dialog_description));
+                    mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.PERMISSIONS_UNAVAILABLE);
                     return;
                 }
                 Log.d(LOGTAG, "Asking for USB permission");
                 mIsAskingForPermission = true;
+                mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.REQUESTING_PERMISSIONS);
                 VisionGlass.getInstance().requestUsbPermission();
             }
             return;
         }
 
-        // Don't try to set the 3D mode if we've already switched to it or if we're retrying.
-        if (mSwitchedTo3DMode || mDisplayModeRetryCount > 1)
+        if (mSwitchedTo3DMode && mPresentationDisplay != null && mActivePresentation != null) {
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
             return;
+        } else {
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.CONNECTED);
+        }
+
+        // Don't try to set the 3D mode if we've already switched to it or if we're retrying.
+        if (mSwitchedTo3DMode || mDisplayModeRetryCount > 1) {
+            Log.d(LOGTAG, "initVisionGlass, we've already switched to 3D mode or we're retrying");
+            return;
+        }
 
         VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, new DisplayModeCallback() {
             @Override
@@ -254,6 +287,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                     VisionGlass.getInstance().setDisplayMode(DisplayMode.vr3d, this);
                 } else {
                     showAlertDialog(getString(R.string.phone_ui_set3dmode_alert_dialog_description));
+                    mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISPLAY_UNAVAILABLE);
                 }
             }
         });
@@ -376,26 +410,33 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     }
 
     private void updateDisplays() {
-        Display[] displays = mDisplayManager.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
-        if (displays.length == 0) {
-            mPresentationDisplay = null;
-            if (mActivePresentation != null) {
-                mActivePresentation.cancel();
-                mActivePresentation = null;
-            }
-            // I've we have already switched to 3D mode but there is no presentation display then
-            // the user has denied presentation permissions. Show a dialog and exit.
-            if (mSwitchedTo3DMode)
-                runOnUiThread(() -> showAlertDialog(getString(R.string.phone_ui_no_presentation_display_alert_dialog_description)));
+        // a display may be added before we receive the USB permission
+        if (!VisionGlass.getInstance().hasUsbPermission()) {
+            Log.d(LOGTAG, "updateDisplays: no USB permissions yet");
             return;
         }
 
-        if (mPresentationDisplay == displays[0])
-            return;
+        Display[] displays = mDisplayManager.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
 
-        Log.d(LOGTAG, "updateDisplays: new Presentation display " + displays[0].getDisplayId());
-        mPresentationDisplay = displays[0];
-        runOnUiThread(this::showPresentation);
+        if (displays.length > 0) {
+            runOnUiThread(() -> showPresentation(displays[0]));
+            return;
+        }
+
+        mPresentationDisplay = null;
+        if (mActivePresentation != null) {
+            mActivePresentation.cancel();
+            mActivePresentation = null;
+        }
+
+        if (!VisionGlass.getInstance().isConnected()) {
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISCONNECTED);
+            return;
+        }
+
+        // This can happen after switching to 3D mode because the user has not accepted permissions
+        // but also when the system is about to replace the display.
+        mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISPLAY_UNAVAILABLE);
     }
 
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) {
@@ -420,7 +461,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         @Override
         public void onVideoAvailabilityChange() {
             boolean isAvailable = mDelegate.getWindows().isVideoAvailable();
-            findViewById(R.id.phoneUIMediaControls).setVisibility(isAvailable ? View.VISIBLE : View.GONE);
+
+            mViewModel.updateIsPlayingMedia(isAvailable);
 
             Media media = getActiveMedia();
             if (!isAvailable) {
@@ -558,25 +600,32 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    mActivePresentation = null;
+                    if (dialog.equals(mActivePresentation)) {
+                        mActivePresentation = null;
+                    }
                 }
             };
 
-    private void showPresentation() {
-        if (mActivePresentation != null) {
+    private void showPresentation(@NonNull Display presentationDisplay) {
+        if (presentationDisplay.equals(mPresentationDisplay) && mActivePresentation != null) {
+            mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
             return;
         }
 
         Log.d(LOGTAG, "Starting IMU");
         VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
 
-        VisionGlassPresentation presentation = new VisionGlassPresentation(this, mPresentationDisplay);
-        Display.Mode [] modes = mPresentationDisplay.getSupportedModes();
+        VisionGlassPresentation presentation = new VisionGlassPresentation(this, presentationDisplay);
+        Display.Mode[] modes = presentationDisplay.getSupportedModes();
         Log.d(LOGTAG, "showPresentation supported modes: " + Arrays.toString(modes));
         presentation.setPreferredDisplayMode(modes[0].getModeId());
         presentation.show();
         presentation.setOnDismissListener(mOnDismissListener);
+
+        mPresentationDisplay = presentationDisplay;
         mActivePresentation = presentation;
+
+        mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
     }
 
     private final class VisionGlassPresentation extends Presentation {
