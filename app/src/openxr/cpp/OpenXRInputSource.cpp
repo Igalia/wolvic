@@ -132,6 +132,8 @@ XrResult OpenXRInputSource::Initialize()
         RETURN_IF_XR_FAILED(OpenXRExtensions::sXrCreateHandTrackerEXT(mSession, &handTrackerInfo,
                                                                       &mHandTracker));
 
+        mSupportsHandJointsMotionRangeInfo = OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_JOINTS_MOTION_RANGE_EXTENSION_NAME);
+
 #if defined(PICOXR)
         // Pico's runtime does not advertise it but it does work.
         mSupportsFBHandTrackingAim = true;
@@ -520,6 +522,12 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     XrHandJointsLocateInfoEXT locateInfo { XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
     locateInfo.baseSpace = localSpace;
     locateInfo.time = predictedDisplayTime;
+
+    if (mSupportsHandJointsMotionRangeInfo) {
+        XrHandJointsMotionRangeInfoEXT motionRangeInfo { XR_TYPE_HAND_JOINTS_MOTION_RANGE_INFO_EXT };
+        motionRangeInfo.handJointsMotionRange = XR_HAND_JOINTS_MOTION_RANGE_UNOBSTRUCTED_EXT;
+        locateInfo.next = &motionRangeInfo;
+    }
 
     XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
     jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
