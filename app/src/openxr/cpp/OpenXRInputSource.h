@@ -73,6 +73,7 @@ private:
     bool mHasHandJoints { false };
     bool mSupportsFBHandTrackingAim { false };
     OpenXRGesturePtr mGestureManager;
+    bool mSupportsHandJointsMotionRangeInfo { false };
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
