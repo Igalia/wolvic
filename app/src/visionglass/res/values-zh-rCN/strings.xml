@@ -1,0 +1,8 @@
+<resources>
+    <string name="phone_ui_alert_dialog_title">错误</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">切换到 3D 模式失败。尝试拔下眼镜并插回，然后重新启动 Wolvic。</string>
+    <string name="phone_ui_usb_alert_dialog_description">获取 USB 权限失败。尝试拔下眼镜并插回，然后重启 Wolvic。</string>
+    <string name="phone_ui_no_presentation_display_alert_dialog_description">无法显示眼镜。请尝试拔下眼镜并插回，然后重启 Wolvic。</string>
+    <string name="vision_glass_disconnected_message">请连接Vision Glass</string>
+    <string name="vision_glass_error_message">发生错误。请重试。</string>
+</resources>
