@@ -3,6 +3,7 @@ package com.igalia.wolvic.browser.api.impl;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.WindowManager;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +18,9 @@ import org.chromium.content.browser.picker.InputDialogContainer;
 import org.chromium.content.browser.picker.MonthPicker;
 import org.chromium.content.browser.picker.WeekPicker;
 import org.chromium.ui.base.ime.TextInputType;
+import org.chromium.url.GURL;
 import org.chromium.wolvic.ColorChooserManager;
+import org.chromium.wolvic.HttpAuthManager;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
@@ -54,6 +57,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         SelectPopup.setFactory(new SelectPopupFactory());
         ColorChooserManager.setFactory(new ColorChooserFactory());
         DateTimeChooserAndroid.setFactory(new DateTimeChooserFactory());
+        HttpAuthManager.setFactory(new HttpAuthManagerFactory());
     }
 
     public WSession.PromptDelegate getDelegate() { return this.mDelegate; }
@@ -725,6 +729,96 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             if (!isComplete()) {
                 markComplete();
                 mDelegate.cancelDateTimeDialog();
+            }
+            return new PromptResponseImpl();
+        }
+    }
+
+    public class HttpAuthManagerFactory implements HttpAuthManager.Factory {
+        public HttpAuthManager.Bridge create(GURL url, boolean isProxy, boolean firstAuthAttempt,
+                                             HttpAuthManager.Listener listener) {
+            return new AuthPromptBridge(url, isProxy, firstAuthAttempt, listener);
+        }
+    }
+
+    public class AuthPromptBridge implements HttpAuthManager.Bridge {
+        private final AuthPrompt mAuthPrompt;
+
+        public AuthPromptBridge(GURL url, boolean isProxy, boolean firstAuthAttempt,
+                                HttpAuthManager.Listener listener) {
+            mAuthPrompt = new AuthPrompt(url, isProxy, firstAuthAttempt, listener);
+        }
+
+        @Override
+        public void show() {
+            try {
+                if (mDelegate != null) {
+                    mDelegate.onAuthPrompt(mSession, mAuthPrompt);
+                } else {
+                    mAuthPrompt.dismiss();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                mAuthPrompt.dismiss();
+            }
+        }
+
+        @Override
+        public void close() {
+            if (!mAuthPrompt.isComplete())
+                mAuthPrompt.dismiss();
+        }
+    }
+
+    public static class AuthPrompt extends BasePromptImpl implements WSession.PromptDelegate.AuthPrompt {
+        private final String mMessage;
+        private final HttpAuthManager.Listener mListener;
+        private final AuthPrompt.AuthOptions mOptions;
+
+        public AuthPrompt(GURL url, boolean isProxy, boolean firstAuthAttempt,
+                          HttpAuthManager.Listener listener) {
+            mMessage = url.getHost();
+            mListener = listener;
+            int flags = isProxy ? AuthOptions.Flags.PROXY : AuthOptions.Flags.HOST;
+            if (!firstAuthAttempt) {
+                flags |= AuthOptions.Flags.PREVIOUS_FAILED;
+            }
+            String userName = TextUtils.isEmpty(url.getUsername()) ? null : url.getUsername();
+            String password = TextUtils.isEmpty(url.getPassword()) ? null : url.getPassword();
+            mOptions = new AuthOptions(flags, url.getSpec(), AuthOptions.Level.NONE, userName, password);
+        }
+
+        @Nullable
+        @Override
+        public String message() { return mMessage; }
+
+        @NonNull
+        @Override
+        public AuthOptions authOptions() { return mOptions; }
+
+        @UiThread
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String password) {
+            markComplete();
+            mListener.proceed("", password);
+            return new PromptResponseImpl();
+        }
+
+        @UiThread
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull final String username, @NonNull final String password) {
+            markComplete();
+            mListener.proceed(username, password);
+            return new PromptResponseImpl();
+        }
+
+        @NonNull
+        @Override
+        public WSession.PromptDelegate.PromptResponse dismiss() {
+            if (!isComplete()) {
+                markComplete();
+                mListener.cancel();
             }
             return new PromptResponseImpl();
         }
