@@ -109,6 +109,7 @@ struct DeviceDelegateOculusVR::State {
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
   float ipd = 0.0f;
+  bool gotFirstValidPose { false };
 
   void UpdatePerspective() {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
@@ -939,6 +940,8 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
     return;
   }
 
+  m.gotFirstValidPose = true;
+
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
@@ -1389,6 +1392,11 @@ bool
 DeviceDelegateOculusVR::ExitApp() {
   vrapi_ShowSystemUI(&m.java, VRAPI_SYS_UI_CONFIRM_QUIT_MENU);
   return true;
+}
+
+bool
+DeviceDelegateOculusVR::GotFirstValidPose() const {
+    return m.gotFirstValidPose;
 }
 
 DeviceDelegateOculusVR::DeviceDelegateOculusVR(State &aState) : m(aState) {}

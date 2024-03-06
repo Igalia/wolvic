@@ -109,6 +109,7 @@ struct DeviceDelegateWaveVR::State {
   WVR_CtrlerModel_t * modelCachedData[2];
   bool isModelDataReady[2];
   std::mutex mCachedDataMutex[2];
+  bool gotFirstValidPose;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -131,6 +132,7 @@ struct DeviceDelegateWaveVR::State {
       , handsCalculated(false)
       , modelCachedData {}
       , isModelDataReady {}
+      , gotFirstValidPose(false)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * 2);
     memset((void*)modelCachedData, 0, sizeof(WVR_CtrlerModel_t) * 2);
@@ -281,6 +283,7 @@ struct DeviceDelegateWaveVR::State {
       immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
       return;
     }
+    gotFirstValidPose = true;
     const float delta = ground.poseMatrix.m[1][3] - head.poseMatrix.m[1][3];
     immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(vrb::Vector(0.0f, delta, 0.0f)));
   }
@@ -1172,6 +1175,11 @@ vrb::LoadTask DeviceDelegateWaveVR::GetControllerModelTask(int32_t aModelIndex) 
 bool
 DeviceDelegateWaveVR::IsRunning() {
   return m.isRunning;
+}
+
+bool
+DeviceDelegateWaveVR::GotFirstValidPose() {
+    return m.gotFirstValidPose;
 }
 
 DeviceDelegateWaveVR::DeviceDelegateWaveVR(State& aState) : m(aState) {}

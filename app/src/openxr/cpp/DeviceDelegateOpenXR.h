@@ -64,6 +64,7 @@ public:
   void UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
                       const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) override;
   void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) override;
+  bool GotFirstValidPose() const override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);

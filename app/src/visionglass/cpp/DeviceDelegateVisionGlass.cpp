@@ -56,6 +56,7 @@ struct DeviceDelegateVisionGlass::State {
   vrb::Matrix reorientMatrix;
   crow::ElbowModelPtr elbow;
   std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
+  bool gotFirstValidPose;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , headingMatrix(vrb::Matrix::Identity())
@@ -66,6 +67,7 @@ struct DeviceDelegateVisionGlass::State {
       , far(1000.0f)
       , reorientMatrix(vrb::Matrix::Identity())
       , elbow(ElbowModel::Create())
+      , gotFirstValidPose(false)
   {
       orientationFilter = std::make_unique<OneEuroFilterQuaternion>(0.1, 0.5, 1.0);
   }
@@ -345,12 +347,20 @@ DeviceDelegateVisionGlass::ControllerButtonPressed(const bool aDown) {
 void
 DeviceDelegateVisionGlass::setHead(const float aX, const float aY, const float aZ, const float aW) {
   // We need to flip the Z axis comming from the SDK to get the proper rotation.
+  if (aX == 0.0f && aY == 0.0f && aZ == 0.0f)
+    return;
+
   m.headingMatrix = vrb::Matrix::Rotation({aX,aY,-aZ,-aW});
+  m.gotFirstValidPose = true;
 }
 
 void
 DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float aY, const float aZ, const float aW) {
     m.controllerOrientation = vrb::Quaternion(aX, aY, aZ, aW);
+}
+
+bool DeviceDelegateVisionGlass::GotFirstValidPose() const {
+  return m.gotFirstValidPose;
 }
 
 DeviceDelegateVisionGlass::DeviceDelegateVisionGlass(State& aState) : m(aState) {}

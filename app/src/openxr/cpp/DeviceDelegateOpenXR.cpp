@@ -1593,6 +1593,11 @@ DeviceDelegateOpenXR::ShouldExitRenderLoop() const
   return m.sessionState == XR_SESSION_STATE_EXITING || m.sessionState == XR_SESSION_STATE_LOSS_PENDING;
 }
 
+bool
+DeviceDelegateOpenXR::GotFirstValidPose() const {
+  return m.firstPose.has_value();
+}
+
 DeviceDelegateOpenXR::DeviceDelegateOpenXR(State &aState) : m(aState) {}
 
 DeviceDelegateOpenXR::~DeviceDelegateOpenXR() { m.Shutdown(); }

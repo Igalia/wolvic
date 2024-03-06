@@ -411,6 +411,11 @@ DeviceDelegateNoAPI::ControllerButtonPressed(const bool aDown) {
 
 }
 
+bool
+DeviceDelegateNoAPI::GotFirstValidPose() const {
+  return true;
+}
+
 DeviceDelegateNoAPI::DeviceDelegateNoAPI(State& aState) : m(aState) {}
 DeviceDelegateNoAPI::~DeviceDelegateNoAPI() { m.Shutdown(); }
 

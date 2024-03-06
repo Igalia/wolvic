@@ -57,6 +57,7 @@ public:
   VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
+  bool GotFirstValidPose() const override;
   // Custom methods for NativeActivity render loop based devices.
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();

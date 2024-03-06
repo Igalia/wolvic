@@ -41,6 +41,7 @@ public:
   void StartFrame(const FramePrediction aPrediction) override;
   void BindEye(const device::Eye) override;
   void EndFrame(const FrameEndMode aMode) override;
+  bool GotFirstValidPose() const override;
   // DeviceDelegateNoAPI interface
   void InitializeJava(JNIEnv* aEnv, jobject aActivity);
   void ShutdownJava();

@@ -1130,6 +1130,8 @@ BrowserWorld::StartFrame() {
       m.loader->InitializeGL();
     }
   }
+  if (!m.device->GotFirstValidPose())
+    return;
 
 #if defined(OCULUSVR)
 #if defined(STORE_BUILD)
@@ -1165,6 +1167,12 @@ BrowserWorld::StartFrame() {
     }
     TickWorld();
     m.externalVR->PushSystemState();
+  }
+
+  static int firstPaint = true;
+  if (firstPaint) {
+    firstPaint = false;
+    RecenterUIYaw(YawTarget::ALL);
   }
 }
 

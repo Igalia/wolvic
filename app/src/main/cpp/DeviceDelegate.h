@@ -115,6 +115,7 @@ public:
   virtual void UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
                               const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {};
   virtual void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) {};
+  virtual bool GotFirstValidPose() const { return false; }
 
 protected:
   DeviceDelegate() {}

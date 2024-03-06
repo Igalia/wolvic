@@ -37,6 +37,7 @@ public:
   void BindEye(const device::Eye aWhich) override;
   void EndFrame(const FrameEndMode aMode) override;
   vrb::LoadTask GetControllerModelTask(int32_t index) override;
+  bool GotFirstValidPose() const override;
   // DeviceDelegateWaveVR interface
   bool IsRunning();
 protected:
