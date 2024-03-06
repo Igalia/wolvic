@@ -2,6 +2,7 @@ package com.igalia.wolvic.browser.api.impl;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.WindowManager;
 import android.text.TextUtils;
 
@@ -20,6 +21,7 @@ import org.chromium.content.browser.picker.WeekPicker;
 import org.chromium.ui.base.ime.TextInputType;
 import org.chromium.url.GURL;
 import org.chromium.wolvic.ColorChooserManager;
+import org.chromium.wolvic.FileSelectManager;
 import org.chromium.wolvic.HttpAuthManager;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
@@ -57,6 +59,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         SelectPopup.setFactory(new SelectPopupFactory());
         ColorChooserManager.setFactory(new ColorChooserFactory());
         DateTimeChooserAndroid.setFactory(new DateTimeChooserFactory());
+        FileSelectManager.setFactory(new FileSelectFactory());
         HttpAuthManager.setFactory(new HttpAuthManagerFactory());
     }
 
@@ -819,6 +822,107 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             if (!isComplete()) {
                 markComplete();
                 mListener.cancel();
+            }
+            return new PromptResponseImpl();
+        }
+    }
+
+    public class FileSelectFactory implements FileSelectManager.Factory {
+        public FileSelectManager.Bridge create(FileSelectManager.Listener listener) {
+            return new FileSelectPromptBridge(listener);
+        }
+    }
+
+    public class FileSelectPromptBridge implements FileSelectManager.Bridge {
+
+        private final FilePrompt mFilePrompt;
+
+
+        public FileSelectPromptBridge(FileSelectManager.Listener listener) {
+            mFilePrompt = new FilePrompt(listener);
+        }
+
+        @Override
+        public void selectFile(String[] acceptMimeTypes, boolean capture, boolean allowMultiple) {
+            try {
+                if (mDelegate != null) {
+                    mFilePrompt.setSelectFileInfo(acceptMimeTypes, capture, allowMultiple);
+                    mDelegate.onFilePrompt(mSession, mFilePrompt);
+                } else {
+                    mFilePrompt.dismiss();
+                }
+            } catch (WindowManager.BadTokenException e) {
+                mFilePrompt.dismiss();
+            }
+        }
+
+        @Override
+        public void close() {
+            if (!mFilePrompt.isComplete()) {
+                mFilePrompt.dismiss();
+            }
+        }
+    }
+
+    public static class FilePrompt extends BasePromptImpl implements WSession.PromptDelegate.FilePrompt {
+        private final FileSelectManager.Listener mListener;
+        private String[] mMimeTypes;
+        @CaptureType
+        private int mCapture;
+        @FileType
+        private int mType;
+
+        public FilePrompt(FileSelectManager.Listener listener) {
+            mListener = listener;
+        }
+
+        public void setSelectFileInfo(String[] acceptMimeTypes, boolean capture, boolean allowMultiple) {
+            mMimeTypes = acceptMimeTypes;
+            mCapture = capture ? Capture.ANY : Capture.NONE;
+            mType = allowMultiple ? Type.MULTIPLE : Type.SINGLE;
+        }
+
+        @Override
+        @FileType
+        public int type() { return mType; }
+
+        @Override
+        @Nullable
+        public String[] mimeTypes() { return mMimeTypes; }
+
+        @Override
+        @CaptureType
+        public int captureType() { return mCapture; }
+
+        @Override
+        @UiThread
+        @NonNull
+        public WSession.PromptDelegate.PromptResponse confirm(@NonNull final Context context, @NonNull final Uri uri) {
+            markComplete();
+            mListener.onFileSelected(uri.getSchemeSpecificPart());
+            return new PromptResponseImpl();
+        }
+
+        @Override
+        @UiThread
+        public @NonNull
+        WSession.PromptDelegate.PromptResponse confirm(@NonNull final Context context, @NonNull final Uri[] uris) {
+            String[] filePathArray = new String[uris.length];
+            for (int i = 0; i < uris.length; i++) {
+                filePathArray[i] = uris[i].getSchemeSpecificPart();
+            }
+
+            markComplete();
+            mListener.onMultipleFilesSelected(filePathArray);
+            return new PromptResponseImpl();
+        }
+
+        @Override
+        @NonNull
+        public WSession.PromptDelegate.PromptResponse dismiss() {
+            if (!isComplete()) {
+                markComplete();
+                mListener.onCanceled();
             }
             return new PromptResponseImpl();
         }
