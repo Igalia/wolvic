@@ -1162,7 +1162,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       frameEndInfo.environmentBlendMode = blendMode;
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
-      CHECK_XRCMD(xrEndFrame(session, &frameEndInfo));
+      MessageXrResult(xrEndFrame(session, &frameEndInfo));
   };
 
   auto canAddLayers = [&layers, maxLayers = m.systemProperties.graphicsProperties.maxLayerCount]() {
