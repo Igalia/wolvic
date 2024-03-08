@@ -963,7 +963,8 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     // Session Settings
 
     public int getUaMode() {
-        return mState.mSession.getSettings().getUserAgentMode();
+        return mState.mSession != null ? mState.mSession.getSettings().getUserAgentMode() :
+                WSessionSettings.USER_AGENT_MODE_MOBILE;
     }
 
     public boolean isActive() {
