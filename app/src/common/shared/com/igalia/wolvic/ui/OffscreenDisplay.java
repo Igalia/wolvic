@@ -98,6 +98,8 @@ public class OffscreenDisplay {
                 mDefaultMetrics.widthPixels = bounds.width();
                 mDefaultMetrics.heightPixels = bounds.height();
                 mDefaultMetrics.density = metrics.getDensity();
+                DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+                mDefaultMetrics.densityDpi = displayMetrics.densityDpi;
             } else {
                 defaultDisplay.getMetrics(mDefaultMetrics);
             }
