@@ -61,7 +61,12 @@ public class DownloadsManager {
     }
 
     public void init() {
-        mContext.registerReceiver(mDownloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            mContext.registerReceiver(mDownloadReceiver, filter, null, mMainHandler, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            mContext.registerReceiver(mDownloadReceiver, filter, null, mMainHandler);
+        }
         List<Download> downloads = getDownloads();
         downloads.forEach(download -> {
             File downloadedFile = download.getOutputFile();
