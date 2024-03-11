@@ -413,7 +413,7 @@ android {
             variant.setIgnore(platform != 'noapi' && platform !='aosp');
 
         // Create variants for China only for HVR and Pico platforms
-        if (store == 'mainlandChina' && !(platform.startsWith('hvr') || platform.startsWith('picoxr')))
+        if (store == 'mainlandChina' && !(platform.startsWith('hvr') || platform.startsWith('visionglass') || platform.startsWith('picoxr')))
             variant.setIgnore(true);
 
         // Create variants for chromium/webkit, only when they are available
