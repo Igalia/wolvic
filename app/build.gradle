@@ -317,6 +317,7 @@ android {
 
         visionglass {
             dimension "platform"
+            applicationId "com.igalia.wolvic" // required for publication in the China AppGallery
             applicationIdSuffix ".visionglass"
             resValue "string", "app_name", "Wolvic Vision Glass"
             externalNativeBuild {
