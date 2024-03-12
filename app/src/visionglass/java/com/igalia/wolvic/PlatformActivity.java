@@ -197,6 +197,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mVoiceSearchButton = findViewById(R.id.phoneUIVoiceButton);
         mVoiceSearchButton.setEnabled(false);
 
+        mBinding.realignButton.setOnClickListener(v -> {
+            queueRunnable(() -> calibrateController());
+        });
+
         View touchpad = findViewById(R.id.touchpad);
         touchpad.setOnClickListener(v -> {
             // We don't really need the coordinates of the click because we use the position
@@ -308,6 +312,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         // The quaternion is returned in the form [w, x, z, y] but we use it as [x, y, z, w].
         // See https://developer.android.com/reference/android/hardware/Sensor#TYPE_ROTATION_VECTOR
         queueRunnable(() -> setControllerOrientation(quaternion[1], quaternion[3], quaternion[2], quaternion[0]));
+
+        mBinding.realignButton.updatePosition(-quaternion[3], -quaternion[1]);
     }
 
     @Override
