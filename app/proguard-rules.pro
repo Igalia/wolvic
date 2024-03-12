@@ -64,9 +64,10 @@
 -keep class com.qualcomm.** {*;}
 
 # --------------------------------------------------------------------
-# App Services
+# AppServices & Components
 # --------------------------------------------------------------------
 -keep class mozilla.appservices.** {*;}
+-keep class mozilla.components.concept.engine.manifest.** {*;}
 
 # --------------------------------------------------------------------
 # Android ViewModel
