@@ -109,8 +109,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     };
     private final Runnable activityResumedRunnable = this::activityResumed;
 
-    private interface PhoneUIButtonsCallback {
-        void onButtonClicked(VRBrowserActivity activity);
+    private interface VRBrowserActivityCallback {
+        void run(VRBrowserActivity activity);
     };
 
     /**
@@ -118,12 +118,12 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
      * object in VRBrowserActivity. It's a bit ugly but it's the best we can do with the current
      * architecture where there are multiple PlatformActivity's.
     */
-    private void runPhoneUICallback(PhoneUIButtonsCallback callback) {
+    private void runVRBrowserActivityCallback(VRBrowserActivityCallback callback) {
         Context context = getApplicationContext();
         assert context instanceof VRBrowserApplication;
         assert ((VRBrowserApplication)context).getCurrentActivity() instanceof VRBrowserActivity;
 
-        callback.onButtonClicked((VRBrowserActivity)((VRBrowserApplication)context).getCurrentActivity());
+        callback.run((VRBrowserActivity)((VRBrowserApplication)context).getCurrentActivity());
     }
 
     private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
@@ -262,6 +262,9 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         if (mSwitchedTo3DMode && mPresentationDisplay != null && mActivePresentation != null) {
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
+            // Recenter the UI so that the user sees the browser window in front. We must do this
+            // at this point to ensure that everything is properly initialized.
+            runVRBrowserActivityCallback(activity -> activity.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL));
             return;
         } else {
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.CONNECTED);
