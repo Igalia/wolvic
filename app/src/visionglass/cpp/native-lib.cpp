@@ -104,6 +104,13 @@ JNI_METHOD(void, setControllerOrientation)
     sAppContext->mDevice->setControllerOrientation(aX, aY, aZ, aW);
 }
 
+JNI_METHOD(void, calibrateController)
+(JNIEnv*, jobject) {
+    if (!sAppContext || !sAppContext->mDevice)
+        return;
+    sAppContext->mDevice->CalibrateController();
+}
+
 jint JNI_OnLoad(JavaVM* aVm, void*) {
     if (sAppContext) {
         return JNI_VERSION_1_6;
