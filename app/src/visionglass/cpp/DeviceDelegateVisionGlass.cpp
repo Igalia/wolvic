@@ -56,6 +56,8 @@ struct DeviceDelegateVisionGlass::State {
   crow::ElbowModelPtr elbow;
   std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
   vrb::Quaternion headOrientation;
+  vrb::Quaternion controllerCalibration;
+  bool isControllerCalibrated;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , clicked(false)
@@ -65,7 +67,12 @@ struct DeviceDelegateVisionGlass::State {
       , far(1000.0f)
       , reorientMatrix(vrb::Matrix::Identity())
       , elbow(ElbowModel::Create())
+      , isControllerCalibrated(false)
   {
+      SetupOrientationFilter();
+  }
+
+  void SetupOrientationFilter() {
       orientationFilter = std::make_unique<OneEuroFilterQuaternion>(0.1, 0.5, 1.0);
   }
 
@@ -125,8 +132,6 @@ DeviceDelegateVisionGlass::SetRenderMode(const device::RenderMode aMode) {
     sEnv->CallVoidMethod(sActivity, sSetRenderMode, (aMode == device::RenderMode::Immersive ? 1 : 0));
     CheckJNIException(sEnv, __FUNCTION__);
   }
-  if (aMode == device::RenderMode::Immersive)
-    RecenterView();
 }
 
 device::RenderMode
@@ -242,12 +247,18 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   if (!m.controller)
     return;
 
+  auto calibratedControllerOrientation = m.controllerOrientation * m.controllerCalibration;
   vrb::Matrix transformMatrix;
   if (auto context = m.context.lock()) {
-    float* filteredOrientation = m.orientationFilter->filter(context->GetTimestamp() * 1000000000, m.controllerOrientation.Data());
-    transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
+      if (m.isControllerCalibrated) {
+          float *filteredOrientation = m.orientationFilter->filter(
+                  context->GetTimestamp() * 1000000000, calibratedControllerOrientation.Data());
+          transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
+      } else {
+          transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
+      }
   } else {
-    transformMatrix = vrb::Matrix::Rotation(m.controllerOrientation);
+    transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
   }
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
   m.controller->SetTransform(kControllerIndex, pointerTransform);
@@ -313,10 +324,6 @@ DeviceDelegateVisionGlass::Resume() {
 
 }
 
-void
-DeviceDelegateVisionGlass::RecenterView() {
-}
-
 static float
 Clamp(const float aValue) {
   if (aValue < -1.0f) {
@@ -350,6 +357,13 @@ DeviceDelegateVisionGlass::setHead(const float aX, const float aY, const float a
 void
 DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float aY, const float aZ, const float aW) {
     m.controllerOrientation = vrb::Quaternion(aX, aY, aZ, aW);
+}
+
+void
+DeviceDelegateVisionGlass::CalibrateController() {
+  m.controllerCalibration = m.controllerOrientation.Inverse() * m.headOrientation.Inverse();
+  m.isControllerCalibrated = true;
+  m.SetupOrientationFilter();
 }
 
 DeviceDelegateVisionGlass::DeviceDelegateVisionGlass(State& aState) : m(aState) {}

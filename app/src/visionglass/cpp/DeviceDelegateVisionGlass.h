@@ -52,12 +52,12 @@ public:
   void ControllerButtonPressed(const bool aDown);
   void setHead(const float aX, const float aY, const float aZ, const float aW);
   void setControllerOrientation(const float aX, const float aY, const float aZ, const float aW);
+  void CalibrateController();
 protected:
   struct State;
   DeviceDelegateVisionGlass(State& aState);
   virtual ~DeviceDelegateVisionGlass();
 private:
-  void RecenterView();
   State& m;
   VRB_NO_DEFAULTS(DeviceDelegateVisionGlass)
 };
