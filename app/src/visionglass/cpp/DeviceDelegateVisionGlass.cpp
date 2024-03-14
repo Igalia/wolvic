@@ -48,7 +48,6 @@ struct DeviceDelegateVisionGlass::State {
   ControllerDelegatePtr controller;
   vrb::CameraEyePtr cameras[2];
   vrb::Color clearColor;
-  vrb::Matrix headingMatrix;
   vrb::Quaternion controllerOrientation;
   bool clicked;
   GLsizei glWidth, glHeight;
@@ -56,9 +55,9 @@ struct DeviceDelegateVisionGlass::State {
   vrb::Matrix reorientMatrix;
   crow::ElbowModelPtr elbow;
   std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
+  vrb::Quaternion headOrientation;
   State()
       : renderMode(device::RenderMode::StandAlone)
-      , headingMatrix(vrb::Matrix::Identity())
       , clicked(false)
       , glWidth(0)
       , glHeight(0)
@@ -230,7 +229,9 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   mShouldRender = true;
 
-  auto headTransform = m.headingMatrix.Translate(kAverageHeight);
+  // We need to flip the Z axis coming from the SDK to get the proper rotation.
+  auto headingMatrix = vrb::Matrix::Rotation({m.headOrientation.x(), m.headOrientation.y(), -m.headOrientation.z(), -m.headOrientation.w()});
+  auto headTransform = headingMatrix.Translate(kAverageHeight);
   m.cameras[0]->SetHeadTransform(headTransform);
   m.cameras[1]->SetHeadTransform(headTransform);
   m.immersiveDisplay->SetEyeTransform(device::Eye::Left, m.cameras[0]->GetEyeTransform());
@@ -314,7 +315,6 @@ DeviceDelegateVisionGlass::Resume() {
 
 void
 DeviceDelegateVisionGlass::RecenterView() {
-  m.headingMatrix = vrb::Matrix::Identity();
 }
 
 static float
@@ -344,8 +344,7 @@ DeviceDelegateVisionGlass::ControllerButtonPressed(const bool aDown) {
 
 void
 DeviceDelegateVisionGlass::setHead(const float aX, const float aY, const float aZ, const float aW) {
-  // We need to flip the Z axis comming from the SDK to get the proper rotation.
-  m.headingMatrix = vrb::Matrix::Rotation({aX,aY,-aZ,-aW});
+  m.headOrientation = vrb::Quaternion(aX, aY, aZ, aW);
 }
 
 void
