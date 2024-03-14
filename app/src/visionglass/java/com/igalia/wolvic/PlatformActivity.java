@@ -698,4 +698,5 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void setHead(double x, double y, double z, double w);
     private native void setControllerOrientation(double x, double y, double z, double w);
+    private native void calibrateController();
 }
