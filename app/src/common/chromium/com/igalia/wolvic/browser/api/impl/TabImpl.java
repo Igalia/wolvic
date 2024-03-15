@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import org.chromium.content_public.browser.MediaSessionObserver;
+import org.chromium.content_public.browser.SelectionPopupController;
 import org.chromium.wolvic.Tab;
 
 /**
@@ -26,6 +27,12 @@ public class TabImpl extends Tab {
         setWebContentsDelegate(mWebContents, mTabWebContentsDelegate);
 
         mWebContentsObserver = new TabWebContentsObserver(mWebContents, session);
+
+        SelectionPopupController controller =
+                SelectionPopupController.fromWebContents(mWebContents);
+        controller.setDelegate(
+                new SelectionPopupControllerDelegate(mWebContents,
+                        controller.getDelegateEventHandler(), session));
     }
 
     public void exitFullScreen() {
