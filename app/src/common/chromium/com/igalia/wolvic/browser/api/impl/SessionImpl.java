@@ -374,7 +374,6 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     @Override
     public void setSelectionActionDelegate(@Nullable SelectionActionDelegate delegate) {
-        // TODO: Implement bridge
         mSelectionActionDelegate = delegate;
     }
 
