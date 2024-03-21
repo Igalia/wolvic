@@ -1810,4 +1810,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permission_microphone_rationale">Realizar búsquedas por voz e ingresar texto requiere permiso para usar su micrófono.</string>
     <string name="permission_camera_and_microphone_rationale">Proporcionar servicios como videoconferencias requiere permiso para usar su cámara y micrófono.</string>
     <string name="permission_location_rationale">Ofrecer noticias y contenidos cercanos requiere permiso para acceder a su ubicación.</string>
+    <string name="permission_persistent_storage_rationale">Guardar y abrir archivos en su dispositivo requiere permiso para almacenar datos en un almacenamiento persistente.</string>
+    <string name="tray_status_phone">Teléfono: %1$s</string>
+    <string name="permission_read_external_storage_rationale">Abrir archivos en su dispositivo requiere permiso para leer su almacenamiento externo.</string>
+    <string name="permission_notification_rationale">Para poder notificarle noticias y actualizaciones, se requiere permiso para enviar notificaciones.</string>
+    <string name="hamburger_menu_zoom">Zoom</string>
 </resources>
