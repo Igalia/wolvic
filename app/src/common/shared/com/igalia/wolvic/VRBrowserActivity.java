@@ -59,7 +59,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
-import com.igalia.wolvic.crashreporting.CrashReporterService;
+import com.igalia.wolvic.browser.api.impl.CrashReporterServiceImpl;
 import com.igalia.wolvic.crashreporting.GlobalExceptionHandler;
 import com.igalia.wolvic.geolocation.GeolocationWrapper;
 import com.igalia.wolvic.input.MotionEventGenerator;
@@ -131,12 +131,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if((intent.getAction() != null) && intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
+            if((intent.getAction() != null) && intent.getAction().equals(CrashReporterServiceImpl.CRASH_ACTION)) {
                 Intent crashIntent;
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
-                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG, Intent.class);
+                    crashIntent = intent.getParcelableExtra(CrashReporterServiceImpl.DATA_TAG, Intent.class);
                 } else {
-                    crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
+                    crashIntent = intent.getParcelableExtra(CrashReporterServiceImpl.DATA_TAG);
                 }
                 handleContentCrashIntent(crashIntent);
             }
@@ -289,7 +289,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         // Fix for infinite restart on startup crashes.
         long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
-        boolean cancelRestart = count > CrashReporterService.MAX_RESTART_COUNT;
+        boolean cancelRestart = count > CrashReporterServiceImpl.MAX_RESTART_COUNT;
         if (cancelRestart) {
             super.onCreate(savedInstanceState);
             Log.e(LOGTAG, "Cancel Restart");
@@ -313,7 +313,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CrashReporterService.CRASH_ACTION);
+        intentFilter.addAction(CrashReporterServiceImpl.CRASH_ACTION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             registerReceiver(mCrashReceiver, intentFilter, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name), null, Context.RECEIVER_NOT_EXPORTED);
         } else {
@@ -901,7 +901,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     };
 
     private void checkForCrash() {
-        final ArrayList<String> files = CrashReporterService.findCrashFiles(getBaseContext());
+        final ArrayList<String> files = CrashReporterServiceImpl.findCrashFiles(getBaseContext());
         if (files.isEmpty()) {
             Log.d(LOGTAG, "No crash files found.");
             return;

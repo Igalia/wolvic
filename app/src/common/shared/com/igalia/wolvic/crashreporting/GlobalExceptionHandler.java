@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.utils.SystemUtils;
+import com.igalia.wolvic.browser.api.impl.CrashReporterServiceImpl;
 
 public class GlobalExceptionHandler {
 
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
         if (mInstance == null) {
             mInstance = new GlobalExceptionHandler();
             WRuntime runtime = EngineProvider.INSTANCE.getOrCreateRuntime(aContext);
-            mInstance.mCrashHandler = runtime.createCrashHandler(aContext, CrashReporterService.class);
+            mInstance.mCrashHandler = runtime.createCrashHandler(aContext, CrashReporterServiceImpl.class);
             Log.d(LOGTAG, "======> GlobalExceptionHandler registered");
         }
 
