@@ -25,7 +25,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -36,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.button.MaterialButton;
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
@@ -65,7 +63,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private DisplayManager mDisplayManager;
     private Display mPresentationDisplay;
     private VisionGlassPresentation mActivePresentation;
-    private View mVoiceSearchButton;
     private int mDisplayModeRetryCount = 0;
     private int mUSBPermissionRequestCount = 0;
     private boolean mSwitchedTo3DMode = false;
@@ -194,21 +191,19 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mViewModel.getConnectionState().observe(this, connectionState ->
                 Log.d(LOGTAG, "Connection state updated: " + connectionState));
 
-        mVoiceSearchButton = findViewById(R.id.phoneUIVoiceButton);
-        mVoiceSearchButton.setEnabled(false);
+        mBinding.voiceSearchButton.setEnabled(false);
 
         mBinding.realignButton.setOnClickListener(v -> {
-            queueRunnable(() -> calibrateController());
+            queueRunnable(this::calibrateController);
         });
 
-        View touchpad = findViewById(R.id.touchpad);
-        touchpad.setOnClickListener(v -> {
+        mBinding.touchpad.setOnClickListener(v -> {
             // We don't really need the coordinates of the click because we use the position
             // of the aim in the 3D environment.
             queueRunnable(() -> touchEvent(false, 0, 0));
         });
 
-        touchpad.setOnTouchListener((view, event) -> {
+        mBinding.touchpad.setOnTouchListener((view, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_MOVE:
@@ -464,7 +459,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         @Override
         public void onKeyboardVisibilityChange(boolean isVisible) {
-            mVoiceSearchButton.setEnabled(isVisible);
+            mBinding.voiceSearchButton.setEnabled(isVisible);
         }
 
         @Override
@@ -486,12 +481,12 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
             media.addMediaListener(new WMediaSession.Delegate() {
                 @Override
                 public void onPlay(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
-                    ((MaterialButton) findViewById(R.id.phoneUIPlayButton)).setIconResource(R.drawable.ic_icon_media_pause);
+                    mBinding.playButton.setIconResource(R.drawable.ic_icon_media_pause);
                 }
 
                 @Override
                 public void onPause(@NonNull WSession session, @NonNull WMediaSession mediaSession) {
-                    ((MaterialButton) findViewById(R.id.phoneUIPlayButton)).setIconResource(R.drawable.ic_icon_media_play);
+                    mBinding.playButton.setIconResource(R.drawable.ic_icon_media_play);
                 }
 
                 @Override
@@ -509,16 +504,15 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         // Setup the phone UI callbacks that require access to the WindowManagerDelegate.
         private void setupPhoneUI() {
-            findViewById(R.id.home_button).setOnClickListener(v -> {
+            mBinding.homeButton.setOnClickListener(v -> {
                 mDelegate.getWindows().getFocusedWindow().loadHome();
             });
 
-            MaterialButton headlockButton = findViewById(R.id.headlock_toggle_button);
-            headlockButton.setOnClickListener(v -> {
-                mDelegate.setHeadLockEnabled(headlockButton.isChecked());
+            mBinding.headlockToggleButton.setOnClickListener(v -> {
+                mDelegate.setHeadLockEnabled(mBinding.headlockToggleButton.isChecked());
             });
 
-            findViewById(R.id.phoneUIPlayButton).setOnClickListener(v -> {
+            mBinding.playButton.setOnClickListener(v -> {
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
@@ -529,36 +523,35 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 }
             });
 
-            findViewById(R.id.phoneUISeekBackward10Button).setOnClickListener(v -> {
+            mBinding.seekBackwardButton.setOnClickListener(v -> {
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
                 media.seek(media.getCurrentTime() - 10);
             });
 
-            findViewById(R.id.phoneUISeekForward30Button).setOnClickListener(v -> {
+            mBinding.seekForwardButton.setOnClickListener(v -> {
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
                 media.seek(media.getCurrentTime() + 30);
             });
 
-            findViewById(R.id.phoneUIVoiceButton).setOnClickListener(v -> {
+            mBinding.voiceSearchButton.setOnClickListener(v -> {
                 // Delegate all the voice input handling in the KeyboardWidget which already handles
                 // all the potential voice input cases.
                 mDelegate.getKeyboard().simulateVoiceButtonClick();
             });
 
-            findViewById(R.id.phoneUIMuteButton).setOnClickListener(v -> {
+            mBinding.muteButton.setOnClickListener(v -> {
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
                 media.setMuted(!media.isMuted());
-                ((MaterialButton) findViewById(R.id.phoneUIMuteButton)).setIconResource(!media.isMuted() ? R.drawable.ic_icon_media_volume : R.drawable.ic_icon_media_volume_muted);
+                mBinding.muteButton.setIconResource(!media.isMuted() ? R.drawable.ic_icon_media_volume : R.drawable.ic_icon_media_volume_muted);
             });
 
-            mMediaSeekbar = findViewById(R.id.phoneUIMediaSeekBar);
-            mMediaSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            mBinding.mediaSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
 
