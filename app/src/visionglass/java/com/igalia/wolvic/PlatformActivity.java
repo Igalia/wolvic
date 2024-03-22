@@ -450,7 +450,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private class PlatformActivityPluginVisionGlass implements PlatformActivityPlugin {
         private WidgetManagerDelegate mDelegate;
         private WMediaSession.Delegate mMediaSessionDelegate;
-        private SeekBar mMediaSeekbar;
 
         PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
             mDelegate = delegate;
@@ -491,7 +490,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
                 @Override
                 public void onPositionState(@NonNull WSession session, @NonNull WMediaSession mediaSession, @NonNull WMediaSession.PositionState state) {
-                    mMediaSeekbar.setProgress((int) ((state.position / state.duration) * 100), false);
+                    mBinding.mediaSeekbar.setProgress((int) ((state.position / state.duration) * 100), false);
                 }
             });
         }
