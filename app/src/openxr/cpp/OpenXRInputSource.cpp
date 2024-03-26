@@ -752,8 +752,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     // Pose transforms.
     bool isPoseActive { false };
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
-#ifdef CHROMIUM
+#if defined(CHROMIUM) && !defined(HVR)
     // Chromium's WebXR code expects aim space to be based on the grip space.
+    // FIXME: HVR doesn´t retrieve a poseLocation with a valid orientaton bit if we use the grip space.
     XrSpace baseSpace = renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
 #else
     XrSpace baseSpace = localSpace;
