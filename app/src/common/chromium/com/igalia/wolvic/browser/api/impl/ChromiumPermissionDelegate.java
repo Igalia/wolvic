@@ -23,26 +23,26 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         PermissionManagerBridge.get().setDelegate(this);
     }
 
-    private static int toContentPermissionType(
-            PermissionManagerBridge.ContentPermissionType permission) {
+    private static @WSession.Permission int toContentPermissionType(
+            @PermissionManagerBridge.ContentPermissionType int permission) {
         switch (permission) {
-            case GEOLOCATION:
+            case PermissionManagerBridge.ContentPermissionType.GEOLOCATION:
                 return WSession.PermissionDelegate.PERMISSION_GEOLOCATION;
-            case DESKTOP_NOTIFICATION:
+            case PermissionManagerBridge.ContentPermissionType.DESKTOP_NOTIFICATION:
                 return WSession.PermissionDelegate.PERMISSION_DESKTOP_NOTIFICATION;
-            case PERSISTENT_STORAGE:
+            case PermissionManagerBridge.ContentPermissionType.PERSISTENT_STORAGE:
                 return WSession.PermissionDelegate.PERMISSION_PERSISTENT_STORAGE;
-            case XR:
+            case PermissionManagerBridge.ContentPermissionType.XR:
                 return WSession.PermissionDelegate.PERMISSION_XR;
-            case AUTOPLAY_INAUDIBLE:
+            case PermissionManagerBridge.ContentPermissionType.AUTOPLAY_INAUDIBLE:
                 return WSession.PermissionDelegate.PERMISSION_AUTOPLAY_INAUDIBLE;
-            case AUTOPLAY_AUDIBLE:
+            case PermissionManagerBridge.ContentPermissionType.AUTOPLAY_AUDIBLE:
                 return WSession.PermissionDelegate.PERMISSION_AUTOPLAY_AUDIBLE;
-            case MEDIA_KEY_SYSTEM_ACCESS:
+            case PermissionManagerBridge.ContentPermissionType.MEDIA_KEY_SYSTEM_ACCESS:
                 return WSession.PermissionDelegate.PERMISSION_MEDIA_KEY_SYSTEM_ACCESS;
-            case TRACKING:
+            case PermissionManagerBridge.ContentPermissionType.TRACKING:
                 return WSession.PermissionDelegate.PERMISSION_TRACKING;
-            case STORAGE_ACCESS:
+            case PermissionManagerBridge.ContentPermissionType.STORAGE_ACCESS:
                 return WSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS;
         }
         throw new IllegalArgumentException("Invalid permission: " + permission);
@@ -50,7 +50,7 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
 
     private static WSession.PermissionDelegate.ContentPermission toContentPermission(
             String url, boolean isOffTheRecord,
-            PermissionManagerBridge.ContentPermissionType permission) {
+            @PermissionManagerBridge.ContentPermissionType int permission) {
         return new WSession.PermissionDelegate.ContentPermission(url,
                 null,
                 isOffTheRecord,
@@ -59,7 +59,8 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
                 isOffTheRecord ? OFF_THE_RECORD_SESSION_ID : SESSION_ID);
     }
 
-    private static PermissionManagerBridge.PermissionStatus fromPermissionValue(int value) {
+    private static @PermissionManagerBridge.PermissionStatus int fromPermissionValue(
+            @WSession.PermissionDelegate.ContentPermission.Value int value) {
         switch (value) {
             case WSession.PermissionDelegate.ContentPermission.VALUE_ALLOW:
                 return PermissionManagerBridge.PermissionStatus.ALLOW;
@@ -71,8 +72,8 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         throw new IllegalArgumentException("Invalid value: " + value);
     }
 
-    private WResult<PermissionManagerBridge.PermissionStatus> requestContentPermission(
-            PermissionManagerBridge.ContentPermissionType permissionType, String url,
+    private @PermissionManagerBridge.PermissionStatus WResult<Integer> requestContentPermission(
+            @PermissionManagerBridge.ContentPermissionType int permissionType, String url,
             boolean isOffTheRecord) {
         if (mPermissionDelegate == null) {
             return WResult.fromValue(PermissionManagerBridge.PermissionStatus.PROMPT);
@@ -92,12 +93,12 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
      * @param currentPermission index of the permission processed on this step
      * @param currentResults accumulated permission results for already processed permissions
      */
-    private WResult<List<PermissionManagerBridge.PermissionStatus>> requestContentPermissions(
-            PermissionManagerBridge.ContentPermissionType[] permissionTypes,
+    private @PermissionManagerBridge.PermissionStatus WResult<List<Integer>> requestContentPermissions(
+            @PermissionManagerBridge.ContentPermissionType int[] permissionTypes,
             String url,
             boolean isOffTheRecord,
             int currentPermission,
-            List<PermissionManagerBridge.PermissionStatus> currentResults) {
+            @PermissionManagerBridge.PermissionStatus List<Integer> currentResults) {
         if (currentPermission == permissionTypes.length) {
             return WResult.fromValue(currentResults);
         }
@@ -110,13 +111,13 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         });
     }
 
-    private WResult<PermissionManagerBridge.PermissionStatus> requestAndroidPermission(
+    private @PermissionManagerBridge.PermissionStatus WResult<Integer> requestAndroidPermission(
             String androidPermission) {
         if (androidPermission.equals(PermissionManagerBridge.NO_ANDROID_PERMISSION)) {
             return WResult.fromValue(PermissionManagerBridge.PermissionStatus.ALLOW);
         }
 
-        WResult<PermissionManagerBridge.PermissionStatus> result = WResult.create();
+        @PermissionManagerBridge.PermissionStatus WResult<Integer> result = WResult.create();
         mPermissionDelegate.onAndroidPermissionsRequest(mSession, new String[]{androidPermission}, new WSession.PermissionDelegate.Callback() {
             @Override
             public void grant() {
@@ -136,10 +137,10 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
      * @param currentPermission index of the permission processed on this step
      * @param currentResults accumulated permission results for already processed permissions
      */
-    private WResult<List<PermissionManagerBridge.PermissionStatus>> requestAndroidPermissions(
+    private @PermissionManagerBridge.PermissionStatus WResult<List<Integer>> requestAndroidPermissions(
             String[] androidPermissions,
             int currentPermission,
-            List<PermissionManagerBridge.PermissionStatus> currentResults) {
+            @PermissionManagerBridge.PermissionStatus List<Integer> currentResults) {
         if (currentPermission == androidPermissions.length) {
             return WResult.fromValue(currentResults);
         }
@@ -151,16 +152,15 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         });
     }
 
-    private void invokeCallback(List<PermissionManagerBridge.PermissionStatus> statuses,
+    private void invokeCallback(@PermissionManagerBridge.PermissionStatus List<Integer> statuses,
                            PermissionManagerBridge.PermissionCallback callback) {
-        PermissionManagerBridge.PermissionStatus[] result = Objects.requireNonNull(statuses).toArray(
-                new PermissionManagerBridge.PermissionStatus[statuses.size()]);
+        int[] result = statuses.stream().mapToInt(Integer::intValue).toArray();
         callback.onPermissionResult(result);
     }
 
     @Override
     public void onContentPermissionRequest(
-            PermissionManagerBridge.ContentPermissionType[] permissionTypes, String url,
+            @PermissionManagerBridge.ContentPermissionType int[] permissionTypes, String url,
             boolean isOffTheRecord, PermissionManagerBridge.PermissionCallback permissionCallback) {
         requestContentPermissions(permissionTypes, url, isOffTheRecord, 0, new ArrayList<>()).then(
                 statuses -> {
