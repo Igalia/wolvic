@@ -23,7 +23,8 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         PermissionManagerBridge.get().setDelegate(this);
     }
 
-    private static int toContentPermissionType(PermissionManagerBridge.PermissionType permission) {
+    private static int toContentPermissionType(
+            PermissionManagerBridge.ContentPermissionType permission) {
         switch (permission) {
             case GEOLOCATION:
                 return WSession.PermissionDelegate.PERMISSION_GEOLOCATION;
@@ -48,7 +49,8 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
     }
 
     private static WSession.PermissionDelegate.ContentPermission toContentPermission(
-            String url, boolean isOffTheRecord, PermissionManagerBridge.PermissionType permission) {
+            String url, boolean isOffTheRecord,
+            PermissionManagerBridge.ContentPermissionType permission) {
         return new WSession.PermissionDelegate.ContentPermission(url,
                 null,
                 isOffTheRecord,
@@ -69,14 +71,14 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         throw new IllegalArgumentException("Invalid value: " + value);
     }
 
-    private WResult<PermissionManagerBridge.PermissionStatus> requestPermission(
-            PermissionManagerBridge.PermissionType permissionType, String url,
+    private WResult<PermissionManagerBridge.PermissionStatus> requestContentPermission(
+            PermissionManagerBridge.ContentPermissionType permissionType, String url,
             boolean isOffTheRecord) {
         if (mPermissionDelegate == null) {
             return WResult.fromValue(PermissionManagerBridge.PermissionStatus.PROMPT);
         }
         // Automatically deny any Chromium permissions that are not supported by Wolvic.
-        if (permissionType == PermissionManagerBridge.PermissionType.NOT_SUPPORTED) {
+        if (permissionType == PermissionManagerBridge.ContentPermissionType.NOT_SUPPORTED) {
             return WResult.fromValue(PermissionManagerBridge.PermissionStatus.DENY);
         }
 
@@ -90,8 +92,8 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
      * @param currentPermission index of the permission processed on this step
      * @param currentResults accumulated permission results for already processed permissions
      */
-    private WResult<List<PermissionManagerBridge.PermissionStatus>> requestPermissions(
-            PermissionManagerBridge.PermissionType[] permissionTypes,
+    private WResult<List<PermissionManagerBridge.PermissionStatus>> requestContentPermissions(
+            PermissionManagerBridge.ContentPermissionType[] permissionTypes,
             String url,
             boolean isOffTheRecord,
             int currentPermission,
@@ -100,9 +102,10 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
             return WResult.fromValue(currentResults);
         }
 
-        return requestPermission(permissionTypes[currentPermission], url, isOffTheRecord).then(status -> {
+        return requestContentPermission(permissionTypes[currentPermission], url,
+                isOffTheRecord).then(status -> {
             currentResults.add(status);
-            return requestPermissions(
+            return requestContentPermissions(
                     permissionTypes, url, isOffTheRecord, currentPermission + 1, currentResults);
         });
     }
@@ -155,36 +158,23 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
         callback.onPermissionResult(result);
     }
 
-    private PermissionManagerBridge.PermissionStatus combineStatus(
-            PermissionManagerBridge.PermissionStatus lhs,
-            PermissionManagerBridge.PermissionStatus rhs) {
-        if (lhs.equals(PermissionManagerBridge.PermissionStatus.DENY)
-                || rhs.equals(PermissionManagerBridge.PermissionStatus.DENY)) {
-            return PermissionManagerBridge.PermissionStatus.DENY;
-        }
-        return PermissionManagerBridge.PermissionStatus.ALLOW;
-    }
-
-    private List<PermissionManagerBridge.PermissionStatus> combineStatuses(
-            List<PermissionManagerBridge.PermissionStatus> lhs,
-            List<PermissionManagerBridge.PermissionStatus> rhs) {
-        List<PermissionManagerBridge.PermissionStatus> result = new ArrayList<>(lhs.size());
-        for (int i = 0; i < lhs.size(); i++) {
-            result.add(combineStatus(lhs.get(i), rhs.get(i)));
-        }
-        return result;
+    @Override
+    public void onContentPermissionRequest(
+            PermissionManagerBridge.ContentPermissionType[] permissionTypes, String url,
+            boolean isOffTheRecord, PermissionManagerBridge.PermissionCallback permissionCallback) {
+        requestContentPermissions(permissionTypes, url, isOffTheRecord, 0, new ArrayList<>()).then(
+                statuses -> {
+                    invokeCallback(statuses, permissionCallback);
+                    return null;
+                });
     }
 
     @Override
-    public void onPermissionRequest(PermissionManagerBridge.PermissionType[] permissionTypes,
-                                    String[] androidPermissions, String url,
-                                    boolean isOffTheRecord,
-                                    PermissionManagerBridge.PermissionCallback permissionCallback) {
-        requestPermissions(permissionTypes, url, isOffTheRecord, 0, new ArrayList<>())
-                .then(statuses -> requestAndroidPermissions(androidPermissions, 0, new ArrayList<>())
-                        .then(androidStatuses -> {
-            invokeCallback(combineStatuses(statuses, androidStatuses), permissionCallback);
+    public void onAndroidPermissionRequest(String[] permissionTypes,
+                                           PermissionManagerBridge.PermissionCallback permissionCallback) {
+        requestAndroidPermissions(permissionTypes, 0, new ArrayList<>()).then(statuses -> {
+            invokeCallback(statuses, permissionCallback);
             return null;
-        }));
+        });
     }
 }
