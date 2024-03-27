@@ -1,4 +1,4 @@
-package com.igalia.wolvic.ui.widgets.menus.library;
+package com.igalia.wolvic.ui.widgets.menus;
 
 import android.content.Context;
 
@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.ui.callbacks.DownloadsContextMenuCallback;
+import com.igalia.wolvic.ui.widgets.menus.library.LibraryContextMenuWidget;
 
 import java.util.EnumSet;
 
