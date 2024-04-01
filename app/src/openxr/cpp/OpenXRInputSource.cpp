@@ -753,8 +753,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     bool isPoseActive { false };
     XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
 #if defined(CHROMIUM) && !defined(HVR)
-    // Chromium's WebXR code expects aim space to be based on the grip space.
-    // FIXME: HVR doesn´t retrieve a poseLocation with a valid orientaton bit if we use the grip space.
+    // Chromium's WebXR code expects aim space to be based on the grip space. The HVR runtime
+    // is buggy and does not support that, so we keep using the local space here and will generate
+    // an aim pose later after retrieving the grip pose.
     XrSpace baseSpace = renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
 #else
     XrSpace baseSpace = localSpace;
@@ -821,6 +822,16 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         delegate.SetImmersiveBeamTransform(mIndex, hasPosition ? gripTransform : pointerTransform);
         flags |= device::GripSpacePosition;
         delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
+#if defined(CHROMIUM) && defined(HVR)
+        // HVR runtime incorrectly return the same values for grip and aim poses. We circumvent that
+        // by inventing a grip pose. The values are chosen to match the controller dimensions. This
+        // is only needed for Chromium because it requires the grip to be based on the aim. As the
+        // runtime returns invalid values for that case, we need to emulate the aim based on grip.
+        if (renderMode == device::RenderMode::Immersive) {
+            static const auto emulatedGripTransform = vrb::Matrix::Translation({0.0, 0.30, 0.0}).Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 5);
+            delegate.SetTransform(mIndex, emulatedGripTransform);
+        }
+#endif
     } else {
         delegate.SetImmersiveBeamTransform(mIndex, vrb::Matrix::Identity());
     }
