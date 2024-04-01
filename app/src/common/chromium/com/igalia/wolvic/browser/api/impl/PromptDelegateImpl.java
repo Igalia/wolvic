@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
 import org.chromium.base.Callback;
+import org.chromium.base.ThreadUtils;
 import org.chromium.content.browser.input.DateTimeChooserAndroid;
 import org.chromium.content.browser.input.SelectPopup;
 import org.chromium.content.browser.input.SelectPopupItem;
@@ -20,12 +21,17 @@ import org.chromium.content.browser.picker.MonthPicker;
 import org.chromium.content.browser.picker.WeekPicker;
 import org.chromium.ui.base.ime.TextInputType;
 import org.chromium.url.GURL;
+import org.chromium.wolvic.AutofillManager;
 import org.chromium.wolvic.ColorChooserManager;
 import org.chromium.wolvic.FileSelectManager;
 import org.chromium.wolvic.HttpAuthManager;
+import org.chromium.wolvic.PasswordManager;
+import org.chromium.wolvic.PasswordForm;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WAutocomplete;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
@@ -61,6 +67,10 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         DateTimeChooserAndroid.setFactory(new DateTimeChooserFactory());
         FileSelectManager.setFactory(new FileSelectFactory());
         HttpAuthManager.setFactory(new HttpAuthManagerFactory());
+
+        AutocompleteFactory autocompleteFactory = new AutocompleteFactory();
+        PasswordManager.setFactory(autocompleteFactory);
+        AutofillManager.setFactory(autocompleteFactory);
     }
 
     public WSession.PromptDelegate getDelegate() { return this.mDelegate; }
@@ -925,6 +935,242 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
                 mListener.onCanceled();
             }
             return new PromptResponseImpl();
+        }
+    }
+
+
+    public class AutocompleteFactory implements PasswordManager.Factory, AutofillManager.Factory {
+        AutocompleteBridge mAutocompleteBridge = new AutocompleteBridge();
+        public PasswordManager.Bridge create(PasswordManager.Listener listener) {
+            mAutocompleteBridge.setListener(listener);
+            return mAutocompleteBridge;
+        }
+        public AutofillManager.Bridge create(AutofillManager.Listener listener) {
+            mAutocompleteBridge.setListener(listener);
+            return mAutocompleteBridge;
+        }
+    }
+
+    public class AutocompleteBridge implements PasswordManager.Bridge, AutofillManager.Bridge {
+        private PasswordManager.Listener mPasswordManagerListener;
+        private AutofillManager.Listener mAutofillManagerListener;
+
+        private LoginSavePrompt mLoginSavePrompt;
+        private LoginSelectPrompt mLoginSelectPrompt;
+
+        public void setListener(PasswordManager.Listener listener) {
+            mPasswordManagerListener = listener;
+        }
+
+        public void setListener(AutofillManager.Listener listener) {
+            mAutofillManagerListener = listener;
+        }
+
+        @Override
+        public boolean isAutocompleteEnabled(Context context) {
+            return SettingsStore.getInstance(context).isAutocompleteEnabled();
+        }
+
+        @Override
+        public boolean isAutoFillEnabled(Context context) {
+            return SettingsStore.getInstance(context).isAutoFillEnabled();
+        }
+
+        @Override
+        public boolean isPasswordManagerEnabled(Context context) {
+            return SettingsStore.getInstance(context).isLoginAutocompleteEnabled();
+        }
+
+        @Override
+        public boolean saveOrUpdatePassword(PasswordForm form) {
+            dismiss();
+            assert mPasswordManagerListener != null;
+
+            mSession.checkLoginIfAlreadySaved(form).then(saved -> {
+                if (!saved) {
+                    WAutocomplete.LoginSaveOption[] options = new WAutocomplete.LoginSaveOption[1];
+                    options[0] = new WAutocomplete.LoginSaveOption(fromPasswordForm(form));
+                    mLoginSavePrompt = new LoginSavePrompt(mPasswordManagerListener, options);
+                    ThreadUtils.postOnUiThread(() -> {
+                        try {
+                            if (mDelegate != null) {
+                                mDelegate.onLoginSave(mSession, mLoginSavePrompt);
+                            } else {
+                                resetLoginSavePrompt();
+                            }
+                        } catch (WindowManager.BadTokenException e) {
+                            resetLoginSavePrompt();
+                        }
+                    });
+                }
+                return null;
+            });
+
+            return true;
+        }
+
+        @Override
+        public boolean onLoginSelect(PasswordForm[] forms) {
+            dismiss();
+            assert mPasswordManagerListener != null;
+
+            WAutocomplete.LoginSelectOption[] options =
+                    new WAutocomplete.LoginSelectOption[forms.length];
+            for (int i = 0; i < forms.length; i++) {
+                options[i] = new WAutocomplete.LoginSelectOption(fromPasswordForm(forms[i]));
+            }
+
+            mLoginSelectPrompt = new LoginSelectPrompt<PasswordManager.Listener>(
+                    mPasswordManagerListener, options);
+            try {
+                if (mDelegate != null) {
+                    mDelegate.onLoginSelect(mSession, mLoginSelectPrompt);
+                } else {
+                    resetLoginSelectPrompt();
+                    return false;
+                }
+            } catch (WindowManager.BadTokenException e) {
+                resetLoginSelectPrompt();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onLoginSelect(String[] username) {
+            dismiss();
+            assert mAutofillManagerListener != null;
+
+            WAutocomplete.LoginSelectOption[] options =
+                    new WAutocomplete.LoginSelectOption[username.length];
+            for (int i = 0; i < username.length; i++) {
+                options[i] = new WAutocomplete.LoginSelectOption(fromUsername(i, username[i]));
+            }
+
+            mLoginSelectPrompt = new LoginSelectPrompt<AutofillManager.Listener>(
+                    mAutofillManagerListener, options);
+            try {
+                if (mDelegate != null) {
+                    mDelegate.onLoginSelect(mSession, mLoginSelectPrompt);
+                } else {
+                    resetLoginSelectPrompt();
+                    return false;
+                }
+            } catch (WindowManager.BadTokenException e) {
+                resetLoginSelectPrompt();
+                return false;
+            }
+            return true;
+        }
+
+
+        @Override
+        public void onLoginUsed(PasswordForm form) {
+            try {
+                if (mDelegate != null) {
+                    mSession.onLoginUsed(form);
+                }
+            } catch (WindowManager.BadTokenException e) {
+            }
+        }
+
+        @Override
+        public void dismiss() {
+            resetLoginSavePrompt();
+            resetLoginSelectPrompt();
+        }
+
+        private void resetLoginSavePrompt() {
+            if (mLoginSavePrompt != null) {
+                mLoginSavePrompt.dismiss();
+                mLoginSavePrompt = null;
+            }
+        }
+
+        private void resetLoginSelectPrompt() {
+            if (mLoginSelectPrompt != null) {
+                mLoginSelectPrompt.dismiss();
+                mLoginSelectPrompt = null;
+            }
+        }
+
+        private @NonNull PasswordForm toPasswordForm(@NonNull WAutocomplete.LoginEntry entry) {
+            return new PasswordForm(entry.username, entry.password, entry.origin,
+                    entry.formActionOrigin, entry.httpRealm, entry.guid);
+        }
+
+        private @NonNull WAutocomplete.LoginEntry fromPasswordForm(@NonNull PasswordForm form) {
+            return new WAutocomplete.LoginEntry.Builder()
+                    .formActionOrigin(form.getFormActionOrigin())
+                    .guid(form.getGuid())
+                    .httpRealm(form.getHttpRealm())
+                    .origin(form.getOrigin())
+                    .password(form.getPassword())
+                    .username(form.getUsername())
+                    .build();
+        }
+
+        private @NonNull WAutocomplete.LoginEntry fromUsername(int index, @NonNull String username) {
+            return new WAutocomplete.LoginEntry.Builder()
+                    .guid(Integer.toHexString(index))
+                    .username(username)
+                    .build();
+        }
+
+        public class LoginSavePrompt extends BasePromptImpl
+                implements WSession.PromptDelegate.AutocompleteRequest<WAutocomplete.LoginSaveOption> {
+            private final PasswordManager.Listener mListener;
+            private final WAutocomplete.LoginSaveOption[] mOptions;
+            public LoginSavePrompt(PasswordManager.Listener listener,
+                                   WAutocomplete.LoginSaveOption[] options) {
+                mListener = listener;
+                mOptions = options;
+            }
+
+            @NonNull
+            @Override
+            public WAutocomplete.LoginSaveOption[] options() {
+                return mOptions;
+            }
+
+            @NonNull
+            @Override
+            public WSession.PromptDelegate.PromptResponse confirm(
+                    @NonNull WAutocomplete.Option<?> selection) {
+                mListener.onLoginSaved(toPasswordForm((WAutocomplete.LoginEntry) selection.value));
+                return new PromptResponseImpl();
+            }
+        }
+
+        public class LoginSelectPrompt<T> extends BasePromptImpl
+                implements WSession.PromptDelegate.AutocompleteRequest<WAutocomplete.LoginSelectOption> {
+            private final T mListener;
+            private final WAutocomplete.LoginSelectOption[] mOptions;
+            public LoginSelectPrompt(T listener,
+                                     WAutocomplete.LoginSelectOption[] options) {
+                mListener = listener;
+                mOptions = options;
+            }
+
+            @NonNull
+            @Override
+            public WAutocomplete.LoginSelectOption[] options() {
+                return mOptions;
+            }
+
+            @NonNull
+            @Override
+            public WSession.PromptDelegate.PromptResponse confirm(
+                    @NonNull WAutocomplete.Option<?> selection) {
+                if (mListener instanceof PasswordManager.Listener) {
+                    ((PasswordManager.Listener) mListener).onLoginSelected(
+                            toPasswordForm((WAutocomplete.LoginEntry) selection.value));
+                } else if (mListener instanceof AutofillManager.Listener) {
+                    ((AutofillManager.Listener) mListener).onLoginSelected(
+                            Integer.valueOf(((WAutocomplete.LoginEntry) selection.value).guid));
+                }
+                return new PromptResponseImpl();
+            }
         }
     }
 }
