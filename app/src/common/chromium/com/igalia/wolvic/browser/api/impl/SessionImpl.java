@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WAutocomplete;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WPanZoomController;
+import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WSessionSettings;
@@ -20,6 +22,7 @@ import com.igalia.wolvic.browser.api.WTextInput;
 import com.igalia.wolvic.browser.api.WWebResponse;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.DownloadManagerBridge;
+import org.chromium.wolvic.PasswordForm;
 import org.chromium.wolvic.PermissionManagerBridge;
 import org.chromium.wolvic.UserDialogManagerBridge;
 
@@ -458,4 +461,11 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         mReadyCallback.onReady();
     }
 
+    public void onLoginUsed(@NonNull PasswordForm form) {
+        mRuntime.getUpLoginPersistence().onLoginUsed(form);
+    }
+
+    public WResult<Boolean> checkLoginIfAlreadySaved(PasswordForm form) {
+       return mRuntime.getUpLoginPersistence().checkLoginIfAlreadySaved(form);
+    }
 }
