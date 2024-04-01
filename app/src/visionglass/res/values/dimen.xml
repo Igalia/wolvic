@@ -1,0 +1,9 @@
+<resources>
+    <item name="settings_world_z" format="float" type="dimen">-3.8</item>
+    <item name="browser_children_z_distance" format="float" type="dimen">0.3</item>
+    <item name="window_world_z_min" format="float" type="dimen">-4.2</item>
+    <item name="window_world_z_max" format="float" type="dimen">-6.2</item>
+    <dimen name="media_controls_world_z" format="float" type="dimen">2.5</dimen>
+    <item name="tray_world_z" format="float" type="dimen">-3.0</item>
+    <item name="keyboard_z" format="float" type="dimen">-3.0</item>
+</resources>

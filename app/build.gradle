@@ -323,6 +323,7 @@ android {
                     arguments "-DVISIONGLASS=ON"
                 }
             }
+            buildConfigField "Float", "DEFAULT_DENSITY", "1.0f"
         }
 
         // Supported ABIs
