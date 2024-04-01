@@ -38,6 +38,7 @@ public class WidgetPlacement {
     public WidgetPlacement(Context aContext) {
         mConext = aContext;
         density = aContext.getResources().getDisplayMetrics().density;
+        layer = SettingsStore.getInstance(mConext).getLayersEnabled();
         updateCylinderMapRadius();
         textureScale = SettingsStore.getInstance(aContext).getDisplayDpi() / 100.0f;
     }
