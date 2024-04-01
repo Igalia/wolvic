@@ -1,11 +1,14 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import androidx.annotation.Nullable;
+
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 
 import org.chromium.wolvic.PermissionManagerBridge;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +73,46 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
                 return PermissionManagerBridge.PermissionStatus.PROMPT;
         }
         throw new IllegalArgumentException("Invalid value: " + value);
+    }
+
+    private static int toWolvicMediaSourceType(
+            @PermissionManagerBridge.MediaSourceType int sourceType) {
+        switch (sourceType) {
+            case PermissionManagerBridge.MediaSourceType.CAMERA:
+                return WSession.PermissionDelegate.MediaSource.SOURCE_CAMERA;
+            case PermissionManagerBridge.MediaSourceType.SCREEN:
+                return WSession.PermissionDelegate.MediaSource.SOURCE_SCREEN;
+            case PermissionManagerBridge.MediaSourceType.MICROPHONE:
+                return WSession.PermissionDelegate.MediaSource.SOURCE_MICROPHONE;
+            case PermissionManagerBridge.MediaSourceType.AUDIOCAPTURE:
+                return WSession.PermissionDelegate.MediaSource.SOURCE_AUDIOCAPTURE;
+            default:
+                return WSession.PermissionDelegate.MediaSource.SOURCE_OTHER;
+        }
+    }
+
+    private static int toWolvicMediaType(
+            @PermissionManagerBridge.MediaType int mediaType) {
+        switch (mediaType) {
+            case PermissionManagerBridge.MediaType.VIDEO:
+                return WSession.PermissionDelegate.MediaSource.TYPE_VIDEO;
+            case PermissionManagerBridge.MediaType.AUDIO:
+                return WSession.PermissionDelegate.MediaSource.TYPE_AUDIO;
+        }
+        throw new IllegalArgumentException("Invalid media type: " + mediaType);
+    }
+
+    private static WSession.PermissionDelegate.MediaSource toWolvicMediaSource(
+            PermissionManagerBridge.MediaSource source) {
+        return new WSession.PermissionDelegate.MediaSource(source.id, source.name,
+                toWolvicMediaSourceType(source.source),
+                toWolvicMediaType(source.type));
+    }
+
+    private static WSession.PermissionDelegate.MediaSource[] toWolvicMediaSources(
+            PermissionManagerBridge.MediaSource[] sources) {
+        return Arrays.stream(sources).map(ChromiumPermissionDelegate::toWolvicMediaSource).toArray(
+                WSession.PermissionDelegate.MediaSource[]::new);
     }
 
     private @PermissionManagerBridge.PermissionStatus WResult<Integer> requestContentPermission(
@@ -176,5 +219,30 @@ public class ChromiumPermissionDelegate implements PermissionManagerBridge.Deleg
             invokeCallback(statuses, permissionCallback);
             return null;
         });
+    }
+
+    @Override
+    public void onMediaPermissionRequest(String url,
+                                         PermissionManagerBridge.MediaSource[] video,
+                                         PermissionManagerBridge.MediaSource[] audio,
+                                         PermissionManagerBridge.MediaCallback callback) {
+        mPermissionDelegate.onMediaPermissionRequest(mSession, url, toWolvicMediaSources(video),
+                toWolvicMediaSources(audio), new WSession.PermissionDelegate.MediaCallback() {
+                    @Override
+                    public void grant(@Nullable String video, @Nullable String audio) {
+                        callback.onMediaPermissionResult(true, video, audio);
+                    }
+
+                    @Override
+                    public void grant(@Nullable WSession.PermissionDelegate.MediaSource video,
+                                      @Nullable WSession.PermissionDelegate.MediaSource audio) {
+                        grant(video == null ? null : video.id, audio == null ? null : audio.id);
+                    }
+
+                    @Override
+                    public void reject() {
+                        callback.onMediaPermissionResult(false, null, null);
+                    }
+                });
     }
 }
