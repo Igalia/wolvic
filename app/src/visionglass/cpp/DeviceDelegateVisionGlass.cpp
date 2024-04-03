@@ -36,7 +36,7 @@ jmethodID sSetRenderMode;
 
 namespace crow {
 
-static const float kHorizontalFOV = 36.0f;
+static const float kHorizontalFOV = 41.0f;
 static const float kVerticalFOV = 21.0f;
 const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
 static const int32_t kControllerIndex = 0;
