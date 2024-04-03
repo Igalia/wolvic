@@ -250,13 +250,9 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   auto calibratedControllerOrientation = m.controllerOrientation * m.controllerCalibration;
   vrb::Matrix transformMatrix;
   if (auto context = m.context.lock()) {
-      if (m.isControllerCalibrated) {
-          float *filteredOrientation = m.orientationFilter->filter(
-                  context->GetTimestamp() * 1000000000, calibratedControllerOrientation.Data());
-          transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
-      } else {
-          transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
-      }
+    float *filteredOrientation = m.orientationFilter->filter(
+            context->GetTimestamp() * 1000000000, calibratedControllerOrientation.Data());
+    transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
   } else {
     transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
   }
