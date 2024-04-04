@@ -23,6 +23,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -32,6 +33,7 @@ import android.widget.SeekBar;
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -195,29 +197,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
 
         mBinding.realignButton.setOnClickListener(v -> {
             queueRunnable(this::calibrateController);
-        });
-
-        mBinding.touchpad.setOnClickListener(v -> {
-            // We don't really need the coordinates of the click because we use the position
-            // of the aim in the 3D environment.
-            queueRunnable(() -> touchEvent(false, 0, 0));
-        });
-
-        mBinding.touchpad.setOnTouchListener((view, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_MOVE:
-                    // We don't really need the coordinates of the click because we use the position
-                    // of the aim in the 3D environment.
-                    queueRunnable(() -> touchEvent(true, 0, 0));
-                    break;
-                case MotionEvent.ACTION_UP:
-                    // We'd emit the touchEvent in the onClick listener of the view. This way both
-                    // user and system activated clicks (e.g. a11y) will work.
-                    view.performClick();
-                    break;
-            }
-            return false;
         });
 
         Button backButton = findViewById(R.id.back_button);
@@ -447,9 +426,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         return new PlatformActivityPluginVisionGlass(delegate);
     }
 
-    private class PlatformActivityPluginVisionGlass implements PlatformActivityPlugin {
+    private class PlatformActivityPluginVisionGlass extends PlatformActivityPlugin {
         private WidgetManagerDelegate mDelegate;
         private WMediaSession.Delegate mMediaSessionDelegate;
+        private GestureDetector mGestureDetector;
 
         PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
             mDelegate = delegate;
@@ -502,6 +482,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }
 
         // Setup the phone UI callbacks that require access to the WindowManagerDelegate.
+        @SuppressLint("ClickableViewAccessibility")
         private void setupPhoneUI() {
             mBinding.homeButton.setOnClickListener(v -> {
                 mDelegate.getWindows().getFocusedWindow().loadHome();
@@ -564,6 +545,51 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                         return;
                     media.seek((seekBar.getProgress() / 100.0) * media.getDuration());
                 }
+            });
+
+            mGestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onScroll(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
+                    // Use inverted axis so the scroll feels more natural.
+                    notifyOnScrollEvent(-distanceX, -distanceY);
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    // We should be really using onDown for this, but we cannot do that because
+                    // onDown is the precursor of other events like onScroll.
+                    queueRunnable(() -> touchEvent(true, 0, 0));
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    queueRunnable(() -> touchEvent(false, 0, 0));
+                    return true;
+                }
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    queueRunnable(() -> touchEvent(false, 0, 0));
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    // Used to perform implement click and hold for scrolling or moving widgets.
+                    queueRunnable(() -> touchEvent(true, 0, 0));
+                }
+            });
+
+            mBinding.touchpad.setOnTouchListener((view, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Seems redundant with onSingleTapXXX events but we need to handle this for the
+                    // onLongPress case. When that happens we don't get onSingleTapXXX gestures but
+                    // we still need to notify that the touch event has ended.
+                    queueRunnable(() -> touchEvent(false, 0, 0));
+                }
+                return mGestureDetector.onTouchEvent(event);
             });
         }
     }
