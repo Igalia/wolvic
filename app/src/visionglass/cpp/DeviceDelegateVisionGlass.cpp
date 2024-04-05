@@ -247,7 +247,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   if (!m.controller)
     return;
 
-  auto calibratedControllerOrientation = m.controllerOrientation * m.controllerCalibration;
+  auto calibratedControllerOrientation = m.controllerCalibration * m.controllerOrientation;
   vrb::Matrix transformMatrix;
   if (auto context = m.context.lock()) {
     float *filteredOrientation = m.orientationFilter->filter(
@@ -357,7 +357,7 @@ DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float 
 
 void
 DeviceDelegateVisionGlass::CalibrateController() {
-  m.controllerCalibration = m.controllerOrientation.Inverse() * m.headOrientation.Inverse();
+  m.controllerCalibration = m.headOrientation * m.controllerOrientation.Inverse();
   m.isControllerCalibrated = true;
   m.SetupOrientationFilter();
 }
