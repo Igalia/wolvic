@@ -265,6 +265,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             }
             onDismiss();
         });
+        mBinding.whatsNewButton.setVisibility(View.GONE);
 
         mCurrentView = null;
     }
@@ -369,6 +370,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 updateProfile(mAccounts.accountProfile());
                 break;
         }
+        mBinding.fxaButton.setVisibility(View.GONE);
     }
 
     private AccountObserver mAccountObserver = new AccountObserver() {

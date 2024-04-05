@@ -126,7 +126,7 @@ public class SettingsStore {
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
     public final static boolean LOGIN_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
-    public final static boolean WHATS_NEW_DISPLAYED = false;
+    public final static boolean WHATS_NEW_DISPLAYED = true;
     public final static long FXA_LAST_SYNC_NEVER = 0;
     public final static boolean RESTORE_TABS_ENABLED = true;
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
