@@ -57,7 +57,6 @@ struct DeviceDelegateVisionGlass::State {
   std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
   vrb::Quaternion headOrientation;
   vrb::Quaternion controllerCalibration;
-  bool isControllerCalibrated;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , clicked(false)
@@ -67,7 +66,6 @@ struct DeviceDelegateVisionGlass::State {
       , far(1000.0f)
       , reorientMatrix(vrb::Matrix::Identity())
       , elbow(ElbowModel::Create())
-      , isControllerCalibrated(false)
   {
       SetupOrientationFilter();
   }
@@ -228,6 +226,11 @@ DeviceDelegateVisionGlass::GetControllerModelName(const int32_t) const {
 void
 DeviceDelegateVisionGlass::ProcessEvents() {}
 
+vrb::Quaternion
+DeviceDelegateVisionGlass::CorrectedHeadOrientation() const {
+    return { m.headOrientation.x(), m.headOrientation.y(), -m.headOrientation.z(), -m.headOrientation.w() };
+}
+
 void
 DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
@@ -235,7 +238,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   mShouldRender = true;
 
   // We need to flip the Z axis coming from the SDK to get the proper rotation.
-  auto headingMatrix = vrb::Matrix::Rotation({m.headOrientation.x(), m.headOrientation.y(), -m.headOrientation.z(), -m.headOrientation.w()});
+  auto headingMatrix = vrb::Matrix::Rotation(CorrectedHeadOrientation());
   auto headTransform = headingMatrix.Translate(kAverageHeight);
   m.cameras[0]->SetHeadTransform(headTransform);
   m.cameras[1]->SetHeadTransform(headTransform);
@@ -247,7 +250,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   if (!m.controller)
     return;
 
-  auto calibratedControllerOrientation = m.controllerCalibration * m.controllerOrientation;
+  auto calibratedControllerOrientation = (m.controllerCalibration * m.controllerOrientation).Normalize();
   vrb::Matrix transformMatrix;
   if (auto context = m.context.lock()) {
     float *filteredOrientation = m.orientationFilter->filter(
@@ -357,8 +360,7 @@ DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float 
 
 void
 DeviceDelegateVisionGlass::CalibrateController() {
-  m.controllerCalibration = m.headOrientation * m.controllerOrientation.Inverse();
-  m.isControllerCalibrated = true;
+  m.controllerCalibration = (CorrectedHeadOrientation() * m.controllerOrientation.Inverse()).Normalize();
   m.SetupOrientationFilter();
 }
 

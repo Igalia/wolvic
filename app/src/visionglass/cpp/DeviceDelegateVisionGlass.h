@@ -59,6 +59,7 @@ protected:
   virtual ~DeviceDelegateVisionGlass();
 private:
   State& m;
+  vrb::Quaternion CorrectedHeadOrientation() const;
   VRB_NO_DEFAULTS(DeviceDelegateVisionGlass)
 };
 
