@@ -250,15 +250,13 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   if (!m.controller)
     return;
 
-  auto calibratedControllerOrientation = (m.controllerCalibration * m.controllerOrientation).Normalize();
-  vrb::Matrix transformMatrix;
-  if (auto context = m.context.lock()) {
-    float *filteredOrientation = m.orientationFilter->filter(
-            context->GetTimestamp() * 1000000000, calibratedControllerOrientation.Data());
-    transformMatrix = vrb::Matrix::Rotation(vrb::Quaternion(filteredOrientation));
-  } else {
-    transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
+  float timestamp;
+  {
+      timestamp = m.context.lock()->GetTimestamp() * 1e9;
   }
+  float* filteredOrientation = m.orientationFilter->filter(timestamp, m.controllerOrientation.Data());
+  auto calibratedControllerOrientation = (m.controllerCalibration * vrb::Quaternion(filteredOrientation)).Normalize();
+  vrb::Matrix transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
   m.controller->SetTransform(kControllerIndex, pointerTransform);
 }
