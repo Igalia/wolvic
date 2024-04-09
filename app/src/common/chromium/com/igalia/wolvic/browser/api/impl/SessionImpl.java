@@ -57,6 +57,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
             assert mTab == null;
             mTab = new TabImpl(
                     mRuntime.getContainerView().getContext(), SessionImpl.this);
+            mSettings.setWebContents(mTab.getContentView().getWebContents());
             if (mInitialUri != null) {
                 mTab.loadUrl(mInitialUri);
                 mInitialUri = null;
