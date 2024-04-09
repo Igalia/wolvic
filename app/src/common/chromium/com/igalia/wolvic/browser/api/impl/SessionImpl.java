@@ -48,6 +48,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     PanZoomControllerImpl mPanZoomController;
     private PermissionManagerBridge.Delegate mChromiumPermissionDelegate;
     private String mInitialUri;
+    private WebContents mWebContents;
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
 
@@ -56,11 +57,13 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         public void onReady() {
             assert mTab == null;
             mTab = new TabImpl(
-                    mRuntime.getContainerView().getContext(), SessionImpl.this);
+                    mRuntime.getContainerView().getContext(), SessionImpl.this, mWebContents);
             if (mInitialUri != null) {
+                assert mWebContents == null;
                 mTab.loadUrl(mInitialUri);
                 mInitialUri = null;
             }
+            mWebContents = null;
         }
     }
 
@@ -139,6 +142,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public void close() {
         mRuntime.unregisterCallback(mReadyCallback);
+        mTab.destroy();
         mTab = null;
     }
 
@@ -454,10 +458,10 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     // The onReadyCallback() mechanism is really limited because it heavily depends on renderers
     // being created by the client (Wolvic). There are cases in which the renderer is created by the
     // web engine (like target=_blank navigations) so we need to explicitly call onReady ourselves.
-    public void invokeOnReady(RuntimeImpl runtime, String uri) {
+    public void invokeOnReady(RuntimeImpl runtime, WebContents webContents) {
         assert !isOpen();
         mRuntime = runtime;
-        mInitialUri = uri;
+        mWebContents = webContents;
         mReadyCallback.onReady();
     }
 
