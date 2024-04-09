@@ -1599,6 +1599,10 @@ void DeviceDelegateOpenXR::SetHitDistance(const float distance) {
   m.furthestHitDistance = std::max(distance, m.furthestHitDistance);
 }
 
+bool DeviceDelegateOpenXR::PopulateTrackedKeyboardInfo(DeviceDelegate::TrackedKeyboardInfo& keyboardInfo) {
+  return m.input->PopulateTrackedKeyboardInfo(keyboardInfo);
+}
+
 void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Reset reorientation after Enter VR

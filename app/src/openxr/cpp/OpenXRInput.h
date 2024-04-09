@@ -2,6 +2,7 @@
 
 #include "vrb/Forward.h"
 #include "OpenXRHelpers.h"
+#include "DeviceDelegate.h"
 #include "ControllerDelegate.h"
 #include "OneEuroFilter.h"
 #include "DeviceDelegate.h"
@@ -67,6 +68,7 @@ public:
   void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
   HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
   void SetKeyboardTrackingEnabled(bool enabled);
+  bool PopulateTrackedKeyboardInfo(DeviceDelegate::TrackedKeyboardInfo& keyboardInfo);
   ~OpenXRInput();
   void InitializeEyeGaze(ControllerDelegate&);
   void InitializeEyeGazeSpaces();
