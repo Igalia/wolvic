@@ -27,15 +27,19 @@ private:
     XrKeyboardTrackingDescriptionFB description;
     XrSpace space = XR_NULL_HANDLE;
     XrSpaceLocation location;
+    std::vector<uint8_t> modelBuffer;
+    bool modelBufferChanged;
     ~KeyboardTrackingFB() {
       if (space != XR_NULL_HANDLE)
         xrDestroySpace(space);
+      modelBuffer.clear();
     }
   };
   typedef std::unique_ptr<KeyboardTrackingFB> KeyboardTrackingFBPtr;
 
   OpenXRInput(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
   void UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace baseSpace);
+  void LoadKeyboardModel();
 
   OpenXRInputMapping* GetActiveInputMapping() const;
 
