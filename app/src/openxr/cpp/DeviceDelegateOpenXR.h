@@ -68,6 +68,7 @@ public:
   void SetHitDistance(const float) override;
   void SetPointerMode(const PointerMode mode) override;
   bool IsPassthroughEnabled() const override;
+  bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);

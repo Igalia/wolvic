@@ -14,6 +14,7 @@
 #include "ExternalVR.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
+#include "TrackedKeyboardRenderer.h"
 #include "Pointer.h"
 #include "Widget.h"
 #include "WidgetMover.h"
@@ -215,6 +216,7 @@ struct BrowserWorld::State {
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
   bool isApplicationEntitled = false;
 #endif
+  TrackedKeyboardRendererPtr trackedKeyboardRenderer;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -255,6 +257,7 @@ struct BrowserWorld::State {
   void ChangeControllerFocus(const Controller& aController);
   void UpdateGazeModeState();
   void UpdateControllers(bool& aRelayoutWidgets);
+  void UpdateTrackedKeyboard();
   void SimulateBack();
   void ClearWebXRControllerData();
   void HandleControllerScroll(Controller& controller, int handle);
@@ -677,6 +680,31 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 }
 
 void
+BrowserWorld::State::UpdateTrackedKeyboard() {
+  DeviceDelegate::TrackedKeyboardInfo keyboardInfo;
+  if (!device->PopulateTrackedKeyboardInfo(keyboardInfo)) {
+    // No keyboard being tracked
+    if (trackedKeyboardRenderer != nullptr) {
+      trackedKeyboardRenderer.reset();
+      trackedKeyboardRenderer = nullptr;
+    }
+    return;
+  }
+
+  // A tracked keyboard exists, lazily create the renderer
+  if (trackedKeyboardRenderer == nullptr)
+    trackedKeyboardRenderer = TrackedKeyboardRenderer::Create(create);
+
+  // Update keyboard model if new buffer is available
+  if (keyboardInfo.modelBuffer.size() > 0)
+    trackedKeyboardRenderer->LoadKeyboardMesh(keyboardInfo.modelBuffer);
+
+  trackedKeyboardRenderer->SetVisible(keyboardInfo.isActive);
+  if (keyboardInfo.isActive)
+    trackedKeyboardRenderer->SetTransform(keyboardInfo.transform);
+}
+
+void
 BrowserWorld::State::HandleControllerScroll(Controller& controller, int handle) {
   if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
     if (controller.scrollStart < 0.0) {
@@ -1065,6 +1093,11 @@ BrowserWorld::ShutdownGL() {
   if (!m.glInitialized) {
     return;
   }
+  if (m.trackedKeyboardRenderer) {
+    m.trackedKeyboardRenderer.reset();
+    m.trackedKeyboardRenderer = nullptr;
+  }
+
   if (m.loader) {
     m.loader->ShutdownGL();
   }
@@ -1172,6 +1205,7 @@ BrowserWorld::StartFrame() {
     bool relayoutWidgets = false;
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
+    m.UpdateTrackedKeyboard();
     if (m.inHeadLockMode) {
       OnReorient();
       m.device->Reorient();
@@ -1802,6 +1836,10 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
     if (controller.enabled && controller.mode == ControllerMode::Hand)
       m.device->DrawHandMesh(controller.index, *camera);
   }
+
+  // Draw tracked keyboard, if any
+  if (m.trackedKeyboardRenderer != nullptr)
+      m.trackedKeyboardRenderer->Draw(*camera);
 
   // Draw controllers
   m.drawList->Reset();
