@@ -147,6 +147,56 @@ HandMeshBufferPtr OpenXRInput::GetNextHandMeshBuffer(const int32_t aControllerIn
   return mInputSources.at(aControllerIndex)->GetNextHandMeshBuffer();
 }
 
+void OpenXRInput::LoadKeyboardModel() {
+  CHECK(OpenXRExtensions::sXrEnumerateRenderModelPathsFB != nullptr);
+  CHECK(OpenXRExtensions::sXrGetRenderModelPropertiesFB != nullptr);
+
+  uint32_t pathCount = 0;
+  CHECK_XRCMD(OpenXRExtensions::sXrEnumerateRenderModelPathsFB(mSession, pathCount, &pathCount, nullptr));
+  if (pathCount == 0)
+    return;
+
+  std::vector<XrRenderModelPathInfoFB> paths(pathCount);
+  CHECK_XRCMD(OpenXRExtensions::sXrEnumerateRenderModelPathsFB(mSession, pathCount, &pathCount, paths.data()));
+
+  for (const auto& pathInfo: paths) {
+    char path[256];
+    uint32_t pathLen = 0;
+    CHECK_XRCMD((xrPathToString(mInstance, pathInfo.path, pathLen, &pathLen, nullptr)));
+    CHECK_XRCMD((xrPathToString(mInstance, pathInfo.path, pathLen, &pathLen, &path[0])));
+    std::string pathString = path;
+    if (pathString.rfind("/model_fb/keyboard", 0) != 0)
+      continue;
+
+    XrRenderModelPropertiesFB props{XR_TYPE_RENDER_MODEL_PROPERTIES_FB};
+    XrResult result = OpenXRExtensions::sXrGetRenderModelPropertiesFB(mSession, pathInfo.path, &props);
+    if (result != XR_SUCCESS || props.modelKey == XR_NULL_RENDER_MODEL_KEY_FB)
+      continue;
+
+    XrRenderModelLoadInfoFB loadInfo = {
+      .type = XR_TYPE_RENDER_MODEL_LOAD_INFO_FB,
+      .modelKey = props.modelKey,
+    };
+    XrRenderModelBufferFB modelInfo = {
+      .type = XR_TYPE_RENDER_MODEL_BUFFER_FB,
+      .bufferCapacityInput = 0,
+      .buffer = nullptr,
+    };
+    CHECK_XRCMD(OpenXRExtensions::sXrLoadRenderModelFB(mSession, &loadInfo, &modelInfo));
+    keyboardTrackingFB->modelBuffer.resize(modelInfo.bufferCountOutput);
+    modelInfo.bufferCapacityInput = modelInfo.bufferCountOutput;
+    modelInfo.buffer = keyboardTrackingFB->modelBuffer.data();
+    result = OpenXRExtensions::sXrLoadRenderModelFB(mSession, &loadInfo, &modelInfo);
+    if (result != XR_SUCCESS) {
+      keyboardTrackingFB->modelBuffer.resize(0);
+      continue;
+    }
+
+    keyboardTrackingFB->modelBufferChanged = true;
+    break;
+  }
+}
+
 void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace baseSpace) {
   CHECK(keyboardTrackingFB != nullptr);
   CHECK(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB != nullptr);
@@ -159,7 +209,7 @@ void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace 
   XrKeyboardTrackingDescriptionFB kbdDesc;
   CHECK_XRCMD(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB(mSession, &queryInfo, &kbdDesc));
 
-  // Check if keyboard disappeared or changed, and clear up state if so
+  // Check if existing keyboard disappeared or changed, and clear up its state if so
   if ((kbdDesc.flags & XR_KEYBOARD_TRACKING_EXISTS_BIT_FB) == 0 ||
        kbdDesc.trackedKeyboardId != keyboardTrackingFB->description.trackedKeyboardId) {
     if (keyboardTrackingFB->space != XR_NULL_HANDLE) {
@@ -167,6 +217,7 @@ void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace 
       keyboardTrackingFB->space = XR_NULL_HANDLE;
     }
     bzero(&keyboardTrackingFB->description, sizeof(keyboardTrackingFB->description));
+    keyboardTrackingFB->modelBuffer.resize(0);
   }
 
   // Bail-out if no keyboard exists
@@ -186,6 +237,10 @@ void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace 
     CHECK_XRCMD(OpenXRExtensions::xrCreateKeyboardSpaceFB(mSession, &createInfo,
                                                           &keyboardTrackingFB->space));
   }
+
+  // Load keyboard render model, if not done already
+  if (keyboardTrackingFB->modelBuffer.size() == 0)
+    LoadKeyboardModel();
 
   // If keyboard is active, query and store the keyboard's pose
   if (kbdDesc.flags & XR_KEYBOARD_TRACKING_CONNECTED_BIT_FB) {
