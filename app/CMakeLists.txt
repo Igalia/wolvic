@@ -39,6 +39,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/Pointer.cpp
              src/main/cpp/Skybox.cpp
              src/main/cpp/SplashAnimation.cpp
+             src/main/cpp/TrackedKeyboardRenderer.cpp
              src/main/cpp/VRBrowser.cpp
              src/main/cpp/VRVideo.cpp
              src/main/cpp/VRLayer.cpp
