@@ -254,7 +254,7 @@ class DisplayOptionsView extends SettingsView {
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
         setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT, true);
-        setWindowDistance(SettingsStore.getInstance(getContext()).getDefaultWindowDistance(), true);
+        setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
