@@ -19,6 +19,10 @@
     <uses-feature android:name="oculus.software.trackedkeyboard" android:required="false" />
     <uses-permission android:name="com.oculus.permission.TRACKED_KEYBOARD" />
 
+    <!-- Tell the system this app uses render model extensions -->
+    <uses-feature android:name="com.oculus.feature.RENDER_MODEL" android:required="true" />
+    <uses-permission android:name="com.oculus.permission.RENDER_MODEL" />
+
     <uses-feature android:name="oculus.software.handtracking" android:required="false" />
     <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
 
