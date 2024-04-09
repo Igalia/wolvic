@@ -130,6 +130,7 @@ android {
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         buildConfigField "Float", "DEFAULT_DENSITY", "1.25f"
+        buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
         buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "false"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -326,6 +327,7 @@ android {
                 }
             }
             buildConfigField "Float", "DEFAULT_DENSITY", "1.0f"
+            buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.5f"
         }
 
         // Supported ABIs
