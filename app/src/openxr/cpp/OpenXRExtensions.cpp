@@ -23,6 +23,9 @@ PFN_xrCreateHandMeshSpaceMSFT OpenXRExtensions::sXrCreateHandMeshSpaceMSFT = nul
 PFN_xrUpdateHandMeshMSFT OpenXRExtensions::sXrUpdateHandMeshMSFT = nullptr;
 PFN_xrCreateKeyboardSpaceFB OpenXRExtensions::xrCreateKeyboardSpaceFB = nullptr;
 PFN_xrQuerySystemTrackedKeyboardFB OpenXRExtensions::xrQuerySystemTrackedKeyboardFB = nullptr;
+PFN_xrEnumerateRenderModelPathsFB OpenXRExtensions::sXrEnumerateRenderModelPathsFB = nullptr;
+PFN_xrGetRenderModelPropertiesFB OpenXRExtensions::sXrGetRenderModelPropertiesFB = nullptr;
+PFN_xrLoadRenderModelFB OpenXRExtensions::sXrLoadRenderModelFB = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -116,6 +119,15 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                         reinterpret_cast<PFN_xrVoidFunction *>(&xrCreateKeyboardSpaceFB)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance,"xrQuerySystemTrackedKeyboardFB",
                                         reinterpret_cast<PFN_xrVoidFunction *>(&xrQuerySystemTrackedKeyboardFB)));
+    }
+
+    if (IsExtensionSupported(XR_FB_RENDER_MODEL_EXTENSION_NAME)) {
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrEnumerateRenderModelPathsFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrEnumerateRenderModelPathsFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrGetRenderModelPropertiesFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrGetRenderModelPropertiesFB)));
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLoadRenderModelFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrLoadRenderModelFB)));
     }
 }
 
