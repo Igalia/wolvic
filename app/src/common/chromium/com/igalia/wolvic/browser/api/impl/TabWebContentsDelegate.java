@@ -77,22 +77,22 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
     }
 
     public class OnNewSessionCallback implements WSession.NavigationDelegate.OnNewSessionCallback {
-        public OnNewSessionCallback(RuntimeImpl runtime, GURL url) {
+        public OnNewSessionCallback(RuntimeImpl runtime, WebContents webContents) {
             mRuntime = runtime;
-            mURL = url;
+            mWebContents = webContents;
         }
 
         @Override
         public void onNewSession(WSession session) {
-            ((SessionImpl) session).invokeOnReady(mRuntime, mURL.getSpec());
+            ((SessionImpl) session).invokeOnReady(mRuntime, mWebContents);
         }
 
         private RuntimeImpl mRuntime;
-        private GURL mURL;
+        private WebContents mWebContents;
     }
 
     @Override
-    public void onCreateNewWindow(GURL url) {
+    public void onCreateNewWindow(WebContents webContents) {
         WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         assert delegate != null;
 
@@ -101,7 +101,18 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         // WebContentsDelegate created by Chromium might be freed by the onNewSession() call when it
         // sets the new WebContentsDelegate object created by Wolvic.
         PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
-            delegate.onNewSession(mSession, url.getSpec(), new OnNewSessionCallback(mSession.mRuntime, url));
+            delegate.onNewSession(mSession, webContents.getVisibleUrl().getSpec(),
+                                  new OnNewSessionCallback(mSession.mRuntime, webContents));
+        }, 0);
+    }
+
+    @Override
+    public void closeContents() {
+        WSession.ContentDelegate delegate = mSession.getContentDelegate();
+        assert delegate != null;
+
+        PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
+            delegate.onCloseRequest(mSession);
         }, 0);
     }
 

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import org.chromium.content_public.browser.MediaSessionObserver;
 import org.chromium.content_public.browser.SelectionPopupController;
+import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.Tab;
 
 /**
@@ -16,8 +17,8 @@ public class TabImpl extends Tab {
     private TabWebContentsDelegate mTabWebContentsDelegate;
     private TabWebContentsObserver mWebContentsObserver;
 
-    public TabImpl(@NonNull Context context, @NonNull SessionImpl session) {
-        super(context, session.getSettings().getUsePrivateMode());
+    public TabImpl(@NonNull Context context, @NonNull SessionImpl session, WebContents webContents) {
+        super(context, session.getSettings().getUsePrivateMode(), webContents);
         registerCallbacks(session);
     }
 
