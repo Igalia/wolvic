@@ -113,6 +113,7 @@ struct DeviceDelegateOpenXR::State {
   HandMeshRendererPtr handMeshRenderer = nullptr;
   HandMeshPropertiesMSFTPtr handMeshProperties;
   bool keyboardTrackingSupported { false };
+  bool renderModelLoadingSupported { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -196,6 +197,10 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME))
         extensions.push_back(XR_FB_KEYBOARD_TRACKING_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_RENDER_MODEL_EXTENSION_NAME))
+        extensions.push_back(XR_FB_RENDER_MODEL_EXTENSION_NAME);
+
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;
@@ -257,6 +262,14 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &kbdTrackingPropertiesFB;
     }
 
+    // If XR_FB_render_model is supported, check whether the runtime is actually able to load models
+    XrSystemRenderModelPropertiesFB renderModelPropertiesFB{ XR_TYPE_SYSTEM_RENDER_MODEL_PROPERTIES_FB };
+    renderModelPropertiesFB.supportsRenderModelLoading = XR_FALSE;
+    if (OpenXRExtensions::IsExtensionSupported(XR_FB_RENDER_MODEL_EXTENSION_NAME)) {
+        renderModelPropertiesFB.next = systemProperties.next;
+        systemProperties.next = &renderModelPropertiesFB;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
@@ -289,6 +302,11 @@ struct DeviceDelegateOpenXR::State {
     if (kbdTrackingPropertiesFB.supportsKeyboardTracking) {
         keyboardTrackingSupported = true;
         VRB_LOG("OpenXR runtime supports XR_FB_keyboard_tracking");
+    }
+
+    if (renderModelPropertiesFB.supportsRenderModelLoading) {
+      renderModelLoadingSupported = renderModelPropertiesFB.supportsRenderModelLoading;
+      VRB_LOG("OpenXR runtime supports XR_FB_render_model");
     }
   }
 
