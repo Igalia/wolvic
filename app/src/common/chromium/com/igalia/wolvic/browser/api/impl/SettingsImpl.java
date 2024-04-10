@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
+import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.SessionSettings;
 
 public class SettingsImpl implements WSessionSettings {
@@ -121,6 +122,11 @@ public class SettingsImpl implements WSessionSettings {
     @Override
     public String getUserAgentOverride() {
         return mSessionSettings.getUserAgentOverride();
+    }
+
+    @Override
+    public void setWebContents(@Nullable WebContents webContents) {
+        mSessionSettings.setWebContents(webContents);
     }
 
     public String getDefaultUserAgent(int mode) {

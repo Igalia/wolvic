@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.api.impl.SettingsImpl;
 
+import org.chromium.content_public.browser.WebContents;
+
 public interface WSessionSettings {
 
     static WSessionSettings create(boolean usePrivateMode) {
@@ -167,4 +169,6 @@ public interface WSessionSettings {
      * @return The current user agent string or null if the agent is specified by ISessionSettings#USER_AGENT_MODE}
      */
     @Nullable String getUserAgentOverride();
+
+    void setWebContents(final @Nullable WebContents webContents);
 }
