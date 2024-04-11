@@ -117,6 +117,14 @@ useDebugSigningOnRelease=true
 
 Note: the release APKs generated with a debug keystore can't be used for production.
 
+## Generate builds with a static version code
+
+By default, each build will be assigned an auto-generated version code, which is derived from the date when the build was created. This behavior interferes with Gradle's caching mechanism and unnecessarily re-runs tasks that depend on the version code, leading to longer build times. You can work around this by temporarily using a static version code that persists between builds. This can be done by setting this property in your `user.properties` file:
+
+```ini
+useStaticVersionCode=true
+```
+
 ## Compress assets
 
 ETC2 compression is used to improve performance and memory usage. Raw assets are placed in the `uncompressed_assets` folder. You can generate the compressed textures using the compressor utility in `tools/compressor`. You need to set up [etc2comp](https://github.com/google/etc2comp) and make it available on your PATH before running the script. Run this command to generate the compressed assets:

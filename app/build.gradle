@@ -25,6 +25,13 @@ def getGitHash = { ->
     return stdout.toString().trim()
 }
 
+def shouldUseStaticVersionCode = { ->
+    if (gradle.hasProperty("userProperties.useStaticVersionCode")) {
+        return gradle."userProperties.useStaticVersionCode" == "true"
+    }
+    return false
+}
+
 def getCrashRestartDisabled = { ->
     if (gradle.hasProperty("userProperties.disableCrashRestart")) {
         return gradle."userProperties.disableCrashRestart"
@@ -119,7 +126,7 @@ android {
         applicationId "com.igalia.wolvic"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 350
+        versionCode generatedVersionCode
         versionName "1.7"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
@@ -201,6 +208,14 @@ android {
         }
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.each { output ->
+            if (shouldUseStaticVersionCode()) {
+                // Overrides any build created with a generated version code from now to 2115
+                output.versionCodeOverride = 1_99_365_2300
+            }
+        }
+    }
 
     flavorDimensions "platform", "abi", "backend", "store"
 
