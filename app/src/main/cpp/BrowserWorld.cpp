@@ -1163,6 +1163,10 @@ BrowserWorld::StartFrame() {
     if (relayoutWidgets) {
       UpdateVisibleWidgets();
     }
+    if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
+      m.layerPassthrough = m.device->CreateLayerPassthrough();
+      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+    }
     TickWorld();
     m.externalVR->PushSystemState();
   }
@@ -1221,13 +1225,9 @@ void
 BrowserWorld::TogglePassthrough() {
   ASSERT_ON_RENDER_THREAD();
   m.device->TogglePassthroughEnabled();
-  if (m.device->IsPassthroughEnabled()) {
-    if (m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
-      m.layerPassthrough = m.device->CreateLayerPassthrough();
-      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
-    }
-  } else {
-    // Make environment changes during pass through mode on to take effect
+  // No need to create the passthrough layer here. StartFrame() will do it on demand.
+  if (!m.device->IsPassthroughEnabled()) {
+    resetPassthroughLayerIfNeeded();
     UpdateEnvironment();
   }
 }
@@ -1799,6 +1799,10 @@ BrowserWorld::TickImmersive() {
   m.externalVR->SetCompositorEnabled(false);
   m.device->SetRenderMode(device::RenderMode::Immersive);
 
+  // We must clear the passthrough layer when entering immersive mode even if we are not adding it
+  // to the list of layers to render. See https://github.com/Igalia/wolvic/issues/1351
+  resetPassthroughLayerIfNeeded();
+
   const bool supportsFrameAhead = m.device->SupportsFramePrediction(DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD);
   auto framePrediction = DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD;
   if (!supportsFrameAhead || (m.externalVR->GetVRState() != ExternalVR::VRState::Rendering) || m.webXRInterstialState != WebXRInterstialState::HIDDEN) {
@@ -1863,6 +1867,17 @@ BrowserWorld::TickImmersive() {
     }
     TickWebXRInterstitial();
   }
+}
+
+void
+BrowserWorld::resetPassthroughLayerIfNeeded() {
+  if (!m.layerPassthrough)
+    return;
+
+  ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);
+  m.rootPassthroughParent->RemoveNode(*m.rootPassthroughParent->GetNode(0));
+  m.device->DeleteLayer(m.layerPassthrough);
+  m.layerPassthrough = nullptr;
 }
 
 void

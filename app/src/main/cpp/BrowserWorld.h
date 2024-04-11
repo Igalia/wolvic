@@ -100,6 +100,7 @@ private:
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   void ProcessOVRPlatformEvents();
 #endif
+  void resetPassthroughLayerIfNeeded();
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
