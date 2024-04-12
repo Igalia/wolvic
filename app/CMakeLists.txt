@@ -232,6 +232,11 @@ target_sources(native-lib PUBLIC
 include_directories(
     ${CMAKE_SOURCE_DIR}/../app/src/main/cpp/tinygltf)
 
+# Add dependency on KTX-Software
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/KTX-Software)
+target_link_libraries(native-lib ktx_read)
+target_include_directories(native-lib PRIVATE ${CMAKE_SOURCE_DIR}/src/KTX-Software/include)
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
