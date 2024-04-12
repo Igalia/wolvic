@@ -583,8 +583,9 @@ android {
         }
     }
 
-    sourceSets.all {
+    sourceSets.configureEach { sourceSet ->
         // oculusvr needs a specific manifest file by its buildtype.
+        def name = sourceSet.name
         if (name.startsWith('oculusvr')) {
            if (name.toLowerCase().contains('debug')) {
                 manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
@@ -812,7 +813,7 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
 // MLS: Read token from local file if it exists
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     try {
         def token = new File("${rootDir}/.mls_token").text.trim()
         buildConfigField 'String', 'MLS_TOKEN', '"' + token + '"'
