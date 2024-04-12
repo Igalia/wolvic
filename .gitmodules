@@ -5,3 +5,7 @@
 	path = app/src/main/cpp/tinygltf
 	url = https://github.com/Igalia/tinygltf.git
 	branch = igalia.com/wolvic
+[submodule "app/src/KTX-Software"]
+	path = app/src/KTX-Software
+	url = https://github.com/KhronosGroup/KTX-Software.git
+	branch = 4.2
