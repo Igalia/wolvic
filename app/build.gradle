@@ -215,8 +215,6 @@ android {
         }
     }
 
-    flavorDimensions "platform", "abi", "backend", "store"
-
     productFlavors {
         // Supported platforms
         oculusvr {
@@ -605,6 +603,7 @@ android {
 
 
     buildFeatures {
+        flavorDimensions = [ "platform", "abi", "backend", "store" ]
         viewBinding true
         prefab true // enable prefab support for various SDK AAR
         dataBinding true
