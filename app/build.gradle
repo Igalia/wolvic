@@ -121,6 +121,7 @@ ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 
 android {
+    namespace 'com.igalia.wolvic'
     compileSdkVersion build_versions.compile_sdk
     defaultConfig {
         applicationId "com.igalia.wolvic"
@@ -608,19 +609,16 @@ android {
         prefab true // enable prefab support for various SDK AAR
         dataBinding true
     }
-    namespace 'com.igalia.wolvic'
-    androidResources {
-        noCompress 'ja'
-        // TODO: This statement should be moved under 'chromium' dimension or removed. So far, these
-        // options are affected to every variants when`isChromiumAvailable()` is true.
-        if (isChromiumAvailable()) {
-            noCompress 'dat'
-            noCompress 'bin'
-            noCompress 'pak'
-        }
-    }
+
     lint {
         disable 'ExtraTranslation'
+    }
+
+    aaptOptions {
+        noCompress 'ja'
+        noCompress 'dat'
+        noCompress 'bin'
+        noCompress 'pak'
     }
 }
 
