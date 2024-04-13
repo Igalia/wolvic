@@ -5,9 +5,18 @@
       {
         "value": "wolvic",
         "title": "Wolvic",
+        "thumbnail": "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/thumbnail.jpg",
+        "payload": "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip"
+      },
+      {
+        "value": "meadow",
+        "title": "Meadow",
         "thumbnail": "https://mixedreality.mozilla.org/FirefoxReality/envs/meadow/thumbnail.jpg",
         "payload": "https://mixedreality.mozilla.org/FirefoxReality/envs/meadow/space.zip"
       }
     ]
+  },
+  "2": {
+    "whatsNewUrl": "https://blog.mozvr.com/firefox-reality-11/"
   }
 }
