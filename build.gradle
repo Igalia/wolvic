@@ -4,7 +4,7 @@ buildscript {
     apply from: 'versions.gradle'
     addRepos(repositories)
     dependencies {
-        classpath "org.mozilla.telemetry:glean-gradle-plugin:56.1.0"
+        classpath "org.mozilla.telemetry:glean-gradle-plugin:$versions.mozilla_glean"
         classpath "com.android.tools.build:gradle:$versions.android_gradle_plugin"
         classpath 'com.android.tools:r8:8.3.37'
         classpath "$deps.kotlin.plugin"

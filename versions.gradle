@@ -28,6 +28,7 @@ versions.gecko_view_release = "121.0.20240108143603"
 versions.gecko_view_nightly = "121.0.20231120095246"
 versions.gecko_view_beta = "121.0.20231208091859"
 versions.android_components = "121.1.0"
+versions.mozilla_glean = "55.0.0"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
 // The version number below tracks the application-services version

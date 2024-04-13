@@ -14,7 +14,7 @@ if (getGradle().getStartParameter().getTaskRequests().toString() =~ /(h|H)vr/) {
     apply plugin: 'com.huawei.agconnect'
 }
 
-deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-native-forUnitTests:$project.ext.glean_version"
+deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-native-forUnitTests:$versions.mozilla_glean"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
