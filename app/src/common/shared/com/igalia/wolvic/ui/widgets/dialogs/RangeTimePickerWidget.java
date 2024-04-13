@@ -65,7 +65,7 @@ public class RangeTimePickerWidget extends TimePicker implements TimePicker.OnTi
         minTime.set(Calendar.MINUTE, mMinMinute);
 
         if (currentTime.before(minTime)) {
-            // Reset current time is before min time, set it to min.
+            // If current time is before min time, set it to min.
             this.setCurrentHour(mMinHour);
             this.setCurrentMinute(mMinMinute);
         }
