@@ -15,7 +15,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
 
-// TODO: Fix all these tests or just remove all of them
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = TestApplication::class)
 class EnvironmentsTest {
@@ -47,7 +46,7 @@ class EnvironmentsTest {
     @Test
     fun `Environments for a target version`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/targetVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironments(context, "11")
+        val env = EnvironmentUtils.getExternalEnvironments(context, "1")
         assertNotNull(env)
         assertEquals(env.size, 2)
     }
@@ -55,7 +54,7 @@ class EnvironmentsTest {
     @Test
     fun `Environments do not exist for a target version, we fallback to the most recent ones`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/previousVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironments(context, "12")
+        val env = EnvironmentUtils.getExternalEnvironments(context, "2")
         assertNotNull(env)
         assertEquals(env.size, 2)
     }
@@ -63,85 +62,87 @@ class EnvironmentsTest {
     @Test
     fun `Environment exist for the target version`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/targetVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironmentById(context, "space", "11")
+        val env = EnvironmentUtils.getExternalEnvironmentById(context, "wolvic", "1")
         assertNotNull(env)
-        assertEquals(env?.value, "space")
-        assertEquals(env?.title, "Space")
-        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/thumbnail.jpg")
-        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/space.zip")
+        assertEquals(env?.value, "wolvic")
+        assertEquals(env?.title, "Wolvic")
+        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/thumbnail.jpg")
+        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip")
     }
 
     @Test
     fun `Environment does not exist for the target version, we fallback to the most recent one`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/previousVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironmentById(context, "space", "12")
+        val env = EnvironmentUtils.getExternalEnvironmentById(context, "wolvic", "2")
         assertNotNull(env)
-        assertEquals(env?.value, "space")
-        assertEquals(env?.title, "Space")
-        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/thumbnail.jpg")
-        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/space.zip")
+        assertEquals(env?.value, "wolvic")
+        assertEquals(env?.title, "Wolvic")
+        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/thumbnail.jpg")
+        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip")
     }
 
     @Test
     fun `Environment does not exist for any version`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/testNoEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironmentById(context, "test", "12")
+        val env = EnvironmentUtils.getExternalEnvironmentById(context, "test", "2")
         assertNull(env)
     }
 
     @Test
     fun `Environment by payload url`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/targetVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironmentByPayload(context, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/space.zip", "11")
+        val env = EnvironmentUtils.getExternalEnvironmentByPayload(context, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip", "11")
         assertNotNull(env)
-        assertEquals(env?.value, "space")
-        assertEquals(env?.title, "Space")
-        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/thumbnail.jpg")
-        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/space/space.zip")
+        assertEquals(env?.value, "wolvic")
+        assertEquals(env?.title, "Wolvic")
+        assertEquals(env?.thumbnail, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/thumbnail.jpg")
+        assertEquals(env?.payload, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip")
     }
 
     @Test
     fun `Environment is builtin`() {
         assertTrue(EnvironmentUtils.isBuiltinEnvironment(context, "void"))
-        assertTrue(EnvironmentUtils.isBuiltinEnvironment(context, "offworld"))
+        assertTrue(EnvironmentUtils.isBuiltinEnvironment(context, "wolvic"))
+        assertTrue(EnvironmentUtils.isBuiltinEnvironment(context, "cyberpunk"))
     }
 
     @Test
     fun `Environment is external`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/targetVersionEnvs.json"))
-        val isExternal = EnvironmentUtils.isExternalEnvironment(context, "space", "11")
+        val isExternal = EnvironmentUtils.isExternalEnvironment(context, "wolvic", "1")
         assertTrue(isExternal)
     }
 
     @Test
     fun `Environment is not external`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/testNoEnvs.json"))
-        val isExternal = EnvironmentUtils.isExternalEnvironment(context, "space", "11")
+        val isExternal = EnvironmentUtils.isExternalEnvironment(context, "wolvic", "1")
         assertFalse(isExternal)
     }
 
     @Test
     fun `External environment path`() {
-        var path = context.getExternalFilesDir(EnvironmentUtils.ENVS_FOLDER)
-        assertNotNull(path)
-        path = File(path, "space")
+        val cacheDir = context.cacheDir.absolutePath
+        assertNotNull(cacheDir)
+
+        val path = File(cacheDir, EnvironmentUtils.ENVS_FOLDER + "/wolvic")
         assertNotNull(path)
 
-        val actualPath = EnvironmentUtils.getExternalEnvPath(context, "space")
+        val actualPath = EnvironmentUtils.getExternalEnvPath(context, "wolvic")
         assertNotNull(actualPath)
 
-        assertEquals(actualPath, path.absolutePath)
+        assertEquals(path.absolutePath, actualPath)
     }
 
     @Test
     fun `External environment is not ready`() {
-        val isReady = EnvironmentUtils.isExternalEnvReady(context, "space")
+        val isReady = EnvironmentUtils.isExternalEnvReady(context, "wolvic")
         assertFalse(isReady)
     }
 
     @Test
     fun `External environment is ready`() {
-        val actualPath = EnvironmentUtils.getExternalEnvPath(context, "space")
+        val actualPath = EnvironmentUtils.getExternalEnvPath(context, "wolvic")
         assertNotNull(actualPath)
 
         // We just check that there are 6 files in the directory to determine that the env is ready
@@ -154,7 +155,7 @@ class EnvironmentsTest {
             assertTrue(file.createNewFile())
         }
 
-        val isReady = EnvironmentUtils.isExternalEnvReady(context, "space")
+        val isReady = EnvironmentUtils.isExternalEnvReady(context, "wolvic")
         assertTrue(isReady)
     }
 
