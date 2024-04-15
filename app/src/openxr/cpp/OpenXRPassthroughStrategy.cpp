@@ -13,6 +13,12 @@ OpenXRPassthroughStrategy::createLayerIfSupported(VRLayerPassthroughPtr) const {
     return nullptr;
 };
 
+OpenXRLayerPassthroughPtr
+OpenXRPassthroughStrategy::createKbdHandsLayerIfSupported(VRLayerPassthroughPtr) const {
+    VRB_ERROR("asking to create a layer for passthrough keyboard hands when it isn't actually supported");
+    return nullptr;
+};
+
 OpenXRPassthroughStrategyFBExtension::~OpenXRPassthroughStrategyFBExtension() {
     if (passthroughHandle != XR_NULL_HANDLE) {
         CHECK_XRCMD(OpenXRExtensions::sXrDestroyPassthroughFB (passthroughHandle));
@@ -68,6 +74,12 @@ OpenXRPassthroughStrategyFBExtension::isReady() const {
 OpenXRLayerPassthroughPtr
 OpenXRPassthroughStrategyFBExtension::createLayerIfSupported(VRLayerPassthroughPtr vrLayer) const {
     return OpenXRLayerPassthrough::Create(vrLayer, passthroughHandle);
+}
+
+OpenXRLayerPassthroughPtr
+OpenXRPassthroughStrategyFBExtension::createKbdHandsLayerIfSupported(VRLayerPassthroughPtr vrLayer) const {
+    VRB_LOG("KBD_HANDS: creating kbd hands layer!");
+    return OpenXRLayerPassthrough::Create(vrLayer, passthroughHandle, XR_PASSTHROUGH_LAYER_PURPOSE_TRACKED_KEYBOARD_HANDS_FB);
 }
 
 } // namespace crow

@@ -107,6 +107,7 @@ struct DeviceDelegateOpenXR::State {
   std::vector<float> refreshRates;
   bool reorientRequested { false };
   OpenXRLayerPassthroughPtr passthroughLayer { nullptr };
+  OpenXRLayerPassthroughPtr passthroughKbdHandsLayer { nullptr };
   PassthroughStrategyPtr passthroughStrategy;
   XrEnvironmentBlendMode defaultBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
   XrEnvironmentBlendMode passthroughBlendMode { XR_ENVIRONMENT_BLEND_MODE_MAX_ENUM };
@@ -186,6 +187,9 @@ struct DeviceDelegateOpenXR::State {
 
     if (OpenXRExtensions::IsExtensionSupported(XR_FB_PASSTHROUGH_EXTENSION_NAME)) {
       extensions.push_back(XR_FB_PASSTHROUGH_EXTENSION_NAME);
+      if (OpenXRExtensions::IsExtensionSupported(XR_FB_PASSTHROUGH_KEYBOARD_HANDS_EXTENSION_NAME)) {
+        extensions.push_back(XR_FB_PASSTHROUGH_KEYBOARD_HANDS_EXTENSION_NAME);
+      }
     }
 
     if (OpenXRExtensions::IsExtensionSupported(XR_ML_ML2_CONTROLLER_INTERACTION_EXTENSION_NAME))
@@ -1418,6 +1422,26 @@ DeviceDelegateOpenXR::CreateLayerPassthrough() {
   assert(m.session != XR_NULL_HANDLE);
   vrb::RenderContextPtr context = m.context.lock();
   m.passthroughLayer->Init(m.javaContext->env, m.session, context);
+  return result;
+}
+
+VRLayerPassthroughPtr
+DeviceDelegateOpenXR::CreateLayerPassthroughKbdHands() {
+  assert(m.passthroughStrategy);
+  if (!m.layersEnabled || !m.passthroughStrategy->usesCompositorLayer()) {
+    return nullptr;
+  }
+
+  if (m.passthroughKbdHandsLayer != nullptr) {
+    m.passthroughKbdHandsLayer->Destroy();
+  }
+  VRLayerPassthroughPtr result = VRLayerPassthrough::Create();
+  m.passthroughKbdHandsLayer = m.passthroughStrategy->createKbdHandsLayerIfSupported(result);
+  assert(m.passthroughKbdHandsLayer);
+
+  assert(m.session != XR_NULL_HANDLE);
+  vrb::RenderContextPtr context = m.context.lock();
+  m.passthroughKbdHandsLayer->Init(m.javaContext->env, m.session, context);
   return result;
 }
 

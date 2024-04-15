@@ -43,6 +43,8 @@ namespace crow {
     static PFN_xrEnumerateRenderModelPathsFB sXrEnumerateRenderModelPathsFB;
     static PFN_xrGetRenderModelPropertiesFB sXrGetRenderModelPropertiesFB;
     static PFN_xrLoadRenderModelFB sXrLoadRenderModelFB;
+
+    static PFN_xrPassthroughLayerSetKeyboardHandsIntensityFB sXrPassthroughLayerSetKeyboardHandsIntensityFB;
   private:
      static std::unordered_set<std::string> sSupportedExtensions;
      static std::unordered_set<std::string> sSupportedApiLayers;

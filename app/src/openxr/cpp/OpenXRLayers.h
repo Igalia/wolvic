@@ -423,7 +423,7 @@ class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrC
     XrCompositionLayerPassthroughFB xrCompositionLayer;
 
     static OpenXRLayerPassthroughPtr
-    Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
+    Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB, const enum XrPassthroughLayerPurposeFB aPurpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB);
     void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
     void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
     void Destroy() override;
@@ -433,6 +433,7 @@ class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrC
 private:
     XrPassthroughFB mPassthroughInstance;
     XrPassthroughLayerFB mPassthroughLayerHandle;
+    enum XrPassthroughLayerPurposeFB mPurpose;
 };
 
 }

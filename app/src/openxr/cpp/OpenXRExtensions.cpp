@@ -26,6 +26,7 @@ PFN_xrQuerySystemTrackedKeyboardFB OpenXRExtensions::xrQuerySystemTrackedKeyboar
 PFN_xrEnumerateRenderModelPathsFB OpenXRExtensions::sXrEnumerateRenderModelPathsFB = nullptr;
 PFN_xrGetRenderModelPropertiesFB OpenXRExtensions::sXrGetRenderModelPropertiesFB = nullptr;
 PFN_xrLoadRenderModelFB OpenXRExtensions::sXrLoadRenderModelFB = nullptr;
+PFN_xrPassthroughLayerSetKeyboardHandsIntensityFB OpenXRExtensions::sXrPassthroughLayerSetKeyboardHandsIntensityFB = nullptr;
 
 void OpenXRExtensions::Initialize() {
     // Extensions.
@@ -128,6 +129,11 @@ void OpenXRExtensions::LoadExtensions(XrInstance instance) {
                                           reinterpret_cast<PFN_xrVoidFunction *>(&sXrGetRenderModelPropertiesFB)));
         CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrLoadRenderModelFB",
                                           reinterpret_cast<PFN_xrVoidFunction *>(&sXrLoadRenderModelFB)));
+    }
+
+    if (IsExtensionSupported(XR_FB_PASSTHROUGH_KEYBOARD_HANDS_EXTENSION_NAME)) {
+        CHECK_XRCMD(xrGetInstanceProcAddr(instance, "xrPassthroughLayerSetKeyboardHandsIntensityFB",
+                                          reinterpret_cast<PFN_xrVoidFunction *>(&sXrPassthroughLayerSetKeyboardHandsIntensityFB)));
     }
 }
 

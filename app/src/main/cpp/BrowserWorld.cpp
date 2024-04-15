@@ -211,12 +211,14 @@ struct BrowserWorld::State {
   bool reorientRequested = false;
   bool inHeadLockMode = false;
   VRLayerPassthroughPtr layerPassthrough;
+  VRLayerPassthroughPtr layerPassthroughKbdHands;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
   bool isApplicationEntitled = false;
 #endif
-  TrackedKeyboardRendererPtr trackedKeyboardRenderer;
+  TrackedKeyboardRendererPtr trackedKeyboardRenderer = nullptr;
+  bool trackedKeyboardIsActive = false;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -698,6 +700,8 @@ BrowserWorld::State::UpdateTrackedKeyboard() {
   trackedKeyboardRenderer->SetVisible(keyboardInfo.isActive);
   if (keyboardInfo.isActive)
     trackedKeyboardRenderer->SetTransform(keyboardInfo.transform);
+
+  trackedKeyboardIsActive = keyboardInfo.isActive;
 }
 
 void
@@ -1200,6 +1204,10 @@ BrowserWorld::StartFrame() {
     if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
       m.layerPassthrough = m.device->CreateLayerPassthrough();
       m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+    }
+    if (m.trackedKeyboardRenderer && m.trackedKeyboardIsActive && m.device->usesPassthroughCompositorLayer() && !m.layerPassthroughKbdHands) {
+        m.layerPassthroughKbdHands = m.device->CreateLayerPassthroughKbdHands();
+        m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthroughKbdHands));
     }
     TickWorld();
     m.externalVR->PushSystemState();
@@ -1830,6 +1838,13 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
   m.rootTransparent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*camera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
+
+  if (!m.device->IsPassthroughEnabled() && m.trackedKeyboardIsActive && m.layerPassthroughKbdHands) {
+    VRB_LOG("KBD_HANDS: drawing kbd hands layer!");
+    m.drawList->Reset();
+    m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*camera);
+  }
 }
 
 void
@@ -1909,13 +1924,23 @@ BrowserWorld::TickImmersive() {
 
 void
 BrowserWorld::resetPassthroughLayerIfNeeded() {
-  if (!m.layerPassthrough)
-    return;
-
-  ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);
-  m.rootPassthroughParent->RemoveNode(*m.rootPassthroughParent->GetNode(0));
-  m.device->DeleteLayer(m.layerPassthrough);
-  m.layerPassthrough = nullptr;
+    /*
+  if (m.layerPassthrough) {
+    //ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);
+    m.rootPassthroughParent->RemoveNode(*m.rootPassthroughParent->GetNode(0));
+    m.device->DeleteLayer(m.layerPassthrough);
+    m.layerPassthrough = nullptr;
+  }
+     */
+  if (m.layerPassthroughKbdHands) {
+    //ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);
+    /*
+    m.rootPassthroughParent->RemoveNode(*m.rootPassthroughParent->GetNode(0));
+    m.device->DeleteLayer(m.layerPassthroughKbdHands);
+    m.layerPassthroughKbdHands = nullptr;
+    VRB_LOG("KBD_HANDS: kbd hands layer re-set!");
+     */
+  }
 }
 
 void

@@ -244,10 +244,11 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aC
 // OpenXRLayerPassthrough;
 
 OpenXRLayerPassthroughPtr
-OpenXRLayerPassthrough::Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB passthroughInstance) {
+OpenXRLayerPassthrough::Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB passthroughInstance, const enum XrPassthroughLayerPurposeFB aPurpose) {
   auto result = std::make_shared<OpenXRLayerPassthrough>();
   result->layer = aLayer;
   result->mPassthroughInstance = passthroughInstance;
+  result->mPurpose = aPurpose;
 
   return result;
 }
@@ -258,9 +259,21 @@ OpenXRLayerPassthrough::Init(JNIEnv *aEnv, XrSession session, vrb::RenderContext
     .type = XR_TYPE_PASSTHROUGH_LAYER_CREATE_INFO_FB,
     .passthrough = mPassthroughInstance,
     .flags = XR_PASSTHROUGH_IS_RUNNING_AT_CREATION_BIT_FB,
-    .purpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB
+    .purpose = mPurpose
   };
   CHECK_XRCMD(OpenXRExtensions::sXrCreatePassthroughLayerFB(session, &layerCreateInfo, &mPassthroughLayerHandle));
+
+  if (mPurpose == XR_PASSTHROUGH_LAYER_PURPOSE_TRACKED_KEYBOARD_MASKED_HANDS_FB ||
+      mPurpose == XR_PASSTHROUGH_LAYER_PURPOSE_TRACKED_KEYBOARD_HANDS_FB) {
+      static const struct XrPassthroughKeyboardHandsIntensityFB intensity = {
+        .type = XR_TYPE_PASSTHROUGH_KEYBOARD_HANDS_INTENSITY_FB,
+        .leftHandIntensity = 1.0,
+        .rightHandIntensity = 1.0
+      };
+      CHECK_XRCMD(OpenXRExtensions::sXrPassthroughLayerSetKeyboardHandsIntensityFB(mPassthroughLayerHandle, &intensity));
+      VRB_LOG("KBD_HANDS: intensisty set!");
+  }
+
   OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Init(aEnv, session, aContext);
 }
 

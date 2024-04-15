@@ -58,6 +58,7 @@ public:
   VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
   VRLayerPassthroughPtr CreateLayerPassthrough() override;
+  VRLayerPassthroughPtr CreateLayerPassthroughKbdHands() override;
   bool usesPassthroughCompositorLayer() const override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) override;
