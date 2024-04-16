@@ -332,7 +332,9 @@ android {
 
         visionglass {
             dimension "platform"
-            applicationIdSuffix ".visionglass"
+            applicationId "com.igalia.wolvic.visionglass" // for publication in China AppGallery
+            versionName "1.6"                             // for publication in China AppGallery
+            applicationIdSuffix ""
             resValue "string", "app_name", "Wolvic Vision Glass"
             externalNativeBuild {
                 cmake {
