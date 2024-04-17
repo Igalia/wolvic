@@ -33,8 +33,8 @@ OpenXRLayerQuad::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPtr& a
 }
 
 void
-OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
-  OpenXRLayerSurface<VRLayerQuadPtr, XrCompositionLayerQuad>::Update(aSpace, aPose, aClearSwapChain);
+OpenXRLayerQuad::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain)  {
+  OpenXRLayerSurface<VRLayerQuadPtr, XrCompositionLayerQuad>::Update(aSpace, aReorientPose, aClearSwapChain);
 
   const uint numXRLayers = GetNumXRLayers();
   for (int i = 0; i < numXRLayers; ++i) {
@@ -75,8 +75,8 @@ OpenXRLayerCylinder::Init(JNIEnv * aEnv, XrSession session, vrb::RenderContextPt
 }
 
 void
-OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
-  OpenXRLayerSurface<VRLayerCylinderPtr, XrCompositionLayerCylinderKHR>::Update(aSpace, aPose, aClearSwapChain);
+OpenXRLayerCylinder::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain)  {
+  OpenXRLayerSurface<VRLayerCylinderPtr, XrCompositionLayerCylinderKHR>::Update(aSpace, aReorientPose, aClearSwapChain);
 
   const uint numXRLayers = GetNumXRLayers();
   for (int i = 0; i < numXRLayers; ++i) {
@@ -155,8 +155,8 @@ OpenXRLayerCube::IsLoaded() const {
 }
 
 void
-OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain)  {
-  OpenXRLayerBase<VRLayerCubePtr, XrCompositionLayerCubeKHR>::Update(aSpace, aPose, aClearSwapChain);
+OpenXRLayerCube::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain)  {
+  OpenXRLayerBase<VRLayerCubePtr, XrCompositionLayerCubeKHR>::Update(aSpace, aReorientPose, aClearSwapChain);
 
   const uint numXRLayers = GetNumXRLayers();
   for (uint i = 0; i < numXRLayers; ++i) {
@@ -205,17 +205,17 @@ OpenXRLayerEquirect::IsDrawRequested() const {
 }
 
 void
-OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) {
+OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) {
   OpenXRLayerPtr source = sourceLayer.lock();
   if (source) {
     swapchain = source->GetSwapChain();
   }
-  OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Update(aSpace, aPose, aClearSwapChain);
+  OpenXRLayerBase<VRLayerEquirectPtr, XrCompositionLayerEquirectKHR>::Update(aSpace, aReorientPose, aClearSwapChain);
 
   const uint numXRLayers = GetNumXRLayers();
   for (int i = 0; i < numXRLayers; ++i) {
     device::Eye eye = i == 0 ? device::Eye::Left : device::Eye::Right;
-    xrLayers[i].pose =  XrPoseIdentity();
+    xrLayers[i].pose = aReorientPose;
     xrLayers[i].eyeVisibility = GetEyeVisibility(i);
     // Map surface and rect
     device::EyeRect rect = layer->GetTextureRect(eye);
@@ -265,7 +265,7 @@ OpenXRLayerPassthrough::Init(JNIEnv *aEnv, XrSession session, vrb::RenderContext
 }
 
 void
-OpenXRLayerPassthrough::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) {
+OpenXRLayerPassthrough::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) {
   xrCompositionLayer = {
           .type = XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB,
           .next = XR_NULL_HANDLE,
@@ -273,7 +273,7 @@ OpenXRLayerPassthrough::Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain
           .space = XR_NULL_HANDLE,
           .layerHandle = mPassthroughLayerHandle,
   };
-  OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Update(aSpace, aPose, aClearSwapChain);
+  OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB>::Update(aSpace, aReorientPose, aClearSwapChain);
 }
 
 void

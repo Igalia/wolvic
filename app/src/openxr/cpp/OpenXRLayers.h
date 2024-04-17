@@ -37,7 +37,7 @@ typedef std::weak_ptr<SurfaceChangedTarget> SurfaceChangedTargetWeakPtr;
 class OpenXRLayer {
 public:
   virtual void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) = 0;
-  virtual void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) = 0;
+  virtual void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) = 0;
   virtual OpenXRSwapChainPtr GetSwapChain() const = 0;
   virtual uint32_t HeaderCount() const = 0;
   virtual const XrCompositionLayerBaseHeader* Header(uint32_t aIndex) const = 0;
@@ -81,7 +81,7 @@ public:
   }
 
   virtual void
-  Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override {
+  Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override {
     const uint numXRLayers = GetNumXRLayers();
     if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE) {
         vrb::Color tintColor = layer->GetTintColor();
@@ -271,8 +271,8 @@ public:
   }
 
   virtual void
-  Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override {
-    OpenXRLayerBase<T , U>::Update(aSpace, aPose, aClearSwapChain);
+  Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override {
+    OpenXRLayerBase<T , U>::Update(aSpace, aReorientPose, aClearSwapChain);
 #ifdef OCULUSVR
     if (this->mLayerImageLayout != XR_NULL_HANDLE) {
       const uint numXRLayers = this->GetNumXRLayers();
@@ -365,7 +365,7 @@ public:
   static OpenXRLayerQuadPtr
   Create(JNIEnv *aEnv, const VRLayerQuadPtr &aLayer, const OpenXRLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-  void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
+  void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
 };
 
 
@@ -378,7 +378,7 @@ public:
   static OpenXRLayerCylinderPtr
   Create(JNIEnv *aEnv, const VRLayerCylinderPtr &aLayer, const OpenXRLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-  void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
+  void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
 };
 
 
@@ -390,7 +390,7 @@ class OpenXRLayerCube : public OpenXRLayerBase<VRLayerCubePtr, XrCompositionLaye
 public:
   static OpenXRLayerCubePtr Create(const VRLayerCubePtr &aLayer, GLint aInternalFormat);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-  void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
+  void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
   void Destroy() override;
   bool IsLoaded() const;
 
@@ -409,7 +409,7 @@ public:
   static OpenXRLayerEquirectPtr
   Create(const VRLayerEquirectPtr &aLayer, const OpenXRLayerPtr &aSourceLayer);
   void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-  void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
+  void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
   void Destroy() override;
   bool IsDrawRequested() const override;
 };
@@ -425,7 +425,7 @@ class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrC
     static OpenXRLayerPassthroughPtr
     Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
     void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-    void Update(XrSpace aSpace, const XrPosef &aPose, XrSwapchain aClearSwapChain) override;
+    void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
     void Destroy() override;
     bool IsDrawRequested() const override { return layer->IsDrawRequested(); };
     bool IsValid() const { return mPassthroughLayerHandle != XR_NULL_HANDLE; }
