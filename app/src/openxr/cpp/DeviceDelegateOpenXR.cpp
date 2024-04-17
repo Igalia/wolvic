@@ -1175,15 +1175,17 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       return;
   }
 
+  XrPosef reorientPose = MatrixToXrPose(GetReorientTransform());
+
   // Add skybox or passthrough layer
   if (mIsPassthroughEnabled) {
       if (m.passthroughLayer && m.passthroughLayer->IsDrawRequested() && m.IsPassthroughLayerReady()) {
-          m.passthroughLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
+          m.passthroughLayer->Update(m.localSpace, reorientPose, XR_NULL_HANDLE);
           layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&m.passthroughLayer->xrCompositionLayer));
           m.passthroughLayer->ClearRequestDraw();
       }
   } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
-    m.cubeLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
+    m.cubeLayer->Update(m.localSpace, reorientPose, XR_NULL_HANDLE);
     for (uint32_t i = 0; i < m.cubeLayer->HeaderCount(); ++i) {
       layers.push_back(m.cubeLayer->Header(i));
     }
@@ -1192,7 +1194,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
 
   // Add VR video layer
   if (m.equirectLayer && m.equirectLayer->IsDrawRequested()) {
-    m.equirectLayer->Update(m.localSpace, predictedPose, XR_NULL_HANDLE);
+    m.equirectLayer->Update(m.localSpace, reorientPose, XR_NULL_HANDLE);
     for (uint32_t i = 0; i < m.equirectLayer->HeaderCount(); ++i) {
       layers.push_back(m.equirectLayer->Header(i));
     }
@@ -1207,7 +1209,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   // Add back UI layers
   for (const OpenXRLayerPtr& layer: m.uiLayers) {
     if (!layer->GetDrawInFront() && layer->IsDrawRequested() && canAddLayers()) {
-      layer->Update(m.layersSpace, predictedPose, XR_NULL_HANDLE);
+      layer->Update(m.layersSpace, reorientPose, XR_NULL_HANDLE);
       for (uint32_t i = 0; i < layer->HeaderCount() && canAddLayers(); ++i) {
         layers.push_back(layer->Header(i));
       }
@@ -1242,7 +1244,7 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   // Add front UI layers
   for (const OpenXRLayerPtr& layer: m.uiLayers) {
     if (layer->GetDrawInFront() && layer->IsDrawRequested() && canAddLayers()) {
-      layer->Update(m.layersSpace, predictedPose, XR_NULL_HANDLE);
+      layer->Update(m.layersSpace, reorientPose, XR_NULL_HANDLE);
       for (uint32_t i = 0; i < layer->HeaderCount() && canAddLayers(); ++i) {
         layers.push_back(layer->Header(i));
       }
