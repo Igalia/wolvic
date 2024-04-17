@@ -68,9 +68,7 @@ jobs:
           gradle-version: ${{ inputs.gradle_version }}
 
       - name: Build ${{ inputs.flavour }} Flavour
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          arguments: ${{ inputs.flavour }}
+        run: ./gradlew ${{ inputs.flavour }}
 
       - name: Upload APK (without WebXR support) to Artifacts
         uses: actions/upload-artifact@v4
