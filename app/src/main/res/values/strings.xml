@@ -2544,5 +2544,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_wifi_unavailable_ssid">SSID unavailable</string>
     <!-- Tooltip for the battery level when using a tethered device instead of a headset -->
     <string name="tray_status_phone">Phone: %1$s</string>
+    <string name="vision_glass_touchpad_instructions">Tap to click. Swipe to scroll</string>
 
 </resources>
