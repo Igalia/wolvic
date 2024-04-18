@@ -340,8 +340,8 @@ android {
                     arguments "-DVISIONGLASS=ON"
                 }
             }
-            buildConfigField "Float", "DEFAULT_DENSITY", "1.0f"
-            buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.5f"
+            buildConfigField "Float", "DEFAULT_DENSITY", "1.5f"
+            buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "1.0f"
         }
 
         // Supported ABIs
