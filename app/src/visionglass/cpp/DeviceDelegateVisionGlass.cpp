@@ -36,8 +36,7 @@ jmethodID sSetRenderMode;
 
 namespace crow {
 
-static const float kHorizontalFOV = 41.0f;
-static const float kVerticalFOV = 21.0f;
+static const float kDiagonalFOV = 41.0f;
 const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
 static const int32_t kControllerIndex = 0;
 
@@ -91,17 +90,29 @@ struct DeviceDelegateVisionGlass::State {
     if (!immersiveDisplay)
       return;
 
-    vrb::Matrix fov = vrb::Matrix::PerspectiveMatrixWithResolutionDegrees(glWidth, glHeight,
-                                                                          kHorizontalFOV, kVerticalFOV,
-                                                                          near, far);
-    float left(0.0f), right(0.0f), top(0.0f), bottom(0.0f), n2(0.0f), f2(0.0f);
-    fov.DecomposePerspectiveDegrees(left, right, top, bottom, n2, f2);
+    if (glHeight == 0 || glWidth == 0)
+      return;
+
+    // Compute horizontal and vertical FOV from diagonal FOV and aspect ratio.
+    // https://medium.com/insights-on-virtual-reality/converting-diagonal-field-of-view-and-aspect-ratio-to-horizontal-and-vertical-field-of-view-13bcc1d8600c
+    auto degToRad = [](float deg) { return deg * M_PI / 180.0; };
+    auto radToDeg = [](float rad) { return rad * 180.0 / M_PI; };
+    auto width = (float) glWidth / 2; // glWidth is sum of the width of both displays
+    auto diagonalSize = sqrt(pow(glWidth / 2, 2) + pow(glHeight, 2));
+    auto horizontalFOV = atan(tan(degToRad(kDiagonalFOV / 2)) * (width / diagonalSize)) * 2;
+    horizontalFOV = radToDeg(horizontalFOV);
+    auto verticalFOV = (horizontalFOV * glHeight) / width;
+
+    float halfHorizontalFOV = horizontalFOV / 2;
+    float halfVerticalFOV = verticalFOV / 2;
+    vrb::Matrix fov = vrb::Matrix::PerspectiveMatrix(degToRad(halfHorizontalFOV), degToRad(halfHorizontalFOV),
+                                                     degToRad(halfVerticalFOV), degToRad(halfVerticalFOV), near, far);
 
     cameras[0]->SetPerspective(fov);
     cameras[1]->SetPerspective(fov);
     immersiveDisplay->SetEyeResolution((int32_t)(glWidth / 2), glHeight);
-    immersiveDisplay->SetFieldOfView(device::Eye::Left, left, right, top, bottom);
-    immersiveDisplay->SetFieldOfView(device::Eye::Right, left, right, top, bottom);
+    immersiveDisplay->SetFieldOfView(device::Eye::Left, -halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, -halfVerticalFOV);
+    immersiveDisplay->SetFieldOfView(device::Eye::Right, -halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, -halfVerticalFOV);
 
     immersiveDisplay->SetCapabilityFlags(device::PositionEmulated | device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession);
   }
