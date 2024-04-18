@@ -350,7 +350,7 @@ public class SettingsStore {
 
     public boolean isHeadLockEnabled() {
         return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_head_lock), shouldStartWithPassthrougEnabled());
+                mContext.getString(R.string.settings_key_head_lock), HEAD_LOCK_DEFAULT);
     }
 
     public void setHeadLockEnabled(boolean isEnabled) {
