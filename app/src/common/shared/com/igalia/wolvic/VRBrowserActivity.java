@@ -761,7 +761,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (key.equals(getString(R.string.settings_key_voice_search_service))) {
                 initializeSpeechRecognizer();
             } else if (key.equals(getString(R.string.settings_key_head_lock))) {
-                setHeadLockEnabled(SettingsStore.getInstance(this).isHeadLockEnabled());
+                boolean isHeadLockEnabled = SettingsStore.getInstance(this).isHeadLockEnabled();
+                setHeadLockEnabled(isHeadLockEnabled);
+                if (!isHeadLockEnabled)
+                    recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
             }
     }
 
@@ -2001,12 +2004,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setHeadLockEnabled(boolean isHeadLockEnabled) {
-        queueRunnable(() -> {
-            setHeadLockEnabledNative(isHeadLockEnabled);
-            if (!isHeadLockEnabled) {
-                recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
-            }
-        });
+        queueRunnable(() -> setHeadLockEnabledNative(isHeadLockEnabled));
     }
 
     @Override
