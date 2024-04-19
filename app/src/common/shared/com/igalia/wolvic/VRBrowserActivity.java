@@ -462,7 +462,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Create the platform plugin after widgets are created to be extra safe.
         mPlatformPlugin = createPlatformPlugin(this);
-        mPlatformPlugin.registerListener(this);
+        if (mPlatformPlugin != null)
+            mPlatformPlugin.registerListener(this);
 
         mWindows.restoreSessions();
     }
@@ -685,7 +686,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Unregister the crash service broadcast receiver
         unregisterReceiver(mCrashReceiver);
         mSearchEngineWrapper.unregisterForUpdates();
-        mPlatformPlugin.unregisterListener(this);
+        if (mPlatformPlugin != null)
+            mPlatformPlugin.unregisterListener(this);
 
         mFragmentController.dispatchDestroy();
 
