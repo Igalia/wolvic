@@ -180,6 +180,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }
     }
 
+    private void registerPhoneIMUListener() {
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
     private void initVisionGlassPhoneUI() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -196,6 +200,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mBinding.voiceSearchButton.setEnabled(false);
 
         mBinding.realignButton.setOnClickListener(v -> {
+            mSensorManager.unregisterListener(this);
+            registerPhoneIMUListener();
             queueRunnable(this::calibrateController);
         });
 
@@ -338,7 +344,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         Log.d(LOGTAG, "PlatformActivity onResume");
         super.onResume();
 
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
+        registerPhoneIMUListener();
 
         // Sometimes no display event is emitted so we need to call updateDisplays() from here.
         if (VisionGlass.getInstance().isConnected() && VisionGlass.getInstance().hasUsbPermission() && mSwitchedTo3DMode && mActivePresentation == null) {
