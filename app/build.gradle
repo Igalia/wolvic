@@ -297,6 +297,7 @@ android {
                     arguments "-DAOSP=ON", "-DOPENXR=ON"
                 }
             }
+            buildConfigField "Float", "DEFAULT_DENSITY", "1.0f"
         }
 
         hvr {
