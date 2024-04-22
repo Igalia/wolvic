@@ -2544,6 +2544,18 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_wifi_unavailable_ssid">SSID unavailable</string>
     <!-- Tooltip for the battery level when using a tethered device instead of a headset -->
     <string name="tray_status_phone">Phone: %1$s</string>
+
+    <!-- Vision Glass: instructions on the touchpad on the phone UI -->
     <string name="vision_glass_touchpad_instructions">Tap to click. Swipe to scroll</string>
+    <!-- Vision Glass: title of an alert dialog in the Phone UI -->
+    <string name="phone_ui_alert_dialog_title">Error</string>
+    <!-- Vision Glass: error message when it was not possible to switch to 3D mode -->
+    <string name="phone_ui_set3dmode_alert_dialog_description">Failed to switch to 3D mode. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
+    <!-- Vision Glass: error message when it was not possible to get USO permissions -->
+    <string name="phone_ui_usb_alert_dialog_description">Failed to get USB permissions. Try unplugging the glasses and plugging them back and restart Wolvic.</string>
+    <!-- Vision Glass: instruct the user to connect the device to the phone -->
+    <string name="vision_glass_disconnected_message">Please connect Vision Glass</string>
+    <!-- Vision Glass: instruct the user to unplug the device and try again -->
+    <string name="vision_glass_error_message">An error happened.\nPlease try again.</string>
 
 </resources>
