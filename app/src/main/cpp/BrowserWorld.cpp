@@ -508,6 +508,10 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
 
+    // Used by some runtimes to perform visual optimizations
+    if (hitDistance < farClip)
+        device->SetHitDistance(hitDistance);
+
     if (controller.focused && (!hitWidget || !hitWidget->IsResizing()) && resizingWidget) {
       resizingWidget->HoverExitResize();
       resizingWidget.reset();

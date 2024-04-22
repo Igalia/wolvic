@@ -114,6 +114,7 @@ struct DeviceDelegateOpenXR::State {
   HandMeshPropertiesMSFTPtr handMeshProperties;
   bool keyboardTrackingSupported { false };
   bool renderModelLoadingSupported { false };
+  float furthestHitDistance { near };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -200,6 +201,8 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_FB_RENDER_MODEL_EXTENSION_NAME))
         extensions.push_back(XR_FB_RENDER_MODEL_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_ML_FRAME_END_INFO_EXTENSION_NAME))
+        extensions.push_back(XR_ML_FRAME_END_INFO_EXTENSION_NAME);
 
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
@@ -1190,13 +1193,21 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
   layers.clear();
 
   // This limit is valid at least for Pico and Meta.
-  auto submitEndFrame = [&layers, displayTime, session = m.session, blendMode = mIsPassthroughEnabled ? m.passthroughBlendMode : m.defaultBlendMode]() {
+  auto submitEndFrame = [&layers, displayTime, session = m.session, blendMode = mIsPassthroughEnabled ? m.passthroughBlendMode : m.defaultBlendMode, distance = m.furthestHitDistance]() {
       static int i = 0;
       XrFrameEndInfo frameEndInfo{XR_TYPE_FRAME_END_INFO};
       frameEndInfo.displayTime = displayTime;
       frameEndInfo.environmentBlendMode = blendMode;
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
+
+      if (OpenXRExtensions::IsExtensionSupported(XR_ML_FRAME_END_INFO_EXTENSION_NAME)) {
+            XrFrameEndInfoML frameEndInfoML{XR_TYPE_FRAME_END_INFO_ML};
+            frameEndInfoML.next = nullptr;
+            frameEndInfoML.focusDistance = distance;
+            frameEndInfo.next = &frameEndInfoML;
+      }
+
       MessageXrResult(xrEndFrame(session, &frameEndInfo));
   };
 
@@ -1502,6 +1513,10 @@ DeviceDelegateOpenXR::DrawHandMesh(const uint32_t aControllerIndex, const vrb::C
   if (!m.handMeshRenderer)
     return;
   m.handMeshRenderer->Draw(aControllerIndex, aCamera);
+}
+
+void DeviceDelegateOpenXR::SetHitDistance(const float distance) {
+  m.furthestHitDistance = std::max(distance, m.furthestHitDistance);
 }
 
 void
