@@ -1923,6 +1923,7 @@ BrowserWorld::TickSplashAnimation() {
     DrawSplashAnimation(aEye);
   };
   if (animationFinished) {
+    RecenterUIYaw(YawTarget::ALL);
     m.frameEndHandler = [=]() {
       if (m.splashAnimation && m.splashAnimation->GetLayer()) {
         m.device->DeleteLayer(m.splashAnimation->GetLayer());
