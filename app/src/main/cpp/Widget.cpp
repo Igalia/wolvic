@@ -670,8 +670,16 @@ void Widget::LayoutQuadWithCylinderParent(const WidgetPtr& aParent) {
     // The widget is flat and the parent is a cylinder.
     // Adjust the widget rotation based on the parent cylinder
     // e.g. rotate the tray based on the parent cylindrical window.
-    const float radius = cylinder->GetTransformNode()->GetTransform().GetScale().x();
-    m.AdjustCylinderRotation(radius);
+    auto x = m.transform->GetTransform().GetTranslation().x();
+    if (x != 0.0) {
+      auto radius = m.placement->cylinderMapRadius;
+      auto angle = M_PI_2 - atan(x/radius);
+      vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(-cosf(angle), 0.0f, sinf(angle)));
+      transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, 0.0f)));
+      m.transformContainer->SetTransform(transform);
+    } else {
+      m.transformContainer->SetTransform(vrb::Matrix::Identity());
+    }
   } else {
     // The widget is flat and the parent is flat. Copy the parent transformContainer matrix (used for cylinder rotations)
     // because the parent widget can still be recursively rotated based on a parent cylinder.
