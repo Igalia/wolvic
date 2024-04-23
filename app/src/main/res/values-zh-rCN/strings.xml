@@ -1828,4 +1828,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permission_rationale_title">需要额外权限</string>
     <string name="permission_camera_rationale">拍摄周围世界的图像需要获得使用您的摄像头的权限。</string>
     <string name="permission_read_external_storage_rationale">打开设备上的文件需要获得读取您的外部存储权限。</string>
+    <string name="phone_ui_alert_dialog_title">错误</string>
+    <string name="phone_ui_usb_alert_dialog_description">获取 USB 权限失败。尝试拔下眼镜并插回，然后重启 Wolvic。</string>
+    <string name="vision_glass_disconnected_message">请连接Vision Glass</string>
+    <string name="vision_glass_error_message">发生错误。请重试。</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">切换到 3D 模式失败。尝试拔下眼镜并插回，然后重新启动 Wolvic。</string>
 </resources>
