@@ -42,6 +42,7 @@ import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
 import com.huawei.usblib.VisionGlass;
 import com.igalia.wolvic.browser.Media;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.databinding.VisionglassLayoutBinding;
@@ -494,6 +495,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 mDelegate.getWindows().getFocusedWindow().loadHome();
             });
 
+            mBinding.headlockToggleButton.setChecked(
+                    SettingsStore.getInstance(PlatformActivity.this).isHeadLockEnabled());
             mBinding.headlockToggleButton.setOnClickListener(v -> {
                 mDelegate.setHeadLockEnabled(mBinding.headlockToggleButton.isChecked());
             });
