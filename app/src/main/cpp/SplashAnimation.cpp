@@ -126,8 +126,8 @@ SplashAnimation::Update(const vrb::Matrix& aHeadTransform) {
   }
   vrb::Vector position = aHeadTransform.GetTranslation();
   if (m.firstDraw && position.Magnitude() > 0.1f) {
-    static const vrb::Vector offset(0.0f, -0.1f, -1.5f);
-    m.logo->GetTransformNode()->SetTransform(aHeadTransform.PostMultiply(vrb::Matrix::Position(offset)));
+    static const vrb::Vector offset(0.0f, -0.2f, -1.5f);
+    m.logo->GetTransformNode()->SetTransform(vrb::Matrix::Position(position + offset));
     m.firstDraw = false;
   }
   m.UpdateTime();
