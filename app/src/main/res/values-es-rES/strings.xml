@@ -1814,4 +1814,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permission_read_external_storage_rationale">Abrir archivos en su dispositivo requiere permiso para leer su almacenamiento externo.</string>
     <string name="permission_notification_rationale">Para poder notificar noticias y actualizaciones, se requiere permiso para enviar notificaciones.</string>
     <string name="hamburger_menu_zoom">Zoom</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">No se pudo cambiar al modo 3D. Intente desconectar las gafas y volver a conectarlas y reinicie Wolvic.</string>
+    <string name="vision_glass_error_message">Ocurrió un error.
+\nPor favor, inténtalo de nuevo.</string>
+    <string name="vision_glass_touchpad_instructions">Toque para hacer clic. Desliza para desplazarte</string>
+    <string name="phone_ui_alert_dialog_title">Error</string>
+    <string name="phone_ui_usb_alert_dialog_description">No se pudieron obtener permisos USB. Intente desconectar las gafas y volver a conectarlas y reinicie Wolvic.</string>
+    <string name="vision_glass_disconnected_message">Por favor, conecte Vision Glass</string>
 </resources>
