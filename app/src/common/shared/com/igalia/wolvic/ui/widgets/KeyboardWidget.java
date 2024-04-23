@@ -398,7 +398,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
         aPlacement.visible = false;
         // FIXME: keyboard is misplaced when rendered in a cylinder layer.
-        aPlacement.cylinder = !((VRBrowserActivity) getContext()).areLayersEnabled();
+        aPlacement.cylinder = false;
         aPlacement.layerPriority = 1;
         updatePlacementTranslationZ();
     }
