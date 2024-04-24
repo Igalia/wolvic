@@ -625,7 +625,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">Autoriser %1$s à envoyer des données techniques et d’interaction à Mozilla</string>
+    <string name="security_options_telemetry_send_data">Autoriser %1$s à envoyer des données techniques et d’interaction à Huawei</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1808,4 +1808,21 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_windows_can_move">Glisser pour déplacer les fenêtres</string>
     <string name="fxa_account_options_device_name">Nom de l\'appareil</string>
     <string name="device_name">%1$s sur %2$s</string>
+    <string name="permission_rationale_title">Permissions supplémentaires</string>
+    <string name="permission_camera_rationale">Prendre des images de votre environnement nécessite la permission d’utiliser votre appareil photo.</string>
+    <string name="permission_camera_and_microphone_rationale">Fournir des services tels que des visioconférences nécessite la permission d’utiliser votre appareil photo et microphone.</string>
+    <string name="permission_location_rationale">Offrir des nouvelles et contenus locaux nécessite la permission d’accéder à votre position.</string>
+    <string name="permission_notification_rationale">Vous tenir informer de nouvelles et mises à jour nécessite la permission d’envoyer des notifications.</string>
+    <string name="permission_persistent_storage_rationale">Enregistrer et ouvrir des fichiers sur votre appareil nécessite la permission de stocker des données dans le stockage permanent.</string>
+    <string name="hamburger_menu_zoom">Zoom</string>
+    <string name="phone_ui_alert_dialog_title">Erreur</string>
+    <string name="permission_microphone_rationale">Effectuer des recherches et saisies vocales nécessite la permission d’utiliser votre microphone.</string>
+    <string name="permission_read_external_storage_rationale">Ouvrir des fichiers sur votre appareil nécessite la permission de lire votre périphérique de stockage.</string>
+    <string name="tray_status_phone">Téléphone: %1$s</string>
+    <string name="vision_glass_touchpad_instructions">Appuyer sur l’écran pour cliquer. Balayer l’écran pour faire défiler</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Échec du passage en mode 3D. Essayez de déconnecter et reconnecter vos lunettes puis redémarrer Wolvic.</string>
+    <string name="phone_ui_usb_alert_dialog_description">Impossible d’obtenir les permissions USB. Essayez de déconnecter et reconnecter vos lunettes puis redémarrer Wolvic.</string>
+    <string name="vision_glass_disconnected_message">Veuillez connecter vos lunettes Vision Glass</string>
+    <string name="vision_glass_error_message">Une erreur est survenue.
+\nVeuillez ressayer.</string>
 </resources>
