@@ -1808,13 +1808,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="fxa_account_options_device_name">디바이스 이름</string>
     <string name="device_name">%2$s 의 %1$s</string>
     <string name="permission_rationale_title">추가 권한</string>
-    <string name="permission_camera_rationale">주변 세계의 이미지를 촬영하려면 카메라를 사용할 수 있는 권한이 필요합니다.</string>
+    <string name="permission_camera_rationale">주변 환경의 사진을 촬영하려면 카메라를 사용할 수 있는 권한이 필요합니다.</string>
     <string name="permission_camera_and_microphone_rationale">화상 회의와 같은 서비스를 제공하려면 카메라와 마이크를 사용할 수 있는 권한이 필요합니다.</string>
-    <string name="permission_notification_rationale">뉴스 및 업데이트를 알려면 알림을 보낼 수 있는 권한이 필요합니다.</string>
+    <string name="permission_notification_rationale">새 소식 및 업데이트를 받으려면 알림을 보낼 수 있는 권한이 필요합니다.</string>
     <string name="permission_persistent_storage_rationale">장치에 파일을 저장하고 열려면 데이터를 영구 저장소에 저장할 수 있는 권한이 필요합니다.</string>
     <string name="hamburger_menu_zoom">줌</string>
     <string name="tray_status_phone">전화: %1$s</string>
     <string name="permission_microphone_rationale">음성 검색 및 텍스트 입력을 수행하려면 마이크를 사용할 수 있는 권한이 필요합니다.</string>
-    <string name="permission_location_rationale">주변 뉴스와 콘텐츠를 제공하려면 귀하의 위치에 액세스할 수 있는 권한이 필요합니다.</string>
+    <string name="permission_location_rationale">현지 뉴스와 콘텐츠를 제공하려면 귀하의 위치에 액세스할 수 있는 권한이 필요합니다.</string>
     <string name="permission_read_external_storage_rationale">장치에서 파일을 열려면 외부 저장소를 읽을 수 있는 권한이 필요합니다.</string>
+    <string name="phone_ui_alert_dialog_title">오류</string>
+    <string name="vision_glass_disconnected_message">Vision Glass를 연결해 주세요</string>
+    <string name="vision_glass_touchpad_instructions">탭으로 클릭. 스와이프로 스크롤</string>
+    <string name="phone_ui_usb_alert_dialog_description">USB 권한을 얻는 데 실패했습니다. 안경의 전원을 뽑고 다시 연결해 주신 후, Wolvic을 다시 실행해 주세요.</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">3D 모드로 전환에 실패했습니다. 안경의 전원을 뽑고 다시 연결해 주신 후, Wolvic을 다시 실행해 주세요.</string>
+    <string name="vision_glass_error_message">에러가 발생했습니다.
+\n다시 시도해주세요.</string>
 </resources>
