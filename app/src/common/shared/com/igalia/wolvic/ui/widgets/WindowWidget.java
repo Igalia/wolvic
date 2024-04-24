@@ -74,6 +74,8 @@ import com.igalia.wolvic.utils.ViewUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2229,9 +2231,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onHandleExternalRequest(@NonNull String url) {
+        try {
+            if (UrlUtils.parseUri(url).getScheme() == null)
+                return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
         if (UrlUtils.isEngineSupportedScheme(url)) {
             return false;
-
         } else {
             Intent intent;
             try {
