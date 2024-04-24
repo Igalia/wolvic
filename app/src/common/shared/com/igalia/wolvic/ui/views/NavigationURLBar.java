@@ -380,9 +380,8 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public  void handleURLEdit(String text) {
-        String url = UrlUtils.urlForText(getContext(), text.trim());
-
         if (!mDelegate.onHandleExternalRequest(text)) {
+            String url = UrlUtils.urlForText(getContext(), text.trim());
             mViewModel.setUrl(url);
             mSession.loadUri(url);
         }
