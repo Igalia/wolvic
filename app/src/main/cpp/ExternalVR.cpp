@@ -231,6 +231,7 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
           break;
     case device::HVR3DoF:
     case device::HVR6DoF:
+    case device::VisionGlass:
     case device::ViveFocus:
       result = mozilla::gfx::VRControllerType::HTCViveFocus;
       break;
@@ -261,9 +262,6 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
     case device::LynxR1:
       // FIXME: Gecko does not support LynxR1 device yet, so let's use a similar one for WebXR.
       result = mozilla::gfx::VRControllerType::OculusTouch3;
-      break;
-    case device::VisionGlass:
-      result = mozilla::gfx::VRControllerType::_empty;
       break;
     case device::UnknownType:
     default:
