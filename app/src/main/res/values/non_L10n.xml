@@ -231,8 +231,9 @@
     <!-- Shared preferences key to store the list of installed Web apps (JSON string) -->
     <string name="settings_key_web_apps_data" translatable="false">settings_key_web_apps_data</string>
 
-    <!-- China license number -->
-    <string name="rCN_license_number" translatable="false">ICP备案号：京ICP备2022006476号-10A</string>
+    <!-- China ICP license number; the actual value is set in each specific build. -->
+    <string name="rCN_icp_license_number" translatable="false" />
+    <string name="rCN_license_number" translatable="false">@string/rCN_icp_license_number</string>
     <string name="rCN_license_link" translatable="false">https://beian.miit.gov.cn/</string>
 
 </resources>
