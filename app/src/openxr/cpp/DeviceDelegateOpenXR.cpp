@@ -1504,6 +1504,10 @@ DeviceDelegateOpenXR::DrawHandMesh(const uint32_t aControllerIndex, const vrb::C
   m.handMeshRenderer->Draw(aControllerIndex, aCamera);
 }
 
+bool DeviceDelegateOpenXR::PopulateTrackedKeyboardInfo(DeviceDelegate::TrackedKeyboardInfo& keyboardInfo) {
+  return m.input->PopulateTrackedKeyboardInfo(keyboardInfo);
+}
+
 void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   // Reset reorientation after Enter VR

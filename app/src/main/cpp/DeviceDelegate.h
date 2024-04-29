@@ -13,6 +13,7 @@
 #include "GestureDelegate.h"
 #include "VRLayer.h"
 #include "vrb/LoaderThread.h"
+#include "vrb/Matrix.h"
 
 #include <memory>
 
@@ -56,6 +57,11 @@ public:
   enum class FrameEndMode {
       APPLY,
       DISCARD
+  };
+  struct TrackedKeyboardInfo {
+      bool isActive;
+      vrb::Matrix transform;
+      std::vector<uint8_t> modelBuffer;
   };
   virtual device::DeviceType GetDeviceType() { return device::UnknownType; }
   virtual void SetRenderMode(const device::RenderMode aMode) = 0;
@@ -115,6 +121,7 @@ public:
   virtual void UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
                               const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {};
   virtual void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) {};
+  virtual bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) { return false; };
 
 protected:
   DeviceDelegate() {}

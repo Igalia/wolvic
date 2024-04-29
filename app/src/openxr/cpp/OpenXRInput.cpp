@@ -217,7 +217,8 @@ void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace 
       keyboardTrackingFB->space = XR_NULL_HANDLE;
     }
     bzero(&keyboardTrackingFB->description, sizeof(keyboardTrackingFB->description));
-    keyboardTrackingFB->modelBuffer.resize(0);
+    keyboardTrackingFB->modelBuffer.clear();
+    keyboardTrackingFB->modelBufferChanged = false;
   }
 
   // Bail-out if no keyboard exists
@@ -259,6 +260,35 @@ void OpenXRInput::SetKeyboardTrackingEnabled(bool enabled) {
     keyboardTrackingFB.reset();
     keyboardTrackingFB = nullptr;
   }
+}
+
+bool OpenXRInput::PopulateTrackedKeyboardInfo(DeviceDelegate::TrackedKeyboardInfo& keyboardInfo) {
+  if (keyboardTrackingFB == nullptr)
+    return false;
+
+  if (keyboardTrackingFB->description.trackedKeyboardId == 0 || keyboardTrackingFB->space == nullptr ||
+      keyboardTrackingFB->modelBuffer.size() == 0) {
+    return false;
+  }
+
+  // Only report keyboard as active (be shown to the user) if it is connected and actively tracked.
+  keyboardInfo.isActive =
+    (keyboardTrackingFB->description.flags & XR_KEYBOARD_TRACKING_CONNECTED_BIT_FB) != 0 &&
+    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT) != 0 &&
+    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT) != 0;
+
+  // Copy the model buffer over only if it has changed
+  if (keyboardTrackingFB->modelBufferChanged) {
+    keyboardInfo.modelBuffer = keyboardTrackingFB->modelBuffer;
+    keyboardTrackingFB->modelBufferChanged = false;
+  } else {
+    keyboardInfo.modelBuffer.resize(0);
+  }
+
+  keyboardInfo.transform = XrPoseToMatrix(keyboardTrackingFB->location.pose);
+  keyboardInfo.transform.TranslateInPlace(kAverageHeight);
+
+  return true;
 }
 
 OpenXRInput::~OpenXRInput() {
