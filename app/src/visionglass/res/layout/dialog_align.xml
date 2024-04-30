@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/prompt_dialog_width"
+    android:orientation="vertical"
+    android:layout_height="@dimen/prompt_dialog_height"
+    android:background="@drawable/dialog_background"
+    android:paddingStart="30dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="30dp"
+    android:paddingBottom="30dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reorientImage"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:singleLine="false"
+        android:text="@string/vision_glass_realign_dialog_explanation"
+        android:textColor="@color/fog"
+        android:textSize="@dimen/text_big_size"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/reorientImage"
+        android:layout_width="250dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:src="@drawable/reorient_phone" />
+
+</LinearLayout>
