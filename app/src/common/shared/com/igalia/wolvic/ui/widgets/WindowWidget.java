@@ -2231,13 +2231,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onHandleExternalRequest(@NonNull String url) {
+        URI uri;
         try {
-            if (UrlUtils.parseUri(url).getScheme() == null)
+            uri = UrlUtils.parseUri(url);
+            if (uri.getScheme() == null)
                 return false;
         } catch (URISyntaxException e) {
             return false;
         }
-        if (UrlUtils.isEngineSupportedScheme(url, mSession.getWSession().getUrlUtilsVisitor())) {
+        if (UrlUtils.isEngineSupportedScheme(uri, mSession.getWSession().getUrlUtilsVisitor())) {
             return false;
         } else {
             Intent intent;
