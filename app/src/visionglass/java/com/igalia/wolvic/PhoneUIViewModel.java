@@ -19,6 +19,9 @@ public class PhoneUIViewModel extends ViewModel {
     }
 
     public void updateConnectionState(ConnectionState newState) {
+        if (newState.equals(mConnectionState.getValue()))
+            return;
+
         mConnectionState.postValue(newState);
 
         if (newState != ConnectionState.ACTIVE) {

@@ -2557,5 +2557,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_disconnected_message">Please connect Vision Glass</string>
     <!-- Vision Glass: instruct the user to unplug the device and try again -->
     <string name="vision_glass_error_message">An error happened.\nPlease try again.</string>
+    <!-- Vision Glass: instruct the user to point the phone straight ahead to re-align the controller. -->
+    <string name="vision_glass_realign_dialog_explanation">To set up the controller, please point your phone straight ahead and tap the button.</string>
 
 </resources>
