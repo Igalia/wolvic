@@ -28,7 +28,9 @@ import org.chromium.wolvic.UserDialogManagerBridge;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
@@ -51,6 +53,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     private WebContents mWebContents;
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
+    private UrlUtilsVisitor mUrlUtilsVisitor;
 
     private class ReadyCallback implements RuntimeImpl.Callback {
         @Override
@@ -471,5 +474,20 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     public WResult<Boolean> checkLoginIfAlreadySaved(PasswordForm form) {
        return mRuntime.getUpLoginPersistence().checkLoginIfAlreadySaved(form);
+    }
+
+    @NonNull
+    @Override
+    public UrlUtilsVisitor getUrlUtilsVisitor() {
+        if (mUrlUtilsVisitor == null) {
+            mUrlUtilsVisitor = new UrlUtilsVisitor() {
+                private final List<String> ENGINE_SUPPORTED_SCHEMES = Arrays.asList("about", "data", "file", "ftp", "http", "https", "view-source", "ws", "wss", "blob", "chrome");
+                @Override
+                public boolean isSupportedScheme(@NonNull String scheme) {
+                    return ENGINE_SUPPORTED_SCHEMES.contains(scheme);
+                }
+            };
+        }
+        return mUrlUtilsVisitor;
     }
 }

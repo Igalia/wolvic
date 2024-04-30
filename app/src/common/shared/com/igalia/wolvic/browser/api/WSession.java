@@ -2733,7 +2733,19 @@ public interface WSession {
     @UiThread
     void getClientToScreenMatrix(@NonNull final Matrix matrix);
 
+    interface UrlUtilsVisitor {
+        @AnyThread
+        boolean isSupportedScheme(@NonNull String scheme);
+    }
 
+    /**
+     * Get the URL utils visitor for this session.
+     *
+     * @return UrlUtilsVisitor instance.
+     */
+    @AnyThread
+    @NonNull
+    UrlUtilsVisitor getUrlUtilsVisitor();
 
     /**
      * Get a matrix for transforming from page coordinates to screen coordinates. The page coordinates
