@@ -35,6 +35,8 @@ public class UrlUtils {
 
     public static String UNKNOWN_MIME_TYPE = "application/octet-stream";
     public static String EXTENSION_MIME_TYPE = "application/x-xpinstall";
+    public static boolean isUnderTest = false;
+    public static String TEST_SEARCH_URL = "http://testsearchengine.com/search?q=";
 
     public static String stripCommonSubdomains(@Nullable String host) {
         if (host == null) {
@@ -260,7 +262,7 @@ public class UrlUtils {
         } else if (text.startsWith("about:") || text.startsWith("resource://") || UrlUtils.isFileUri(text)) {
             url = text;
         } else {
-            url = SearchEngineWrapper.get(context).getSearchURL(text);
+            url = !isUnderTest ? SearchEngineWrapper.get(context).getSearchURL(text) : TEST_SEARCH_URL + url;
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
             TelemetryService.urlBarEvent(false);
