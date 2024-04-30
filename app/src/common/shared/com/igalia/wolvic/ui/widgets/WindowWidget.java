@@ -2237,7 +2237,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } catch (URISyntaxException e) {
             return false;
         }
-        if (UrlUtils.isEngineSupportedScheme(url)) {
+        if (UrlUtils.isEngineSupportedScheme(url, mSession.getWSession().getUrlUtilsVisitor())) {
             return false;
         } else {
             Intent intent;

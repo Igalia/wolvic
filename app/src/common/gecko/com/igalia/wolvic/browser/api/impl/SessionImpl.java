@@ -19,6 +19,8 @@ import com.igalia.wolvic.browser.api.WTextInput;
 import org.mozilla.geckoview.GeckoSession;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class SessionImpl implements WSession {
     private @NonNull GeckoSession mSession;
@@ -36,6 +38,7 @@ public class SessionImpl implements WSession {
     private TextInputImpl mTextInput;
     private PanZoomControllerImpl mPanZoomController;
     private Method mGeckoLocationMethod;
+    private UrlUtilsVisitor mUrlUtilsVisitor;
 
     // The difference between "Mobile" and "VR" matches GeckoViewSettings.jsm
     private static final String WOLVIC_USER_AGENT_MOBILE = GeckoSession.getDefaultUserAgent() + " Wolvic/" + BuildConfig.VERSION_NAME;
@@ -399,5 +402,19 @@ public class SessionImpl implements WSession {
             result |= GeckoSession.LOAD_FLAGS_BYPASS_CLASSIFIER;
         }
         return result;
+    }
+
+    @Override
+    public UrlUtilsVisitor getUrlUtilsVisitor() {
+        if (mUrlUtilsVisitor == null) {
+            mUrlUtilsVisitor = new UrlUtilsVisitor() {
+                private final List<String> ENGINE_SUPPORTED_SCHEMES = Arrays.asList("about", "data", "file", "ftp", "http", "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob");
+                @Override
+                public boolean isSupportedScheme(@NonNull String scheme) {
+                    return ENGINE_SUPPORTED_SCHEMES.contains(scheme);
+                }
+            };
+        }
+        return mUrlUtilsVisitor;
     }
 }
