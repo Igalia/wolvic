@@ -44,7 +44,7 @@ public class AlignDynamicButton extends MaterialButton {
         // metrics
         mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
         mCornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-        mSquarePadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+        mSquarePadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
         mCirclePadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
 
         mPaint = new Paint();
@@ -60,17 +60,22 @@ public class AlignDynamicButton extends MaterialButton {
 
         // Draw square
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setAlpha(150);
+        mPaint.setAlpha(120);
         mSquareRect.set(mSquarePadding, mSquarePadding, getWidth() - mSquarePadding, getHeight() - mSquarePadding);
 
         canvas.drawRoundRect(mSquareRect, mCornerRadius, mCornerRadius, mPaint);
+
+        // Draw crosshair
+        float crosshairLength = getWidth() / 12f;
+        canvas.drawLine(getWidth() / 2f - crosshairLength, getHeight() / 2f, getWidth() / 2f + crosshairLength, getHeight() / 2f, mPaint);
+        canvas.drawLine(getWidth() / 2f, getHeight() / 2f - crosshairLength, getWidth() / 2f, getHeight() / 2f + crosshairLength, mPaint);
 
         // Draw circle
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setAlpha(255);
         float radius = Math.min(getWidth(), getHeight()) / 10f;
-        float centerX = mCirclePadding + ((mPointPosition.x + 1) * (getWidth() - mCirclePadding) / 2f);
-        float centerY = mCirclePadding + ((mPointPosition.y + 1) * (getHeight() - mCirclePadding) / 2f);
+        float centerX = mCirclePadding + ((mPointPosition.x + 1) / 2f) * (getWidth() - 2 * mCirclePadding);
+        float centerY = mCirclePadding + ((mPointPosition.y + 1) / 2f) * (getHeight() - 2 * mCirclePadding);
 
         canvas.drawCircle(centerX, centerY, radius, mPaint);
     }

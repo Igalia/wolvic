@@ -32,11 +32,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 
-import androidx.activity.ComponentActivity;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.huawei.usblib.DisplayMode;
@@ -48,6 +48,7 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.databinding.VisionglassLayoutBinding;
+import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -57,7 +58,7 @@ import java.util.Arrays;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class PlatformActivity extends ComponentActivity implements SensorEventListener, OnConnectionListener {
+public class PlatformActivity extends FragmentActivity implements SensorEventListener, OnConnectionListener {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static final String HUAWEI_USB_PERMISSION = "com.huawei.usblib.USB_PERMISSION";
@@ -72,6 +73,8 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private int mUSBPermissionRequestCount = 0;
     private boolean mSwitchedTo3DMode = false;
     private boolean mShouldRecalibrateAfterIMURestart = false;
+    private AlignPhoneDialogFragment mAlignDialogFragment;
+    private AlignNotificationUIDialog mAlignNotificationUIDialog;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -189,6 +192,35 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    private void reorientController() {
+        mAlignDialogFragment.dismiss();
+
+        if (mAlignNotificationUIDialog != null) {
+            mAlignNotificationUIDialog.hide(UIWidget.REMOVE_WIDGET);
+            mAlignNotificationUIDialog = null;
+        }
+
+        mSensorManager.unregisterListener(this);
+        registerPhoneIMUListener();
+
+        runVRBrowserActivityCallback(activity -> activity.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL));
+    }
+
+    private void onConnectionStateChanged(PhoneUIViewModel.ConnectionState connectionState) {
+        Log.d(LOGTAG, "Connection state updated: " + connectionState);
+
+        if (connectionState == PhoneUIViewModel.ConnectionState.ACTIVE) {
+            mAlignDialogFragment.show(getSupportFragmentManager(), "AlignDialogFragment");
+
+            if (mAlignNotificationUIDialog == null) {
+                mAlignNotificationUIDialog = new AlignNotificationUIDialog(this);
+            }
+            mAlignNotificationUIDialog.show(UIWidget.REQUEST_FOCUS);
+        } else if (mAlignDialogFragment.isAdded()) {
+            mAlignDialogFragment.dismiss();
+        }
+    }
+
     private void initVisionGlassPhoneUI() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -204,15 +236,16 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mBinding.setViewModel(mViewModel);
         mBinding.setLifecycleOwner(this);
 
-        mViewModel.getConnectionState().observe(this, connectionState ->
-                Log.d(LOGTAG, "Connection state updated: " + connectionState));
+        mViewModel.getConnectionState().observe(this, this::onConnectionStateChanged);
+
+        mAlignDialogFragment = new AlignPhoneDialogFragment(R.style.Theme_WolvicPhone);
+        mAlignDialogFragment.setOnRealignButtonClickListener(v -> {
+            reorientController();
+        });
+
+        mBinding.realignButton.setOnClickListener(v -> reorientController());
 
         mBinding.voiceSearchButton.setEnabled(false);
-
-        mBinding.realignButton.setOnClickListener(v -> {
-            mSensorManager.unregisterListener(this);
-            registerPhoneIMUListener();
-        });
 
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> onBackPressed());
@@ -308,6 +341,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         }
 
         mBinding.realignButton.updatePosition(-quaternion[3], -quaternion[1]);
+
+        if (mAlignDialogFragment != null && mAlignDialogFragment.isVisible()) {
+            mAlignDialogFragment.updatePosition(-quaternion[3], -quaternion[1]);
+        }
     }
 
     @Override
