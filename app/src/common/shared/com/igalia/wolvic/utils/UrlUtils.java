@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
+import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.telemetry.TelemetryService;
 
@@ -30,8 +31,6 @@ import java.util.regex.Pattern;
 
 // This class refers from mozilla-mobile/focus-android
 public class UrlUtils {
-
-    private static List<String> ENGINE_SUPPORTED_SCHEMES = Arrays.asList(null, "about", "data", "file", "ftp", "http", "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob");
 
     public static String UNKNOWN_MIME_TYPE = "application/octet-stream";
     public static String EXTENSION_MIME_TYPE = "application/x-xpinstall";
@@ -254,7 +253,7 @@ public class UrlUtils {
         }
     }
 
-    public static String urlForText(@NonNull Context context, @NonNull String text) {
+    public static String urlForText(@NonNull Context context, @NonNull String text, @NonNull WSession.UrlUtilsVisitor visitor) {
         String url = text.trim();
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
@@ -278,7 +277,8 @@ public class UrlUtils {
     }
 
     // TODO Ideally we should use something like org.mozilla.fenix.components.AppLinksInterceptor for this
-    public static boolean isEngineSupportedScheme(@NonNull String url) {
-        return ENGINE_SUPPORTED_SCHEMES.contains(Uri.parse(url).getScheme());
+    public static boolean isEngineSupportedScheme(@NonNull String url, @NonNull WSession.UrlUtilsVisitor visitor) {
+        String scheme = Uri.parse(url).getScheme();
+        return scheme != null && visitor.isSupportedScheme(scheme);
     }
 }
