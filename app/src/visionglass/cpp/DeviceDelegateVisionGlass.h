@@ -42,6 +42,7 @@ public:
   void BindEye(const device::Eye) override;
   void EndFrame(const FrameEndMode aMode) override;
   bool IsControllerLightEnabled() const override;
+  void SetHitDistance(const float) override;
   // DeviceDelegateVisionGlass interface
   void InitializeJava(JNIEnv* aEnv, jobject aActivity);
   void ShutdownJava();
