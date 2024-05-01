@@ -235,6 +235,14 @@ DeviceDelegateVisionGlass::GetControllerModelName(const int32_t) const {
 }
 
 void
+DeviceDelegateVisionGlass::SetHitDistance(const float distance) {
+  // Scale the beam so it reaches all the way to the pointer.
+  auto beamTransform = vrb::Matrix::Identity();
+  beamTransform.ScaleInPlace(vrb::Vector(1.0, 1.0, distance));
+  m.controller->SetBeamTransform(kControllerIndex, beamTransform);
+}
+
+void
 DeviceDelegateVisionGlass::ProcessEvents() {}
 
 vrb::Quaternion
