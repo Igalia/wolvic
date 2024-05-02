@@ -1750,16 +1750,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void startWidgetResize(final Widget aWidget, float aMaxWidth, float aMaxHeight, float minWidth, float minHeight) {
+    public void startWidgetResize(final WindowWidget aWidget) {
         if (aWidget == null) {
             return;
         }
         mWindows.enterResizeMode();
-        queueRunnable(() -> startWidgetResizeNative(aWidget.getHandle(), aMaxWidth, aMaxHeight, minWidth, minHeight));
+        Pair<Float, Float> maxSize = aWidget.getMaxWorldSize();
+        Pair<Float, Float> minSize = aWidget.getMinWorldSize();
+        queueRunnable(() -> startWidgetResizeNative(aWidget.getHandle(), maxSize.first, maxSize.second, minSize.first, minSize.second));
     }
 
     @Override
-    public void finishWidgetResize(final Widget aWidget) {
+    public void finishWidgetResize(final WindowWidget aWidget) {
         if (aWidget == null) {
             return;
         }
@@ -1923,11 +1925,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void setControllersVisible(final boolean aVisible) {
         queueRunnable(() -> setControllersVisibleNative(aVisible));
-    }
-
-    @Override
-    public void setWindowSize(float targetWidth, float targetHeight) {
-        mWindows.getFocusedWindow().resizeByMultiplier(targetWidth / targetHeight, 1.0f);
     }
 
     @Override

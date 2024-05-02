@@ -1307,10 +1307,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
     private void startWidgetResize() {
         if (mAttachedWindow != null) {
-            final float aspect = (float) mAttachedWindow.getWindowWidth() / (float) mAttachedWindow.getWindowHeight();
-            Pair<Float, Float> maxSize = mAttachedWindow.getSizeForScale(mAttachedWindow.getMaxWindowScale(), aspect);
-            Pair<Float, Float> minSize = mAttachedWindow.getSizeForScale(0.5f, aspect);
-            mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, maxSize.second, minSize.first, minSize.second);
+            mWidgetManager.startWidgetResize(mAttachedWindow);
         }
     }
 
