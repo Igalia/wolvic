@@ -371,7 +371,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         initializeSpeechRecognizer();
 
         mPoorPerformanceAllowList = new HashSet<>();
-        checkForCrash();
+
+        // FIXME: We don't have any crash report analysis tool, so we need to disable this for the time being.
+        if (false)
+            checkForCrash();
 
         setHeadLockEnabled(mSettings.isHeadLockEnabled());
 
