@@ -213,7 +213,7 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags "-DOCULUSVR -DOPENXR"
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", "-DOPENXR=ON"
+                    arguments "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", "-DOPENXR=ON"
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
@@ -693,6 +693,8 @@ dependencies {
     implementation deps.work.runtime
     implementation deps.work.runtime_ktx
 
+    // OpenXR standard loader
+    implementation 'org.khronos.openxr:openxr_loader_for_android:1.0.34'
 
     // Testing
     androidTestImplementation deps.atsl.runner
@@ -722,9 +724,6 @@ dependencies {
     hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
     hvrImplementation 'com.huawei.hms:location:6.2.0.300'
     hvrImplementation 'com.huawei.hms:push:6.5.0.300'
-
-    // Lynx
-    lynxImplementation fileTree(dir: "${project.rootDir}/third_party/lynx", include: ['*.aar'])
 
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
