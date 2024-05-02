@@ -17,7 +17,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import androidx.preference.PreferenceManager;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;
@@ -37,6 +36,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -107,6 +107,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public static final int DEACTIVATE_CURRENT_SESSION = 0;
     public static final int LEAVE_CURRENT_SESSION_ACTIVE = 1;
 
+    private final float MIN_SCALE = 0.5f;
     private final float DEFAULT_SCALE = 1.0f;
     private final float MAX_SCALE = 3.0f;
 
@@ -1515,7 +1516,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mMaxWindowScale != aScale) {
             mMaxWindowScale = aScale;
 
-            Pair<Float, Float> maxSize = getSizeForScale(aScale);
+            Pair<Float, Float> maxSize = getSizeForScale(aScale, getCurrentAspect());
 
             if (mWidgetPlacement.worldWidth > maxSize.first) {
                 float currentAspect = (float) mWidgetPlacement.width / (float) mWidgetPlacement.height;
@@ -1537,40 +1538,68 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mMaxWindowScale;
     }
 
-    public @NonNull Pair<Float, Float> getSizeForScale(float aScale) {
-        return getSizeForScale(aScale, SettingsStore.getInstance(getContext()).getWindowAspect());
+    public Pair<Float, Float> getMaxWorldSize() {
+        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        float absoluteMaxWidth = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * WidgetPlacement.worldToDpRatio(getContext());
+        float currentMaxWidth = defaultWidth + (absoluteMaxWidth - defaultWidth) * (getMaxWindowScale() - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
+        float currentMaxHeight = SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT * WidgetPlacement.worldToDpRatio(getContext());
+        return new Pair<>(currentMaxWidth, currentMaxHeight);
+    }
+
+    public Pair<Float, Float> getMinWorldSize() {
+        float minWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * MIN_SCALE;
+        float minHeight = minWidth * SettingsStore.WINDOW_HEIGHT_DEFAULT / SettingsStore.WINDOW_WIDTH_DEFAULT;
+        return new Pair<>(minWidth, minHeight);
     }
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
-        float defaultWorldSize = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        float maxWorldSize = SettingsStore.MAX_WINDOW_WIDTH_DEFAULT * (defaultWorldSize/SettingsStore.WINDOW_WIDTH_DEFAULT);
-        float targetSize;
+        Pair<Float, Float> minWorldSize = getMinWorldSize();
+        Pair<Float, Float> maxWorldSize = getMaxWorldSize();
+        Pair<Float,Float> mainAxisMinMax, crossAxisMinMax;
+        float mainAxisDefault, mainAxisTarget;
+        float mainCrossAspect;
 
         boolean isHorizontal = aAspect >= 1.0;
-        if (!isHorizontal) {
-            defaultWorldSize = defaultWorldSize * aAspect;
-            maxWorldSize = SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT * (defaultWorldSize/SettingsStore.WINDOW_HEIGHT_DEFAULT);
+        if (isHorizontal) {
+            // horizontal orientation
+            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+            mainAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
+            crossAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
+            mainCrossAspect = aAspect;
+        } else {
+            // vertical orientation
+            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aAspect;
+            mainAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
+            crossAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
+            mainCrossAspect = 1 / aAspect;
         }
 
         if (aScale < DEFAULT_SCALE) {
-            // Reduce the area of the window according to the desired scale.
-            float worldSize = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-            float worldOrthogonalSize = isHorizontal ? worldSize / aAspect : worldSize * aAspect;
-            float targetArea = worldSize * worldOrthogonalSize * aScale;
-            targetSize = (float) Math.sqrt(targetArea * aAspect);
+            // Reduce the area of the window according to the desired scale, preserving the aspect ratio.
+            mainAxisTarget = (float) (mainAxisDefault * Math.sqrt(aScale));
         } else if (aScale == DEFAULT_SCALE) {
-            // Default window size.
-            targetSize = defaultWorldSize;
-        } else if (aScale >= MAX_SCALE) {
-            // Maximum window size.
-            targetSize = maxWorldSize;
+            // Main axis is set to the default size, cross axis will try to preserve the ratio.
+            mainAxisTarget = mainAxisDefault;
+        } else if (aScale >= getMaxWindowScale()) {
+            // Main axis is set to the maximum size, cross axis will try to preserve the ratio.
+            mainAxisTarget = mainAxisMinMax.second;
         } else {
             // Proportional between the default and maximum sizes.
-            targetSize = defaultWorldSize + (maxWorldSize - defaultWorldSize) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
+            mainAxisTarget = mainAxisDefault + (mainAxisMinMax.second - mainAxisDefault) * (aScale - DEFAULT_SCALE) / (MAX_SCALE - DEFAULT_SCALE);
         }
 
-        float targetOrthogonalSize = isHorizontal ? targetSize / aAspect : targetSize * aAspect;
-        return isHorizontal ? Pair.create(targetSize, targetOrthogonalSize) : Pair.create(targetOrthogonalSize, targetSize);
+        float crossAxisTarget = mainAxisTarget / mainCrossAspect;
+
+        // Adjust in case crossAxisTarget might have fallen outside of the boundaries.
+        if (crossAxisTarget < crossAxisMinMax.first) {
+            crossAxisTarget = crossAxisMinMax.first;
+            mainAxisTarget = Math.max(mainAxisMinMax.first, Math.min(crossAxisTarget * mainCrossAspect, mainAxisMinMax.second));
+        } else if (crossAxisTarget > crossAxisMinMax.second) {
+            crossAxisTarget = crossAxisMinMax.second;
+            mainAxisTarget = Math.max(mainAxisMinMax.first, Math.min(crossAxisTarget * mainCrossAspect, mainAxisMinMax.second));
+        }
+
+        return isHorizontal ? Pair.create(mainAxisTarget, crossAxisTarget) : Pair.create(crossAxisTarget, mainAxisTarget);
     }
 
     private int getWindowWidth(float aWorldWidth) {

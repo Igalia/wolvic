@@ -70,8 +70,8 @@ public interface WidgetManagerDelegate {
     void updateWidgetsPlacementTranslationZ();
     void updateVisibleWidgets();
     void recreateWidgetSurface(Widget aWidget);
-    void startWidgetResize(Widget aWidget, float maxWidth, float maxHeight, float minWidth, float minHeight);
-    void finishWidgetResize(Widget aWidget);
+    void startWidgetResize(WindowWidget aWidget);
+    void finishWidgetResize(WindowWidget aWidget);
     void startWidgetMove(Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
     void finishWidgetMove();
     void addUpdateListener(@NonNull UpdateListener aUpdateListener);
@@ -83,7 +83,6 @@ public interface WidgetManagerDelegate {
     void popWorldBrightness(Object aKey);
     void triggerHapticFeedback();
     void setControllersVisible(boolean visible);
-    void setWindowSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();

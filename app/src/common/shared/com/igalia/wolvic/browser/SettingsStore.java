@@ -103,7 +103,7 @@ public class SettingsStore {
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
     // The maximum size is computed so the resulting texture fits within 2560x2560.
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 675;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 800;
 
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
