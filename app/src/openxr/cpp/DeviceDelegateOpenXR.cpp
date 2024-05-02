@@ -1371,6 +1371,30 @@ DeviceDelegateOpenXR::CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) {
   return layer;
 }
 
+void DeviceDelegateOpenXR::checkSupportedColorFormats(GLint aInternalFormat) {
+    ASSERT(m.session);
+    std::string format;
+    switch (aInternalFormat) {
+        case GL_COMPRESSED_SRGB8_ETC2:
+            format = "GL_COMPRESSED_SRGB8_ETC2";
+            break;
+        case GL_COMPRESSED_RGB8_ETC2:
+            format = "GL_COMPRESSED_RGB8_ETC2";
+            break;
+        case GL_RGBA8:
+            format = "GL_RGBA8";
+            break;
+        case GL_SRGB8_ALPHA8:
+            format = "GL_SRGB8_ALPHA8";
+            break;
+        default:
+            format = "UNKNOWN";
+    }
+
+    VRB_LOG("Checking the %s color format", format.c_str());
+    CHECK_MSG(m.SupportsColorFormat(aInternalFormat), "Runtime doesn't support the selected swapChain color format");
+}
+
 
 VRLayerCubePtr
 DeviceDelegateOpenXR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) {
@@ -1383,6 +1407,7 @@ DeviceDelegateOpenXR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aIn
   VRLayerCubePtr layer = VRLayerCube::Create(aWidth, aHeight, aInternalFormat);
   m.cubeLayer = OpenXRLayerCube::Create(layer, aInternalFormat);
   if (m.session != XR_NULL_HANDLE) {
+    checkSupportedColorFormats(aInternalFormat);
     vrb::RenderContextPtr context = m.context.lock();
     m.cubeLayer->Init(m.javaContext->env, m.session, context);
   }
@@ -1602,6 +1627,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     layer->Init(m.javaContext->env, m.session, context);
   }
   if (m.cubeLayer) {
+    checkSupportedColorFormats(m.cubeLayer->GetColorFormat());
     m.cubeLayer->Init(m.javaContext->env, m.session, context);
   }
   if (m.equirectLayer) {

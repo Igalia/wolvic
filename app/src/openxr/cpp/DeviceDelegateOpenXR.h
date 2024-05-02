@@ -73,6 +73,10 @@ public:
   bool IsInVRMode() const;
   bool ExitApp();
   bool ShouldExitRenderLoop() const;
+
+private:
+  void checkSupportedColorFormats(GLint aInternalFormat);
+
 protected:
   struct State;
   DeviceDelegateOpenXR(State& aState);
