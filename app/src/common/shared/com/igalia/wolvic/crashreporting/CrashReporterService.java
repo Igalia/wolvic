@@ -59,9 +59,13 @@ public class CrashReporterService extends JobIntentService {
         }
         return files;
     }
-
+    
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
+        if (!EngineProvider.INSTANCE.isRuntimeCreated()) {
+            Log.e(LOGTAG, "Application crashed during startup, before the engine's runtime had been created.");
+            return;
+        }
         String action = intent.getAction();
         WRuntime.CrashReportIntent crash = EngineProvider.INSTANCE.getOrCreateRuntime(getBaseContext()).getCrashReportIntent();
         if (crash.action_crashed.equals(action)) {
