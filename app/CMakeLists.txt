@@ -89,41 +89,30 @@ target_sources(
 
 include(AndroidNdkModules)
 android_ndk_import_module_native_app_glue()
-target_link_libraries(native-lib native_app_glue)
+target_link_libraries(native-lib PRIVATE native_app_glue)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 endif()
 
-
 if(OPENXR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DXR_USE_PLATFORM_ANDROID -DXR_USE_GRAPHICS_API_OPENGL_ES")
-    include_directories(
-            ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include
-            ${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp
-    )
-    if (OCULUSVR)
-        include_directories(
-            ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
-        )
-        add_custom_command(TARGET native-lib POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Libs/Android/${ANDROID_ABI}/Release/libopenxr_loader.so
-                ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
-                )
-    elseif (HVR)
+    find_package(OpenXR REQUIRED CONFIG)
+    include_directories(${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp)
+    if (HVR)
+        include_directories(${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include)
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/../third_party/hvr/${ANDROID_ABI}/libxr_loader.so
                 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libxr_loader.so
                 )
     elseif (PICOXR)
-        include_directories(
-            ${CMAKE_SOURCE_DIR}/../third_party/picoxr/include
-        )
+        include_directories(${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include)
         add_custom_command(TARGET native-lib POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
         )
+    else ()
+        target_link_libraries(native-lib PRIVATE OpenXR::openxr_loader)
     endif ()
     target_sources(
             native-lib
@@ -141,6 +130,7 @@ if(OPENXR)
 endif()
 
 if(OCULUSVR)
+include_directories(${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include)
 add_custom_command(TARGET native-lib POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so
@@ -162,10 +152,6 @@ find_library( # Sets the name of the path variable.
               android-lib
               android )
 
-add_library(oculusvr-lib SHARED IMPORTED)
-set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Libs/Android/${ANDROID_ABI}/Release/libopenxr_loader.so )
-
 add_library(ovrplatform-lib SHARED IMPORTED)
 set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so )
@@ -182,22 +168,10 @@ add_library(picoxr-lib SHARED IMPORTED)
 set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so)
 
-if (LYNX OR SPACES)
+if(SPACES)
     find_package(loader REQUIRED CONFIG)
-    target_link_libraries(native-lib loader::openxr_loader)
-endif()
-
-if (AOSP)
-    # Each module in an Android project can link to only one CMake or ndk-build script file. Given
-    # that we already have the native-lib, we need to add other the OpenXR loaded CMake project
-    #to the top level CMakeLists.txt file, i.e., this one.
-    set(lib_src_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK)
-    set(lib_build_DIR ${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/build)
-    file(MAKE_DIRECTORY ${lib_build_DIR})
-
-    add_subdirectory(${lib_src_DIR} ${lib_build_DIR})
-    target_link_libraries(native-lib openxr_loader)
-endif()
+    target_link_libraries(native-lib PRIVATE loader::openxr_loader)
+endif ()
 
 # Add dependency on tinygltf library, which is used to load hand models
 # from .glb assets. Since it is only a single C++ source and header,
@@ -210,7 +184,7 @@ include_directories(
 
 # Add dependency on KTX-Software
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/main/cpp/KTX-Software)
-target_link_libraries(native-lib ktx_read)
+target_link_libraries(native-lib PRIVATE ktx_read)
 target_include_directories(native-lib PRIVATE ${CMAKE_SOURCE_DIR}/src/main/cpp/KTX-Software/include)
 
 # Specifies libraries CMake should link to your target library. You
@@ -218,7 +192,7 @@ target_include_directories(native-lib PRIVATE ${CMAKE_SOURCE_DIR}/src/main/cpp/K
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       native-lib PRIVATE
                        vrb
 
                        # Link VR_SDK_LIB exported from gradle flavors
