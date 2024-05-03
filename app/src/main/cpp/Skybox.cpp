@@ -253,7 +253,7 @@ FileDoesNotExist (const std::string& aName) {
 
 std::string
 Skybox::ValidateCustomSkyboxAndFindFileExtension(const std::string& aBasePath) {
-#if defined(PICOXR) || (defined(OPENXR) && defined(OCULUSVR))
+#if defined(PICOXR) || defined(OCULUSVR)
   const std::string& colorSpace = "_srgb";
 #else
   const std::string& colorSpace = "";
