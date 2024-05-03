@@ -1546,12 +1546,12 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   createInfo.next = reinterpret_cast<const XrBaseInStructure*>(&m.graphicsBinding);
   createInfo.systemId = m.system;
 
-  if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME)) {
-    XrSessionCreateInfoOverlayEXTX overlayInfo {
+  XrSessionCreateInfoOverlayEXTX overlayInfo {
       .type = XR_TYPE_SESSION_CREATE_INFO_OVERLAY_EXTX,
       .createFlags = 0,
       .sessionLayersPlacement = 0
-    };
+  };
+  if (OpenXRExtensions::IsExtensionSupported(XR_EXTX_OVERLAY_EXTENSION_NAME)) {
     auto oldNext = createInfo.next;
     createInfo.next = &overlayInfo;
     overlayInfo.next = oldNext;
