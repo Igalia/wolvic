@@ -1201,8 +1201,8 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
       frameEndInfo.layerCount = (uint32_t) layers.size();
       frameEndInfo.layers = layers.data();
 
+      XrFrameEndInfoML frameEndInfoML{XR_TYPE_FRAME_END_INFO_ML};
       if (OpenXRExtensions::IsExtensionSupported(XR_ML_FRAME_END_INFO_EXTENSION_NAME)) {
-            XrFrameEndInfoML frameEndInfoML{XR_TYPE_FRAME_END_INFO_ML};
             frameEndInfoML.next = nullptr;
             frameEndInfoML.focusDistance = distance;
             frameEndInfo.next = &frameEndInfoML;
