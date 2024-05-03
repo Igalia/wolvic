@@ -137,25 +137,6 @@ if(OPENXR)
             ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRExtensions.cpp
             ${CMAKE_SOURCE_DIR}/src/openxr/cpp/OpenXRPassthroughStrategy.cpp
     )
-
-elseif(OCULUSVR)
-include_directories(
-        ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Include
-        ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Include
-        ${CMAKE_SOURCE_DIR}/../app/src/oculusvr/cpp
-)
-target_sources(
-    native-lib
-    PUBLIC
-    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/DeviceDelegateOculusVR.cpp
-    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/OculusSwapChain.cpp
-    ${CMAKE_SOURCE_DIR}/src/oculusvr/cpp/OculusVRLayers.cpp
-    )
-add_custom_command(TARGET native-lib POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvrapi.so
-        )
 endif()
 
 if(OCULUSVR)
@@ -181,14 +162,8 @@ find_library( # Sets the name of the path variable.
               android )
 
 add_library(oculusvr-lib SHARED IMPORTED)
-if(OPENXR)
 set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/ovr_openxr_mobile_sdk/OpenXR/Libs/Android/${ANDROID_ABI}/Release/libopenxr_loader.so )
-else()
-set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so )
-endif()
-
 
 add_library(ovrplatform-lib SHARED IMPORTED)
 set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
