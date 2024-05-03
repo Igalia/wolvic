@@ -146,7 +146,11 @@ XrResult OpenXRInputSource::Initialize()
             mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
         else {
             // TODO: fine tune params for different devices.
-            OpenXRGestureManagerHandJoints::OneEuroFilterParams params = { 0.25, 0.1, 1 };
+            OpenXRGestureManagerHandJoints::OneEuroFilterParams params;
+            if (deviceType == device::MagicLeap2)
+                params = {0.25, 2, 1};
+            else
+                params = { 0.25, 0.1, 1 };
             mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints, &params);
         }
     }
