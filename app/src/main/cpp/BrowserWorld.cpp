@@ -1972,7 +1972,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   // meantime.
   const std::string extension = aExtension.empty() ? ".png" : aExtension;
   GLenum glFormat = GL_SRGB8_ALPHA8;
-#elif defined(OPENXR) && defined(OCULUSVR)
+#elif OCULUSVR
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_SRGB8_ETC2 : GL_SRGB8_ALPHA8;
 #else

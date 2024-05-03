@@ -16,8 +16,6 @@
 #include <vrb/RunnableQueue.h>
 #if defined(OPENXR)
 #include "DeviceDelegateOpenXR.h"
-#elif defined(OCULUSVR)
-#include "DeviceDelegateOculusVR.h"
 #endif
 
 #define STR(x) #x
@@ -40,9 +38,6 @@ using namespace crow;
 #if defined(OPENXR)
 typedef DeviceDelegateOpenXR PlatformDeviceDelegate;
 typedef DeviceDelegateOpenXRPtr PlatformDeviceDelegatePtr;
-#elif defined(OCULUSVR)
-typedef DeviceDelegateOculusVR PlatformDeviceDelegate;
-typedef DeviceDelegateOculusVRPtr PlatformDeviceDelegatePtr;
 #endif
 
 namespace {
