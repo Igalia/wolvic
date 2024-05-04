@@ -31,7 +31,7 @@ namespace crow {
     constexpr const char* kPathThumbstick { "input/thumbstick" };
     constexpr const char* kPathThumbrest { "input/thumbrest" };
     constexpr const char* kPathTrackpad { "input/trackpad" };
-    constexpr const char* kPathSelect { "/input/select" };
+    constexpr const char* kPathSelect { "input/select" };
     constexpr const char* kPathMenu { "input/menu" };
     constexpr const char* kPathBack { "input/back" };
     constexpr const char* kPathHaptic { "output/haptic" };
@@ -400,7 +400,7 @@ namespace crow {
             device::UnknownType,
             std::vector<OpenXRInputProfile> { "generic-button" },
             std::vector<OpenXRButton> {
-                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::Click, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Trigger, kPathSelect, OpenXRButtonFlags::Click, OpenXRHandFlags::Both },
             },
             {},
             std::vector<OpenXRHaptic> {

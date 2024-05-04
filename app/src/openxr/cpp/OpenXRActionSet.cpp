@@ -80,7 +80,7 @@ XrResult OpenXRActionSet::GetOrCreateAction(XrActionType actionType, const std::
 }
 
 XrResult OpenXRActionSet::GetOrCreateButtonActions(OpenXRButtonType type, OpenXRButtonFlags flags, OpenXRHandFlags hand, OpenXRButtonActions& actions) {
-  std::string key = mPrefix + "_button_";
+  std::string key = mPrefix + "button_";
   if (hand != OpenXRHandFlags::Both) {
     key += hand == OpenXRHandFlags::Left ? "left_" : "right_";
   }
