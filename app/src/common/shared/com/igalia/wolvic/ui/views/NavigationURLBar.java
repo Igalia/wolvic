@@ -158,8 +158,9 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.urlEditText.setOnEditorActionListener((aTextView, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEND) {
+                String textContent = aTextView.getText().toString();
                 ((Activity)getContext()).runOnUiThread(() -> {
-                    handleURLEdit(aTextView.getText().toString());
+                    handleURLEdit(textContent);
                 });
                 return true;
             }
