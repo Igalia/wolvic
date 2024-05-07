@@ -205,14 +205,14 @@ DeviceDelegateVisionGlass::SetControllerDelegate(ControllerDelegatePtr& aControl
   m.controller = aController;
   m.controller->CreateController(kControllerIndex, kControllerIndex, "Vision Glass Controller");
   m.controller->SetEnabled(kControllerIndex, true);
-  m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation);
   m.controller->SetTargetRayMode(kControllerIndex, device::TargetRayMode::TrackedPointer);
   m.controller->SetControllerType(kControllerIndex, device::VisionGlass);
   m.controller->SetMode(kControllerIndex, ControllerMode::Device);
   m.controller->SetAimEnabled(kControllerIndex, true);
-  m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation);
+  m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::PositionEmulated | device::GripSpacePosition);
 
-  m.controller->SetButtonCount(kControllerIndex, 5);
+  m.controller->SetButtonCount(kControllerIndex, 1);
+  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, false, false);
 }
 
 void
