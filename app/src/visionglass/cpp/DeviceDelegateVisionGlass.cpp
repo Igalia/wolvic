@@ -111,8 +111,8 @@ struct DeviceDelegateVisionGlass::State {
     cameras[0]->SetPerspective(fov);
     cameras[1]->SetPerspective(fov);
     immersiveDisplay->SetEyeResolution((int32_t)(glWidth / 2), glHeight);
-    immersiveDisplay->SetFieldOfView(device::Eye::Left, -halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, -halfVerticalFOV);
-    immersiveDisplay->SetFieldOfView(device::Eye::Right, -halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, -halfVerticalFOV);
+    immersiveDisplay->SetFieldOfView(device::Eye::Left, halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, halfVerticalFOV);
+    immersiveDisplay->SetFieldOfView(device::Eye::Right, halfHorizontalFOV, halfHorizontalFOV, halfVerticalFOV, halfVerticalFOV);
 
     immersiveDisplay->SetCapabilityFlags(device::PositionEmulated | device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession);
   }
