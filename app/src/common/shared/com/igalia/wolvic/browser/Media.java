@@ -100,6 +100,18 @@ public class Media implements WMediaSession.Delegate {
        }
     }
 
+    public void seekForward() {
+        if (mMediaSession != null) {
+            mMediaSession.seekForward();
+        }
+    }
+
+    public void seekBackward() {
+        if (mMediaSession != null) {
+            mMediaSession.seekBackward();
+        }
+    }
+
     public void play() {
         if (mMediaSession != null) {
             mMediaSession.play();
