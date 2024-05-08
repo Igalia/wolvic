@@ -165,7 +165,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        app:icon="@drawable/ic_icon_media_seek_backward_10"
+                        app:icon="@drawable/ic_icon_media_seek_backward"
                         app:iconGravity="textStart"
                         app:iconPadding="0dp"
                         app:iconTint="@color/white" />
@@ -187,7 +187,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        app:icon="@drawable/ic_icon_media_seek_forward_30"
+                        app:icon="@drawable/ic_icon_media_seek_forward"
                         app:iconGravity="textStart"
                         app:iconPadding="0dp"
                         app:iconTint="@color/white" />

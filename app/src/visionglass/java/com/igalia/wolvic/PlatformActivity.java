@@ -516,14 +516,14 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
-                media.seek(media.getCurrentTime() - 10);
+                media.seekBackward();
             });
 
             mBinding.seekForwardButton.setOnClickListener(v -> {
                 Media media = getActiveMedia();
                 if (media == null)
                     return;
-                media.seek(media.getCurrentTime() + 30);
+                media.seekForward();
             });
 
             mBinding.voiceSearchButton.setOnClickListener(v -> {
