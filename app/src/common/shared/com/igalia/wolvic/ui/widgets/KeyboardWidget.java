@@ -1007,16 +1007,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         final InputConnection connection = mInputConnection;
         final int action = mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION;
+        final boolean hide = (action == EditorInfo.IME_ACTION_DONE) || (action == EditorInfo.IME_ACTION_GO) ||
+                (action == EditorInfo.IME_ACTION_SEARCH) || (action == EditorInfo.IME_ACTION_SEND);
         postInputCommand(() -> postDisplayCommand(() -> {
             // Handle the action before clearing the focus, otherwise URL autocomplete will be lost.
             connection.performEditorAction(action);
 
-            boolean hide = (action == EditorInfo.IME_ACTION_DONE) || (action == EditorInfo.IME_ACTION_GO) ||
-                (action == EditorInfo.IME_ACTION_SEARCH) || (action == EditorInfo.IME_ACTION_SEND);
-
-            if (hide && mFocusedView != null) {
-                mFocusedView.clearFocus();
-            }
+            postUICommand(() -> {
+                if (hide && mFocusedView != null) {
+                    mFocusedView.clearFocus();
+                }
+            });
         }));
     }
 
