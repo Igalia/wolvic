@@ -22,9 +22,11 @@ import android.hardware.display.DisplayManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -188,10 +190,15 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private void initVisionGlassPhoneUI() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setTheme(R.style.Theme_WolvicPhone);
+        setTheme(R.style.FxR_Dark);
+
+        ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.Theme_WolvicPhone);
+        LayoutInflater themedInflater = getLayoutInflater().cloneInContext(themedContext);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.visionglass_layout);
+        mBinding = DataBindingUtil.inflate(themedInflater, R.layout.visionglass_layout, null, false);
+        setContentView(mBinding.getRoot());
 
         mViewModel = new ViewModelProvider(this).get(PhoneUIViewModel.class);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.visionglass_layout);
         mBinding.setViewModel(mViewModel);
         mBinding.setLifecycleOwner(this);
 

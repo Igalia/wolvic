@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.WolvicPhone" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="Theme.WolvicPhone" parent="Theme.MaterialComponents">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/midnight</item>
         <item name="colorPrimaryDark">@color/midnight</item>
@@ -10,9 +10,6 @@
         <item name="colorSecondary">@color/azure</item>
         <item name="colorSecondaryVariant">@color/azure_blur</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="android:navigationBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:textColor">@color/black</item>
         <item name="backgroundColor">@color/midnight</item>
