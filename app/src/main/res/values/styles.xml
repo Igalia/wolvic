@@ -494,6 +494,10 @@
 
         <!-- TextView Style -->
         <item name="android:textViewStyle">@style/ShadowTextViewStyle</item>
+
+        <!-- Phone window decoration -->
+        <item name="android:statusBarColor">@color/midnight</item>
+        <item name="android:navigationBarColor">@color/midnight</item>
     </style>
 
     <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>
