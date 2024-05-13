@@ -209,7 +209,7 @@ DeviceDelegateVisionGlass::SetControllerDelegate(ControllerDelegatePtr& aControl
   m.controller->SetControllerType(kControllerIndex, device::VisionGlass);
   m.controller->SetMode(kControllerIndex, ControllerMode::Device);
   m.controller->SetAimEnabled(kControllerIndex, true);
-  m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::PositionEmulated | device::GripSpacePosition);
+  m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::PositionEmulated);
 
   m.controller->SetButtonCount(kControllerIndex, 1);
   m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, false, false);
