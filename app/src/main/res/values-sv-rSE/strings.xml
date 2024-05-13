@@ -1819,4 +1819,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="permission_persistent_storage_rationale">Att spara och öppna filer på din enhet kräver tillstånd för att lagra data i beständig lagring.</string>
     <string name="permission_notification_rationale">Att meddela dig om nyheter och uppdateringar kräver tillåtelse att skicka aviseringar.</string>
     <string name="permission_read_external_storage_rationale">För att öppna filer på din enhet krävs behörighet att läsa din externa lagring.</string>
+    <string name="vision_glass_touchpad_instructions">Tryck för att klicka. Svep för att rulla</string>
+    <string name="phone_ui_alert_dialog_title">Fel</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Misslyckades att växla till 3D-läge. Testa att koppla ur glasögonen och koppla tillbaka dem och starta om Wolvic.</string>
+    <string name="phone_ui_usb_alert_dialog_description">Misslyckades att få USB-behörigheter. Testa att koppla ur glasögonen och koppla tillbaka dem och starta om Wolvic.</string>
+    <string name="vision_glass_disconnected_message">Vänligen anslut Apple Vision glasögon</string>
+    <string name="vision_glass_error_message">Ett fel uppstog.
+\nVar god försök igen.</string>
 </resources>
