@@ -255,7 +255,6 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   m.cameras[1]->SetHeadTransform(headTransform);
   m.immersiveDisplay->SetEyeTransform(device::Eye::Left, m.cameras[0]->GetEyeTransform());
   m.immersiveDisplay->SetEyeTransform(device::Eye::Right, m.cameras[1]->GetEyeTransform());
-  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
 
   // Update controller
   if (!m.controller)
