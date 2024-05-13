@@ -289,6 +289,31 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         });
     }
 
+    private float[] fromSensorManagerToWorld(float[] sensorValues) {
+        // The quaternion is returned in the form [w, x, z, y] but we use it as [x, y, z, w].
+        // See https://developer.android.com/reference/android/hardware/Sensor#TYPE_ROTATION_VECTOR
+        float[] q = new float[4];
+        q[0] = sensorValues[1];
+        q[1] = sensorValues[2];
+        q[2] = sensorValues[3];
+        q[3] = sensorValues[0];
+
+        // In Android when holding the phone in portrait mode, the Y axis is pointing up and the Z
+        // axis is pointing towards the user. However we want to use it as a remote controller,
+        // which means holding it like if it were onto a flat surface with the top of the phone
+        // pointing away from the user, and the screen facing up. This means that we need to "remap"
+        // the axes by swapping the Y and Z components.
+        // See https://developer.android.com/reference/android/hardware/SensorManager#getRotationMatrix(float[],%20float[],%20float[],%20float[])
+        float temp = q[1];
+        q[1] = q[2];
+        q[2] = temp;
+
+        q[0] *= -1;
+        q[1] *= -1;
+
+        return q;
+    }
+
     // SensorEventListener overrides
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -296,11 +321,10 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         if (event.sensor.getType() != Sensor.TYPE_GAME_ROTATION_VECTOR)
             return;
 
-        float[] quaternion = new float[4];
-        SensorManager.getQuaternionFromVector(quaternion, event.values);
-        // The quaternion is returned in the form [w, x, z, y] but we use it as [x, y, z, w].
-        // See https://developer.android.com/reference/android/hardware/Sensor#TYPE_ROTATION_VECTOR
-        queueRunnable(() -> setControllerOrientation(quaternion[1], quaternion[3], quaternion[2], quaternion[0]));
+        float[] sensorQuaternion = new float[4];
+        SensorManager.getQuaternionFromVector(sensorQuaternion, event.values);
+        final float[] quaternion = fromSensorManagerToWorld(sensorQuaternion);
+        queueRunnable(() -> setControllerOrientation(quaternion[0], quaternion[1], quaternion[2], quaternion[3]));
 
         if (mShouldRecalibrateAfterIMURestart) {
             mShouldRecalibrateAfterIMURestart = false;
