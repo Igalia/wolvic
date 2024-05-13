@@ -70,7 +70,7 @@ struct DeviceDelegateVisionGlass::State {
   }
 
   void SetupOrientationFilter() {
-      orientationFilter = std::make_unique<OneEuroFilterQuaternion>(0.1, 0.5, 1.0);
+      orientationFilter = std::make_unique<OneEuroFilterQuaternion>(0.25, 2, 1.0);
   }
 
   void Initialize() {
