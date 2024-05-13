@@ -6,4 +6,5 @@
     <dimen name="media_controls_world_z" format="float" type="dimen">1.5</dimen>
     <item name="tray_world_z" format="float" type="dimen">-4.0</item>
     <item name="keyboard_z" format="float" type="dimen">-4.0</item>
+    <item name="webxr_interstitial_world_y" format="float" type="dimen">1.5</item>
 </resources>
