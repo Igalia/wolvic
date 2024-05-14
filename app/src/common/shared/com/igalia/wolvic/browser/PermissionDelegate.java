@@ -303,8 +303,8 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
     public void onMediaPermissionRequest(@NonNull WSession aSession, @NonNull String aUri, MediaSource[] aVideo, MediaSource[] aAudio, @NonNull final MediaCallback aMediaCallback) {
         Log.d(LOGTAG, "onMediaPermissionRequest: " + aUri);
 
-        final MediaSource video = aVideo != null ? aVideo[0] : null;
-        final MediaSource audio = aAudio != null ? aAudio[0] : null;
+        final MediaSource video = aVideo != null && aVideo.length > 0 ? aVideo[0] : null;
+        final MediaSource audio = aAudio != null && aAudio.length > 0 ? aAudio[0] : null;
         PermissionWidget.PermissionType type;
         if (video != null && audio != null) {
             type = PermissionWidget.PermissionType.CameraAndMicrophone;
