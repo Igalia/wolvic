@@ -71,6 +71,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     private int mDisplayModeRetryCount = 0;
     private int mUSBPermissionRequestCount = 0;
     private boolean mSwitchedTo3DMode = false;
+    private boolean mShouldRecalibrateAfterIMURestart = false;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -184,6 +185,7 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
     }
 
     private void registerPhoneIMUListener() {
+        mShouldRecalibrateAfterIMURestart = true;
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -210,7 +212,6 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         mBinding.realignButton.setOnClickListener(v -> {
             mSensorManager.unregisterListener(this);
             registerPhoneIMUListener();
-            queueRunnable(this::calibrateController);
         });
 
         Button backButton = findViewById(R.id.back_button);
@@ -300,6 +301,11 @@ public class PlatformActivity extends ComponentActivity implements SensorEventLi
         // The quaternion is returned in the form [w, x, z, y] but we use it as [x, y, z, w].
         // See https://developer.android.com/reference/android/hardware/Sensor#TYPE_ROTATION_VECTOR
         queueRunnable(() -> setControllerOrientation(quaternion[1], quaternion[3], quaternion[2], quaternion[0]));
+
+        if (mShouldRecalibrateAfterIMURestart) {
+            mShouldRecalibrateAfterIMURestart = false;
+            queueRunnable(this::calibrateController);
+        }
 
         mBinding.realignButton.updatePosition(-quaternion[3], -quaternion[1]);
     }
