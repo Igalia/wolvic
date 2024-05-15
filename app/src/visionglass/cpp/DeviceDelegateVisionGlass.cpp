@@ -265,8 +265,8 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
       timestamp = m.context.lock()->GetTimestamp() * 1e9;
   }
   float* filteredOrientation = m.orientationFilter->filter(timestamp, m.controllerOrientation.Data());
-  auto calibratedControllerOrientation = (m.controllerCalibration * vrb::Quaternion(filteredOrientation)).Normalize();
-  vrb::Matrix transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
+  auto calibratedControllerOrientation = m.controllerCalibration * vrb::Quaternion(filteredOrientation);
+  vrb::Matrix transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation.Conjugate());
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
   m.controller->SetTransform(kControllerIndex, pointerTransform);
 }
@@ -368,7 +368,12 @@ DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float 
 
 void
 DeviceDelegateVisionGlass::CalibrateController() {
-  m.controllerCalibration = (CorrectedHeadOrientation() * m.controllerOrientation.Inverse()).Normalize();
+  // When the controller is calibrated we reset the phone IMU. This means that the controller
+  // orientation is the identity quaternion ATM. So we store the current head position, and then we
+  // just need to revert this rotation (conjugate) to get controller orientation that points to the
+  // same direction as the head.
+  // Last but not least, we directly store the conjugate here to avoid computing it on each frame.
+  m.controllerCalibration = CorrectedHeadOrientation().Conjugate();
   m.SetupOrientationFilter();
 }
 
