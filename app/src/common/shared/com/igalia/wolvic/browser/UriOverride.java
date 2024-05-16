@@ -90,7 +90,7 @@ public class UriOverride {
                 Log.d(LOGTAG, "Failed to hash domain: " + domain);
                 return null;
             }
-            Log.d(LOGTAG, "hash: " + domainHash);
+            Log.d(LOGTAG, "hash: " + domainHash + " for domain: " + domain);
             override = mOverrideMap.get(domainHash);
             if (override != null) {
                 Log.d(LOGTAG, "found override from hash: " + override);
