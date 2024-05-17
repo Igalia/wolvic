@@ -364,10 +364,10 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             queueRunnable(this::calibrateController);
         }
 
-        mBinding.realignButton.updatePosition(-quaternion[3], -quaternion[1]);
+        mBinding.realignButton.updatePosition(quaternion[1], quaternion[0]);
 
         if (mAlignDialogFragment != null && mAlignDialogFragment.isVisible()) {
-            mAlignDialogFragment.updatePosition(-quaternion[3], -quaternion[1]);
+            mAlignDialogFragment.updatePosition(quaternion[1], quaternion[0]);
         }
     }
 

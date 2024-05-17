@@ -6,9 +6,19 @@
     android:background="?colorPrimary"
     android:orientation="vertical"
     android:paddingStart="16dp"
-    android:paddingTop="48dp"
+    android:paddingTop="32dp"
     android:paddingEnd="16dp"
-    android:paddingBottom="48dp">
+    android:paddingBottom="32dp">
+
+    <TextView
+        android:id="@+id/tvMessage"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/vision_glass_realign_dialog_explanation"
+        android:textAlignment="center"
+        android:textColor="?colorOnPrimary" />
 
     <com.igalia.wolvic.AlignDynamicButton
         android:id="@+id/realign_button"
@@ -17,15 +27,5 @@
         android:layout_gravity="center"
         android:backgroundTint="@color/azure"
         app:iconTint="@color/white" />
-
-    <TextView
-        android:id="@+id/tvMessage"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/vision_glass_realign_dialog_explanation"
-        android:textAlignment="center"
-        android:textColor="?colorOnPrimary" />
 
 </LinearLayout>
