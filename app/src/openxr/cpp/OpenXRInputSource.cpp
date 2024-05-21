@@ -668,7 +668,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
-    delegate.SetControllerType(mIndex, mDeviceType);
+    delegate.SetButtonCount(mIndex, 1);
 
     // Select action
     bool indexPinching = false;
@@ -744,12 +744,9 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
 void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
 {
-    if (!mActiveMapping) {
-      delegate.SetEnabled(mIndex, false);
-      return;
-    }
-
-    if ((mHandeness == OpenXRHandFlags::Left && !mActiveMapping->leftControllerModel) || (mHandeness == OpenXRHandFlags::Right && !mActiveMapping->rightControllerModel)) {
+    if (mActiveMapping &&
+        ((mHandeness == OpenXRHandFlags::Left && !mActiveMapping->leftControllerModel) ||
+         (mHandeness == OpenXRHandFlags::Right && !mActiveMapping->rightControllerModel))) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -810,6 +807,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             }
             delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
         }
+    }
+
+    if (!mActiveMapping) {
+        delegate.SetEnabled(mIndex, false);
+        return;
     }
 
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
@@ -1022,15 +1024,13 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
         }
     }
 
+    uint32_t numHaptics = 0;
     if (mActiveMapping != nullptr) {
         // Add haptic devices to controller, if any
-        uint32_t numHaptics = 0;
         for (auto& haptic: mActiveMapping->haptics) {
             if (haptic.hand == OpenXRHandFlags::Both || haptic.hand == mHandeness)
                 numHaptics++;
         }
-        delegate.SetHapticCount(mIndex, numHaptics);
-
         // On emulated profiles we need to set the button count here because it
         // may never be set during Update() (e.g, when hand tracking is active).
         if (emulateProfile) {
@@ -1044,6 +1044,7 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
             delegate.SetButtonCount(mIndex, buttonCount);
         }
     }
+    delegate.SetHapticCount(mIndex, numHaptics);
 
     return XR_SUCCESS;
 }
