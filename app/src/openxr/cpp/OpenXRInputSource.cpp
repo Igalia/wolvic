@@ -69,10 +69,10 @@ XrResult OpenXRInputSource::Initialize()
     // Filter mappings
     bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
     auto systemDoF = systemIs6DoF ? DoF::IS_6DOF : DoF::IS_3DOF;
-    auto deviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
+    mDeviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
     // Add a workaround for Monado not reporting properly device capabilities
     // https://gitlab.freedesktop.org/monado/monado/-/issues/265
-    if (deviceType == device::LenovoVRX) {
+    if (mDeviceType == device::LenovoVRX) {
         systemIs6DoF = true;
         systemDoF = DoF::IS_6DOF;
     }
@@ -81,9 +81,9 @@ XrResult OpenXRInputSource::Initialize()
       if (mapping.controllerType == device::UnknownType) {
           mMappings.push_back(mapping);
           // Use the system's deviceType instead to ensure we get a valid VRController on WebXR sessions
-          mMappings.back().controllerType = deviceType;
+          mMappings.back().controllerType = mDeviceType;
         continue;
-      } else if (deviceType != mapping.controllerType) {
+      } else if (mDeviceType != mapping.controllerType) {
         continue;
       }
 
@@ -550,7 +550,7 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
 #if defined(SPACES)
     // Bug in Spaces runtime, isActive returns always false, force it to true for the A3.
     // https://gitlab.freedesktop.org/monado/monado/-/issues/263
-    if (DeviceUtils::GetDeviceTypeFromSystem(true) == device::LenovoA3)
+    if (mDeviceType == device::LenovoA3)
         mHasHandJoints = true;
 #endif
 
@@ -668,6 +668,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
+    delegate.SetControllerType(mIndex, mDeviceType);
 
     // Select action
     bool indexPinching = false;
@@ -755,7 +756,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     delegate.SetLeftHanded(mIndex, mHandeness == OpenXRHandFlags::Left);
     delegate.SetTargetRayMode(mIndex, device::TargetRayMode::TrackedPointer);
-    delegate.SetControllerType(mIndex, mActiveMapping->controllerType);
+    delegate.SetControllerType(mIndex, mDeviceType);
 
     // Spaces must be created here, it doesn't work if they are created in Initialize (probably a OpenXR SDK bug?)
     if (mGripSpace == XR_NULL_HANDLE) {
