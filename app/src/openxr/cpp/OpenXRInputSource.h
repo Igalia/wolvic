@@ -109,7 +109,7 @@ public:
 
     XrResult SuggestBindings(SuggestedBindings&) const;
     void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, ControllerDelegate& delegate);
-    XrResult UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
+    XrResult UpdateInteractionProfile(ControllerDelegate&);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
     void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);

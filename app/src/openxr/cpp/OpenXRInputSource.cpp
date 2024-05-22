@@ -989,31 +989,26 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     UpdateHaptics(delegate);
 }
 
-XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegate, const char* emulateProfile)
+XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegate)
 {
     const char* path = nullptr;
     size_t path_len = 0;
 
-    if (emulateProfile == nullptr) {
-        XrInteractionProfileState state{XR_TYPE_INTERACTION_PROFILE_STATE};
-        RETURN_IF_XR_FAILED(xrGetCurrentInteractionProfile(mSession, mSubactionPath, &state));
-        if (state.interactionProfile == XR_NULL_PATH) {
-            return XR_SUCCESS; // Not ready yet
-        }
 
-        constexpr uint32_t bufferSize = 100;
-        char buffer[bufferSize];
-        uint32_t writtenCount = 0;
-        RETURN_IF_XR_FAILED(xrPathToString(mInstance, state.interactionProfile,
-                                           bufferSize, &writtenCount,
-                                           buffer));
-        path = buffer;
-        path_len = writtenCount;
-    } else {
-        path = emulateProfile;
-        path_len = strlen(emulateProfile);
+    XrInteractionProfileState state{XR_TYPE_INTERACTION_PROFILE_STATE};
+    RETURN_IF_XR_FAILED(xrGetCurrentInteractionProfile(mSession, mSubactionPath, &state));
+    if (state.interactionProfile == XR_NULL_PATH) {
+        return XR_SUCCESS; // Not ready yet
     }
 
+    constexpr uint32_t bufferSize = 100;
+    char buffer[bufferSize];
+    uint32_t writtenCount = 0;
+    RETURN_IF_XR_FAILED(xrPathToString(mInstance, state.interactionProfile,
+                                       bufferSize, &writtenCount,
+                                       buffer));
+    path = buffer;
+    path_len = writtenCount;
     mActiveMapping = nullptr;
 
     for (auto& mapping : mMappings) {
@@ -1030,18 +1025,6 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
         for (auto& haptic: mActiveMapping->haptics) {
             if (haptic.hand == OpenXRHandFlags::Both || haptic.hand == mHandeness)
                 numHaptics++;
-        }
-        // On emulated profiles we need to set the button count here because it
-        // may never be set during Update() (e.g, when hand tracking is active).
-        if (emulateProfile) {
-            int buttonCount { 0 };
-            for (auto &button: mActiveMapping->buttons) {
-                if ((button.hand & mHandeness) == 0) {
-                    continue;
-                }
-                buttonCount++;
-            }
-            delegate.SetButtonCount(mIndex, buttonCount);
         }
     }
     delegate.SetHapticCount(mIndex, numHaptics);
