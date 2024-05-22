@@ -587,33 +587,11 @@ struct DeviceDelegateOpenXR::State {
     return nullptr;
   }
 
-  const char* GetDefaultInteractionProfilePath() {
-#if OCULUSVR
-      return OculusTouch.path;
-#elif PICOXR
-      return Pico4x.path;
-#else
-      if (deviceType == device::MagicLeap2)
-          return MagicLeap2.path;
-      return KHRSimple.path;
-#endif
-  }
-
   void BeginXRSession() {
       XrSessionBeginInfo sessionBeginInfo{XR_TYPE_SESSION_BEGIN_INFO};
       sessionBeginInfo.primaryViewConfigurationType = viewConfigType;
       CHECK_XRCMD(xrBeginSession(session, &sessionBeginInfo));
       vrReady = true;
-
-      // If hand tracking is supported, we want to emulate a default interaction
-      // profile, so that if Wolvic is launched without controllers active, we can
-      // still use hand tracking for emulating the controllers.
-      // This is a temporary situation while we don't implement WebXR hand tracking
-      // APIs.
-      if (mHandTrackingSupported) {
-          if (const char* defaultProfilePath = GetDefaultInteractionProfilePath())
-              UpdateInteractionProfile(defaultProfilePath);
-      }
   }
 
   void HandleSessionEvent(const XrEventDataSessionStateChanged& event) {
@@ -782,11 +760,11 @@ struct DeviceDelegateOpenXR::State {
     controllersReadyCallback = nullptr;
   }
 
-  void UpdateInteractionProfile(const char* emulateProfile = nullptr) {
+  void UpdateInteractionProfile() {
       if (!input || !controller)
           return;
 
-      input->UpdateInteractionProfile(*controller, emulateProfile);
+      input->UpdateInteractionProfile(*controller);
       MaybeNotifyControllersReady();
   }
 

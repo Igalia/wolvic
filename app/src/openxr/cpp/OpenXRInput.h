@@ -56,7 +56,7 @@ public:
   XrResult Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate);
   int32_t GetControllerModelCount() const;
   std::string GetControllerModelName(const int32_t aModelIndex) const;
-  void UpdateInteractionProfile(ControllerDelegate&, const char* emulateProfile = nullptr);
+  void UpdateInteractionProfile(ControllerDelegate&);
   bool AreControllersReady() const;
   void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
   HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
