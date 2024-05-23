@@ -969,6 +969,12 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
   tinygltf::asset_manager = AAssetManager_fromJava(m.env, aAssetManager);
 
+  m.device->OnControllersCreated([this](){
+    m.controllers->InitializeBeam();
+    m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
+    m.rootController->AddNode(m.controllers->GetRoot());
+  });
+
   if (!m.modelsLoaded) {
     m.device->OnControllersReady([this](){
       const int32_t modelCount = m.device->GetControllerModelCount();
@@ -987,12 +993,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
           }
         }
       }
-      m.controllers->InitializeBeam();
-      m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
-      m.rootController->AddNode(m.controllers->GetRoot());
-      if (m.device->IsControllerLightEnabled()) {
+      if (m.device->IsControllerLightEnabled())
         m.rootController->AddLight(m.light);
-      }
     });
 
     VRBrowser::CheckTogglePassthrough();
