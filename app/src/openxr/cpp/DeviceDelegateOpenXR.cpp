@@ -770,15 +770,20 @@ struct DeviceDelegateOpenXR::State {
     // TODO: Check if activity globarRef needs to be released
   }
 
+  void MaybeNotifyControllersReady() {
+    ASSERT(input);
+    if (!controllersReadyCallback || !input->AreControllersReady())
+        return;
+    controllersReadyCallback();
+    controllersReadyCallback = nullptr;
+  }
+
   void UpdateInteractionProfile(const char* emulateProfile = nullptr) {
       if (!input || !controller)
           return;
 
       input->UpdateInteractionProfile(*controller, emulateProfile);
-      if (controllersReadyCallback && input->AreControllersReady()) {
-          controllersReadyCallback();
-          controllersReadyCallback = nullptr;
-      }
+      MaybeNotifyControllersReady();
   }
 
   bool IsPassthroughLayerReady() {
@@ -1570,10 +1575,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
   ProcessEvents();
-  if (m.controllersReadyCallback && m.input && m.input->AreControllersReady()) {
-    m.controllersReadyCallback();
-    m.controllersReadyCallback = nullptr;
-  }
+  m.MaybeNotifyControllersReady();
   m.input->SetKeyboardTrackingEnabled(m.keyboardTrackingSupported && m.renderModelLoadingSupported);
 
   vrb::RenderContextPtr context = m.context.lock();
