@@ -99,6 +99,7 @@ public:
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};
   virtual bool IsControllerLightEnabled() const { return true; }
   virtual vrb::LoadTask GetControllerModelTask(int32_t index) { return nullptr; } ;
+  virtual void OnControllersCreated(std::function<void()> callback) { callback(); }
   virtual void OnControllersReady(const std::function<void()>& callback) {
     callback();
   }

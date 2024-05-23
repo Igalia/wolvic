@@ -101,6 +101,7 @@ struct DeviceDelegateOpenXR::State {
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
   std::vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
+  std::function<void()> controllersCreatedCallback;
   std::function<void()> controllersReadyCallback;
   std::optional<XrPosef> firstPose;
   bool mHandTrackingSupported = false;
@@ -910,6 +911,14 @@ DeviceDelegateOpenXR::IsPositionTrackingSupported() const {
   return m.IsPositionTrackingSupported();
 }
 
+void DeviceDelegateOpenXR::OnControllersCreated(std::function<void()> callback) {
+  if (m.input) {
+      callback();
+      return;
+  }
+  m.controllersCreatedCallback = std::move(callback);
+}
+
 void
 DeviceDelegateOpenXR::OnControllersReady(const std::function<void()>& callback) {
   if (m.input && m.input->AreControllersReady()) {
@@ -1578,6 +1587,10 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
   ProcessEvents();
+  if (m.controllersCreatedCallback) {
+    m.controllersCreatedCallback();
+    m.controllersCreatedCallback = nullptr;
+  }
   m.MaybeNotifyControllersReady();
   m.input->SetKeyboardTrackingEnabled(m.keyboardTrackingSupported && m.renderModelLoadingSupported);
 
