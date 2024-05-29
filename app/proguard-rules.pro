@@ -85,6 +85,9 @@
 -keep class com.huawei.agconnect.**{*;}
 -keep class com.huawei.hms.analytics.**{*;}
 -keep class com.huawei.hms.push.**{*;}
+-keep class com.huawei.usblib.**{*;}
+-keep class com.huawei.hvr.**{*;}
+-keep class com.huawei.hmf.**{*;}
 
 -dontwarn **
 -target 1.7
