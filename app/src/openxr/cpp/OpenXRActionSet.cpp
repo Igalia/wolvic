@@ -29,7 +29,7 @@ OpenXRActionSetPtr OpenXRActionSet::Create(XrInstance instance, XrSession sessio
 }
 
 XrResult OpenXRActionSet::Initialize() {
-  std::string actionSetName = "fxr_action_set";
+  std::string actionSetName = "wolvic_action_set";
   XrActionSetCreateInfo createInfo { XR_TYPE_ACTION_SET_CREATE_INFO };
   std::strncpy(createInfo.actionSetName, actionSetName.c_str(), XR_MAX_ACTION_SET_NAME_SIZE - 1);
   std::strncpy(createInfo.localizedActionSetName, actionSetName.c_str(), XR_MAX_ACTION_SET_NAME_SIZE - 1);
