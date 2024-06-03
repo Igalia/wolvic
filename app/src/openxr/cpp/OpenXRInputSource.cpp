@@ -17,6 +17,7 @@ namespace crow {
 // Threshold to consider a trigger value as a click
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
+const float kClickLowFiThreshold = 0.8f;
 
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
@@ -51,6 +52,7 @@ XrResult OpenXRInputSource::Initialize()
 {
     mSubactionPathName = mHandeness == OpenXRHandFlags::Left ? kPathLeftHand : kPathRightHand;
     mSubactionPath = mActionSet.GetSubactionPath(mHandeness);
+    mIsHandInteractionEXTSupported = OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
 
     // Initialize Action Set.
     std::string prefix = std::string("input_") + (mHandeness == OpenXRHandFlags::Left ? "left" : "right");
@@ -58,6 +60,10 @@ XrResult OpenXRInputSource::Initialize()
     // Initialize pose actions and spaces.
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "grip", OpenXRHandFlags::Both, mGripAction));
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "pointer", OpenXRHandFlags::Both, mPointerAction));
+    if (mIsHandInteractionEXTSupported) {
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "pinch_ext", OpenXRHandFlags::Both, mPinchPoseAction));
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "poke_ext", OpenXRHandFlags::Both, mPokePoseAction));
+    }
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_VIBRATION_OUTPUT, "haptic", OpenXRHandFlags::Both, mHapticAction));
 
     // Filter mappings
@@ -140,19 +146,14 @@ XrResult OpenXRInputSource::Initialize()
 #else
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
-        VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? "XR_FB_HAND_TRACKING_AIM" : "hand joints");
-
         if (mSupportsFBHandTrackingAim)
             mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
-        else {
+        else if (!mIsHandInteractionEXTSupported) {
             // TODO: fine tune params for different devices.
-            OpenXRGestureManagerHandJoints::OneEuroFilterParams params;
-            if (deviceType == device::MagicLeap2)
-                params = {0.25, 2, 1};
-            else
-                params = { 0.25, 0.1, 1 };
+            OpenXRGestureManagerHandJoints::OneEuroFilterParams params= { 0.25, 1, 1 };
             mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints, &params);
         }
+        VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME : (mIsHandInteractionEXTSupported ? XR_EXT_HAND_INTERACTION_EXTENSION_NAME : "hand joints"));
     }
 
     // Initialize double buffers for storing XR_MSFT_hand_tracking_mesh geometry
@@ -265,6 +266,7 @@ std::optional<OpenXRInputSource::OpenXRButtonState> OpenXRInputSource::GetButton
     bool clickedHasValue = hasValue;
     queryActionState(button.flags & OpenXRButtonFlags::Touch, actions.touch, result.touched, result.clicked);
     queryActionState(button.flags & OpenXRButtonFlags::Value, actions.value, result.value, result.clicked ? 1.0 : 0.0);
+    queryActionState(button.flags & OpenXRButtonFlags::Ready, actions.ready, result.ready, true);
 
     if (!clickedHasValue && result.value > kClickThreshold) {
       result.clicked = true;
@@ -420,6 +422,13 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
         RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mGripAction, mSubactionPathName + "/" + kPathGripPose, bindings));
         RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPointerAction, mSubactionPathName + "/" + kPathAimPose, bindings));
 
+        // FIXME: reenable this once MagicLeap OS v1.8 is released as it has a fix for this.
+        // Otherwise the hand interaction profile is not properly used.
+        if (mIsHandInteractionEXTSupported && (DeviceUtils::GetDeviceTypeFromSystem(true) != device::MagicLeap2)) {
+            RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPinchPoseAction, mSubactionPathName + "/" + kPinchPose, bindings));
+            RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPokePoseAction, mSubactionPathName + "/" + kPokePose, bindings));
+        }
+
         // Suggest binding for button actions.
         for (auto& button: mapping.buttons) {
             if ((button.hand & mHandeness) == 0) {
@@ -442,6 +451,10 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
             if (button.flags & OpenXRButtonFlags::Value) {
                 assert(actions.value != XR_NULL_HANDLE);
                 RETURN_IF_XR_FAILED(CreateBinding(mapping.path, actions.value, mSubactionPathName + "/" + button.path + "/" + kPathActionValue, bindings));
+            }
+            if (button.flags & OpenXRButtonFlags::Ready) {
+                assert(actions.ready != XR_NULL_HANDLE);
+                RETURN_IF_XR_FAILED(CreateBinding(mapping.path, actions.ready, mSubactionPathName + "/" + button.path + "/" + kPathActionReady, bindings));
             }
         }
 
@@ -529,7 +542,8 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     XrHandJointLocationsEXT jointLocations { XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
     jointLocations.jointCount = XR_HAND_JOINT_COUNT_EXT;
     jointLocations.jointLocations = mHandJoints.data();
-    mGestureManager->populateNextStructureIfNeeded(jointLocations);
+    if (mGestureManager)
+        mGestureManager->populateNextStructureIfNeeded(jointLocations);
 
     CHECK_XRCMD(OpenXRExtensions::sXrLocateHandJointsEXT(mHandTracker, &locateInfo, &jointLocations));
     mHasHandJoints = jointLocations.isActive;
@@ -553,7 +567,6 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     mHasHandJoints = mHasHandJoints && hasAtLeastOneValidJoint(jointLocations);
 
     // Rest of the method deal with XR_MSFT_hand_tracking_mesh extension
-
     if (!OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME) || !mHasHandJoints)
         return mHasHandJoints;
 
@@ -601,12 +614,8 @@ bool OpenXRInputSource::GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace
     return mHasHandJoints;
 }
 
-void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate)
-{
-    // Prepare and submit hand joint locations data for rendering
-    assert(mHasHandJoints);
-    std::vector<vrb::Matrix> jointTransforms;
-    std::vector<float> jointRadii;
+void
+OpenXRInputSource::PopulateHandJointLocations(device::RenderMode renderMode, std::vector<vrb::Matrix>& jointTransforms, std::vector<float>& jointRadii) {
     jointTransforms.resize(mHandJoints.size());
     jointRadii.resize(mHandJoints.size());
     for (int i = 0; i < mHandJoints.size(); i++) {
@@ -623,16 +632,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         jointTransforms[i] = transform;
         jointRadii[i] = mHandJoints[i].radius;
     }
-
-    // This is not really needed. It's just an optimization for devices taking over the control of
-    // hands when facing head. In those cases we don't need to do all the matrix computations.
-    bool systemTakesOverWhenHandsFacingHead = false;
-#if defined(OCULUSVR)
-    systemTakesOverWhenHandsFacingHead = true;
-#endif
-    bool hasAim = mGestureManager->hasAim();
-    bool systemGestureDetected = mGestureManager->systemGestureDetected(jointTransforms[HAND_JOINT_FOR_AIM], head);
-
 #if defined(PICOXR)
     // Scale joints according to their radius (for rendering). This is currently only
     // relevant on Pico with system version earlier than 5.7.1, where we are using spheres
@@ -648,10 +647,23 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         }
     }
 #endif
+}
+
+void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, ControllerDelegate& delegate)
+{
+    assert(mHasHandJoints);
+
+    // This is not really needed. It's just an optimization for devices taking over the control of
+    // hands when facing head. In those cases we don't need to do all the matrix computations.
+    bool systemTakesOverWhenHandsFacingHead = false;
+#if defined(OCULUSVR)
+    systemTakesOverWhenHandsFacingHead = true;
+#endif
+    bool hasAim = mGestureManager->hasAim();
+    bool systemGestureDetected = mGestureManager->systemGestureDetected(handJointForAim, head);
 
     // We should handle the gesture whenever the system does not handle it.
     bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
-    delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
     delegate.SetAimEnabled(mIndex, hasAim);
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
@@ -752,6 +764,12 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     if (mPointerSpace == XR_NULL_HANDLE) {
       CHECK_XRCMD(CreateActionSpace(mPointerAction, mPointerSpace));
     }
+    if (mIsHandInteractionEXTSupported) {
+      if (mPinchSpace == XR_NULL_HANDLE)
+        CHECK_XRCMD(CreateActionSpace(mPinchPoseAction, mPinchSpace));
+      if (mPokeSpace == XR_NULL_HANDLE)
+        CHECK_XRCMD(CreateActionSpace(mPokePoseAction, mPokeSpace));
+    }
 
     // Pose transforms.
     bool isPoseActive { false };
@@ -776,12 +794,27 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 #else
     bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
 #endif
-    if (isControllerUnavailable && GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head)) {
-        EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, delegate);
-        return;
+
+    auto gotHandTrackingInfo = false;
+    if (isControllerUnavailable || mUsingHandInteractionProfile) {
+        gotHandTrackingInfo = GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head);
+        if (gotHandTrackingInfo) {
+            std::vector<vrb::Matrix> jointTransforms;
+            std::vector<float> jointRadii;
+            PopulateHandJointLocations(renderMode, jointTransforms, jointRadii);
+            if (!mIsHandInteractionEXTSupported) {
+                EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], delegate);
+                delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
+                return;
+            }
+            delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
+        }
     }
 
-    if ((poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0) {
+    bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
+    delegate.SetAimEnabled(mIndex, hasAim);
+
+    if (!hasAim && !mUsingHandInteractionProfile) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -795,9 +828,13 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     };
     adjustPoseLocation(offsets);
 
-    delegate.SetMode(mIndex, ControllerMode::Device);
+    // XR_EXT_hand_interaction does not really require the hand joints data, but if we
+    // set ControllerMode::Hand then Wolvic code assumes that it does.
+    delegate.SetMode(mIndex, mUsingHandInteractionProfile && gotHandTrackingInfo ? ControllerMode::Hand : ControllerMode::Device);
     delegate.SetEnabled(mIndex, true);
-    delegate.SetAimEnabled(mIndex, true);
+
+    bool isHandActionEnabled = !hasAim && mUsingHandInteractionProfile;
+    delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
@@ -866,10 +903,20 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         buttonCount++;
         auto browserButton = GetBrowserButton(button);
         auto immersiveButton = GetImmersiveButton(button);
-        delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1, state->clicked, state->touched, state->value);
 
-        if (button.type == OpenXRButtonType::Trigger)
+        if (isHandActionEnabled) {
+            // When hand faces head, tracking systems do not have the same level of precision
+            // detecting pinches, that's why we need to lower the bar to detect them.
+            delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= kClickLowFiThreshold,
+                                    state->value > 0, 1.0);
+        } else {
+            delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1,
+                                    state->clicked, state->touched, state->value);
+        }
+
+        if (button.type == OpenXRButtonType::Trigger && state->ready) {
             delegate.SetSelectFactor(mIndex, state->value);
+        }
 
         // Select action
         if (renderMode == device::RenderMode::Immersive && button.type == OpenXRButtonType::Trigger && state->clicked != selectActionStarted) {
@@ -969,6 +1016,7 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
     for (auto& mapping : mMappings) {
         if (!strncmp(mapping.path, path, path_len)) {
             mActiveMapping = &mapping;
+            mUsingHandInteractionProfile = !strncmp(path, kInteractionProfileHandInteraction, path_len);
             break;
         }
     }
