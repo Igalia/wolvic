@@ -19,8 +19,6 @@ import java.io.File
 @Config(manifest = Config.NONE, application = TestApplication::class)
 class EnvironmentsTest {
 
-    @get:Rule
-    val gleanRule = GleanTestRule(ApplicationProvider.getApplicationContext())
     lateinit var settingStore: SettingsStore
     private lateinit var context: Context
 
