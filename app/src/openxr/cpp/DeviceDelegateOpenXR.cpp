@@ -204,6 +204,9 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_ML_FRAME_END_INFO_EXTENSION_NAME))
         extensions.push_back(XR_ML_FRAME_END_INFO_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME))
+        extensions.push_back(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;

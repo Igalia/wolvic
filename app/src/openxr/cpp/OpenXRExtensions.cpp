@@ -46,6 +46,9 @@ void OpenXRExtensions::Initialize() {
 #elif PICOXR
     // Pico incorrectly advertises this extension as supported but it makes Wolvic not work.
     sSupportedExtensions.erase(XR_EXTX_OVERLAY_EXTENSION_NAME);
+#elif SPACES
+    // Spaces incorrectly advertises this extension as supported but it does not really work.
+    sSupportedExtensions.erase(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
 #endif
 
     // Adding this check here is ugly but required to have a working build for VRX. With the current
