@@ -18,3 +18,16 @@ jobs:
           assembleNoapiX64GeckoGeneric,
         ]
     secrets: inherit
+
+  unit-tests:
+    name: Unit Tests
+    needs: [build-external]
+    uses: ./.github/workflows/build.yml
+    with:
+      flavour: ${{ matrix.flavour }}
+    strategy:
+      matrix:
+        flavour: [
+          testNoapiArm64GeckoGenericDebugUnitTest,
+          testNoapiX64GeckoGenericReleaseUnitTest,
+        ]
