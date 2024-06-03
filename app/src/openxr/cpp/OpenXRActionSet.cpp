@@ -102,6 +102,9 @@ XrResult OpenXRActionSet::GetOrCreateButtonActions(OpenXRButtonType type, OpenXR
   if (flags  & OpenXRButtonFlags::Value) {
     RETURN_IF_XR_FAILED(CreateAction(XR_ACTION_TYPE_FLOAT_INPUT, key + "_value", hand, actions.value));
   }
+  if (flags  & OpenXRButtonFlags::Ready) {
+    RETURN_IF_XR_FAILED(CreateAction(XR_ACTION_TYPE_BOOLEAN_INPUT, key + "_ready_ext", hand, actions.ready));
+  }
 
   mButtonActions.emplace(key, actions);
 

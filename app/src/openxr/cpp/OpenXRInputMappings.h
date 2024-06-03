@@ -39,9 +39,13 @@ namespace crow {
     constexpr const char* kPathButtonB { "input/b" };
     constexpr const char* kPathButtonX { "input/x" };
     constexpr const char* kPathButtonY { "input/y" };
+    constexpr const char* kPinchPose { "input/pinch_ext/pose" };
+    constexpr const char* kPokePose { "input/poke_ext/pose" };
     constexpr const char* kPathActionClick { "click" };
     constexpr const char* kPathActionTouch { "touch" };
     constexpr const char* kPathActionValue { "value" };
+    constexpr const char* kPathActionReady { "ready_ext" };
+    constexpr const char* kInteractionProfileHandInteraction { "/interaction_profiles/ext/hand_interaction_ext" };
 
     // OpenXR Button List
     enum class OpenXRButtonType {
@@ -73,9 +77,11 @@ namespace crow {
         Click = (1u << 0),
         Touch = (1u << 1),
         Value  = (1u << 2),
+        Ready = (1u << 3),
         ValueTouch = Touch | Value,
         ClickTouch = Click | Touch,
         ClickValue = Click | Value,
+        ReadyValue = Ready | Value,
         All  = Click | Touch | Value,
     };
 
@@ -391,6 +397,21 @@ namespace crow {
             },
     };
 
+    const OpenXRInputMapping HandInteraction {
+        kInteractionProfileHandInteraction,
+        IS_6DOF,
+        "",
+        "",
+        device::UnknownType,
+        std::vector<OpenXRInputProfile> { "generic-hand-select-grasp", "generic-hand-select", "generic-hand" },
+        std::vector<OpenXRButton> {
+                { OpenXRButtonType::Trigger, "input/pinch_ext", OpenXRButtonFlags::ReadyValue, OpenXRHandFlags::Both },
+                /* Not adding aim_activate_ext nor grasp_ext as we don't need them yet */
+        },
+        {},
+        {}
+    };
+
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
@@ -408,8 +429,8 @@ namespace crow {
             },
     };
 
-    const std::array<OpenXRInputMapping, 11> OpenXRInputMappings {
-        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, KHRSimple
+    const std::array<OpenXRInputMapping, 12> OpenXRInputMappings {
+        OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, HandInteraction, KHRSimple
     };
 
 } // namespace crow

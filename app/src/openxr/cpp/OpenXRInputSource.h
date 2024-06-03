@@ -18,6 +18,10 @@ typedef std::shared_ptr<OpenXRInputSource> OpenXRInputSourcePtr;
 class OpenXRInputSource {
 public:
     using SuggestedBindings = std::unordered_map<std::string, std::vector<XrActionSuggestedBinding>>;
+    XrResult GetActionState(XrAction, bool*) const;
+    XrResult GetActionState(XrAction, float*) const;
+    XrResult GetActionState(XrAction, XrVector2f*) const;
+
 private:
     OpenXRInputSource(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
 
@@ -31,12 +35,10 @@ private:
       bool clicked { false };
       bool touched { false };
       float value { 0 };
+      bool ready { false };
     };
     std::optional<OpenXRButtonState> GetButtonState(const OpenXRButton&) const;
     std::optional<XrVector2f> GetAxis(OpenXRAxisType) const;
-    XrResult GetActionState(XrAction, bool*) const;
-    XrResult GetActionState(XrAction, float*) const;
-    XrResult GetActionState(XrAction, XrVector2f*) const;
     ControllerDelegate::Button GetBrowserButton(const OpenXRButton&) const;
     std::optional<uint8_t> GetImmersiveButton(const OpenXRButton&) const;
     XrResult applyHapticFeedback(XrAction, XrDuration, float = XR_FREQUENCY_UNSPECIFIED, float = 0.0) const;
@@ -44,7 +46,8 @@ private:
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, ControllerDelegate& delegate);
+    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, ControllerDelegate& delegate);
+    void PopulateHandJointLocations(device::RenderMode, std::vector<vrb::Matrix>& jointTransforms, std::vector<float>& jointRadii);
 
     XrInstance mInstance { XR_NULL_HANDLE };
     XrSession mSession { XR_NULL_HANDLE };
@@ -57,6 +60,10 @@ private:
     XrSpace mGripSpace { XR_NULL_HANDLE };
     XrAction mPointerAction { XR_NULL_HANDLE };
     XrSpace mPointerSpace { XR_NULL_HANDLE };
+    XrAction mPinchPoseAction {XR_NULL_HANDLE };
+    XrSpace mPinchSpace { XR_NULL_HANDLE };
+    XrAction mPokePoseAction {XR_NULL_HANDLE };
+    XrSpace mPokeSpace { XR_NULL_HANDLE };
     std::unordered_map<OpenXRButtonType, OpenXRActionSet::OpenXRButtonActions> mButtonActions;
     std::unordered_map<OpenXRAxisType, XrAction> mAxisActions;
     XrAction mHapticAction;
@@ -74,6 +81,7 @@ private:
     bool mSupportsFBHandTrackingAim { false };
     OpenXRGesturePtr mGestureManager;
     bool mSupportsHandJointsMotionRangeInfo { false };
+    bool mUsingHandInteractionProfile { false };
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
@@ -91,6 +99,8 @@ private:
     } mHandMeshMSFT;
     HandMeshBufferPtr AcquireHandMeshBuffer();
     void ReleaseHandMeshBuffer();
+
+    bool mIsHandInteractionEXTSupported { false };
 
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
