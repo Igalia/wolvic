@@ -41,7 +41,7 @@ git clone https://github.com/Igalia/wolvic-third-parties.git third_party
 This repo is only available to Igalia members. If you have access to the relevant SDK but not this repo, you can manually place them here:
 
  - `third_party/ovr_mobile/` for Oculus (should contain a `VrApi` folder)
- - `third_party/OVRPlatformSDK/` for Oculus (should contain a `Android` and `include` folders)
+ - ~`third_party/OVRPlatformSDK/` for Oculus (should contain a `Android` and `include` folders)~ (deprecated)
  - `third_party/ovr_openxr_mobile_sdk/` for Oculus (should contain an `OpenXR` folder)
  - `third_party/hvr/` for Huawei (should contain  `arm64-v8a`, `armeabi-v7a` and `include` folders)
  - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
@@ -79,7 +79,7 @@ For testing on a non-VR device:
 
 - **`noapi`**: Runs on standard Android phones without a headset
 
-Building for Oculus Mobile, Huawei and WaveVR requires access to their respective SDKs which are not included in this repo.
+Building for Huawei and WaveVR requires access to their respective SDKs which are not included in this repo.
 
 The command line version of `gradlew` requires JDK 11. If you see an error that Gradle doesn't understand your Java version, check which version of you're using by running `java -showversion` or `java -version`. You're probably using and older JDK, which won't work.
 
@@ -135,12 +135,6 @@ npm install
 npm run compress
 ```
 
-## Enable OpenXR builds for Meta devices
-You can enable OpenXR API for Oculus by adding this property to your `user.properties` file:
-
-```ini
-openxr=true
-```
 ## Locale support
 
 For more info on localization, how it works in the Wolvic XR project, and how to correctly edit localizable text in the application, please see our [localization wiki page](https://github.com/Igalia/wolvic/wiki/Localization).
