@@ -8,6 +8,8 @@ Want to learn more about Wolvic? Read our [FAQ](https://wolvic.com/en/faq)!
 
 ## Setup instructions
 
+> For setup instructions using the development version of the Chromium backend check [this instructions out instead](CHROMIUM.md)
+
 ### GeckoView local substitution
 
 After [PR #70](https://github.com/Igalia/wolvic/pull/70), WebXR sessions won't work with the prebuilt maven GeckoView libraries because that PR introduced a change in the GeckoView protocol. So you have to build GeckoView manually by applying patches at [this repository](https://github.com/Igalia/wolvic-gecko-patches).
