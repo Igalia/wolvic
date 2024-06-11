@@ -77,10 +77,14 @@ XrResult OpenXRInputSource::Initialize()
         systemDoF = DoF::IS_6DOF;
     }
     for (auto& mapping: OpenXRInputMappings) {
-      if (mDeviceType != mapping.controllerType)
-        continue;
-
-      if (systemDoF != mapping.systemDoF)
+      // Always populate default/fall-back profiles
+      if (mapping.controllerType == device::UnknownType) {
+          mMappings.push_back(mapping);
+          // Use the system's deviceType instead to ensure we get a valid VRController on WebXR sessions
+          mMappings.back().controllerType = mDeviceType;
+          continue;
+      }
+      if ((mDeviceType != mapping.controllerType) || (systemDoF != mapping.systemDoF))
           continue;
       mMappings.push_back(mapping);
     }
