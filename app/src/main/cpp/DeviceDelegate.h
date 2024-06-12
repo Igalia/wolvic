@@ -100,7 +100,8 @@ public:
   virtual bool IsControllerLightEnabled() const { return true; }
   virtual vrb::LoadTask GetControllerModelTask(int32_t index) { return nullptr; } ;
   virtual void OnControllersCreated(std::function<void()> callback) { callback(); }
-  virtual void OnControllersReady(const std::function<void()>& callback) {
+  typedef std::function<bool()> ControllersReadyCallback;
+  virtual void OnControllersReady(const ControllersReadyCallback& callback) {
     callback();
   }
   class ReorientClient {
