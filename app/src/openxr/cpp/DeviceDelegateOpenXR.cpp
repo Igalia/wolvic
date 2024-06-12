@@ -102,7 +102,7 @@ struct DeviceDelegateOpenXR::State {
   device::DeviceType deviceType = device::UnknownType;
   std::vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
   std::function<void()> controllersCreatedCallback;
-  std::function<void()> controllersReadyCallback;
+  std::function<bool()> controllersReadyCallback;
   std::optional<XrPosef> firstPose;
   bool mHandTrackingSupported = false;
   std::vector<float> refreshRates;
@@ -756,8 +756,11 @@ struct DeviceDelegateOpenXR::State {
     ASSERT(input);
     if (!controllersReadyCallback || !input->AreControllersReady())
         return;
-    controllersReadyCallback();
-    controllersReadyCallback = nullptr;
+    // Invoke the callback. We only clear it if the load has started. Otherwise we will retry later.
+    // This happens for example if a profile with no 3D models like hand interaction is loaded on
+    // start. If we clear the callback it won't ever be called in case the user grabs a controller.
+    if (controllersReadyCallback())
+        controllersReadyCallback = nullptr;
   }
 
   void UpdateInteractionProfile() {
@@ -898,7 +901,7 @@ void DeviceDelegateOpenXR::OnControllersCreated(std::function<void()> callback) 
 }
 
 void
-DeviceDelegateOpenXR::OnControllersReady(const std::function<void()>& callback) {
+DeviceDelegateOpenXR::OnControllersReady(const ControllersReadyCallback& callback) {
   if (m.input && m.input->AreControllersReady()) {
     callback();
     return;

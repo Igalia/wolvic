@@ -43,7 +43,7 @@ public:
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   bool IsPositionTrackingSupported() const override;
   void OnControllersCreated(std::function<void()> callback) override;
-  void OnControllersReady(const std::function<void()>& callback) override;
+  void OnControllersReady(const ControllersReadyCallback& callback) override;
   void SetCPULevel(const device::CPULevel aLevel) override;
   void ProcessEvents() override;
   bool SupportsFramePrediction(FramePrediction aPrediction) const override;
