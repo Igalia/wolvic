@@ -977,6 +977,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
   if (!m.modelsLoaded) {
     m.device->OnControllersReady([this](){
+      bool loadStarted = false;
       const int32_t modelCount = m.device->GetControllerModelCount();
       for (int32_t index = 0; index < modelCount; index++) {
         vrb::LoadTask task = m.device->GetControllerModelTask(index);
@@ -986,15 +987,18 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
           // we need to do the model load right when the controller becomes available)
           m.controllers->SetControllerModelTask(index, task);
           m.controllers->LoadControllerModel(index);
+          loadStarted = true;
         } else {
           const std::string fileName = m.device->GetControllerModelName(index);
           if (!fileName.empty()) {
             m.controllers->LoadControllerModel(index, m.loader, fileName);
+            loadStarted = true;
           }
         }
       }
       if (m.device->IsControllerLightEnabled())
         m.rootController->AddLight(m.light);
+      return loadStarted;
     });
 
     VRBrowser::CheckTogglePassthrough();
