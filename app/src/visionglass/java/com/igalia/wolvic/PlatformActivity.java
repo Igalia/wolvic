@@ -675,6 +675,16 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 return mGestureDetector.onTouchEvent(event);
             });
         }
+
+        @Override
+        boolean onBackPressed() {
+            // User pressed Back on the phone and VR is not active, so we use the default behaviour.
+            if (mViewModel.getConnectionState().getValue() != PhoneUIViewModel.ConnectionState.ACTIVE) {
+                PlatformActivity.super.onBackPressed();
+                return true;
+            }
+            return false;
+        }
     }
 
     private final DisplayManager.DisplayListener mDisplayListener =
