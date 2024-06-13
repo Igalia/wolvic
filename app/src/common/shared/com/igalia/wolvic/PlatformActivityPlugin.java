@@ -9,6 +9,7 @@ public abstract class PlatformActivityPlugin {
     }
     abstract void onKeyboardVisibilityChange(boolean isVisible);
     abstract void onVideoAvailabilityChange();
+    abstract boolean onBackPressed();
     void registerListener(PlatformActivityPluginListener listener) {
         if (mListeners == null)
             mListeners = new ArrayList<>();
