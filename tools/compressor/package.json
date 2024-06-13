@@ -15,7 +15,7 @@
   "author": "Mozilla",
   "license": "Apache-2.0",
   "devDependencies": {
-    "gulp": "^4.0.2"
+    "gulp": "^5.0.0"
   },
   "dependencies": {
     "readdirp": "^3.6.0",
