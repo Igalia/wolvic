@@ -997,6 +997,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     @Deprecated
     public void onBackPressed() {
+        if (mPlatformPlugin != null && mPlatformPlugin.onBackPressed()) {
+            return;
+        }
         if (mIsPresentingImmersive) {
             queueRunnable(this::exitImmersiveNative);
             return;
