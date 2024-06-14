@@ -331,8 +331,9 @@ android {
 
         visionglass {
             dimension "platform"
+            applicationId "com.igalia.wolvic"
             applicationIdSuffix ".visionglass"
-            resValue "string", "app_name", "Wolvic Vision Glass"
+            resValue "string", "app_name", "Wolvic Vision"
             targetSdkVersion build_versions.target_sdk_visionglass
             externalNativeBuild {
                 cmake {
