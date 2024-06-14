@@ -114,7 +114,7 @@ android {
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode generatedVersionCode
-        versionName "1.7"
+        versionName "0.9.1"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
@@ -174,8 +174,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            //minifyEnabled true
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
@@ -360,7 +360,7 @@ android {
 
         chromium {
             dimension "backend"
-            resValue "string", "app_name", "Wolvic Chromium"
+            resValue "string", "app_name", "Wolvic Chromium (beta)"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DCHROMIUM"
@@ -368,6 +368,7 @@ android {
                 }
             }
             buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "true"
+            applicationIdSuffix ".chromium"
         }
 
         webkit {
