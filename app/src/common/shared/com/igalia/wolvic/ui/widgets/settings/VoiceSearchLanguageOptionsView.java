@@ -45,11 +45,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         SpeechRecognizer speechRecognizer = mWidgetManager.getServicesProvider().getSpeechRecognizer();
 
-        if (speechRecognizer == null) {
-            mSupportedLanguages = Collections.emptyList();
-        } else {
-            mSupportedLanguages = speechRecognizer.getSupportedLanguages();
-        }
+        mSupportedLanguages = (speechRecognizer != null) ? speechRecognizer.getSupportedLanguages() : Collections.emptyList();
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_language_voice, this, true);

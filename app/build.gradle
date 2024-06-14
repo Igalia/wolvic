@@ -9,8 +9,9 @@ apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
-// Apply AGConnect plugin only for Hvr builds
-if (getGradle().getStartParameter().getTaskRequests().toString() =~ /(h|H)vr/) {
+// Apply AGConnect plugin only for Huawei builds
+if (getGradle().getStartParameter().getTaskRequests().toString() =~ /[Hh]vr/
+        || getGradle().getStartParameter().getTaskRequests().toString() =~ /[Vv]isionglass/) {
     apply plugin: 'com.huawei.agconnect'
 }
 
@@ -327,6 +328,7 @@ android {
                     arguments "-DVISIONGLASS=ON"
                 }
             }
+            buildConfigField "String", "HVR_API_KEY", "\"${getHVRApiKey()}\""
             buildConfigField "Float", "DEFAULT_DENSITY", "1.5f"
             buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "1.0f"
         }
@@ -550,7 +552,8 @@ android {
 
         visionglass {
             java.srcDirs = [
-                    'src/visionglass/java'
+                    'src/visionglass/java',
+                    'src/hvr/java/com/igalia/wolvic/speech'
             ]
         }
 
@@ -722,6 +725,10 @@ dependencies {
 
     // Vission Glass
     visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/aliceimu/", include: ['*.aar'])
+    visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
+    visionglassImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
+    visionglassImplementation 'com.huawei.agconnect:agconnect-core:1.9.1.301'
+    visionglassImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
 
     // HTC Vive
     if (!gradle.startParameter.taskNames.isEmpty() &&
@@ -806,21 +813,21 @@ android.applicationVariants.configureEach { variant ->
         buildConfigField 'String', 'MLS_TOKEN', '""'
     }
 
-    // HVR packages for mainland china must only use HVR speech recognition system.
     def platform = variant.productFlavors.get(0).name
     def store = variant.productFlavors.get(3).name
-    if (platform.toLowerCase().startsWith('hvr') && store == "mainlandChina") {
-        variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
-    }
 
-    // Default homepages for China releases.
+    // Default homepages and voice recognition services for China releases.
+    // HVR packages for mainland china must only use HVR speech recognition system.
     if (store == "mainlandChina") {
         if (platform.toLowerCase().startsWith('hvr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/index.html"'
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('visionglass')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/hvg.html"'
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('picoxr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }
     }
 

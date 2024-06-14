@@ -7,7 +7,6 @@ public abstract class PlatformActivityPlugin {
     public interface PlatformActivityPluginListener {
         void onPlatformScrollEvent(float distanceX, float distanceY);
     }
-    abstract void onKeyboardVisibilityChange(boolean isVisible);
     abstract void onVideoAvailabilityChange();
     void registerListener(PlatformActivityPluginListener listener) {
         if (mListeners == null)

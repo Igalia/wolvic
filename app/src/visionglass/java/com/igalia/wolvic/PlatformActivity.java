@@ -28,6 +28,7 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -39,6 +40,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
 import com.huawei.usblib.OnConnectionListener;
@@ -48,8 +50,11 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.databinding.VisionglassLayoutBinding;
+import com.igalia.wolvic.speech.SpeechRecognizer;
+import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -156,6 +161,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         usbPermissionFilter.addAction(HUAWEI_USB_PERMISSION);
         registerReceiver(mUsbPermissionReceiver, usbPermissionFilter);
 
+        initializeAGConnect();
+
         initVisionGlassPhoneUI();
 
         mDisplayManager.registerDisplayListener(mDisplayListener, null);
@@ -244,8 +251,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         });
 
         mBinding.realignButton.setOnClickListener(v -> reorientController());
-
-        mBinding.voiceSearchButton.setEnabled(false);
 
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> onBackPressed());
@@ -503,6 +508,26 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISPLAY_UNAVAILABLE);
     }
 
+    private void initializeAGConnect() {
+        try {
+            String speechService = SettingsStore.getInstance(this).getVoiceSearchService();
+            if (SpeechServices.HUAWEI_ASR.equals(speechService) && StringUtils.isEmpty(BuildConfig.HVR_API_KEY)) {
+                Log.e(LOGTAG, "HVR API key is not available");
+                return;
+            }
+            MLApplication.getInstance().setApiKey(BuildConfig.HVR_API_KEY);
+            try {
+                SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
+                ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(speechRecognizer);
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Exception creating the speech recognizer: " + e);
+                ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) {
         return new PlatformActivityPluginVisionGlass(delegate);
     }
@@ -515,11 +540,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
             mDelegate = delegate;
             setupPhoneUI();
-        }
-
-        @Override
-        public void onKeyboardVisibilityChange(boolean isVisible) {
-            mBinding.voiceSearchButton.setEnabled(isVisible);
         }
 
         @Override
@@ -601,9 +621,11 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             });
 
             mBinding.voiceSearchButton.setOnClickListener(v -> {
-                // Delegate all the voice input handling in the KeyboardWidget which already handles
-                // all the potential voice input cases.
-                mDelegate.getKeyboard().simulateVoiceButtonClick();
+                if (mDelegate.getKeyboard().getVisibility() == View.VISIBLE) {
+                    mDelegate.getKeyboard().simulateVoiceButtonClick();
+                } else {
+                    mDelegate.getNavigationBar().onVoiceSearchClicked();
+                }
             });
 
             mBinding.muteButton.setOnClickListener(v -> {
