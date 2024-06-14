@@ -321,6 +321,7 @@ android {
             dimension "platform"
             applicationIdSuffix ".visionglass"
             resValue "string", "app_name", "Wolvic Vision Glass"
+            targetSdkVersion build_versions.target_sdk_visionglass
             externalNativeBuild {
                 cmake {
                     cppFlags " -DVISIONGLASS"
