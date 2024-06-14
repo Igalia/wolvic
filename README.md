@@ -37,7 +37,7 @@ cd wolvic
 If you're developing for the Oculus, Huawei, Pico, or VIVE, you need to clone the repo with third-party SDK files.
 
 ```bash
-git clone https://github.com/Igalia/wolvic-third-parties.git third_party
+git clone git@github.com:Igalia/wolvic-third-parties.git third_party
 ```
 
 This repo is only available to Igalia members. If you have access to the relevant SDK but not this repo, you can manually place them here:
