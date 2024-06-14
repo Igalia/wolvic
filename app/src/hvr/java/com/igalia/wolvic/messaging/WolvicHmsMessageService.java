@@ -1,4 +1,4 @@
-package com.igalia.wolvic;
+package com.igalia.wolvic.messaging;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.huawei.hms.common.ApiException;
 import com.huawei.hms.push.HmsMessageService;
 import com.huawei.hms.push.HmsMessaging;
 import com.huawei.hms.push.RemoteMessage;
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class WolvicHmsMessageService extends HmsMessageService {

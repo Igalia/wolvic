@@ -1,4 +1,4 @@
-package com.igalia.wolvic;
+package com.igalia.wolvic.geolocation;
 
 import android.content.Context;
 import android.location.Location;
