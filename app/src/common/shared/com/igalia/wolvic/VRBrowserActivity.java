@@ -1709,10 +1709,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             view.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
 
-        if (aWidget == mKeyboard && mPlatformPlugin != null) {
-            mPlatformPlugin.onKeyboardVisibilityChange(visible);
-        }
-
         for (UpdateListener listener: mWidgetUpdateListeners) {
             listener.onWidgetUpdate(aWidget);
         }
@@ -1933,8 +1929,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void keyboardDismissed() {
         mNavigationBar.showVoiceSearch();
-        if (mPlatformPlugin != null)
-            mPlatformPlugin.onKeyboardVisibilityChange(false);
     }
 
     @Override
