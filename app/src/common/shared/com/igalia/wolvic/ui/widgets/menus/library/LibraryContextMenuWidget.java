@@ -40,10 +40,10 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
 
     }
 
-    ArrayList<MenuItem> mItems;
+    protected ArrayList<MenuItem> mItems;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    Optional<LibraryContextMenuCallback> mItemDelegate;
-    LibraryContextMenuItem mItem;
+    protected Optional<LibraryContextMenuCallback> mItemDelegate;
+    protected LibraryContextMenuItem mItem;
 
     protected LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, EnumSet<Action> additionalActions) {
         super(aContext, R.layout.library_menu);

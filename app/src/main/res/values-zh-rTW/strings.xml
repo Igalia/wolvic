@@ -1696,6 +1696,14 @@
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">關閉下載項目</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Web Apps' icon in the
+         tray and the Web Apps view is closed. The button it labels, when pressed, opens a list view of the user's web apps. -->
+    <string name="open_webapps_tooltip">開啟網頁應用</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Web Apps' icon in the
+         tray and the Web Apps view is closed. The button it labels, when pressed, closes the Web Apps view. -->
+    <string name="close_webapps_tooltip">關閉網頁應用</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Library' icon in the
          tray and the Library view is closed. The button it labels, when pressed, opens the library panel. -->
     <string name="open_library_tooltip">開啟收藏庫</string>
@@ -1822,6 +1830,9 @@
 
     <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
     <string name="url_downloads_title">下載項目</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the web apps panel -->
+    <string name="url_webapps_title">網頁應用</string>
 
     <!-- This string is displayed in the URL bar when the user is in the addons panel -->
     <string name="url_addons_title">附加元件</string>
