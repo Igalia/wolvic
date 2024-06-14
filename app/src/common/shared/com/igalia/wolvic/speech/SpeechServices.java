@@ -15,7 +15,7 @@ public abstract class SpeechServices {
     // These classes must implement the SpeechRecognizer interface and provide a constructor
     // that takes a Context as its only parameter.
     public static final String MEETKAI = "com.igalia.wolvic.speech.MKSpeechRecognizer";
-    public static final String HUAWEI_ASR = "com.igalia.wolvic.HVRSpeechRecognizer";
+    public static final String HUAWEI_ASR = "com.igalia.wolvic.speech.HVRSpeechRecognizer";
 
     @StringDef(value = {MEETKAI, HUAWEI_ASR})
     @interface Service {

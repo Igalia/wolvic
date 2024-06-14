@@ -1,4 +1,4 @@
-package com.igalia.wolvic;
+package com.igalia.wolvic.speech;
 
 import android.app.Activity;
 import android.content.Context;
