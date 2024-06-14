@@ -292,6 +292,11 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
+        if (mApplication.getSpeechRecognizer() == null) {
+            Log.e(LOGTAG, "Speech recognizer not available");
+            return;
+        }
+
         if (!mApplication.getSpeechRecognizer().shouldDisplayStoreDataPrompt() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
