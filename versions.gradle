@@ -190,6 +190,7 @@ build_versions.target_sdk_oculusvr = 32
 build_versions.target_sdk_wave = 31
 build_versions.target_sdk_aosp = 29
 build_versions.target_sdk_spaces = 29
+build_versions.target_sdk_visionglass = 33
 build_versions.compile_sdk = 34
 build_versions.build_tools = "34.0.0"
 ext.build_versions = build_versions
