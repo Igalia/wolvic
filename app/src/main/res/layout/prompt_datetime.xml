@@ -53,11 +53,12 @@
                             android:layout_height="match_parent">
                         </DatePicker>
 
-                        <TimePicker
+                        <com.igalia.wolvic.ui.widgets.dialogs.RangeTimePickerWidget
                             android:id="@+id/time_picker"
                             android:layout_width="475dp"
-                            android:layout_height="match_parent">
-                        </TimePicker>
+                            android:layout_height="match_parent"
+                            android:timePickerMode="spinner">
+                        </com.igalia.wolvic.ui.widgets.dialogs.RangeTimePickerWidget>
                     </LinearLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout

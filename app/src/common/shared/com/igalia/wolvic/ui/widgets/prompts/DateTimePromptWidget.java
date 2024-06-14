@@ -5,16 +5,15 @@ import android.icu.util.Calendar;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
-
 import android.widget.DatePicker;
-import android.widget.TimePicker;
+
+import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-
-import androidx.annotation.NonNull;
+import com.igalia.wolvic.ui.widgets.dialogs.RangeTimePickerWidget;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,7 +71,7 @@ public class DateTimePromptWidget extends PromptWidget {
         inflate(aContext, R.layout.prompt_datetime, this);
 
         final DatePicker datePicker;
-        final TimePicker timePicker;
+        final RangeTimePickerWidget timePicker;
 
         mAudio = AudioEngine.fromContext(aContext);
         mLayout = findViewById(R.id.layout);
@@ -115,6 +114,12 @@ public class DateTimePromptWidget extends PromptWidget {
             timePicker.setHour(cal.get(java.util.Calendar.HOUR_OF_DAY));
             timePicker.setMinute(cal.get(java.util.Calendar.MINUTE));
             timePicker.setIs24HourView(DateFormat.is24HourFormat(aContext));
+            if (minDate != null) {
+                timePicker.setMinTime(minDate.getHours(), minDate.getMinutes());
+            }
+            if (maxDate != null) {
+                timePicker.setMaxTime(maxDate.getHours(), maxDate.getMinutes());
+            }
         } else {
             findViewById(R.id.time_picker).setVisibility(View.GONE);
             timePicker = null;
