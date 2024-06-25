@@ -406,6 +406,8 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     @Override
     public void newDownload(String url) {
+        if (mContentDelegate == null)
+            return;
         // Since we only have the URL, we have to use default values for the rest of the web
         // response data.
         mContentDelegate.onExternalResponse(this, new WWebResponse() {
