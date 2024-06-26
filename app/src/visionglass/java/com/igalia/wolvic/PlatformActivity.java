@@ -341,7 +341,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         q[1] = q[2];
         q[2] = temp;
 
-        q[0] *= -1;
         q[1] *= -1;
 
         return q;
@@ -364,10 +363,10 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             queueRunnable(this::calibrateController);
         }
 
-        mBinding.realignButton.updatePosition(quaternion[1], quaternion[0]);
+        mBinding.realignButton.updatePosition(quaternion[1], - quaternion[0]);
 
         if (mAlignDialogFragment != null && mAlignDialogFragment.isVisible()) {
-            mAlignDialogFragment.updatePosition(quaternion[1], quaternion[0]);
+            mAlignDialogFragment.updatePosition(quaternion[1], - quaternion[0]);
         }
     }
 
