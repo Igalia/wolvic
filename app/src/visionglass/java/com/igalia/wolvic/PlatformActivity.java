@@ -153,6 +153,15 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         Log.d(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
+        // Before we do anything else, we need to ensure that the user has accepted the legal terms.
+        SettingsStore settings = SettingsStore.getInstance(this);
+        if (!settings.isTermsServiceAccepted() && !settings.isPrivacyPolicyAccepted()) {
+            Intent intent = new Intent(this, FirstRunActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
