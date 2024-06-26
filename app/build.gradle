@@ -535,13 +535,15 @@ android {
 
         hvr {
             java.srcDirs = [
-                    'src/hvr/java'
+                    'src/hvr/java',
+                    'src/hvrcommon/java'
             ]
             assets.srcDirs = [
                     'src/hvr/assets'
             ]
             res.srcDirs = [
-                    'src/hvr/res'
+                    'src/hvr/res',
+                    'src/hvrcommon/res'
             ]
         }
 
@@ -566,7 +568,11 @@ android {
         visionglass {
             java.srcDirs = [
                     'src/visionglass/java',
-                    'src/hvr/java/com/igalia/wolvic/speech'
+                    'src/hvrcommon/java'
+            ]
+            res.srcDirs = [
+                    'src/visionglass/res',
+                    'src/hvrcommon/res'
             ]
         }
 
