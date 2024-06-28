@@ -92,6 +92,8 @@ struct DeviceDelegateOpenXR::State {
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
+  float nearMin { 0.1f };
+  float farMax { std::numeric_limits<float>::max() };
   bool hasEventFocus = true;
   crow::ElbowModelPtr elbow;
   ControllerDelegatePtr controller;
@@ -207,6 +209,9 @@ struct DeviceDelegateOpenXR::State {
 
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME))
         extensions.push_back(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME))
+        extensions.push_back(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME);
 
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
@@ -358,9 +363,20 @@ struct DeviceDelegateOpenXR::State {
     uint32_t viewCount;
     CHECK_XRCMD(xrEnumerateViewConfigurationViews(instance, system, viewConfigType, 0, &viewCount, nullptr));
     CHECK_MSG(viewCount > 0, "OpenXR unexpected viewCount");
-    viewConfig.resize(viewCount, {XR_TYPE_VIEW_CONFIGURATION_VIEW});
+    XrViewConfigurationDepthRangeEXT depthRangeExt {XR_TYPE_VIEW_CONFIGURATION_DEPTH_RANGE_EXT};
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME)) {
+        viewConfig.resize(viewCount, {XR_TYPE_VIEW_CONFIGURATION_VIEW, &depthRangeExt});
+    } else {
+        viewConfig.resize(viewCount, {XR_TYPE_VIEW_CONFIGURATION_VIEW});
+    }
     CHECK_XRCMD(xrEnumerateViewConfigurationViews(instance, system, viewConfigType, viewCount, &viewCount, viewConfig.data()));
-
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME)) {
+      nearMin = depthRangeExt.minNearZ;
+      farMax = depthRangeExt.maxFarZ;
+      SetClipPlanes(depthRangeExt.recommendedNearZ, depthRangeExt.recommendedFarZ);
+      VRB_LOG("OpenXR view configuration depth range: minNearZ=%f maxFarZ=%f recommendedNearZ=%f recommendedFarZ=%f",
+              depthRangeExt.minNearZ, depthRangeExt.maxFarZ, depthRangeExt.recommendedNearZ, depthRangeExt.recommendedFarZ);
+    }
     // Cache view buffer (used in xrLocateViews)
     views.resize(viewCount, {XR_TYPE_VIEW});
 
@@ -374,6 +390,11 @@ struct DeviceDelegateOpenXR::State {
       eyeSwapChains.push_back(swapChain);
     }
     VRB_DEBUG("OpenXR available views: %d", (int)eyeSwapChains.size());
+  }
+
+  void SetClipPlanes(float aNear, float aFar) {
+      near = std::max(nearMin, aNear);
+      far = std::min(aFar, farMax);
   }
 
   void InitializeBlendModes() {
@@ -862,8 +883,7 @@ DeviceDelegateOpenXR::SetClearColor(const vrb::Color& aColor) {
 
 void
 DeviceDelegateOpenXR::SetClipPlanes(const float aNear, const float aFar) {
-  m.near = aNear;
-  m.far = aFar;
+  m.SetClipPlanes(aNear, aFar);
 }
 
 void
