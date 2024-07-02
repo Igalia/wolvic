@@ -790,7 +790,17 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
 #endif
 
+    // TODO: merge this with the one in OpenXRGestureManager
+    auto isPalmFacingHead = [](const vrb::Matrix& palm, const vrb::Matrix& head) {
+        auto palmToHead = (head.GetTranslation() - palm.GetTranslation()).Normalize();
+        // Extract the orientation of -Y axis which is the one pointing from the palm out.
+        auto palmNormalizedOrientation = palm.MultiplyDirection({0, -1, 0}).Normalize();
+
+        return palmNormalizedOrientation.Dot(palmToHead) > 0.9;
+    };
+
     auto gotHandTrackingInfo = false;
+    auto palmFacesHead = false;
     if (isControllerUnavailable || mUsingHandInteractionProfile) {
         gotHandTrackingInfo = GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head);
         if (gotHandTrackingInfo) {
@@ -802,6 +812,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
             }
+            palmFacesHead = isPalmFacingHead(jointTransforms[HAND_JOINT_FOR_AIM], head);
             delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
         }
     }
@@ -814,7 +825,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
     delegate.SetAimEnabled(mIndex, hasAim);
 
-    if (!hasAim && !mUsingHandInteractionProfile) {
+    if (!hasAim && (!mUsingHandInteractionProfile || !gotHandTrackingInfo)) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -833,7 +844,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetMode(mIndex, mUsingHandInteractionProfile && gotHandTrackingInfo ? ControllerMode::Hand : ControllerMode::Device);
     delegate.SetEnabled(mIndex, true);
 
-    bool isHandActionEnabled = !hasAim && mUsingHandInteractionProfile;
+    auto isHandActionEnabled = !hasAim && mUsingHandInteractionProfile && palmFacesHead;
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
@@ -905,14 +916,31 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         auto immersiveButton = GetImmersiveButton(button);
 
         if (isHandActionEnabled) {
+            ASSERT(button.type == OpenXRButtonType::Trigger);
+            if (mDeviceType == device::MagicLeap2) {
+                // The MagicLeap2 sometimes return pinches when the hand transitions from tracked
+                // to untracked states. We need to filter them out, otherwise we'd get phantom clicks
+                // when moving hands out of sight while them face the head. The change threshold value
+                // is based on testing, but it seems to work well.
+                const float kPinchChangeThreshold = 0.35f;
+                const float change = abs(mLastHandActionTriggerValue - state->value);
+                mLastHandActionTriggerValue = state->value;
+                if (change > kPinchChangeThreshold)
+                    continue;
+            }
+
             // When hand faces head, tracking systems do not have the same level of precision
             // detecting pinches, that's why we need to lower the bar to detect them.
             delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= kClickLowFiThreshold,
-                                    state->value > 0, 1.0);
-        } else {
-            delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1,
-                                    state->clicked, state->touched, state->value);
+                                    state->value > 0, state->value);
+            continue;
         }
+
+        if (!hasAim)
+            continue;
+
+        delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1,
+                                state->clicked, state->touched, state->value);
 
         if (button.type == OpenXRButtonType::Trigger && state->ready) {
             delegate.SetSelectFactor(mIndex, state->value);
