@@ -366,7 +366,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 }
             };
         }
-        context.registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        }
     }
 
     public void stop(Context context) {
