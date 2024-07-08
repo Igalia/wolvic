@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.igalia.wolvic.R
@@ -23,11 +24,9 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.buildSearchUrl
-import mozilla.components.feature.search.ext.createSearchEngine
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.suggestions.SearchSuggestionClient
 import java.lang.ref.WeakReference
-import java.util.Locale
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 
@@ -48,10 +47,17 @@ class SearchEngineWrapper private constructor(aContext: Context) :
         ))
     fun registerForUpdates() {
         if (hasContext()) {
-            context!!.registerReceiver(
-                mLocaleChangedReceiver,
-                IntentFilter(Intent.ACTION_LOCALE_CHANGED)
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                context!!.registerReceiver(
+                    mLocaleChangedReceiver,
+                    IntentFilter(Intent.ACTION_LOCALE_CHANGED), Context.RECEIVER_NOT_EXPORTED
+                )
+            } else {
+                context!!.registerReceiver(
+                        mLocaleChangedReceiver,
+                        IntentFilter(Intent.ACTION_LOCALE_CHANGED)
+                )
+            }
             mPrefs?.registerOnSharedPreferenceChangeListener(this)
         }
     }

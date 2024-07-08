@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
+import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -268,7 +269,11 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(WolvicHmsMessageService.MESSAGE_RECEIVED_ACTION);
-        registerReceiver(mHmsMessageBroadcastReceiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            registerReceiver(mHmsMessageBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mHmsMessageBroadcastReceiver, filter);
+        }
 
         setHmsMessageServiceAutoInit(true);
         getHmsMessageServiceToken();

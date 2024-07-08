@@ -168,7 +168,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         // Alternatively: android.hardware.usb.action.USB_DEVICE_ATTACHED, USB_DEVICE_DETACHED.
         IntentFilter usbPermissionFilter = new IntentFilter();
         usbPermissionFilter.addAction(HUAWEI_USB_PERMISSION);
-        registerReceiver(mUsbPermissionReceiver, usbPermissionFilter);
+        registerReceiver(mUsbPermissionReceiver, usbPermissionFilter, Context.RECEIVER_NOT_EXPORTED);
 
         initializeAGConnect();
 
