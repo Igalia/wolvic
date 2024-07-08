@@ -1560,7 +1560,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mLastBatteryLevel = bm == null ? 100 : bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         }
 
-        Intent intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        Intent intent = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }
         int plugged = intent == null ? -1 : intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         boolean isCharging = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB || plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
         mTray.setBatteryLevels(mLastBatteryLevel, isCharging, leftLevel, rightLevel);
