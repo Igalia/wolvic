@@ -7,12 +7,6 @@
 
 namespace crow {
 
-// This threshold is used to detect when palm is facing the head,
-// and enable the left hand action gesture. The higher the threshold
-// the more aligned objects should be to be considered facing each other.
-// 0.7 is generally accepted as good for objects facing each other.
-const float kPalmHeadThreshold = 0.7;
-
 // Distance threshold to consider that two hand joints touch
 // Used to detect pinch events between thumb-tip joint and the
 // rest of the finger tips.
@@ -31,17 +25,30 @@ const float kPinchRange = kPinchStart - kPinchThreshold;
 const double kSmoothFactor = 0.5;
 
 bool
-OpenXRGestureManager::palmFacesHead(const vrb::Matrix &palm, const vrb::Matrix &head) const {
+OpenXRGestureManager::handFacesHead(const vrb::Matrix &hand, const vrb::Matrix &head) {
     // For the hand we take the Y axis because that corresponds to head's Z axis when
     // the hand is in upright position facing head (the gesture we want to detect).
-    auto vectorPalm = palm.MultiplyDirection({0, 1, 0});
+    auto handDirection = hand.MultiplyDirection({0, 1, 0}).Normalize();
 #ifdef PICOXR
     // Axis are inverted in Pico system versions prior to 5.7.1
     if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
-        vectorPalm = palm.MultiplyDirection({0, 0, -1});
+        handDirection = hand.MultiplyDirection({0, 0, -1});
 #endif
-    auto vectorHead = head.MultiplyDirection({0, 0, -1});
-    return vectorPalm.Dot(vectorHead) > kPalmHeadThreshold;
+    auto headDirection = head.MultiplyDirection({0, 0, -1}).Normalize();
+
+    // First check that vector directions align
+    const float kHandHeadDirectionAlignment = 0.8;
+    if (handDirection.Dot(headDirection) <= kHandHeadDirectionAlignment)
+        return false;
+
+    // Then check that vectors are not too far away
+    const float kHandHeadDistanceThreshold = 0.10;
+    auto handToHead = hand.GetTranslation() - head.GetTranslation();
+    auto handProjectedIntoHeadPlane = headDirection * (handToHead.Dot(headDirection));
+    auto inPlaneDistance = handToHead - handProjectedIntoHeadPlane;
+
+    return abs(inPlaneDistance.x()) < kHandHeadDistanceThreshold &&
+        abs(inPlaneDistance.y()) < kHandHeadDistanceThreshold;
 }
 
 double
@@ -98,13 +105,13 @@ OpenXRGestureManagerFBHandTrackingAim::aimPose(const XrTime predictedDisplayTime
 }
 
 bool
-OpenXRGestureManagerFBHandTrackingAim::systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const {
+OpenXRGestureManagerFBHandTrackingAim::systemGestureDetected(const vrb::Matrix& hand, const vrb::Matrix& head) const {
 #ifdef PICOXR
     // Pico does not correctly implement the SYSTEM_GESTURE_BIT_FB flags.
-    return palmFacesHead(palm, head) && !hasAim();
+    return handFacesHead(hand, head) && !hasAim();
 #elif LYNX
     // Lynx does not correctly implement the SYSTEM_GESTURE_BIT_FB and XR_HAND_TRACKING_AIM_VALID_BIT_FB flags (it's always active)
-    return palmFacesHead(palm, head);
+    return handFacesHead(hand, head);
 #else
     return mFBAimState.status & XR_HAND_TRACKING_AIM_SYSTEM_GESTURE_BIT_FB;
 #endif
@@ -175,8 +182,8 @@ OpenXRGestureManagerHandJoints::aimPose(const XrTime predictedDisplayTime, const
 }
 
 bool
-OpenXRGestureManagerHandJoints::systemGestureDetected(const vrb::Matrix& palm, const vrb::Matrix& head) const {
-    return palmFacesHead(palm, head);
+OpenXRGestureManagerHandJoints::systemGestureDetected(const vrb::Matrix& hand, const vrb::Matrix& head) const {
+    return handFacesHead(hand, head);
 }
 
 }
