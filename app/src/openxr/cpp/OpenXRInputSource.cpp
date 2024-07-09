@@ -5,12 +5,7 @@
 #include "DeviceUtils.h"
 #include "SystemUtils.h"
 
-#if defined(PICOXR)
-    // Pico system version prior to 5.7.1 doesn't provide palm joint info :( so we use the wrist instead.
-#define HAND_JOINT_FOR_AIM (CompareBuildIdString(kPicoVersionHandTrackingUpdate) ? XR_HAND_JOINT_WRIST_EXT : XR_HAND_JOINT_PALM_EXT)
-#else
-#define HAND_JOINT_FOR_AIM XR_HAND_JOINT_PALM_EXT
-#endif
+#define HAND_JOINT_FOR_AIM XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT
 
 namespace crow {
 
@@ -789,6 +784,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 #endif
 
     auto gotHandTrackingInfo = false;
+    auto handFacesHead = false;
     if (isControllerUnavailable || mUsingHandInteractionProfile) {
         gotHandTrackingInfo = GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head);
         if (gotHandTrackingInfo) {
@@ -800,6 +796,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
             }
+            handFacesHead = OpenXRGestureManager::handFacesHead(jointTransforms[HAND_JOINT_FOR_AIM], head);
             delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
         }
     }
@@ -812,7 +809,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
     delegate.SetAimEnabled(mIndex, hasAim);
 
-    if (!hasAim && !mUsingHandInteractionProfile) {
+    if (!hasAim && !(mUsingHandInteractionProfile && gotHandTrackingInfo && handFacesHead)) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -831,7 +828,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetMode(mIndex, mUsingHandInteractionProfile && gotHandTrackingInfo ? ControllerMode::Hand : ControllerMode::Device);
     delegate.SetEnabled(mIndex, true);
 
-    bool isHandActionEnabled = !hasAim && mUsingHandInteractionProfile;
+    bool isHandActionEnabled = !hasAim && mUsingHandInteractionProfile && handFacesHead;
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
