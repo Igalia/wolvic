@@ -83,7 +83,6 @@ private:
     bool mSupportsHandJointsMotionRangeInfo { false };
     bool mUsingHandInteractionProfile { false };
     device::DeviceType mDeviceType { device::UnknownType };
-    float mLastHandActionTriggerValue { 0.0f };
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
