@@ -884,6 +884,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             continue;
         }
 
+        if (!state->ready)
+            continue;
+
         placeholders.erase(button.type);
         buttonCount++;
         auto browserButton = GetBrowserButton(button);
@@ -899,7 +902,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
                                     state->clicked, state->touched, state->value);
         }
 
-        if (button.type == OpenXRButtonType::Trigger && state->ready) {
+        if (button.type == OpenXRButtonType::Trigger) {
             delegate.SetSelectFactor(mIndex, state->value);
         }
 
