@@ -90,7 +90,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private Drawable mShiftDisabledIcon;
     private Drawable mCapsLockOnIcon;
     private View mFocusedView;
-    private View mExternalFocusedView;
     private LinearLayout mKeyboardLayout;
     private RelativeLayout mKeyboardContainer;
     private WindowWidget mAttachedWindow;
@@ -1378,8 +1377,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    public void showSoftInput(@NonNull WSession session, View requestView) {
-        mExternalFocusedView = requestView;
+    public void showSoftInput(@NonNull WSession session) {
         if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE || mInputRestarted) {
             post(() -> updateFocusedView(mAttachedWindow));
         }
@@ -1415,7 +1413,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        updateFocusedView(mExternalFocusedView == newFocus ? mAttachedWindow : newFocus);
+        updateFocusedView(newFocus);
     }
 
 
