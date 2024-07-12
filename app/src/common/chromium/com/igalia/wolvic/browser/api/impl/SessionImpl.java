@@ -202,8 +202,6 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         WDisplay display = new DisplayImpl(this, mTab.getCompositorView());
         mRuntime.getContainerView().addView(mTab.getCompositorView(),
                 new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
-        mRuntime.getContainerView().addView(getContentView(),
-                new ViewGroup.LayoutParams(settings.getWindowWidth(), settings.getWindowHeight()));
         getTextInput().setView(getContentView());
         return display;
     }
@@ -211,7 +209,6 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public void releaseDisplay(@NonNull WDisplay display) {
         mRuntime.getContainerView().removeView(mTab.getCompositorView());
-        mRuntime.getContainerView().removeView(getContentView());
         getTextInput().setView(null);
     }
 
