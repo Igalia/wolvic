@@ -92,7 +92,7 @@ public class TextInputImpl implements WTextInput {
 
             @Override
             public void showSoftInput(@NonNull GeckoSession session) {
-                mDelegate.showSoftInput(mSession, null);
+                mDelegate.showSoftInput(mSession);
             }
 
             @Override

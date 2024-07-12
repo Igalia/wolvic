@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
-import android.view.View;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
@@ -1435,11 +1434,11 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     @Override
-    public void showSoftInput(@NonNull WSession aSession, @Nullable View requestView) {
+    public void showSoftInput(@NonNull WSession aSession) {
         if (mState.mSession == aSession) {
             mState.mIsInputActive = true;
             for (WSession.TextInputDelegate listener : mTextInputListeners) {
-                listener.showSoftInput(aSession, requestView);
+                listener.showSoftInput(aSession);
             }
         }
     }

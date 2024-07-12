@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.view.PointerIcon;
 import android.view.Surface;
-import android.view.View;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
@@ -1762,16 +1761,10 @@ public interface WSession {
          * This method is always called, even in viewless mode.
          *
          * @param session Session instance.
-         * @param requestView View requesting the soft input. This can be set to allow the soft
-         *                    keyboard to be requested from a view that exist outside a hierarchy of
-         *                    the window widget which the keyboard widget is attached to.
-         *                    If this is null, this method will treat the focused view is the window
-         *                    widget.
          * @see #hideSoftInput
          */
-
         @UiThread
-        default void showSoftInput(@NonNull final WSession session, @Nullable View requestView) {}
+        default void showSoftInput(@NonNull final WSession session) {}
 
         /**
          * Hide the soft input. May be called consecutively, even if the soft input is already hidden.
