@@ -177,7 +177,8 @@
                             app:honeycombButtonIcon="@drawable/ic_icon_settings_account"
                             app:honeycombButtonText="@string/settings_fxa_account_sign_in"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width"
-                            app:honeycombButtonIconHover="false"/>
+                            app:honeycombButtonIconHover="false"
+                            app:visibleGone="@{BuildConfig.FLAVOR_backend != &quot;chromium&quot;}"/>
 
                     </LinearLayout>
 
