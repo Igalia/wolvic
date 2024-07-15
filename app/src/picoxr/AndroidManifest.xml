@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.vr.headtracking" android:required="true" />
     <!-- Required in Pico platform to avoid a crash during app resuming -->
     <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="replace"/>
+    <uses-permission android:name="com.picovr.permission.EYE_TRACKING"/>
 
     <application android:requestLegacyExternalStorage="true">
         <activity android:name=".VRBrowserActivity" android:screenOrientation="landscape">
@@ -16,5 +17,6 @@
         </activity>
         <meta-data android:name="pvr.app.type" android:value="vr" />
         <meta-data android:name="handtracking" android:value="1" />
+        <meta-data android:name="picovr.software.eye_tracking" android:value="true" />
     </application>
 </manifest>

@@ -8,11 +8,8 @@ package com.igalia.wolvic;
 import android.app.NativeActivity;
 import android.content.Intent;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.WindowManager;
 
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
-import com.igalia.wolvic.utils.SystemUtils;
 
 public class PlatformActivity extends NativeActivity {
 
@@ -36,6 +33,11 @@ public class PlatformActivity extends NativeActivity {
     protected Intent getStoreIntent() {
         // Dummy implementation.
         return null;
+    }
+
+    protected String getEyeTrackingPermissionString() {
+        // FIXME: currently returning MagicLeap2 string, should be generalized to other devices.
+        return "com.magicleap.permission.EYE_TRACKING";
     }
 
     @Override

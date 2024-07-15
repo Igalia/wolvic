@@ -36,6 +36,8 @@ public class PlatformActivity extends NativeActivity {
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
 
     @Override

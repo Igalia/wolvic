@@ -35,6 +35,8 @@ public class PlatformActivity extends NativeActivity {
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return "com.picovr.permission.EYE_TRACKING"; }
+
     @Override
     public void onBackPressed() {
         queueRunnable(new Runnable() {

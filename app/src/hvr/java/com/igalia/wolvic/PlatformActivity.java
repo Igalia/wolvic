@@ -78,6 +78,8 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
                 if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {

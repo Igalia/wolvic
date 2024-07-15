@@ -2559,5 +2559,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_error_message">An error happened.\nPlease try again.</string>
     <!-- Vision Glass: instruct the user to point the phone straight ahead to re-align the controller. -->
     <string name="vision_glass_realign_dialog_explanation">To set up the controller, please point your phone straight ahead and tap the button.</string>
+    <string name="controller_options_pointer_mode">Gaze Mode</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Pointer</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Eye Tracking</string>
 
 </resources>

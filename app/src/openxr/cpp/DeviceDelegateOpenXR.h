@@ -66,6 +66,7 @@ public:
                       const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) override;
   void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) override;
   void SetHitDistance(const float) override;
+  void SetPointerMode(const PointerMode mode) override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
@@ -81,6 +82,7 @@ protected:
 private:
   State& m;
   VRB_NO_DEFAULTS(DeviceDelegateOpenXR)
+  void updateEyeGaze();
 };
 
 } // namespace crow

@@ -72,6 +72,8 @@ const char* const kUpdateControllerBatteryLevelsName = "updateControllerBatteryL
 const char* const kUpdateControllerBatteryLevelsSignature = "(II)V";
 const char* const kOnAppFocusChangedName = "onAppFocusChanged";
 const char* const kOnAppFocusChangedSignature = "(Z)V";
+const char* const kSetEyeTrackingSupported = "setEyeTrackingSupported";
+const char* const kSetEyeTrackingSupportedSignature = "(Z)V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -107,7 +109,9 @@ jmethodID sDisableLayers = nullptr;
 jmethodID sAppendAppNotesToCrashReport = nullptr;
 jmethodID sUpdateControllerBatteryLevels = nullptr;
 jmethodID sOnAppFocusChanged = nullptr;
-}
+jmethodID sSetEyeTrackingSupported = nullptr;
+
+} // namespace
 
 namespace crow {
 
@@ -157,6 +161,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sAppendAppNotesToCrashReport = FindJNIMethodID(sEnv, sBrowserClass, kAppendAppNotesToCrashReport, kAppendAppNotesToCrashReportSignature);
   sUpdateControllerBatteryLevels = FindJNIMethodID(sEnv, sBrowserClass, kUpdateControllerBatteryLevelsName, kUpdateControllerBatteryLevelsSignature);
   sOnAppFocusChanged = FindJNIMethodID(sEnv, sBrowserClass, kOnAppFocusChangedName, kOnAppFocusChangedSignature);
+  sSetEyeTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetEyeTrackingSupported, kSetEyeTrackingSupportedSignature);
 }
 
 JNIEnv * VRBrowser::Env()
@@ -467,6 +472,14 @@ VRBrowser::OnAppFocusChanged(const bool aIsFocused) {
   if (!ValidateMethodID(sEnv, sActivity, sOnAppFocusChanged, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sOnAppFocusChanged, (jboolean) aIsFocused);
   CheckJNIException(sEnv, __FUNCTION__);
+}
+
+// implement the SetEyeTrackingSupported method
+void
+VRBrowser::SetEyeTrackingSupported(bool aIsSupported) {
+    if (!ValidateMethodID(sEnv, sActivity, sSetEyeTrackingSupported, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sSetEyeTrackingSupported, (jboolean) aIsSupported);
+    CheckJNIException(sEnv, __FUNCTION__);
 }
 
 } // namespace crow
