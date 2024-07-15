@@ -582,7 +582,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private void showWhatsNewDialogIfNeeded() {
-        if (SettingsStore.getInstance(this).isWhatsNewDisplayed() || mWindows.getFocusedWindow().isKioskMode()) {
+        if (SettingsStore.getInstance(this).isWhatsNewDisplayed() || mWindows.getFocusedWindow().isKioskMode()
+            || BuildConfig.FLAVOR_backend.equals("chromium")) {
             return;
         }
 

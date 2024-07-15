@@ -1410,8 +1410,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
         boolean isSendTabEnabled = false;
-        if (URLUtil.isHttpUrl(mAttachedWindow.getSession().getCurrentUri()) ||
-                URLUtil.isHttpsUrl(mAttachedWindow.getSession().getCurrentUri())) {
+        if (!BuildConfig.FLAVOR_backend.equals("chromium") &&
+                (URLUtil.isHttpUrl(mAttachedWindow.getSession().getCurrentUri()) ||
+                URLUtil.isHttpsUrl(mAttachedWindow.getSession().getCurrentUri()))) {
             isSendTabEnabled = true;
         }
         mHamburgerMenu.setSendTabEnabled(isSendTabEnabled);
