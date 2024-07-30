@@ -40,6 +40,8 @@ public class PlatformActivity extends VRActivity {
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     public PlatformActivity() {}
 
     @Override

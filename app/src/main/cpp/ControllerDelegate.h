@@ -61,6 +61,7 @@ public:
   virtual void SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) = 0;
   virtual void SetTargetRayMode(const int32_t aControllerIndex, device::TargetRayMode aMode) = 0;
   virtual void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) = 0;
+  virtual void TranslateTransform(const int32_t aControllerIndex, const vrb::Vector& aTranslation) = 0;
   virtual void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) = 0;
   virtual void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) = 0;
   virtual void SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) = 0;

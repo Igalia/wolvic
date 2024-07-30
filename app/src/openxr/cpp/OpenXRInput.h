@@ -3,6 +3,8 @@
 #include "vrb/Forward.h"
 #include "OpenXRHelpers.h"
 #include "ControllerDelegate.h"
+#include "OneEuroFilter.h"
+#include "DeviceDelegate.h"
 #include <vector>
 
 namespace crow {
@@ -37,7 +39,7 @@ private:
   };
   typedef std::unique_ptr<KeyboardTrackingFB> KeyboardTrackingFBPtr;
 
-  OpenXRInput(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
+  OpenXRInput(XrInstance, XrSession, XrSystemProperties, XrSpace localSpace, ControllerDelegate& delegate);
   void UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace baseSpace);
   void LoadKeyboardModel();
 
@@ -49,11 +51,15 @@ private:
   std::vector<OpenXRInputSourcePtr> mInputSources;
   OpenXRActionSetPtr mActionSet;
   KeyboardTrackingFBPtr keyboardTrackingFB { nullptr };
+  XrAction mUserIntentAction { XR_NULL_HANDLE };
+  XrSpace mEyeGazeActionSpace {XR_NULL_HANDLE };
+  XrSpace mLocalReferenceSpace { XR_NULL_HANDLE};
+  std::unique_ptr<OneEuroFilterQuaternion> mOneEuroFilterGazeOrientation;
 
 public:
-  static OpenXRInputPtr Create(XrInstance, XrSession, XrSystemProperties, ControllerDelegate& delegate);
+  static OpenXRInputPtr Create(XrInstance, XrSession, XrSystemProperties, XrSpace localSpace, ControllerDelegate& delegate);
   XrResult Initialize(ControllerDelegate& delegate);
-  XrResult Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate);
+  XrResult Update(const XrFrameState&, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode, ControllerDelegate &);
   int32_t GetControllerModelCount() const;
   std::string GetControllerModelName(const int32_t aModelIndex) const;
   void UpdateInteractionProfile(ControllerDelegate&);
@@ -62,6 +68,9 @@ public:
   HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
   void SetKeyboardTrackingEnabled(bool enabled);
   ~OpenXRInput();
+  void InitializeEyeGaze(ControllerDelegate&);
+  void InitializeEyeGazeSpaces();
+  bool updateEyeGaze(XrFrameState, const vrb::Matrix& head, ControllerDelegate&);
 };
 
 } // namespace crow

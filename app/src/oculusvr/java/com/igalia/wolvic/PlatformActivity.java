@@ -51,6 +51,8 @@ public class PlatformActivity extends NativeActivity {
         return intent;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"in onCreate");

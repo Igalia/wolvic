@@ -27,6 +27,7 @@ import com.igalia.wolvic.browser.engine.EngineProvider;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
 import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.RemoteProperties;
@@ -140,6 +141,7 @@ public class SettingsStore {
     public final static boolean AUTOFILL_ENABLED = true;
     public final static boolean LOGIN_AUTOCOMPLETE_ENABLED = true;
     public final static String SEARCH_ENGINE_DEFAULT = "";
+    public final static @WidgetManagerDelegate.PointerMode int POINTER_MODE_DEFAULT = WidgetManagerDelegate.TRACKED_POINTER;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -697,6 +699,16 @@ public class SettingsStore {
 
     public boolean isHapticFeedbackEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), HAPTIC_FEEDBACK_ENABLED);
+    }
+
+    public void setPointerMode(@WidgetManagerDelegate.PointerMode int pointerMode) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_pointer_mode), pointerMode);
+        editor.commit();
+    }
+
+    public @WidgetManagerDelegate.PointerMode int getPointerMode() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_pointer_mode), POINTER_MODE_DEFAULT);
     }
 
     public boolean isCenterWindows() {

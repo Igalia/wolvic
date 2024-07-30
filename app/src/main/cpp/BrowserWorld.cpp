@@ -1698,6 +1698,11 @@ BrowserWorld::SetIsServo(const bool aIsServo) {
   m.externalVR->SetSourceBrowser(aIsServo ? ExternalVR::VRBrowserType::Servo : ExternalVR::VRBrowserType::Gecko);
 }
 
+void
+BrowserWorld::SetPointerMode(crow::DeviceDelegate::PointerMode pointerMode) {
+  m.device->SetPointerMode(pointerMode);
+}
+
 JNIEnv*
 BrowserWorld::GetJNIEnv() const {
   ASSERT_ON_RENDER_THREAD(nullptr);
@@ -2197,6 +2202,21 @@ JNI_METHOD(void, setIsServo)
   crow::BrowserWorld::Instance().SetIsServo(aIsServo);
 }
 
-
+JNI_METHOD(void, setPointerModeNative)
+(JNIEnv*, jobject, jint nativePointerMode) {
+    crow::DeviceDelegate::PointerMode pointerMode;
+    switch (nativePointerMode) {
+        case 0:
+            pointerMode = crow::DeviceDelegate::PointerMode::TRACKED_POINTER;
+            break;
+        case 1:
+            pointerMode = crow::DeviceDelegate::PointerMode::TRACKED_EYE;
+            break;
+        default:
+            ASSERT(false);
+            break;
+    }
+    crow::BrowserWorld::Instance().SetPointerMode(pointerMode);
+}
 
 } // extern "C"

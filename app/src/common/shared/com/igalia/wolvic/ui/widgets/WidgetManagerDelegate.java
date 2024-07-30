@@ -35,6 +35,10 @@ public interface WidgetManagerDelegate {
         void onWebXRRenderStateChange(boolean aRendering);
     }
 
+    interface EyeTrackingCallback {
+        void onEyeTrackingPermissionRequest(boolean aPermissionGranted);
+    }
+
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
@@ -60,6 +64,12 @@ public interface WidgetManagerDelegate {
     @interface YawTarget {}
     int YAW_TARGET_ALL = 0; // Targets widgets and VR videos.
     int YAW_TARGET_WIDGETS = 1; // Targets widgets only.
+
+    // Keep in sync with DeviceDelegate.h
+    @IntDef(value = { TRACKED_POINTER, TRACKED_EYE })
+    @interface PointerMode {}
+    int TRACKED_POINTER = 0;
+    int TRACKED_EYE = 1;
 
     enum OriginatorType {WEBSITE, APPLICATION}
 
@@ -126,4 +136,7 @@ public interface WidgetManagerDelegate {
     @NonNull
     AppServicesProvider getServicesProvider();
     KeyboardWidget getKeyboard();
+    void setPointerMode(@PointerMode int mode);
+    void checkEyeTrackingPermissions(@NonNull EyeTrackingCallback callback);
+    boolean isEyeTrackingSupported();
 }

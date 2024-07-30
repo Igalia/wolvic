@@ -100,6 +100,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();
     private SensorManager mSensorManager;
 

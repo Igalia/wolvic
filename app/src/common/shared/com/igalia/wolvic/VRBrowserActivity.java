@@ -247,6 +247,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private int mLastBatteryLevel = -1;
     private PlatformActivityPlugin mPlatformPlugin;
     private int mLastMotionEventWidgetHandle;
+    private boolean mIsEyeTrackingSupported;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -381,6 +382,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             checkForCrash();
 
         setHeadLockEnabled(mSettings.isHeadLockEnabled());
+        if (mSettings.getPointerMode() == WidgetManagerDelegate.TRACKED_EYE)
+            checkEyeTrackingPermissions(aPermissionGranted -> setPointerMode(aPermissionGranted ? WidgetManagerDelegate.TRACKED_EYE : WidgetManagerDelegate.TRACKED_POINTER));
+        else
+            setPointerMode(mSettings.getPointerMode());
 
         // Show the launch dialogs, if needed.
         if (!showTermsServiceDialogIfNeeded()) {
@@ -1589,6 +1594,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
+    @Keep
+    @SuppressWarnings("unused")
+    private void setEyeTrackingSupported(final boolean isSupported) { mIsEyeTrackingSupported = isSupported; }
+
     private SurfaceTexture createSurfaceTexture() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
@@ -2138,6 +2147,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setPointerMode(@PointerMode int mode) {
+        queueRunnable(() -> setPointerModeNative(mode));
+    }
+
+    @Override
     @NonNull
     public AppServicesProvider getServicesProvider() {
         return (AppServicesProvider)getApplication();
@@ -2151,6 +2165,40 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         float SCROLL_SCALE = 32;
         handleScrollEvent(mLastMotionEventWidgetHandle, 0, distanceX / SCROLL_SCALE, distanceY / SCROLL_SCALE);
     }
+
+    @Override
+    public void checkEyeTrackingPermissions(@NonNull EyeTrackingCallback callback) {
+        if (isPermissionGranted(getEyeTrackingPermissionString())) {
+            callback.onEyeTrackingPermissionRequest(true);
+            return;
+        }
+
+        PromptDialogWidget dialog = new PromptDialogWidget(this);
+        dialog.setTitle(R.string.eye_tracking_permission_title);
+        dialog.setDescription(R.string.eye_tracking_permission_message);
+        dialog.setButtons(new int[] {R.string.ok_button});
+        dialog.setCheckboxVisible(false);
+        dialog.setIcon(R.drawable.mozac_ic_warning_fill_24);
+        dialog.setButtonsDelegate((index, isChecked) -> {
+            dialog.hide(UIWidget.REMOVE_WIDGET);
+            dialog.releaseWidget();
+            requestPermission(null, getEyeTrackingPermissionString(), OriginatorType.APPLICATION, new WSession.PermissionDelegate.Callback() {
+                @Override
+                public void grant() {
+                    callback.onEyeTrackingPermissionRequest(true);
+                }
+
+                @Override
+                public void reject() {
+                    callback.onEyeTrackingPermissionRequest(false);
+                }
+            });
+        });
+        dialog.show(UIWidget.REQUEST_FOCUS);
+    }
+
+    @Override
+    public boolean isEyeTrackingSupported() { return mIsEyeTrackingSupported; }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
@@ -2180,4 +2228,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
     private native void setIsServo(boolean aIsServo);
+    private native void setPointerModeNative(@PointerMode int aMode);
 }
