@@ -247,6 +247,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private int mLastBatteryLevel = -1;
     private PlatformActivityPlugin mPlatformPlugin;
     private int mLastMotionEventWidgetHandle;
+    private boolean mIsEyeTrackingSupported;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1594,11 +1595,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    private void setEyeTrackingSupported(final boolean isSupported) {
-        runOnUiThread(() -> {
-            mSettings.setEyeTrackingSupported(isSupported);
-        });
-    }
+    private void setEyeTrackingSupported(final boolean isSupported) { mIsEyeTrackingSupported = isSupported; }
 
     private SurfaceTexture createSurfaceTexture() {
         int[] ids = new int[1];
@@ -2186,6 +2183,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
     }
+
+    @Override
+    public boolean isEyeTrackingSupported() { return mIsEyeTrackingSupported; }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);

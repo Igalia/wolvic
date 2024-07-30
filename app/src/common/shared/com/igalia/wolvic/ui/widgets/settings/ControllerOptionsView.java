@@ -58,7 +58,7 @@ class ControllerOptionsView extends SettingsView {
         mBinding.hapticFeedbackSwitch.setOnCheckedChangeListener(mHapticFeedbackListener);
         setHapticFeedbackEnabled(SettingsStore.getInstance(getContext()).isHapticFeedbackEnabled(), false);
 
-        if (SettingsStore.getInstance(getContext()).isEyeTrackingSupported()) {
+        if (mWidgetManager.isEyeTrackingSupported()) {
             mBinding.pointerModeRadio.setOnCheckedChangeListener(mPointerModeListener);
             setPointerMode(SettingsStore.getInstance(getContext()).getPointerMode(), false);
         } else {

@@ -138,4 +138,5 @@ public interface WidgetManagerDelegate {
     KeyboardWidget getKeyboard();
     void setPointerMode(@PointerMode int mode);
     void checkEyeTrackingPermissions(@NonNull EyeTrackingCallback callback);
+    boolean isEyeTrackingSupported();
 }

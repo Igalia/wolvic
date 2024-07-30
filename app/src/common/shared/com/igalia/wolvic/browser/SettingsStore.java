@@ -1104,14 +1104,4 @@ public class SettingsStore {
     public String getWebAppsData() {
         return mPrefs.getString(mContext.getString(R.string.settings_key_web_apps_data), "");
     }
-
-    public void setEyeTrackingSupported(boolean isSupported) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_eye_tracking_supported), isSupported);
-        editor.commit();
-    }
-
-    public boolean isEyeTrackingSupported() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_eye_tracking_supported), false);
-    }
 }
