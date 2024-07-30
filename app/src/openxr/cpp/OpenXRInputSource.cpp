@@ -744,7 +744,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
 #endif
         delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
-    } else if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE) {
+    } else {
+        assert(pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE);
         HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, delegate);
     }
 
