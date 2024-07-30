@@ -118,6 +118,11 @@ public:
                               const vrb::GroupPtr& aRoot, const bool aEnabled, const bool leftHanded) {};
   virtual void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) {};
   virtual void SetHitDistance(const float) {};
+  enum class PointerMode {
+    TRACKED_POINTER,
+    TRACKED_EYE
+  };
+  virtual void SetPointerMode(const PointerMode) {};
 
 protected:
   DeviceDelegate() {}

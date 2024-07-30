@@ -36,6 +36,8 @@ public class PlatformActivity extends NativeActivity {
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     @Override
     public void onBackPressed() {
         queueRunnable(new Runnable() {

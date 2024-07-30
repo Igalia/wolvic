@@ -40,10 +40,12 @@
     <string name="settings_key_haptic_pulse_duration" translatable="false">settings_haptic_pulse_duration</string>
     <string name="settings_key_haptic_pulse_intensity" translatable="false">settings_haptic_pulse_intensity</string>
     <string name="settings_key_haptic_feedback_enabled" translatable="false">settings_haptic_feedback_enabled</string>
+    <string name="settings_key_gaze_mode_enabled" translatable="false">settings_gaze_mode_enabled</string>
     <string name="settings_key_keyboard_locale" translatable="false">settings_key_keyboard_locale</string>
     <string name="settings_key_crash_restart_count" translatable="false">settings_key_crash_restart_count</string>
     <string name="settings_key_crash_restart_count_timestamp" translatable="false">settings_key_crash_restart_count_timestamp</string>
     <string name="settings_key_keyboard_move" translatable="false">settings_key_keyboard_move</string>
+    <string name="settings_key_pointer_mode" translatable="false">settings_key_pointer_mode</string>
     <string name="private_browsing_support_url" translatable="false">https://support.mozilla.org/kb/private-mode-firefox-reality</string>
     <string name="settings_key_browser_world_width" translatable="false">settings_browser_world_width</string>
     <string name="settings_key_browser_world_height" translatable="false">settings_browser_world_height</string>
@@ -80,6 +82,7 @@
     <string name="settings_key_terms_service_accepted" translatable="false">settings_key_terms_service_accepted</string>
     <string name="settings_key_privacy_policy_accepted" translatable="false">settings_key_privacy_policy_accepted</string>
     <string name="settings_key_search_engine_id" translatable="false">settings_key_search_engine_id</string>
+    <string name="settings_key_eye_tracking_supported" translatable="false">settings_key_eye_tracking_supported</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/igalia/wolvic/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://wolvic.com/legal/privacy/</string>
     <string name="private_report_url" translatable="false">https://www.igalia.com/privacy/&amp;url=%1$s</string>

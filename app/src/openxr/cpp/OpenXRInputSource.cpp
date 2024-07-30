@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include "DeviceUtils.h"
 #include "SystemUtils.h"
+#include "DeviceDelegate.h"
 
 #define HAND_JOINT_FOR_AIM XR_HAND_JOINT_MIDDLE_PROXIMAL_EXT
 
@@ -13,6 +14,10 @@ namespace crow {
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
 const float kClickLowFiThreshold = 0.8f;
+
+// When doing scrolling with eye tracking we wait until this threshold is reached to start scrolling.
+// Otherwise single (slow) clicks would easily trigger scrolling.
+const XrDuration kEyeTrackingScrollThreshold = 250000000;
 
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
@@ -641,7 +646,7 @@ OpenXRInputSource::PopulateHandJointLocations(device::RenderMode renderMode, std
 #endif
 }
 
-void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, ControllerDelegate& delegate)
+void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate)
 {
     assert(mHasHandJoints);
 
@@ -654,9 +659,14 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     bool hasAim = mGestureManager->hasAim();
     bool systemGestureDetected = mGestureManager->systemGestureDetected(handJointForAim, head);
 
+    if (!hasAim && !systemGestureDetected && !usingEyeTracking) {
+        delegate.SetEnabled(mIndex, false);
+        return;
+    }
+
     // We should handle the gesture whenever the system does not handle it.
     bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
-    delegate.SetAimEnabled(mIndex, hasAim);
+    delegate.SetAimEnabled(mIndex, hasAim && pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER);
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
     delegate.SetMode(mIndex, ControllerMode::Hand);
     delegate.SetEnabled(mIndex, true);
@@ -713,28 +723,36 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     }
 #endif
 
-    if (renderMode == device::RenderMode::StandAlone)
-        pointerTransform.TranslateInPlace(kAverageHeight);
+    device::CapabilityFlags flags = device::Orientation | device::Position;
+    if (pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER) {
+        if (renderMode == device::RenderMode::StandAlone)
+            pointerTransform.TranslateInPlace(kAverageHeight);
 
+        // TODO: removing this flag will allow us to remove the ifdef. Keeping it just to limit
+        // the scope of the changes.
+        flags = device::GripSpacePosition;
 #if CHROMIUM
-    // Blink WebXR uses the grip space instead of the local space to position the
-    // controller. Since controller's position is the same as the origin of the
-    // grip space, we just set the transform matrix to the identity.
-    // Then we need to correct the beam transform matrix to maintain origin and
-    // direction when we are not in immersive mode.
-    delegate.SetTransform(mIndex, vrb::Matrix::Identity());
-    delegate.SetBeamTransform(mIndex, pointerTransform);
+        // Blink WebXR uses the grip space instead of the local space to position the
+        // controller. Since controller's position is the same as the origin of the
+        // grip space, we just set the transform matrix to the identity.
+        // Then we need to correct the beam transform matrix to maintain origin and
+        // direction when we are not in immersive mode.
+        delegate.SetTransform(mIndex, vrb::Matrix::Identity());
+        delegate.SetBeamTransform(mIndex, pointerTransform);
 #else
-    delegate.SetTransform(mIndex, pointerTransform);
-    delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
+        delegate.SetTransform(mIndex, pointerTransform);
+        delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
 #endif
-    delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
+        delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
+    } else {
+        assert(pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE);
+        HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, delegate);
+    }
 
-    device::CapabilityFlags flags = device::Orientation | device::Position | device::GripSpacePosition;
     delegate.SetCapabilityFlags(mIndex, flags);
 }
 
-void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
+void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix &head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate)
 {
     if (mActiveMapping &&
         ((mHandeness == OpenXRHandFlags::Left && !mActiveMapping->leftControllerModel) ||
@@ -792,7 +810,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             std::vector<float> jointRadii;
             PopulateHandJointLocations(renderMode, jointTransforms, jointRadii);
             if (!mIsHandInteractionEXTSupported) {
-                EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], delegate);
+                EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], pointerMode, usingEyeTracking, delegate);
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
             }
@@ -806,10 +824,18 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         return;
     }
 
+    bool usingTrackedPointer = pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER;
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
-    delegate.SetAimEnabled(mIndex, hasAim);
 
-    if (!hasAim && !(mUsingHandInteractionProfile && gotHandTrackingInfo && handFacesHead)) {
+    // Don't enable aim for eye tracking as we don't want to paint the beam. Note that we'd still
+    // have an aim, meaning that we can point, focus, click... UI elements.
+    delegate.SetAimEnabled(mIndex, hasAim && usingTrackedPointer);
+
+    // Disable the controller if there is no aim unless:
+    // a) we're using hand interaction profile and we have hand tracking info. In that case the user
+    // is facing their palm to do a hand gesture (that's why there is no aim)
+    // b) we're using eye tracking. In that case the eye gaze will be the aim, not the contorller's
+    if (!hasAim && !(mUsingHandInteractionProfile && gotHandTrackingInfo && handFacesHead) && !usingEyeTracking) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -832,36 +858,47 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
-    vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
-
     const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
+    flags |= positionTracked ? device::Position : device::PositionEmulated;
+
+    vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
     if (positionTracked) {
-      if (renderMode == device::RenderMode::StandAlone) {
-        pointerTransform.TranslateInPlace(kAverageHeight);
-      }
-      flags |= device::Position;
+        if (renderMode == device::RenderMode::StandAlone) {
+            pointerTransform.TranslateInPlace(kAverageHeight);
+        }
     } else {
-      auto hand = mHandeness == OpenXRHandFlags::Left ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right;
-      pointerTransform = elbow->GetTransform(hand, head, pointerTransform);
-      flags |= device::PositionEmulated;
+        auto hand = mHandeness == OpenXRHandFlags::Left ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right;
+        pointerTransform = elbow->GetTransform(hand, head, pointerTransform);
     }
 
-    delegate.SetTransform(mIndex, pointerTransform);
+    if (pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER) {
+        delegate.SetTransform(mIndex, pointerTransform);
 
-    isPoseActive = false;
-    poseLocation = { XR_TYPE_SPACE_LOCATION };
-    CHECK_XRCMD(GetPoseState(mGripAction, mGripSpace, localSpace, frameState,  isPoseActive, poseLocation));
-    if (isPoseActive) {
-        adjustPoseLocation(offsets);
-        auto gripTransform = XrPoseToMatrix(poseLocation.pose);
-        bool hasPosition = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
-        delegate.SetImmersiveBeamTransform(mIndex, hasPosition ? gripTransform : pointerTransform);
-        flags |= device::GripSpacePosition;
-        delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
-    } else {
-        delegate.SetImmersiveBeamTransform(mIndex, vrb::Matrix::Identity());
+        isPoseActive = false;
+        poseLocation = {XR_TYPE_SPACE_LOCATION};
+        CHECK_XRCMD(GetPoseState(mGripAction, mGripSpace, localSpace, frameState, isPoseActive,
+                                 poseLocation));
+        if (isPoseActive) {
+            adjustPoseLocation(offsets);
+            auto gripTransform = XrPoseToMatrix(poseLocation.pose);
+            delegate.SetImmersiveBeamTransform(mIndex,
+                                               positionTracked ? gripTransform : pointerTransform);
+            flags |= device::GripSpacePosition;
+            delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
+#if defined(CHROMIUM) && defined(HVR)
+            // HVR runtime incorrectly return the same values for grip and aim poses. We circumvent that
+            // by inventing a grip pose. The values are chosen to match the controller dimensions. This
+            // is only needed for Chromium because it requires the grip to be based on the aim. As the
+            // runtime returns invalid values for that case, we need to emulate the aim based on grip.
+            if (renderMode == device::RenderMode::Immersive) {
+                static const auto emulatedGripTransform = vrb::Matrix::Translation({0.0, 0.30, 0.0}).Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 5);
+                delegate.SetTransform(mIndex, emulatedGripTransform);
+            }
+#endif
+        } else {
+            delegate.SetImmersiveBeamTransform(mIndex, vrb::Matrix::Identity());
+        }
     }
-
     delegate.SetCapabilityFlags(mIndex, flags);
 
     // Buttons.
@@ -904,6 +941,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
         if (button.type == OpenXRButtonType::Trigger) {
             delegate.SetSelectFactor(mIndex, state->value);
+            if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE)
+                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, delegate);
         }
 
         // Select action
@@ -1034,6 +1073,21 @@ HandMeshBufferPtr
 OpenXRInputSource::GetNextHandMeshBuffer() {
     ReleaseHandMeshBuffer();
     return mHandMeshMSFT.buffer;
+}
+
+void OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix &pointerTransform, ControllerDelegate &controllerDelegate) {
+    if (!mTriggerWasClicked && triggerClicked) {
+        mControllerPositionOnGestureStart =  pointerTransform.GetTranslation();
+        mEyeTrackingPinchStartTime = predictedDisplayTime;
+    } else if (mTriggerWasClicked && triggerClicked) {
+        // Throttle the start of the scroll gesture to avoid scrolling on pinch.
+        if (predictedDisplayTime - mEyeTrackingPinchStartTime > kEyeTrackingScrollThreshold) {
+            vrb::Vector currentControllerPosition = pointerTransform.GetTranslation();
+            auto delta = currentControllerPosition - mControllerPositionOnGestureStart;
+            controllerDelegate.TranslateTransform(mIndex, delta * 10);
+        }
+    }
+    mTriggerWasClicked = triggerClicked;
 }
 
 } // namespace crow

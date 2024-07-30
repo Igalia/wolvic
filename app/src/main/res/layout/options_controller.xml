@@ -40,6 +40,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/pointer_mode_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/controller_options_pointer_mode"
+                    app:options="@array/developer_options_pointer_modes"
+                    app:values="@array/developer_options_pointer_modes_values" />
+
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/haptic_feedback_switch"
                     android:layout_width="match_parent"

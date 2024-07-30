@@ -43,6 +43,8 @@
 #include "OpenXRLayers.h"
 #include "OpenXRPassthroughStrategy.h"
 
+#include "OpenXRActionSet.h"
+
 namespace crow {
 
 struct HandMeshPropertiesMSFT {
@@ -118,6 +120,8 @@ struct DeviceDelegateOpenXR::State {
   bool keyboardTrackingSupported { false };
   bool renderModelLoadingSupported { false };
   float furthestHitDistance { near };
+  OpenXRActionSetPtr eyeActionSet;
+  PointerMode pointerMode { PointerMode::TRACKED_POINTER };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -213,6 +217,9 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME))
         extensions.push_back(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME))
+        extensions.push_back(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;
@@ -282,6 +289,13 @@ struct DeviceDelegateOpenXR::State {
         systemProperties.next = &renderModelPropertiesFB;
     }
 
+    XrSystemEyeGazeInteractionPropertiesEXT eyeGazeProperties{ XR_TYPE_SYSTEM_EYE_GAZE_INTERACTION_PROPERTIES_EXT };
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME)) {
+        eyeGazeProperties.supportsEyeGazeInteraction = XR_FALSE;
+        eyeGazeProperties.next = systemProperties.next;
+        systemProperties.next = &eyeGazeProperties;
+    }
+
     // Retrieve system info
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
@@ -320,6 +334,13 @@ struct DeviceDelegateOpenXR::State {
       renderModelLoadingSupported = renderModelPropertiesFB.supportsRenderModelLoading;
       VRB_LOG("OpenXR runtime supports XR_FB_render_model");
     }
+
+    bool isEyeTrackingSupported { false };
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME)) {
+        isEyeTrackingSupported = eyeGazeProperties.supportsEyeGazeInteraction;
+        VRB_LOG("OpenXR runtime %s support XR_EXT_eye_gaze_interaction", isEyeTrackingSupported ? "does" : "doesn't");
+    }
+    VRBrowser::SetEyeTrackingSupported(isEyeTrackingSupported);
   }
 
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
@@ -1152,7 +1173,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     offsets.y() = -0.05;
     offsets.z() = 0.05;
 #endif
-    m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, *m.controller);
+    m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, m.pointerMode, *m.controller);
   }
 
   if (m.reorientRequested && m.renderMode == device::RenderMode::StandAlone) {
@@ -1586,7 +1607,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.passthroughStrategy->initializePassthrough(m.session);
 
-  m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, *m.controller.get());
+  m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, m.localSpace, *m.controller.get());
   ProcessEvents();
   if (m.controllersCreatedCallback) {
     m.controllersCreatedCallback();
@@ -1668,5 +1689,9 @@ DeviceDelegateOpenXR::ShouldExitRenderLoop() const
 DeviceDelegateOpenXR::DeviceDelegateOpenXR(State &aState) : m(aState) {}
 
 DeviceDelegateOpenXR::~DeviceDelegateOpenXR() { m.Shutdown(); }
+
+void DeviceDelegateOpenXR::SetPointerMode(const DeviceDelegate::PointerMode mode) {
+  m.pointerMode = mode;
+}
 
 } // namespace crow

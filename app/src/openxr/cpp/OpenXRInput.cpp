@@ -3,22 +3,24 @@
 #include "OpenXRInputSource.h"
 #include "OpenXRActionSet.h"
 #include "OpenXRExtensions.h"
+#include "DeviceDelegate.h"
 #include <vector>
 
 namespace crow {
 
-OpenXRInputPtr OpenXRInput::Create(XrInstance instance, XrSession session, XrSystemProperties properties, ControllerDelegate& delegate)
+OpenXRInputPtr OpenXRInput::Create(XrInstance instance, XrSession session, XrSystemProperties properties, XrSpace localSpace, ControllerDelegate& delegate)
 {
-  auto input = std::unique_ptr<OpenXRInput>(new OpenXRInput(instance, session, properties, delegate));
+  auto input = std::unique_ptr<OpenXRInput>(new OpenXRInput(instance, session, properties, localSpace, delegate));
   if (XR_FAILED(input->Initialize(delegate)))
     return nullptr;
   return input;
 }
 
-OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemProperties properties, ControllerDelegate& delegate)
+OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemProperties properties, XrSpace localSpace, ControllerDelegate& delegate)
     : mInstance(instance)
     , mSession(session)
     , mSystemProperties(properties)
+    , mLocalReferenceSpace(localSpace)
 {
   VRB_ERROR("OpenXR systemName: %s", properties.systemName);
 }
@@ -56,17 +58,24 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
     }
   }
 
+  bool supportsEyeGazeExtension = OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
+  if (supportsEyeGazeExtension)
+    InitializeEyeGaze(delegate);
+
   XrSessionActionSetsAttachInfo attachInfo { XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO };
   attachInfo.countActionSets = 1;
   attachInfo.actionSets = &mActionSet->ActionSet();
   RETURN_IF_XR_FAILED(xrAttachSessionActionSets(mSession, &attachInfo));
+
+  if (supportsEyeGazeExtension)
+    InitializeEyeGazeSpaces();
 
   UpdateInteractionProfile(delegate);
 
   return XR_SUCCESS;
 }
 
-XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, ControllerDelegate& delegate)
+XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, ControllerDelegate& delegate)
 {
   XrActiveActionSet activeActionSet {
     mActionSet->ActionSet(), XR_NULL_PATH
@@ -77,8 +86,10 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
   syncInfo.activeActionSets = &activeActionSet;
   RETURN_IF_XR_FAILED(xrSyncActions(mSession, &syncInfo));
 
+  bool usingEyeTracking = pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE && updateEyeGaze(frameState, head, delegate);
+
   for (auto& input : mInputSources) {
-    input->Update(frameState, baseSpace, head, offsets, renderMode, delegate);
+    input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, delegate);
   }
 
   // Update tracked keyboard
@@ -266,6 +277,68 @@ OpenXRInput::~OpenXRInput() {
     keyboardTrackingFB.reset();
     keyboardTrackingFB = nullptr;
   }
+}
+
+void OpenXRInput::InitializeEyeGaze(ControllerDelegate& delegate) {
+    XrActionCreateInfo actionInfo{XR_TYPE_ACTION_CREATE_INFO};
+    strcpy(actionInfo.actionName, "user_intent");
+    actionInfo.actionType = XR_ACTION_TYPE_POSE_INPUT;
+    strcpy(actionInfo.localizedActionName, "User Intent");
+    CHECK_XRCMD(xrCreateAction(mActionSet->ActionSet(), &actionInfo, &mUserIntentAction));
+
+    // Create suggested bindings
+    XrPath eyeGazeInteractionProfilePath;
+    CHECK_XRCMD(xrStringToPath(mInstance, "/interaction_profiles/ext/eye_gaze_interaction",
+                               &eyeGazeInteractionProfilePath));
+    XrPath gazePosePath;
+    CHECK_XRCMD(xrStringToPath(mInstance, "/user/eyes_ext/input/gaze_ext/pose", &gazePosePath));
+
+    XrActionSuggestedBinding bindings;
+    bindings.action = mUserIntentAction;
+    bindings.binding = gazePosePath;
+
+    XrInteractionProfileSuggestedBinding suggestedBindings{XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
+    suggestedBindings.interactionProfile = eyeGazeInteractionProfilePath;
+    suggestedBindings.suggestedBindings = &bindings;
+    suggestedBindings.countSuggestedBindings = 1;
+    CHECK_XRCMD(xrSuggestInteractionProfileBindings(mInstance, &suggestedBindings));
+
+    mOneEuroFilterGazeOrientation = std::make_unique<OneEuroFilterQuaternion>(0.5, 0.25, 1.0);
+}
+
+void OpenXRInput::InitializeEyeGazeSpaces() {
+    XrPosef pose_identity = XrPoseIdentity();
+    XrActionSpaceCreateInfo createActionSpaceInfo{XR_TYPE_ACTION_SPACE_CREATE_INFO};
+    createActionSpaceInfo.action = mUserIntentAction;
+    createActionSpaceInfo.poseInActionSpace = pose_identity;
+    CHECK_XRCMD(xrCreateActionSpace(mSession, &createActionSpaceInfo, &mEyeGazeActionSpace));
+}
+
+bool OpenXRInput::updateEyeGaze(XrFrameState frameState, const vrb::Matrix& head, ControllerDelegate& delegate) {
+    XrActionStatePose actionStatePose{XR_TYPE_ACTION_STATE_POSE};
+    XrActionStateGetInfo getActionStateInfo{XR_TYPE_ACTION_STATE_GET_INFO};
+    getActionStateInfo.action = mUserIntentAction;
+    CHECK_XRCMD(xrGetActionStatePose(mSession, &getActionStateInfo, &actionStatePose));
+    if (!actionStatePose.isActive)
+        return false;
+
+    XrEyeGazeSampleTimeEXT eyeGazeSampleTime{XR_TYPE_EYE_GAZE_SAMPLE_TIME_EXT};
+    XrSpaceLocation gazeLocation{XR_TYPE_SPACE_LOCATION, &eyeGazeSampleTime};
+    CHECK_XRCMD(xrLocateSpace(mEyeGazeActionSpace, mLocalReferenceSpace, frameState.predictedDisplayTime, &gazeLocation));
+
+    if (!(gazeLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) ||
+        !(gazeLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT)) {
+        return false;
+    }
+
+    vrb::Vector gazePosition = head.Translate({gazeLocation.pose.position.x, gazeLocation.pose.position.y, gazeLocation.pose.position.z}).GetTranslation();
+    vrb::Quaternion gazeOrientation(gazeLocation.pose.orientation.x, gazeLocation.pose.orientation.y, gazeLocation.pose.orientation.z, gazeLocation.pose.orientation.w);
+    float* filteredOrientation = mOneEuroFilterGazeOrientation->filter(frameState.predictedDisplayTime, gazeOrientation.Data());
+    gazeOrientation = {filteredOrientation[0], filteredOrientation[1], filteredOrientation[2], filteredOrientation[3]};
+    delegate.SetTransform(0, vrb::Matrix::Rotation(gazeOrientation).Translate(gazePosition));
+    delegate.SetImmersiveBeamTransform(0, vrb::Matrix::Identity());
+
+    return true;
 }
 
 } // namespace crow

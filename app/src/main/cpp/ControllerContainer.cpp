@@ -448,6 +448,15 @@ ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Mat
 }
 
 void
+ControllerContainer::TranslateTransform(const int32_t aControllerIndex, const vrb::Vector &aTranslation) {
+    if (!m.Contains(aControllerIndex)) {
+        return;
+    }
+    Controller& controller = m.list[aControllerIndex];
+    SetTransform(aControllerIndex, controller.transformMatrix.Translate(aTranslation));
+}
+
+void
 ControllerContainer::SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) {
   if (!m.Contains(aControllerIndex)) {
     return;

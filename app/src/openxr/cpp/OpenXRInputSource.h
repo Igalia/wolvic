@@ -7,6 +7,7 @@
 #include "ElbowModel.h"
 #include "HandMeshRenderer.h"
 #include "OpenXRGestureManager.h"
+#include "DeviceDelegate.h"
 #include <optional>
 #include <unordered_map>
 
@@ -46,7 +47,7 @@ private:
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, ControllerDelegate& delegate);
+    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate);
     void PopulateHandJointLocations(device::RenderMode, std::vector<vrb::Matrix>& jointTransforms, std::vector<float>& jointRadii);
 
     XrInstance mInstance { XR_NULL_HANDLE };
@@ -83,6 +84,9 @@ private:
     bool mSupportsHandJointsMotionRangeInfo { false };
     bool mUsingHandInteractionProfile { false };
     device::DeviceType mDeviceType { device::UnknownType };
+    bool mTriggerWasClicked { false };
+    vrb::Vector mControllerPositionOnGestureStart;
+    XrTime mEyeTrackingPinchStartTime { 0 };
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
@@ -103,12 +107,13 @@ private:
 
     bool mIsHandInteractionEXTSupported { false };
 
+    void HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, ControllerDelegate &controllerDelegate);
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
 
     XrResult SuggestBindings(SuggestedBindings&) const;
-    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, ControllerDelegate& delegate);
+    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }

@@ -40,6 +40,16 @@
         <item>1</item>
     </integer-array>
 
+    <integer-array name="developer_options_pointer_modes" translatable="false">
+        <item>@string/developer_options_pointer_mode_tracked_pointer</item>
+        <item>@string/developer_options_pointer_mode_tracked_eye</item>
+    </integer-array>
+
+    <integer-array name="developer_options_pointer_modes_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
     <!-- Environments Options -->
     <string-array name="developer_options_ua_modes" translatable="false">
         <item>@string/developer_options_ua_mobile</item>

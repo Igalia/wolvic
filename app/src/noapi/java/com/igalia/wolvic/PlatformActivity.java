@@ -51,6 +51,8 @@ public class PlatformActivity extends ComponentActivity {
         return null;
     }
 
+    protected String getEyeTrackingPermissionString() { return null; }
+
     private GLSurfaceView mView;
     private TextView mFrameRate;
     private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();
