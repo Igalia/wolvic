@@ -2562,5 +2562,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_pointer_mode">Gaze Mode</string>
     <string name="developer_options_pointer_mode_tracked_pointer">Pointer</string>
     <string name="developer_options_pointer_mode_tracked_eye">Eye Tracking</string>
+    <string name="eye_tracking_permission_title">Eye Tracking Permissions</string>
+    <string name="eye_tracking_permission_message">Enabling eye tracking for browsing the web poses significant privacy risks. This technology captures where and how long a user looks at specific parts of a webpage, revealing intimate details about their interests and emotional reactions. Advertisers and third parties can exploit this data for intrusive marketing and profiling. Moreover, eye movement patterns could infer sensitive information such as medical conditions, cognitive states, or personal habits. Therefore, it is crucial to consider the privacy implications before granting access to eye tracking information to webpages.</string>
 
 </resources>

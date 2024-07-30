@@ -2171,17 +2171,29 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             callback.onEyeTrackingPermissionRequest(true);
             return;
         }
-        requestPermission(null, getEyeTrackingPermissionString(), OriginatorType.APPLICATION, new WSession.PermissionDelegate.Callback() {
-            @Override
-            public void grant() {
-                callback.onEyeTrackingPermissionRequest(true);
-            }
 
-            @Override
-            public void reject() {
-                callback.onEyeTrackingPermissionRequest(false);
-            }
+        PromptDialogWidget dialog = new PromptDialogWidget(this);
+        dialog.setTitle(R.string.eye_tracking_permission_title);
+        dialog.setDescription(R.string.eye_tracking_permission_message);
+        dialog.setButtons(new int[] {R.string.ok_button});
+        dialog.setCheckboxVisible(false);
+        dialog.setIcon(R.drawable.mozac_ic_warning_fill_24);
+        dialog.setButtonsDelegate((index, isChecked) -> {
+            dialog.hide(UIWidget.REMOVE_WIDGET);
+            dialog.releaseWidget();
+            requestPermission(null, getEyeTrackingPermissionString(), OriginatorType.APPLICATION, new WSession.PermissionDelegate.Callback() {
+                @Override
+                public void grant() {
+                    callback.onEyeTrackingPermissionRequest(true);
+                }
+
+                @Override
+                public void reject() {
+                    callback.onEyeTrackingPermissionRequest(false);
+                }
+            });
         });
+        dialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     @Override
