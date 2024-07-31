@@ -115,6 +115,10 @@
     <dimen name="tabs_icon_padding_max">7dp</dimen>
     <dimen name="tabs_icon_padding_min">3dp</dimen>
 
+    <!-- Tabs Bar -->
+    <dimen name="tabs_bar_width">200dp</dimen>
+    <dimen name="tabs_bar_height">450dp</dimen>
+
     <!-- No Internet toast -->
     <dimen name="no_internet_width">400dp</dimen>
     <dimen name="no_internet_height">200dp</dimen>

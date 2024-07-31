@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tabs_bar_bg"
+    android:orientation="vertical">
+
+    <com.igalia.wolvic.ui.views.CustomRecyclerView
+        android:id="@+id/tabsRecyclerView"
+        style="@style/customRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:fadingEdgeLength="20dp"
+        android:overScrollMode="never"
+        android:paddingStart="0dp"
+        android:paddingEnd="10dp"
+        android:requiresFadingEdge="vertical"
+        tools:listitem="@layout/tabs_bar_item" />
+
+</LinearLayout>

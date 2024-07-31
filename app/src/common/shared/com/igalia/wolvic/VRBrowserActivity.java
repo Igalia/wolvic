@@ -80,6 +80,7 @@ import com.igalia.wolvic.ui.widgets.WebXRInterstitialWidget;
 import com.igalia.wolvic.ui.widgets.Widget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+import com.igalia.wolvic.ui.widgets.TabsBar;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
@@ -213,6 +214,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     RootWidget mRootWidget;
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
+    TabsBar mTabsBar;
     CrashDialogWidget mCrashDialog;
     TrayWidget mTray;
     WhatsNewWidget mWhatsNewWidget = null;
@@ -460,13 +462,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
 
+        // Create Tabs bar widget
+        mTabsBar = new TabsBar(this);
+        mTabsBar.setTabDelegate(mWindows);
+
         // Create the tray
         mTray = new TrayWidget(this);
         mTray.addListeners(mWindows);
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
         attachToWindow(mWindows.getFocusedWindow(), null);
 
-        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
+        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mTabsBar, mKeyboard, mTray, mWebXRInterstitial));
 
         // Create the platform plugin after widgets are created to be extra safe.
         mPlatformPlugin = createPlatformPlugin(this);
@@ -479,11 +485,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {
         mPermissionDelegate.setParentWidgetHandle(aWindow.getHandle());
         mNavigationBar.attachToWindow(aWindow);
+        mTabsBar.attachToWindow(aWindow);
         mKeyboard.attachToWindow(aWindow);
         mTray.attachToWindow(aWindow);
 
         if (aPrevWindow != null) {
             updateWidget(mNavigationBar);
+            updateWidget(mTabsBar);
             updateWidget(mKeyboard);
             updateWidget(mTray);
         }
