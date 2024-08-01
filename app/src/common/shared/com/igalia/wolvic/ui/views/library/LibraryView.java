@@ -23,6 +23,7 @@ import com.igalia.wolvic.utils.ViewUtils;
 import java.util.concurrent.Executor;
 
 public abstract class LibraryView extends FrameLayout {
+    protected String mSearchFilter = "";
 
     protected WidgetManagerDelegate mWidgetManager;
     protected LibraryContextMenuWidget mContextMenu;
@@ -45,6 +46,10 @@ public abstract class LibraryView extends FrameLayout {
     }
 
     public void updateUI() {};
+
+    public void updateSearchFilter(String s) {
+        mSearchFilter = s;
+    };
 
     public void onDestroy() {};
 
