@@ -10,6 +10,7 @@
 #include <openxr/openxr_reflection.h>
 #include "SystemUtils.h"
 #include "vrb/Matrix.h"
+#include "Device.h"
 
 namespace crow {
 
@@ -117,6 +118,20 @@ inline bool IsHandJointPositionValid(const enum XrHandJointEXT aJoint, const Han
     return pose.position.x != 0.0 && pose.position.y != 0.0 && pose.position.z != 0.0;
 #endif
     return (handJoints[aJoint].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0;
+}
+
+inline XrEnvironmentBlendMode toOpenXRBlendMode(device::BlendMode blendMode) {
+    switch (blendMode) {
+        case device::BlendMode::Opaque:
+            return XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+        case device::BlendMode::Additive:
+            return XR_ENVIRONMENT_BLEND_MODE_ADDITIVE;
+        case device::BlendMode::AlphaBlend:
+            return XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND;
+        default:
+            THROW(Fmt("Unknown blend mode %d", blendMode));
+            return XR_ENVIRONMENT_BLEND_MODE_OPAQUE;
+    }
 }
 
 }  // namespace crow
