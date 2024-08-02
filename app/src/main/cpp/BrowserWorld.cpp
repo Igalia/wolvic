@@ -1155,10 +1155,18 @@ BrowserWorld::StartFrame() {
   m.controllers->SetFrameId(frameId);
   m.CheckExitImmersive();
 
+  auto createPassthroughLayerIfNeeded = [this]() {
+      if (!m.device->IsPassthroughEnabled() || !m.device->usesPassthroughCompositorLayer() || m.layerPassthrough)
+          return;
+      m.layerPassthrough = m.device->CreateLayerPassthrough();
+      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+  };
+
   if (m.splashAnimation) {
     TickSplashAnimation();
   } else if (m.externalVR->IsPresenting()) {
     m.CheckBackButton();
+    createPassthroughLayerIfNeeded();
     TickImmersive();
   } else {
     bool relayoutWidgets = false;
@@ -1173,10 +1181,7 @@ BrowserWorld::StartFrame() {
     if (relayoutWidgets) {
       UpdateVisibleWidgets();
     }
-    if (m.device->IsPassthroughEnabled() && m.device->usesPassthroughCompositorLayer() && !m.layerPassthrough) {
-      m.layerPassthrough = m.device->CreateLayerPassthrough();
-      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
-    }
+    createPassthroughLayerIfNeeded();
     TickWorld();
     m.externalVR->PushSystemState();
   }
@@ -1813,6 +1818,8 @@ void
 BrowserWorld::TickImmersive() {
   m.externalVR->SetCompositorEnabled(false);
   m.device->SetRenderMode(device::RenderMode::Immersive);
+  m.device->SetImmersiveBlendMode(m.externalVR->GetImmersiveBlendMode());
+  m.device->SetImmersiveXRSessionType(m.externalVR->GetImmersiveXRSessionType());
 
   // We must clear the passthrough layer when entering immersive mode even if we are not adding it
   // to the list of layers to render. See https://github.com/Igalia/wolvic/issues/1351
@@ -1886,7 +1893,7 @@ BrowserWorld::TickImmersive() {
 
 void
 BrowserWorld::resetPassthroughLayerIfNeeded() {
-  if (!m.layerPassthrough)
+  if (!m.layerPassthrough || (m.externalVR->IsPresenting() && m.externalVR->GetImmersiveXRSessionType() == DeviceDelegate::ImmersiveXRSessionType::AR))
     return;
 
   ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);

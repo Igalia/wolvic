@@ -67,6 +67,7 @@ public:
   void DrawHandMesh(const uint32_t aControllerIndex, const vrb::Camera&) override;
   void SetHitDistance(const float) override;
   void SetPointerMode(const PointerMode mode) override;
+  bool IsPassthroughEnabled() const override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
@@ -75,6 +76,8 @@ public:
   bool IsInVRMode() const;
   bool ExitApp();
   bool ShouldExitRenderLoop() const;
+  void SetImmersiveBlendMode(device::BlendMode) override;
+
 protected:
   struct State;
   DeviceDelegateOpenXR(State& aState);

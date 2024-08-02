@@ -599,6 +599,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 }
             }
         }
+
+        // Chromium does fullscreen windows when entering immersive-ar sessions. We have to restore
+        // the fullscreen window when exiting.
+        if (mFullscreenWindow != null)
+            mFullscreenWindow.getSession().exitFullScreen();
     }
 
     private void closeLibraryPanelInFocusedWindowIfNeeded() {
