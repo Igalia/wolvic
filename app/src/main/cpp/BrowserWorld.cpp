@@ -1202,13 +1202,13 @@ BrowserWorld::EndFrame() {
 }
 
 void
-BrowserWorld::TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity) {
+BrowserWorld::TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity, const int aControllerId) {
   if (!m.controllers) {
     return;
   }
 
   for (Controller& controller: m.controllers->GetControllers()) {
-    if (!controller.focused || !m.controllers->GetHapticCount(controller.index)) {
+    if (controller.index != aControllerId || !m.controllers->GetHapticCount(controller.index)) {
       continue;
     }
     m.controllers->SetHapticFeedback(controller.index, controller.inputFrameID + 1, aPulseDuration, aPulseIntensity);
@@ -2082,8 +2082,8 @@ JNI_METHOD(void, setWorldBrightnessNative)
 }
 
 JNI_METHOD(void, triggerHapticFeedbackNative)
-(JNIEnv*, jobject, jfloat aPulseDuration, jfloat aPulseIntensity) {
-  crow::BrowserWorld::Instance().TriggerHapticFeedback(aPulseDuration, aPulseIntensity);
+(JNIEnv*, jobject, jfloat aPulseDuration, jfloat aPulseIntensity, jint aControllerId) {
+  crow::BrowserWorld::Instance().TriggerHapticFeedback(aPulseDuration, aPulseIntensity, aControllerId);
 }
 
 JNI_METHOD(void, setTemporaryFilePath)
