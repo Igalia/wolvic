@@ -63,7 +63,7 @@ jobs:
           distribution: ${{ inputs.jdk_distribution }}
 
       - name: Setup Gradle ${{ inputs.gradle_version }}
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{ inputs.gradle_version }}
 
