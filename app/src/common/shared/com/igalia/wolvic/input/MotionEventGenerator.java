@@ -120,7 +120,7 @@ public class MotionEventGenerator {
         }
         if (aWidget != device.mPreviousWidget && !aPressed) {
             generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
-            widgetManager.triggerHapticFeedback();
+            widgetManager.triggerHapticFeedback(aDevice);
             device.mHoverStartWidget = aWidget;
         }
         if (aPressed && !device.mWasPressed) {
@@ -142,7 +142,7 @@ public class MotionEventGenerator {
             if (!isOtherDeviceDown(device.mDevice)) {
                 generateEvent(device.mTouchStartWidget, device, aFocused, MotionEvent.ACTION_UP, false);
                 generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
-                widgetManager.triggerHapticFeedback();
+                widgetManager.triggerHapticFeedback(aDevice);
                 device.mHoverStartWidget = aWidget;
             }
             device.mTouchStartWidget = null;
