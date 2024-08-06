@@ -26,6 +26,7 @@ import kotlinx.coroutines.future.future
 import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.EnableSource
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AMOAddonsProvider
@@ -140,14 +141,16 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
 
     fun installAddon(addon: Addon,
                      onSuccess: ((Addon) -> Unit) = { },
-                     onError: ((String, Throwable) -> Unit) = { _, _ -> }): CancellableOperation {
-        return addonManager.installAddon(addon, { addon1: Addon ->
-            onSuccess.invoke(addon1)
-            notifyListeners()
-
-        }, { s: String, throwable: Throwable ->
-            onError.invoke(s, throwable)
-        })
+                     onError: ((Throwable) -> Unit) = { _ -> }): CancellableOperation {
+        return addonManager.installAddon(addon.downloadUrl,
+            InstallationMethod.MANAGER,
+            { addon1: Addon ->
+                onSuccess.invoke(addon1)
+                notifyListeners()
+            },
+            { throwable: Throwable ->
+                onError.invoke(throwable)
+            })
     }
 
     fun uninstallAddon(addon: Addon,

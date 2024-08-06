@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.utils.SystemUtils;
 
+import mozilla.components.concept.engine.webextension.InstallationMethod;
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime;
 
 /**
@@ -24,10 +25,10 @@ public class BuiltinExtension {
      * Installs the web extension in the runtime through the WebExtensionRuntime install method
      */
     public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl) {
-        runtime.installWebExtension(extensionId, extensionUrl, webExtension -> {
+        runtime.installBuiltInWebExtension(extensionId, extensionUrl, webExtension -> {
             Log.i(LOGTAG, extensionId + " Web Extension successfully installed");
             return null;
-        }, (s, throwable) -> {
+        }, (throwable) -> {
             Log.e(LOGTAG, "Error installing the " + extensionId + " Web Extension: " + throwable.getLocalizedMessage());
             return null;
         });
