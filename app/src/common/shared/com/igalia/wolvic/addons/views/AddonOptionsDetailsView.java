@@ -150,7 +150,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
     private void bindRatingBar(@NonNull RatingBar view, Addon addon) {
         if (addon != null && addon.getRating() != null) {
             view.setRating(addon.getRating().getAverage());
-            view.setContentDescription(String.format(view.getResources().getString(R.string.mozac_feature_addons_rating_content_description),
+            view.setContentDescription(String.format(view.getResources().getString(R.string.mozac_feature_addons_rating_content_description_2),
                     addon.getRating().getAverage()));
         }
     }

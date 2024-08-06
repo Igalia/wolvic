@@ -5,16 +5,3 @@
 ---
 $schema: moz://mozilla.org/schemas/glean/pings/1-0-0
 
-session-end:
-  description: >
-    This ping is sent at the end of a session (when Firefox Reality
-    switches to the background). We usually send search and UI control
-    metrics at the end of a session.
-  include_client_id: true
-  bugs:
-    - https://github.com/MozillaReality/FirefoxReality/issues/2230
-  data_reviews:
-    - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
-  notification_emails:
-    - fxr-telemetry@mozilla.com
-    - dmu@mozilla.com

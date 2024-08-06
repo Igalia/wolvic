@@ -27,13 +27,13 @@ def versions = [:]
 versions.gecko_view_release = "128.0.20240725162350"
 versions.gecko_view_nightly = "128.0.20240609205151"
 versions.gecko_view_beta = "128.0.20240628091536"
-versions.android_components = "121.1.0"
+versions.android_components = "128.0"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
 // The version number below tracks the application-services version
 // that we depend on directly for its rustlog package, and it's important
 // that it be kept insync with the version used by android-components above.
-versions.mozilla_appservices = "120.0.2"
+versions.mozilla_appservices = "128.0"
 versions.room = "2.5.2"
 versions.lifecycle = "2.6.2"
 versions.cardview = "1.0.0"

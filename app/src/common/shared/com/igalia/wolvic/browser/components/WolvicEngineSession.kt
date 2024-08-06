@@ -11,6 +11,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import org.json.JSONObject
@@ -30,6 +31,11 @@ class WolvicEngineSession(
     override fun exitFullScreenMode() = Unit
     override fun findAll(text: String) = Unit
     override fun findNext(forward: Boolean) = Unit
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
+
     override fun goBack(userInteraction: Boolean) = Unit
     override fun goForward(userInteraction: Boolean) = Unit
     override fun goToHistoryIndex(index: Int) = Unit
@@ -39,9 +45,15 @@ class WolvicEngineSession(
     ) = Unit
     override fun loadData(data: String, mimeType: String, encoding: String) = Unit
     override fun reload(flags: LoadUrlFlags) = Unit
-    override fun requestAnalysisStatus(
+    override fun reportBackInStock(
         url: String,
         onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit;
+
+    override fun requestAnalysisStatus(
+        url: String,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit
     ) = Unit;
 
@@ -67,6 +79,17 @@ class WolvicEngineSession(
     override fun sendClickAttributionEvent(aid: String, onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit) = Unit
 
     override fun sendImpressionAttributionEvent(aid: String, onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit) = Unit
+    override fun sendPlacementAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
+
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit
+    ) = Unit
 
     override fun stopLoading() = Unit
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) = Unit

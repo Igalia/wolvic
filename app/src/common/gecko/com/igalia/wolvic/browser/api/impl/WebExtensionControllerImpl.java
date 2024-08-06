@@ -11,6 +11,7 @@ import com.igalia.wolvic.browser.components.GeckoWebExtension;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.WebExtensionController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ class WebExtensionControllerImpl implements WWebExtensionController {
         mController.setPromptDelegate(new org.mozilla.geckoview.WebExtensionController.PromptDelegate() {
             @Nullable
             @Override
-            public GeckoResult<AllowOrDeny> onInstallPrompt(@NonNull org.mozilla.geckoview.WebExtension extension) {
+            public GeckoResult<AllowOrDeny> onInstallPrompt(@NonNull org.mozilla.geckoview.WebExtension extension, @NonNull String[] permissions, @NonNull String[] origins) {
                 return Utils.map(ResultImpl.from(mPromptDelegate.onInstallPrompt(new GeckoWebExtension(extension, mRuntime))));
             }
 

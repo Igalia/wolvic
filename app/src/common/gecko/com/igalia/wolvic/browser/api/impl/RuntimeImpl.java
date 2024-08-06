@@ -99,7 +99,7 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public void setUpLoginPersistence(Lazy<LoginsStorage> storage) {
-        mRuntime.setAutocompleteStorageDelegate(GeckoAutocompleteDelegateWrapper.create(storage));
+        mRuntime.setAutocompleteStorageDelegate(GeckoAutocompleteDelegateWrapper.create(storage, mSettings.isAutofillLoginsEnabled()));
     }
 
     @NonNull

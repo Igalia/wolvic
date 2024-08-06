@@ -54,10 +54,10 @@ class WolvicWebExtensionRuntime(
      * See [Engine.installWebExtension].
      */
     override fun installWebExtension(
-            id: String,
-            url: String,
-            onSuccess: ((WebExtension) -> Unit),
-            onError: ((String, Throwable) -> Unit)
+        url: String,
+        installationMethod: InstallationMethod?,
+        onSuccess: (WebExtension) -> Unit,
+        onError: (Throwable) -> Unit
     ): CancellableOperation {
 
         val onInstallSuccess: ((WebExtension) -> Unit) = {
@@ -67,27 +67,48 @@ class WolvicWebExtensionRuntime(
             onSuccess(it)
         }
 
-        val result = if (url.isResourceUrl()) {
-            runtime.webExtensionController.ensureBuiltIn(url, id).apply {
-                then({
-                    onInstallSuccess(it!!)
-                    WResult.create<Void>()
-                }, { throwable ->
-                    onError(id, throwable)
-                    WResult.create<Void>()
-                })
-            }
-        } else {
+        val result =
             runtime.webExtensionController.install(url).apply {
                 then({
                     onInstallSuccess(it!!)
                     WResult.create<Void>()
                 }, { throwable ->
-                    onError(id, throwable)
+                    onError(throwable)
                     WResult.create<Void>()
                 })
             }
+
+        return result.asCancellableOperation()
+    }
+
+    /**
+     * See [Engine.installBuiltInWebExtension].
+     */
+    override fun installBuiltInWebExtension(
+        id:String,
+        url: String,
+        onSuccess: (WebExtension) -> Unit,
+        onError: (Throwable) -> Unit
+    ): CancellableOperation {
+
+        val onInstallSuccess: ((WebExtension) -> Unit) = {
+            webExtensionDelegate?.onInstalled(it)
+            it.registerActionHandler(webExtensionActionHandler)
+            it.registerTabHandler(webExtensionTabHandler, null)
+            onSuccess(it)
         }
+
+        val result =
+            runtime.webExtensionController.ensureBuiltIn(url, id).apply {
+                then({
+                    onInstallSuccess(it!!)
+                    WResult.create<Void>()
+                }, { throwable ->
+                    onError(throwable)
+                    WResult.create<Void>()
+                })
+            }
+
         return result.asCancellableOperation()
     }
 
@@ -141,11 +162,13 @@ class WolvicWebExtensionRuntime(
         val promptDelegate = object : WWebExtensionController.PromptDelegate {
             override fun onInstallPrompt(extension: WebExtension): WResult<WAllowOrDeny>? {
                 val result = WResult.allow()
-                webExtensionDelegate.onInstallPermissionRequest(
-                        extension
-                ) {
-                    allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
-                    WAllowOrDeny.DENY)
+                extension.getMetadata()?.let {
+                    webExtensionDelegate.onInstallPermissionRequest(
+                        extension,
+                        it.requiredPermissions,
+                        ) { allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
+                        WAllowOrDeny.DENY)
+                    }
                 }
                 return result
             }

@@ -688,7 +688,6 @@ dependencies {
     implementation deps.android_components.feature_addons
     implementation deps.android_components.glean
     implementation deps.android_components.preference
-    implementation deps.app_services.rustlog
 
     // Kotlin dependency
     implementation deps.kotlin.stdlib
@@ -713,7 +712,6 @@ dependencies {
     testImplementation deps.junit
     testImplementation deps.atsl.core
     testImplementation deps.robolectric
-    testImplementation deps.app_services.rustlog
     testImplementation deps.android_components.support_test
     testImplementation deps.android_components.support_test_appservices
     jnaForTest deps.jna
