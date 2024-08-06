@@ -24,7 +24,7 @@ class NavigationDelegateImpl implements GeckoSession.NavigationDelegate {
     }
 
     @Override
-    public void onLocationChange(@NonNull GeckoSession session, @Nullable String url, @NonNull List<GeckoSession.PermissionDelegate.ContentPermission> perms) {
+    public void onLocationChange(@NonNull GeckoSession session, @Nullable String url, @NonNull List<GeckoSession.PermissionDelegate.ContentPermission> perms, @NonNull Boolean hasUserGesture) {
         mDelegate.onLocationChange(mSession, url);
     }
 
