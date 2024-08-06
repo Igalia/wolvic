@@ -187,8 +187,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                                 mBinding.getRoot().post(() -> mBinding.addonsList.smoothScrollToPosition(0));
                                 return null;
 
-                            }, (s, throwable) -> {
-                                Log.d(LOGTAG, s);
+                            }, (throwable) -> {
                                 if (!(throwable instanceof CancellationException)) {
                                     showDownloadingAddonErrorDialog(addon);
                                 }
