@@ -50,6 +50,7 @@ public:
   void SetStageSize(const float aWidth, const float aDepth) override;
   void SetSittingToStandingTransform(const vrb::Matrix& aTransform) override;
   void CompleteEnumeration() override;
+  void SetBlendModes(std::vector<device::BlendMode>) override;
   // ExternalVR interface
   void PushSystemState();
   void PullBrowserState();
@@ -69,6 +70,8 @@ public:
   void OnPause();
   void OnResume();
   uint64_t GetFrameId() const;
+  device::BlendMode GetImmersiveBlendMode() const;
+  DeviceDelegate::ImmersiveXRSessionType GetImmersiveXRSessionType() const;
   ExternalVR();
   ~ExternalVR() = default;
 protected:
