@@ -137,6 +137,7 @@ public:
   virtual void SetPointerMode(const PointerMode) {};
   virtual void SetImmersiveBlendMode(device::BlendMode) {};
   virtual bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) { return false; };
+  virtual void SetHandTrackingEnabled(bool value) {};
 
 protected:
   DeviceDelegate() {}

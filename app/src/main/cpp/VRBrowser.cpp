@@ -74,6 +74,11 @@ const char* const kOnAppFocusChangedName = "onAppFocusChanged";
 const char* const kOnAppFocusChangedSignature = "(Z)V";
 const char* const kSetEyeTrackingSupported = "setEyeTrackingSupported";
 const char* const kSetEyeTrackingSupportedSignature = "(Z)V";
+const char* const kSetHandTrackingSupported = "setHandTrackingSupported";
+const char* const kSetHandTrackingSupportedSignature = "(Z)V";
+const char* const kOnControllersAvailable = "onControllersAvailable";
+const char* const kOnControllersAvailableSignature = "()V";
+
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -110,6 +115,8 @@ jmethodID sAppendAppNotesToCrashReport = nullptr;
 jmethodID sUpdateControllerBatteryLevels = nullptr;
 jmethodID sOnAppFocusChanged = nullptr;
 jmethodID sSetEyeTrackingSupported = nullptr;
+jmethodID sSetHandTrackingSupported = nullptr;
+jmethodID sOnControllersAvailable = nullptr;
 
 } // namespace
 
@@ -162,6 +169,8 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sUpdateControllerBatteryLevels = FindJNIMethodID(sEnv, sBrowserClass, kUpdateControllerBatteryLevelsName, kUpdateControllerBatteryLevelsSignature);
   sOnAppFocusChanged = FindJNIMethodID(sEnv, sBrowserClass, kOnAppFocusChangedName, kOnAppFocusChangedSignature);
   sSetEyeTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetEyeTrackingSupported, kSetEyeTrackingSupportedSignature);
+  sSetHandTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetHandTrackingSupported, kSetHandTrackingSupportedSignature);
+  sOnControllersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnControllersAvailable, kOnControllersAvailableSignature);
 }
 
 JNIEnv * VRBrowser::Env()
@@ -480,6 +489,21 @@ VRBrowser::SetEyeTrackingSupported(bool aIsSupported) {
     if (!ValidateMethodID(sEnv, sActivity, sSetEyeTrackingSupported, __FUNCTION__)) { return; }
     sEnv->CallVoidMethod(sActivity, sSetEyeTrackingSupported, (jboolean) aIsSupported);
     CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::SetHandTrackingSupported(bool aIsSupported) {
+    if (!ValidateMethodID(sEnv, sActivity, sSetHandTrackingSupported, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sSetHandTrackingSupported, (jboolean) aIsSupported);
+    CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::OnControllersAvailable() {
+    if (!ValidateMethodID(sEnv, sActivity, sOnControllersAvailable, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sOnControllersAvailable);
+    CheckJNIException(sEnv, __FUNCTION__);
+
 }
 
 } // namespace crow
