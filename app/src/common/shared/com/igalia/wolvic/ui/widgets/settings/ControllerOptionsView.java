@@ -64,6 +64,12 @@ class ControllerOptionsView extends SettingsView {
         } else {
             mBinding.pointerModeRadio.setVisibility(GONE);
         }
+
+        if (mWidgetManager.isHandTrackingSupported() && mWidgetManager.areControllersAvailable()) {
+            setHandTrackingEnabled(mWidgetManager.isHandTrackingEnabled(), false);
+        } else {
+            mBinding.handtrackingSwitch.setVisibility(GONE);
+        }
     }
 
     private void resetOptions() {
@@ -75,6 +81,7 @@ class ControllerOptionsView extends SettingsView {
         }
         setHapticFeedbackEnabled(SettingsStore.HAPTIC_FEEDBACK_ENABLED, true);
         setPointerMode(SettingsStore.POINTER_MODE_DEFAULT, true);
+        setHandTrackingEnabled(true, true);
     }
 
     private void setPointerColor(int checkedId, boolean doApply) {
@@ -119,6 +126,16 @@ class ControllerOptionsView extends SettingsView {
         }
     }
 
+    private void setHandTrackingEnabled(boolean value, boolean doApply) {
+        mBinding.handtrackingSwitch.setOnCheckedChangeListener(null);
+        mBinding.handtrackingSwitch.setValue(value, false);
+        mBinding.handtrackingSwitch.setOnCheckedChangeListener(mHandtrackingListener);
+
+        if (doApply) {
+            mWidgetManager.setHandTrackingEnabled(value);
+        }
+    }
+
     private RadioGroupSetting.OnCheckedChangeListener mPointerColorListener = (radioGroup, checkedId, doApply) -> {
         setPointerColor(checkedId, doApply);
     };
@@ -145,6 +162,9 @@ class ControllerOptionsView extends SettingsView {
             }
         });
     };
+
+    private SwitchSetting.OnCheckedChangeListener mHandtrackingListener = (compoundButton, enabled, apply) ->
+            setHandTrackingEnabled(enabled, true);
 
     @Override
     protected SettingViewType getType() {

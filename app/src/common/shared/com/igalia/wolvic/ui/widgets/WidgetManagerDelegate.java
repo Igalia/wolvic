@@ -137,6 +137,11 @@ public interface WidgetManagerDelegate {
     AppServicesProvider getServicesProvider();
     KeyboardWidget getKeyboard();
     void setPointerMode(@PointerMode int mode);
+    void setHandTrackingEnabled(boolean value);
+    boolean isHandTrackingEnabled();
     void checkEyeTrackingPermissions(@NonNull EyeTrackingCallback callback);
     boolean isEyeTrackingSupported();
+    boolean isHandTrackingSupported();
+    boolean areControllersAvailable();
+
 }

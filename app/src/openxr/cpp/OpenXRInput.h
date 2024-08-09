@@ -61,11 +61,12 @@ public:
   static OpenXRInputPtr Create(XrInstance, XrSession, XrSystemProperties, XrSpace localSpace,
                                bool isEyeTrackingSupported, ControllerDelegate &delegate);
   XrResult Initialize(ControllerDelegate &delegate, bool isEyeTrackingSupported);
-  XrResult Update(const XrFrameState&, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode, ControllerDelegate &);
+  XrResult Update(const XrFrameState&, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode, bool handTrackingEnabled, ControllerDelegate &);
   int32_t GetControllerModelCount() const;
   std::string GetControllerModelName(const int32_t aModelIndex) const;
   void UpdateInteractionProfile(ControllerDelegate&);
   bool AreControllersReady() const;
+  bool HasPhysicalControllersAvailable() const;
   void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
   HandMeshBufferPtr GetNextHandMeshBuffer(const int32_t aControllerIndex);
   void SetKeyboardTrackingEnabled(bool enabled);
