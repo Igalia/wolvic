@@ -657,13 +657,34 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public float getCurrentScale() {
-        float currentAspect = getCurrentAspect();
-        float currentWorldHeight = mWidgetPlacement.worldWidth / currentAspect;
-        float currentArea = mWidgetPlacement.worldWidth * currentWorldHeight;
-        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        float defaultHeight = defaultWidth / SettingsStore.getInstance(getContext()).getWindowAspect();
-        float defaultArea = defaultWidth * defaultHeight;
-        return currentArea / defaultArea;
+        // This method walks back the calculations in getSizeForScale().
+        Pair<Float, Float> minWorldSize = getMinWorldSize();
+        Pair<Float, Float> maxWorldSize = getMaxWorldSize();
+        Pair<Float,Float> mainAxisMinMax;
+        float mainAxisCurrent, mainAxisDefault;
+
+        boolean isHorizontal = getCurrentAspect() >= 1.0;
+        if (isHorizontal) {
+            // horizontal orientation
+            mainAxisCurrent = getWindowWidth() - mBorderWidth * 2;
+            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+            mainAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
+        } else {
+            // vertical orientation
+            mainAxisCurrent = getWindowHeight() - mBorderWidth * 2;
+            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * getCurrentAspect();
+            mainAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
+        }
+
+        if (mainAxisCurrent < mainAxisDefault) {
+            return (float) Math.pow(mainAxisCurrent / mainAxisDefault, 2);
+        } else if (mainAxisCurrent == mainAxisDefault) {
+            return DEFAULT_SCALE;
+        } else if (mainAxisCurrent == mainAxisMinMax.second) {
+            return MAX_SCALE;
+        } else {
+            return DEFAULT_SCALE + (mainAxisCurrent - mainAxisDefault) * (MAX_SCALE - DEFAULT_SCALE) / (mainAxisMinMax.second - mainAxisDefault);
+        }
     }
 
     public float getCurrentAspect() {
