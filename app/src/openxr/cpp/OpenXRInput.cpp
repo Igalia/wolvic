@@ -76,7 +76,7 @@ XrResult OpenXRInput::Initialize(ControllerDelegate &delegate, bool isEyeTrackin
   return XR_SUCCESS;
 }
 
-XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, ControllerDelegate& delegate)
+XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool handTrackingEnabled, ControllerDelegate& delegate)
 {
   XrActiveActionSet activeActionSet {
     mActionSet->ActionSet(), XR_NULL_PATH
@@ -90,7 +90,7 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
   bool usingEyeTracking = pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE && updateEyeGaze(frameState, head, delegate);
 
   for (auto& input : mInputSources) {
-    input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, delegate);
+    input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, handTrackingEnabled, delegate);
   }
 
   // Update tracked keyboard
@@ -145,6 +145,14 @@ OpenXRInputMapping* OpenXRInput::GetActiveInputMapping() const
   }
 
   return nullptr;
+}
+
+bool OpenXRInput::HasPhysicalControllersAvailable() const {
+    for (auto& input : mInputSources) {
+        if (input->HasPhysicalControllersAvailable())
+            return true;
+    }
+    return false;
 }
 
 void OpenXRInput::SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount) {

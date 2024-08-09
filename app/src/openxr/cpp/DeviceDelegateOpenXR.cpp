@@ -125,6 +125,7 @@ struct DeviceDelegateOpenXR::State {
   std::vector<XrEnvironmentBlendMode> blendModes;
   XrEnvironmentBlendMode immersiveBlendMode { XR_ENVIRONMENT_BLEND_MODE_OPAQUE };
   bool isEyeTrackingSupported { false };
+  bool handTrackingEnabled { true };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -310,6 +311,7 @@ struct DeviceDelegateOpenXR::State {
         VRB_ERROR("OpenXR runtime reports 0 layers. There must be at least 1");
 
     mHandTrackingSupported = handTrackingProperties.supportsHandTracking;
+    VRBrowser::SetHandTrackingSupported(mHandTrackingSupported);
     VRB_LOG("OpenXR runtime %s hand tracking", mHandTrackingSupported ? "does support" : "doesn't support");
     VRB_LOG("OpenXR runtime %s FB passthrough extension", passthroughProperties.supportsPassthrough ? "does support" : "doesn't support");
 
@@ -827,8 +829,13 @@ struct DeviceDelegateOpenXR::State {
     // Invoke the callback. We only clear it if the load has started. Otherwise we will retry later.
     // This happens for example if a profile with no 3D models like hand interaction is loaded on
     // start. If we clear the callback it won't ever be called in case the user grabs a controller.
-    if (controllersReadyCallback())
+    if (controllersReadyCallback()) {
+        if (input->HasPhysicalControllersAvailable()) {
+            VRB_LOG("DeviceDelegateOpenXR -- Physical controllers available");
+            VRBrowser::OnControllersAvailable();
+        }
         controllersReadyCallback = nullptr;
+    }
   }
 
   void UpdateInteractionProfile() {
@@ -1199,7 +1206,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     offsets.y() = -0.05;
     offsets.z() = 0.05;
 #endif
-    m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, m.pointerMode, *m.controller);
+    m.input->Update(frameState, m.localSpace, head, offsets, m.renderMode, m.pointerMode, m.handTrackingEnabled, *m.controller);
   }
 
   if (m.reorientRequested && m.renderMode == device::RenderMode::StandAlone) {
@@ -1737,6 +1744,10 @@ void DeviceDelegateOpenXR::SetPointerMode(const DeviceDelegate::PointerMode mode
 
 void DeviceDelegateOpenXR::SetImmersiveBlendMode(device::BlendMode mode) {
   m.immersiveBlendMode = toOpenXRBlendMode(mode);
+}
+
+void DeviceDelegateOpenXR::SetHandTrackingEnabled(bool value) {
+  m.handTrackingEnabled = value;
 }
 
 } // namespace crow

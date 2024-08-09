@@ -113,10 +113,12 @@ public:
     ~OpenXRInputSource();
 
     XrResult SuggestBindings(SuggestedBindings&) const;
-    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate);
+    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
+    bool IsUsingHandInteractionProfile() { return mUsingHandInteractionProfile; }
+    bool HasPhysicalControllersAvailable() const;
     void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
     HandMeshBufferPtr GetNextHandMeshBuffer();
 };

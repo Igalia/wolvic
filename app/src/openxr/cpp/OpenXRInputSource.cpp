@@ -733,7 +733,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     delegate.SetCapabilityFlags(mIndex, flags);
 }
 
-void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix &head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate)
+void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix &head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, ControllerDelegate& delegate)
 {
     if (mActiveMapping &&
         ((mHandeness == OpenXRHandFlags::Left && !mActiveMapping->leftControllerModel) ||
@@ -787,6 +787,10 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     auto gotHandTrackingInfo = false;
     auto handFacesHead = false;
     if (isControllerUnavailable || mUsingHandInteractionProfile) {
+        if (!handTrackingEnabled) {
+            delegate.SetEnabled(mIndex, false);
+            return;
+        }
         gotHandTrackingInfo = GetHandTrackingInfo(frameState.predictedDisplayTime, localSpace, head);
         if (gotHandTrackingInfo) {
             std::vector<vrb::Matrix> jointTransforms;
@@ -1072,6 +1076,10 @@ void OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, boo
         }
     }
     mTriggerWasClicked = triggerClicked;
+}
+
+bool OpenXRInputSource::HasPhysicalControllersAvailable() const {
+    return mActiveMapping && (!mUsingHandInteractionProfile || mMappings.size() > 1);
 }
 
 } // namespace crow

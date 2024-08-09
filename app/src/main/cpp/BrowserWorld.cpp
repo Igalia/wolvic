@@ -1742,6 +1742,11 @@ BrowserWorld::SetPointerMode(crow::DeviceDelegate::PointerMode pointerMode) {
   m.device->SetPointerMode(pointerMode);
 }
 
+void
+BrowserWorld::SetHandTrackingEnabled(bool value) {
+    m.device->SetHandTrackingEnabled(value);
+}
+
 JNIEnv*
 BrowserWorld::GetJNIEnv() const {
   ASSERT_ON_RENDER_THREAD(nullptr);
@@ -2263,6 +2268,11 @@ JNI_METHOD(void, setPointerModeNative)
             break;
     }
     crow::BrowserWorld::Instance().SetPointerMode(pointerMode);
+}
+
+JNI_METHOD(void, setHandTrackingEnabledNative)
+(JNIEnv*, jobject, jboolean value) {
+    crow::BrowserWorld::Instance().SetHandTrackingEnabled(value);
 }
 
 } // extern "C"

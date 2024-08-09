@@ -240,6 +240,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
     private Media mPrevActiveMedia = null;
     private boolean mIsPassthroughEnabled = false;
+    private boolean mIsHandTrackingEnabled = true;
+    private boolean mIsHandTrackingSupported = false;
+    private boolean mAreControllersAvailable = false;
     private long mLastBatteryUpdate = System.nanoTime();
     private int mLastBatteryLevel = -1;
     private PlatformActivityPlugin mPlatformPlugin;
@@ -1596,6 +1599,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @SuppressWarnings("unused")
     private void setEyeTrackingSupported(final boolean isSupported) { mIsEyeTrackingSupported = isSupported; }
 
+    @Keep
+    @SuppressWarnings("unused")
+    private void setHandTrackingSupported(final boolean isSupported) {
+        mIsHandTrackingSupported = isSupported;
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void onControllersAvailable() {
+        mAreControllersAvailable = true;
+    }
+
     private SurfaceTexture createSurfaceTexture() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
@@ -2014,6 +2029,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public boolean isPassthroughSupported() {
         return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces() || DeviceType.isPicoXR();
     }
+    @Override
+    public boolean areControllersAvailable() {
+        return mAreControllersAvailable;
+    }
 
     @Override
     public boolean isPageZoomEnabled() {
@@ -2149,6 +2168,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setHandTrackingEnabled(boolean value) {
+        mIsHandTrackingEnabled = value;
+        queueRunnable(() -> setHandTrackingEnabledNative(value));
+    }
+
+    @Override
+    public boolean isHandTrackingEnabled() {
+        return mIsHandTrackingEnabled;
+    }
+
+    @Override
+    public boolean isHandTrackingSupported() {
+        return mIsHandTrackingSupported;
+    }
+
+    @Override
     @NonNull
     public AppServicesProvider getServicesProvider() {
         return (AppServicesProvider)getApplication();
@@ -2226,4 +2261,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
     private native void setIsServo(boolean aIsServo);
     private native void setPointerModeNative(@PointerMode int aMode);
+    private native void setHandTrackingEnabledNative(boolean value);
+
 }
