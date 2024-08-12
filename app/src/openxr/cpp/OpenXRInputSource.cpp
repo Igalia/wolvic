@@ -730,7 +730,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
 
         // TODO: removing this flag will allow us to remove the ifdef. Keeping it just to limit
         // the scope of the changes.
-        flags = device::GripSpacePosition;
+        flags |= device::GripSpacePosition;
 #if CHROMIUM
         // Blink WebXR uses the grip space instead of the local space to position the
         // controller. Since controller's position is the same as the origin of the
