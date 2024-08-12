@@ -34,7 +34,7 @@
             android:name="com.igalia.wolvic.VRBrowserActivity"
             android:launchMode="singleInstance"
             android:exported="true"
-            android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
+            android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
             android:windowSoftInputMode="stateAlwaysHidden">
             <!-- Declares Wolvic as a browser app -->
             <intent-filter>
