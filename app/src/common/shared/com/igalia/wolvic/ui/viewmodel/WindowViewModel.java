@@ -215,7 +215,7 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mIsTitleBarVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            if (isFullscreen.getValue().get() || !isKioskMode.getValue().get() || isResizeMode.getValue().get() || isActiveWindow.getValue().get()) {
+            if (isFullscreen.getValue().get() || isKioskMode.getValue().get() || isResizeMode.getValue().get() || isActiveWindow.getValue().get()) {
                 isTitleBarVisible.postValue(new ObservableBoolean(false));
 
             } else {
