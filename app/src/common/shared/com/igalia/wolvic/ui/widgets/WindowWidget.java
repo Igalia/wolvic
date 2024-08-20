@@ -666,12 +666,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         boolean isHorizontal = getCurrentAspect() >= 1.0;
         if (isHorizontal) {
             // horizontal orientation
-            mainAxisCurrent = getWindowWidth() - mBorderWidth * 2;
+            mainAxisCurrent = (getWindowWidth() - mBorderWidth * 2) * WidgetPlacement.worldToDpRatio(getContext());
             mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
             mainAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
         } else {
             // vertical orientation
-            mainAxisCurrent = getWindowHeight() - mBorderWidth * 2;
+            mainAxisCurrent = (getWindowHeight() - mBorderWidth * 2) * WidgetPlacement.worldToDpRatio(getContext());
             mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * getCurrentAspect();
             mainAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
         }
