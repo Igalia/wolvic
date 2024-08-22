@@ -9,31 +9,59 @@
         "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
       },
       {
+        "value": "goatrock",
+        "title": "Goat Rock State Beach by Bob Dass (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/goatrock/goatrock.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/goatrock/goatrock.zip",
+        "source": "https://www.flickr.com/photos/54144402@N03/49263489461/"
+      },
+      {
+        "value": "kinderdijk",
+        "title": "Kinderdijk by Aldo Hoeben (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/kinderdijk/kinderdijk.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/kinderdijk/kinderdijk.zip",
+        "source": "https://flickr.com/photos/aldo/4584265973/"
+      },
+      {
+        "value": "wadakura",
+        "title": "Wadakura fountain park by heiwa4126 (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/wadakura/wadakura.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/wadakura/wadakura.zip",
+        "source": "https://www.flickr.com/photos/heiwa4126/4231022562/"
+      },
+      {
+        "value": "notredameparis",
+        "title": " Notre-Dame de Paris by Alexandre Duret-Lutz (CC BY-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/notredameparis/notredameparis.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/notredameparis/notredameparis.zip",
+        "source": "https://www.flickr.com/photos/gadl/403173357/"
+      },
+      {
         "value": "japanesegarden",
         "title": "Japanese Garden by Masakazu Matsumoto (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/japanesegarden/japanesegarden.png",
-        "payload": "https://darker.ink/wolvic-test-environments/japanesegarden/japanesegarden.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.zip",
         "source": "https://www.flickr.com/photos/vitroids/48868845128/"
       },
       {
         "value": "doublearch",
         "title": "Double Arch by Masakazu Matsumoto (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/doublearch/doublearch.png",
-        "payload": "https://darker.ink/wolvic-test-environments/doublearch/doublearch.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.zip",
         "source": "https://www.flickr.com/photos/vitroids/48822338172/"
       },
       {
         "value": "ploumanach",
         "title": "Ploumanac'h by Alexandre Duret-Lutz (CC BY-NC-SA)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/ploumanach/ploumanach.png",
-        "payload": "https://darker.ink/wolvic-test-environments/ploumanach/ploumanach.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.zip",
         "source": "https://www.flickr.com/photos/gadl/22026335904/"
       },
       {
         "value": "tullinge",
         "title": "Tullinge by Simon Inns (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/tullinge/tullinge.png",
-        "payload": "https://darker.ink/wolvic-test-environments/tullinge/tullinge.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.zip",
         "source": "https://www.flickr.com/photos/simoninns/24120710880/"
       },
       {
@@ -154,29 +182,29 @@
       {
         "value": "japanesegarden",
         "title": "Japanese Garden by Masakazu Matsumoto (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/japanesegarden/japanesegarden.png",
-        "payload": "https://darker.ink/wolvic-test-environments/japanesegarden/japanesegarden.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.zip",
         "source": "https://www.flickr.com/photos/vitroids/48868845128/"
       },
       {
         "value": "doublearch",
         "title": "Double Arch by Masakazu Matsumoto (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/doublearch/doublearch.png",
-        "payload": "https://darker.ink/wolvic-test-environments/doublearch/doublearch.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.zip",
         "source": "https://www.flickr.com/photos/vitroids/48822338172/"
       },
       {
         "value": "ploumanach",
         "title": "Ploumanac'h by Alexandre Duret-Lutz (CC BY-NC-SA)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/ploumanach/ploumanach.png",
-        "payload": "https://darker.ink/wolvic-test-environments/ploumanach/ploumanach.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.zip",
         "source": "https://www.flickr.com/photos/gadl/22026335904/"
       },
       {
         "value": "tullinge",
         "title": "Tullinge by Simon Inns (CC BY)",
-        "thumbnail": "https://darker.ink/wolvic-test-environments/tullinge/tullinge.png",
-        "payload": "https://darker.ink/wolvic-test-environments/tullinge/tullinge.zip",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.zip",
         "source": "https://www.flickr.com/photos/simoninns/24120710880/"
       },
       {
