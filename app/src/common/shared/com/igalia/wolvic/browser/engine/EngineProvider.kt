@@ -39,9 +39,11 @@ object EngineProvider {
                     .build())
             builder.displayDensityOverride(settingsStore.displayDensity)
             builder.displayDpiOverride(settingsStore.displayDpi)
+            // This calculation ensures that screen.width and screen.height are always greater or
+            // equal than window.innerWidth and window.innerHeight, even with different densities.
             builder.screenSizeOverride(
-                (settingsStore.maxWindowWidth * settingsStore.displayDensity).toInt(),
-                (settingsStore.maxWindowHeight * settingsStore.displayDensity).toInt()
+                (settingsStore.maxWindowWidth * settingsStore.displayDpi / 100.0).toInt(),
+                (settingsStore.maxWindowHeight * settingsStore.displayDpi / 100.0).toInt()
             )
             builder.enterpriseRootsEnabled(settingsStore.isSystemRootCAEnabled)
             builder.inputAutoZoomEnabled(false)
