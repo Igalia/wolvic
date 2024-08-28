@@ -31,14 +31,23 @@
         android:supportsRtl="true"
         android:theme="@style/FxR.Dark">
         <activity
+            android:name=".VersionCheckActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="com.oculus.intent.category.2D" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.igalia.wolvic.VRBrowserActivity"
             android:launchMode="singleInstance"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
             android:windowSoftInputMode="stateAlwaysHidden">
             <!-- Declares Wolvic as a browser app -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -47,7 +56,6 @@
             </intent-filter>
             <!-- Used for the special wolvic:// links -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data

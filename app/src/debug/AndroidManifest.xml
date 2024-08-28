@@ -4,7 +4,6 @@
     <application android:name=".VRBrowserApplication">
         <activity android:name=".VRBrowserActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
                 <category android:name="android.intent.category.APP_BROWSER" />

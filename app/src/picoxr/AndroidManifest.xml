@@ -8,12 +8,8 @@
     <uses-permission android:name="com.picovr.permission.EYE_TRACKING"/>
 
     <application android:requestLegacyExternalStorage="true">
-        <activity android:name=".VRBrowserActivity" android:screenOrientation="landscape">
+        <activity android:name=".VRBrowserActivity">
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <meta-data android:name="pvr.app.type" android:value="vr" />
         <meta-data android:name="handtracking" android:value="1" />
