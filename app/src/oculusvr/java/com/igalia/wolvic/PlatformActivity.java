@@ -55,7 +55,6 @@ public class PlatformActivity extends NativeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(LOGTAG,"in onCreate");
         super.onCreate(savedInstanceState);
         //getWindow().takeInputQueue(null);
         // Keep the screen on

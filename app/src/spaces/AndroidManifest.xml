@@ -39,16 +39,12 @@
 
     <application>
         <activity
-            android:name=".VRBrowserActivity"
-            android:screenOrientation="landscape">
+            android:name=".VRBrowserActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="native-lib" />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="snapdragon.intent.category.SPACES" />
             </intent-filter>
         </activity>
