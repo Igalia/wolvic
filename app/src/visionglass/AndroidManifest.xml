@@ -6,12 +6,9 @@
         android:required="false" />
 
     <application>
-        <activity
-            android:name=".VRBrowserActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+        <activity android:name=".VRBrowserActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
