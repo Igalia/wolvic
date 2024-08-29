@@ -8,15 +8,17 @@
 
 namespace crow {
 
-OpenXRInputPtr OpenXRInput::Create(XrInstance instance, XrSession session, XrSystemProperties properties, XrSpace localSpace, ControllerDelegate& delegate)
+OpenXRInputPtr
+OpenXRInput::Create(XrInstance instance, XrSession session, XrSystemProperties properties,
+                    XrSpace localSpace, bool isEyeTrackingSupported, ControllerDelegate &delegate)
 {
-  auto input = std::unique_ptr<OpenXRInput>(new OpenXRInput(instance, session, properties, localSpace, delegate));
-  if (XR_FAILED(input->Initialize(delegate)))
+  auto input = std::unique_ptr<OpenXRInput>(new OpenXRInput(instance, session, properties, localSpace));
+  if (XR_FAILED(input->Initialize(delegate, isEyeTrackingSupported)))
     return nullptr;
   return input;
 }
 
-OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemProperties properties, XrSpace localSpace, ControllerDelegate& delegate)
+OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemProperties properties, XrSpace localSpace)
     : mInstance(instance)
     , mSession(session)
     , mSystemProperties(properties)
@@ -25,7 +27,7 @@ OpenXRInput::OpenXRInput(XrInstance instance, XrSession session, XrSystemPropert
   VRB_ERROR("OpenXR systemName: %s", properties.systemName);
 }
 
-XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
+XrResult OpenXRInput::Initialize(ControllerDelegate &delegate, bool isEyeTrackingSupported)
 {
   mActionSet = OpenXRActionSet::Create(mInstance, mSession);
 
@@ -58,8 +60,7 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
     }
   }
 
-  bool supportsEyeGazeExtension = OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
-  if (supportsEyeGazeExtension)
+  if (isEyeTrackingSupported)
     InitializeEyeGaze(delegate);
 
   XrSessionActionSetsAttachInfo attachInfo { XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO };
@@ -67,7 +68,7 @@ XrResult OpenXRInput::Initialize(ControllerDelegate& delegate)
   attachInfo.actionSets = &mActionSet->ActionSet();
   RETURN_IF_XR_FAILED(xrAttachSessionActionSets(mSession, &attachInfo));
 
-  if (supportsEyeGazeExtension)
+  if (isEyeTrackingSupported)
     InitializeEyeGazeSpaces();
 
   UpdateInteractionProfile(delegate);
