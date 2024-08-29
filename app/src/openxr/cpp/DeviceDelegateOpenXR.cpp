@@ -122,6 +122,7 @@ struct DeviceDelegateOpenXR::State {
   float furthestHitDistance { near };
   OpenXRActionSetPtr eyeActionSet;
   PointerMode pointerMode { PointerMode::TRACKED_POINTER };
+  bool isEyeTrackingSupported { false };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -335,7 +336,6 @@ struct DeviceDelegateOpenXR::State {
       VRB_LOG("OpenXR runtime supports XR_FB_render_model");
     }
 
-    bool isEyeTrackingSupported { false };
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME)) {
         isEyeTrackingSupported = eyeGazeProperties.supportsEyeGazeInteraction;
         VRB_LOG("OpenXR runtime %s support XR_EXT_eye_gaze_interaction", isEyeTrackingSupported ? "does" : "doesn't");
@@ -1607,7 +1607,7 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   m.passthroughStrategy->initializePassthrough(m.session);
 
-  m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, m.localSpace, *m.controller.get());
+  m.input = OpenXRInput::Create(m.instance, m.session, m.systemProperties, m.localSpace, m.isEyeTrackingSupported, *m.controller.get());
   ProcessEvents();
   if (m.controllersCreatedCallback) {
     m.controllersCreatedCallback();
