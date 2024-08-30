@@ -433,7 +433,7 @@ public class PromptDelegate implements
     public WResult<PromptResponse> onLoginSelect(@NonNull WSession session, final @NonNull AutocompleteRequest<WAutocomplete.LoginSelectOption> autocompleteRequest) {
         final WResult<PromptResponse> result = WResult.create();
 
-        if (autocompleteRequest.options().length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
+        if (autocompleteRequest.options().length > 0 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
             List<Login> logins = Arrays.stream(autocompleteRequest.options()).map(item -> LoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
             if (mSelectLoginPrompt == null) {
                 mSelectLoginPrompt = new SelectLoginPromptWidget(mContext);
