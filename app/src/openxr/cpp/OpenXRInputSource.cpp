@@ -143,14 +143,18 @@ XrResult OpenXRInputSource::Initialize()
 #else
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
-        if (mSupportsFBHandTrackingAim)
-            mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
-        else if (!mIsHandInteractionEXTSupported) {
-            // TODO: fine tune params for different devices.
-            OpenXRGestureManagerHandJoints::OneEuroFilterParams params= { 0.25, 1, 1 };
-            mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints, &params);
+        if (!mIsHandInteractionEXTSupported) {
+            if (mSupportsFBHandTrackingAim) {
+                mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
+            } else {
+                // TODO: fine tune params for different devices.
+                OpenXRGestureManagerHandJoints::OneEuroFilterParams params= { 0.25, 1, 1 };
+                mGestureManager = std::make_unique<OpenXRGestureManagerHandJoints>(mHandJoints, &params);
+            }
+            VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME : "hand joints");
+        } else {
+            VRB_LOG("OpenXR: using %s to compute hands aim", XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
         }
-        VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME : (mIsHandInteractionEXTSupported ? XR_EXT_HAND_INTERACTION_EXTENSION_NAME : "hand joints"));
     }
 
     // Initialize double buffers for storing XR_MSFT_hand_tracking_mesh geometry
