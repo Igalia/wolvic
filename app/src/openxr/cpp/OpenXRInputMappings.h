@@ -299,6 +299,31 @@ namespace crow {
             },
     };
 
+    const OpenXRInputMapping Pico4U {
+            "/interaction_profiles/bytedance/pico4_controller",
+            IS_6DOF,
+            "vr_controller_pico4u_left.obj",
+            "vr_controller_pico4u_right.obj",
+            device::Pico4U,
+            std::vector<OpenXRInputProfile> { "pico-4", "generic-trigger-squeeze-thumbstick" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, kPathTrigger, OpenXRButtonFlags::ValueTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Thumbstick, kPathThumbstick, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::ButtonX, kPathButtonX, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left },
+                    { OpenXRButtonType::ButtonY, kPathButtonY, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Left,  },
+                    { OpenXRButtonType::ButtonA, kPathButtonA, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::ButtonB, kPathButtonB, OpenXRButtonFlags::ClickTouch, OpenXRHandFlags::Right },
+                    { OpenXRButtonType::Menu, kPathMenu, OpenXRButtonFlags::Click, OpenXRHandFlags::Left, ControllerDelegate::Button::BUTTON_APP, true }
+            },
+            std::vector<OpenXRAxis> {
+                    { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
+            },
+            std::vector<OpenXRHaptic> {
+                    { kPathHaptic, OpenXRHandFlags::Both },
+            },
+    };
+
     const OpenXRInputMapping PicoNeo3 {
             "/interaction_profiles/pico/neo3_controller",
             IS_6DOF,
@@ -453,8 +478,8 @@ namespace crow {
     };
 
 
-    const std::array<OpenXRInputMapping, 13> OpenXRInputMappings {
-            OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, Pico4xOld, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, HandInteraction, MSFTHandInteraction
+    const std::array<OpenXRInputMapping, 14> OpenXRInputMappings {
+            OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4U, Pico4x, Pico4xOld, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, HandInteraction, MSFTHandInteraction
     };
 
 } // namespace crow
