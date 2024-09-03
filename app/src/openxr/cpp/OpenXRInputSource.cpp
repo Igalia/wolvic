@@ -1041,6 +1041,7 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
         if (!strncmp(mapping.path, path, path_len)) {
             mActiveMapping = &mapping;
             mUsingHandInteractionProfile = !strncmp(path, kInteractionProfileHandInteraction, path_len);
+            VRB_LOG("OpenXR: NEW active mapping %s", mActiveMapping->path);
             break;
         }
     }
