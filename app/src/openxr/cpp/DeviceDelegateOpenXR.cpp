@@ -221,6 +221,9 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME))
         extensions.push_back(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
 
+    if (OpenXRExtensions::IsExtensionSupported(XR_BD_CONTROLLER_INTERACTION_EXTENSION_NAME))
+        extensions.push_back(XR_BD_CONTROLLER_INTERACTION_EXTENSION_NAME);
+
     java = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     java.applicationVM = javaContext->vm;
     java.applicationActivity = javaContext->activity;
