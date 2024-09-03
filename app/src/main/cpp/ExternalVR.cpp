@@ -254,6 +254,8 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
       result = mozilla::gfx::VRControllerType::PicoNeo3;
       break;
     case device::Pico4x:
+    case device::Pico4U:
+      // FIXME: Gecko does not support Pico4U device yet, so let's use a similar one for WebXR.
       result = mozilla::gfx::VRControllerType::Pico4;
       break;
     case device::MagicLeap2:
