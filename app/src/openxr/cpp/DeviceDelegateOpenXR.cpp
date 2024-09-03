@@ -743,6 +743,7 @@ struct DeviceDelegateOpenXR::State {
       // Pico4x default is 72hz, but has an experimental setting to set it to 90hz. If the setting
       // is disabled we'll select 72hz which is the only one advertised by OpenXR in that case.
       case device::Pico4x:
+      case device::Pico4U:
         suggestedRefreshRate = 90.0;
         break;
       case device::OculusQuest:
