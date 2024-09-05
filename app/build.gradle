@@ -179,13 +179,13 @@ android {
             //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
-            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
+            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props-chromium.json"'
             buildConfigField "String", "MK_API_KEY", "\"${getMKApiKey()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
-            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props.json"'
+            buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props-chromium.json"'
             buildConfigField "String", "MK_API_KEY", "\"\""
         }
     }
