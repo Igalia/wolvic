@@ -773,7 +773,7 @@ dependencies {
     // chromium
     if (isChromiumAvailable()) {
         chromiumImplementation fileTree(dir: gradle."localProperties.chromium_aar", include: ['*.aar'])
-        chromiumImplementation 'androidx.fragment:fragment:1.8.2'
+        chromiumImplementation 'androidx.fragment:fragment:1.8.3'
     }
 
     // webkit
