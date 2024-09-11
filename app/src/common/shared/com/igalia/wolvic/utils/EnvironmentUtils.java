@@ -20,6 +20,8 @@ public class EnvironmentUtils {
 
     public static final String ENVS_FOLDER = "envs";
     public static final String BUILTIN_ENVS_PREFIX = "cubemap/";
+    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isPicoXR()) ?
+            new String[]{".jpg", ".png"} : new String[]{".ktx", ".jpg", ".png"};
 
     /**
      * Gets the ouput path for a given environment id.
@@ -84,28 +86,26 @@ public class EnvironmentUtils {
     }
 
     /**
-     * Check wether or not an external environment is ready to be used. Checks is the ouput directory exists
-     * and if it contains 6 items. We make an assumption that those items are the right images and that they
-     * follow the naming convention.
+     * Check whether or not an external environment is ready to be used. Checks if the directory exists
+     * and if it contains at least 6 supported files. We make an assumption that those files are the
      * right images and that they follow the naming convention.
      * @param context An activity context.
      * @param envId The environment id. This maps to the Remote properties JSON "value" environment property.
      * @return true is the environment is ready, false otherwise
      */
     public static boolean isExternalEnvReady(@NonNull Context context, @NonNull String envId) {
-        boolean isEnvReady = false;
         String envOutputPath = getExternalEnvPath(context, envId);
         if (envOutputPath != null) {
-            File file = new File(envOutputPath);
-            if (file.exists() && file.isDirectory()) {
-                File[] files = file.listFiles();
-                if (files != null && files.length == 6) {
-                    isEnvReady = true;
-                }
+            File envDirectory = new File(envOutputPath);
+            if (envDirectory.exists() && envDirectory.isDirectory()) {
+                File[] envFiles = envDirectory.listFiles(file -> {
+                    String fileName = file.getName().toLowerCase();
+                    return file.isFile() && Arrays.stream(SUPPORTED_ENV_EXTENSIONS).anyMatch(fileName::endsWith);
+                });
+                return envFiles != null && envFiles.length >= 6;
             }
         }
-
-        return isEnvReady;
+        return false;
     }
 
     /**
@@ -209,9 +209,10 @@ public class EnvironmentUtils {
      */
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
+        // Pico4x and Meta Quest (after v69) do not support compressed textures for the cubemap.
         if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
             String payload = env.getPayload();
-            String format = DeviceType.isOculusBuild() ? "_ktx" : "_misc"; // Pico4x doesn't support 'ktx'
+            String format = "_misc";
             int at = payload.lastIndexOf(".");
             return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
         }
