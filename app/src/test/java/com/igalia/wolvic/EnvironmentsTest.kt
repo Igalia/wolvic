@@ -143,13 +143,13 @@ class EnvironmentsTest {
         val actualPath = EnvironmentUtils.getExternalEnvPath(context, "wolvic")
         assertNotNull(actualPath)
 
-        // We just check that there are 6 files in the directory to determine that the env is ready
-        // so we just create 6 random files.
         val dir = File(actualPath!!)
         assertNotNull(dir)
         dir.mkdirs()
-        for (x in 0..5) {
-            val file = File(dir, "image_$x")
+
+        val fileNames = listOf("negx.png", "negy.png", "negz.png", "posx.png", "posy.png", "posz.png")
+        for (fileName in fileNames) {
+            val file = File(dir, fileName)
             assertTrue(file.createNewFile())
         }
 
