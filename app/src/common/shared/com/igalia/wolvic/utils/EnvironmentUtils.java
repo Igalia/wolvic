@@ -20,7 +20,7 @@ public class EnvironmentUtils {
 
     public static final String ENVS_FOLDER = "envs";
     public static final String BUILTIN_ENVS_PREFIX = "cubemap/";
-    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isPicoXR()) ?
+    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) ?
             new String[]{".jpg", ".png"} : new String[]{".ktx", ".jpg", ".png"};
 
     /**
