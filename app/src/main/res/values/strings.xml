@@ -2567,6 +2567,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- Shown when starting the application if the OS version is not compatible -->
     <string name="incompatible_os_version_title">Incompatible OS Version</string>
-    <string name="incompatible_os_version_message">Your OS version is not supported. This version of Wolvic requires at least version %1$d</string>
+    <string name="incompatible_os_version_message">Your OS version is not supported. This version of Wolvic requires at least version %1$s</string>
 
 </resources>
