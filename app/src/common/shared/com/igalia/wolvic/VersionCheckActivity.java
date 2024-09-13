@@ -14,17 +14,14 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 public class VersionCheckActivity extends Activity {
-    private static final String META_OS_VERSION = "ro.vros.build.version";
-    private static final int MIN_META_OS_VERSION_WITH_KHR_LOADER = 62;
-    static final String LOGTAG = SystemUtils.createLogtag(VersionCheckActivity.class);
-    private int minSupportedVersion = 0;
     private boolean browserActivityStarted = false;
+    private PlatformSystemCheck platformSystemCheck = new PlatformSystemCheck();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (isOSVersionCompatible()) {
+        if (platformSystemCheck.isOSVersionCompatible()) {
             Intent receivedIntent = getIntent();
             Bundle extras = receivedIntent.getExtras();
 
@@ -49,40 +46,11 @@ public class VersionCheckActivity extends Activity {
             System.exit(0);
     }
 
-    private static String getSystemProperty(String key) {
-        String value = null;
-        try {
-            Process process = Runtime.getRuntime().exec("getprop " + key);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            value = reader.readLine();
-            reader.close();
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
-
-    private boolean isOSVersionCompatible() {
-        if (BuildConfig.FLAVOR_platform.equals("oculusvr")) {
-            minSupportedVersion = MIN_META_OS_VERSION_WITH_KHR_LOADER;
-            String osVersion = getSystemProperty(META_OS_VERSION);
-            Log.i(LOGTAG, "Checking that OS version is at least " + minSupportedVersion + " (found " + osVersion + ")");
-            try {
-                if (osVersion == null || Integer.parseInt(osVersion) < MIN_META_OS_VERSION_WITH_KHR_LOADER)
-                    return false;
-            } catch (NumberFormatException e) {
-                Log.e(LOGTAG, "Failed to parse OS version: " + osVersion);
-                return false;
-            }
-        }
-        return true;
-    }
 
     private void showIncompatibleOSDialog() {
         new AlertDialog.Builder(this)
             .setTitle(R.string.incompatible_os_version_title)
-            .setMessage(getString(R.string.incompatible_os_version_message, minSupportedVersion))
+            .setMessage(getString(R.string.incompatible_os_version_message, platformSystemCheck.minSupportedVersion()))
             .setOnDismissListener((dialog) -> finish())
             .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
             .setIcon(android.R.drawable.ic_dialog_alert)
