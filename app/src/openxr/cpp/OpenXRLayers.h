@@ -189,14 +189,6 @@ protected:
     info.width = width;
     info.height = height;
     bool shouldZeroInitialize = aSurfaceType == VRLayerSurface::SurfaceType::AndroidSurface;
-#if defined(PICOXR)
-    // Circumvent a bug in the pico OpenXR runtime in versions below 5.4.0.
-    char buildId[128] = {0};
-    if (CompareSemanticVersionStrings(GetBuildIdString(buildId), "5.4.0")) {
-      // System version is < 5.4.0
-      shouldZeroInitialize = false;
-    }
-#endif
     if (shouldZeroInitialize) {
       // These members must be zero
       // See https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/xrCreateSwapchainAndroidSurfaceKHR.html#XR_KHR_android_surface_swapchain
