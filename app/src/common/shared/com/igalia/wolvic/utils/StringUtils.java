@@ -8,11 +8,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.igalia.wolvic.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class StringUtils {
@@ -88,5 +83,37 @@ public class StringUtils {
             Log.e(LOGTAG, "String index is out of bound at capitalize(). " + e);
             return input;
         }
+    }
+
+    public static int compareVersions(@NonNull String version1, @NonNull String version2) {
+        if (version1.isEmpty() && version2.isEmpty())
+            return 0;
+        if (version1.isEmpty())
+            return -1;
+        if (version2.isEmpty())
+            return 1;
+
+        String[] components1 = version1.split("\\.");
+        String[] components2 = version2.split("\\.");
+        int len = Math.max(components1.length, components2.length);
+
+        for (int i = 0; i < len; i++) {
+            String component1 = i < components1.length ? components1[i] : "0";
+            String component2 = i < components2.length ? components2[i] : "0";
+            try {
+                int num1 = Integer.parseInt(component1);
+                int num2 = Integer.parseInt(component2);
+                int comparison = Integer.compare(num1, num2);
+                if (comparison != 0) {
+                    return comparison;
+                }
+            } catch (NumberFormatException e) {
+                int comparison = component1.compareTo(component2);
+                if (comparison != 0) {
+                    return comparison;
+                }
+            }
+        }
+        return 0;
     }
 }
