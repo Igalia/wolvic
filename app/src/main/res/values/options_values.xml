@@ -85,6 +85,21 @@
         <item>2</item>
     </integer-array>
 
+    <!-- Windows' size Options -->
+    <string-array name="windows_size" translatable="false">
+        <item>@string/windows_size_800x450</item>
+        <item>@string/windows_size_800x600</item>
+        <item>@string/windows_size_1000x562</item>
+        <item>@string/windows_size_1000x750</item>
+    </string-array>
+
+    <string-array name="windows_size_values" translatable="false">
+        <item>800x450</item>
+        <item>800x600</item>
+        <item>1000x562</item>
+        <item>1000x750</item>
+    </string-array>
+
     <!-- Tracking Options -->
     <string-array name="privacy_options_tracking" translatable="false">
         <item>@string/privacy_options_tracking_etp</item>

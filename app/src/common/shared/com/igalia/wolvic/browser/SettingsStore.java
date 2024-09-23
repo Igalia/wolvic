@@ -477,11 +477,25 @@ public class SettingsStore {
     }
 
     public int getWindowWidth() {
-        return WINDOW_WIDTH_DEFAULT;
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_window_width), WINDOW_WIDTH_DEFAULT);
+    }
+
+    public void setWindowWidth(int width) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_window_width), width);
+        editor.commit();
     }
 
     public int getWindowHeight() {
-        return WINDOW_HEIGHT_DEFAULT;
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_window_height), WINDOW_HEIGHT_DEFAULT);
+    }
+
+    public void setWindowHeight(int height) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_window_height), height);
+        editor.commit();
     }
 
     public float getWindowAspect() {
