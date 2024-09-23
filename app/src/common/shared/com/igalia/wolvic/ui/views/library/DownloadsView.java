@@ -280,7 +280,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     protected void updateLayout() {
         post(() -> {
             double width = Math.ceil(getWidth() / getContext().getResources().getDisplayMetrics().density);
-            boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
+            boolean isNarrow = width < SettingsStore.getInstance(getContext()).getWindowWidth();
 
             if (isNarrow != mViewModel.getIsNarrow().getValue().get()) {
                 mDownloadsAdapter.setNarrow(isNarrow);
