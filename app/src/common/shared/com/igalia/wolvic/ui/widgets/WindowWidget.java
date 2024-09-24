@@ -258,7 +258,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aPlacement.width = windowWidth + mBorderWidth * 2;
         aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight() + mBorderWidth * 2;
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) *
-                (float)windowWidth / (float)windowWidth;
+                (float)windowWidth / (float)SettingsStore.WINDOW_WIDTH_DEFAULT;
         aPlacement.density = getBrowserDensity();
         aPlacement.visible = true;
         aPlacement.cylinder = true;
