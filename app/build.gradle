@@ -436,6 +436,18 @@ android {
         
     }
 
+    androidComponents {
+        onVariants(selector().all()) { variant ->
+            def platform = variant.productFlavors.get(0).second
+            def store = variant.productFlavors.get(3).second
+
+            // Adjust the applicationId so it matches what the store expects.
+            if (platform == "visionglass" && store == "generic") {
+                variant.applicationId.set("com.igalia.wolvic.world.visionglass")
+            }
+        }
+    }
+
     sourceSets {
         main {
             java.srcDirs = [
