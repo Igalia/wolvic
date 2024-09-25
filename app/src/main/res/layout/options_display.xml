@@ -92,9 +92,9 @@
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/windows_size"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:description="Default size of all windows"
+                    app:description="Default size of windows"
                     app:options="@array/windows_size"
                     app:values="@array/windows_size_values" />
 

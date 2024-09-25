@@ -607,7 +607,7 @@
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
 
-    <!-- This string is used to label radio buttons for setting the default size of all windows. -->
+    <!-- This string is used to label radio buttons for setting the default size of windows. -->
     <string name="windows_size">Default Size of Windows</string>
 
     <!-- This string is used to label the radio button of Default Size of Windows to be 800x450. -->
