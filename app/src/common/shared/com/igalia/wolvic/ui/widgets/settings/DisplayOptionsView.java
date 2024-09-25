@@ -7,7 +7,6 @@ package com.igalia.wolvic.ui.widgets.settings;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
