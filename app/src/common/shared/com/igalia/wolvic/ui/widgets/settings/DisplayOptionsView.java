@@ -21,7 +21,6 @@ import com.igalia.wolvic.ui.views.settings.SliderSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-import com.igalia.wolvic.utils.SystemUtils;
 
 class DisplayOptionsView extends SettingsView {
 
