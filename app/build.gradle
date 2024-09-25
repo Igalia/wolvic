@@ -837,9 +837,6 @@ android.applicationVariants.configureEach { variant ->
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }
-    } else if (platform.toLowerCase().startsWith('visionglass')) {
-        // Adjust the applicationId so it matches what the store expects.
-        variant.mergedFlavor.applicationIdSuffix ".world.visionglass"
     }
 
     // Append "Dev" to the app name for debug builds. We do it by directly modifying the resource
