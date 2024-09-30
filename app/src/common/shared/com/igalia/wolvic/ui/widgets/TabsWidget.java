@@ -38,6 +38,7 @@ public class TabsWidget extends UIDialog {
     protected UITextButton mSelectTabsButton;
     protected UITextButton mDoneButton;
     protected UITextButton mCloseTabsButton;
+    protected UITextButton mBookmarkTabsButton;
     protected UITextButton mCloseTabsAllButton;
     protected UITextButton mSelectAllButton;
     protected UITextButton mUnselectTabs;

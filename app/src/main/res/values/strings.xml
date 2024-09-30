@@ -1995,6 +1995,10 @@
 the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tabs_close_selected">Close tabs</string>
 
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+the Select` button. When clicked it bookmarks all the previously selected tabs -->
+    <string name="tabs_bookmark_selected">Bookmark tabs</string>
+
     <!-- This string is displayed in a button on the header of the tabs dialog.
      When clicked it closes all the available tabs -->
     <string name="tabs_close_all">Close all</string>
