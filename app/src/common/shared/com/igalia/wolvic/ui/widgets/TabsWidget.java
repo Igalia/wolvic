@@ -52,6 +52,7 @@ public class TabsWidget extends UIDialog {
         void onTabSelect(Session aTab);
         void onTabAdd();
         void onTabsClose(List<Session> aTabs);
+        void onTabsBookmark(List<Session> aTabs);
     }
 
     public TabsWidget(Context aContext) {
@@ -125,6 +126,14 @@ public class TabsWidget extends UIDialog {
         mCloseTabsButton.setOnClickListener(v -> {
             if (mTabDelegate != null) {
                 mTabDelegate.onTabsClose(mSelectedTabs);
+            }
+            onDismiss();
+        });
+
+        mBookmarkTabsButton = findViewById(R.id.tabsBookmarkButton);
+        mBookmarkTabsButton.setOnClickListener(v -> {
+            if (mTabDelegate != null) {
+                mTabDelegate.onTabsBookmark(mSelectedTabs);
             }
             onDismiss();
         });
@@ -358,11 +367,13 @@ public class TabsWidget extends UIDialog {
         mTabsSelectModeView.setVisibility(mSelecting ? View.VISIBLE : View.GONE);
         if (mSelectedTabs.size() > 0) {
             mCloseTabsButton.setVisibility(View.VISIBLE);
+            mBookmarkTabsButton.setVisibility(View.VISIBLE);
             mUnselectTabs.setVisibility(View.VISIBLE);
             mCloseTabsAllButton.setVisibility(View.GONE);
             mSelectAllButton.setVisibility(View.GONE);
         } else {
             mCloseTabsButton.setVisibility(View.GONE);
+            mBookmarkTabsButton.setVisibility(View.GONE);
             mUnselectTabs.setVisibility(View.GONE);
             mCloseTabsAllButton.setVisibility(View.VISIBLE);
             mSelectAllButton.setVisibility(View.VISIBLE);
