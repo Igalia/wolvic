@@ -847,8 +847,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 for (WindowListener listener: mListeners) {
                     listener.onFocusRequest(this);
                 }
-                // Return to discard first click after focus
-                return;
             }
         } else if (aEvent.getAction() == MotionEvent.ACTION_UP || aEvent.getAction() == MotionEvent.ACTION_CANCEL) {
             mClickedAfterFocus = false;
@@ -885,8 +883,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             updateBorder();
         }
 
-        if (!mActive) {
-            // Do not send touch events to not focused windows.
+        if (!mActive
+                && aEvent.getAction() != MotionEvent.ACTION_SCROLL
+                && aEvent.getAction() != MotionEvent.ACTION_HOVER_MOVE) {
+            // Do not send hover events to not focused windows, except for scrolling and moving events.
             return;
         }
 
