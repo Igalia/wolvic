@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_height="@dimen/horizontal_tabs_bar_height"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tabs_bar_bg"
+    android:orientation="horizontal">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_tab"
+        android:layout_width="64dp"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:background="@drawable/tab_add_background"
+        android:scaleType="fitCenter"
+        app:backgroundTint="@null"
+        app:icon="@drawable/ic_icon_newtab"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/fog" />
+
+    <com.igalia.wolvic.ui.views.CustomRecyclerView
+        android:id="@+id/tabsRecyclerView"
+        style="@style/customRecyclerViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:scrollbars="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/tabs_bar_item_horizontal" />
+
+</LinearLayout>

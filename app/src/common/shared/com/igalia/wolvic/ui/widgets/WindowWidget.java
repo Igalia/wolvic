@@ -170,6 +170,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (mViewModel.getIsDrmUsed().getValue().get() && getSession() != null) {
                 getSession().reload(WSession.LOAD_FLAGS_BYPASS_CACHE);
             }
+        } else if (key.equals(getContext().getString(R.string.settings_key_tabs_location))) {
+            int tabsLocation = sharedPreferences.getInt(key, SettingsStore.TABS_LOCATION_TRAY);
+            mViewModel.setUsesHorizontalTabsBar(tabsLocation == SettingsStore.TABS_LOCATION_HORIZONTAL);
+            mViewModel.setUsesVerticalTabsBar(tabsLocation == SettingsStore.TABS_LOCATION_VERTICAL);
         }
     }
 
@@ -207,6 +211,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsPrivateSession(mSession.isPrivateMode());
         mViewModel.setUrl(mSession.getCurrentUri());
         mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
+        int tabsLocation = SettingsStore.getInstance(getContext()).getTabsLocation();
+        mViewModel.setUsesHorizontalTabsBar(tabsLocation == SettingsStore.TABS_LOCATION_HORIZONTAL);
+        mViewModel.setUsesVerticalTabsBar(tabsLocation == SettingsStore.TABS_LOCATION_VERTICAL);
 
         // re-center the front window when its height changes
         mViewModel.getHeight().observe((VRBrowserActivity) getContext(), observableInt -> centerFrontWindowIfNeeded());
