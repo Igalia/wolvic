@@ -85,6 +85,23 @@
         <item>2</item>
     </integer-array>
 
+    <!-- Tabs Location Options -->
+    <string-array name="display_options_tabs_location" translatable="false">
+        <item>@string/display_options_tabs_location_tray</item>
+        <item>@string/display_options_tabs_location_horizontal</item>
+        <item>@string/display_options_tabs_location_vertical</item>
+    </string-array>
+
+    <integer-array name="display_options_tabs_location_values" translatable="false">
+        <!-- SettingsStore.TABS_LOCATION_DEFAULT -->
+        <item>0</item>
+        <!-- SettingsStore.TABS_LOCATION_HORIZONTAL -->
+        <item>1</item>
+        <!-- SettingsStore.TABS_LOCATION_VERTICAL -->
+        <item>2</item>
+    </integer-array>
+
+
     <!-- Tracking Options -->
     <string-array name="privacy_options_tracking" translatable="false">
         <item>@string/privacy_options_tracking_etp</item>

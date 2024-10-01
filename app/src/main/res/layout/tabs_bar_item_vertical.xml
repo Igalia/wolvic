@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.igalia.wolvic.ui.views.TabsBarItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:layout_width='match_parent'
+    android:layout_height="@dimen/vertical_tabs_bar_item_height"
+    android:padding="1dp">
+
+    <RelativeLayout
+        android:id="@+id/tab_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/tabs_bar_item_bg"
+        android:duplicateParentState="true">
+
+        <ImageView
+            android:id="@+id/tab_favicon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_icon_globe" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/tab_close_button"
+            android:layout_toEndOf="@id/tab_favicon"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tab_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:lines="1"
+                android:shadowColor="#00000000"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                tools:text="Title of the page" />
+
+            <TextView
+                android:id="@+id/tab_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:lines="1"
+                android:shadowColor="#00000000"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                tools:text="example.com" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tab_close_button"
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:minWidth="32dp"
+            android:padding="0dp"
+            app:icon="@drawable/ic_icon_exit"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="16dp"
+            app:iconTint="@drawable/tab_close_icon_color" />
+    </RelativeLayout>
+
+</com.igalia.wolvic.ui.views.TabsBarItem>

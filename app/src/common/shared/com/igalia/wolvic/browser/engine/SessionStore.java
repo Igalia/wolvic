@@ -33,6 +33,7 @@ import com.igalia.wolvic.utils.UrlUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -84,9 +85,11 @@ public class SessionStore implements
     private FxaWebChannelFeature mWebChannelsFeature;
     private Store.Subscription mStoreSubscription;
     private BrowserIconsHelper mBrowserIconsHelper;
+    private final LinkedHashSet<SessionChangeListener> mSessionChangeListeners;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
+        mSessionChangeListeners = new LinkedHashSet<>();
     }
 
     public void initialize(Context context) {
@@ -358,6 +361,10 @@ public class SessionStore implements
         return mActiveSession;
     }
 
+    public List<Session> getSessions(boolean aPrivateMode) {
+        return mSessions.stream().filter(session -> session.isPrivateMode() == aPrivateMode).collect(Collectors.toList());
+    }
+
     public ArrayList<Session> getSortedSessions(boolean aPrivateMode) {
         ArrayList<Session> result = new ArrayList<>(mSessions);
         result.removeIf(session -> session.isPrivateMode() != aPrivateMode);
@@ -372,6 +379,14 @@ public class SessionStore implements
 
     public void setPermissionDelegate(PermissionDelegate delegate) {
         mPermissionDelegate = delegate;
+    }
+
+    public void addSessionChangeListener(SessionChangeListener listener) {
+        mSessionChangeListeners.add(listener);
+    }
+
+    public void removeSessionChangeListener(SessionChangeListener listener) {
+        mSessionChangeListeners.remove(listener);
     }
 
     public BookmarksStore getBookmarkStore() {
@@ -514,27 +529,42 @@ public class SessionStore implements
     @Override
     public void onSessionAdded(Session aSession) {
         ComponentsAdapter.get().addSession(aSession);
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionAdded(aSession);
+        }
     }
 
     @Override
     public void onSessionOpened(Session aSession) {
         ComponentsAdapter.get().link(aSession);
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionOpened(aSession);
+        }
     }
 
     @Override
     public void onSessionClosed(Session aSession) {
         ComponentsAdapter.get().unlink(aSession);
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionClosed(aSession);
+        }
     }
 
     @Override
     public void onSessionRemoved(String aId) {
         ComponentsAdapter.get().removeSession(aId);
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionRemoved(aId);
+        }
     }
 
     @Override
     public void onSessionStateChanged(Session aSession, boolean aActive) {
         if (aActive) {
             ComponentsAdapter.get().selectSession(aSession);
+        }
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionStateChanged(aSession, aActive);
         }
     }
 
@@ -549,6 +579,9 @@ public class SessionStore implements
             ComponentsAdapter.get().link(newSession);
         }
 
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onCurrentSessionChange(aOldSession, aSession);
+        }
     }
 
     @Override

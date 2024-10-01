@@ -85,6 +85,7 @@
     <string name="settings_key_privacy_policy_accepted" translatable="false">settings_key_privacy_policy_accepted</string>
     <string name="settings_key_search_engine_id" translatable="false">settings_key_search_engine_id</string>
     <string name="settings_key_eye_tracking_supported" translatable="false">settings_key_eye_tracking_supported</string>
+    <string name="settings_key_tabs_location" translatable="false">settings_key_tabs_location</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/igalia/wolvic/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://wolvic.com/legal/privacy/</string>
     <string name="private_report_url" translatable="false">https://www.igalia.com/privacy/&amp;url=%1$s</string>
