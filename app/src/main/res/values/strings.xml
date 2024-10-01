@@ -499,6 +499,14 @@
          and is used to customize if we use passthrough mode when the app starts. -->
     <string name="display_options_start_with_passthrough">Start with Passthrough Mode</string>
 
+    <!-- This string labels a set of radio buttons in the 'Display Options' dialog
+         and is used to customize the location of the Tabs pane. -->
+    <string name="display_options_tabs_location">Tabs location</string>
+
+    <string name="display_options_tabs_location_tray">Tray</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
+
     <!-- This string labels an On/Off switch in the 'Display Options' dialog
          and is used to customize if we use sound effects when interacting with app. -->
     <string name="display_options_sound_effect">Use Sound Effects</string>
