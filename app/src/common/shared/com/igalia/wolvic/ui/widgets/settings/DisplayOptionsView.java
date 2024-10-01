@@ -96,6 +96,10 @@ class DisplayOptionsView extends SettingsView {
         mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
         setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled(), false);
 
+        @SettingsStore.TabsLocation int tabsLocation = SettingsStore.getInstance(getContext()).getTabsLocation();
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
+        setTabsLocation(mBinding.tabsLocationRadio.getIdForValue(tabsLocation), false);
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -189,6 +193,10 @@ class DisplayOptionsView extends SettingsView {
         setWindowMovement(enabled, true);
     };
 
+    private RadioGroupSetting.OnCheckedChangeListener mTabsLocationChangeListener = (radioGroup, checkedId, doApply) -> {
+        setTabsLocation(checkedId, true);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -240,6 +248,9 @@ class DisplayOptionsView extends SettingsView {
         }
         if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+        }
+        if (!mBinding.tabsLocationRadio.getValueForId(mBinding.tabsLocationRadio.getCheckedRadioButtonId()).equals(SettingsStore.TABS_LOCATION_DEFAULT)) {
+            setTabsLocation(mBinding.tabsLocationRadio.getIdForValue(SettingsStore.TABS_LOCATION_DEFAULT), true);
         }
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
@@ -358,6 +369,17 @@ class DisplayOptionsView extends SettingsView {
             // Disable head lock if window movement is enabled,
             // otherwise the windows might be moved out of the user's reach.
             setHeadLock(false, true);
+        }
+    }
+
+    private void setTabsLocation(int checkedId, boolean doApply) {
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(null);
+        mBinding.tabsLocationRadio.setChecked(checkedId, doApply);
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
+
+        if (doApply) {
+            int tabsLocationValue = (Integer) mBinding.tabsLocationRadio.getValueForId(checkedId);
+            SettingsStore.getInstance(getContext()).setTabsLocation(tabsLocationValue);
         }
     }
 

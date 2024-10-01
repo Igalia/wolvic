@@ -62,7 +62,7 @@ import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
-        WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
+        WindowWidget.WindowListener, TabDelegate, Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
@@ -1387,6 +1387,7 @@ public void selectTab(@NonNull Session aTab) {
     public void onTabSelect(Session aTab) {
         if (mFocusedWindow.getSession() != aTab) {
             TelemetryService.Tabs.activatedEvent();
+            aTab.updateLastUse();
         }
 
         WindowWidget targetWindow = mFocusedWindow;

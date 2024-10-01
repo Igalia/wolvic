@@ -69,13 +69,16 @@ import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.OffscreenDisplay;
 import com.igalia.wolvic.ui.adapters.Language;
+import com.igalia.wolvic.ui.widgets.AbstractTabsBar;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
+import com.igalia.wolvic.ui.widgets.HorizontalTabsBar;
 import com.igalia.wolvic.ui.widgets.KeyboardWidget;
 import com.igalia.wolvic.ui.widgets.NavigationBarWidget;
 import com.igalia.wolvic.ui.widgets.RootWidget;
 import com.igalia.wolvic.ui.widgets.TrayWidget;
 import com.igalia.wolvic.ui.widgets.UISurfaceTextureRenderer;
 import com.igalia.wolvic.ui.widgets.UIWidget;
+import com.igalia.wolvic.ui.widgets.VerticalTabsBar;
 import com.igalia.wolvic.ui.widgets.WebXRInterstitialWidget;
 import com.igalia.wolvic.ui.widgets.Widget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -105,6 +108,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -210,6 +214,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     RootWidget mRootWidget;
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
+    AbstractTabsBar mTabsBar;
     CrashDialogWidget mCrashDialog;
     TrayWidget mTray;
     WhatsNewWidget mWhatsNewWidget = null;
@@ -465,9 +470,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray = new TrayWidget(this);
         mTray.addListeners(mWindows);
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
+
+        // Create Tabs bar widget
+        if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_HORIZONTAL) {
+            mTabsBar = new HorizontalTabsBar(this, mWindows);
+        } else if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL) {
+            mTabsBar = new VerticalTabsBar(this, mWindows);
+        } else {
+            mTabsBar = null;
+        }
+
         attachToWindow(mWindows.getFocusedWindow(), null);
 
-        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
+        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mTabsBar, mWebXRInterstitial));
 
         // Create the platform plugin after widgets are created to be extra safe.
         mPlatformPlugin = createPlatformPlugin(this);
@@ -483,10 +498,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mKeyboard.attachToWindow(aWindow);
         mTray.attachToWindow(aWindow);
 
+        if (mTabsBar != null) {
+            mTabsBar.attachToWindow(aWindow);
+        }
+
         if (aPrevWindow != null) {
             updateWidget(mNavigationBar);
+            updateWidget(mTabsBar);
             updateWidget(mKeyboard);
             updateWidget(mTray);
+            if (mTabsBar != null) {
+                updateWidget(mTabsBar);
+            }
         }
     }
 
@@ -772,14 +795,40 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(getString(R.string.settings_key_voice_search_service))) {
-                initializeSpeechRecognizer();
-            } else if (key.equals(getString(R.string.settings_key_head_lock))) {
-                boolean isHeadLockEnabled = SettingsStore.getInstance(this).isHeadLockEnabled();
-                setHeadLockEnabled(isHeadLockEnabled);
-                if (!isHeadLockEnabled)
-                    recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
+        if (Objects.equals(key, getString(R.string.settings_key_voice_search_service))) {
+            initializeSpeechRecognizer();
+        } else if (Objects.equals(key, getString(R.string.settings_key_head_lock))) {
+            boolean isHeadLockEnabled = mSettings.isHeadLockEnabled();
+            setHeadLockEnabled(isHeadLockEnabled);
+            if (!isHeadLockEnabled)
+                recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
+        } else if (Objects.equals(key, getString(R.string.settings_key_tabs_location))) {
+
+            Log.e(LOGTAG, "update tabs location");
+
+            // remove the previous widget
+            if (mTabsBar != null) {
+                Log.e(LOGTAG, "remove previous widget");
+                removeWidget(mTabsBar);
             }
+
+            if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY) {
+                mTabsBar = null;
+            } else {
+                if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_HORIZONTAL) {
+                    mTabsBar = new HorizontalTabsBar(this, mWindows);
+                } else if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL) {
+                    mTabsBar = new VerticalTabsBar(this, mWindows);
+                } else {
+                    Log.e(LOGTAG, "Invalid value for tabs location");
+                    mTabsBar = null;
+                    return;
+                }
+                addWidget(mTabsBar);
+                mTabsBar.attachToWindow(mWindows.getFocusedWindow());
+                updateWidget(mTabsBar);
+            }
+        }
     }
 
     void loadFromIntent(final Intent intent) {
