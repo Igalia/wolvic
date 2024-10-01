@@ -154,26 +154,6 @@ class DeveloperOptionsView extends SettingsView {
         }
     };
 
-    private RestartDialogWidget.CancelCallback cancelReset(boolean restartDebugLogging,
-                                                           boolean restartUIHardwareAcceleration,
-                                                           boolean restartWebGLOutOfProcess) {
-        RestartDialogWidget.CancelCallback cancelCallback = () -> {
-            if (restartDebugLogging) {
-                setDebugLogging(!SettingsStore.DEBUG_LOGGING_DEFAULT, true);
-            }
-
-            if (restartUIHardwareAcceleration) {
-                setUIHardwareAcceleration(!SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
-            }
-
-            if (restartWebGLOutOfProcess) {
-                setWebGLOutOfProcess(!SettingsStore.WEBGL_OUT_OF_PROCESS, true);
-            }
-        };
-
-        return cancelCallback;
-    }
-
     private void setRemoteDebugging(boolean value, boolean doApply) {
         mBinding.remoteDebuggingSwitch.setOnCheckedChangeListener(null);
         mBinding.remoteDebuggingSwitch.setValue(value, doApply);
