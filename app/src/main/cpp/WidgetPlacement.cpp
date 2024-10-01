@@ -76,6 +76,8 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_INT_FIELD(borderColor);
   GET_STRING_FIELD(name);
   GET_INT_FIELD(clearColor);
+  GET_FLOAT_FIELD(horizontalOffset, "horizontalOffset");
+  GET_FLOAT_FIELD(verticalOffset, "verticalOffset");
 
   return result;
 }

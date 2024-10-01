@@ -69,6 +69,12 @@ public class SettingsStore {
     public static final int INTERNAL = 0;
     public static final int EXTERNAL = 1;
 
+    @IntDef(value = { TABS_LOCATION_TRAY, TABS_LOCATION_HORIZONTAL, TABS_LOCATION_VERTICAL})
+    public @interface TabsLocation {}
+    public static final int TABS_LOCATION_TRAY = 0;
+    public static final int TABS_LOCATION_HORIZONTAL = 1;
+    public static final int TABS_LOCATION_VERTICAL = 2;
+
     private Context mContext;
     private SharedPreferences mPrefs;
     private SettingsViewModel mSettingsViewModel;
@@ -143,6 +149,7 @@ public class SettingsStore {
     public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
     public final static boolean LATIN_AUTO_COMPLETE_ENABLED = false;
     public final static boolean WINDOW_MOVEMENT_DEFAULT = false;
+    public final static @TabsLocation int TABS_LOCATION_DEFAULT = TABS_LOCATION_TRAY;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     public final static float HAPTIC_PULSE_DURATION_DEFAULT = 10.0f;
     public final static float HAPTIC_PULSE_INTENSITY_DEFAULT = 1.0f;
@@ -389,6 +396,18 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
         editor.apply();
+    }
+
+    @TabsLocation
+    public int getTabsLocation() {
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_tabs_location), TABS_LOCATION_DEFAULT);
+    }
+
+    public void setTabsLocation(@TabsLocation int tabsLocation) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_tabs_location), tabsLocation);
+        editor.commit();
     }
 
     public boolean isEnvironmentOverrideEnabled() {

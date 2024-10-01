@@ -6,6 +6,7 @@
 package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -16,15 +17,19 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.audio.AudioEngine;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.TopBarBinding;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.utils.DeviceType;
 
-public class TopBarWidget extends UIWidget {
+import java.util.Objects;
+
+public class TopBarWidget extends UIWidget implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private WindowViewModel mViewModel;
     private TopBarBinding mBinding;
@@ -32,6 +37,8 @@ public class TopBarWidget extends UIWidget {
     private WindowWidget mAttachedWindow;
     private TopBarWidget.Delegate mDelegate;
     private boolean mWidgetAdded = false;
+    private SharedPreferences mPrefs;
+    private boolean mUsesHorizontalTabsBar = false;
 
     public TopBarWidget(Context aContext) {
         super(aContext);
@@ -56,6 +63,7 @@ public class TopBarWidget extends UIWidget {
 
     private void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         updateUI();
     }
@@ -75,6 +83,16 @@ public class TopBarWidget extends UIWidget {
         // limit the amount of layers we create, as Pico's runtime only allows 16 at a given time.
         if (DeviceType.isPicoXR())
             aPlacement.layer = false;
+    }
+
+    private void adjustWindowPlacement(boolean isHorizontalTabsVisible) {
+        if (isHorizontalTabsVisible) {
+            // Move this widget upwards to make space for the horizontal tabs bar.
+            getPlacement().verticalOffset = WidgetPlacement.dpDimension(getContext(), R.dimen.horizontal_tabs_bar_height) * WidgetPlacement.worldToDpRatio(getContext());
+        } else {
+            getPlacement().verticalOffset = 0;
+        }
+        mWidgetManager.updateWidget(TopBarWidget.this);
     }
 
     private void updateUI() {
@@ -141,8 +159,10 @@ public class TopBarWidget extends UIWidget {
 
         if (mViewModel != null) {
             mViewModel.getIsTopBarVisible().removeObserver(mIsVisible);
+            mViewModel.getIsTabsBarVisible().removeObserver(mIsTabsBarVisible);
             mViewModel = null;
         }
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -163,7 +183,13 @@ public class TopBarWidget extends UIWidget {
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsTopBarVisible().observe((VRBrowserActivity)getContext(), mIsVisible);
+        mViewModel.getIsTopBarVisible().observe((VRBrowserActivity) getContext(), mIsVisible);
+        mViewModel.getIsTabsBarVisible().observe((VRBrowserActivity) getContext(), mIsTabsBarVisible);
+
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        int tabsLocation = mPrefs.getInt(getContext().getString(R.string.settings_key_tabs_location), SettingsStore.TABS_LOCATION_DEFAULT);
+        mUsesHorizontalTabsBar = (tabsLocation == SettingsStore.TABS_LOCATION_HORIZONTAL);
+        adjustWindowPlacement(mViewModel.getIsTabsBarVisible().getValue().get() && mUsesHorizontalTabsBar);
     }
 
     public @Nullable WindowWidget getAttachedWindow() {
@@ -178,7 +204,7 @@ public class TopBarWidget extends UIWidget {
         super.releaseWidget();
     }
 
-    Observer<ObservableBoolean> mIsVisible = isVisible -> {
+    private Observer<ObservableBoolean> mIsVisible = isVisible -> {
         mWidgetPlacement.visible = isVisible.get();
         if (!mWidgetAdded) {
             mWidgetManager.addWidget(TopBarWidget.this);
@@ -187,6 +213,19 @@ public class TopBarWidget extends UIWidget {
             mWidgetManager.updateWidget(TopBarWidget.this);
         }
     };
+
+    private Observer<ObservableBoolean> mIsTabsBarVisible = isTabsBarVisible -> {
+        adjustWindowPlacement(isTabsBarVisible.get() && mUsesHorizontalTabsBar);
+    };
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        if (Objects.equals(key, getContext().getString(R.string.settings_key_tabs_location))) {
+            int tabsLocation = mPrefs.getInt(getContext().getString(R.string.settings_key_tabs_location), SettingsStore.TABS_LOCATION_DEFAULT);
+            mUsesHorizontalTabsBar = tabsLocation == SettingsStore.TABS_LOCATION_HORIZONTAL;
+            adjustWindowPlacement(mViewModel.getIsTabsBarVisible().getValue().get() && mUsesHorizontalTabsBar);
+        }
+    }
 
     public void setDelegate(TopBarWidget.Delegate aDelegate) {
         mDelegate = aDelegate;

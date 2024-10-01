@@ -1599,7 +1599,7 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
   // Widget anchor point
   translation -= vrb::Vector(anchorX, anchorY, 0.0f);
 
-  // Parent anchor point, taking the gravity into account.
+  // Parent anchor point, taking gravity and offset into account.
   if (parent) {
     float parentTranslationX, parentTranslationY;
     if (aPlacement->parentAnchorGravity & WidgetPlacement::kParentAnchorGravityCenterX) {
@@ -1607,12 +1607,16 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
     } else {
       parentTranslationX = parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f;
     }
+    parentTranslationX += (aPlacement->horizontalOffset);
+
     if (aPlacement->parentAnchorGravity & WidgetPlacement::kParentAnchorGravityCenterY) {
       parentTranslationY = (parentWorldHeight - worldHeight) / 2.0f - parentWorldHeight * 0.5f;
     } else {
       parentTranslationY =
               parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f;
     }
+    parentTranslationY += (aPlacement->verticalOffset);
+
     translation += vrb::Vector(parentTranslationX, parentTranslationY, 0.0f);
   }
 

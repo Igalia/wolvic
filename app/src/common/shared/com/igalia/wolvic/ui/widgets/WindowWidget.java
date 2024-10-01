@@ -1056,6 +1056,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetManager.updateVisibleWidgets();
     }
 
+    public void setOffset(float horizontalOffset, float verticalOffset) {
+        mWidgetPlacement.horizontalOffset = horizontalOffset;
+        mWidgetPlacement.verticalOffset = verticalOffset;
+        mWidgetManager.updateWidget(this);
+    }
+
     @Override
     public void releaseWidget() {
         cleanListeners(mSession);

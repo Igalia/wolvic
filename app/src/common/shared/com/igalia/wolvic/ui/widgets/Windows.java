@@ -65,7 +65,7 @@ import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
-        WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
+        WindowWidget.WindowListener, TabDelegate, Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
@@ -348,9 +348,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         updateMaxWindowScales();
         mWidgetManager.addWidget(newWindow);
-        focusWindow(newWindow);
         updateCurvedMode(true);
         updateViews();
+        focusWindow(newWindow);
 
         // We are only interested in general windows opened.
         if (!isInPrivateMode()) {
@@ -445,6 +445,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
 
         updateViews();
+        adjustWindowOffsets();
         if (mDelegate != null) {
             mDelegate.onWindowClosed();
         }
@@ -935,6 +936,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.parentAnchorX = 0.0f;
                 placement.parentAnchorY = 0.0f;
                 placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
+                placement.horizontalOffset = - WidgetPlacement.dpDimension(mContext, R.dimen.vertical_tabs_bar_width) * WidgetPlacement.worldToDpRatio(mContext);
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -954,6 +956,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.parentAnchorX = 1.0f;
                 placement.parentAnchorY = 0.0f;
                 placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
+                placement.horizontalOffset = WidgetPlacement.dpDimension(mContext, R.dimen.vertical_tabs_bar_width) * WidgetPlacement.worldToDpRatio(mContext);
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -967,6 +970,27 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.translationX = WidgetPlacement.dpDimension(mContext, R.dimen.multi_window_padding);
                 placement.translationY = 0.0f;
                 placement.translationZ = 0.0f;
+        }
+    }
+
+    public void adjustWindowOffsets() {
+        boolean verticalTabsBar = SettingsStore.getInstance(mContext).getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL;
+        float tabsBarWidth = WidgetPlacement.dpDimension(mContext, R.dimen.vertical_tabs_bar_width) * WidgetPlacement.worldToDpRatio(mContext);
+
+        WindowWidget frontWindow = getFrontWindow();
+        WindowWidget leftWindow = getLeftWindow();
+        WindowWidget rightWindow = getRightWindow();
+
+        if (frontWindow != null) {
+            frontWindow.setOffset(0.0f, 0.0f);
+        }
+
+        if (leftWindow != null) {
+            leftWindow.setOffset((verticalTabsBar && frontWindow == mFocusedWindow) ? -tabsBarWidth : 0.0f, 0.0f);
+        }
+
+        if (rightWindow != null) {
+            rightWindow.setOffset((verticalTabsBar && rightWindow == mFocusedWindow) ? tabsBarWidth : 0.0f, 0.0f);
         }
     }
 
@@ -1426,6 +1450,7 @@ public void selectTab(@NonNull Session aTab) {
     public void onTabSelect(Session aTab) {
         if (mFocusedWindow.getSession() != aTab) {
             TelemetryService.Tabs.activatedEvent();
+            aTab.updateLastUse();
         }
 
         WindowWidget targetWindow = mFocusedWindow;
