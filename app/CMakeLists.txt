@@ -79,6 +79,16 @@ elseif(HVR)
             ${CMAKE_SOURCE_DIR}/src/hvr/cpp/native-lib.cpp
             ${CMAKE_SOURCE_DIR}/src/main/cpp/BrowserEGLContext.cpp
     )
+elseif(AOSP)
+target_sources(
+        native-lib
+        PUBLIC
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/BrowserEGLContext.cpp
+)
+find_package(game-activity REQUIRED CONFIG)
+target_link_libraries(native-lib PRIVATE game-activity::game-activity_static)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
 else()
 target_sources(
     native-lib
