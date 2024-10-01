@@ -8,7 +8,11 @@
 #include <EGL/eglext.h>
 
 #ifndef HVR
+#if (AOSP)
+#include <game-activity/native_app_glue/android_native_app_glue.h>
+#else
 #include <android_native_app_glue.h>
+#endif
 #endif
 
 namespace crow {
