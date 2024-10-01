@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.utils.DeviceType;
 
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
@@ -83,6 +82,10 @@ public class WidgetPlacement {
      */
     public float cylinderMapRadius;
 
+    // Translation offset (in world dimensions), applied after anchors.
+    public float horizontalOffset;
+    public float verticalOffset;
+
     public WidgetPlacement clone() {
         WidgetPlacement w = new WidgetPlacement();
         w.copyFrom(this);
@@ -121,6 +124,8 @@ public class WidgetPlacement {
         this.name = w.name;
         this.clearColor = w.clearColor;
         this.cylinderMapRadius = w.cylinderMapRadius;
+        this.horizontalOffset = w.horizontalOffset;
+        this.verticalOffset = w.verticalOffset;
     }
 
     public void updateCylinderMapRadius() {
