@@ -62,6 +62,7 @@ import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 
 public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
+    public RestartDialogWidget.CancelCallback cancelCallback;
 
     private SettingsBinding mBinding;
     private AudioEngine mAudio;
@@ -595,6 +596,8 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         if (mRestartDialog == null) {
             mRestartDialog = new RestartDialogWidget(getContext());
         }
+
+        mRestartDialog.cancelCallback = cancelCallback;
 
         mRestartDialog.show(REQUEST_FOCUS);
     }

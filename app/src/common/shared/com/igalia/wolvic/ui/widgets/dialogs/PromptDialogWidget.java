@@ -38,6 +38,7 @@ public class PromptDialogWidget extends UIDialog {
 
     public static final int NEGATIVE = 0;
     public static final int POSITIVE = 1;
+    public static final int OTHER = 2;
 
     protected PromptDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
@@ -68,6 +69,11 @@ public class PromptDialogWidget extends UIDialog {
         mBinding.rightButton.setOnClickListener(v -> {
             if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(POSITIVE, isChecked());
+            }
+        });
+        mBinding.optionallyAddedButton.setOnClickListener(v -> {
+            if (mAppDialogDelegate != null) {
+                mAppDialogDelegate.onButtonClicked(OTHER, isChecked());
             }
         });
     }
@@ -236,7 +242,6 @@ public class PromptDialogWidget extends UIDialog {
         if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[NEGATIVE]);
             mBinding.leftButton.setVisibility(View.VISIBLE);
-
         } else {
             mBinding.leftButton.setVisibility(View.GONE);
         }
@@ -244,9 +249,15 @@ public class PromptDialogWidget extends UIDialog {
         if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[POSITIVE]);
             mBinding.rightButton.setVisibility(View.VISIBLE);
-
         } else {
             mBinding.rightButton.setVisibility(View.GONE);
+        }
+
+        if (buttons.length > 2) {
+            mBinding.optionallyAddedButton.setText(buttons[OTHER]);
+            mBinding.optionallyAddedButton.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.optionallyAddedButton.setVisibility(View.GONE);
         }
     }
 
@@ -254,7 +265,6 @@ public class PromptDialogWidget extends UIDialog {
         if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[NEGATIVE]);
             mBinding.leftButton.setVisibility(View.VISIBLE);
-
         } else {
             mBinding.leftButton.setVisibility(View.GONE);
         }
@@ -262,9 +272,15 @@ public class PromptDialogWidget extends UIDialog {
         if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[POSITIVE]);
             mBinding.rightButton.setVisibility(View.VISIBLE);
-
         } else {
             mBinding.rightButton.setVisibility(View.GONE);
+        }
+
+        if (buttons.length > 2) {
+            mBinding.optionallyAddedButton.setText(buttons[OTHER]);
+            mBinding.optionallyAddedButton.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.optionallyAddedButton.setVisibility(View.GONE);
         }
     }
 

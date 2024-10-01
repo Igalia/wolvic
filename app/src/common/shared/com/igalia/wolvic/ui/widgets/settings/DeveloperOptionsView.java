@@ -18,6 +18,7 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsDeveloperBinding;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.utils.DeviceType;
 
 class DeveloperOptionsView extends SettingsView {
@@ -109,6 +110,7 @@ class DeveloperOptionsView extends SettingsView {
 
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
+
         if (mBinding.remoteDebuggingSwitch.isChecked() != SettingsStore.REMOTE_DEBUGGING_DEFAULT) {
             setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT, true);
         }
@@ -117,12 +119,14 @@ class DeveloperOptionsView extends SettingsView {
             setPerformance(SettingsStore.PERFORMANCE_MONITOR_DEFAULT, true);
         }
 
-        if (mBinding.debugLoggingSwitch.isChecked() != SettingsStore.DEBUG_LOGGING_DEFAULT) {
+        boolean prevDebugLoggingSelection = mBinding.debugLoggingSwitch.isChecked();
+        if (prevDebugLoggingSelection != SettingsStore.DEBUG_LOGGING_DEFAULT) {
             setDebugLogging(SettingsStore.DEBUG_LOGGING_DEFAULT, true);
             restart = true;
         }
 
-        if (mBinding.hardwareAccelerationSwitch.isChecked() != SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT) {
+        boolean prevHardwareAccelerationSelection = mBinding.hardwareAccelerationSwitch.isChecked();
+        if (prevHardwareAccelerationSelection != SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT) {
             setUIHardwareAcceleration(SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
             restart = true;
         }
@@ -131,7 +135,8 @@ class DeveloperOptionsView extends SettingsView {
             setBypassCacheOnReload(SettingsStore.BYPASS_CACHE_ON_RELOAD, true);
         }
 
-        if (BuildConfig.DEBUG && mBinding.webglOutOfProcessSwitch.isChecked() != SettingsStore.WEBGL_OUT_OF_PROCESS) {
+        boolean prevWebglOutOfProcessSelection = mBinding.webglOutOfProcessSwitch.isChecked();
+        if (BuildConfig.DEBUG && prevWebglOutOfProcessSelection != SettingsStore.WEBGL_OUT_OF_PROCESS) {
             setWebGLOutOfProcess(SettingsStore.WEBGL_OUT_OF_PROCESS, true);
             restart = true;
         }
@@ -141,9 +146,33 @@ class DeveloperOptionsView extends SettingsView {
         }
 
         if (restart) {
-            showRestartDialog();
+            showRestartDialog(() -> {
+                setDebugLogging(prevDebugLoggingSelection, true);
+                setUIHardwareAcceleration(prevHardwareAccelerationSelection, true);
+                setWebGLOutOfProcess(prevWebglOutOfProcessSelection, true);
+            });
         }
     };
+
+    private RestartDialogWidget.CancelCallback cancelReset(boolean restartDebugLogging,
+                                                           boolean restartUIHardwareAcceleration,
+                                                           boolean restartWebGLOutOfProcess) {
+        RestartDialogWidget.CancelCallback cancelCallback = () -> {
+            if (restartDebugLogging) {
+                setDebugLogging(!SettingsStore.DEBUG_LOGGING_DEFAULT, true);
+            }
+
+            if (restartUIHardwareAcceleration) {
+                setUIHardwareAcceleration(!SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
+            }
+
+            if (restartWebGLOutOfProcess) {
+                setWebGLOutOfProcess(!SettingsStore.WEBGL_OUT_OF_PROCESS, true);
+            }
+        };
+
+        return cancelCallback;
+    }
 
     private void setRemoteDebugging(boolean value, boolean doApply) {
         mBinding.remoteDebuggingSwitch.setOnCheckedChangeListener(null);
@@ -165,7 +194,9 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
-            showRestartDialog();
+            showRestartDialog(() -> {
+                setUIHardwareAcceleration(!value, true);
+            });
         }
     }
 
@@ -186,7 +217,9 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setDebugLoggingEnabled(value);
-            showRestartDialog();
+            showRestartDialog(() -> {
+                setDebugLogging(!value, true);
+            });
         }
     }
 
@@ -207,7 +240,9 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
-            showRestartDialog();
+            showRestartDialog(() -> {
+                setWebGLOutOfProcess(!value, true);
+            });
         }
     }
 
