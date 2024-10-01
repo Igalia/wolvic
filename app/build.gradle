@@ -716,6 +716,9 @@ dependencies {
     implementation 'net.lingala.zip4j:zip4j:2.11.5'
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
+    // AOSP
+    aospImplementation 'androidx.games:games-activity:3.0.5'
+
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
@@ -728,7 +731,7 @@ dependencies {
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
 
-    // Vission Glass
+    // Vision Glass
     visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/aliceimu/", include: ['*.aar'])
     visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
     visionglassImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'

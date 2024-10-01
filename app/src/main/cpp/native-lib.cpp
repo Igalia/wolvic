@@ -11,7 +11,11 @@
 #include "vrb/Logger.h"
 #include "vrb/GLError.h"
 #include "BrowserEGLContext.h"
+#if (AOSP)
+#include <game-activity/native_app_glue/android_native_app_glue.h>
+#else
 #include <android_native_app_glue.h>
+#endif
 #include <cstdlib>
 #include <vrb/RunnableQueue.h>
 #if defined(OPENXR)
@@ -142,13 +146,19 @@ android_main(android_app *aAppState) {
 
   sAppContext->mQueue->AttachToThread();
 
+#if (AOSP)
+  jobject activity = aAppState->activity->javaGameActivity;
+#else
+  jobject activity = aAppState->activity->clazz;
+#endif
+
   // Create Browser context
-  crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);
+  crow::VRBrowser::InitializeJava(jniEnv, activity);
 
   // Create device delegate
   sAppContext->mJavaContext.env = jniEnv;
   sAppContext->mJavaContext.vm = aAppState->activity->vm;
-  sAppContext->mJavaContext.activity = aAppState->activity->clazz;
+  sAppContext->mJavaContext.activity = activity;
 
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   if (!ovr_IsPlatformInitialized()) {
@@ -171,8 +181,8 @@ android_main(android_app *aAppState) {
   BrowserWorld::Instance().RegisterDeviceDelegate(sAppContext->mDevice);
 
   // Initialize java
-  auto assetManager = GetAssetManager(jniEnv, aAppState->activity->clazz);
-  BrowserWorld::Instance().InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
+  auto assetManager = GetAssetManager(jniEnv, activity);
+  BrowserWorld::Instance().InitializeJava(jniEnv, activity, assetManager);
   jniEnv->DeleteLocalRef(assetManager);
 
   auto MaybeInitGLAndEnterVR = [aAppState]() {
@@ -208,7 +218,11 @@ android_main(android_app *aAppState) {
     // We need to call ProcessEvents to make sure we receive the event.
     sAppContext->mDevice->ProcessEvents();
     if (sAppContext->mDevice->ShouldExitRenderLoop()) {
+#if (AOSP)
+      GameActivity_finish(aAppState->activity);
+#else
       ANativeActivity_finish(aAppState->activity);
+#endif
       continue;
     }
 #endif

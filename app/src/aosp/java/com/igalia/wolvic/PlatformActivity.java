@@ -5,13 +5,13 @@
 
 package com.igalia.wolvic;
 
-import android.app.NativeActivity;
 import android.content.Intent;
 import android.view.KeyEvent;
 
+import com.google.androidgamesdk.GameActivity;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 
-public class PlatformActivity extends NativeActivity {
+public class PlatformActivity extends GameActivity {
 
     public static boolean filterPermission(final String aPermission) {
         // Dummy implementation.
@@ -41,14 +41,14 @@ public class PlatformActivity extends NativeActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                platformExit();
-            }
-        });
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // GameActivity does not invoke onBackPressed() on KEYCODE_BACK
+            onBackPressed();
+        }
+        return super.onKeyUp(keyCode, event);
     }
+
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
 }
