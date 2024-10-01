@@ -650,7 +650,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             WindowWidget window = addWindow();
             if (window != null) {
                 window.loadHome();
-
             }
 
         } else {
