@@ -149,6 +149,14 @@
                     android:layout_height="wrap_content"
                     app:description="@string/display_options_head_lock" />
 
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/tabs_location_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_tabs_location"
+                    app:options="@array/display_options_tabs_location"
+                    app:values="@array/display_options_tabs_location_values" />
+
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 

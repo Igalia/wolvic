@@ -48,13 +48,6 @@ public class TabsWidget extends UIDialog {
     protected boolean mSelecting;
     protected ArrayList<Session> mSelectedTabs = new ArrayList<>();
 
-    public interface TabDelegate {
-        void onTabSelect(Session aTab);
-        void onTabAdd();
-        void onTabsClose(List<Session> aTabs);
-        void onTabsBookmark(List<Session> aTabs);
-    }
-
     public TabsWidget(Context aContext) {
         super(aContext);
         mBitmapCache = BitmapCache.getInstance(aContext);

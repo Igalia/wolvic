@@ -212,6 +212,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         if (mState.mSession != null) {
             setActive(false);
             suspend();
+        } else {
+            // Notify listeners manually.
+            mSessionChangeListeners.forEach(listener -> listener.onSessionRemoved(mState.mId));
         }
 
         if (mState.mParentId != null) {
