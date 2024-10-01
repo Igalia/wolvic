@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -30,12 +31,13 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -63,8 +65,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate {
+public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener,
+        DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
@@ -121,9 +126,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(TrayViewModel.class);
-        mTrayViewModel.getIsVisible().observe((VRBrowserActivity) getContext(), mIsVisibleObserver);
 
+        mTrayViewModel.getIsVisible().observe((VRBrowserActivity) getContext(), mIsVisibleObserver);
         mTrayViewModel.setHeadsetBatteryLevel(R.drawable.ic_icon_statusbar_indicator_10);
+        mTrayViewModel.setNeedsTabsButton(SettingsStore.getInstance(getContext()).getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY);
+
         updateUI();
 
         mIsWindowAttached = false;
@@ -140,6 +147,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mConnectivityReceived = ((VRBrowserApplication)getContext().getApplicationContext()).getConnectivityReceiver();
         mConnectivityReceived.addListener(this);
+
+        PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
 
         mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
 
@@ -923,5 +932,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         java.text.DateFormat format = SimpleDateFormat.getDateInstance(
                 SimpleDateFormat.FULL, LocaleUtils.getDisplayLanguage(getContext()).getLocale());
         return format.format(new Date());
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        if (Objects.equals(key, getContext().getString(R.string.settings_key_tabs_location))) {
+            int value = sharedPreferences.getInt(key, SettingsStore.TABS_LOCATION_TRAY);
+            mTrayViewModel.setNeedsTabsButton(value == SettingsStore.TABS_LOCATION_TRAY);
+            updateUI();
+        }
     }
 }

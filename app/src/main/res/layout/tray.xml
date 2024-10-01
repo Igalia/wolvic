@@ -168,6 +168,7 @@
                 app:tooltipDensity="@dimen/tray_tooltip_density"
                 app:tooltipPosition="bottom"
                 app:tooltipLayout="@layout/tooltip_tray"
+                visibleGone="@{traymodel.needsTabsButton}"
                 android:src="@drawable/ic_icon_tray_tabs"
                 app:regularModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_unchecked_start : @drawable/tray_background_unchecked_middle}"
                 app:privateModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_start_private : @drawable/tray_background_middle_private}"
