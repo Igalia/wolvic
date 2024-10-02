@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -229,7 +228,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private SettingsStore mSettings;
     private SharedPreferences mPrefs;
     private boolean mConnectionAvailable = true;
-    private AudioManager mAudioManager;
     private Widget mActiveDialog;
     private Set<String> mPoorPerformanceAllowList;
     private float mCurrentCylinderDensity = 0;
@@ -245,21 +243,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private PlatformActivityPlugin mPlatformPlugin;
     private int mLastMotionEventWidgetHandle;
     private boolean mIsEyeTrackingSupported;
-
-    private boolean callOnAudioManager(Consumer<AudioManager> fn) {
-        if (mAudioManager == null) {
-            mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        }
-        if (mAudioManager != null) {
-            try {
-                fn.accept(mAudioManager);
-                return true;
-            } catch (Exception e) {
-                Log.e(LOGTAG, "Caught exception calling AudioManager: " + e.toString());
-            }
-        }
-        return false;
-    }
 
     private ViewTreeObserver.OnGlobalFocusChangeListener globalFocusListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
         @Override
@@ -1021,33 +1004,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (isNotSpecialKey(event) && mKeyboard.dispatchKeyEvent(event)) {
             return true;
-        }
-        final int keyCode = event.getKeyCode();
-        if (DeviceType.isOculusBuild()) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
-                // Eat search key, otherwise it causes a crash on Oculus
-                return true;
-            }
-            int action = event.getAction();
-            if (action != KeyEvent.ACTION_DOWN) {
-                return super.dispatchKeyEvent(event);
-            }
-            boolean result;
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_VOLUME_UP:
-                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI));
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI));
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_MUTE:
-                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI));
-                    break;
-                default:
-                    return super.dispatchKeyEvent(event);
-            }
-            return result || super.dispatchKeyEvent(event);
-
         }
         return super.dispatchKeyEvent(event);
     }
