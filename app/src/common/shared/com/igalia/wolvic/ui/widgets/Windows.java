@@ -1521,7 +1521,6 @@ public void selectTab(@NonNull Session aTab) {
                 }
             }, executor).exceptionally(throwable -> {
                 Log.d(LOGTAG, "Error checking bookmark: " + throwable.getLocalizedMessage());
-                throwable.printStackTrace();
                 return null;
             });
         }
