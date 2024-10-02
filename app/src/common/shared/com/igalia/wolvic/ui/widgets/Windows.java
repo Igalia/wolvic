@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
+import com.igalia.wolvic.browser.BookmarksStore;
 import com.igalia.wolvic.browser.HistoryStore;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.Services;
@@ -50,6 +51,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.Executor;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -1501,6 +1503,27 @@ public void selectTab(@NonNull Session aTab) {
     @Override
     public void onTabsClose(List<Session> aTabs) {
         closeTabs(aTabs, mPrivateMode, true);
+    }
+
+    public void onTabsBookmark(List<Session> aTabs) {
+        for (Session tab: aTabs) {
+            String url = tab.getCurrentUri();
+
+            if (StringUtils.isEmpty(url)) {
+                continue;
+            }
+
+            BookmarksStore bookmarkStore = SessionStore.get().getBookmarkStore();
+            Executor executor = ((VRBrowserApplication)mContext.getApplicationContext()).getExecutors().mainThread();
+            bookmarkStore.isBookmarked(url).thenAcceptAsync(bookmarked -> {
+                if (!bookmarked) {
+                    bookmarkStore.addBookmark(url, tab.getCurrentTitle());
+                }
+            }, executor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "Error checking bookmark: " + throwable.getLocalizedMessage());
+                return null;
+            });
+        }
     }
 
     public void closeTab(@NonNull Session aTab) {
