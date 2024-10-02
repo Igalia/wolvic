@@ -18,7 +18,6 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.OptionsDeveloperBinding;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
-import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.utils.DeviceType;
 
 class DeveloperOptionsView extends SettingsView {
@@ -167,6 +166,8 @@ class DeveloperOptionsView extends SettingsView {
     }
 
     private void setUIHardwareAcceleration(boolean value, boolean doApply) {
+        boolean prevValue = SettingsStore.getInstance(getContext()).isUIHardwareAccelerationEnabled();
+
         mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(null);
         mBinding.hardwareAccelerationSwitch.setValue(value, false);
         mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
@@ -175,7 +176,7 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
             showRestartDialog(() -> {
-                setUIHardwareAcceleration(!value, true);
+                setUIHardwareAcceleration(prevValue,true);
             });
         }
     }
@@ -191,6 +192,8 @@ class DeveloperOptionsView extends SettingsView {
     }
 
     private void setDebugLogging(boolean value, boolean doApply) {
+        boolean prevValue = SettingsStore.getInstance(getContext()).isDebugLoggingEnabled();
+
         mBinding.debugLoggingSwitch.setOnCheckedChangeListener(null);
         mBinding.debugLoggingSwitch.setValue(value, false);
         mBinding.debugLoggingSwitch.setOnCheckedChangeListener(mDebugLogginListener);
@@ -198,7 +201,7 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setDebugLoggingEnabled(value);
             showRestartDialog(() -> {
-                setDebugLogging(!value, true);
+                setDebugLogging(prevValue, true);
             });
         }
     }
@@ -214,6 +217,8 @@ class DeveloperOptionsView extends SettingsView {
     }
 
     private void setWebGLOutOfProcess(boolean value, boolean doApply) {
+        boolean prevValue = SettingsStore.getInstance(getContext()).isWebGLOutOfProcess();
+
         mBinding.webglOutOfProcessSwitch.setOnCheckedChangeListener(null);
         mBinding.webglOutOfProcessSwitch.setValue(value, false);
         mBinding.webglOutOfProcessSwitch.setOnCheckedChangeListener(mWebGLOutOfProcessListener);
@@ -221,7 +226,7 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
             showRestartDialog(() -> {
-                setWebGLOutOfProcess(!value, true);
+                setWebGLOutOfProcess(prevValue, true);
             });
         }
     }

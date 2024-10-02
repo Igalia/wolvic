@@ -12,11 +12,15 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 public class RestartDialogWidget extends PromptDialogWidget {
 
-    public CancelCallback cancelCallback;
+    private CancelCallback mCancelCallback;
 
     public RestartDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
+    }
+
+    public void setCancelCallback(CancelCallback cancelCallback) {
+        mCancelCallback = cancelCallback;
     }
 
     @Override
@@ -35,8 +39,8 @@ public class RestartDialogWidget extends PromptDialogWidget {
                 mWidgetManager.saveState();
                 postDelayed(() -> SystemUtils.restart(getContext()), 500);
             } else if (index == PromptDialogWidget.OTHER) {
-                if (cancelCallback != null) {
-                    cancelCallback.cancel();
+                if (mCancelCallback != null) {
+                    mCancelCallback.cancel();
                 }
                 onDismiss();
             }

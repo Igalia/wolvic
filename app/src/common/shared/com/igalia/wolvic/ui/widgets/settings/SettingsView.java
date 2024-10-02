@@ -49,7 +49,7 @@ public abstract class SettingsView extends FrameLayout {
     public interface Delegate {
         void onDismiss();
         void exitWholeSettings();
-        void showRestartDialog();
+        void showRestartDialog(RestartDialogWidget.CancelCallback cancelCallback);
         void showClearUserDataDialog();
         void showAlert(String aTitle, String aMessage);
         void showView(SettingsView.SettingViewType type);
@@ -79,11 +79,7 @@ public abstract class SettingsView extends FrameLayout {
 
     protected void showRestartDialog(RestartDialogWidget.CancelCallback cancelCallback) {
         if (mDelegate != null) {
-            if (mDelegate instanceof SettingsWidget) {
-                ((SettingsWidget) mDelegate).cancelCallback = cancelCallback;
-            }
-
-            mDelegate.showRestartDialog();
+            mDelegate.showRestartDialog(cancelCallback);
         }
     }
 

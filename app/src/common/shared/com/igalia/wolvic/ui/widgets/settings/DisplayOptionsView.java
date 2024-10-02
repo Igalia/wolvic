@@ -21,7 +21,6 @@ import com.igalia.wolvic.ui.views.settings.SliderSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 
 class DisplayOptionsView extends SettingsView {
 
@@ -252,8 +251,10 @@ class DisplayOptionsView extends SettingsView {
             setUaMode(mBinding.uaRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
         }
 
-        if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+        Object prevMSAA = mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId());
+        if (!prevMSAA.equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+            restart = true;
         }
 
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
@@ -278,6 +279,7 @@ class DisplayOptionsView extends SettingsView {
 
         if (restart) {
             showRestartDialog(() -> {
+                setMSAAMode(mBinding.msaaRadio.getIdForValue(prevMSAA), true);
                 setDisplayDensity(prevDensity);
                 setDisplayDpi(prevDpi);
             });

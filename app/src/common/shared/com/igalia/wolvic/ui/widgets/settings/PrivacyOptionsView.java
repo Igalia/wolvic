@@ -29,7 +29,6 @@ import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
-import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.utils.DeviceType;
 
 import java.util.ArrayList;
@@ -347,6 +346,8 @@ class PrivacyOptionsView extends SettingsView {
     }
 
     private void setUseSystemRootCA(boolean value, boolean doApply) {
+        boolean prevValue = SettingsStore.getInstance(getContext()).isSystemRootCAEnabled();
+
         mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(null);
         mBinding.useSystemRootCASwitch.setValue(value, false);
         mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(mUseSystemRootCAListener);
@@ -354,7 +355,7 @@ class PrivacyOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setSystemRootCAEnabled(value);
             showRestartDialog(() -> {
-                setUseSystemRootCA(!value, true);
+                setUseSystemRootCA(prevValue, true);
             });
         }
     }
