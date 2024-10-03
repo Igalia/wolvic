@@ -43,4 +43,8 @@ public class TabImpl extends Tab {
     public void onMediaFullscreen(boolean isFullscreen) {
         mTabMediaSessionObserver.onMediaFullscreen(isFullscreen);
     }
+
+    public void purgeHistory() {
+        mWebContents.getNavigationController().clearHistory();
+    }
 }
