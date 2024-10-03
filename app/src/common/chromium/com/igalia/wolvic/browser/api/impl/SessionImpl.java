@@ -170,7 +170,8 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
 
     @Override
     public void purgeHistory() {
-        // TODO: Implement
+        if (isOpen())
+            mTab.purgeHistory();
     }
 
     @NonNull
