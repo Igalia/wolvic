@@ -93,6 +93,8 @@ public class UrlUtils {
         return localhostPattern.matcher(uri).find() || ipPattern.matcher(uri).find();
     }
 
+    private static String privateAboutPageBytes;
+
     public static boolean isLocalIP(@Nullable String aUri) {
         if (!isIPUri(aUri)) {
             return false;
@@ -105,9 +107,14 @@ public class UrlUtils {
     }
 
     public static boolean isPrivateAboutPage(@Nullable Context context,  @Nullable String uri) {
+        if (uri == null || !isDataUri(uri))
+            return false;
+
         InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
-        byte[] privatePageBytes = InternalPages.createAboutPage(context, pageResources);
-        return uri != null && uri.equals("data:text/html;base64," + Base64.encodeToString(privatePageBytes, Base64.NO_WRAP));
+        if (privateAboutPageBytes == null)
+            privateAboutPageBytes = "data:text/html;base64," + Base64.encodeToString(InternalPages.createAboutPage(context, pageResources), Base64.NO_WRAP);
+
+        return uri.equals(privateAboutPageBytes);
     }
 
     public static Boolean isHomeUri(@Nullable Context context, @Nullable String aUri) {
