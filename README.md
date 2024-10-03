@@ -47,7 +47,6 @@ This repo is only available to Igalia members. If you have access to the relevan
  - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
  - `third_party/picoxr` [Pico OpenXR Mobile SDK](https://developer-global.pico-interactive.com/sdk?deviceId=1&platformId=3&itemId=11) (should contain `libs` folders, among other things that are not necessary for Wolvic)
  - `third_party/spaces` [for Snapdragon Spaces](https://spaces.qualcomm.com/)(should contain `libopenxr_loader.aar`)
- - `third_party/OpenXR-SDK/` [OpenXR-SDK](https://github.com/KhronosGroup/OpenXR-SDK) (should contain an `include` folder). This is used by HVR and PicoXR flavours. The other flavours using OpenXR use the include files provided by the Khronos OpenXR loader AAR from Maven.
  - `third_party/aliceimu/` for [Huawei Vision Glass](https://consumer.huawei.com/cn/wearables/vision-glass/) (should contain an `.aar` file with the IMU library for the glasses)
 
 The [repo in `third_party`](https://github.com/Igalia/wolvic-third-parties) can be updated like so:
