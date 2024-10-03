@@ -1,6 +1,7 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.graphics.Matrix;
+import android.util.Base64;
 import android.view.ViewGroup;
 
 import androidx.annotation.AnyThread;
@@ -92,8 +93,9 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     }
 
     @Override
-    public void loadData(@NonNull byte[] data, String mymeType) {
-        // TODO: Implement
+    public void loadData(@NonNull byte[] data, String mimeType) {
+        if (isOpen())
+            mTab.loadData(Base64.encodeToString(data, Base64.NO_WRAP), mimeType, "base64");
     }
 
     @Override
