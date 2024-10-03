@@ -20,7 +20,7 @@ public class EnvironmentUtils {
 
     public static final String ENVS_FOLDER = "envs";
     public static final String BUILTIN_ENVS_PREFIX = "cubemap/";
-    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) ?
+    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isOculusBuild()) ?
             new String[]{".jpg", ".png"} : new String[]{".ktx", ".jpg", ".png"};
 
     /**
@@ -209,10 +209,10 @@ public class EnvironmentUtils {
      */
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
-        // Pico4x and Meta Quest (after v69) do not support compressed textures for the cubemap.
         if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
             String payload = env.getPayload();
-            String format = "_misc";
+            // Meta Quest (after v69) do not support compressed textures for the cubemap.
+            String format = DeviceType.isOculusBuild() ? "_misc" : "_ktx";
             int at = payload.lastIndexOf(".");
             return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
         }
