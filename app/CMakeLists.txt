@@ -96,16 +96,15 @@ endif()
 if(OPENXR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DXR_USE_PLATFORM_ANDROID -DXR_USE_GRAPHICS_API_OPENGL_ES")
     find_package(OpenXR REQUIRED CONFIG)
+    target_link_libraries(native-lib PRIVATE OpenXR::headers)
     include_directories(${CMAKE_SOURCE_DIR}/../app/src/openxr/cpp)
     if (HVR)
-        include_directories(${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include)
         add_custom_command(TARGET native-lib POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/../third_party/hvr/${ANDROID_ABI}/libxr_loader.so
                 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libxr_loader.so
                 )
     elseif (PICOXR)
-        include_directories(${CMAKE_SOURCE_DIR}/../third_party/OpenXR-SDK/include)
         add_custom_command(TARGET native-lib POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so
