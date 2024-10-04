@@ -217,6 +217,8 @@ struct DeviceDelegateOpenXR::State {
 
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME))
         extensions.push_back(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+    else if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME))
+        extensions.push_back(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
 
     if (OpenXRExtensions::IsExtensionSupported(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME))
         extensions.push_back(XR_EXT_VIEW_CONFIGURATION_DEPTH_RANGE_EXTENSION_NAME);
