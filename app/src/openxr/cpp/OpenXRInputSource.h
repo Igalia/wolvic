@@ -105,7 +105,7 @@ private:
     HandMeshBufferPtr AcquireHandMeshBuffer();
     void ReleaseHandMeshBuffer();
 
-    bool mIsHandInteractionEXTSupported { false };
+    bool mIsHandInteractionSupported { false };
 
     void HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, ControllerDelegate &controllerDelegate);
 public:

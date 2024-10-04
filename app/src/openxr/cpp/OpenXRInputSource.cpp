@@ -51,7 +51,8 @@ XrResult OpenXRInputSource::Initialize()
 {
     mSubactionPathName = mHandeness == OpenXRHandFlags::Left ? kPathLeftHand : kPathRightHand;
     mSubactionPath = mActionSet.GetSubactionPath(mHandeness);
-    mIsHandInteractionEXTSupported = OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+    mIsHandInteractionSupported = OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME) ||
+                                  OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
 
     // Initialize Action Set.
     std::string prefix = std::string("input_") + (mHandeness == OpenXRHandFlags::Left ? "left" : "right");
@@ -59,7 +60,7 @@ XrResult OpenXRInputSource::Initialize()
     // Initialize pose actions and spaces.
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "grip", OpenXRHandFlags::Both, mGripAction));
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "pointer", OpenXRHandFlags::Both, mPointerAction));
-    if (mIsHandInteractionEXTSupported) {
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME)) {
         RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "pinch_ext", OpenXRHandFlags::Both, mPinchPoseAction));
         RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "poke_ext", OpenXRHandFlags::Both, mPokePoseAction));
     }
@@ -142,7 +143,7 @@ XrResult OpenXRInputSource::Initialize()
 #else
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
 #endif
-        if (!mIsHandInteractionEXTSupported) {
+        if (!mIsHandInteractionSupported) {
             if (mSupportsFBHandTrackingAim) {
                 mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
             } else {
@@ -152,7 +153,11 @@ XrResult OpenXRInputSource::Initialize()
             }
             VRB_LOG("OpenXR: using %s to compute hands aim", mSupportsFBHandTrackingAim ? XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME : "hand joints");
         } else {
-            VRB_LOG("OpenXR: using %s to compute hands aim", XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+            if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME)) {
+                VRB_LOG("OpenXR: using %s to compute hands aim", XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
+            } else if (OpenXRExtensions::IsExtensionSupported(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME)) {
+                VRB_LOG("OpenXR: using %s to compute hands aim", XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
+            }
         }
     }
 
@@ -424,7 +429,7 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
 
         // FIXME: reenable this once MagicLeap OS v1.8 is released as it has a fix for this.
         // Otherwise the hand interaction profile is not properly used.
-        if (mIsHandInteractionEXTSupported && (DeviceUtils::GetDeviceTypeFromSystem(true) != device::MagicLeap2)) {
+        if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME) && (DeviceUtils::GetDeviceTypeFromSystem(true) != device::MagicLeap2)) {
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPinchPoseAction, mSubactionPathName + "/" + kPinchPose, bindings));
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPokePoseAction, mSubactionPathName + "/" + kPokePose, bindings));
         }
@@ -752,7 +757,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     if (mPointerSpace == XR_NULL_HANDLE) {
       CHECK_XRCMD(CreateActionSpace(mPointerAction, mPointerSpace));
     }
-    if (mIsHandInteractionEXTSupported) {
+    if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME)) {
       if (mPinchSpace == XR_NULL_HANDLE)
         CHECK_XRCMD(CreateActionSpace(mPinchPoseAction, mPinchSpace));
       if (mPokeSpace == XR_NULL_HANDLE)
@@ -795,7 +800,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             std::vector<vrb::Matrix> jointTransforms;
             std::vector<float> jointRadii;
             PopulateHandJointLocations(renderMode, jointTransforms, jointRadii);
-            if (!mIsHandInteractionEXTSupported) {
+            if (!mIsHandInteractionSupported) {
                 EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], pointerMode, usingEyeTracking, delegate);
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
@@ -813,6 +818,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     bool usingTrackedPointer = pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER;
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
 
+    // When using hand interaction profiles we still get valid aim even if the hand is facing
+    // the head like when performing system gestures. In that case we don't want to show the beam.
+    if (mUsingHandInteractionProfile)
+        hasAim = hasAim && !handFacesHead;
+
     // Don't enable aim for eye tracking as we don't want to paint the beam. Note that we'd still
     // have an aim, meaning that we can point, focus, click... UI elements.
     delegate.SetAimEnabled(mIndex, hasAim && usingTrackedPointer);
@@ -820,8 +830,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     // Disable the controller if there is no aim unless:
     // a) we're using hand interaction profile and we have hand tracking info. In that case the user
     // is facing their palm to do a hand gesture (that's why there is no aim)
-    // b) we're using eye tracking. In that case the eye gaze will be the aim, not the contorller's
-    if (!hasAim && !(mUsingHandInteractionProfile && gotHandTrackingInfo && handFacesHead) && !usingEyeTracking) {
+    // b) we're using eye tracking. In that case the eye gaze will be the aim, not the controller's
+    if (!hasAim && !(mUsingHandInteractionProfile && gotHandTrackingInfo) && !usingEyeTracking) {
       delegate.SetEnabled(mIndex, false);
       return;
     }
@@ -835,7 +845,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     };
     adjustPoseLocation(offsets);
 
-    // XR_EXT_hand_interaction does not really require the hand joints data, but if we
+    // Hand interaction profiles do not really require the hand joints data, but if we
     // set ControllerMode::Hand then Wolvic code assumes that it does.
     delegate.SetMode(mIndex, mUsingHandInteractionProfile && gotHandTrackingInfo ? ControllerMode::Hand : ControllerMode::Device);
     delegate.SetEnabled(mIndex, true);
@@ -1015,11 +1025,13 @@ XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegat
     path = buffer;
     path_len = writtenCount;
     mActiveMapping = nullptr;
+    bool pathDefinesHandInteractionProfile = !strncmp(path, kInteractionProfileHandInteraction, path_len) ||
+                                             !strncmp(path, kInteractionProfileMSFTHandInteraction, path_len);
 
     for (auto& mapping : mMappings) {
         if (!strncmp(mapping.path, path, path_len)) {
             mActiveMapping = &mapping;
-            mUsingHandInteractionProfile = !strncmp(path, kInteractionProfileHandInteraction, path_len);
+            mUsingHandInteractionProfile = pathDefinesHandInteractionProfile;
             VRB_LOG("OpenXR: NEW active mapping %s", mActiveMapping->path);
             break;
         }

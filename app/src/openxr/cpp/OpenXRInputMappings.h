@@ -45,6 +45,7 @@ namespace crow {
     constexpr const char* kPathActionValue { "value" };
     constexpr const char* kPathActionReady { "ready_ext" };
     constexpr const char* kInteractionProfileHandInteraction { "/interaction_profiles/ext/hand_interaction_ext" };
+    constexpr const char* kInteractionProfileMSFTHandInteraction { "/interaction_profiles/microsoft/hand_interaction" };
 
     // OpenXR Button List
     enum class OpenXRButtonType {
@@ -436,8 +437,24 @@ namespace crow {
         {}
     };
 
-    const std::array<OpenXRInputMapping, 12> OpenXRInputMappings {
-            OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, Pico4xOld, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, HandInteraction
+    const OpenXRInputMapping MSFTHandInteraction {
+            kInteractionProfileMSFTHandInteraction,
+            IS_6DOF,
+            "",
+            "",
+            device::UnknownType,
+            std::vector<OpenXRInputProfile> { "generic-hand-select-grasp", "generic-hand-select", "generic-hand" },
+            std::vector<OpenXRButton> {
+                    { OpenXRButtonType::Trigger, "input/select", OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+                    { OpenXRButtonType::Squeeze, kPathSqueeze, OpenXRButtonFlags::Value, OpenXRHandFlags::Both },
+            },
+            {},
+            {}
+    };
+
+
+    const std::array<OpenXRInputMapping, 13> OpenXRInputMappings {
+            OculusTouch, OculusTouch2, MetaQuestTouchPro, Pico4x, Pico4xOld, PicoNeo3, Hvr6DOF, Hvr3DOF, LenovoVRX, MagicLeap2, MetaTouchPlus, HandInteraction, MSFTHandInteraction
     };
 
 } // namespace crow
