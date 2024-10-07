@@ -189,41 +189,45 @@ public class HamburgerMenuWidget extends UIWidget implements
 
         // In kiosk mode, only resize, find in page and passthrough are available.
         if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
-            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                    HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
-                    (menuItem) -> {
-                        if (mDelegate != null) {
-                            mDelegate.onAddons();
-                        }
-                        return null;
-                    }).build());
-
             final Session activeSession = SessionStore.get().getActiveSession();
-            String url = activeSession.getCurrentUri();
-            boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
-            final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
-            if (tab != null && showAddons) {
-                final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
-                extensions.forEach((extension) -> {
-                    if (!extension.getAllowedInPrivateBrowsing() && activeSession.isPrivateMode()) {
-                        return;
-                    }
 
-                    final WebExtensionState tabExtensionState = tab.getExtensionState().get(extension.getId());
-                    if (extension.getBrowserAction() != null) {
-                        addOrUpdateAddonMenuItem(
-                                extension,
-                                extension.getBrowserAction(),
-                                tabExtensionState != null ? tabExtensionState.getBrowserAction() : null);
-                    }
-                    if (extension.getPageAction() != null) {
-                        addOrUpdateAddonMenuItem(
-                                extension,
-                                extension.getPageAction(),
-                                tabExtensionState != null ? tabExtensionState.getPageAction() : null);
-                    }
-                });
+            if (!BuildConfig.FLAVOR_backend.equals("chromium")) {
+                mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                        HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
+                        (menuItem) -> {
+                            if (mDelegate != null) {
+                                mDelegate.onAddons();
+                            }
+                            return null;
+                        }).build());
+
+                String url = activeSession.getCurrentUri();
+                boolean showAddons = (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) && !mWidgetManager.getFocusedWindow().isLibraryVisible();
+                final SessionState tab = ComponentsAdapter.get().getSessionStateForSession(activeSession);
+                if (tab != null && showAddons) {
+                    final List<WebExtensionState> extensions = ComponentsAdapter.get().getSortedEnabledExtensions();
+                    extensions.forEach((extension) -> {
+                        if (!extension.getAllowedInPrivateBrowsing() && activeSession.isPrivateMode()) {
+                            return;
+                        }
+
+                        final WebExtensionState tabExtensionState = tab.getExtensionState().get(extension.getId());
+                        if (extension.getBrowserAction() != null) {
+                            addOrUpdateAddonMenuItem(
+                                    extension,
+                                    extension.getBrowserAction(),
+                                    tabExtensionState != null ? tabExtensionState.getBrowserAction() : null);
+                        }
+                        if (extension.getPageAction() != null) {
+                            addOrUpdateAddonMenuItem(
+                                    extension,
+                                    extension.getPageAction(),
+                                    tabExtensionState != null ? tabExtensionState.getPageAction() : null);
+                        }
+                    });
+                }
             }
+
 
             if (activeSession.getWebAppManifest() != null) {
                 mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(

@@ -182,6 +182,10 @@ public class LibraryPanel extends FrameLayout {
     private void selectTab(@NonNull View view) {
         mBinding.tabcontent.removeAllViews();
 
+        if (BuildConfig.FLAVOR_backend.equals("chromium")) {
+            mBinding.addons.setVisibility(View.GONE);
+        }
+
         mBinding.bookmarks.setActiveMode(false);
         mBinding.webApps.setActiveMode(false);
         mBinding.history.setActiveMode(false);
