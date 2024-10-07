@@ -13,7 +13,6 @@ namespace crow {
 // Threshold to consider a trigger value as a click
 // Used when devices don't map the click value for triggers;
 const float kClickThreshold = 0.91f;
-const float kClickLowFiThreshold = 0.8f;
 
 // When doing scrolling with eye tracking we wait until this threshold is reached to start scrolling.
 // Otherwise single (slow) clicks would easily trigger scrolling.
@@ -916,10 +915,8 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         auto browserButton = GetBrowserButton(button);
         auto immersiveButton = GetImmersiveButton(button);
 
-        if (isHandActionEnabled) {
-            // When hand faces head, tracking systems do not have the same level of precision
-            // detecting pinches, that's why we need to lower the bar to detect them.
-            delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= kClickLowFiThreshold,
+        if (isHandActionEnabled && button.type == OpenXRButtonType::Trigger) {
+            delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= kClickThreshold,
                                     state->value > 0, 1.0);
         } else {
             delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1,
