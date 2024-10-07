@@ -147,21 +147,6 @@
                 android:textColor="@drawable/dialog_button_text_color"
                 android:textStyle="bold"
                 tools:text="Accept" />
-
-            <Button
-                android:id="@+id/optionallyAddedButton"
-                android:layout_width="156dp"
-                android:layout_height="36dp"
-                android:layout_below="@id/rightButton"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:visibility="gone"
-                android:background="@drawable/dialog_regular_button_background"
-                android:fontFamily="sans-serif"
-                android:scaleType="fitCenter"
-                android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"
-                tools:text="Other" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>

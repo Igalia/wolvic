@@ -483,10 +483,6 @@
          from being restarted. -->
     <string name="restart_later_dialog_button">Restart Later</string>
 
-    <!-- This string is used to label the button the user presses in order to cancel the selection
-         that required restart. -->
-    <string name="restart_cancel_dialog_button">Cancel Selection</string>
-
     <!-- This string represents the back button the user presses in order to cancel the selection
          that required restart. -->
     <string name="restart_back_dialog_button">Back</string>

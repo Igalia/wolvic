@@ -30,7 +30,6 @@ public class RestartDialogWidget extends PromptDialogWidget {
         setButtons(new int[] {
                 R.string.restart_later_dialog_button,
                 R.string.restart_now_dialog_button,
-                R.string.restart_cancel_dialog_button,
                 R.string.restart_back_dialog_button,
         });
         setButtonsDelegate((index, isChecked) -> {
@@ -39,11 +38,6 @@ public class RestartDialogWidget extends PromptDialogWidget {
             } else if (index == PromptDialogWidget.POSITIVE) {
                 mWidgetManager.saveState();
                 postDelayed(() -> SystemUtils.restart(getContext()), 500);
-            } else if (index == PromptDialogWidget.OTHER) {
-                if (mCancelCallback != null) {
-                    mCancelCallback.cancel();
-                }
-                onDismiss();
             } else if (index == PromptDialogWidget.BACK) {
                 if (mCancelCallback != null) {
                     mCancelCallback.cancel();
