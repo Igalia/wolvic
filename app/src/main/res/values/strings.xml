@@ -487,6 +487,10 @@
          that required restart. -->
     <string name="restart_cancel_dialog_button">Cancel Selection</string>
 
+    <!-- This string represents the back button the user presses in order to cancel the selection
+         that required restart. -->
+    <string name="restart_back_dialog_button">Back</string>
+
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
      and is used to enable or disable curved display. -->
     <string name="developer_options_curved_display">Enable Curved Display</string>

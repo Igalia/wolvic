@@ -39,6 +39,7 @@ public class PromptDialogWidget extends UIDialog {
     public static final int NEGATIVE = 0;
     public static final int POSITIVE = 1;
     public static final int OTHER = 2;
+    public static final int BACK = 3;
 
     protected PromptDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
@@ -74,6 +75,11 @@ public class PromptDialogWidget extends UIDialog {
         mBinding.optionallyAddedButton.setOnClickListener(v -> {
             if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(OTHER, isChecked());
+            }
+        });
+        mBinding.backButton.setOnClickListener(v -> {
+            if (mAppDialogDelegate != null) {
+                mAppDialogDelegate.onButtonClicked(BACK, isChecked());
             }
         });
     }
@@ -259,6 +265,12 @@ public class PromptDialogWidget extends UIDialog {
         } else {
             mBinding.optionallyAddedButton.setVisibility(View.GONE);
         }
+
+        if (buttons.length > 3) {
+            mBinding.backButton.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.backButton.setVisibility(View.GONE);
+        }
     }
 
     public void setButtons(@NonNull String[] buttons) {
@@ -281,6 +293,12 @@ public class PromptDialogWidget extends UIDialog {
             mBinding.optionallyAddedButton.setVisibility(View.VISIBLE);
         } else {
             mBinding.optionallyAddedButton.setVisibility(View.GONE);
+        }
+
+        if (buttons.length > 3) {
+            mBinding.backButton.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.backButton.setVisibility(View.GONE);
         }
     }
 
