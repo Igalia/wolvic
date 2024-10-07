@@ -439,9 +439,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     protected void onDismiss() {
+        Log.e("CancelSelectionPR", "UIWidget onDismiss() is called");
         hide(REMOVE_WIDGET);
 
         if (mDelegate != null) {
+            Log.e("CancelSelectionPR", "mDelegate in UIWidget onDismiss() is not null");
             mDelegate.onDismiss();
         }
     }

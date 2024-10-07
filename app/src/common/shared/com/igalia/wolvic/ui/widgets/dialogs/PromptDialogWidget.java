@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -33,7 +34,9 @@ public class PromptDialogWidget extends UIDialog {
 
     public interface Delegate {
         void onButtonClicked(int index, boolean isChecked);
-        default void onDismiss() {}
+        default void onDismiss() {
+            Log.e("CancelSelectionPR", "PromptDialogWidget onDismiss() is called");
+        }
     }
 
     public static final int NEGATIVE = 0;
