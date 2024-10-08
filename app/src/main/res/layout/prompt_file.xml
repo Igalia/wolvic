@@ -75,7 +75,6 @@
             android:fadingEdgeLength="60dp"
             android:maxHeight="@dimen/prompt_content_max_height"
             android:minHeight="400dp"
-            android:overScrollMode="never"
             android:requiresFadingEdge="vertical"
             android:smoothScrollbar="true"
             app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"

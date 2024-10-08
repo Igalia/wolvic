@@ -56,7 +56,6 @@
         android:layout_marginEnd="20dp"
         android:divider="@android:color/transparent"
         android:smoothScrollbar="true"
-        android:overScrollMode="never"
         android:dividerHeight="4dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
