@@ -22,7 +22,7 @@
             android:listSelector="@null"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"/>
+            app:layoutManager="LinearLayoutManager"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="30dp"
