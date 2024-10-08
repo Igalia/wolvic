@@ -28,6 +28,7 @@ public abstract class LibraryView extends FrameLayout {
     protected LibraryContextMenuWidget mContextMenu;
     protected Executor mUIThreadExecutor;
     protected LibraryPanel mRootPanel;
+    private @NonNull String mSearchFilter = "";
 
     public LibraryView(@NonNull Context context) {
         super(context);
@@ -58,6 +59,23 @@ public abstract class LibraryView extends FrameLayout {
 
     protected void updateLayout() {}
 
+    protected void setSearchFilter(String searchFilter) {
+        mSearchFilter = (searchFilter != null) ? searchFilter : "";
+    }
+
+    @NonNull
+    protected String getSearchFilter() {
+        return mSearchFilter;
+    }
+
+    public boolean supportsSearch() {
+        return false;
+    }
+
+    public void updateSearchFilter(String searchFilter) {
+        // Unimplemented by default.
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -67,10 +85,11 @@ public abstract class LibraryView extends FrameLayout {
 
     protected RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
 
-            if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_SETTLING) {
+            // Only request focus when the user starts scrolling the list.
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 recyclerView.requestFocus();
             }
         }
