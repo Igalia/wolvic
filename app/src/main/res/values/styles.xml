@@ -490,7 +490,7 @@
         <item name="android:fastScrollStyle">@style/Widget.FastScroll</item>
         <item name="android:fastScrollOverlayPosition">atThumb</item>
         <item name="android:smoothScrollbar">true</item>
-        <item name="android:overScrollMode">ifContentScrolls</item>
+        <item name="android:overScrollMode">never</item>
 
         <!-- TextView Style -->
         <item name="android:textViewStyle">@style/ShadowTextViewStyle</item>
