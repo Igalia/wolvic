@@ -78,6 +78,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     private HistoryAdapter mHistoryAdapter;
     private ClearHistoryDialogWidget mClearHistoryDialog;
     private HistoryViewModel mViewModel;
+    private List<VisitInfo> mCachedHistoryItems;
 
     public HistoryView(Context aContext, @NonNull LibraryPanel delegate) {
         super(aContext, delegate);
@@ -148,6 +149,21 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
             v.requestFocusFromTouch();
             return false;
         });
+    }
+
+    @Override
+    public boolean supportsSearch() {
+        return true;
+    }
+
+    @Override
+    public void updateSearchFilter(String searchFilter) {
+        setSearchFilter(searchFilter);
+        if (mCachedHistoryItems == null) {
+            updateHistory();
+        } else {
+            showHistory(mCachedHistoryItems);
+        }
     }
 
     @Override
@@ -421,6 +437,8 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     }
 
     private void showHistory(List<VisitInfo> historyItems) {
+        mCachedHistoryItems = historyItems;
+
         if (historyItems == null || historyItems.size() == 0) {
             mViewModel.setIsEmpty(true);
             mViewModel.setIsLoading(false);
@@ -428,7 +446,18 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         } else {
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
-            mHistoryAdapter.setHistoryList(historyItems);
+
+            // Search by filtering the cached list.
+            if (getSearchFilter().isEmpty()) {
+                mHistoryAdapter.setHistoryList(historyItems);
+            } else {
+                List<VisitInfo> filteredHistoryItems = historyItems.stream().filter(visitInfo ->
+                        visitInfo.getVisitType() == VisitType.TYPED ||
+                                (visitInfo.getTitle() != null && visitInfo.getTitle().toLowerCase().contains(getSearchFilter()) ||
+                                        visitInfo.getUrl().toLowerCase().contains(getSearchFilter()))
+                ).collect(Collectors.toList());
+                mHistoryAdapter.setHistoryList(filteredHistoryItems);
+            }
         }
 
         mBinding.executePendingBindings();
