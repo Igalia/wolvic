@@ -91,7 +91,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="privacy_options_popups_list_header_v1"
                     android:paddingEnd="15dp"
-                    app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+                    app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
         </FrameLayout>
 
