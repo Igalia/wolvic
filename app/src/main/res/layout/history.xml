@@ -102,7 +102,7 @@
             android:contentDescription="History feed"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; !historyViewModel.isEmpty}" />
 
         <FrameLayout

@@ -77,7 +77,7 @@
             android:minHeight="400dp"
             android:requiresFadingEdge="vertical"
             android:smoothScrollbar="true"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!isEmpty}" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

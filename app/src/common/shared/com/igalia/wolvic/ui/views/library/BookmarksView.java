@@ -33,7 +33,6 @@ import com.igalia.wolvic.databinding.BookmarksBinding;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Bookmark;
 import com.igalia.wolvic.ui.adapters.BookmarkAdapter;
-import com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager;
 import com.igalia.wolvic.ui.callbacks.BookmarkItemCallback;
 import com.igalia.wolvic.ui.callbacks.BookmarksCallback;
 import com.igalia.wolvic.ui.callbacks.LibraryContextMenuCallback;
@@ -69,7 +68,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
-    private CustomLinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private BookmarksViewModel mViewModel;
     private List<BookmarkNode> mCachedBookmarkItems;
 
@@ -124,7 +123,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
             mBinding.bookmarksList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         }
 
-        mLayoutManager = (CustomLinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
+        mLayoutManager = (LinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
 
         mViewModel.setIsLoading(true);
 

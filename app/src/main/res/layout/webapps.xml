@@ -82,7 +82,7 @@
             android:contentDescription="@string/web_apps_title"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; !webAppsViewModel.isEmpty}" />
 
     </RelativeLayout>
