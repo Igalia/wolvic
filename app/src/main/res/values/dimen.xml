@@ -195,9 +195,10 @@
     <!-- Library -->
     <dimen name="library_item_row_height">38dp</dimen>
     <dimen name="library_item_row_height_narrow">64dp</dimen>
-    <dimen name="library_item_title_text_size">20sp</dimen>
-    <dimen name="library_item_url_text_size">16sp</dimen>
-    <dimen name="library_item_date_text_size">16sp</dimen>
+    <dimen name="library_item_header_text_size">18sp</dimen>
+    <dimen name="library_item_title_text_size">16sp</dimen>
+    <dimen name="library_item_url_text_size">14sp</dimen>
+    <dimen name="library_item_date_text_size">14sp</dimen>
     <dimen name="library_icon_padding_max">10dp</dimen>
     <dimen name="library_icon_padding_min">8dp</dimen>
     <dimen name="library_icon_size_wide">75dp</dimen>

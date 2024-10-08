@@ -43,7 +43,6 @@
                 android:layout_marginEnd="10dp"
                 android:text="@string/downloads_delete"
                 android:textColor="@color/library_panel_button_text_color"
-                android:textSize="18sp"
                 android:textStyle="bold"
                 android:enabled="@{!isEmpty}"/>
 
@@ -62,7 +61,6 @@
                 android:paddingEnd="10dp"
                 android:text="@string/downloads_sort"
                 android:textColor="@color/sorting_panel_content_color"
-                android:textSize="18sp"
                 android:textStyle="bold"
                 android:drawableEnd="@drawable/ic_icon_dropdown"
                 android:drawableTint="@color/sorting_panel_content_color"

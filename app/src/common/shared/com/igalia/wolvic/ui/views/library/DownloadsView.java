@@ -58,6 +58,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     private DownloadsManager mDownloadsManager;
     private Comparator<Download> mSortingComparator;
     private DownloadsViewModel mViewModel;
+    private List<Download> mCachedDownloadItems;
 
     public DownloadsView(Context aContext, @NonNull LibraryPanel delegate) {
         super(aContext, delegate);
@@ -120,6 +121,22 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     @Override
     public void onDestroy() {
         mBinding.downloadsList.removeOnScrollListener(mScrollListener);
+    }
+
+    @Override
+    public boolean supportsSearch() {
+        return true;
+    }
+
+    @Override
+    public void updateSearchFilter(String searchFilter) {
+        setSearchFilter(searchFilter);
+
+        if (mCachedDownloadItems == null) {
+            onDownloadsUpdate(mDownloadsManager.getDownloads());
+        } else {
+            onDownloadsUpdate(mCachedDownloadItems);
+        }
     }
 
     @Override
@@ -425,6 +442,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
     @Override
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
+        mCachedDownloadItems = downloads;
+
         if (downloads.size() == 0) {
             mViewModel.setIsEmpty(true);
             mViewModel.setIsLoading(false);
@@ -432,10 +451,22 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         } else {
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
-            List<Download> sorted = downloads.stream().sorted(mSortingComparator).collect(Collectors.toList());
-            mDownloadsAdapter.setDownloadsList(sorted);
-        }
 
+            // Search by filtering the cached list.
+            if (getSearchFilter().isEmpty()) {
+                mDownloadsAdapter.setDownloadsList(downloads);
+            } else {
+                List<Download> filteredDownloads = downloads.stream()
+                        .filter(value -> {
+                            if (value.getTitle() != null && !getSearchFilter().isEmpty()) {
+                                return value.getTitle().toLowerCase().contains(getSearchFilter());
+                            }
+                            return true;
+                        })
+                        .sorted(mSortingComparator).collect(Collectors.toList());
+                mDownloadsAdapter.setDownloadsList(filteredDownloads);
+            }
+        }
         mBinding.executePendingBindings();
     }
 
