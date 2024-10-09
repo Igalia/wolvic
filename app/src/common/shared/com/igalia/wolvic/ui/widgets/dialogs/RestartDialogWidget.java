@@ -14,8 +14,6 @@ public class RestartDialogWidget extends PromptDialogWidget {
 
     private CancelCallback mCancelCallback;
 
-    private boolean noButtonsClicked;
-
     public RestartDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
@@ -27,31 +25,22 @@ public class RestartDialogWidget extends PromptDialogWidget {
 
     @Override
     public void updateUI() {
-        noButtonsClicked = true;
-
         super.updateUI();
 
         setButtons(new int[] {
                 R.string.restart_later_dialog_button,
                 R.string.restart_now_dialog_button,
-                R.string.restart_back_dialog_button,
+                R.string.back_button,
         });
         setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
-                noButtonsClicked = false;
-                onDismiss();
+                hide(REMOVE_WIDGET);
             } else if (index == PromptDialogWidget.POSITIVE) {
-                noButtonsClicked = false;
                 mWidgetManager.saveState();
                 postDelayed(() -> SystemUtils.restart(getContext()), 500);
             } else if (index == PromptDialogWidget.BACK) {
-                noButtonsClicked = false;
-                if (mCancelCallback != null) {
-                    mCancelCallback.cancel();
-                }
                 onDismiss();
             }
-            noButtonsClicked = true;
         });
         setCheckboxVisible(false);
         setDescriptionVisible(false);
@@ -63,7 +52,7 @@ public class RestartDialogWidget extends PromptDialogWidget {
 
     @Override
     public void onDismiss() {
-        if (noButtonsClicked && mCancelCallback != null) {
+        if (mCancelCallback != null) {
             mCancelCallback.cancel();
         }
 

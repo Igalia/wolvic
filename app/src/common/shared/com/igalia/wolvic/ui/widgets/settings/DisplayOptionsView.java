@@ -203,17 +203,13 @@ class DisplayOptionsView extends SettingsView {
             float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
             float newDensity = Float.parseFloat(mBinding.densityEdit.getFirstText());
             if (setDisplayDensity(newDensity)) {
-                showRestartDialog(() -> {
-                    setDisplayDensity(prevDensity);
-                });
+                showRestartDialog(() -> {setDisplayDensity(prevDensity);});
             }
 
         } catch (NumberFormatException e) {
             float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
             if (setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT)) {
-                showRestartDialog(() -> {
-                    setDisplayDensity(prevDensity);
-                });
+                showRestartDialog(() -> {setDisplayDensity(prevDensity);});
             }
         }
     };
@@ -223,17 +219,13 @@ class DisplayOptionsView extends SettingsView {
             int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
             int newDpi = Integer.parseInt(mBinding.dpiEdit.getFirstText());
             if (setDisplayDpi(newDpi)) {
-                showRestartDialog(() -> {
-                    setDisplayDpi(prevDpi);
-                });
+                showRestartDialog(() -> {setDisplayDpi(prevDpi);});
             }
 
         } catch (NumberFormatException e) {
             int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
             if (setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT)) {
-                showRestartDialog(() -> {
-                    setDisplayDpi(prevDpi);
-                });
+                showRestartDialog(() -> {setDisplayDpi(prevDpi);});
             }
         }
     };
@@ -414,9 +406,7 @@ class DisplayOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mBinding.msaaRadio.getValueForId(checkedId));
-            showRestartDialog(() -> {
-                setMSAAMode(previouslyCheckedMSAAId, true);
-            });
+            showRestartDialog(() -> {setMSAAMode(previouslyCheckedMSAAId, true);});
         }
     }
 

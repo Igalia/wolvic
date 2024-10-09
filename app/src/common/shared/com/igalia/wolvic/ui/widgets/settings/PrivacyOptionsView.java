@@ -354,9 +354,7 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setSystemRootCAEnabled(value);
-            showRestartDialog(() -> {
-                setUseSystemRootCA(prevValue, true);
-            });
+            showRestartDialog(() -> {setUseSystemRootCA(prevValue, true);});
         }
     }
 

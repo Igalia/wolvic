@@ -175,9 +175,7 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
-            showRestartDialog(() -> {
-                setUIHardwareAcceleration(prevValue,true);
-            });
+            showRestartDialog(() -> {setUIHardwareAcceleration(prevValue,true);});
         }
     }
 
@@ -200,9 +198,7 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setDebugLoggingEnabled(value);
-            showRestartDialog(() -> {
-                setDebugLogging(prevValue, true);
-            });
+            showRestartDialog(() -> {setDebugLogging(prevValue, true);});
         }
     }
 
@@ -225,9 +221,7 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
-            showRestartDialog(() -> {
-                setWebGLOutOfProcess(prevValue, true);
-            });
+            showRestartDialog(() -> {setWebGLOutOfProcess(prevValue, true);});
         }
     }
 
