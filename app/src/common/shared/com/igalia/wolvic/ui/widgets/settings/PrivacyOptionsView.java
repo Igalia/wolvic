@@ -346,13 +346,15 @@ class PrivacyOptionsView extends SettingsView {
     }
 
     private void setUseSystemRootCA(boolean value, boolean doApply) {
+        boolean prevValue = SettingsStore.getInstance(getContext()).isSystemRootCAEnabled();
+
         mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(null);
         mBinding.useSystemRootCASwitch.setValue(value, false);
         mBinding.useSystemRootCASwitch.setOnCheckedChangeListener(mUseSystemRootCAListener);
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setSystemRootCAEnabled(value);
-            showRestartDialog();
+            showRestartDialog(() -> {setUseSystemRootCA(prevValue, true);});
         }
     }
 

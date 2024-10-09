@@ -200,28 +200,32 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mDensityListener = (view) -> {
         try {
+            float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
             float newDensity = Float.parseFloat(mBinding.densityEdit.getFirstText());
             if (setDisplayDensity(newDensity)) {
-                showRestartDialog();
+                showRestartDialog(() -> {setDisplayDensity(prevDensity);});
             }
 
         } catch (NumberFormatException e) {
+            float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
             if (setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT)) {
-                showRestartDialog();
+                showRestartDialog(() -> {setDisplayDensity(prevDensity);});
             }
         }
     };
 
     private OnClickListener mDpiListener = (view) -> {
         try {
+            int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
             int newDpi = Integer.parseInt(mBinding.dpiEdit.getFirstText());
             if (setDisplayDpi(newDpi)) {
-                showRestartDialog();
+                showRestartDialog(() -> {setDisplayDpi(prevDpi);});
             }
 
         } catch (NumberFormatException e) {
+            int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
             if (setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT)) {
-                showRestartDialog();
+                showRestartDialog(() -> {setDisplayDpi(prevDpi);});
             }
         }
     };
@@ -238,11 +242,16 @@ class DisplayOptionsView extends SettingsView {
         if (!mBinding.uaRadio.getValueForId(mBinding.uaRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
             setUaMode(mBinding.uaRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
         }
-        if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+
+        Object prevMSAA = mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId());
+        if (!prevMSAA.equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+            restart = true;
         }
 
+        float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
+        int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
 
 
@@ -261,7 +270,11 @@ class DisplayOptionsView extends SettingsView {
         }
 
         if (restart) {
-            showRestartDialog();
+            showRestartDialog(() -> {
+                setMSAAMode(mBinding.msaaRadio.getIdForValue(prevMSAA), true);
+                setDisplayDensity(prevDensity);
+                setDisplayDpi(prevDpi);
+            });
         }
     };
 
@@ -385,13 +398,15 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void setMSAAMode(int checkedId, boolean doApply) {
+        int previouslyCheckedMSAAId = mBinding.msaaRadio.getIdForValue(SettingsStore.getInstance(getContext()).getMSAALevel());
+
         mBinding.msaaRadio.setOnCheckedChangeListener(null);
         mBinding.msaaRadio.setChecked(checkedId, doApply);
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mBinding.msaaRadio.getValueForId(checkedId));
-            showRestartDialog();
+            showRestartDialog(() -> {setMSAAMode(previouslyCheckedMSAAId, true);});
         }
     }
 
@@ -415,11 +430,11 @@ class DisplayOptionsView extends SettingsView {
     private boolean setDisplayDpi(int newDpi) {
         mBinding.dpiEdit.setOnClickListener(null);
         boolean restart = false;
-        int prevDensity = SettingsStore.getInstance(getContext()).getDisplayDpi();
+        int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
         if (newDpi < SettingsStore.DISPLAY_DPI_MIN || newDpi > SettingsStore.DISPLAY_DPI_MAX) {
-            newDpi = prevDensity;
+            newDpi = prevDpi;
 
-        } else if (prevDensity != newDpi) {
+        } else if (prevDpi != newDpi) {
             SettingsStore.getInstance(getContext()).setDisplayDpi(newDpi);
             restart = true;
         }

@@ -13,6 +13,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.ui.views.CustomScrollView;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 
 public abstract class SettingsView extends FrameLayout {
 
@@ -48,7 +49,7 @@ public abstract class SettingsView extends FrameLayout {
     public interface Delegate {
         void onDismiss();
         void exitWholeSettings();
-        void showRestartDialog();
+        void showRestartDialog(RestartDialogWidget.CancelCallback cancelCallback);
         void showClearUserDataDialog();
         void showAlert(String aTitle, String aMessage);
         void showView(SettingsView.SettingViewType type);
@@ -76,9 +77,9 @@ public abstract class SettingsView extends FrameLayout {
         }
     }
 
-    protected void showRestartDialog() {
+    protected void showRestartDialog(RestartDialogWidget.CancelCallback cancelCallback) {
         if (mDelegate != null) {
-            mDelegate.showRestartDialog();
+            mDelegate.showRestartDialog(cancelCallback);
         }
     }
 
