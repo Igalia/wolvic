@@ -140,13 +140,11 @@ public class DeviceType {
     }
 
     // Identifiers for store-specific builds.
-    public enum StoreType {NONE, META_STORE, META_APP_LAB, MAINLAND_CHINA}
+    public enum StoreType {NONE, META_STORE, MAINLAND_CHINA}
 
     public static StoreType getStoreType() {
         if (BuildConfig.FLAVOR_store.toLowerCase().contains("metastore"))
             return StoreType.META_STORE;
-        else if (BuildConfig.FLAVOR_store.toLowerCase().contains("applab"))
-            return StoreType.META_APP_LAB;
         else if (BuildConfig.FLAVOR_store.toLowerCase().contains("mainlandchina"))
             return StoreType.MAINLAND_CHINA;
         else
