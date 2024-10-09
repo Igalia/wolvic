@@ -12,9 +12,15 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 public class RestartDialogWidget extends PromptDialogWidget {
 
+    private CancelCallback mCancelCallback;
+
     public RestartDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
+    }
+
+    public void setCancelCallback(CancelCallback cancelCallback) {
+        mCancelCallback = cancelCallback;
     }
 
     @Override
@@ -23,15 +29,17 @@ public class RestartDialogWidget extends PromptDialogWidget {
 
         setButtons(new int[] {
                 R.string.restart_later_dialog_button,
-                R.string.restart_now_dialog_button
+                R.string.restart_now_dialog_button,
+                R.string.back_button,
         });
         setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
-                onDismiss();
-
+                hide(REMOVE_WIDGET);
             } else if (index == PromptDialogWidget.POSITIVE) {
                 mWidgetManager.saveState();
                 postDelayed(() -> SystemUtils.restart(getContext()), 500);
+            } else if (index == PromptDialogWidget.BACK) {
+                onDismiss();
             }
         });
         setCheckboxVisible(false);
@@ -40,5 +48,18 @@ public class RestartDialogWidget extends PromptDialogWidget {
         setIcon(R.drawable.ff_logo);
         setTitle(R.string.restart_dialog_restart);
         setBody(getContext().getString(R.string.restart_dialog_text, getContext().getString(R.string.app_name)));
+    }
+
+    @Override
+    public void onDismiss() {
+        if (mCancelCallback != null) {
+            mCancelCallback.cancel();
+        }
+
+        hide(REMOVE_WIDGET);
+    }
+
+    public interface CancelCallback {
+        void cancel();
     }
 }
