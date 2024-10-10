@@ -1050,7 +1050,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // default position
         mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
         // center vertically relative to the default position
-        mWidgetPlacement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - mWidgetPlacement.height) / 2.0f;
+        mWidgetPlacement.translationY += (SettingsStore.getInstance(getContext()).getWindowHeight() - mWidgetPlacement.height) / 2.0f;
         mWidgetManager.updateWidget(this);
         mWidgetManager.updateVisibleWidgets();
     }
@@ -1568,8 +1568,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public Pair<Float, Float> getMinWorldSize() {
+        SettingsStore settings = SettingsStore.getInstance(getContext());
         float minWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * MIN_SCALE;
-        float minHeight = minWidth * SettingsStore.WINDOW_HEIGHT_DEFAULT / SettingsStore.WINDOW_WIDTH_DEFAULT;
+        float minHeight = minWidth * settings.getWindowHeight() / settings.getWindowWidth();
         return new Pair<>(minWidth, minHeight);
     }
 
@@ -1624,7 +1625,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private int getWindowWidth(float aWorldWidth) {
-        return (int) Math.floor(SettingsStore.WINDOW_WIDTH_DEFAULT * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
+        return (int) Math.floor(SettingsStore.getInstance(getContext()).getWindowWidth() * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
     }
 
     private NavigationBarWidget.NavigationListener mNavigationBarListener = new NavigationBarWidget.NavigationListener() {
