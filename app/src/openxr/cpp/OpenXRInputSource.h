@@ -47,7 +47,7 @@ private:
     void UpdateHaptics(ControllerDelegate&);
     bool GetHandTrackingInfo(XrTime predictedDisplayTime, XrSpace, const vrb::Matrix& head);
     float GetDistanceBetweenJoints (XrHandJointEXT jointA, XrHandJointEXT jointB);
-    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate);
+    void EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate& delegate);
     void PopulateHandJointLocations(device::RenderMode, std::vector<vrb::Matrix>& jointTransforms, std::vector<float>& jointRadii);
 
     XrInstance mInstance { XR_NULL_HANDLE };
@@ -85,7 +85,8 @@ private:
     bool mUsingHandInteractionProfile { false };
     device::DeviceType mDeviceType { device::UnknownType };
     bool mTriggerWasClicked { false };
-    vrb::Vector mControllerPositionOnGestureStart;
+    vrb::Vector mControllerPositionOnScrollStart;
+    vrb::Matrix mEyeGazeTransformOnPinchStart;
     XrTime mEyeTrackingPinchStartTime { 0 };
 
     struct HandMeshMSFT {
@@ -107,13 +108,13 @@ private:
 
     bool mIsHandInteractionSupported { false };
 
-    void HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, ControllerDelegate &controllerDelegate);
+    bool HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &);
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
 
     XrResult SuggestBindings(SuggestedBindings&) const;
-    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, ControllerDelegate& delegate);
+    void Update(const XrFrameState&, XrSpace, const vrb::Matrix& head, const vrb::Vector& offsets, device::RenderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate& delegate);
     XrResult UpdateInteractionProfile(ControllerDelegate&);
     std::string ControllerModelName() const;
     OpenXRInputMapping* GetActiveMapping() const { return mActiveMapping; }
