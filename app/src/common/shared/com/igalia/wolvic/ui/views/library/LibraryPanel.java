@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -76,6 +77,25 @@ public class LibraryPanel extends FrameLayout {
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.library, this, true);
+
+        mBinding.searchBar.setIconifiedByDefault(false);
+        mBinding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                mCurrentView.updateSearchFilter(s.toLowerCase());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                mCurrentView.updateSearchFilter(s.toLowerCase());
+                return true;
+            }
+        });
+        mBinding.searchBar.setOnCloseListener(() -> {
+            mCurrentView.updateSearchFilter("");
+            return true;
+        });
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setSupportsSystemNotifications(BuildConfig.SUPPORTS_SYSTEM_NOTIFICATIONS);
         mBinding.setDelegate(new LibraryNavigationDelegate() {
@@ -129,6 +149,8 @@ public class LibraryPanel extends FrameLayout {
     public void onShow() {
         if (mCurrentView != null) {
             mCurrentView.onShow();
+            mBinding.searchBar.setQuery("", false);
+            mBinding.searchBar.clearFocus();
         }
     }
 
@@ -213,6 +235,10 @@ public class LibraryPanel extends FrameLayout {
 
         mBinding.setCanGoBack(mCurrentView.canGoBack());
         mCurrentView.onShow();
+
+        mBinding.searchBar.setQuery("", false);
+        mBinding.searchBar.clearFocus();
+        mBinding.searchBar.setVisibility(mCurrentView.supportsSearch() ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void selectPanel(@Windows.PanelType int panelType) {
