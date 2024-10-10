@@ -56,6 +56,7 @@ private:
   XrSpace mEyeGazeActionSpace {XR_NULL_HANDLE };
   XrSpace mLocalReferenceSpace { XR_NULL_HANDLE};
   std::unique_ptr<OneEuroFilterQuaternion> mOneEuroFilterGazeOrientation;
+  vrb::Matrix mEyeTrackingTransform;
 
 public:
   static OpenXRInputPtr Create(XrInstance, XrSession, XrSystemProperties, XrSpace localSpace,

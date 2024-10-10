@@ -90,7 +90,7 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
   bool usingEyeTracking = pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE && updateEyeGaze(frameState, head, delegate);
 
   for (auto& input : mInputSources) {
-    input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, handTrackingEnabled, delegate);
+    input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, handTrackingEnabled, mEyeTrackingTransform, delegate);
   }
 
   // Update tracked keyboard
@@ -374,8 +374,7 @@ bool OpenXRInput::updateEyeGaze(XrFrameState frameState, const vrb::Matrix& head
     vrb::Quaternion gazeOrientation(gazeLocation.pose.orientation.x, gazeLocation.pose.orientation.y, gazeLocation.pose.orientation.z, gazeLocation.pose.orientation.w);
     float* filteredOrientation = mOneEuroFilterGazeOrientation->filter(frameState.predictedDisplayTime, gazeOrientation.Data());
     gazeOrientation = {filteredOrientation[0], filteredOrientation[1], filteredOrientation[2], filteredOrientation[3]};
-    delegate.SetTransform(0, vrb::Matrix::Rotation(gazeOrientation).Translate(gazePosition));
-    delegate.SetImmersiveBeamTransform(0, vrb::Matrix::Identity());
+    mEyeTrackingTransform = vrb::Matrix::Rotation(gazeOrientation).Translate(gazePosition);
 
     return true;
 }
