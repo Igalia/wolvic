@@ -28,6 +28,8 @@
 
     <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
 
+    <uses-permission android:name="com.oculus.permission.EYE_TRACKING" />
+
     <application
         android:name=".VRBrowserApplication"
         android:allowBackup="true"

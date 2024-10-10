@@ -51,7 +51,7 @@ public class PlatformActivity extends NativeActivity {
         return intent;
     }
 
-    protected String getEyeTrackingPermissionString() { return null; }
+    protected String getEyeTrackingPermissionString() { return "com.oculus.permission.EYE_TRACKING"; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
