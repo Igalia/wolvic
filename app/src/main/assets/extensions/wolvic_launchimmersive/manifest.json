@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Wolvic Launch Immersive",
+  "version": "1.0",
+  "description": "Launch Immersive Experiences Automatically",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "wolvic-launchimmersive@igalia.com"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
