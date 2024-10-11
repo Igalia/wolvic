@@ -109,7 +109,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener, PlatformActivityPlugin.PlatformActivityPluginListener {
@@ -126,6 +125,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public static final String EXTRA_HIDE_WHATS_NEW = "hide_whats_new";
     public static final String EXTRA_KIOSK = "kiosk";
     private static final long BATTERY_UPDATE_INTERVAL = 60 * 1_000_000_000L; // 60 seconds
+
+    private boolean mLaunchImmersive = false;
+    public static final String EXTRA_LAUNCH_IMMERSIVE = "launch_immersive";
+    // Element where a click would be simulated to launch the WebXR experience.
+    public static final String EXTRA_LAUNCH_IMMERSIVE_PARENT_XPATH = "launch_immersive_parent_xpath";
+    public static final String EXTRA_LAUNCH_IMMERSIVE_ELEMENT_XPATH = "launch_immersive_element_xpath";
 
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
@@ -246,6 +251,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private PlatformActivityPlugin mPlatformPlugin;
     private int mLastMotionEventWidgetHandle;
     private boolean mIsEyeTrackingSupported;
+    private String mImmersiveParentElementXPath;
+    private String mImmersiveTargetElementXPath;
 
     private ViewTreeObserver.OnGlobalFocusChangeListener globalFocusListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
         @Override
@@ -691,6 +698,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         if (getCrashReportIntent().action_crashed.equals(intent.getAction())) {
             Log.e(LOGTAG, "Restarted after a crash");
+        } else if (isLaunchImmersive()) {
+            // We need to restart the Activity to ensure that the engine settings are initialized.
+            finish();
+            startActivity(intent);
         } else {
             loadFromIntent(intent);
         }
@@ -833,6 +844,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
 
             openInKioskMode = extras.getBoolean(EXTRA_KIOSK, false);
+
+            if (extras.getBoolean(EXTRA_LAUNCH_IMMERSIVE)) {
+                mImmersiveParentElementXPath = extras.getString(EXTRA_LAUNCH_IMMERSIVE_PARENT_XPATH);
+                mImmersiveTargetElementXPath = extras.getString(EXTRA_LAUNCH_IMMERSIVE_ELEMENT_XPATH);
+
+                // Open in immersive requires specific information to be present
+                mLaunchImmersive = targetUri != null && mImmersiveTargetElementXPath != null;
+            }
         }
 
         // If there is a target URI we open it
@@ -844,6 +863,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (openInKioskMode) {
                 // FIXME this might not work as expected if the app was already running
                 mWindows.openInKioskMode(targetUri.toString());
+            } if (mLaunchImmersive) {
+                mWindows.openInImmersiveMode(targetUri, mImmersiveParentElementXPath, mImmersiveTargetElementXPath);
             } else {
                 if (openInWindow) {
                     location = Windows.OPEN_IN_NEW_WINDOW;
@@ -1258,6 +1279,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = false;
+        TelemetryService.stopImmersive();
+
+        if (mLaunchImmersive) {
+            Log.d(LOGTAG, "Launched in immersive mode: exiting WebXR will finish the app");
+            finish();
+        }
+
         runOnUiThread(() -> {
             mWindows.exitImmersiveMode();
             for (WebXRListener listener: mWebXRListeners) {
@@ -1268,7 +1296,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the window in front of you when you exit immersive mode.
         recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
 
-        TelemetryService.stopImmersive();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             if (!mWindows.isPaused()) {
@@ -1805,6 +1832,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public boolean isWebXRPresenting() {
         return mIsPresentingImmersive;
+    }
+
+    @Override
+    public boolean isLaunchImmersive() {
+        // This method may be called before we have parsed the current Intent.
+        return mLaunchImmersive ||
+                (getIntent() != null && getIntent().getBooleanExtra(EXTRA_LAUNCH_IMMERSIVE, false)
+                        && getIntent().getStringExtra(EXTRA_LAUNCH_IMMERSIVE_ELEMENT_XPATH) != null);
     }
 
     @Override

@@ -4,6 +4,7 @@ import static com.igalia.wolvic.ui.widgets.settings.SettingsView.SettingViewType
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
@@ -84,6 +85,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
     private static final int WEB_APP_ADDED_NOTIFICATION_ID = 3;
+
+    // launch Wolvic in immersive mode automatically
+    private static final String PARENT_ELEMENT_XPATH_PARAMETER = "wolvic-launchimmersive-parentElementXPath";
+    private static final String TARGET_ELEMENT_XPATH_PARAMETER = "wolvic-launchimmersive-targetElementXPath";
+    private static final String IMMERSIVE_EXTENSION_ID = "wolvic-launchimmersive@igalia.com";
+    private static final String IMMERSIVE_EXTENSION_URL = "resource://android/assets/extensions/wolvic_launchimmersive/";
 
     class WindowState {
         WindowPlacement placement;
@@ -1475,6 +1482,35 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(mFocusedWindow, session);
         mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         mFocusedWindow.setKioskMode(true);
+    }
+
+    public void openInImmersiveMode(Uri targetUri, String immersiveParentElementXPath, String immersiveTargetElementXPath) {
+        Uri.Builder uriBuilder = targetUri.buildUpon();
+        if (!StringUtils.isEmpty(immersiveParentElementXPath)) {
+            uriBuilder.appendQueryParameter(PARENT_ELEMENT_XPATH_PARAMETER, immersiveParentElementXPath);
+        }
+        if (!StringUtils.isEmpty(immersiveTargetElementXPath)) {
+            uriBuilder.appendQueryParameter(TARGET_ELEMENT_XPATH_PARAMETER, immersiveTargetElementXPath);
+        }
+        Uri extendedUri = uriBuilder.build();
+
+        Session session = SessionStore.get().createSuspendedSession(extendedUri.toString(), true);
+
+        mFocusedWindow.setKioskMode(true);
+
+        SessionStore.get().getWebExtensionRuntime().installBuiltInWebExtension(
+                IMMERSIVE_EXTENSION_ID,
+                IMMERSIVE_EXTENSION_URL,
+                webExtension -> {
+                    setFirstPaint(mFocusedWindow, session);
+                    mFocusedWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
+                    return null;
+                },
+                (throwable) -> {
+                    Log.e(LOGTAG, "Error installing the " + IMMERSIVE_EXTENSION_ID + " from " + IMMERSIVE_EXTENSION_URL + " Web Extension: " + throwable.getLocalizedMessage());
+                    return null;
+                }
+        );
     }
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {

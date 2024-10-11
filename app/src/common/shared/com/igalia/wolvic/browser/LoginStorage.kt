@@ -16,7 +16,7 @@ class LoginStorage(
         val context: Context
 ) {
 
-    private val places = (context as AppServicesProvider).places
+    private val places = (context.applicationContext as AppServicesProvider).places
     private var storage = places.logins
     private val passwordsKeyProvider by lazy { storage.value.crypto }
 
