@@ -58,7 +58,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mConnectivityManager.init();
         mPlaces = new Places(activityContext);
         mServices = new Services(activityContext, mPlaces);
-        mLoginStorage = new LoginStorage(this);
+        mLoginStorage = new LoginStorage(activityContext);
         mAccounts = new Accounts(activityContext);
         mSessionStore = SessionStore.get();
         mSessionStore.initialize(activityContext);
