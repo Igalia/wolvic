@@ -292,7 +292,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            getSession().loadUri(getSession().getHomeUri());
+            String homeUri = getSession().getHomeUri();
+            if (homeUri != "") {
+                getSession().loadUri(homeUri);
+            } else {
+                mAttachedWindow.showPanel(Windows.BOOKMARKS);
+            }
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }

@@ -1519,7 +1519,13 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(targetWindow, session);
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
-            session.loadHomePage();
+            if (session.getHomeUri() == "") {
+                Log.e(LOGTAG, "Empty home URI in Windows => Show bookmarks");
+                targetWindow.showPanel(Windows.BOOKMARKS);
+            } else {
+                Log.e(LOGTAG, "Non-empty home URI in Windows => Load homepage");
+                session.loadHomePage();
+            }
         }
     }
 
