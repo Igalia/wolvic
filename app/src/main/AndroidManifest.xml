@@ -39,18 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="com.oculus.intent.category.2D" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.igalia.wolvic.VRBrowserActivity"
-            android:launchMode="singleInstance"
-            android:exported="false"
-            android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
-            android:windowSoftInputMode="stateAlwaysHidden">
-            <!-- Declares Wolvic as a browser app -->
+            <!-- Declares Wolvic as a browser app that can open Web URLs -->
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-
+                <action android:name="android.intent.action.VIEW" />
                 <data android:scheme="https" />
                 <data android:scheme="http" />
             </intent-filter>
@@ -58,6 +51,7 @@
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.VIEW" />
                 <data
                     android:scheme="wolvic"
                     android:host="com.igalia.wolvic" />
@@ -68,6 +62,12 @@
                 <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.igalia.wolvic.VRBrowserActivity"
+            android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <service
             android:name="com.igalia.wolvic.crashreporting.CrashReporterService"
             android:exported="false"

@@ -3,15 +3,8 @@ package com.igalia.wolvic;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.igalia.wolvic.utils.SystemUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Properties;
 
 public class VersionCheckActivity extends Activity {
     private boolean browserActivityStarted = false;
@@ -24,11 +17,16 @@ public class VersionCheckActivity extends Activity {
         if (platformSystemCheck.isOSVersionCompatible()) {
             Intent receivedIntent = getIntent();
             Bundle extras = receivedIntent.getExtras();
+            Uri data = receivedIntent.getData();
 
             // Start VRBrowserActivity if OS version is compatible
             Intent intent = new Intent(this, VRBrowserActivity.class);
-            if (extras != null)
+            if (extras != null) {
                 intent.putExtras(extras);
+            }
+            if (data != null) {
+                intent.setData(data);
+            }
 
             startActivity(intent);
             browserActivityStarted = true;
