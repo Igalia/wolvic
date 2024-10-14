@@ -72,11 +72,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
 
-        int windowsWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
-        int windowsHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
-        String windowsSize = windowsWidth + "x" + windowsHeight;
+        mBinding.windowsSize.setOptions(SettingsStore.WINDOW_SIZES);
         mBinding.windowsSize.setOnCheckedChangeListener(mWindowsSizeChangeListener);
-        setWindowsSize(mBinding.windowsSize.getIdForValue(windowsSize), false);
+        setWindowsSize(SettingsStore.windowSizeId, false);
 
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
@@ -258,9 +256,9 @@ class DisplayOptionsView extends SettingsView {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
             restart = true;
         }
-        String defaultWindowsSize = SettingsStore.WINDOW_WIDTH_DEFAULT + "x" + SettingsStore.WINDOW_HEIGHT_DEFAULT;
-        if (!mBinding.windowsSize.getValueForId(mBinding.windowsSize.getCheckedRadioButtonId()).equals(defaultWindowsSize)) {
-            setWindowsSize(mBinding.windowsSize.getIdForValue(defaultWindowsSize), true);
+
+        if (mBinding.windowsSize.getCheckedRadioButtonId() != 0) {
+            setWindowsSize(0, true);
         }
 
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
@@ -429,10 +427,8 @@ class DisplayOptionsView extends SettingsView {
         mBinding.windowsSize.setChecked(checkedId, doApply);
         mBinding.windowsSize.setOnCheckedChangeListener(mWindowsSizeChangeListener);
 
-        String windowsSize = (String)mBinding.windowsSize.getValueForId(checkedId);
-        String[] widthAndHeight = windowsSize.split("x");
-        SettingsStore.getInstance(getContext()).setWindowWidth(Integer.parseInt(widthAndHeight[0]));
-        SettingsStore.getInstance(getContext()).setWindowHeight(Integer.parseInt(widthAndHeight[1]));
+        SettingsStore.getInstance(getContext()).setWindowSize(checkedId);
+        SettingsStore.windowSizeId = checkedId;
     }
 
     private boolean setDisplayDensity(float newDensity) {
