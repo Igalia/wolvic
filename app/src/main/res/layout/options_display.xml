@@ -94,9 +94,7 @@
                     android:id="@+id/windows_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="Window's&#10;default size"
-                    app:options="@array/windows_size"
-                    app:values="@array/windows_size_values" />
+                    app:description="Window's&#10;default size" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
