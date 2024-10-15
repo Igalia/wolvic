@@ -404,10 +404,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         } else {
             if (mSession.getHomeUri() == "") {
-                Log.e(LOGTAG, "Empty home URI in WindowWidget => Show bookmarks");
                 showPanel(Windows.BOOKMARKS);
             } else {
-                Log.e(LOGTAG, "Non-empty home URI in WindowWidget => Load homepage");
                 mSession.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
             }
         }
@@ -531,16 +529,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
         if (mLibrary != null) {
-            Log.e(LOGTAG, "mLibrary is not null => Function USED");
             if (mView == null) {
-                Log.e(LOGTAG, "mView is null => First case");
                 setView(mLibrary, switchSurface);
                 mLibrary.selectPanel(panelType);
                 mLibrary.onShow();
                 mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
                 //if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
-                    Log.e(LOGTAG, "if is executed");
                     final Runnable firstDrawCallback = mFirstDrawCallback;
                     onFirstContentfulPaint(mSession.getWSession());
                     mRestoreFirstPaint = () -> {
@@ -550,18 +545,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             mWidgetManager.updateWidget(WindowWidget.this);
                         }
                     };
-                //} else {
-                    //Log.e(LOGTAG, "if is not executed");
-                //}
 
             } else if (mView == mLibrary) {
-                Log.e(LOGTAG, "mView == mLibrary => Second case");
                 mLibrary.selectPanel(panelType);
-            } else {
-                Log.e(LOGTAG, "mView is other case => Function NOT USED");
             }
-        } else {
-            Log.e(LOGTAG, "mLibrary is null => Function NOT USED");
         }
     }
 

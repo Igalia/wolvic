@@ -407,9 +407,9 @@ class DisplayOptionsView extends SettingsView {
     private int getHomepageId() {
         String homepage = SettingsStore.getInstance(getContext()).getHomepage();
 
-        if (homepage == mDefaultHomepageUrl) {
+        if (homepage ==  getContext().getString(R.string.HOMEPAGE_URL)) {
             return 0;
-        } else if (homepage == "New Tab") {
+        } else if (homepage == "") {
             return 1;
         } else {
             return 2;
