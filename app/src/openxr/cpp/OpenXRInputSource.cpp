@@ -731,7 +731,8 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
     } else {
         assert(pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE);
-        if (!HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, eyeTrackingTransform, delegate))
+        HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, eyeTrackingTransform, delegate);
+        if (!triggerButtonPressed)
             delegate.SetTransform(mIndex, eyeTrackingTransform);
     }
 
@@ -933,9 +934,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
         if (button.type == OpenXRButtonType::Trigger) {
             delegate.SetSelectFactor(mIndex, state->value);
-            if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE)
-                if (!HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, eyeTrackingTransform, delegate))
+            if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE) {
+                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, eyeTrackingTransform, delegate);
+                if (!state->clicked)
                     delegate.SetTransform(mIndex, eyeTrackingTransform);
+            }
         }
 
         // Select action
@@ -1071,12 +1074,11 @@ OpenXRInputSource::GetNextHandMeshBuffer() {
     return mHandMeshMSFT.buffer;
 }
 
-bool OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix &pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &controllerDelegate) {
-    bool handled { false };
+void
+OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix &pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &controllerDelegate) {
     if (!mTriggerWasClicked && triggerClicked) {
         mEyeGazeTransformOnPinchStart = eyeTrackingTransform;
         mEyeTrackingPinchStartTime = predictedDisplayTime;
-        handled = true;
     } else if (mTriggerWasClicked && triggerClicked) {
         // Throttle the start of the scroll gesture to avoid scrolling on pinch.
         if (predictedDisplayTime - mEyeTrackingPinchStartTime > kEyeTrackingScrollThreshold) {
@@ -1088,10 +1090,8 @@ bool OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, boo
             // scrolling starts.
             mControllerPositionOnScrollStart =  pointerTransform.GetTranslation();
         }
-        handled = true;
     }
     mTriggerWasClicked = triggerClicked;
-    return handled;
 }
 
 bool OpenXRInputSource::HasPhysicalControllersAvailable() const {

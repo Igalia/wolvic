@@ -108,7 +108,7 @@ private:
 
     bool mIsHandInteractionSupported { false };
 
-    bool HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &);
+    void HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &controllerDelegate);
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
