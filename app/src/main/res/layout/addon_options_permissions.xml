@@ -38,7 +38,7 @@
                         android:paddingEnd="20dp"
                         android:fadingEdgeLength="60dp"
                         android:requiresFadingEdge="vertical"
-                        app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"/>
+                        app:layoutManager="LinearLayoutManager"/>
                     <TextView
                         android:id="@+id/learn_more_link"
                         android:layout_width="match_parent"

@@ -80,6 +80,7 @@
                         android:id="@+id/backButton"
                         style="?attr/navigationBarButtonStyle"
                         android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/ic_icon_back"
                         android:tint="@color/midnight"
                         android:onClick="@{(view) -> delegate != null ? delegate.onBack(view) : void}"
@@ -87,10 +88,10 @@
 
                     <TextView
                         android:id="@+id/title"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
+                        android:layout_toEndOf="@id/backButton"
                         android:gravity="center_horizontal"
                         android:textAlignment="gravity"
                         android:paddingStart="15dp"
@@ -99,9 +100,20 @@
                         android:textSize="@dimen/text_biggest_size"
                         android:textStyle="bold" />
 
+                    <SearchView
+                        android:id="@+id/search_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@id/closeButton"
+                        android:layout_toEndOf="@id/title"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="15dp" />
+
                     <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/closeButton"
                         style="?attr/navigationBarButtonStyle"
+                        android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_icon_exit"
                         android:tint="@color/midnight"

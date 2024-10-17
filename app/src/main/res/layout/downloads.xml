@@ -82,7 +82,7 @@
             android:contentDescription="Downloads"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; !downloadsViewModel.isEmpty}" />
 
         <FrameLayout

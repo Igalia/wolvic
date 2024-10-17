@@ -35,7 +35,7 @@
             android:orientation="vertical"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!viewModel.isLoading}" />
 
     </com.igalia.wolvic.ui.views.ScrollBlockingLayout>

@@ -106,7 +106,7 @@
             android:contentDescription="Bookmarks feed"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager"
+            app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!bookmarksViewModel.isLoading &amp;&amp; !bookmarksViewModel.isEmpty}" />
 
         <FrameLayout

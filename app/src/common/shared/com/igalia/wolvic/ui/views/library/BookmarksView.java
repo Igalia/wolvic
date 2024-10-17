@@ -33,7 +33,6 @@ import com.igalia.wolvic.databinding.BookmarksBinding;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.Bookmark;
 import com.igalia.wolvic.ui.adapters.BookmarkAdapter;
-import com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager;
 import com.igalia.wolvic.ui.callbacks.BookmarkItemCallback;
 import com.igalia.wolvic.ui.callbacks.BookmarksCallback;
 import com.igalia.wolvic.ui.callbacks.LibraryContextMenuCallback;
@@ -47,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
@@ -68,8 +68,9 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
-    private CustomLinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private BookmarksViewModel mViewModel;
+    private List<BookmarkNode> mCachedBookmarkItems;
 
     public BookmarksView(Context aContext, @NonNull LibraryPanel delegate) {
         super(aContext, delegate);
@@ -122,7 +123,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
             mBinding.bookmarksList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         }
 
-        mLayoutManager = (CustomLinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
+        mLayoutManager = (LinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
 
         mViewModel.setIsLoading(true);
 
@@ -143,6 +144,22 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
             v.requestFocusFromTouch();
             return false;
         });
+    }
+
+    @Override
+    public boolean supportsSearch() {
+        return true;
+    }
+
+    @Override
+    public void updateSearchFilter(String searchFilter) {
+        setSearchFilter(searchFilter);
+
+        if (mCachedBookmarkItems == null) {
+            updateBookmarks();
+        } else {
+            showBookmarks(mCachedBookmarkItems);
+        }
     }
 
     @Override
@@ -359,6 +376,8 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     }
 
     private void showBookmarks(List<BookmarkNode> aBookmarks) {
+        mCachedBookmarkItems = aBookmarks;
+
         if (aBookmarks == null || aBookmarks.size() == 0) {
             mViewModel.setIsEmpty(true);
             mViewModel.setIsLoading(false);
@@ -366,7 +385,17 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         } else {
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
-            mBookmarkAdapter.setBookmarkList(aBookmarks);
+
+            // Search by filtering the cached list.
+            if (getSearchFilter().isEmpty()) {
+                mBookmarkAdapter.setBookmarkList(aBookmarks);
+            } else {
+                List<BookmarkNode> filteredBookmarks = aBookmarks.stream().filter(bookmark ->
+                        (bookmark.getTitle() != null && bookmark.getTitle().toLowerCase().contains(getSearchFilter()) ||
+                        (bookmark.getUrl() != null && bookmark.getUrl().toLowerCase().contains(getSearchFilter())))
+                ).collect(Collectors.toList());
+                mBookmarkAdapter.setBookmarkList(filteredBookmarks);
+            }
         }
 
         mBinding.executePendingBindings();

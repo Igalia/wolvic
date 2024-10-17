@@ -42,7 +42,7 @@
             android:contentDescription="Saved Logins list"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+            app:layoutManager="LinearLayoutManager" />
 
         <RelativeLayout
             android:id="@+id/buttonsLayout"

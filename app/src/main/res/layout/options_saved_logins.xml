@@ -92,7 +92,7 @@
                     android:background="@color/asphalt"
                     android:contentDescription="Logins List"
                     android:paddingEnd="15dp"
-                    app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+                    app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
         </FrameLayout>
 

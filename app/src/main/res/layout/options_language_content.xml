@@ -53,7 +53,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
-                    app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+                    app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
 
             <LinearLayout
@@ -77,7 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
-                    app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+                    app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
         </LinearLayout>
 
