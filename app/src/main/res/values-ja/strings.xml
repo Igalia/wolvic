@@ -1688,7 +1688,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t•Wolvicの一部の機能はウェブ情報サービスを利用しています。そのサービスの信憑性やエラーの有無は保証できません。この機能に関する詳細（ウェブ情報サービスを利用する機能を不有効にする方法なども含み）は以下の利用規約に記述されています。</string>
     <string name="terms_service_subtitle_2">Wolvicウェブ情報サービス</string>
     <string name="developer_options_center_windows">ウィンドウを上下中央揃えにする</string>
-    <string name="display_options_windows_can_move">ウィンドウのドラッグを有効にする</string>
     <string name="display_options_sound_effect">効果音を使う</string>
     <string name="display_options_latin_auto_complete">ラテン文字キーボード入力の自動補完</string>
     <string name="display_options_head_lock">ヘッドロックを有効にする</string>
