@@ -639,7 +639,7 @@ OpenXRInputSource::PopulateHandJointLocations(device::RenderMode renderMode, std
     }
 }
 
-void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, ControllerDelegate& delegate)
+void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate& delegate)
 {
     assert(mHasHandJoints);
 
@@ -731,13 +731,15 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
     } else {
         assert(pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE);
-        HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, delegate);
+        HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, eyeTrackingTransform, delegate);
+        if (!triggerButtonPressed)
+            delegate.SetTransform(mIndex, eyeTrackingTransform);
     }
 
     delegate.SetCapabilityFlags(mIndex, flags);
 }
 
-void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix &head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, ControllerDelegate& delegate)
+void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpace, const vrb::Matrix &head, const vrb::Vector& offsets, device::RenderMode renderMode, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, bool handTrackingEnabled, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate& delegate)
 {
     if (mActiveMapping &&
         ((mHandeness == OpenXRHandFlags::Left && !mActiveMapping->leftControllerModel) ||
@@ -801,7 +803,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             std::vector<float> jointRadii;
             PopulateHandJointLocations(renderMode, jointTransforms, jointRadii);
             if (!mIsHandInteractionSupported) {
-                EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], pointerMode, usingEyeTracking, delegate);
+                EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], pointerMode, usingEyeTracking, eyeTrackingTransform, delegate);
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
             }
@@ -932,8 +934,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
         if (button.type == OpenXRButtonType::Trigger) {
             delegate.SetSelectFactor(mIndex, state->value);
-            if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE)
-                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, delegate);
+            if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE) {
+                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, eyeTrackingTransform, delegate);
+                if (!state->clicked)
+                    delegate.SetTransform(mIndex, eyeTrackingTransform);
+            }
         }
 
         // Select action
@@ -1069,16 +1074,21 @@ OpenXRInputSource::GetNextHandMeshBuffer() {
     return mHandMeshMSFT.buffer;
 }
 
-void OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix &pointerTransform, ControllerDelegate &controllerDelegate) {
+void
+OpenXRInputSource::HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix &pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &controllerDelegate) {
     if (!mTriggerWasClicked && triggerClicked) {
-        mControllerPositionOnGestureStart =  pointerTransform.GetTranslation();
+        mEyeGazeTransformOnPinchStart = eyeTrackingTransform;
         mEyeTrackingPinchStartTime = predictedDisplayTime;
     } else if (mTriggerWasClicked && triggerClicked) {
         // Throttle the start of the scroll gesture to avoid scrolling on pinch.
         if (predictedDisplayTime - mEyeTrackingPinchStartTime > kEyeTrackingScrollThreshold) {
             vrb::Vector currentControllerPosition = pointerTransform.GetTranslation();
-            auto delta = currentControllerPosition - mControllerPositionOnGestureStart;
-            controllerDelegate.TranslateTransform(mIndex, delta * 10);
+            auto delta = currentControllerPosition - mControllerPositionOnScrollStart;
+            controllerDelegate.SetTransform(mIndex, mEyeGazeTransformOnPinchStart.Translate(delta * 10));
+        } else {
+            // Keep updating the initial position while throttling to avoid a sudden jump when
+            // scrolling starts.
+            mControllerPositionOnScrollStart =  pointerTransform.GetTranslation();
         }
     }
     mTriggerWasClicked = triggerClicked;
