@@ -403,7 +403,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mSession.loadPrivateBrowsingPage();
 
         } else {
-            mSession.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
+            if (mSession.getHomeUri() == "") {
+                showPanel(Windows.BOOKMARKS);
+            } else {
+                mSession.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
+            }
         }
     }
 
@@ -523,7 +527,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         showPanel(panelType, true);
     }
 
-    private void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
+    public void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
         if (mLibrary != null) {
             if (mView == null) {
                 setView(mLibrary, switchSurface);
@@ -531,7 +535,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mLibrary.onShow();
                 mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
-                if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                //if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
                     final Runnable firstDrawCallback = mFirstDrawCallback;
                     onFirstContentfulPaint(mSession.getWSession());
                     mRestoreFirstPaint = () -> {
@@ -541,7 +545,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             mWidgetManager.updateWidget(WindowWidget.this);
                         }
                     };
-                }
 
             } else if (mView == mLibrary) {
                 mLibrary.selectPanel(panelType);

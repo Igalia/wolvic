@@ -1483,7 +1483,11 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(targetWindow, session);
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
-            session.loadHomePage();
+            if (session.getHomeUri() == "") {
+                targetWindow.showPanel(Windows.BOOKMARKS);
+            } else {
+                session.loadHomePage();
+            }
         }
     }
 

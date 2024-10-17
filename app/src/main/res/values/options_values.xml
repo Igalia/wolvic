@@ -85,6 +85,13 @@
         <item>2</item>
     </integer-array>
 
+    <!-- Homepage Setting Options -->
+    <string-array name="developer_options_homepage" translatable="false">
+        <item>@string/developer_options_homepage_wolvic</item>
+        <item>@string/developer_options_homepage_new_tab</item>
+        <item>@string/developer_options_homepage_other</item>
+    </string-array>
+
     <!-- Tracking Options -->
     <string-array name="privacy_options_tracking" translatable="false">
         <item>@string/privacy_options_tracking_etp</item>
