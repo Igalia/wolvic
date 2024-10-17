@@ -1805,7 +1805,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="experimental_features">Fonctionnalités expérimentales</string>
     <string name="controller_options_haptic_feedback">Retour haptique</string>
     <string name="developer_options_center_windows">Centrer les fenêtres verticalement</string>
-    <string name="display_options_windows_can_move">Glisser pour déplacer les fenêtres</string>
     <string name="fxa_account_options_device_name">Nom de l\'appareil</string>
     <string name="device_name">%1$s sur %2$s</string>
     <string name="permission_rationale_title">Permissions supplémentaires</string>

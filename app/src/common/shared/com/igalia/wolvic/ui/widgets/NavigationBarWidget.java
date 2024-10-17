@@ -10,11 +10,14 @@ import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
 import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
 import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -95,6 +98,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
     private static final int POPUP_NOTIFICATION_ID = 3;
     private static final int WEB_APP_ADDED_NOTIFICATION_ID = 4;
+    private static final float MOVE_BAR_MIN_ALPHA = 0.3f;
+    private static final float MOVE_BAR_MAX_ALPHA = 1.0f;
 
     public interface NavigationListener {
         void onBack();
@@ -134,20 +139,28 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private WidgetPlacement mBeforeFullscreenPlacement;
     private float mSavedCylinderDensity = 0.0f;
     private Animation mAnimation;
+    private ValueAnimator mMoveBarAnimator;
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            Drawable background = v.getBackground();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_POINTER_DOWN:
                 case MotionEvent.ACTION_DOWN:
                     v.setPressed(true);
+                    if (background != null) {
+                        background.setColorFilter(getContext().getColor(R.color.design_default_color_primary), PorterDuff.Mode.ADD);
+                    }
                     mWidgetManager.startWidgetMove(mWidgetManager.getWindows().getFrontWindow(), WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_WINDOW);
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     v.setPressed(false);
+                    if (background != null) {
+                        background.clearColorFilter();
+                    }
                     mWidgetManager.finishWidgetMove();
                     break;
                 default:
@@ -326,7 +339,27 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
-        mBinding.navigationBarNavigation.moveButton.setOnTouchListener(new MoveTouchListener());
+        mBinding.navigationBarNavigation.moveBar.setAlpha(MOVE_BAR_MIN_ALPHA);
+        mBinding.navigationBarNavigation.moveBar.setOnTouchListener(new MoveTouchListener());
+        mBinding.navigationBarNavigation.moveBar.setOnHoverListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    mMoveBarAnimator = ValueAnimator.ofFloat(v.getAlpha(), MOVE_BAR_MAX_ALPHA);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    mMoveBarAnimator = ValueAnimator.ofFloat(v.getAlpha(), MOVE_BAR_MIN_ALPHA);
+                    break;
+                default:
+                    return false;
+            }
+            mMoveBarAnimator.addUpdateListener(animation -> {
+                v.setAlpha((float) animation.getAnimatedValue());
+                v.requestLayout();
+            });
+            mMoveBarAnimator.setDuration(100);
+            mMoveBarAnimator.start();
+            return true;
+        });
         mBinding.navigationBarFullscreen.fullScreenMoveButton.setOnTouchListener(new MoveTouchListener());
 
         mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {

@@ -11,8 +11,16 @@
             name="settingsmodel"
             type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
     </data>
+
     <LinearLayout
         android:id="@+id/navigationBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+    <!-- Navigation bar -->
+    <LinearLayout
         style="?attr/navigationBarStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -136,16 +144,6 @@
         </RelativeLayout>
 
         <com.igalia.wolvic.ui.views.UIButton
-            android:id="@+id/moveButton"
-            style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
-            android:layout_weight="0"
-            android:src="@drawable/ic_icon_move"
-            android:tooltipText="@string/move_tooltip"
-            app:privateMode="@{viewmodel.isPrivateSession}"
-            app:visibleGone="@{settingsmodel.isWindowMovementEnabled &amp;&amp; viewmodel.isCurved}" />
-
-        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
@@ -153,5 +151,27 @@
             android:src="@drawable/ic_icon_hamburger_menu"
             android:tooltipText="@string/hamburger_menu_tooltip"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
+    </LinearLayout>
+
+    <!-- Horizontal Divider -->
+        <FrameLayout
+            android:clickable="true"
+            android:id="@+id/moveBar"
+            android:radius="4dp"
+            android:layout_margin="10dp"
+            android:layout_width="128dp"
+            android:layout_height="32dp"
+            android:tooltipText="@string/move_tooltip"
+            android:layout_gravity="center_horizontal"
+            app:visibleGone="@{viewmodel.isCurved}">
+
+            <View
+                android:layout_width="@dimen/move_bar_width"
+                android:layout_height="8dp"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_line"
+                android:radius="4dp" />
+        </FrameLayout>
+
     </LinearLayout>
 </layout>
