@@ -1804,7 +1804,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_haptic_feedback">Haptisk feedback</string>
     <string name="fxa_account_options_device_name">Enhetsnamn</string>
     <string name="move_tooltip">Flytta</string>
-    <string name="display_options_windows_can_move">Dra för att flytta fönster</string>
     <string name="display_options_sound_effect">Använd ljudeffekter</string>
     <string name="display_options_windows_distance">Fönster distans</string>
     <string name="display_options_latin_auto_complete">Latinsk tangentbordsinmatning Automatisk komplettering</string>

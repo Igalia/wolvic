@@ -149,12 +149,6 @@
                     android:layout_height="wrap_content"
                     app:description="@string/display_options_head_lock" />
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/windowMovementSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/display_options_windows_can_move" />
-
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 

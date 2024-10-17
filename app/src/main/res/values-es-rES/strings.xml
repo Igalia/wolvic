@@ -1789,7 +1789,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_start_with_passthrough">Usar el modo Passthrough al iniciar</string>
     <string name="tray_wifi_unavailable_ssid">SSID no disponible</string>
     <string name="voice_input_start">¿Qué te gustaría introducir?</string>
-    <string name="display_options_windows_can_move">Las ventanas se pueden mover</string>
     <string name="display_options_latin_auto_complete">Autocompletado con el teclado latino</string>
     <string name="display_options_head_lock">Activar Head Lock</string>
     <string name="controller_options_haptic_feedback">Feedback táctil</string>

@@ -768,7 +768,6 @@
     <string name="device_name">%1$s em %2$s</string>
     <string name="move_tooltip">Mover</string>
     <string name="developer_options_center_windows">Centralizar Janelas Verticalmente</string>
-    <string name="display_options_windows_can_move">Arraste para mover janelas</string>
     <string name="display_options_sound_effect">Usar efeitos sonoros</string>
     <string name="display_options_latin_auto_complete">Teclado em Latim com Autocompletar</string>
     <string name="display_options_head_lock">Habilitar bloqueio de cabeça</string>

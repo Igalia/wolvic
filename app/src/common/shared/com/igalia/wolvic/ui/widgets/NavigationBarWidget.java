@@ -10,11 +10,14 @@ import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_POPUP;
 import static com.igalia.wolvic.db.SitePermission.SITE_PERMISSION_TRACKING;
 import static com.igalia.wolvic.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -134,6 +137,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     private WidgetPlacement mBeforeFullscreenPlacement;
     private float mSavedCylinderDensity = 0.0f;
     private Animation mAnimation;
+    private ValueAnimator mMoveBarAnimator;
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
@@ -326,7 +330,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
         });
 
-        mBinding.navigationBarNavigation.moveButton.setOnTouchListener(new MoveTouchListener());
+        mBinding.navigationBarNavigation.moveBar.setOnTouchListener(new MoveTouchListener());
         mBinding.navigationBarFullscreen.fullScreenMoveButton.setOnTouchListener(new MoveTouchListener());
 
         mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {

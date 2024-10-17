@@ -433,7 +433,6 @@
     <string name="developer_options_msaa_disabled">Desativado</string>
     <string name="settings_accounts_sign_out">Sair</string>
     <string name="developer_options_center_windows">Centralizar as Janelas Verticalmente</string>
-    <string name="display_options_windows_can_move">Arrastar para mover janelas</string>
     <string name="display_options_sound_effect">Usar efeitos sonoros</string>
     <string name="display_options_windows_distance">Distância das janelas</string>
     <string name="experimental_features">Funcionalidades experimentais</string>

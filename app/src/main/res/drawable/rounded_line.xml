@@ -1,0 +1,27 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/ocean" />
+            <corners android:radius="5dp" />
+            <size android:height="5dp" />
+            <!-- 50% opacity @color/asphalt -->
+
+        </shape>
+    </item>
+    <item android:state_hovered="true">
+        <shape>
+            <solid android:color="@color/azure" />
+            <corners android:radius="5dp" />
+            <size android:height="5dp" />
+
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@color/fog" />
+            <corners android:radius="5dp" />
+            <size android:height="5dp" />
+
+        </shape>
+    </item>
+</selector>

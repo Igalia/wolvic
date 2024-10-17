@@ -1679,7 +1679,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nVIGTIGT: Medmindre du bruger Sync, vil den nye Wolvic-app ikke have dine bogmærker og faner.</string>
     <string name="developer_options_center_windows">Centrer vinduer vertikalt</string>
-    <string name="display_options_windows_can_move">Træk for at flytte vinduer</string>
     <string name="controller_options_haptic_feedback">Haptisk feedback</string>
     <string name="security_options_permission_fine_location_warning">Wolvic kan kun få din omtrentlige placering. Dette kan ændres i systemindstillingerne.</string>
     <string name="voice_input_start">Hvad vil du gerne have input til?</string>
