@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.SettingsStore;
 
 public class TrayViewModel extends AndroidViewModel {
 
@@ -21,6 +22,7 @@ public class TrayViewModel extends AndroidViewModel {
     private MediatorLiveData<ObservableBoolean> isVisible;
     private MutableLiveData<String> time;
     private MutableLiveData<String> pm;
+    private MutableLiveData<ObservableBoolean> needsTabsButton;
     private MutableLiveData<ObservableBoolean> wifiConnected;
     private MutableLiveData<ObservableInt> headsetIcon;
     private MutableLiveData<ObservableInt> headsetBatteryLevel;
@@ -43,7 +45,7 @@ public class TrayViewModel extends AndroidViewModel {
         isVisible.setValue(new ObservableBoolean(false));
         time = new MutableLiveData<>();
         pm = new MutableLiveData<>();
-        pm = new MutableLiveData<>();
+        needsTabsButton = new MutableLiveData<>(new ObservableBoolean(true));
         wifiConnected = new MutableLiveData<>(new ObservableBoolean(true));
         headsetIcon = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_headset_normal));
         headsetBatteryLevel = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_indicator));
@@ -69,6 +71,7 @@ public class TrayViewModel extends AndroidViewModel {
         isKeyboardVisible.setValue(isKeyboardVisible.getValue());
         time.postValue(time.getValue());
         pm.postValue(pm.getValue());
+        needsTabsButton.postValue(needsTabsButton.getValue());
         wifiConnected.postValue(wifiConnected.getValue());
         headsetIcon.setValue(headsetIcon.getValue());
         headsetBatteryLevel.setValue(headsetBatteryLevel.getValue());
@@ -125,6 +128,14 @@ public class TrayViewModel extends AndroidViewModel {
 
     public MutableLiveData<String> getPm() {
         return pm;
+    }
+
+    public void setNeedsTabsButton(boolean needsTabs) {
+        this.needsTabsButton.setValue(new ObservableBoolean(needsTabs));
+    }
+
+    public MutableLiveData<ObservableBoolean> getNeedsTabsButton() {
+        return needsTabsButton;
     }
 
     public void setWifiConnected(boolean connected) {
