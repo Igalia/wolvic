@@ -221,7 +221,8 @@ public class PermissionDelegate implements WSession.PermissionDelegate, WidgetMa
             // https://hacks.mozilla.org/2019/02/firefox-66-to-block-automatically-playing-audible-video-and-audio/
             return WResult.fromValue(ContentPermission.VALUE_ALLOW);
         } else if(perm.permission == PERMISSION_AUTOPLAY_AUDIBLE) {
-            if (SettingsStore.getInstance(mContext).isAutoplayEnabled()) {
+            // allow autoplay when we launch Wolvic in immersive mode automatically
+            if (SettingsStore.getInstance(mContext).isAutoplayEnabled() || mWidgetManager.isLaunchImmersive()) {
                 return WResult.fromValue(ContentPermission.VALUE_ALLOW);
             } else {
                 return WResult.fromValue(ContentPermission.VALUE_DENY);
