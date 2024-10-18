@@ -21,6 +21,8 @@
     <string name="settings_key_speech_data_collection" translatable="false">settings_key_speech_data_collection</string>
     <string name="settings_key_speech_data_collection_reviewed" translatable="false">settings_key_speech_data_collection_accept</string>
     <string name="settings_key_window_distance" translatable="false">settings_window_distance</string>
+    <string name="settings_key_window_width" translatable="false">settings_window_width</string>
+    <string name="settings_key_window_height" translatable="false">settings_window_height</string>
     <string name="settings_key_user_agent_version" translatable="false">settings_user_agent_version_v2</string>
     <string name="settings_key_input_mode" translatable="false">settings_touch_mode</string>
     <string name="settings_key_center_windows" translatable="false">settings_center_windows</string>
