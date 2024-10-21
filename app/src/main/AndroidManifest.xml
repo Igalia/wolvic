@@ -32,7 +32,8 @@
         android:theme="@style/FxR.Dark">
         <activity
             android:name=".VersionCheckActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
