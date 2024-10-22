@@ -296,7 +296,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             if (homeUri != "") {
                 getSession().loadUri(homeUri);
             } else {
-                mAttachedWindow.showPanel(Windows.BOOKMARKS);
+                mAttachedWindow.showNewTab();
             }
 
             if (mAudio != null) {

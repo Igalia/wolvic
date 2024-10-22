@@ -62,6 +62,7 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.ui.views.NewTabView;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
@@ -134,6 +135,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Session mSession;
     private int mWindowId;
     private LibraryPanel mLibrary;
+    private NewTabView mNewTab;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
@@ -217,6 +219,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mLibrary = new LibraryPanel(aContext);
+        mNewTab = new NewTabView(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
@@ -404,7 +407,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         } else {
             if (mSession.getHomeUri() == "") {
-                showPanel(Windows.BOOKMARKS);
+                //showPanel(Windows.BOOKMARKS);
+                showNewTab();
             } else {
                 mSession.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
             }
@@ -527,7 +531,31 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         showPanel(panelType, true);
     }
 
-    public void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
+    public void showNewTab() {
+        if (mNewTab != null) {
+            if (mView == null) {
+                setView(mNewTab, true);
+                mViewModel.setIsFindInPage(false);
+                //mViewModel.setIsPanelVisible(true);
+                //if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
+                onFirstContentfulPaint(mSession.getWSession());
+                mRestoreFirstPaint = () -> {
+                    setFirstPaintReady(false);
+                    setFirstDrawCallback(firstDrawCallback);
+                    if (mWidgetManager != null) {
+                        mWidgetManager.updateWidget(WindowWidget.this);
+                    }
+                };
+                //}
+            }
+            /*} else if (mView == mLibrary) {
+                mLibrary.selectPanel(panelType);
+            }*/
+        }
+    }
+
+    private void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
         if (mLibrary != null) {
             if (mView == null) {
                 setView(mLibrary, switchSurface);
@@ -535,7 +563,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mLibrary.onShow();
                 mViewModel.setIsFindInPage(false);
                 mViewModel.setIsPanelVisible(true);
-                //if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
                     final Runnable firstDrawCallback = mFirstDrawCallback;
                     onFirstContentfulPaint(mSession.getWSession());
                     mRestoreFirstPaint = () -> {
@@ -545,7 +573,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             mWidgetManager.updateWidget(WindowWidget.this);
                         }
                     };
-
+                }
             } else if (mView == mLibrary) {
                 mLibrary.selectPanel(panelType);
             }
