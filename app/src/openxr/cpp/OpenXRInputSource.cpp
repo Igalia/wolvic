@@ -10,10 +10,6 @@
 
 namespace crow {
 
-// Threshold to consider a trigger value as a click
-// Used when devices don't map the click value for triggers;
-const float kClickThreshold = 0.91f;
-
 // When doing scrolling with eye tracking we wait until this threshold is reached to start scrolling.
 // Otherwise single (slow) clicks would easily trigger scrolling.
 const XrDuration kEyeTrackingScrollThreshold = 250000000;
