@@ -22,6 +22,9 @@ import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class DisplayOptionsView extends SettingsView {
 
     private OptionsDisplayBinding mBinding;
@@ -71,6 +74,14 @@ class DisplayOptionsView extends SettingsView {
         int msaaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
+
+        List<String> windowSizePresets = new ArrayList<>();
+        for (SettingsStore.WindowSizePreset preset : SettingsStore.WindowSizePreset.values()) {
+            windowSizePresets.add(getContext().getString(R.string.window_size_preset, preset.width, preset.height));
+        }
+        mBinding.windowsSize.setOptions(windowSizePresets.toArray(new String[0]));
+        mBinding.windowsSize.setOnCheckedChangeListener(mWindowsSizeChangeListener);
+        setWindowsSize(SettingsStore.windowSizeId, false);
 
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
@@ -165,6 +176,10 @@ class DisplayOptionsView extends SettingsView {
         setMSAAMode(checkedId, true);
     };
 
+    private RadioGroupSetting.OnCheckedChangeListener mWindowsSizeChangeListener = (radioGroup, checkedId, doApply) -> {
+        setWindowsSize(checkedId, true);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mAutoplayListener = (compoundButton, enabled, apply) -> {
         setAutoplay(enabled, true);
     };
@@ -247,6 +262,10 @@ class DisplayOptionsView extends SettingsView {
         if (!prevMSAA.equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
             restart = true;
+        }
+
+        if (mBinding.windowsSize.getCheckedRadioButtonId() != 0) {
+            setWindowsSize(0, true);
         }
 
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
@@ -408,6 +427,15 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mBinding.msaaRadio.getValueForId(checkedId));
             showRestartDialog(() -> {setMSAAMode(previouslyCheckedMSAAId, true);});
         }
+    }
+
+    private void setWindowsSize(int checkedId, boolean doApply) {
+        mBinding.windowsSize.setOnCheckedChangeListener(null);
+        mBinding.windowsSize.setChecked(checkedId, doApply);
+        mBinding.windowsSize.setOnCheckedChangeListener(mWindowsSizeChangeListener);
+
+        SettingsStore.getInstance(getContext()).setWindowSize(checkedId);
+        SettingsStore.windowSizeId = checkedId;
     }
 
     private boolean setDisplayDensity(float newDensity) {
