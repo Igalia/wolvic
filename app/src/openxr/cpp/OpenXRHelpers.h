@@ -14,6 +14,10 @@
 
 namespace crow {
 
+// Threshold to consider a trigger value as a click
+// Used when devices don't map the click value for triggers;
+const float kClickThreshold = 0.91f;
+
 #if defined(HVR)
   const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
 #else

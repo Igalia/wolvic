@@ -1753,4 +1753,8 @@ void DeviceDelegateOpenXR::SetHandTrackingEnabled(bool value) {
   m.handTrackingEnabled = value;
 }
 
+float DeviceDelegateOpenXR::GetSelectThreshold() {
+  return kClickThreshold;
+}
+
 } // namespace crow
