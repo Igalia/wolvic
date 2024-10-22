@@ -22,6 +22,9 @@ import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class DisplayOptionsView extends SettingsView {
 
     private OptionsDisplayBinding mBinding;
@@ -72,7 +75,12 @@ class DisplayOptionsView extends SettingsView {
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
 
-        mBinding.windowsSize.setOptions(SettingsStore.WINDOW_SIZES);
+        //mBinding.windowsSize.setOptions(SettingsStore.WINDOW_SIZES);
+        List<String> windowSizePresets = new ArrayList<>();
+        for (SettingsStore.WindowSizePreset preset : SettingsStore.WindowSizePreset.values()) {
+            windowSizePresets.add(getContext().getString(R.string.window_size_preset, preset.width, preset.height));
+        }
+        mBinding.windowsSize.setOptions(windowSizePresets.toArray(new String[0]));
         mBinding.windowsSize.setOnCheckedChangeListener(mWindowsSizeChangeListener);
         setWindowsSize(SettingsStore.windowSizeId, false);
 

@@ -106,6 +106,22 @@ public class SettingsStore {
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 800;
     public final static String[] WINDOW_SIZES = {"800x450", "800x600", "1000x562", "1000x750"};
+
+    public enum WindowSizePreset {
+        PRESET_0(800, 450),
+        PRESET_1(800, 600),
+        PRESET_2(1000, 562),
+        PRESET_3(1000, 750);
+
+        public final int width;
+        public final int height;
+
+        WindowSizePreset(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     public static int windowSizeId;
 
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
@@ -489,10 +505,16 @@ public class SettingsStore {
     }
 
     public void setWindowSize(int id) {
-        String[] widthAndHeight = WINDOW_SIZES[id].split("x");
+        /*String[] widthAndHeight = WINDOW_SIZES[id].split("x");
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_window_width), Integer.parseInt(widthAndHeight[0]));
         editor.putInt(mContext.getString(R.string.settings_key_window_height), Integer.parseInt(widthAndHeight[1]));
+        editor.commit();*/
+
+        WindowSizePreset sizePreset = WindowSizePreset.values()[id];
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_window_width), sizePreset.width);
+        editor.putInt(mContext.getString(R.string.settings_key_window_height), sizePreset.height);
         editor.commit();
     }
 
