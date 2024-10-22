@@ -138,6 +138,7 @@ public:
   virtual void SetImmersiveBlendMode(device::BlendMode) {};
   virtual bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) { return false; };
   virtual void SetHandTrackingEnabled(bool value) {};
+  virtual float GetSelectThreshold() { return 1.f; };
 
 protected:
   DeviceDelegate() {}
