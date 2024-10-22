@@ -217,6 +217,7 @@ struct BrowserWorld::State {
   bool isApplicationEntitled = false;
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
+  float selectThreshold;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -531,7 +532,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
         const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
         controller.pointer->SetScale(scale + kPointerSize - controller.selectFactor * kPointerSize);
-        if (controller.selectFactor >= 1.0f)
+        if (controller.selectFactor >= selectThreshold)
           controller.pointer->SetPointerColor(kPointerColorSelected);
         else
           controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
@@ -936,6 +937,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.device->SetControllerDelegate(delegate);
     m.device->SetReorientClient(this);
     m.gestures = m.device->GetGestureDelegate();
+    m.selectThreshold = m.device->GetSelectThreshold();
   } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers->Reset();
