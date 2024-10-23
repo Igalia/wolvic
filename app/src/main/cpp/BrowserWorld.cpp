@@ -168,7 +168,6 @@ struct BrowserWorld::State {
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
-  GroupPtr rootPassthroughParent;
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
   TransformPtr rootWebXRInterstitial;
@@ -210,7 +209,6 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   bool inHeadLockMode = false;
-  VRLayerPassthroughPtr layerPassthrough;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -231,7 +229,6 @@ struct BrowserWorld::State {
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
-    rootPassthroughParent = Group::Create(create);
     rootWebXRInterstitial = Transform::Create(create);
     //rootOpaque->AddLight(light);
     //rootTransparent->AddLight(light);
@@ -1191,10 +1188,9 @@ BrowserWorld::StartFrame() {
   m.CheckExitImmersive();
 
   auto createPassthroughLayerIfNeeded = [this]() {
-      if (!m.device->IsPassthroughEnabled() || !m.device->usesPassthroughCompositorLayer() || m.layerPassthrough)
+      if (!m.device->IsPassthroughEnabled() || !m.device->usesPassthroughCompositorLayer())
           return;
-      m.layerPassthrough = m.device->CreateLayerPassthrough();
-      m.rootPassthroughParent->AddNode(VRLayerNode::Create(m.create, m.layerPassthrough));
+      m.device->CreateLayerPassthrough();
   };
 
   if (m.splashAnimation) {
@@ -1278,7 +1274,6 @@ BrowserWorld::TogglePassthrough() {
   m.device->TogglePassthroughEnabled();
   // No need to create the passthrough layer here. StartFrame() will do it on demand.
   if (!m.device->IsPassthroughEnabled()) {
-    resetPassthroughLayerIfNeeded();
     UpdateEnvironment();
   }
 }
@@ -1806,9 +1801,7 @@ BrowserWorld::DrawWorld(device::Eye aEye) {
   // Draw skybox or passthrough layer.
   if (!m.device->IsPassthroughEnabled() || m.device->usesPassthroughCompositorLayer()) {
     m.drawList->Reset();
-    if (m.device->IsPassthroughEnabled())
-      m.rootPassthroughParent->Cull(*m.cullVisitor, *m.drawList);
-    else
+    if (!m.device->IsPassthroughEnabled())
       m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
     m.drawList->Draw(*camera);
   }
@@ -1865,10 +1858,6 @@ BrowserWorld::TickImmersive() {
   m.device->SetRenderMode(device::RenderMode::Immersive);
   m.device->SetImmersiveBlendMode(m.externalVR->GetImmersiveBlendMode());
   m.device->SetImmersiveXRSessionType(m.externalVR->GetImmersiveXRSessionType());
-
-  // We must clear the passthrough layer when entering immersive mode even if we are not adding it
-  // to the list of layers to render. See https://github.com/Igalia/wolvic/issues/1351
-  resetPassthroughLayerIfNeeded();
 
   const bool supportsFrameAhead = m.device->SupportsFramePrediction(DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD);
   auto framePrediction = DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD;
@@ -1934,17 +1923,6 @@ BrowserWorld::TickImmersive() {
     }
     TickWebXRInterstitial();
   }
-}
-
-void
-BrowserWorld::resetPassthroughLayerIfNeeded() {
-  if (!m.layerPassthrough || (m.externalVR->IsPresenting() && m.externalVR->GetImmersiveXRSessionType() == DeviceDelegate::ImmersiveXRSessionType::AR))
-    return;
-
-  ASSERT(m.rootPassthroughParent->GetNodeCount() == 1);
-  m.rootPassthroughParent->RemoveNode(*m.rootPassthroughParent->GetNode(0));
-  m.device->DeleteLayer(m.layerPassthrough);
-  m.layerPassthrough = nullptr;
 }
 
 void

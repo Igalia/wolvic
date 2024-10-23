@@ -93,16 +93,13 @@ public:
     }
 
     for (uint i = 0; i < numXRLayers; ++i) {
-      // We have to explicitly cast to XrCompositionLayerBaseHeader because the
-      // XrCompositionLayerPassthroughFB structure used "flags" instead of "layerFlags". It's still
-      // a XrCompositionLayerBaseHeader though because the structs are binary compatible.
-      XrCompositionLayerBaseHeader* xrLayer = (XrCompositionLayerBaseHeader*) &xrLayers[i];
-      xrLayer->layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-      xrLayer->space = aSpace;
-      xrLayer->next = XR_NULL_HANDLE;
+      auto& xrLayer = xrLayers[i];
+      xrLayer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+      xrLayer.space = aSpace;
+      xrLayer.next = XR_NULL_HANDLE;
 
       if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE)
-        PushNextXrStructureInChain((XrBaseInStructure&)*xrLayer, (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
+        PushNextXrStructureInChain((XrBaseInStructure&)xrLayer, (XrBaseInStructure&)*mCompositionLayerColorScaleBias);
     }
   }
 
@@ -418,17 +415,15 @@ public:
 class OpenXRLayerPassthrough;
 typedef std::shared_ptr<OpenXRLayerPassthrough> OpenXRLayerPassthroughPtr;
 
-class OpenXRLayerPassthrough : public OpenXRLayerBase<VRLayerPassthroughPtr, XrCompositionLayerPassthroughFB> {
+class OpenXRLayerPassthrough {
   public:
     XrCompositionLayerPassthroughFB xrCompositionLayer;
 
-    static OpenXRLayerPassthroughPtr
-    Create(const VRLayerPassthroughPtr& aLayer, XrPassthroughFB);
-    void Init(JNIEnv *aEnv, XrSession session, vrb::RenderContextPtr &aContext) override;
-    void Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override;
-    void Destroy() override;
-    bool IsDrawRequested() const override { return layer->IsDrawRequested(); };
+    static OpenXRLayerPassthroughPtr Create(XrPassthroughFB);
+    void Init(XrSession session);
     bool IsValid() const { return mPassthroughLayerHandle != XR_NULL_HANDLE; }
+    XrPassthroughLayerFB GetPassthroughLayerHandle() const { return mPassthroughLayerHandle; }
+    ~OpenXRLayerPassthrough();
 
 private:
     XrPassthroughFB mPassthroughInstance;

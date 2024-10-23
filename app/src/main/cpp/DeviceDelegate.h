@@ -107,7 +107,7 @@ public:
   virtual VRLayerProjectionPtr CreateLayerProjection(VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
   virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) { return nullptr; }
   virtual VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) { return nullptr; }
-  virtual VRLayerPassthroughPtr CreateLayerPassthrough() { return nullptr; }
+  virtual void CreateLayerPassthrough() { }
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};
   virtual bool IsControllerLightEnabled() const { return true; }
   virtual vrb::LoadTask GetControllerModelTask(int32_t index) { return nullptr; } ;
@@ -123,7 +123,7 @@ public:
   };
   void SetReorientClient(ReorientClient* client) { mReorientClient = client; }
   virtual bool IsPassthroughEnabled() const { return mIsPassthroughEnabled; }
-  void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
+  virtual void TogglePassthroughEnabled() { mIsPassthroughEnabled = !mIsPassthroughEnabled; }
   virtual bool usesPassthroughCompositorLayer() const { return false; }
   virtual int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) { return -1; };
   virtual void UpdateHandMesh(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,

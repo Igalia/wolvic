@@ -18,7 +18,7 @@ virtual bool usesCompositorLayer() const { return false; }
 virtual HandleEventResult handleEvent(const XrEventDataBaseHeader&) { return HandleEventResult::NoError; };
 virtual ~OpenXRPassthroughStrategy() = default;
 virtual bool isReady() const { return mIsInErrorState; };
-virtual OpenXRLayerPassthroughPtr createLayerIfSupported(VRLayerPassthroughPtr) const;
+virtual OpenXRLayerPassthroughPtr createLayerIfSupported() const;
 protected:
 bool mIsInErrorState { false };
 };
@@ -34,7 +34,7 @@ void initializePassthrough(XrSession) override;
 bool usesCompositorLayer() const override { return true; }
 HandleEventResult handleEvent(const XrEventDataBaseHeader&) override;
 bool isReady() const override;
-OpenXRLayerPassthroughPtr createLayerIfSupported(VRLayerPassthroughPtr) const override;
+OpenXRLayerPassthroughPtr createLayerIfSupported() const override;
 
 XrPassthroughFB passthroughHandle { XR_NULL_HANDLE };
 };
