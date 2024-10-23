@@ -9,6 +9,34 @@
         "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
       },
       {
+        "value": "lobos",
+        "title": "Lobos, Fuerteventura by Simon Waldherr (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/lobos/lobos.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/lobos/lobos.zip",
+        "source": "https://www.flickr.com/photos/simonwaldherr/51638698181/"
+      },
+      {
+        "value": "nostalgiablue",
+        "title": "Colors of Nostalgia (Blue) by Duncan Rawlinson (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nostalgiablue/nostalgiablue.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nostalgiablue/nostalgiablue.zip",
+        "source": "https://www.flickr.com/photos/thelastminute/52426821655/"
+      },
+      {
+        "value": "nostalgiaorange",
+        "title": "Colors of Nostalgia (Orange) by Duncan Rawlinson (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nostalgiaorange/nostalgiaorange.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nostalgiaorange/nostalgiaorange.zip",
+        "source": "https://www.flickr.com/photos/thelastminute/52425863182"
+      },
+      {
+        "value": "fantasylandscape3",
+        "title": "Fantasy Landscape 3 by Giimann (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/fantasylandscape3/fantasylandscape3.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/fantasylandscape3/fantasylandscape3.zip",
+        "source": "https://sketchfab.com/3d-models/fantasy-landscape-3-ded6e2bb0cfd4ef785b81fed2178c2fd"
+      },
+      {
         "value": "goatrock",
         "title": "Goat Rock State Beach by Bob Dass (CC BY)",
         "thumbnail": "https://igalia.github.io/wolvic-3D-environments/goatrock/goatrock.png",
