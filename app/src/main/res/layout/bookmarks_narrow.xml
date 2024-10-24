@@ -71,7 +71,6 @@
                     android:padding="5dp"
                     android:text="@{isSyncing ? @string/fxa_syncing : @string/fxa_sync}"
                     android:textColor="@color/library_panel_button_text_color"
-                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:visibleGone="@{isSignedIn &amp;&amp; isSyncEnabled}"/>
 
@@ -92,7 +91,6 @@
                     android:padding="5dp"
                     android:text="@string/fxa_account_sing_to_sync"
                     android:textColor="@color/library_panel_button_text_color"
-                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:visibleGone="@{!isSignedIn}"/>
 
@@ -113,7 +111,6 @@
                     android:padding="5dp"
                     android:text="@string/fxa_account_sync_settings"
                     android:textColor="@color/library_panel_button_text_color"
-                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:visibleGone="@{isSignedIn &amp;&amp; !isSyncEnabled}"/>
             </FrameLayout>

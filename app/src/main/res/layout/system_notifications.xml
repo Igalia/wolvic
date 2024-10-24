@@ -67,7 +67,7 @@
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:visibleGone="@{!notificationsViewModel.isLoading &amp;&amp; !notificationsViewModel.isEmpty}"
-            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+            app:layoutManager="LinearLayoutManager" />
 
         <FrameLayout
             android:id="@+id/header"
