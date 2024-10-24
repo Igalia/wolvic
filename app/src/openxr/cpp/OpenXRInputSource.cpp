@@ -648,11 +648,6 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     bool hasAim = mGestureManager->hasAim();
     bool systemGestureDetected = mGestureManager->systemGestureDetected(handJointForAim, head);
 
-    if (!hasAim && !systemGestureDetected && !usingEyeTracking) {
-        delegate.SetEnabled(mIndex, false);
-        return;
-    }
-
     // We should handle the gesture whenever the system does not handle it.
     bool isHandActionEnabled = systemGestureDetected && (!systemTakesOverWhenHandsFacingHead || mHandeness == Left);
     delegate.SetAimEnabled(mIndex, hasAim && pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER);

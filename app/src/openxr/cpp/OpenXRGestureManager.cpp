@@ -101,10 +101,7 @@ OpenXRGestureManagerFBHandTrackingAim::aimPose(const XrTime predictedDisplayTime
 
 bool
 OpenXRGestureManagerFBHandTrackingAim::systemGestureDetected(const vrb::Matrix& hand, const vrb::Matrix& head) const {
-#ifdef PICOXR
-    // Pico does not correctly implement the SYSTEM_GESTURE_BIT_FB flags.
-    return handFacesHead(hand, head) && !hasAim();
-#elif LYNX
+#if LYNX
     // Lynx does not correctly implement the SYSTEM_GESTURE_BIT_FB and XR_HAND_TRACKING_AIM_VALID_BIT_FB flags (it's always active)
     return handFacesHead(hand, head);
 #else
