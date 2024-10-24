@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.igalia.wolvic.ui.views.CustomRecyclerView
+            android:id="@+id/bookmarks_list"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:contentDescription="Bookmarks feed"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="com.igalia.wolvic.ui.adapters.CustomLinearLayoutManager" />
+
+    </RelativeLayout>
+</layout>

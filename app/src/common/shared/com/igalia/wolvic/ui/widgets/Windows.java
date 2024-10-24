@@ -1519,7 +1519,11 @@ public void selectTab(@NonNull Session aTab) {
         setFirstPaint(targetWindow, session);
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
-            session.loadHomePage();
+            if (session.getHomeUri() == "") {
+                targetWindow.showNewTab();
+            } else {
+                session.loadHomePage();
+            }
         }
     }
 

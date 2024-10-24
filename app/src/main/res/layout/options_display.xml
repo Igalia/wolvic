@@ -90,15 +90,22 @@
                     app:options="@array/developer_options_msaa"
                     app:values="@array/developer_options_msaa_mode_values" />
 
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/homepage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_homepage"
+                    app:options="@array/developer_options_homepage" />
+
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:width="300dp"
                     android:inputType="textWebEmailAddress"
-                    app:description="@string/developer_options_homepage"
                     app:hintTextColor="@color/iron_blur"
-                    app:highlightedTextColor="@color/fog" />
+                    app:highlightedTextColor="@color/fog"
+                    android:visibility="gone" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/density_edit"
