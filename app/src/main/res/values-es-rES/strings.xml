@@ -541,7 +541,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
-    <string name="security_options_drm_content_v1">Permitir que los sitios identifiquen automáticamente el dispositivo para reproducir contenido controlado por DRM. (&lt;a href=%1$s&gt;Saber más&lt;/a&gt;)</string>
+    <string name="security_options_drm_content_v1"><![CDATA[Permitir que los sitios identifiquen automáticamente el dispositivo para reproducir contenido controlado por DRM. (<a href=%1$s>Saber más</a>)]]></string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Restaurar pestañas y ventanas después de reiniciar</string>
@@ -1821,4 +1821,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="phone_ui_alert_dialog_title">Error</string>
     <string name="phone_ui_usb_alert_dialog_description">No se pudieron obtener permisos USB. Intente desconectar las gafas, volver a conectarlas y reiniciar Wolvic.</string>
     <string name="vision_glass_disconnected_message">Por favor, conecte Vision Glass</string>
+    <string name="incompatible_os_version_title">Versión no soportada</string>
+    <string name="incompatible_os_version_message">La versión actual del sistema no está soportada. Wolvic requiere al menos la versión %1$s</string>
+    <string name="controller_options_handtracking">Seguimiento de manos</string>
+    <string name="tabs_bookmark_selected">Añadir a marcadores</string>
+    <string name="vision_glass_realign_dialog_explanation">Para configurar el controlador, apunte su teléfono hacia adelante y toque el botón.</string>
 </resources>
