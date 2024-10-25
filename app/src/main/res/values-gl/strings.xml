@@ -374,8 +374,7 @@
     <string name="resize_tooltip">Redimensionar</string>
     <string name="webxr_allowed_tooltip">WebXR permitido</string>
     <string name="webxr_blocked_tooltip">WebXR non permitido</string>
-    <string name="webxr_interstitial_exit_webxr">Saír
-\nWebXR</string>
+    <string name="webxr_interstitial_exit_webxr">Saír de \nWebXR</string>
     <string name="webxr_interstitial_how_to_continue_1">Premer calquera botón para continuar</string>
     <string name="private_browsing_enter_tooltip">Entrar en navegación privada</string>
     <string name="private_browsing_exit_tooltip">Saír da navegación privada</string>
@@ -799,4 +798,9 @@
     <string name="vision_glass_touchpad_instructions">Pulsa para facer click. Desliza para facer scroll</string>
     <string name="vision_glass_error_message">Houbo un erro.
 \nTente de novo.</string>
+    <string name="tabs_bookmark_selected">Gardar nos marcadores</string>
+    <string name="incompatible_os_version_title">Versión non soportada</string>
+    <string name="incompatible_os_version_message">A versión actual do sistema non está soportada. Wolvic require polo menos a versión %1$s</string>
+    <string name="controller_options_handtracking">Seguimento de mans</string>
+    <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, apunte o seu teléfono cara adiante e toque o botón.</string>
 </resources>
