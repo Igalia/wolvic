@@ -1605,7 +1605,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the headset status bar icon when hovered.
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Headset: %1$s</string>
-
     <string name="language_service_options_reset">Einstellungen des Sprachsuchdienstes zurücksetzen</string>
     <string name="external_open_uri_error_no_activity_body">Keine Anwendung gefunden, die mit %1$s</string>
     <string name="voice_search_unsupported">Sprachsuche wird für Ihre Sprache nicht unterstützt.</string>
