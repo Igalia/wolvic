@@ -554,7 +554,7 @@
     <string name="security_options_login_save">Gravar logins e palavras-passe</string>
     <string name="security_options_login_autofill">Preenchimento automático</string>
     <string name="security_options_autoplay">Reprodução automática de mídia</string>
-    <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para a Mozilla</string>
+    <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para Huawei</string>
     <string name="sync">Sincronizar</string>
     <string name="do_not_sync">Não sincronizar</string>
     <string name="voice_search_decoding">Procurando…</string>
@@ -778,4 +778,19 @@
 \nPode ler o Acordo de Usuário e a Política de Privacidade completos.</string>
     <string name="display_options_latin_auto_complete">Preenchimento automático de entradas em teclado latino</string>
     <string name="permission_rationale_title">Permissões adicionais</string>
+    <string name="permission_camera_rationale">Usar imagens do ambiente ao seu redor requer permissão para utilizar a sua câmera.</string>
+    <string name="hamburger_menu_zoom">Zoom</string>
+    <string name="permission_microphone_rationale">Realizar pesquisas por voz e entrada de texto requer permissão para utilizar o seu microfone.</string>
+    <string name="permission_notification_rationale">Notificá-lo sobre notícias e atualizações requer permissão para enviar notificações.</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Falha ao mudar para o modo 3D. Tente desconectar os óculos, conectá-los novamente e reiniciar o Wolvic.</string>
+    <string name="permission_camera_and_microphone_rationale">Fornecer serviços como videoconferência requer permissão para utilizar a sua câmera e microfone.</string>
+    <string name="permission_location_rationale">Notícias e conteúdo nas proximidades requerem permissão para acessar a sua localização.</string>
+    <string name="permission_read_external_storage_rationale">Abrir arquivos no seu dispositivo requer permissão para acessar o armazenamento externo.</string>
+    <string name="permission_persistent_storage_rationale">Salvar e abrir arquivos no seu dispositivo requer permissão para armazenar dados no armazenamento persistente.</string>
+    <string name="tray_status_phone">Telefone: %1$s</string>
+    <string name="vision_glass_touchpad_instructions">Toque para clicar. Deslize para rolar</string>
+    <string name="phone_ui_alert_dialog_title">Erro</string>
+    <string name="phone_ui_usb_alert_dialog_description">Falha ao obter permissões USB. Tente desconectar os óculos, conectá-los novamente e reiniciar o Wolvic.</string>
+    <string name="vision_glass_disconnected_message">Por favor, conecte o Vision Glass</string>
+    <string name="vision_glass_error_message">Ocorreu um erro.\nPor favor, tente novamente.</string>
 </resources>
