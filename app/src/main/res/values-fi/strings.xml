@@ -1139,7 +1139,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_status_unknown_error">Tuntematon virhe</string>
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Ympäristövirhe</string>
-
     <string name="settings_privacy_saved_logins">Tallennetut kirjautumistiedot</string>
     <string name="settings_privacy_search_engine_title">Hakukone</string>
     <string name="settings_display">Näyttö</string>
