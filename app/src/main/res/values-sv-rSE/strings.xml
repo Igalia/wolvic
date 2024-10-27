@@ -1017,7 +1017,7 @@
     <string name="privacy_options_saved_login_delete">Ta bort</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking">Förbättrat spårningsskydd. (&lt;a href=%1$s&gt;Läs mer&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[Enhanced Tracking Protection. (<a href="%1$s">Läs mer</a>)]]></string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avancerat</string>
@@ -1819,4 +1819,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_disconnected_message">Vänligen anslut Apple Vision glasögon</string>
     <string name="vision_glass_error_message">Ett fel uppstog.
 \nVar god försök igen.</string>
+    <string name="controller_options_handtracking">Handspårning</string>
+    <string name="tabs_bookmark_selected">Bokmärk flikar</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Ögonspårning</string>
+    <string name="eye_tracking_permission_title">Behörigheter för ögonspårning</string>
+    <string name="incompatible_os_version_title">Inkompatibel OS-version</string>
+    <string name="incompatible_os_version_message">Din OS-version stöds inte. Denna version av Wolvic kräver minst version %1$s</string>
+    <string name="vision_glass_realign_dialog_explanation">För att ställa in handkontrollen, vänligen rikta telefonen rakt fram och tryck på knappen.</string>
+    <string name="controller_options_pointer_mode">Blickläge</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Pekare</string>
+    <string name="eye_tracking_permission_message">Att aktivera ögonspårning för att surfa på webben innebär betydande integritetsrisker. Denna teknik fångar var och hur länge en användare tittar på specifika delar av en webbsida och avslöjar intima detaljer om deras intressen och känslomässiga reaktioner. Annonsörer och tredje part kan utnyttja denna data för påträngande marknadsföring och profilering. Dessutom kan ögonrörelsemönster sluta sig till känslig information som medicinska tillstånd, kognitiva tillstånd eller personliga vanor. Därför är det avgörande att överväga integritetskonsekvenserna innan du beviljar tillgång till ögonspårningsinformation till/för webbsidor.</string>
 </resources>
