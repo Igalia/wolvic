@@ -793,4 +793,9 @@
     <string name="phone_ui_usb_alert_dialog_description">Falha ao obter permissões USB. Tente desconectar os óculos, conectá-los novamente e reiniciar o Wolvic.</string>
     <string name="vision_glass_disconnected_message">Por favor, conecte o Vision Glass</string>
     <string name="vision_glass_error_message">Ocorreu um erro.\nPor favor, tente novamente.</string>
+    <string name="incompatible_os_version_title">Versão não suportada</string>
+    <string name="incompatible_os_version_message">A versão atual do sistema não é suportada. O Wolvic requer pelo menos a versão %1$s</string>
+    <string name="tabs_bookmark_selected">Adicionar aos favoritos</string>
+    <string name="controller_options_handtracking">Rastreamento de mãos</string>
+    <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, aponte o seu telefone para a frente e toque no botão.</string>
 </resources>
