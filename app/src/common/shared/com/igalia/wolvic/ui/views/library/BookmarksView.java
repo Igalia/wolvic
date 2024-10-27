@@ -44,12 +44,14 @@ import com.igalia.wolvic.utils.SystemUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
+import mozilla.components.concept.storage.BookmarkNodeType;
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthFlowError;
 import mozilla.components.concept.sync.AuthType;
@@ -375,10 +377,28 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         });
     }
 
+    private List<BookmarkNode> filterBookmarks(List<BookmarkNode> bookmarks, String searchFilter) {
+        if (bookmarks == null || bookmarks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<BookmarkNode> filteredList = new ArrayList<>();
+        for (BookmarkNode bookmark : bookmarks) {
+            if (bookmark.getType() == BookmarkNodeType.FOLDER) {
+                filteredList.addAll(filterBookmarks(bookmark.getChildren(), searchFilter));
+            } else if (bookmark.getType() == BookmarkNodeType.ITEM &&
+                    ((bookmark.getTitle() != null && bookmark.getTitle().toLowerCase().contains(searchFilter)) ||
+                            (bookmark.getUrl() != null && bookmark.getUrl().toLowerCase().contains(searchFilter)))) {
+                filteredList.add(bookmark);
+            }
+        }
+        return filteredList;
+    }
+
     private void showBookmarks(List<BookmarkNode> aBookmarks) {
         mCachedBookmarkItems = aBookmarks;
 
-        if (aBookmarks == null || aBookmarks.size() == 0) {
+        if (aBookmarks == null || aBookmarks.isEmpty()) {
             mViewModel.setIsEmpty(true);
             mViewModel.setIsLoading(false);
 
@@ -390,10 +410,7 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
             if (getSearchFilter().isEmpty()) {
                 mBookmarkAdapter.setBookmarkList(aBookmarks);
             } else {
-                List<BookmarkNode> filteredBookmarks = aBookmarks.stream().filter(bookmark ->
-                        (bookmark.getTitle() != null && bookmark.getTitle().toLowerCase().contains(getSearchFilter()) ||
-                        (bookmark.getUrl() != null && bookmark.getUrl().toLowerCase().contains(getSearchFilter())))
-                ).collect(Collectors.toList());
+                List<BookmarkNode> filteredBookmarks = filterBookmarks(aBookmarks, getSearchFilter().toLowerCase());
                 mBookmarkAdapter.setBookmarkList(filteredBookmarks);
             }
         }
