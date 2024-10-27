@@ -236,7 +236,7 @@
     <string name="security_options_permission_webxr">Dispositivos de realidade virtual (WebXR)</string>
     <string name="security_options_webxr_settings">Avanzado</string>
     <string name="security_options_crash_reports_send_data">Permitir a %1$s enviar informes de erros automáticos</string>
-    <string name="security_options_telemetry_send_data">Permitir a %1$s enviar datos técnicos e de interacción a Mozilla</string>
+    <string name="security_options_telemetry_send_data">Permitir a %1$s enviar datos técnicos e de interacción a Huawei</string>
     <string name="sync">Sincronización</string>
     <string name="on">Activado</string>
     <string name="off">Desactivado</string>
@@ -374,8 +374,7 @@
     <string name="resize_tooltip">Redimensionar</string>
     <string name="webxr_allowed_tooltip">WebXR permitido</string>
     <string name="webxr_blocked_tooltip">WebXR non permitido</string>
-    <string name="webxr_interstitial_exit_webxr">Saír
-\nWebXR</string>
+    <string name="webxr_interstitial_exit_webxr">Saír de \nWebXR</string>
     <string name="webxr_interstitial_how_to_continue_1">Premer calquera botón para continuar</string>
     <string name="private_browsing_enter_tooltip">Entrar en navegación privada</string>
     <string name="private_browsing_exit_tooltip">Saír da navegación privada</string>
@@ -782,4 +781,26 @@
     <string name="keyboardview_keycode_enter">Enter</string>
     <string name="tray_wifi_unavailable_ssid">SSID non dispoñible</string>
     <string name="display_options_latin_auto_complete">Autocompletado co teclado latino</string>
+    <string name="tray_status_phone">Teléfono: %1$s</string>
+    <string name="hamburger_menu_zoom">Zoom</string>
+    <string name="permission_camera_rationale">Obter imaxes do teu entorno require permiso para usar a túa cámara.</string>
+    <string name="permission_notification_rationale">Notificar de novas e actualizacións require permiso para enviar notificacións.</string>
+    <string name="phone_ui_alert_dialog_title">Erro</string>
+    <string name="phone_ui_usb_alert_dialog_description">Erro obtendo permisos USB. Tente desconectar as gafas, conectalas de novo e reiniciar Wolvic.</string>
+    <string name="permission_rationale_title">Permisos adicionais</string>
+    <string name="permission_microphone_rationale">Facer pesquisas por voz e escritura por voz require permisos para usar o teu micrófono.</string>
+    <string name="permission_camera_and_microphone_rationale">Proporcionar servizos como a videoconferencia require permiso para usar a cámara e o micrófono.</string>
+    <string name="permission_location_rationale">Ofrecer novas e contido local require permiso para acceder á túa localización.</string>
+    <string name="permission_read_external_storage_rationale">Abrir arquivos no teu dispositivo require permiso para ler o almacenamento externo.</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Erro ao cambiar a modo 3D. Tente desconectar as gafas, conectalas de novo e reiniciar Wolvic.</string>
+    <string name="permission_persistent_storage_rationale">Gardar e abrir arquivos no teu dispositivo require permisos para almacenar datos no almacenamento persistente.</string>
+    <string name="vision_glass_disconnected_message">Por favor conecte Vision Glass</string>
+    <string name="vision_glass_touchpad_instructions">Pulsa para facer click. Desliza para facer scroll</string>
+    <string name="vision_glass_error_message">Houbo un erro.
+\nTente de novo.</string>
+    <string name="tabs_bookmark_selected">Gardar nos marcadores</string>
+    <string name="incompatible_os_version_title">Versión non soportada</string>
+    <string name="incompatible_os_version_message">A versión actual do sistema non está soportada. Wolvic require polo menos a versión %1$s</string>
+    <string name="controller_options_handtracking">Seguimento de mans</string>
+    <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, apunte o seu teléfono cara adiante e toque o botón.</string>
 </resources>
