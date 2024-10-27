@@ -860,8 +860,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">允許 %1$s 傳送技術與互動資料給 Mozilla</string>
-
+    <string name="security_options_telemetry_send_data">允許 %1$s 傳送技術與互動資料給 華為</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -2413,4 +2412,21 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n支援文件（請求/回應的收據、通訊等）將存檔，以證明其管理正確。
 \n同樣，我們提醒您，您有權向西班牙資料保護局提出索賠。</string>
+    <string name="tray_status_phone">電話: %1$s</string>
+    <string name="permission_microphone_rationale">進行語音搜尋和文字輸入需要使用麥克風的權限。</string>
+    <string name="permission_notification_rationale">通知您新聞和更新需要發送通知的權限。</string>
+    <string name="phone_ui_alert_dialog_title">錯誤</string>
+    <string name="vision_glass_disconnected_message">請連接視鏡</string>
+    <string name="vision_glass_error_message">發生錯誤。
+\n請再試一次。</string>
+    <string name="permission_rationale_title">附加權限</string>
+    <string name="permission_camera_rationale">拍攝周圍世界的影像需要獲得使用相機的許可。</string>
+    <string name="permission_camera_and_microphone_rationale">提供視訊會議等服務需要獲得使用攝影機和麥克風的許可。</string>
+    <string name="permission_location_rationale">提供附近的新聞和內容需要獲得存取您的位置的權限。</string>
+    <string name="hamburger_menu_zoom">放大</string>
+    <string name="vision_glass_touchpad_instructions">輕擊即可點擊。 滑動即可滾動</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">無法切換到 3D 模式。 嘗試拔下眼鏡插頭並重新插上，然後重新啟動 Wolvic。</string>
+    <string name="phone_ui_usb_alert_dialog_description">無法取得USB權限。 嘗試拔下眼鏡插頭並重新插上，然後重新啟動 Wolvic。</string>
+    <string name="permission_read_external_storage_rationale">開啟裝置上的檔案需要讀取外部儲存的權限。</string>
+    <string name="permission_persistent_storage_rationale">在設備上儲存和開啟檔案需要在持久性儲存中儲存資料的權限。</string>
 </resources>
