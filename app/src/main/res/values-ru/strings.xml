@@ -622,8 +622,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">Разрешить %1$s отправлять технические данные и данные взаимодействия в Mozilla
- </string>
+    <string name="security_options_telemetry_send_data">Разрешить %1$s отправлять технические данные и данные взаимодействия в Huawei</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1689,8 +1688,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="rCN_first_launch_confirmation_agree">Согласиться и продолжить</string>
     <string name="rCN_first_launch_confirmation_disagree">Не согласиться и выйти</string>
     <string name="keyboardview_keycode_alt">Alt</string>
-    <string name="keyboardview_keycode_cancel">Cancel</string>
-    <string name="keyboardview_keycode_delete">Delete</string>
+    <string name="keyboardview_keycode_cancel">Отменить</string>
+    <string name="keyboardview_keycode_delete">Удалить</string>
     <string name="keyboardview_keycode_done">Done</string>
     <string name="keyboardview_keycode_mode_change">Mode change</string>
     <string name="keyboardview_keycode_enter">Enter</string>
@@ -1722,4 +1721,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \nВы можете ознакомиться с полным текстом пользовательского соглашения и политики конфиденциальности.</string>
     <string name="privacy_policy_section_3">Эта политика конфиденциальности регулируется законодательством Испании. Оригинальный язык политики — испанский. Любые возможные отличия между оригинальной версией и переводами на другие языки будут трактоваться в соответствии с испанской версией, которая доступна по адресу: https://wolvic.com/es/legal/privacy/ .</string>
+    <string name="hamburger_menu_zoom">Увеличение</string>
+    <string name="permission_camera_rationale">Получение изображений окружающего мира требует разрешения использовать вашу камеру.</string>
+    <string name="permission_location_rationale">Показ местных новостей и материалов требует разрешения запрашивать ваше местоположение.</string>
+    <string name="permission_notification_rationale">Уведомления о новостях и обновлениях требуют разрешения отправлять вам уведомления.</string>
+    <string name="permission_microphone_rationale">Выполнение голосового поиска и текстового ввода требует разрешения использовать ваш микрофон.</string>
+    <string name="permission_camera_and_microphone_rationale">Предоставление таких сервисов, как видеоконференция, требует разрешения использовать ваши камеру и микрофон.</string>
+    <string name="permission_read_external_storage_rationale">Чтобы открывать файлы на вашем устройстве, требуется разрешение читать ваше внешнее хранилище.</string>
+    <string name="permission_persistent_storage_rationale">Чтобы открывать и сохранять файлы на вашем устройстве, требуется разрешение сохранять данные в постоянном хранилище.</string>
+    <string name="permission_rationale_title">Дополнительные разрешения</string>
 </resources>
