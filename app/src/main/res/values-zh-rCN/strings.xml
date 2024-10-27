@@ -660,7 +660,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">允许 %1$s 向 Mozilla 发送技术信息及交互数据</string>
+    <string name="security_options_telemetry_send_data">允许 %1$s 向 华为发送技术信息及交互数据</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1833,4 +1833,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_disconnected_message">请连接Vision Glass</string>
     <string name="vision_glass_error_message">发生错误。请重试。</string>
     <string name="phone_ui_set3dmode_alert_dialog_description">切换到 3D 模式失败。尝试拔下眼镜并插回，然后重新启动 Wolvic。</string>
+    <string name="hamburger_menu_zoom">放大</string>
+    <string name="tray_status_phone">电话: %1$s</string>
+    <string name="vision_glass_touchpad_instructions">轻击屏幕即可点击。 轻滑即可滚动</string>
 </resources>
