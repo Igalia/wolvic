@@ -241,7 +241,7 @@
     <string name="search_placeholder">Pesquise na Web ou digite endereço</string>
     <string name="video_mode_180_top_bottom">Estéreo 180 de cima para baixo</string>
     <string name="video_controls_live">AO VIVO</string>
-    <string name="crash_dialog_message">Ajude a Mozilla a melhorar o %1$s enviando seus dados de falha. &lt;a href=more&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="crash_dialog_message">Ajude a melhorar o %1$s enviando seus dados de falha. &lt;a href=more&gt;Saiba mais&lt;/a&gt;</string>
     <string name="video_mode_360">360</string>
     <string name="do_not_sent_button">Não envie</string>
     <string name="brightness_mode_normal">Normal</string>
@@ -792,4 +792,9 @@
     <string name="phone_ui_usb_alert_dialog_description">Falha para obter permissões USB. Tente desconectar o óculos, conecte-o novamente e reinicie o Wolvic.</string>
     <string name="vision_glass_error_message">Aconteceu um erro.
 \nPor favor, tente novamente.</string>
+    <string name="incompatible_os_version_message">A versão atual do sistema não é suportada. O Wolvic requer pelo menos a versão %1$s</string>
+    <string name="tabs_bookmark_selected">Adicionar aos favoritos</string>
+    <string name="incompatible_os_version_title">Versão não suportada</string>
+    <string name="controller_options_handtracking">Rastreamento de mãos</string>
+    <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, aponte o seu telefone para a frente e toque no botão.</string>
 </resources>
