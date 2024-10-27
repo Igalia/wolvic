@@ -672,7 +672,7 @@
     <string name="crash_dialog_heading">問題が発生したため、不正終了しました</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[%1$s の改善を助けるため、Mozilla にクラッシュデータを送信してください。]]></string>
+    <string name="crash_dialog_message"><![CDATA[%1$s の改善を助けるため、Wolvic にクラッシュデータを送信してください。]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">常にデータを送信する</string>
@@ -1829,4 +1829,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_touchpad_instructions">タップしてクリック。スワイプしてスクロール。</string>
     <string name="phone_ui_alert_dialog_title">エラー</string>
     <string name="vision_glass_error_message">エラーが発生しました。\nもう一度お試しください。</string>
+    <string name="controller_options_handtracking">ハンドトラッキング</string>
+    <string name="tabs_bookmark_selected">タブをブックマークに追加</string>
+    <string name="incompatible_os_version_title">サポートされていないバージョンです</string>
+    <string name="incompatible_os_version_message">現在のシステムバージョンはサポートされていません。Wolvicは少なくともバージョン%1$sが必要です。</string>
+    <string name="vision_glass_realign_dialog_explanation">コントローラーを設定するには、電話をまっすぐ前に向けてボタンをタップしてください。</string>
 </resources>
