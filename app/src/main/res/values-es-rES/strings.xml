@@ -676,7 +676,7 @@
     <string name="crash_dialog_heading">Hubo un problema y se cerró la aplicación</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">Ayuda a Mozilla a mejorar %1$s enviando tu informe de error. &lt;a href=more&gt;Learn More&lt;/a&gt;</string>
+    <string name="crash_dialog_message"><![CDATA[Por favor, ayude a Mozilla a mejorar %1$s enviándonos sus errores. <a href="more">Más información</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Enviar siempre la información sin preguntar</string>
@@ -1020,7 +1020,7 @@
     <string name="privacy_options_saved_login_delete">Eliminar</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking">Protección contra rastreo mejorada. (&lt;a href=%1$s&gt;Saber más&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[Protección contra rastreo mejorada (<a href="%1$s">Saber más</a>)]]></string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Avanzado</string>
@@ -1820,4 +1820,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_handtracking">Seguimiento de manos</string>
     <string name="tabs_bookmark_selected">Añadir a marcadores</string>
     <string name="vision_glass_realign_dialog_explanation">Para configurar el controlador, apunte su teléfono hacia adelante y toque el botón.</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Puntero</string>
+    <string name="controller_options_pointer_mode">Modo de mirar</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Seguimiento ocular</string>
+    <string name="eye_tracking_permission_title">Permisos de seguimiento ocular</string>
+    <string name="eye_tracking_permission_message">Habilitar el seguimiento ocular para navegar por la web plantea riesgos significativos de privacidad. Esta tecnología captura dónde y cuánto tiempo un usuario mira partes específicas de una página web, revelando detalles íntimos sobre sus intereses y reacciones emocionales. Los anunciantes y terceros pueden explotar estos datos para el marketing intrusivo y la elaboración de perfiles. Además, los patrones de movimiento del ojo podrían deducir información sensible como condiciones médicas, estados cognitivos o hábitos personales. Por lo tanto, es crucial considerar las implicaciones de la privacidad antes de conceder acceso a la información de seguimiento ocular a páginas web.</string>
 </resources>
