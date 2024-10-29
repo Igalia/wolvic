@@ -207,7 +207,7 @@ android_main(android_app *aAppState) {
     android_poll_source *pSource;
 
     // Loop until all events are read. If the activity is paused use a blocking call to read events.
-    while (ALooper_pollAll(computeALooperTimeout(), nullptr, &events, (void **) &pSource) >= 0) {
+    while (ALooper_pollOnce(computeALooperTimeout(), nullptr, &events, (void **) &pSource) >= 0) {
       // Process event.
       if (pSource) {
         pSource->process(aAppState, pSource);
