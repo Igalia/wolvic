@@ -633,6 +633,21 @@ OpenXRInputSource::PopulateHandJointLocations(device::RenderMode renderMode, std
         jointTransforms[i] = transform;
         jointRadii[i] = mHandJoints[i].radius;
     }
+#if defined(PICOXR)
+    // Scale joints according to their radius (for rendering). This is currently only
+    // relevant on Pico with system version earlier than 5.7.1, where we are using spheres
+    // to render the hands instead of a proper hand model due to incorrect joint orientation.
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate)) {
+        for (int i = 0; i < mHandJoints.size(); i++) {
+            if (IsHandJointPositionValid((XrHandJointEXT) i, mHandJoints)) {
+                float radius = mHandJoints[i].radius;
+                vrb::Matrix scale = vrb::Matrix::Identity().ScaleInPlace(
+                        vrb::Vector(radius, radius, radius));
+                jointTransforms[i].PostMultiplyInPlace(scale);
+            }
+        }
+    }
+#endif
 }
 
 void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode, XrTime predictedDisplayTime, const vrb::Matrix& head, const vrb::Matrix& handJointForAim, DeviceDelegate::PointerMode pointerMode, bool usingEyeTracking, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate& delegate)
@@ -696,6 +711,14 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
                                                       correctionAngle);
         pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
+    }
+#elif defined(PICOXR)
+    // On Pico, this only affects system versions earlier than 5.7.1
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate)) {
+        float correctionAngle = -M_PI_2;
+        pointerTransform
+            .PostMultiplyInPlace(vrb::Matrix::Rotation(vrb::Vector(0.0, 1.0, 0.0),correctionAngle)
+            .PostMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0), correctionAngle)));
     }
 #endif
 
