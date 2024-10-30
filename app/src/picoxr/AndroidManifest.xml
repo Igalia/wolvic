@@ -10,8 +10,8 @@
     <application android:requestLegacyExternalStorage="true">
         <activity android:name=".VRBrowserActivity">
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
-            <meta-data android:name="pvr.app.type" android:value="vr" />
         </activity>
+        <meta-data android:name="pvr.app.type" android:value="vr" />
         <meta-data android:name="handtracking" android:value="1" />
         <meta-data android:name="picovr.software.eye_tracking" android:value="true" />
     </application>
