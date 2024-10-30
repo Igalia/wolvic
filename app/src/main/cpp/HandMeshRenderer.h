@@ -35,6 +35,21 @@ public:
 };
 
 
+// HandMeshRendererSpheres
+
+class HandMeshRendererSpheres: public HandMeshRenderer {
+protected:
+    struct State;
+    State& m;
+    HandMeshRendererSpheres(State&, vrb::CreationContextPtr&);
+public:
+    static HandMeshRendererPtr Create(vrb::CreationContextPtr&);
+private:
+    void Update(const uint32_t aControllerIndex, const std::vector<vrb::Matrix>& handJointTransforms,
+                const vrb::GroupPtr& aRoot, HandMeshBufferPtr& aBuffer, const bool aEnabled, const bool leftHanded) override;
+};
+
+
 // HandMeshRendererSkinned
 
 struct HandMeshSkinned;

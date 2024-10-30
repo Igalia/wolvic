@@ -200,6 +200,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final long RESET_CRASH_COUNT_DELAY = 5000;
     static final int UPDATE_NATIVE_WIDGETS_DELAY = 50; // milliseconds
 
+    // Passthrough was enabled on Pico version 5.7.1, via XR_FB_passthrough extension
+    static final String kPicoVersionPassthroughUpdate = "5.7.1";
+
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -1982,7 +1985,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
     @Override
     public boolean isPassthroughSupported() {
-        return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces() || DeviceType.isPicoXR();
+        return DeviceType.isOculusBuild() || DeviceType.isLynx() || DeviceType.isSnapdragonSpaces() ||
+               (DeviceType.isPicoXR() && Build.ID.compareTo(kPicoVersionPassthroughUpdate) >= 0);
     }
     @Override
     public boolean areControllersAvailable() {

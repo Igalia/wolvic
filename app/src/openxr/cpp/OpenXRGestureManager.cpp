@@ -29,6 +29,11 @@ OpenXRGestureManager::handFacesHead(const vrb::Matrix &hand, const vrb::Matrix &
     // For the hand we take the Y axis because that corresponds to head's Z axis when
     // the hand is in upright position facing head (the gesture we want to detect).
     auto handDirection = hand.MultiplyDirection({0, 1, 0}).Normalize();
+#ifdef PICOXR
+    // Axis are inverted in Pico system versions prior to 5.7.1
+    if (CompareBuildIdString(kPicoVersionHandTrackingUpdate))
+        handDirection = hand.MultiplyDirection({0, 0, -1});
+#endif
     auto headDirection = head.MultiplyDirection({0, 0, -1}).Normalize();
 
     // First check that vector directions align
