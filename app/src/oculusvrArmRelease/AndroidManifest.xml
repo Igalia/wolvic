@@ -54,10 +54,12 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             android:resizeableActivity="false"
             android:supportsPictureInPicture="false"
-            tools:replace="android:launchMode, android:configChanges">
+            tools:replace="android:launchMode, android:configChanges"
+            android:exported="true">
             <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.INFO" />
                 <category android:name="com.oculus.intent.category.VR" android:value="vr_only"/>
             </intent-filter>
