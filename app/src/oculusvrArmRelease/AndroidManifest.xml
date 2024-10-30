@@ -45,11 +45,6 @@
         <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
         <meta-data android:name="com.oculus.supportedDevices" android:value="quest|quest2|questpro"/>
         <activity
-            android:name=".VersionCheckActivity"
-            android:screenOrientation="landscape"
-            android:exported="true">
-        </activity>
-        <activity
             android:name=".VRBrowserActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
