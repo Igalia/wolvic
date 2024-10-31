@@ -7,12 +7,18 @@
 namespace crow {
 
 #define ANDROID_OS_BUILD_ID "ro.build.display.id"
-#define ANDROID_OS_MODEL_ID "ro.product.vendor.model"
+#define ANDROID_OS_MANUFACTURER_ID "ro.product.manufacturer"
+#define ANDROID_OS_MODEL_ID "ro.product.model"
 
 // Get the Build ID of the current Android system.
 inline const char* GetBuildIdString(char* out) {
   __system_property_get(ANDROID_OS_BUILD_ID, out);
   return out;
+}
+
+// Retrieves the manufacturer name from the Android OS. Returns the amount of chars in the result.
+inline int GetManufacturerString(char* out) {
+  return __system_property_get(ANDROID_OS_MANUFACTURER_ID, out);
 }
 
 // Retrieves the model name from Android OS. Returns the amount of chars of the model.

@@ -120,6 +120,10 @@ vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context
 }
 
 device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
+    const char* PICO_MANUFACTURER = "Pico";
+    const char* OCULUS_MANUFACTURER = "Oculus";
+    const char* QUEST_MODEL_PREFIX = "Quest";
+
     char model[128];
     int length = PopulateDeviceModelString(model);
 
@@ -146,8 +150,20 @@ device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
 
     auto device = deviceNamesMap.find(model);
     if (device == deviceNamesMap.end()) {
-        VRB_WARN("Device %s is not supported", model);
-        return device::UnknownType;
+      // Fallback logic for Meta and Pico.
+      char manufacturer[128];
+      int mLength = GetManufacturerString(manufacturer);
+      if (is6DoF && strcmp(manufacturer, PICO_MANUFACTURER) == 0) {
+          VRB_WARN("Device %s %s is not recognized, assuming Pico 4 compatible.", manufacturer, model);
+          return device::Pico4x;
+      } else if (is6DoF && strcmp(manufacturer, OCULUS_MANUFACTURER) == 0 &&
+                 strncmp(model, QUEST_MODEL_PREFIX, strlen(QUEST_MODEL_PREFIX)) == 0) {
+          VRB_WARN("Device %s %s is not recognized, assuming Meta Quest compatible.", manufacturer, model);
+          return device::MetaQuest3;
+      } else {
+          VRB_WARN("Device %s %s is not supported", manufacturer, model);
+          return device::UnknownType;
+      }
     }
     return device->second;
 }
