@@ -14,7 +14,7 @@
     <string name="fxa_account_syncing_off">Синхронізацію вимкнено</string>
     <string name="fxa_account_last_sync_error">Помилка синхронізації</string>
     <string name="fxa_account_last_synced">Остання синхронізація %1$d хвилин(у) тому</string>
-    <string name="security_options_drm_content_v1">Автоматично дозволяти сайтам ідентифікувати ваш пристрій для відтворення DRM вмісту. (&lt;a href=%1$s&gt;Докладніше&lt;/a&gt;)</string>
+    <string name="security_options_drm_content_v1"><![CDATA[Автоматично дозволяти сайтам ідентифікувати ваш пристрій для відтворення DRM вмісту. (<a href="%1$s">Докладніше</a>)]]></string>
     <string name="security_options_login_save">Зберігати логіни та паролі</string>
     <string name="security_options_login_sync">Синхронізувати логіни з акаунтом Mozilla</string>
     <string name="send_tab_dialog_syncing">Синхронізація…</string>
@@ -273,7 +273,7 @@
     <string name="upload_list_empty">Немає файлів для вивантаження</string>
     <string name="back_button">Назад</string>
     <string name="ok_button">OK</string>
-    <string name="crash_dialog_message">Будь ласка, допоможіть Mozilla покращити %1$s, надіславши дані про збій &lt;a href=more&gt;Докладніше&lt;/a&gt;</string>
+    <string name="crash_dialog_message"><![CDATA[Будь ласка, допоможіть Mozilla покращити %1$s, надіславши дані про збій <a href="more">Докладніше</a>]]></string>
     <string name="brightness_mode_void">Пустотна</string>
     <string name="context_menu_view_audio">Переглянути аудіо</string>
     <string name="context_menu_copy_audio_location">Скопіювати посилання на аудіо</string>
@@ -336,7 +336,7 @@
     <string name="voice_samples_collect_data_dialog_title">Дозволити %1$s збирати зразки голосу для досліджень?</string>
     <string name="addons_install_dialog_title">Додати %1$s?</string>
     <string name="addons_download_success_dialog_title">%1$s було додано до %2$s</string>
-    <string name="voice_samples_collect_dialog_description2">Для покращення розпізнавання мови та інших сервісів нам необхідно збирати зразки голосу для досліджень. Ми зберігаємо ваші дані надійно і без персональної інформації. Ви завжди зможете використовувати голосовий пошук, навіть якщо ви не дозволяєте збір інформації. &lt;a href=&gt;Докладніше&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[Для покращення розпізнавання мови та інших сервісів нам необхідно збирати зразки голосу для досліджень. Ми зберігаємо ваші дані надійно і без персональної інформації. Ви завжди зможете використовувати голосовий пошук, навіть якщо ви не дозволяєте збір інформації. <a href="">Докладніше</a>]]></string>
     <string name="addons_download_success_dialog_ok">Гаразд, зрозуміло</string>
     <string name="addons_remove_error_dialog_title">Під час видалення %1$s сталась помилка</string>
     <string name="addons_download_error_dialog_title">Під час завантаження сталася помилка. Будь ласка, спробуйте ще раз.</string>
@@ -368,9 +368,9 @@
     <string name="whats_new_body_sub_1">Обліковий запис Mozilla також дозволяє синхронізувати закладки та історію на всіх ваших пристроях.</string>
     <string name="slow_script_dialog_action_wait">Почекати</string>
     <string name="download_status_pending">Очікується</string>
-    <string name="webxr_permission_dialog_message">WebXR %1$s для цього сайта. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR %1$s для цього сайта. <a href="%2$s">Докладніше</a>]]></string>
     <string name="webxr_dialog_button_off">Вимкнено</string>
-    <string name="drm_first_use_body_v2">Увімкнення DRM дозволяє сайтам ідентифікувати цей пристрій щоразу, коли ви його відвідуєте. &lt;a href=%1$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="drm_first_use_body_v2"><![CDATA[Увімкнення DRM дозволяє сайтам ідентифікувати цей пристрій щоразу, коли ви його відвідуєте. <a href="%1$s">Докладніше</a>]]></string>
     <string name="drm_first_use_allow">Дозволити</string>
     <string name="drm_first_use_do_not_allow">Не дозволяти</string>
     <string name="exit_confirm_dialog_button_cancel">Скасувати</string>
@@ -420,14 +420,24 @@
 \n
 \nВміст та елементи, що складають додаток, були впроваджені та/або розроблені IGALIA на основі ліцензій з відкритим вихідним кодом і захищені, зокрема, законами про інтелектуальну та промислову власність Королівства Іспанії, а також міжнародними договорами та угодами, які можуть виникнути в результаті використання додатку.</string>
     <string name="privacy_policy_section_3">Ця Політика конфіденційності регулюється іспанським законодавством. Мова Політики конфіденційності цієї програми - іспанська. З цієї причини будь-які можливі розбіжності між оригінальною версією іспанською мовою та її перекладом на іншу мову вважатимуться переважною версією іспанською мовою, яку можна знайти тут: https://wolvic.com/es/legal/privacy/ .</string>
-    <string name="privacy_options_tracking">Вдосконалений захист від відстеження. (&lt;a href=%1$s&gt;Докладніше&lt;/a&gt;)</string>
-    <string name="tracking_dialog_message">Вдосконалений захист від відстеження %1$s для цього сайту. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="privacy_options_tracking"><![CDATA[Вдосконалений захист від відстеження. (<a href="%1$s">Докладніше</a>)]]></string>
+    <string name="tracking_dialog_message"><![CDATA[Вдосконалений захист від відстеження %1$s для цього сайту. <a href="%2$s">Докладніше</a>]]></string>
     <string name="language_service_options_reset">Скинути параметри сервісу голосового пошуку</string>
     <string name="addons_details_private_mode">Працює в режимі приватного перегляду</string>
     <string name="private_browsing_exit_tooltip">Вийти з режиму приватного перегляду</string>
     <string name="private_browsing_enter_tooltip">Увійти до приватного перегляду</string>
-    <string name="private_browsing_body">&lt;р&gt;При перегляді в режимі Приватного перегляду, %1$s &lt;strong&gt;не зберігає&lt;/strong&gt;:&lt;/р&gt; &lt;ul class=two-column&gt; &lt;li&gt;відвідані сторінки&lt;/li&gt; &lt;li&gt;пошукові запити&lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;тимчасові файли&lt;/li&gt; &lt;/ul&gt; &lt;р&gt;Приватний перегляд &lt;strong&gt;не робить вас анонімними&lt;/strong&gt; в Інтернеті. Ваш роботодавець чи Інтернет-провайдер все ще може знати, яку сторінку ви відвідуєте.&lt;/р&gt; &lt;р class=about-info&gt;Докладніше про &lt;а id=learnMore&gt;Приватний перегляд&lt;/a&gt;.&lt;/р&gt;</string>
-    <string name="drm_dialog_message">Деякі аудіо та відео на цьому сайті використовують захист DRM, що може обмежувати можливості %1$s. &lt;a href=%2$s&gt;Докладніше&lt;/a&gt;</string>
+    <string name="private_browsing_body"><![CDATA[
+<р>При перегляді в режимі Приватного перегляду, %1$s <strong>не зберігає</strong>:</р>
+<ul class="two-column">
+  <li>відвідані сторінки</li>
+  <li>пошукові запити</li>
+  <li>cookies</li>
+  <li>тимчасові файли</li> 
+</ul>
+<р>Приватний перегляд <strong>не робить вас анонімними</strong> в Інтернеті. Ваш роботодавець чи Інтернет-провайдер все ще може знати, яку сторінку ви відвідуєте.</р>
+<р class="about-info">Докладніше про <а id="learnMore">Приватний перегляд</a>.</р>
+     ]]></string>
+    <string name="drm_dialog_message"><![CDATA[Деякі аудіо та відео на цьому сайті використовують захист DRM, що може обмежувати можливості %1$s. <a href="%2$s">Докладніше</a>]]></string>
     <string name="drm_dialog_button_off">Вимкнено</string>
     <string name="upload_button">Вивантажити</string>
     <string name="crash_dialog_heading">У нас виникла неполадка та збій</string>
@@ -494,7 +504,7 @@
     <string name="addons_details_details">Подробиці</string>
     <string name="addons_details_permissions">Дозволи</string>
     <string name="addons_details_remove">Видалити додаток</string>
-    <string name="addons_install_dialog_body">&lt;p ALIGN=LEFT&gt;Потрібен ваш дозвіл на:&lt;ul&gt;%1$s&lt;/ul&gt;&lt;/p&gt;</string>
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Потрібен ваш дозвіл на:<ul>%1$s</ul></p>]]></string>
     <string name="addons_install_dialog_add">Додати</string>
     <string name="addons_downloading_dialog_cancel">Скасувати</string>
     <string name="addons_download_success_dialog_body">Відкрийте його в меню</string>
@@ -795,4 +805,14 @@
     <string name="vision_glass_disconnected_message">Будь ласка, під\'єднайте Vision Glass</string>
     <string name="vision_glass_error_message">Сталася помилка.
 \nБудь ласка, спробуйте ще раз.</string>
+    <string name="controller_options_handtracking">Відстеження рук</string>
+    <string name="tabs_bookmark_selected">Додати вкладки в закладки</string>
+    <string name="controller_options_pointer_mode">Режим погляду</string>
+    <string name="eye_tracking_permission_title">Дозволи на відстеження очей</string>
+    <string name="incompatible_os_version_title">Несумісна версія ОС</string>
+    <string name="incompatible_os_version_message">Ваша версія ОС не підтримується. Ця версія Wolvic вимагає щонайменше версію %1$s</string>
+    <string name="vision_glass_realign_dialog_explanation">Щоб налаштувати контролер, наведіть телефон прямо вперед і натисніть кнопку.</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Вказівник</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Відстеження очей</string>
+    <string name="eye_tracking_permission_message">Увімкнення відстеження очей для перегляду вебу створює значні ризики для конфіденційності. Ця технологія фіксує, куди і як довго користувач дивиться на конкретні частини веб-сторінки, розкриваючи інтимні деталі про його інтереси та емоційні реакції. Рекламодавці та треті особи можуть використовувати ці дані для нав\'язливого маркетингу та профілювання. Більше того, патерни руху очей можуть вказувати на чутливу інформацію, таку як медичні стани, когнітивні стани або особисті звички. Тому важливо враховувати наслідки для конфіденційності перед наданням доступу до інформації про відстеження очей для веб-сторінок.</string>
 </resources>
