@@ -92,8 +92,7 @@ public:
         mCompositionLayerColorScaleBiasStruct.colorScale = {tintColor.Red(), tintColor.Green(), tintColor.Blue(), tintColor.Alpha()};
     }
 
-    for (uint i = 0; i < numXRLayers; ++i) {
-      auto& xrLayer = xrLayers[i];
+    for (auto& xrLayer : xrLayers) {
       xrLayer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
       xrLayer.space = aSpace;
       xrLayer.next = XR_NULL_HANDLE;
