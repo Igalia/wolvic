@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath "org.mozilla.telemetry:glean-gradle-plugin:56.1.0"
         classpath "com.android.tools.build:gradle:$versions.android_gradle_plugin"
-        classpath 'com.android.tools:r8:8.5.35'
+        classpath 'com.android.tools:r8:8.7.14'
         classpath "$deps.kotlin.plugin"
         classpath 'com.huawei.agconnect:agcp:1.9.1.301'
 

@@ -613,6 +613,7 @@ android {
         viewBinding true
         prefab true // enable prefab support for various SDK AAR
         dataBinding true
+        buildConfig true
     }
 
     lint {
