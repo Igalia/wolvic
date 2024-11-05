@@ -119,14 +119,8 @@ namespace crow {
         OpenXRHandFlags hand;
     };
 
-    enum DoF {
-        IS_3DOF,
-        IS_6DOF,
-    };
-
     struct OpenXRInputMapping {
         const char* const path { nullptr };
-        DoF systemDoF;
         const char* const leftControllerModel { nullptr };
         const char* const rightControllerModel { nullptr };
         device::DeviceType controllerType { device::OculusQuest };
@@ -143,7 +137,6 @@ namespace crow {
     // Oculus Touch v2:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v2.json
     const OpenXRInputMapping OculusTouch {
         "/interaction_profiles/oculus/touch_controller",
-        IS_6DOF,
         "vr_controller_oculusquest_left.obj",
         "vr_controller_oculusquest_right.obj",
         device::OculusQuest,
@@ -170,7 +163,6 @@ namespace crow {
     // Oculus Touch v3:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/oculus/oculus-touch-v3.json
     const OpenXRInputMapping OculusTouch2 {
             "/interaction_profiles/oculus/touch_controller",
-            IS_6DOF,
             "vr_controller_oculusquest2_left.obj",
             "vr_controller_oculusquest2_right.obj",
             device::OculusQuest2,
@@ -197,7 +189,6 @@ namespace crow {
     // Meta Quest Touch Pro: https://github.com/immersive-web/webxr-input-profiles/blob/main/packages/registry/profiles/meta/meta-quest-touch-pro.json
     const OpenXRInputMapping MetaQuestTouchPro {
             "/interaction_profiles/oculus/touch_controller",
-            IS_6DOF,
             "vr_controller_metaquestpro_left.obj",
             "vr_controller_metaquestpro_right.obj",
             device::MetaQuestPro,
@@ -224,7 +215,6 @@ namespace crow {
     // Meta Quest Touch Plus:  https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/meta/meta-quest-touch-plus.json
     const OpenXRInputMapping MetaTouchPlus {
             "/interaction_profiles/oculus/touch_controller",
-            IS_6DOF,
             "vr_controller_metaquest3_left.obj",
             "vr_controller_metaquest3_right.obj",
             device::MetaQuest3,
@@ -251,7 +241,6 @@ namespace crow {
     // Pico controller: this definition was created for the Pico 4, but the Neo 3 will likely also be compatible
     const OpenXRInputMapping Pico4xOld {
             "/interaction_profiles/pico/neo3_controller",
-            IS_6DOF,
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
             device::Pico4x,
@@ -276,7 +265,6 @@ namespace crow {
 
     const OpenXRInputMapping Pico4x {
             "/interaction_profiles/bytedance/pico4_controller",
-            IS_6DOF,
             "vr_controller_pico4_left.obj",
             "vr_controller_pico4_right.obj",
             device::Pico4x,
@@ -301,7 +289,6 @@ namespace crow {
 
     const OpenXRInputMapping Pico4U {
             "/interaction_profiles/bytedance/pico4_controller",
-            IS_6DOF,
             "vr_controller_pico4u_left.obj",
             "vr_controller_pico4u_right.obj",
             device::Pico4U,
@@ -326,7 +313,6 @@ namespace crow {
 
     const OpenXRInputMapping PicoNeo3 {
             "/interaction_profiles/pico/neo3_controller",
-            IS_6DOF,
             "vr_controller_piconeo3_left.obj",
             "vr_controller_piconeo3_right.obj",
             device::PicoNeo3,
@@ -352,7 +338,6 @@ namespace crow {
     // HVR 3DOF: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-trigger-touchpad.json
     const OpenXRInputMapping Hvr3DOF {
             "/interaction_profiles/huawei/controller",
-            IS_3DOF,
             nullptr,
             "vr_controller_focus.obj",
             device::HVR3DoF,
@@ -372,7 +357,6 @@ namespace crow {
 
   const OpenXRInputMapping Hvr6DOF {
       "/interaction_profiles/huawei/6dof_controller",
-      IS_6DOF,
       "hvr_6dof_left.obj",
       "hvr_6dof_right.obj",
       device::HVR6DoF,
@@ -403,7 +387,6 @@ namespace crow {
 
     const OpenXRInputMapping LenovoVRX {
             "/interaction_profiles/oculus/touch_controller",
-            IS_6DOF,
             "vr_controller_vrx_left.obj",
             "vr_controller_vrx_right.obj",
             device::LenovoVRX,
@@ -429,7 +412,6 @@ namespace crow {
 
     const OpenXRInputMapping MagicLeap2 {
             "/interaction_profiles/ml/ml2_controller",
-            IS_6DOF,
             "",
             "vr_controller_magicleap2.obj",
             device::MagicLeap2,
@@ -449,7 +431,6 @@ namespace crow {
 
     const OpenXRInputMapping HandInteraction {
         kInteractionProfileHandInteraction,
-        IS_6DOF,
         "",
         "",
         device::UnknownType,
@@ -464,7 +445,6 @@ namespace crow {
 
     const OpenXRInputMapping MSFTHandInteraction {
             kInteractionProfileMSFTHandInteraction,
-            IS_6DOF,
             "",
             "",
             device::UnknownType,

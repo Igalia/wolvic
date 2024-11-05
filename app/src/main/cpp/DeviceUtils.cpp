@@ -119,15 +119,9 @@ vrb::GeometryPtr DeviceUtils::GetSphereGeometry(vrb::CreationContextPtr& context
     return std::move(geometry);
 }
 
-device::DeviceType DeviceUtils::GetDeviceTypeFromSystem(bool is6DoF) {
+device::DeviceType DeviceUtils::GetDeviceTypeFromSystem() {
     char model[128];
     int length = PopulateDeviceModelString(model);
-
-#ifdef HVR
-    // Huawei glasses can be attached to multiple different phones, so we basically cannot filter
-    // by device type in this case.
-    return is6DoF ? device::HVR6DoF : device::HVR3DoF;
-#endif
 
     if (deviceNamesMap.empty()) {
         deviceNamesMap.emplace("Quest", device::OculusQuest);

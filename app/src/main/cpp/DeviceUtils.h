@@ -30,7 +30,7 @@ public:
                                      const uint32_t aMaxWidth, const uint32_t aMaxHeight,
                                      uint32_t& aTargetWidth, uint32_t& aTargetHeight);
   static vrb::GeometryPtr GetSphereGeometry(vrb::CreationContextPtr& context, uint32_t resolution, float radius);
-  static device::DeviceType GetDeviceTypeFromSystem(bool is6DoF);
+  static device::DeviceType GetDeviceTypeFromSystem();
 
 private:
   static vrb::Matrix CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition,
