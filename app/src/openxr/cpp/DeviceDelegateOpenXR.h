@@ -58,7 +58,7 @@ public:
   VRLayerCylinderPtr CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) override;
   VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
-  VRLayerPassthroughPtr CreateLayerPassthrough() override;
+  void CreateLayerPassthrough() override;
   bool usesPassthroughCompositorLayer() const override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   int32_t GetHandTrackingJointIndex(const HandTrackingJoints aJoint) override;
@@ -70,6 +70,7 @@ public:
   bool IsPassthroughEnabled() const override;
   bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) override;
   void SetHandTrackingEnabled(bool value) override;
+  void TogglePassthroughEnabled() override;
   // Custom methods for NativeActivity render loop based devices.
   void BeginXRSession();
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
@@ -89,6 +90,7 @@ private:
   State& m;
   VRB_NO_DEFAULTS(DeviceDelegateOpenXR)
   void updateEyeGaze();
+  void UpdatePassthrough();
 };
 
 } // namespace crow

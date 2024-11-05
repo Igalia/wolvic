@@ -33,6 +33,8 @@ namespace crow {
     static PFN_xrDestroyPassthroughFB sXrDestroyPassthroughFB;
     static PFN_xrCreatePassthroughLayerFB sXrCreatePassthroughLayerFB;
     static PFN_xrDestroyPassthroughLayerFB sXrDestroyPassthroughLayerFB;
+    static PFN_xrPassthroughLayerResumeFB sXrPassthroughLayerResumeFB;
+    static PFN_xrPassthroughLayerPauseFB sXrPassthroughLayerPauseFB;
 
     static PFN_xrCreateHandMeshSpaceMSFT sXrCreateHandMeshSpaceMSFT;
     static PFN_xrUpdateHandMeshMSFT sXrUpdateHandMeshMSFT;

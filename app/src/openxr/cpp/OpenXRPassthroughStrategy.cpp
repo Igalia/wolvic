@@ -8,7 +8,7 @@
 namespace crow {
 
 OpenXRLayerPassthroughPtr
-OpenXRPassthroughStrategy::createLayerIfSupported(VRLayerPassthroughPtr) const {
+OpenXRPassthroughStrategy::createLayerIfSupported() const {
     VRB_ERROR("asking to create a layer for passthrough when it isn't actually supported");
     return nullptr;
 };
@@ -66,8 +66,8 @@ OpenXRPassthroughStrategyFBExtension::isReady() const {
 }
 
 OpenXRLayerPassthroughPtr
-OpenXRPassthroughStrategyFBExtension::createLayerIfSupported(VRLayerPassthroughPtr vrLayer) const {
-    return OpenXRLayerPassthrough::Create(vrLayer, passthroughHandle);
+OpenXRPassthroughStrategyFBExtension::createLayerIfSupported() const {
+    return OpenXRLayerPassthrough::Create(passthroughHandle);
 }
 
 } // namespace crow
