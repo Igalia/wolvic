@@ -63,15 +63,13 @@ XrResult OpenXRInputSource::Initialize()
     RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_VIBRATION_OUTPUT, "haptic", OpenXRHandFlags::Both, mHapticAction));
 
     // Filter mappings
+#if HVR
+    // Huawei glasses can be attached to multiple phones, so we can't filter by device type.
     bool systemIs6DoF = mSystemProperties.trackingProperties.positionTracking == XR_TRUE;
-    auto systemDoF = systemIs6DoF ? DoF::IS_6DOF : DoF::IS_3DOF;
-    mDeviceType = DeviceUtils::GetDeviceTypeFromSystem(systemIs6DoF);
-    // Add a workaround for Monado not reporting properly device capabilities
-    // https://gitlab.freedesktop.org/monado/monado/-/issues/265
-    if (mDeviceType == device::LenovoVRX) {
-        systemIs6DoF = true;
-        systemDoF = DoF::IS_6DOF;
-    }
+    mDeviceType = systemIs6DoF ? device::HVR6DoF : device::HVR3DoF;
+#else
+    mDeviceType = DeviceUtils::GetDeviceTypeFromSystem();
+#endif
     for (auto& mapping: OpenXRInputMappings) {
       // Always populate default/fall-back profiles
       if (mapping.controllerType == device::UnknownType) {
@@ -80,7 +78,7 @@ XrResult OpenXRInputSource::Initialize()
           mMappings.back().controllerType = mDeviceType;
           continue;
       }
-      if ((mDeviceType != mapping.controllerType) || (systemDoF != mapping.systemDoF))
+      if (mDeviceType != mapping.controllerType)
           continue;
       mMappings.push_back(mapping);
     }
@@ -425,7 +423,7 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
 
         // FIXME: reenable this once MagicLeap OS v1.8 is released as it has a fix for this.
         // Otherwise the hand interaction profile is not properly used.
-        if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME) && (DeviceUtils::GetDeviceTypeFromSystem(true) != device::MagicLeap2)) {
+        if (OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_INTERACTION_EXTENSION_NAME) && (DeviceUtils::GetDeviceTypeFromSystem() != device::MagicLeap2)) {
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPinchPoseAction, mSubactionPathName + "/" + kPinchPose, bindings));
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mPokePoseAction, mSubactionPathName + "/" + kPokePose, bindings));
         }
