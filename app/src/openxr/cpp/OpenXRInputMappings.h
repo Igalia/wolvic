@@ -462,8 +462,8 @@ namespace crow {
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
             IS_6DOF,
-            "vr_controller_oculusgo.obj",
-            "vr_controller_oculusgo.obj",
+            "generic-trigger.obj",
+            "generic-trigger.obj",
             device::UnknownType,
             std::vector<OpenXRInputProfile> { "generic-button" },
             std::vector<OpenXRButton> {
