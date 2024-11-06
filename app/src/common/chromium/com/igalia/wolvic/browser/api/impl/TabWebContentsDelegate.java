@@ -76,6 +76,9 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         }
     }
 
+    @Override
+    public void onWebAppManifest(WebContents webContents, @NonNull String manifest) {}
+
     public class OnNewSessionCallback implements WSession.NavigationDelegate.OnNewSessionCallback {
         public OnNewSessionCallback(RuntimeImpl runtime, WebContents webContents) {
             mRuntime = runtime;
