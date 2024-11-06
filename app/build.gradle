@@ -621,6 +621,9 @@ android {
     }
     androidResources {
         noCompress 'pak'
+        noCompress 'ja'
+        noCompress 'dat'
+        noCompress 'bin'
     }
 
 }
