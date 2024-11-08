@@ -9,6 +9,7 @@ import com.igalia.wolvic.browser.api.WAllowOrDeny;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.ui.adapters.WebApp;
+import com.igalia.wolvic.utils.SystemUtils;
 
 import org.chromium.base.task.PostTask;
 import org.chromium.base.task.TaskTraits;
@@ -25,7 +26,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
-    private static final String TAG = "TabWebContentsDelegate";
+    private static final String LOGTAG = SystemUtils.createLogtag(TabWebContentsDelegate.class);
 
     private @NonNull SessionImpl mSession;
     private @NonNull final WebContents mWebContents;
@@ -88,16 +89,16 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
     @Override
     public void onWebAppManifest(WebContents webContents, @NonNull String manifest) {
          @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
-        if (delegate != null) {
-            // We parse the manifest here to prevent errors later in case it is malformed.
-            try {
-                WebApp webAppManifest = new WebApp(new JSONObject(manifest));
-                delegate.onWebAppManifest(mSession, webAppManifest);
-            } catch (JSONException e) {
-                Log.w(TAG, "Error parsing JSON: " + e.getMessage());
-            } catch (IOException e) {
-                Log.w(TAG, "Error when receiving Web App manifest: " + e.getMessage());
-            }
+        if (delegate == null)
+            return;
+        // We parse the manifest here to prevent errors later in case it is malformed.
+        try {
+            WebApp webAppManifest = new WebApp(new JSONObject(manifest));
+            delegate.onWebAppManifest(mSession, webAppManifest);
+        } catch (JSONException e) {
+            Log.w(LOGTAG, "Error parsing JSON: " + e.getMessage());
+        } catch (IOException e) {
+            Log.w(LOGTAG, "Error when receiving Web App manifest: " + e.getMessage());
         }
     }
 
