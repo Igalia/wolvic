@@ -70,7 +70,7 @@ struct Widget::State {
   void Initialize(const int aHandle, const WidgetPlacementPtr& aPlacement, const int32_t aTextureWidth, const int32_t aTextureHeight,
                   const QuadPtr& aQuad, const CylinderPtr& aCylinder) {
     handle = (uint32_t)aHandle;
-    name = "crow::Widget-" + std::to_string(handle);
+    name = aPlacement->name + '_' + std::to_string(handle);
     vrb::RenderContextPtr render = context.lock();
     if (!render) {
       return;
