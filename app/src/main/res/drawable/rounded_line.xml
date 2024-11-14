@@ -4,8 +4,6 @@
             <solid android:color="@color/ocean" />
             <corners android:radius="5dp" />
             <size android:height="5dp" />
-            <!-- 50% opacity @color/asphalt -->
-
         </shape>
     </item>
     <item android:state_hovered="true">
@@ -13,7 +11,6 @@
             <solid android:color="@color/azure" />
             <corners android:radius="5dp" />
             <size android:height="5dp" />
-
         </shape>
     </item>
     <item>
@@ -21,7 +18,6 @@
             <solid android:color="@color/fog" />
             <corners android:radius="5dp" />
             <size android:height="5dp" />
-
         </shape>
     </item>
 </selector>
