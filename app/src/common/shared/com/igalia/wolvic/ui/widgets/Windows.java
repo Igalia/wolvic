@@ -1388,17 +1388,18 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             for (WindowWidget win: getCurrentWindows()) {
                 setWindowVisible(win, win == mFullscreenWindow);
             }
-            updateMaxWindowScales();
-            updateViews();
-        } else if (mFullscreenWindow != null) {
+        } else {
+            if (mFullscreenWindow == null)
+                return;
             aWindow.restoreBeforeFullscreenPlacement();
             mFullscreenWindow = null;
             for (WindowWidget win : getCurrentWindows()) {
                 setWindowVisible(win, true);
             }
-            updateMaxWindowScales();
-            updateViews();
         }
+        updateMaxWindowScales();
+        updateCurvedMode(true);
+
     }
 
     @Override
