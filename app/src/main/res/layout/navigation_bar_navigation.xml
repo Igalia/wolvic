@@ -170,6 +170,7 @@
                 android:layout_height="8dp"
                 android:layout_gravity="center"
                 android:background="@drawable/rounded_line"
+                android:duplicateParentState="true"
                 android:radius="4dp" />
         </FrameLayout>
 
