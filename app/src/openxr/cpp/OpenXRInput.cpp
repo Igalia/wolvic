@@ -227,7 +227,8 @@ void OpenXRInput::UpdateTrackedKeyboard(const XrFrameState& frameState, XrSpace 
     .flags = XR_KEYBOARD_TRACKING_QUERY_LOCAL_BIT_FB,
   };
   XrKeyboardTrackingDescriptionFB kbdDesc;
-  CHECK_XRCMD(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB(mSession, &queryInfo, &kbdDesc));
+  if (XR_FAILED(OpenXRExtensions::xrQuerySystemTrackedKeyboardFB(mSession, &queryInfo, &kbdDesc)))
+    return;
 
   // Check if existing keyboard disappeared or changed, and clear up its state if so
   if ((kbdDesc.flags & XR_KEYBOARD_TRACKING_EXISTS_BIT_FB) == 0 ||
