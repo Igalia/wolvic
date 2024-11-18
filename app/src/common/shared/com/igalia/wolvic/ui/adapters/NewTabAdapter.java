@@ -59,6 +59,9 @@ public class NewTabAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void addItem(String title, String url) {
+        if (!url.startsWith("http://") || !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
         SessionStore.get().getBookmarkStore().addBookmark(url, title);
         Bookmark item = new Bookmark(title, url);
         bookmarkItems.add(item);
