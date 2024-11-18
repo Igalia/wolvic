@@ -239,23 +239,24 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isNativeContentVisible.getValue().get()) {
+            if (currentContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                url = getApplication().getString(R.string.url_home_title, getApplication().getString(R.string.app_name));
+
+            } else if (isNativeContentVisible.getValue().get()) {
                 url = getApplication().getString(R.string.url_library_title);
 
-            } else {
-                if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
-                        (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get())) {
-                    url = getApplication().getString(R.string.private_browsing_title);
+            } else if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
+                    (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get())) {
+                url = getApplication().getString(R.string.private_browsing_title);
 
-                } else if (UrlUtils.isHomeUri(getApplication(), aUrl.toString())) {
-                    url = getApplication().getString(R.string.url_home_title, getApplication().getString(R.string.app_name));
+            } else if (UrlUtils.isHomeUri(getApplication(), aUrl.toString())) {
+                url = getApplication().getString(R.string.url_home_title, getApplication().getString(R.string.app_name));
 
-                } else if (UrlUtils.isWebExtensionUrl(aUrl.toString())) {
-                    url = getApplication().getString(R.string.web_extensions_title);
+            } else if (UrlUtils.isWebExtensionUrl(aUrl.toString())) {
+                url = getApplication().getString(R.string.web_extensions_title);
 
-                } else if (UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
-                    url = "";
-                }
+            } else if (UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
+                url = "";
             }
 
             titleBarUrl.postValue(UrlUtils.titleBarUrl(url));
@@ -434,7 +435,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isNativeContentVisible.getValue().get()) {
+        if (isNativeContentVisible.getValue().get() && currentContentType.getValue() != Windows.ContentType.NEW_TAB) {
             return getApplication().getString(R.string.url_library_title);
 
         } else {

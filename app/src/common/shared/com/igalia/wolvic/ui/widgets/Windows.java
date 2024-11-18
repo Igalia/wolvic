@@ -98,6 +98,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
+
+        @NonNull
         ContentType panelType = ContentType.WEB_CONTENT;
 
         public void load(@NonNull WindowWidget aWindow, WindowsState aState, int aTabIndex) {
@@ -170,10 +172,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         HISTORY(UrlUtils.ABOUT_HISTORY),
         DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS),
         ADDONS(UrlUtils.ABOUT_ADDONS),
-        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS);
-        public final String URL;
+        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS),
+        NEW_TAB(UrlUtils.ABOUT_NEWTAB);
 
-        ContentType(String url) {
+        @NonNull public final String URL;
+        ContentType(@NonNull String url) {
             this.URL = url;
         }
     }
@@ -370,23 +373,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         newWindow.getPlacement().height = aState.textureHeight;
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         placeWindow(newWindow, aState.placement);
-        if (newWindow.getSession() != null) {
-            switch (aState.panelType) {
-                case BOOKMARKS:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
-                    break;
-                case HISTORY:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
-                    break;
-                case DOWNLOADS:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_DOWNLOADS);
-                    break;
-                case ADDONS:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_ADDONS);
-                    break;
-                case WEB_CONTENT:
-                    break;
-            }
+
+        if (newWindow.getSession() != null && !StringUtils.isEmpty(aState.panelType.URL)) {
+            newWindow.getSession().loadUri(aState.panelType.URL);
         }
         updateCurvedMode(true);
 

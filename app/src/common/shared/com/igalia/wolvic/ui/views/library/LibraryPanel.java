@@ -177,6 +177,7 @@ public class LibraryPanel extends FrameLayout {
         mSystemNotificationsView.onDestroy();
     }
 
+    @NonNull
     public Windows.ContentType getSelectedPanelType() {
         if (mCurrentView == mBookmarksView) {
             return Windows.ContentType.BOOKMARKS;

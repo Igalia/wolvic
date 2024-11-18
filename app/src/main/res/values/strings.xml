@@ -613,6 +613,15 @@
     <!-- This string is used to label the radio buttons that set the default size of windows. -->
     <string name="window_size_preset">%1$d×%2$d</string>
 
+    <!-- This string is used to label the homepage radio button that sets the homepage to be the New Tab page. -->
+    <string name="display_options_homepage_new_tab">New Tab</string>
+
+    <!-- This string is used to label the homepage radio button that sets the homepage to be Wolvic homepage. -->
+    <string name="display_options_homepage_wolvic_com">wolvic.com</string>
+
+    <!-- This string is used to label the homepage radio button that allows users to set the homepage they want. -->
+    <string name="display_options_homepage_other">Other</string>
+
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent Mode</string>
