@@ -72,6 +72,10 @@ class DisplayOptionsView extends SettingsView {
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
 
+        int homepageId = getHomepageId(SettingsStore.getInstance(getContext()).getHomepage());
+        mBinding.homepage.setOnCheckedChangeListener(mHomepageChangeListener);
+        setHomepage(homepageId, false);
+
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
 
@@ -165,6 +169,10 @@ class DisplayOptionsView extends SettingsView {
         setMSAAMode(checkedId, true);
     };
 
+    private RadioGroupSetting.OnCheckedChangeListener mHomepageChangeListener = (radioGroup, checkedId, doApply) -> {
+        setHomepage(checkedId, true);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mAutoplayListener = (compoundButton, enabled, apply) -> {
         setAutoplay(enabled, true);
     };
@@ -247,6 +255,11 @@ class DisplayOptionsView extends SettingsView {
         if (!prevMSAA.equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
             restart = true;
+        }
+
+        int defaultHomepageId = getHomepageId(mDefaultHomepageUrl);
+        if (mBinding.homepage.getCheckedRadioButtonId() != defaultHomepageId) {
+            setHomepage(defaultHomepageId, true);
         }
 
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
@@ -374,11 +387,39 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
+    private void setHomepage(int checkedId, boolean doApply) {
+        mBinding.homepage.setOnCheckedChangeListener(null);
+        mBinding.homepage.setChecked(checkedId, doApply);
+        mBinding.homepage.setOnCheckedChangeListener(mHomepageChangeListener);
+
+        if (checkedId == 0) {
+            mBinding.homepageEdit.setVisibility(View.GONE);
+            SettingsStore.getInstance(getContext()).setHomepage(mDefaultHomepageUrl);
+        } else if (checkedId == 1) {
+            mBinding.homepageEdit.setVisibility(View.GONE);
+            SettingsStore.getInstance(getContext()).setHomepage("about://newtab");
+        } else if (checkedId == 2) {
+            mBinding.homepageEdit.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private int getHomepageId(String homepage) {
+        if (homepage ==  getContext().getString(R.string.HOMEPAGE_URL)) {
+            return 0;
+        } else if (homepage == "about://newtab") {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
     private void setHomepage(String newHomepage) {
-        mBinding.homepageEdit.setOnClickListener(null);
-        mBinding.homepageEdit.setFirstText(newHomepage);
-        SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
-        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
+        if (mBinding.homepageEdit.getVisibility() == VISIBLE) {
+            mBinding.homepageEdit.setOnClickListener(null);
+            mBinding.homepageEdit.setFirstText(newHomepage);
+            SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
+            mBinding.homepageEdit.setOnClickListener(mHomepageListener);
+        }
     }
 
     private void setWindowDistance(float value, boolean doApply) {

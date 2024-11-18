@@ -339,7 +339,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     static class BookmarkFolderViewHolder extends RecyclerView.ViewHolder {
-
         final BookmarkItemFolderBinding binding;
 
         BookmarkFolderViewHolder(@NonNull BookmarkItemFolderBinding binding) {

@@ -1,5 +1,7 @@
 package com.igalia.wolvic.ui.adapters;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -24,6 +26,11 @@ public class Bookmark {
     private int mPosition;
     private Type mType;
     private boolean mHasChildren;
+
+    public Bookmark(String title, String url) {
+        mTitle = title;
+        mURL = url;
+    }
 
     public Bookmark(@NonNull BookmarkNode node, int level, boolean isExpanded) {
         mIsExpanded = isExpanded;
@@ -130,6 +137,28 @@ public class Bookmark {
 
         return children;
     }
+
+    /*public static List<Bookmark> getBookmarkItems(@NonNull List<BookmarkNode> bookmarkNodes) {
+        Log.e("New Tab", "Bookmark nodes size: " + bookmarkNodes.size());
+
+        ArrayList<Bookmark> bookmarkItems = new ArrayList<>();
+
+        for (BookmarkNode node : bookmarkNodes) {
+            if (node.getType() == BookmarkNodeType.ITEM) {
+            //if (node.getTitle() != null) {
+            //if (node.getType() != BookmarkNodeType.FOLDER && node.getTitle() != null) {
+                Log.e("New Tab", "Bookmark node's item type recognized");
+                Bookmark bookmark = new Bookmark(node, 0, false);
+                bookmarkItems.add(bookmark);
+            } else {
+                Log.e("New Tab", "Not item type. Real type: " + node.getType());
+            }
+        }
+
+        Log.e("New Tab", "Bookmark items size: " + bookmarkItems.size());
+
+        return bookmarkItems;
+    }*/
 
     /**
      * Traverses the current display list looking for opened folders

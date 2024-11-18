@@ -607,6 +607,15 @@
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
 
+    <!-- This string is used to label the homepage radio button that sets the homepage to be Wolvic homepage. -->
+    <string name="developer_options_homepage_wolvic">Wolvic</string>
+
+    <!-- This string is used to label the homepage radio button that sets the homepage to be the New Tab page. -->
+    <string name="developer_options_homepage_new_tab">New Tab</string>
+
+    <!-- This string is used to label the homepage radio button that allows users to set the homepage they want. -->
+    <string name="developer_options_homepage_other">Other</string>
+
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent Mode</string>

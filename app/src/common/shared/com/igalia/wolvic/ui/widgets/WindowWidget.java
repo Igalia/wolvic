@@ -62,6 +62,7 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.ui.views.NewTabView;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
@@ -134,6 +135,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Session mSession;
     private int mWindowId;
     private LibraryPanel mLibrary;
+    private NewTabView mNewTab;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
@@ -217,6 +219,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mLibrary = new LibraryPanel(aContext);
+        mNewTab = new NewTabView(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
@@ -523,6 +526,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         showPanel(panelType, true);
     }
 
+    public void showNewTab() {
+        if (mNewTab != null) {
+            setView(mNewTab, true);
+            mViewModel.setIsFindInPage(false);
+            final Runnable firstDrawCallback = mFirstDrawCallback;
+            onFirstContentfulPaint(mSession.getWSession());
+            mRestoreFirstPaint = () -> {
+                setFirstPaintReady(false);
+                setFirstDrawCallback(firstDrawCallback);
+                if (mWidgetManager != null) {
+                        mWidgetManager.updateWidget(WindowWidget.this);
+                }
+            };
+        }
+    }
+
     private void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
         if (mLibrary != null) {
             if (mView == null) {
@@ -542,7 +561,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         }
                     };
                 }
-
             } else if (mView == mLibrary) {
                 mLibrary.selectPanel(panelType);
             }
@@ -558,6 +576,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             unsetView(mLibrary, switchSurface);
             mLibrary.onHide();
             mViewModel.setIsPanelVisible(false);
+        }
+        if (switchSurface && mRestoreFirstPaint != null) {
+            mRestoreFirstPaint.run();
+            mRestoreFirstPaint = null;
+        }
+    }
+
+    public void hideNewTab(boolean switchSurface) {
+        if (mView != null && mNewTab != null) {
+            unsetView(mNewTab, switchSurface);
         }
         if (switchSurface && mRestoreFirstPaint != null) {
             mRestoreFirstPaint.run();
@@ -2002,23 +2030,33 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         Uri uri = Uri.parse(aRequest.uri);
         if (UrlUtils.isAboutPage(uri.toString())) {
-            if(UrlUtils.isBookmarksUrl(uri.toString())) {
-                showPanel(Windows.BOOKMARKS);
+           if(UrlUtils.isBookmarksUrl(uri.toString())) {
+               hideNewTab(true);
+               showPanel(Windows.BOOKMARKS);
 
             } else if (UrlUtils.isHistoryUrl(uri.toString())) {
-                showPanel(Windows.HISTORY);
+               hideNewTab(true);
+               showPanel(Windows.HISTORY);
 
             } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-                showPanel(Windows.DOWNLOADS);
+               hideNewTab(true);
+               showPanel(Windows.DOWNLOADS);
 
             } else if (UrlUtils.isAddonsUrl(uri.toString())) {
-                showPanel(Windows.ADDONS);
+               hideNewTab(true);
+               showPanel(Windows.ADDONS);
+
+            } else if (UrlUtils.isNewTabUrl(uri.toString())) {
+                showNewTab();
 
             } else {
-                hideLibraryPanel();
-            }
+               hideNewTab(true);
+               hideLibraryPanel();
+
+           }
 
         } else {
+            hideNewTab(true);
             hideLibraryPanel();
         }
 
