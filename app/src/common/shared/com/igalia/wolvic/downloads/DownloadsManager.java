@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,7 @@ public class DownloadsManager {
     private DownloadManager mDownloadManager;
     private ScheduledThreadPoolExecutor mExecutor;
     private ScheduledFuture<?> mFuture;
+    private Executor mDiskExecutor;
 
     public DownloadsManager(@NonNull Context context) {
         mMainHandler = new Handler(Looper.getMainLooper());
@@ -58,6 +61,7 @@ public class DownloadsManager {
         mListeners = new ArrayList<>();
         mDownloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         mExecutor = new ScheduledThreadPoolExecutor(1);
+        mDiskExecutor = ((VRBrowserApplication) mContext.getApplicationContext()).getExecutors().diskIO();
     }
 
     public void init() {
@@ -310,13 +314,17 @@ public class DownloadsManager {
     };
 
     private void notifyDownloadsUpdate() {
-        List<Download> downloads = getDownloads();
-        int filter = Download.RUNNING | Download.PAUSED | Download.PENDING;
-        boolean activeDownloads = downloads.stream().filter(d -> (d.getStatus() & filter) != 0).count()  > 0;
-        mListeners.forEach(listener -> listener.onDownloadsUpdate(downloads));
-        if (!activeDownloads) {
-            stopUpdates();
-        }
+        mDiskExecutor.execute(() -> {
+            List<Download> downloads = getDownloads();
+            int filter = Download.RUNNING | Download.PAUSED | Download.PENDING;
+            boolean activeDownloads = downloads.stream().filter(d -> (d.getStatus() & filter) != 0).count()  > 0;
+            mMainHandler.post(() -> {
+                mListeners.forEach(listener -> listener.onDownloadsUpdate(downloads));
+            });
+            if (!activeDownloads) {
+                stopUpdates();
+            }
+        });
     }
 
     private void notifyDownloadCompleted(@NonNull long downloadId) {
