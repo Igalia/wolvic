@@ -64,6 +64,10 @@ public class DownloadsManager {
         mDiskExecutor = ((VRBrowserApplication) mContext.getApplicationContext()).getExecutors().diskIO();
     }
 
+    private void removeDownloadOnDiskIO(long id) {
+        mDiskExecutor.execute(() -> { mDownloadManager.remove(id); });
+    }
+
     public void init() {
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -75,7 +79,7 @@ public class DownloadsManager {
         downloads.forEach(download -> {
             File downloadedFile = download.getOutputFile();
             if (mDownloadManager != null && (downloadedFile == null || !downloadedFile.exists())) {
-                mDownloadManager.remove(download.getId());
+                removeDownloadOnDiskIO(download.getId());
             }
         });
     }
@@ -235,19 +239,19 @@ public class DownloadsManager {
                     File newFile = new File(file.getAbsolutePath().concat(".bak"));
                     file.renameTo(newFile);
                     if (mDownloadManager != null) {
-                        mDownloadManager.remove(downloadId);
+                        removeDownloadOnDiskIO(downloadId);
                     }
                     newFile.renameTo(file);
 
                 } else {
                     if (mDownloadManager != null) {
-                        mDownloadManager.remove(downloadId);
+                        removeDownloadOnDiskIO(downloadId);
                     }
                 }
 
             } else {
                 if (mDownloadManager != null) {
-                    mDownloadManager.remove(downloadId);
+                    removeDownloadOnDiskIO(downloadId);
                 }
             }
         }
