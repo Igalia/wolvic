@@ -77,7 +77,7 @@ public class PermissionWidget extends PromptDialogWidget {
     }
 
     public void showPermissionsRationalePrompt(@NonNull List<String> permissions, @NonNull WSession.PermissionDelegate.Callback aCallback) {
-        Log.e(LOGTAG, "showPermissionsRationalePrompt "+aCallback);
+        Log.d(LOGTAG, "showPermissionsRationalePrompt "+aCallback);
         if (permissions.isEmpty()) {
             aCallback.reject();
             return;

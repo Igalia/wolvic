@@ -319,7 +319,7 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "PlatformActivity onDestroy");
+        Log.d(TAG, "PlatformActivity onDestroy");
 
         stopHmsMessageService();
         unregisterReceiver(mHmsMessageBroadcastReceiver);
@@ -332,20 +332,20 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i(TAG, "PlatformActivity onStart");
+        Log.d(TAG, "PlatformActivity onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i(TAG, "PlatformActivity onStop");
+        Log.d(TAG, "PlatformActivity onStop");
         queueRunnable(this::nativeOnStop);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG, "PlatformActivity onPause");
+        Log.d(TAG, "PlatformActivity onPause");
         queueRunnable(this::nativeOnPause);
     }
 
@@ -360,25 +360,25 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "PlatformActivity onResume");
+        Log.d(TAG, "PlatformActivity onResume");
         queueRunnable(this::nativeOnResume);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.e(TAG, "makelele life surfaceCreated");
+        Log.d(TAG, "surfaceCreated");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(TAG, "PlatformActivity surfaceChanged");
+        Log.d(TAG, "PlatformActivity surfaceChanged");
         queueRunnable(() -> nativeOnSurfaceChanged(holder.getSurface()));
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        Log.i(TAG, "PlatformActivity surfaceDestroyed");
+        Log.d(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
     }
 
