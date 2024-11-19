@@ -3,6 +3,7 @@ package com.igalia.wolvic.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -98,7 +99,7 @@ public class DictionariesManager implements DownloadsManager.DownloadsListener, 
 
         if (dicItem == null) {
             // If the dic has not been downloaded, start downloading it
-            String outputPath = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getAbsolutePath();
+            String outputPath = Objects.requireNonNull(mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)).getAbsolutePath();
             DownloadJob job = DownloadJob.create(payload);
             job.setOutputPath(outputPath + "/" + job.getFilename());
             mDownloadManager.startDownload(job);

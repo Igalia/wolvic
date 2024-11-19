@@ -137,7 +137,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
         if (envItem == null) {
             // If the env has not been downloaded, start downloading it
-            String outputPath = mContext.getExternalFilesDir(null).getAbsolutePath();
+            String outputPath = mContext.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             DownloadJob job = DownloadJob.create(payload);
             job.setOutputPath(outputPath + "/" + job.getFilename());
             mDownloadManager.startDownload(job);
