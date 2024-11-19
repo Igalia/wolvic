@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 
@@ -89,6 +90,23 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         //  see https://github.com/Igalia/wolvic/issues/797
         getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // TODO: eventually add .penaltyDeath() to the policies once we have fixed all the issues.
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
     }
 
     public Services getServices() {
