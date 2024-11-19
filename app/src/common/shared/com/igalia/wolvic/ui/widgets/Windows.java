@@ -225,7 +225,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         restoreWindows();
     }
 
-    public void saveState() {
+    private void saveStateOnDiskIO() {
         File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
         try (Writer writer = new FileWriter(file)) {
             WindowsState state = new WindowsState();
@@ -255,6 +255,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             Log.e(LOGTAG, "Error saving windows state: " + e.getLocalizedMessage());
             file.delete();
         }
+    }
+
+    public void saveState() {
+        Executor diskIOExecutor = ((VRBrowserApplication)mContext.getApplicationContext()).getExecutors().diskIO();
+        diskIOExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                saveStateOnDiskIO();
+            }
+        });
     }
 
     private WindowsState restoreState() {
