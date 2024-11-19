@@ -199,7 +199,7 @@ public class SettingsStore {
                     String json = response.getBody().string(StandardCharsets.UTF_8);
                     SharedPreferences.Editor editor = mPrefs.edit();
                     editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
-                    editor.commit();
+                    editor.apply();
 
                     mSettingsViewModel.setProps(json);
                 }
@@ -217,7 +217,7 @@ public class SettingsStore {
     public void setCrashReportingEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_crash), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isTelemetryEnabled() {
@@ -234,7 +234,7 @@ public class SettingsStore {
     public void setTelemetryEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_telemetry), isEnabled);
-        editor.commit();
+        editor.apply();
 
         // We send after enabling in case of opting-in
         if (isEnabled) {
@@ -258,13 +258,13 @@ public class SettingsStore {
     public void setTelemetryPingUpdateSent(boolean isSent) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_telemetry_status_update_sent), isSent);
-        editor.commit();
+        editor.apply();
     }
 
     public void setGeolocationData(String aGeolocationData) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_geolocation_data), aGeolocationData);
-        editor.commit();
+        editor.apply();
     }
 
     public String getGeolocationData() {
@@ -279,7 +279,7 @@ public class SettingsStore {
     public void setRemoteDebuggingEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_remote_debugging), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -295,7 +295,7 @@ public class SettingsStore {
     public void setDrmContentPlaybackEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_drm_playback), isEnabled);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setIsDrmEnabled(isEnabled);
     }
@@ -308,7 +308,7 @@ public class SettingsStore {
     public void setTrackingProtectionLevel(int level) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_tracking_protection_level), level);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setIsTrackingProtectionEnabled(level != WContentBlocking.EtpLevel.NONE);
     }
@@ -321,7 +321,7 @@ public class SettingsStore {
     public void setSystemRootCAEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_system_root_ca), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public static boolean shouldStartWithPassthrougEnabled() {
@@ -336,7 +336,7 @@ public class SettingsStore {
     public void setStartWithPassthroughEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_start_with_passthrough), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isLatinAutoCompleteEnabled() {
@@ -347,7 +347,7 @@ public class SettingsStore {
     public void setLatinAutoComplete(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_latin_auto_complete), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isHeadLockEnabled() {
@@ -358,7 +358,7 @@ public class SettingsStore {
     public void setHeadLockEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isWindowMovementEnabled() {
@@ -369,7 +369,7 @@ public class SettingsStore {
     public void setWindowMovementEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_window_movement), isEnabled);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setWindowMovementEnabled(isEnabled);
     }
@@ -382,7 +382,7 @@ public class SettingsStore {
     public void setEnvironmentOverrideEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_environment_override), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isUIHardwareAccelerationEnabled() {
@@ -401,7 +401,7 @@ public class SettingsStore {
     public void setUIHardwareAccelerationEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_ui_hardware_acceleration), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isPerformanceMonitorEnabled() {
@@ -412,7 +412,7 @@ public class SettingsStore {
     public void setPerformanceMonitorEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_performance_monitor), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     @FloatRange(from = 0, to = 1)
@@ -423,7 +423,7 @@ public class SettingsStore {
     public void setWindowDistance(@FloatRange(from = 0, to = 1) float distance) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_window_distance), distance);
-        editor.commit();
+        editor.apply();
     }
 
     public int getUaMode() {
@@ -439,7 +439,7 @@ public class SettingsStore {
         }
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_user_agent_version), checkedMode);
-        editor.commit();
+        editor.apply();
     }
 
     public int getInputMode() {
@@ -450,7 +450,7 @@ public class SettingsStore {
     public void setInputMode(int aTouchMode) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_input_mode), aTouchMode);
-        editor.commit();
+        editor.apply();
     }
 
     public String getHomepage() {
@@ -462,7 +462,7 @@ public class SettingsStore {
     public void setHomepage(String aHomepage) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_homepage), aHomepage);
-        editor.commit();
+        editor.apply();
     }
 
     public float getDisplayDensity() {
@@ -473,7 +473,7 @@ public class SettingsStore {
     public void setDisplayDensity(float aDensity) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_display_density), aDensity);
-        editor.commit();
+        editor.apply();
     }
 
     public int getWindowWidth() {
@@ -496,7 +496,7 @@ public class SettingsStore {
     public void setDeviceName(String aDeviceName) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_device_name), aDeviceName);
-        editor.commit();
+        editor.apply();
     }
 
     public int getDisplayDpi() {
@@ -511,7 +511,7 @@ public class SettingsStore {
         }
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_display_dpi), aDpi);
-        editor.commit();
+        editor.apply();
     }
 
     public int getMaxWindowWidth() {
@@ -529,7 +529,7 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
-        editor.commit();
+        editor.apply();
     }
 
     public int getPointerColor() {
@@ -540,7 +540,7 @@ public class SettingsStore {
     public void setPointerColor(int color) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_pointer_color), color);
-        editor.commit();
+        editor.apply();
     }
 
     public int getScrollDirection() {
@@ -554,7 +554,7 @@ public class SettingsStore {
         mCachedScrollDirection = aScrollDirection;
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_scroll_direction), aScrollDirection);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -569,7 +569,7 @@ public class SettingsStore {
     public void setMSAALevel(int level) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_msaa), level);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean getLayersEnabled() {
@@ -592,7 +592,7 @@ public class SettingsStore {
     public void setAudioEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_audio), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public String getVoiceSearchService() {
@@ -603,7 +603,7 @@ public class SettingsStore {
     public void setVoiceSearchService(String service) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_voice_search_service), service);
-        editor.commit();
+        editor.apply();
     }
 
     public String getVoiceSearchLocale() {
@@ -615,7 +615,7 @@ public class SettingsStore {
     public void setVoiceSearchLocale(String language) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_voice_search_language), language);
-        editor.commit();
+        editor.apply();
     }
 
     public String getDisplayLocale() {
@@ -627,7 +627,7 @@ public class SettingsStore {
     public void setDisplayLocale(String language) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_display_language), language);
-        editor.commit();
+        editor.apply();
     }
 
     public ArrayList<String> getContentLocales() {
@@ -654,7 +654,7 @@ public class SettingsStore {
         JSONArray json = new JSONArray(languages);
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_content_languages), json.toString());
-        editor.commit();
+        editor.apply();
     }
 
     public float getCylinderDensity() {
@@ -664,7 +664,7 @@ public class SettingsStore {
     public void setCylinderDensity(float aDensity) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_cylinder_density), aDensity);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isCurvedModeEnabled() {
@@ -678,7 +678,7 @@ public class SettingsStore {
     public void setHapticPulseDuration(float aPulseDuration) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_duration), aPulseDuration);
-        editor.commit();
+        editor.apply();
     }
 
     public float getHapticPulseIntensity() {
@@ -688,13 +688,13 @@ public class SettingsStore {
     public void setHapticPulseIntensity(float aPulseIntensity) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_haptic_pulse_intensity), aPulseIntensity);
-        editor.commit();
+        editor.apply();
     }
 
     public void setHapticFeedbackEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_haptic_feedback_enabled), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isHapticFeedbackEnabled() {
@@ -704,7 +704,7 @@ public class SettingsStore {
     public void setPointerMode(@WidgetManagerDelegate.PointerMode int pointerMode) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_pointer_mode), pointerMode);
-        editor.commit();
+        editor.apply();
     }
 
     public @WidgetManagerDelegate.PointerMode int getPointerMode() {
@@ -719,13 +719,13 @@ public class SettingsStore {
     public void setCenterWindows(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_center_windows), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public void setSelectedKeyboard(Locale aLocale) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_keyboard_locale), aLocale.toLanguageTag());
-        editor.commit();
+        editor.apply();
     }
 
     public Locale getKeyboardLocale() {
@@ -745,7 +745,7 @@ public class SettingsStore {
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), count);
                 editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count_timestamp), -1);
-                editor.commit();
+                editor.apply();
             }
         }
         return count;
@@ -757,13 +757,13 @@ public class SettingsStore {
         count++;
         editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), count);
         editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count_timestamp), System.currentTimeMillis());
-        editor.commit();
+        editor.apply();
     }
 
     public synchronized void resetCrashRestartCount() {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), 0);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isSpeechDataCollectionEnabled() {
@@ -774,7 +774,7 @@ public class SettingsStore {
     public void setSpeechDataCollectionEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isNotificationsEnabled() {
@@ -785,7 +785,7 @@ public class SettingsStore {
     public void setNotificationsEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_notifications), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isSpeechDataCollectionReviewed() {
@@ -796,7 +796,7 @@ public class SettingsStore {
     public void setSpeechDataCollectionReviewed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection_reviewed), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isDebugLoggingEnabled() {
@@ -806,7 +806,7 @@ public class SettingsStore {
     public void setDebugLoggingEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_debug_logging), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isAutoplayEnabled() {
@@ -816,13 +816,13 @@ public class SettingsStore {
     public void setAutoplayEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_autoplay), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public void setPid(int aPid) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_pid), aPid);
-        editor.commit();
+        editor.apply();
     }
 
     public int getPid() {
@@ -836,7 +836,7 @@ public class SettingsStore {
     public void setPopUpsBlockingEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setIsPopUpBlockingEnabled(isEnabled);
     }
@@ -848,7 +848,7 @@ public class SettingsStore {
     public void setWebXREnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_webxr), isEnabled);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setIsWebXREnabled(isEnabled);
     }
@@ -856,7 +856,7 @@ public class SettingsStore {
     public void setWhatsNewDisplayed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_whats_new_displayed), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isWhatsNewDisplayed() {
@@ -874,7 +874,7 @@ public class SettingsStore {
 
             SharedPreferences.Editor editor = mPrefs.edit();
             editor.putString(mContext.getString(R.string.settings_key_fxa_last_sync), jsonObject.toString());
-            editor.commit();
+            editor.apply();
 
         } catch (Exception e) {
             Log.d(LOGTAG, e.getMessage());
@@ -906,7 +906,7 @@ public class SettingsStore {
     public void setRestoreTabsEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_restore_tabs), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isRestoreTabsEnabled() {
@@ -916,7 +916,7 @@ public class SettingsStore {
     public void setBypassCacheOnReload(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isBypassCacheOnReloadEnabled() {
@@ -926,7 +926,7 @@ public class SettingsStore {
     public void setDownloadsSortingOrder(@SortingContextMenuWidget.Order int order) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_downloads_sorting_order), order);
-        editor.commit();
+        editor.apply();
     }
 
     public @Storage int getDownloadsSortingOrder() {
@@ -936,7 +936,7 @@ public class SettingsStore {
     public void setRemotePropsVersionName(String versionName) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_remote_props_version_name), versionName);
-        editor.commit();
+        editor.apply();
 
         mSettingsViewModel.setPropsVersionName(versionName);
     }
@@ -948,7 +948,7 @@ public class SettingsStore {
     public void setAutocompleteEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_autocomplete), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isAutocompleteEnabled() {
@@ -966,13 +966,13 @@ public class SettingsStore {
         } else {
             editor.remove(mContext.getString(R.string.settings_key_search_engine_id));
         }
-        editor.commit();
+        editor.apply();
     }
 
     public void setWebGLOutOfProcess(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isWebGLOutOfProcess() {
@@ -982,7 +982,7 @@ public class SettingsStore {
     public void setLocalAddonAllowed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_local_addon_allowed), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isLocalAddonAllowed() {
@@ -996,7 +996,7 @@ public class SettingsStore {
     public void setPrefsLastResetVersionCode(int versionCode) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_prefs_last_reset_version_code), versionCode);
-        editor.commit();
+        editor.apply();
     }
 
     @Nullable
@@ -1018,13 +1018,13 @@ public class SettingsStore {
     public void setRemoteProperties(@Nullable String json) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
-        editor.commit();
+        editor.apply();
     }
 
     public void recordPasswordsEncryptionKeyGenerated() {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_passwords_encryption_key_generated), true);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isPasswordsEncryptionKeyGenerated() {
@@ -1034,7 +1034,7 @@ public class SettingsStore {
     public void setAutoFillEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_autofill_enabled), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isAutoFillEnabled() {
@@ -1044,7 +1044,7 @@ public class SettingsStore {
     public void setLoginAutocompleteEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_login_autocomplete_enabled), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isLoginAutocompleteEnabled() {
@@ -1054,7 +1054,7 @@ public class SettingsStore {
     public void setLoginSyncEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_login_sync_enabled), isEnabled);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isLoginSyncEnabled() {
@@ -1068,7 +1068,7 @@ public class SettingsStore {
         } else {
             editor.remove(mContext.getString(R.string.settings_key_tab_after_restore));
         }
-        editor.commit();
+        editor.apply();
     }
 
     public String getTabAfterRestore() {
@@ -1078,7 +1078,7 @@ public class SettingsStore {
     public void setTermsServiceAccepted(boolean isAccepted) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_terms_service_accepted), isAccepted);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isTermsServiceAccepted() {
@@ -1088,7 +1088,7 @@ public class SettingsStore {
     public void setPrivacyPolicyAccepted(boolean isAccepted) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), isAccepted);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isPrivacyPolicyAccepted() {
@@ -1098,7 +1098,7 @@ public class SettingsStore {
     public void setWebAppsData(String aWebAppsData) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_web_apps_data), aWebAppsData);
-        editor.commit();
+        editor.apply();
     }
 
     public String getWebAppsData() {
