@@ -140,7 +140,7 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
                         wResult.complete(WAllowOrDeny.DENY)
 
                     } else {
-                        android.util.Log.e(LOGTAG, "Authentication successfully completed.")
+                        android.util.Log.d(LOGTAG, "Authentication successfully completed.")
                         wResult.complete(WAllowOrDeny.ALLOW)
                     }
                 }

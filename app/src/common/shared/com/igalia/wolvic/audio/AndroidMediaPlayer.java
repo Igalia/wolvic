@@ -29,7 +29,7 @@ public class AndroidMediaPlayer implements AudioEngine.AudioEngineImpl {
             }
             try {
                 MediaPlayer mediaPlayer = new MediaPlayer();
-                Log.e(LOGTAG, "Preloading Android Media Player for " + sound);
+                Log.d(LOGTAG, "Preloading Android Media Player for " + sound);
                 AssetFileDescriptor fd = mContext.getAssets().openFd(vrAudioTheme.getPath(sound));
                 mediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
                 mediaPlayer.prepare();

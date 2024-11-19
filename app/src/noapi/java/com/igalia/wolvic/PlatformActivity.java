@@ -80,7 +80,7 @@ public class PlatformActivity extends ComponentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(LOGTAG, "PlatformActivity onCreate");
+        Log.d(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.noapi_layout);

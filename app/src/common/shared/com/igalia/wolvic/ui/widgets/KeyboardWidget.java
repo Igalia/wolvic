@@ -1331,7 +1331,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             }
             // Android Components do not support InputConnection.sendKeyEvent()
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                Log.e("reb", "key = " + KeyEvent.keyCodeToString(keyCode));
+                Log.d("reb", "key = " + KeyEvent.keyCodeToString(keyCode));
 
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DEL:
