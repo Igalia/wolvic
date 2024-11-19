@@ -461,7 +461,6 @@ namespace crow {
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
             "/interaction_profiles/khr/simple_controller",
-            IS_6DOF,
             "generic-trigger.obj",
             "generic-trigger.obj",
             device::UnknownType,
