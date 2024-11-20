@@ -111,7 +111,6 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
         mBinding.setBookmarksViewModel(mViewModel);
         mBinding.setCallback(mBookmarksCallback);
         mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, getContext());
-        mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, getContext());
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
         mBinding.bookmarksList.setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();

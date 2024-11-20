@@ -21,6 +21,9 @@ import com.igalia.wolvic.ui.views.settings.SliderSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+import com.igalia.wolvic.utils.UrlUtils;
+
+import java.util.Objects;
 
 class DisplayOptionsView extends SettingsView {
 
@@ -394,19 +397,19 @@ class DisplayOptionsView extends SettingsView {
 
         if (checkedId == 0) {
             mBinding.homepageEdit.setVisibility(View.GONE);
-            SettingsStore.getInstance(getContext()).setHomepage(mDefaultHomepageUrl);
+            SettingsStore.getInstance(getContext()).setHomepage(UrlUtils.ABOUT_NEWTAB);
         } else if (checkedId == 1) {
             mBinding.homepageEdit.setVisibility(View.GONE);
-            SettingsStore.getInstance(getContext()).setHomepage("about://newtab");
+            SettingsStore.getInstance(getContext()).setHomepage(mDefaultHomepageUrl);
         } else if (checkedId == 2) {
             mBinding.homepageEdit.setVisibility(View.VISIBLE);
         }
     }
 
     private int getHomepageId(String homepage) {
-        if (homepage ==  getContext().getString(R.string.HOMEPAGE_URL)) {
+        if (Objects.equals(homepage, UrlUtils.ABOUT_NEWTAB)) {
             return 0;
-        } else if (homepage == "about://newtab") {
+        } else if (Objects.equals(homepage, getContext().getString(R.string.HOMEPAGE_URL))) {
             return 1;
         } else {
             return 2;

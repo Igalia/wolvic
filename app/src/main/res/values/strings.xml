@@ -608,7 +608,7 @@
     <string name="developer_options_msaa_4">4x</string>
 
     <!-- This string is used to label the homepage radio button that sets the homepage to be Wolvic homepage. -->
-    <string name="developer_options_homepage_wolvic">Wolvic</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
 
     <!-- This string is used to label the homepage radio button that sets the homepage to be the New Tab page. -->
     <string name="developer_options_homepage_new_tab">New Tab</string>
@@ -1969,6 +1969,9 @@
 
     <!-- This string is displayed in the URL bar when the user is in the Library panel -->
     <string name="url_library_title">Library</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the New Tab view -->
+    <string name="url_new_tab_title">New Tab</string>
 
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->

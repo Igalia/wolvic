@@ -527,22 +527,28 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void showNewTab() {
+        hidePanel();
         if (mNewTab != null) {
             setView(mNewTab, true);
             mViewModel.setIsFindInPage(false);
-            final Runnable firstDrawCallback = mFirstDrawCallback;
+            mViewModel.setIsNewTabVisible(true);
             onFirstContentfulPaint(mSession.getWSession());
-            mRestoreFirstPaint = () -> {
-                setFirstPaintReady(false);
-                setFirstDrawCallback(firstDrawCallback);
-                if (mWidgetManager != null) {
+            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
+                onFirstContentfulPaint(mSession.getWSession());
+                mRestoreFirstPaint = () -> {
+                    setFirstPaintReady(false);
+                    setFirstDrawCallback(firstDrawCallback);
+                    if (mWidgetManager != null) {
                         mWidgetManager.updateWidget(WindowWidget.this);
-                }
-            };
+                    }
+                };
+            }
         }
     }
 
     private void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
+        hideNewTab();
         if (mLibrary != null) {
             if (mView == null) {
                 setView(mLibrary, switchSurface);
@@ -583,7 +589,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void hideNewTab(boolean switchSurface) {
+    public void hideNewTab() {
+        if (mViewModel.getIsNewTabVisible().getValue().get()) {
+            hideNewTab(true);
+            mViewModel.setIsNewTabVisible(false);
+        }
+    }
+
+    private void hideNewTab(boolean switchSurface) {
         if (mView != null && mNewTab != null) {
             unsetView(mNewTab, switchSurface);
         }
@@ -2031,32 +2044,27 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Uri uri = Uri.parse(aRequest.uri);
         if (UrlUtils.isAboutPage(uri.toString())) {
            if(UrlUtils.isBookmarksUrl(uri.toString())) {
-               hideNewTab(true);
                showPanel(Windows.BOOKMARKS);
 
             } else if (UrlUtils.isHistoryUrl(uri.toString())) {
-               hideNewTab(true);
                showPanel(Windows.HISTORY);
 
             } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-               hideNewTab(true);
                showPanel(Windows.DOWNLOADS);
 
             } else if (UrlUtils.isAddonsUrl(uri.toString())) {
-               hideNewTab(true);
                showPanel(Windows.ADDONS);
 
             } else if (UrlUtils.isNewTabUrl(uri.toString())) {
                 showNewTab();
 
             } else {
-               hideNewTab(true);
+               hideNewTab();
                hideLibraryPanel();
-
            }
 
         } else {
-            hideNewTab(true);
+            hideNewTab();
             hideLibraryPanel();
         }
 
