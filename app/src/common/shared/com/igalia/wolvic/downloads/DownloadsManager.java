@@ -99,7 +99,7 @@ public class DownloadsManager {
             // Already scheduled
             return;
         }
-        mFuture = mExecutor.scheduleAtFixedRate(mDownloadUpdateTask, 0, REFRESH_INTERVAL, TimeUnit.MILLISECONDS);
+        mFuture = mExecutor.scheduleWithFixedDelay(mDownloadUpdateTask, 0, REFRESH_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     private void stopUpdates() {
