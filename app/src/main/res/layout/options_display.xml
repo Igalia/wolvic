@@ -90,6 +90,12 @@
                     app:options="@array/developer_options_msaa"
                     app:values="@array/developer_options_msaa_mode_values" />
 
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/windows_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:description="@string/settings_window_size" />
+
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"

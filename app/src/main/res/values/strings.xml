@@ -607,6 +607,12 @@
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
 
+    <!-- This string is used to label the description of radio buttons for setting the default size of windows. -->
+    <string name="settings_window_size">Default Window Size</string>
+
+    <!-- This string is used to label the radio buttons that set the default size of windows. -->
+    <string name="window_size_preset">%1$d×%2$d</string>
+
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent Mode</string>
