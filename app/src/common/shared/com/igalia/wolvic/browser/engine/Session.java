@@ -12,6 +12,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import androidx.preference.PreferenceManager;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -1364,6 +1367,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
                 for (WSession.ContentDelegate listener : mContentListeners) {
                     listener.onFirstContentfulPaint(aSession);
                 }
+            } else if (!mState.mIsLoading) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    // onFirstContentfulPaint is not emitted sometimes when loading a page from
+                    // the cache. This is a workaround to ensure that the event is emitted.
+                    if (!mFirstContentfulPaint)
+                        onFirstContentfulPaint(aSession);
+                }, 500);
             }
         }
     }
