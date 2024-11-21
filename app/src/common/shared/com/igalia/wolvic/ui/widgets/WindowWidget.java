@@ -1050,7 +1050,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // default position
         mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
         // center vertically relative to the default position
-        mWidgetPlacement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - mWidgetPlacement.height) / 2.0f;
+        mWidgetPlacement.translationY += (SettingsStore.getInstance(getContext()).getWindowHeight() - mWidgetPlacement.height) / 2.0f;
         mWidgetManager.updateWidget(this);
         mWidgetManager.updateVisibleWidgets();
     }
@@ -1568,14 +1568,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public Pair<Float, Float> getMinWorldSize() {
+        SettingsStore settings = SettingsStore.getInstance(getContext());
         float minWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * MIN_SCALE;
-        float minHeight = minWidth * SettingsStore.WINDOW_HEIGHT_DEFAULT / SettingsStore.WINDOW_WIDTH_DEFAULT;
+        float minHeight = minWidth * settings.getWindowHeight() / settings.getWindowWidth();
         return new Pair<>(minWidth, minHeight);
+    }
+
+    public Pair<Float, Float> getDefaultWorldSize() {
+        SettingsStore settings = SettingsStore.getInstance(getContext());
+        float defaultWidth = settings.getWindowWidth() * WidgetPlacement.worldToDpRatio(getContext());
+        float defaultHeight = settings.getWindowHeight() * WidgetPlacement.worldToDpRatio(getContext());
+        return new Pair<>(defaultWidth, defaultHeight);
     }
 
     public @NonNull Pair<Float, Float> getSizeForScale(float aScale, float aAspect) {
         Pair<Float, Float> minWorldSize = getMinWorldSize();
         Pair<Float, Float> maxWorldSize = getMaxWorldSize();
+        Pair<Float, Float> defaultWorldSize = getDefaultWorldSize();
         Pair<Float,Float> mainAxisMinMax, crossAxisMinMax;
         float mainAxisDefault, mainAxisTarget;
         float mainCrossAspect;
@@ -1583,13 +1592,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         boolean isHorizontal = aAspect >= 1.0;
         if (isHorizontal) {
             // horizontal orientation
-            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+            mainAxisDefault = defaultWorldSize.first;
             mainAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
             crossAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
             mainCrossAspect = aAspect;
         } else {
             // vertical orientation
-            mainAxisDefault = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aAspect;
+            mainAxisDefault = defaultWorldSize.second;
             mainAxisMinMax = Pair.create(minWorldSize.second, maxWorldSize.second);
             crossAxisMinMax = Pair.create(minWorldSize.first, maxWorldSize.first);
             mainCrossAspect = 1 / aAspect;

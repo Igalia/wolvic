@@ -915,7 +915,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.window_world_y);
                 if (centerWindow) {
                     // center the window vertically relative to its default position
-                    placement.translationY += (SettingsStore.WINDOW_HEIGHT_DEFAULT - placement.height) / 2.0f;
+                    placement.translationY += (SettingsStore.getInstance(mContext).getWindowHeight() - placement.height) / 2.0f;
                 }
                 placement.translationZ = WidgetPlacement.getWindowWorldZMeters(mContext);
                 break;
