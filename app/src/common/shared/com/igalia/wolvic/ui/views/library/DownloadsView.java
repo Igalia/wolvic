@@ -5,6 +5,7 @@
 
 package com.igalia.wolvic.ui.views.library;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PointF;
@@ -162,24 +163,32 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
             if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
                 if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
-                    mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                            getContext().getString(R.string.download_addon_install),
-                            item.getFilename(),
-                            new String[]{
-                                    getContext().getString(R.string.download_addon_install_cancel),
-                                    getContext().getString(R.string.download_addon_install_confirm_install),
-                            },
-                            (index, isChecked) -> {
-                                if (index == PromptDialogWidget.POSITIVE) {
-                                    LocalExtension.install(
-                                            SessionStore.get().getWebExtensionRuntime(),
-                                            UUID.randomUUID().toString(),
-                                            item.getOutputFileUriAsString(),
-                                            ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
-                                    );
+                    if (mWidgetManager.isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        mWidgetManager.getFocusedWindow().showConfirmPrompt(
+                                getContext().getString(R.string.download_addon_install),
+                                item.getFilename(),
+                                new String[]{
+                                        getContext().getString(R.string.download_addon_install_cancel),
+                                        getContext().getString(R.string.download_addon_install_confirm_install),
+                                },
+                                (index, isChecked) -> {
+                                    if (index == PromptDialogWidget.POSITIVE) {
+                                        LocalExtension.install(
+                                                SessionStore.get().getWebExtensionRuntime(),
+                                                UUID.randomUUID().toString(),
+                                                item.getOutputFileUriAsString(),
+                                                ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                                        );
+                                    }
                                 }
-                            }
-                    );
+                        );
+                        } else {
+                            mWidgetManager.getFocusedWindow().showAlert(
+                                    getContext().getString(R.string.download_addon_install_blocked),
+                                    getContext().getString(R.string.download_addon_install_blocked_permissions_body),
+                                    null
+                            );
+                        }
                 } else {
                     mWidgetManager.getFocusedWindow().showAlert(
                             getContext().getString(R.string.download_addon_install_blocked),
