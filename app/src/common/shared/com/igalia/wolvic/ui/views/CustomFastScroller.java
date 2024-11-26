@@ -361,7 +361,7 @@ class CustomFastScroller extends RecyclerView.ItemDecoration implements Recycler
         int verticalContentLength = mRecyclerView.computeVerticalScrollRange();
         int verticalVisibleLength = mRecyclerViewHeight;
         mNeedVerticalScrollbar = verticalContentLength - verticalVisibleLength > 0
-                    && mRecyclerViewHeight >= mScrollbarMinimumRange || mNeedHorizontalScrollbar;
+                    && mRecyclerViewHeight >= mScrollbarMinimumRange || mNeedVerticalScrollbar;
 
         int horizontalContentLength = mRecyclerView.computeHorizontalScrollRange();
         int horizontalVisibleLength = mRecyclerViewWidth;
