@@ -1201,15 +1201,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Override
-    public void onLibraryClicked() {
-        if (mFocusedWindow.isNativeContentVisible()) {
+    public void onBookmarksClicked() {
+        if (mFocusedWindow.getCurrentContentType() == ContentType.BOOKMARKS) {
             mFocusedWindow.hidePanel();
-
-        } else if (mDownloadsManager.isDownloading()) {
-            mFocusedWindow.showPanel(ContentType.DOWNLOADS);
-
         } else {
             mFocusedWindow.showPanel(ContentType.BOOKMARKS);
+        }
+    }
+
+    @Override
+    public void onDownloadsClicked() {
+        if (mFocusedWindow.getCurrentContentType() == ContentType.DOWNLOADS) {
+            mFocusedWindow.hidePanel();
+        } else {
+            mFocusedWindow.showPanel(ContentType.DOWNLOADS);
         }
     }
 

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools">
     <data>
+        <import type="com.igalia.wolvic.ui.widgets.Windows.ContentType"/>
         <variable
             name="viewmodel"
             type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
@@ -14,7 +15,7 @@
     <RelativeLayout
         android:layout_width="@dimen/tray_width"
         android:layout_height="@dimen/tray_height"
-        android:gravity="top|center_horizontal">
+        android:gravity="center">
 
         <RelativeLayout
             android:id="@+id/status_bar"
@@ -183,19 +184,30 @@
                 android:src="@{viewmodel.isPrivateSession ? @drawable/ic_icon_tray_private_browsing_on_v2 : @drawable/ic_icon_tray_private_browsing_v2}"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/bookmarksButton"
+                style="@style/trayButtonMiddleTheme"
+                android:src="@drawable/ic_icon_bookmark"
+                android:tooltipText="@{viewmodel.currentContentType == ContentType.BOOKMARKS ? @string/close_library_tooltip : @string/open_library_tooltip}"
+                app:activeMode="@{viewmodel.currentContentType == ContentType.BOOKMARKS}"
+                app:clipDrawable="@drawable/ic_icon_library_clip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipLayout="@layout/tooltip_tray"
+                app:tooltipPosition="bottom" />
+
             <RelativeLayout
                 android:layout_width="40dp"
                 android:layout_height="40dp">
                 <com.igalia.wolvic.ui.views.UIButton
-                    android:id="@+id/libraryButton"
+                    android:id="@+id/downloadsButton"
                     style="@style/trayButtonMiddleTheme"
-                    android:tooltipText="@{viewmodel.isNativeContentVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
+                    android:tooltipText="@{viewmodel.currentContentType == ContentType.DOWNLOADS ? @string/close_library_tooltip : @string/open_library_tooltip}"
                     app:tooltipDensity="@dimen/tray_tooltip_density"
                     app:tooltipPosition="bottom"
                     app:tooltipLayout="@layout/tooltip_tray"
-                    android:src="@drawable/ic_icon_library"
+                    android:src="@drawable/ic_icon_downloads"
                     app:clipDrawable="@drawable/ic_icon_library_clip"
-                    app:activeMode="@{viewmodel.isNativeContentVisible}"/>
+                    app:activeMode="@{viewmodel.currentContentType == ContentType.DOWNLOADS}"/>
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
