@@ -1291,7 +1291,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     }
 
     @Override
-    public void onLibraryClicked() {
+    public void onBookmarksClicked() {
+        onLibraryClicked();
+    }
+
+    @Override
+    public void onDownloadsClicked() {
+        onLibraryClicked();
+    }
+
+    private void onLibraryClicked() {
         if (mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
 

@@ -489,6 +489,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mViewModel.getIsNativeContentVisible().getValue().get();
     }
 
+    public Windows.ContentType getCurrentContentType() {
+        return mViewModel.getCurrentContentType().getValue();
+    }
+
     public int getWindowWidth() {
         return mWidgetPlacement.width;
     }
