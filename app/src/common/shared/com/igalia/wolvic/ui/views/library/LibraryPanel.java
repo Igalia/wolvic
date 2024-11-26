@@ -37,7 +37,7 @@ public class LibraryPanel extends FrameLayout {
     private AddonsView mAddonsView;
     private SystemNotificationsView mSystemNotificationsView;
     private LibraryView mCurrentView;
-    private @Windows.PanelType int mCurrentPanel;
+    private Windows.ContentType mCurrentPanel;
 
     public LibraryPanel(@NonNull Context context) {
         super(context);
@@ -64,7 +64,7 @@ public class LibraryPanel extends FrameLayout {
         mDownloadsView = new DownloadsView(getContext(), this);
         mAddonsView = new AddonsView(getContext(), this);
         mSystemNotificationsView = new SystemNotificationsView(getContext(), this);
-        mCurrentPanel = Windows.BOOKMARKS;
+        mCurrentPanel = Windows.ContentType.BOOKMARKS;
 
         updateUI();
     }
@@ -177,27 +177,27 @@ public class LibraryPanel extends FrameLayout {
         mSystemNotificationsView.onDestroy();
     }
 
-    public @Windows.PanelType int getSelectedPanelType() {
+    public Windows.ContentType getSelectedPanelType() {
         if (mCurrentView == mBookmarksView) {
-            return Windows.BOOKMARKS;
+            return Windows.ContentType.BOOKMARKS;
 
         } else if (mCurrentView == mWebAppsView) {
-            return Windows.WEB_APPS;
+            return Windows.ContentType.WEB_APPS;
 
         } else if (mCurrentView == mHistoryView) {
-            return Windows.HISTORY;
+            return Windows.ContentType.HISTORY;
 
         } else if (mCurrentView == mDownloadsView) {
-            return Windows.DOWNLOADS;
+            return Windows.ContentType.DOWNLOADS;
 
         } else if (mCurrentView == mAddonsView) {
-            return Windows.ADDONS;
+            return Windows.ContentType.ADDONS;
 
         } else if (mCurrentView == mSystemNotificationsView) {
-            return Windows.NOTIFICATIONS;
+            return Windows.ContentType.NOTIFICATIONS;
 
         } else {
-            return Windows.NONE;
+            return Windows.ContentType.WEB_CONTENT;
         }
     }
 
@@ -241,30 +241,30 @@ public class LibraryPanel extends FrameLayout {
         mBinding.searchBar.setVisibility(mCurrentView.supportsSearch() ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public void selectPanel(@Windows.PanelType int panelType) {
+    public void selectPanel(Windows.ContentType panelType) {
         mCurrentPanel = panelType;
 
-        if (panelType == Windows.NONE) {
+        if (panelType == Windows.ContentType.WEB_CONTENT) {
             panelType = getSelectedPanelType();
         }
         switch (panelType) {
-            case Windows.NONE:
-            case Windows.BOOKMARKS:
+            case WEB_CONTENT:
+            case BOOKMARKS:
                 selectTab(mBinding.bookmarks);
                 break;
-            case Windows.WEB_APPS:
+            case WEB_APPS:
                 selectTab(mBinding.webApps);
                 break;
-            case Windows.HISTORY:
+            case HISTORY:
                 selectTab(mBinding.history);
                 break;
-            case Windows.DOWNLOADS:
+            case DOWNLOADS:
                 selectTab(mBinding.downloads);
                 break;
-            case Windows.ADDONS:
+            case ADDONS:
                 selectTab(mBinding.addons);
                 break;
-            case Windows.NOTIFICATIONS:
+            case NOTIFICATIONS:
                 selectTab(mBinding.notifications);
                 break;
         }

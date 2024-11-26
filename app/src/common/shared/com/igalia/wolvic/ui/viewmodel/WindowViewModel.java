@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.webkit.URLUtil;
 
@@ -22,12 +23,15 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.ui.widgets.Windows;
+import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 public class WindowViewModel extends AndroidViewModel {
+
+    private static final String LOGTAG = SystemUtils.createLogtag(WindowViewModel.class);
 
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
@@ -48,7 +52,8 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isInsecure;
     private MutableLiveData<ObservableBoolean> isActiveWindow;
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
-    private MutableLiveData<ObservableBoolean> isLibraryVisible;
+    private MutableLiveData<Windows.ContentType> currentContentType;
+    private MediatorLiveData<ObservableBoolean> isNativeContentVisible;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
     private MutableLiveData<ObservableBoolean> isBookmarked;
@@ -128,7 +133,12 @@ public class WindowViewModel extends AndroidViewModel {
         isTitleBarVisible.addSource(isOnlyWindow, mIsTitleBarVisibleObserver);
         isTitleBarVisible.setValue(new ObservableBoolean(true));
 
-        isLibraryVisible = new MutableLiveData<>(new ObservableBoolean(false));
+        currentContentType = new MutableLiveData<>(Windows.ContentType.WEB_CONTENT);
+        isNativeContentVisible = new MediatorLiveData<>();
+        isNativeContentVisible.addSource(currentContentType, contentType ->
+                isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT))
+        );
+        isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
@@ -151,7 +161,7 @@ public class WindowViewModel extends AndroidViewModel {
         isInsecureVisible = new MediatorLiveData<>();
         isInsecureVisible.addSource(isInsecure, mIsInsecureVisibleObserver);
         isInsecureVisible.addSource(isPrivateSession, mIsInsecureVisibleObserver);
-        isInsecureVisible.addSource(isLibraryVisible, mIsInsecureVisibleObserver);
+        isInsecureVisible.addSource(isNativeContentVisible, mIsInsecureVisibleObserver);
         isInsecureVisible.setValue(new ObservableBoolean(false));
 
         isMediaAvailable = new MutableLiveData<>(new ObservableBoolean(false));
@@ -172,13 +182,14 @@ public class WindowViewModel extends AndroidViewModel {
         isUrlBarButtonsVisible.addSource(isDrmUsed, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isPopUpAvailable, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isWebXRUsed, mIsUrlBarButtonsVisibleObserver);
-        isUrlBarButtonsVisible.addSource(isLibraryVisible, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isNativeContentVisible, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isFocused, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.setValue(new ObservableBoolean(false));
 
         isUrlBarIconsVisible = new MediatorLiveData<>();
         isUrlBarIconsVisible.addSource(isLoading, mIsUrlBarIconsVisibleObserver);
         isUrlBarIconsVisible.addSource(isInsecureVisible, mIsUrlBarIconsVisibleObserver);
+        isUrlBarIconsVisible.addSource(isNativeContentVisible, mIsUrlBarIconsVisibleObserver);
         isUrlBarIconsVisible.setValue(new ObservableBoolean(false));
 
         mWidth = new MutableLiveData<>(new ObservableInt());
@@ -228,7 +239,7 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isLibraryVisible.getValue().get()) {
+            if (isNativeContentVisible.getValue().get()) {
                 url = getApplication().getString(R.string.url_library_title);
 
             } else {
@@ -260,7 +271,7 @@ public class WindowViewModel extends AndroidViewModel {
                         (UrlUtils.isDataUri(aUrl) && isPrivateSession.getValue().get()) ||
                         UrlUtils.isFileUri(aUrl) ||
                         UrlUtils.isHomeUri(getApplication(), aUrl) ||
-                        isLibraryVisible.getValue().get() ||
+                        isNativeContentVisible.getValue().get() ||
                         UrlUtils.isBlankUri(getApplication(), aUrl)) {
                     isInsecureVisible.postValue(new ObservableBoolean(false));
 
@@ -281,7 +292,7 @@ public class WindowViewModel extends AndroidViewModel {
             if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
                     (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get()) ||
                     UrlUtils.isHomeUri(getApplication(), aUrl.toString()) ||
-                    isLibraryVisible.getValue().get() ||
+                    isNativeContentVisible.getValue().get() ||
                     UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
                 navigationBarUrl.postValue("");
 
@@ -297,7 +308,7 @@ public class WindowViewModel extends AndroidViewModel {
             String aUrl = url.getValue().toString();
             isUrlBarButtonsVisible.postValue(new ObservableBoolean(
                     !isFocused.getValue().get() &&
-                            !isLibraryVisible.getValue().get() &&
+                            !isNativeContentVisible.getValue().get() &&
                             !UrlUtils.isContentFeed(getApplication(), aUrl) &&
                             !UrlUtils.isPrivateAboutPage(getApplication(), aUrl) &&
                             (URLUtil.isHttpUrl(aUrl) || URLUtil.isHttpsUrl(aUrl)) &&
@@ -316,7 +327,7 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(ObservableBoolean o) {
             isUrlBarIconsVisible.postValue(new ObservableBoolean(
-                    !isLibraryVisible.getValue().get() &&
+                    !isNativeContentVisible.getValue().get() &&
                             (isLoading.getValue().get() ||
                                     isInsecureVisible.getValue().get())
             ));
@@ -370,21 +381,20 @@ public class WindowViewModel extends AndroidViewModel {
         setUrl(new SpannableString(url));
     }
 
-    public void setUrl(@Nullable Spannable url) {
+    private void setUrl(@Nullable Spannable url) {
         if (url == null) {
             return;
         }
 
-        String aURL = url.toString();
-
-        int index = -1;
+        String aURL;
         try {
-            aURL = URLDecoder.decode(aURL, "UTF-8");
+            aURL = URLDecoder.decode(url.toString(), "UTF-8");
 
         } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-            e.printStackTrace();
+            Log.w(LOGTAG, "Unable to decode URL [ " + url + " ] : " + e);
             aURL = "";
         }
+        int index = -1;
         if (aURL.startsWith("jar:")) {
             return;
 
@@ -404,21 +414,18 @@ public class WindowViewModel extends AndroidViewModel {
         // Update the URL bar only if the URL is different than the current one and
         // the URL bar is not focused to avoid override user input
         if (!getUrl().getValue().toString().equalsIgnoreCase(aURL) && !getIsFocused().getValue().get()) {
-            this.url.postValue(new SpannableString(aURL));
             if (index > 0) {
                 SpannableString spannable = new SpannableString(aURL);
                 ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
                 ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
                 spannable.setSpan(color1, 0, index + 3, 0);
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
-                this.url.postValue(url);
+                this.url.postValue(spannable);
 
             } else {
                 this.url.postValue(url);
             }
         }
-
-        this.url.postValue(url);
     }
 
     @NonNull
@@ -427,7 +434,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isLibraryVisible.getValue().get()) {
+        if (isNativeContentVisible.getValue().get()) {
             return getApplication().getString(R.string.url_library_title);
 
         } else {
@@ -563,18 +570,17 @@ public class WindowViewModel extends AndroidViewModel {
         this.isActiveWindow.setValue(new ObservableBoolean(isActiveWindow));
     }
 
-    public void setIsLibraryVisible(boolean isLibraryVisible) {
-        this.isLibraryVisible.postValue(new ObservableBoolean(isLibraryVisible));
-        this.url.postValue(this.getUrl().getValue());
-    }
-
-    public void setIsPanelVisible(boolean isVisible) {
-        setIsLibraryVisible(isVisible);
+    public void setCurrentContentType(Windows.ContentType contentType) {
+        currentContentType.postValue(contentType);
     }
 
     @NonNull
-    public MutableLiveData<ObservableBoolean> getIsLibraryVisible() {
-        return isLibraryVisible;
+    public MutableLiveData<Windows.ContentType> getCurrentContentType() {
+        return currentContentType;
+    }
+
+    public MutableLiveData<ObservableBoolean> getIsNativeContentVisible() {
+        return isNativeContentVisible;
     }
 
     @NonNull

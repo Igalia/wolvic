@@ -15,11 +15,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1379,12 +1377,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onAddons() {
                 hideMenu();
 
-                if (!mAttachedWindow.isLibraryVisible()) {
-                    mAttachedWindow.switchPanel(Windows.ADDONS);
-
-                } else if (mAttachedWindow.getSelectedPanel() != Windows.ADDONS) {
-                    mAttachedWindow.showPanel(Windows.ADDONS);
-                }
+                mAttachedWindow.showPanel(Windows.ContentType.ADDONS);
             }
 
             @Override
@@ -1460,7 +1453,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBlockedCount++;
         final int currentCount = mBlockedCount;
         postDelayed(() -> {
-            if (currentCount == mBlockedCount && !mViewModel.getIsLibraryVisible().getValue().get()) {
+            if (currentCount == mBlockedCount && !mViewModel.getIsNativeContentVisible().getValue().get()) {
                 showNotification(POPUP_NOTIFICATION_ID,
                         mBinding.navigationBarNavigation.urlBar.getPopUpButton(),
                         NotificationManager.Notification.TOP,

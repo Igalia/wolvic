@@ -52,9 +52,9 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.Executor;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
@@ -98,7 +98,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
-        @PanelType int panelType = Windows.NONE;
+        ContentType panelType = ContentType.WEB_CONTENT;
 
         public void load(@NonNull WindowWidget aWindow, WindowsState aState, int aTabIndex) {
             WidgetPlacement widgetPlacement;
@@ -117,11 +117,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             textureHeight = widgetPlacement.height;
             worldWidth = widgetPlacement.worldWidth;
             tabIndex = aTabIndex;
-            if (aWindow.isLibraryVisible()) {
+            if (aWindow.isNativeContentVisible()) {
                 panelType = aWindow.getSelectedPanel();
 
             } else {
-                panelType = Windows.NONE;
+                panelType = ContentType.WEB_CONTENT;
             }
         }
     }
@@ -163,15 +163,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private DownloadsManager mDownloadsManager;
     private ConnectivityReceiver mConnectivityReceived;
 
-    @IntDef(value = {NONE, BOOKMARKS, WEB_APPS, HISTORY, DOWNLOADS, ADDONS, NOTIFICATIONS})
-    public @interface PanelType {}
-    public static final int NONE = 0;
-    public static final int BOOKMARKS = 1;
-    public static final int WEB_APPS = 2;
-    public static final int HISTORY = 3;
-    public static final int DOWNLOADS = 4;
-    public static final int ADDONS = 5;
-    public static final int NOTIFICATIONS = 6;
+    public enum ContentType {
+        WEB_CONTENT(""),
+        BOOKMARKS(UrlUtils.ABOUT_BOOKMARKS),
+        WEB_APPS(UrlUtils.ABOUT_WEBAPPS),
+        HISTORY(UrlUtils.ABOUT_HISTORY),
+        DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS),
+        ADDONS(UrlUtils.ABOUT_ADDONS),
+        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS);
+        public final String URL;
+
+        ContentType(String url) {
+            this.URL = url;
+        }
+    }
 
     public enum WindowPlacement{
         FRONT(0),
@@ -379,7 +384,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 case ADDONS:
                     newWindow.getSession().loadUri(UrlUtils.ABOUT_ADDONS);
                     break;
-                case NONE:
+                case WEB_CONTENT:
                     break;
             }
         }
@@ -626,9 +631,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void closeLibraryPanelInFocusedWindowIfNeeded() {
-        if (!mFocusedWindow.isLibraryVisible())
+        if (!mFocusedWindow.isNativeContentVisible())
             return;
-        mFocusedWindow.switchPanel(NONE);
+        mFocusedWindow.hidePanel();
     }
 
     public void enterPrivateMode() {
@@ -1192,11 +1197,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     @Override
     public void onLibraryClicked() {
-        if (mDownloadsManager.isDownloading()) {
-            mFocusedWindow.switchPanel(Windows.DOWNLOADS);
+        if (mFocusedWindow.isNativeContentVisible()) {
+            mFocusedWindow.hidePanel();
+
+        } else if (mDownloadsManager.isDownloading()) {
+            mFocusedWindow.showPanel(ContentType.DOWNLOADS);
 
         } else {
-            mFocusedWindow.switchPanel(Windows.NONE);
+            mFocusedWindow.showPanel(ContentType.BOOKMARKS);
         }
     }
 
@@ -1768,7 +1776,7 @@ public void selectTab(@NonNull Session aTab) {
     }
 
     public boolean isSessionFocused(@NonNull Session session) {
-        return mRegularWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && session.isPrivateMode() == mPrivateMode) ||
-                mPrivateWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && session.isPrivateMode() == mPrivateMode );
+        return mRegularWindows.stream().anyMatch(window -> window.getSession() == session && !window.isNativeContentVisible() && session.isPrivateMode() == mPrivateMode) ||
+                mPrivateWindows.stream().anyMatch(window -> window.getSession() == session && !window.isNativeContentVisible() && session.isPrivateMode() == mPrivateMode);
     }
 }

@@ -189,13 +189,13 @@
                 <com.igalia.wolvic.ui.views.UIButton
                     android:id="@+id/libraryButton"
                     style="@style/trayButtonMiddleTheme"
-                    android:tooltipText="@{viewmodel.isLibraryVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
+                    android:tooltipText="@{viewmodel.isNativeContentVisible ? @string/close_library_tooltip : @string/open_library_tooltip}"
                     app:tooltipDensity="@dimen/tray_tooltip_density"
                     app:tooltipPosition="bottom"
                     app:tooltipLayout="@layout/tooltip_tray"
                     android:src="@drawable/ic_icon_library"
                     app:clipDrawable="@drawable/ic_icon_library_clip"
-                    app:activeMode="@{viewmodel.isLibraryVisible}"/>
+                    app:activeMode="@{viewmodel.isNativeContentVisible}"/>
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
