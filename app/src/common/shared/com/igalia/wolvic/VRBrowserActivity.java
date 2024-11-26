@@ -82,7 +82,6 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.CrashDialogWidget;
-import com.igalia.wolvic.ui.widgets.dialogs.DeprecatedVersionDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.LegalDocumentDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SendTabDialogWidget;
@@ -1104,7 +1103,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // We shouldn't divide the scale factor when we pass the motion event to the web engine
             if (widget instanceof WindowWidget) {
                 WindowWidget windowWidget = (WindowWidget) widget;
-                if (!windowWidget.isLibraryVisible()) {
+                if (!windowWidget.isNativeContentVisible()) {
                     scale = 1.0f;
                 }
             }

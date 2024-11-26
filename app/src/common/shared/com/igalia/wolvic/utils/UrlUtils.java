@@ -208,6 +208,26 @@ public class UrlUtils {
         return url.equalsIgnoreCase(ABOUT_ADDONS);
     }
 
+    public static final String ABOUT_WEBAPPS = "about://webapps";
+
+    public static boolean isWebAppsUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_WEBAPPS);
+    }
+
+    public static final String ABOUT_NOTIFICATIONS = "about://notifications";
+
+    public static boolean isNotificationsUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_NOTIFICATIONS);
+    }
+
     public static final String WEB_EXTENSION_URL = "moz-extension://";
 
     public static boolean isWebExtensionUrl(@Nullable String url) {
@@ -225,7 +245,8 @@ public class UrlUtils {
     }
 
     public static boolean isAboutPage(@Nullable String url) {
-        return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isAddonsUrl(url) || isPrivateUrl(url);
+        return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isAddonsUrl(url) ||
+                isWebAppsUrl(url) || isNotificationsUrl(url) || isPrivateUrl(url);
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {

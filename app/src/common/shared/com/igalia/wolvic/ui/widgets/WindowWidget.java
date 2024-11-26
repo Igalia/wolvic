@@ -330,7 +330,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     protected void onDismiss() {
-        if (mViewModel.getIsLibraryVisible().getValue().get()) {
+        if (mViewModel.getIsNativeContentVisible().getValue().get()) {
             if (!mLibrary.onBack()) {
                 hidePanel();
             }
@@ -485,8 +485,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public boolean isLibraryVisible() {
-        return mViewModel.getIsLibraryVisible().getValue().get();
+    public boolean isNativeContentVisible() {
+        return mViewModel.getIsNativeContentVisible().getValue().get();
     }
 
     public int getWindowWidth() {
@@ -497,55 +497,51 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mWidgetPlacement.height;
     }
 
-    public @Windows.PanelType
-    int getSelectedPanel() {
+    public Windows.ContentType getSelectedPanel() {
         return mLibrary.getSelectedPanelType();
     }
 
     private void hideLibraryPanel() {
-        if (mViewModel.getIsLibraryVisible().getValue().get()) {
+        if (mViewModel.getIsNativeContentVisible().getValue().get()) {
             hidePanel(true);
-        }
-    }
-
-    public void switchPanel(@Windows.PanelType int panelType) {
-        if (mViewModel.getIsLibraryVisible().getValue().get()) {
-            hidePanel(true);
-
-        } else {
-            showPanel(panelType, true);
         }
     }
 
     Runnable mRestoreFirstPaint;
 
-    public void showPanel(@Windows.PanelType int panelType) {
-        showPanel(panelType, true);
+    public void showPanel(Windows.ContentType panelType) {
+        if (panelType == Windows.ContentType.WEB_CONTENT) {
+            hidePanel();
+        } else {
+            showPanel(panelType, true);
+        }
     }
 
-    private void showPanel(@Windows.PanelType int panelType, boolean switchSurface) {
-        if (mLibrary != null) {
-            if (mView == null) {
-                setView(mLibrary, switchSurface);
-                mLibrary.selectPanel(panelType);
-                mLibrary.onShow();
-                mViewModel.setIsFindInPage(false);
-                mViewModel.setIsPanelVisible(true);
-                if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
-                    final Runnable firstDrawCallback = mFirstDrawCallback;
-                    onFirstContentfulPaint(mSession.getWSession());
-                    mRestoreFirstPaint = () -> {
-                        setFirstPaintReady(false);
-                        setFirstDrawCallback(firstDrawCallback);
-                        if (mWidgetManager != null) {
-                            mWidgetManager.updateWidget(WindowWidget.this);
-                        }
-                    };
-                }
+    private void showPanel(Windows.ContentType contentType, boolean switchSurface) {
+        if (mLibrary == null) {
+            return;
+        }
 
-            } else if (mView == mLibrary) {
-                mLibrary.selectPanel(panelType);
+        mViewModel.setIsFindInPage(false);
+        mViewModel.setCurrentContentType(contentType);
+        mViewModel.setUrl(contentType.URL);
+        if (mView == null) {
+            setView(mLibrary, switchSurface);
+            mLibrary.selectPanel(contentType);
+            mLibrary.onShow();
+            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
+                onFirstContentfulPaint(mSession.getWSession());
+                mRestoreFirstPaint = () -> {
+                    setFirstPaintReady(false);
+                    setFirstDrawCallback(firstDrawCallback);
+                    if (mWidgetManager != null) {
+                        mWidgetManager.updateWidget(WindowWidget.this);
+                    }
+                };
             }
+        } else if (mView == mLibrary) {
+            mLibrary.selectPanel(contentType);
         }
     }
 
@@ -557,7 +553,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mView != null && mLibrary != null) {
             unsetView(mLibrary, switchSurface);
             mLibrary.onHide();
-            mViewModel.setIsPanelVisible(false);
+            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
         }
         if (switchSurface && mRestoreFirstPaint != null) {
             mRestoreFirstPaint.run();
@@ -1127,12 +1123,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
+            if (mViewModel.getIsNativeContentVisible().getValue().get()) {
                 mWidgetManager.popWorldBrightness(this);
             }
 
         } else {
-            if (mViewModel.getIsLibraryVisible().getValue().get()) {
+            if (mViewModel.getIsNativeContentVisible().getValue().get()) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
             }
         }
@@ -2003,16 +1999,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Uri uri = Uri.parse(aRequest.uri);
         if (UrlUtils.isAboutPage(uri.toString())) {
             if(UrlUtils.isBookmarksUrl(uri.toString())) {
-                showPanel(Windows.BOOKMARKS);
+                showPanel(Windows.ContentType.BOOKMARKS);
 
             } else if (UrlUtils.isHistoryUrl(uri.toString())) {
-                showPanel(Windows.HISTORY);
+                showPanel(Windows.ContentType.HISTORY);
 
             } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-                showPanel(Windows.DOWNLOADS);
+                showPanel(Windows.ContentType.DOWNLOADS);
 
             } else if (UrlUtils.isAddonsUrl(uri.toString())) {
-                showPanel(Windows.ADDONS);
+                showPanel(Windows.ContentType.ADDONS);
 
             } else {
                 hideLibraryPanel();

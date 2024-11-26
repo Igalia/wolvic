@@ -35,7 +35,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -578,7 +577,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWidgetPlacement.parentHandle = -1;
 
         if (mViewModel != null) {
-            mViewModel.getIsLibraryVisible().removeObserver(mIsLibraryVisible);
+            mViewModel.getIsNativeContentVisible().removeObserver(mIsNativeContentVisible);
             mViewModel.getIsPrivateSession().removeObserver(mIsPrivateSession);
             mViewModel = null;
         }
@@ -601,7 +600,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
-        mViewModel.getIsLibraryVisible().observe((VRBrowserActivity)getContext(), mIsLibraryVisible);
+        mViewModel.getIsNativeContentVisible().observe((VRBrowserActivity)getContext(), mIsNativeContentVisible);
         mViewModel.getIsPrivateSession().observe((VRBrowserActivity)getContext(), mIsPrivateSession);
 
         mBinding.setViewmodel(mViewModel);
@@ -611,7 +610,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mIsWindowAttached = true;
     }
 
-    private Observer<ObservableBoolean> mIsLibraryVisible = aBoolean -> {
+    private Observer<ObservableBoolean> mIsNativeContentVisible = aBoolean -> {
         if (mBinding.libraryButton.isHovered()) {
             return;
         }
