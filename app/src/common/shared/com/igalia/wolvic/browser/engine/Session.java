@@ -1422,6 +1422,13 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
     }
 
+    @Override
+    public void onPaymentHandler(@NonNull final WSession aSession, @NonNull WDisplay aDisplay) {
+        for (WSession.ContentDelegate listener : mContentListeners) {
+            listener.onPaymentHandler(aSession, aDisplay);
+        }
+    }
+
     // TextInput Delegate
 
     @Override

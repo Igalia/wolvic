@@ -317,6 +317,15 @@ public interface WSession {
          */
         @UiThread
         default void onShowDynamicToolbar(@NonNull final WSession aSession) {}
+
+        /**
+         * The app should display its dynamic toolbar, fully expanded to the height that was previously.
+         *
+         * @param aSession ISession that initiated the callback.
+         * @param aDisplay IDisplay that initiated the callback.
+         */
+        @UiThread
+        default void onPaymentHandler(@NonNull final WSession aSession, @NonNull final WDisplay aDisplay) {}
     }
 
     interface NavigationDelegate {

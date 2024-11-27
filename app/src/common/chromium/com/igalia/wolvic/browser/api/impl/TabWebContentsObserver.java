@@ -1,24 +1,38 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WWebRequestError;
 
+import org.chromium.base.ContextUtils;
+import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.content_public.browser.LifecycleState;
+import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.NavigationHandle;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
+import org.chromium.ui.base.ActivityWindowAndroid;
+import org.chromium.ui.base.IntentRequestTracker;
+import org.chromium.ui.base.ViewAndroidDelegate;
+import org.chromium.ui.base.WindowAndroid;
 import org.chromium.url.GURL;
+import org.chromium.wolvic.TabCompositorView;
 
 import java.security.cert.X509Certificate;
 
 public class TabWebContentsObserver extends WebContentsObserver {
     private @NonNull SessionImpl mSession;
+    private @NonNull TabImpl mTab;
 
-    public TabWebContentsObserver(WebContents webContents, @NonNull SessionImpl session) {
-        super(webContents);
+    public TabWebContentsObserver(TabImpl tab, @NonNull SessionImpl session) {
+        super(tab.getActiveWebContents());
+        mTab = tab;
         mSession = session;
     }
 
@@ -104,6 +118,50 @@ public class TabWebContentsObserver extends WebContentsObserver {
             delegate.onPageStop(mSession, true);
         }
         dispatchCanGoBackOrForward();
+
+        // Test code
+        if (mTab.getActiveWebContents() == mWebContents.get()) {
+            WebContents paymentHandlerWebContents = mTab.createWebContents(false);
+            if (paymentHandlerWebContents != null) {
+                Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+                ActivityWindowAndroid windowAndroid = new ActivityWindowAndroid(context, false,
+                        IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
+
+                ContentView contentView =
+                        ContentView.createContentView(context, null /* eventOffsetHandler */, paymentHandlerWebContents);
+                paymentHandlerWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(contentView),
+                        contentView, windowAndroid, WebContents.createDefaultInternalsHolder());
+
+                paymentHandlerWebContents
+                    .getNavigationController()
+                    .loadUrl(new LoadUrlParams("https://bobbucks.dev/pay"));
+
+                onCreateNewPaymentHandler(paymentHandlerWebContents, contentView);
+            }
+        }
+    }
+
+    public void onCreateNewPaymentHandler(@NonNull WebContents paymentHandlerWebContents, ContentView contentView) {
+        Log.e("MYSH", "create payment webcontents");
+        WSession.ContentDelegate contentDelegate = mSession.getContentDelegate();
+        if (contentDelegate == null) {
+            Log.e("MYSH", "null ContentDelegate");
+            return;
+        }
+
+        WindowAndroid windowAndroid = paymentHandlerWebContents.getTopLevelNativeWindow();
+        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        TabCompositorView compositorView = new TabCompositorView(context);
+        compositorView.onNativeLibraryLoaded(windowAndroid);
+        windowAndroid.setAnimationPlaceholderView(compositorView);
+
+        mTab.setPaymentWebContents(paymentHandlerWebContents, contentView, compositorView);
+
+        WDisplay display = mSession.acquireOverlayDisplay(compositorView);
+        contentDelegate.onPaymentHandler(mSession, display);
+
+        // Show Compositor View after attaching to the parent view.
+        compositorView.setCurrentWebContents(paymentHandlerWebContents);
     }
 
     @Override

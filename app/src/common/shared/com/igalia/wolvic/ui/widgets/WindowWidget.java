@@ -48,6 +48,7 @@ import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.VideoAvailabilityListener;
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
@@ -125,6 +126,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private PromptDialogWidget mAppDialog;
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
+    private OverlayContentWidget mPaymentHandler;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -839,6 +841,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
+        Log.e("MYSH", "WindowWidget handleTouchEvent");
         if (aEvent.getAction() == MotionEvent.ACTION_DOWN) {
             if (!mActive) {
                 mClickedAfterFocus = true;
@@ -875,6 +878,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
+        Log.e("MYSH", "WindowWidget handleHoverEvent");
         if (aEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
             mHovered = true;
             updateBorder();
@@ -1332,6 +1336,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onTouchEvent(MotionEvent aEvent) {
+        Log.e("MYSH", "WindowWidget onTouchEvent");
         WSession session = mSession.getWSession();
         if (session == null) {
             return false;
@@ -1342,6 +1347,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
+        Log.e("MYSH", "WindowWidget onGenericMotionEvent");
         if (mView != null) {
             return super.onGenericMotionEvent(aEvent);
         } else {
@@ -1867,6 +1873,25 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         getResources().getString(R.string.download_open_file_open_unsupported_body),
                         null);
             }
+        }
+    }
+
+    @Override
+    public void onPaymentHandler(@NonNull WSession session, @NonNull WDisplay display) {
+        Log.e("MYSH", "WindowWidget onPaymentHandler");
+        mPaymentHandler = new OverlayContentWidget(getContext());
+        mPaymentHandler.setDelegates(session, display);
+
+        mPaymentHandler.getPlacement().parentHandle = getHandle();
+        mPaymentHandler.attachToWindow(this);
+        mPaymentHandler.show(KEEP_FOCUS);
+    }
+
+    public void hidePaymentHandler() {
+        Log.e("MYSH", "WindowWidget hidePaymentHandler");
+        if (mPaymentHandler != null) {
+            mPaymentHandler.releaseWidget();
+            mPaymentHandler = null;
         }
     }
 
