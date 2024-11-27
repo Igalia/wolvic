@@ -48,6 +48,7 @@ import com.igalia.wolvic.browser.SessionChangeListener;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.VideoAvailabilityListener;
 import com.igalia.wolvic.browser.api.WAllowOrDeny;
+import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WSession;
@@ -125,6 +126,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private PromptDialogWidget mAppDialog;
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
+    private OverlayContentWidget mPaymentHandler;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -1883,6 +1885,26 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         getResources().getString(R.string.download_open_file_open_unsupported_body),
                         null);
             }
+        }
+    }
+
+    @Override
+    public void onShowPaymentHandler(@NonNull WSession session, @NonNull WDisplay display, @NonNull OnPaymentHandlerCallback callback) {
+        assert mPaymentHandler == null;
+        mPaymentHandler = new OverlayContentWidget(getContext());
+        mPaymentHandler.setDelegates(session, display, callback);
+
+        mPaymentHandler.getPlacement().parentHandle = getHandle();
+        mPaymentHandler.attachToWindow(this);
+        mPaymentHandler.show(KEEP_FOCUS);
+    }
+
+    @Override
+    public void onHidePaymentHandler(@NonNull WSession session) {
+        if (mPaymentHandler != null) {
+            mPaymentHandler.hide(REMOVE_WIDGET);
+            mPaymentHandler.releaseWidget();
+            mPaymentHandler = null;
         }
     }
 
