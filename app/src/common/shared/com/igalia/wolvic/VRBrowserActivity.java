@@ -73,6 +73,7 @@ import com.igalia.wolvic.ui.widgets.AppServicesProvider;
 import com.igalia.wolvic.ui.widgets.HorizontalTabsBar;
 import com.igalia.wolvic.ui.widgets.KeyboardWidget;
 import com.igalia.wolvic.ui.widgets.NavigationBarWidget;
+import com.igalia.wolvic.ui.widgets.OverlayContentWidget;
 import com.igalia.wolvic.ui.widgets.RootWidget;
 import com.igalia.wolvic.ui.widgets.TrayWidget;
 import com.igalia.wolvic.ui.widgets.UISurfaceTextureRenderer;
@@ -1150,6 +1151,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 if (!windowWidget.isNativeContentVisible()) {
                     scale = 1.0f;
                 }
+            } else if (widget instanceof OverlayContentWidget) {
+                scale = 1.0f;
             }
             final float x = aX / scale;
             final float y = aY / scale;
