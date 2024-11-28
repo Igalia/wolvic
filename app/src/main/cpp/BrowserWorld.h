@@ -49,7 +49,8 @@ public:
   void EndFrame();
   void TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity, const int aControllerId);
   void TogglePassthrough();
-  void SetHeadLockEnabled(const bool isEnabled);
+  enum class LockMode { NO_LOCK, HEAD, CONTROLLER };
+  void SetLockMode(LockMode);
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
   void UpdatePointerColor();

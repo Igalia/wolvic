@@ -208,7 +208,7 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
-  bool inHeadLockMode = false;
+  LockMode lockMode = LockMode::NO_LOCK;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1204,7 +1204,7 @@ BrowserWorld::StartFrame() {
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
     m.UpdateTrackedKeyboard();
-    if (m.inHeadLockMode) {
+    if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
       m.device->Reorient();
     }
@@ -1279,9 +1279,9 @@ BrowserWorld::TogglePassthrough() {
 }
 
 void
-BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
-  m.inHeadLockMode = isEnabled;
+  m.lockMode = lockMode;
 }
 
 void
@@ -2135,9 +2135,9 @@ JNI_METHOD(void, togglePassthroughNative)
   crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
-JNI_METHOD(void, setHeadLockEnabledNative)
-(JNIEnv*, jobject, jboolean isEnabled) {
-  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
+JNI_METHOD(void, setLockEnabledNative)
+(JNIEnv*, jobject, jint lockMode) {
+    crow::BrowserWorld::Instance().SetLockMode(static_cast<crow::BrowserWorld::LockMode>(lockMode));
 }
 
 JNI_METHOD(void, exitImmersiveNative)

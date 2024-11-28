@@ -374,7 +374,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (false)
             checkForCrash();
 
-        setHeadLockEnabled(mSettings.isHeadLockEnabled());
+        setLockMode(mSettings.isHeadLockEnabled() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
         if (mSettings.getPointerMode() == WidgetManagerDelegate.TRACKED_EYE)
             checkEyeTrackingPermissions(aPermissionGranted -> setPointerMode(aPermissionGranted ? WidgetManagerDelegate.TRACKED_EYE : WidgetManagerDelegate.TRACKED_POINTER));
         else
@@ -736,7 +736,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 initializeSpeechRecognizer();
             } else if (key.equals(getString(R.string.settings_key_head_lock))) {
                 boolean isHeadLockEnabled = SettingsStore.getInstance(this).isHeadLockEnabled();
-                setHeadLockEnabled(isHeadLockEnabled);
+                setLockMode(isHeadLockEnabled ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
                 if (!isHeadLockEnabled)
                     recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
             }
@@ -1998,8 +1998,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void setHeadLockEnabled(boolean isHeadLockEnabled) {
-        queueRunnable(() -> setHeadLockEnabledNative(isHeadLockEnabled));
+    public void setLockMode(@LockMode int lockMode) {
+        queueRunnable(() -> setLockEnabledNative(lockMode));
     }
 
     @Override
@@ -2209,7 +2209,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
     private native void togglePassthroughNative();
-    private native void setHeadLockEnabledNative(boolean isEnabled);
+    private native void setLockEnabledNative(@LockMode int aLockMode);
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
