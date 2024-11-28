@@ -209,6 +209,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   LockMode lockMode = LockMode::NO_LOCK;
+  vrb::Matrix lockModeInitialTransform;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1148,6 +1149,16 @@ BrowserWorld::ProcessOVRPlatformEvents() {
 }
 #endif
 
+vrb::Matrix
+BrowserWorld::GetActiveControllerOrientation() const {
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (!controller.enabled)
+      continue;
+    return controller.transform->GetTransform();
+  }
+  return vrb::Matrix::Identity();
+}
+
 void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
@@ -1206,7 +1217,9 @@ BrowserWorld::StartFrame() {
     m.UpdateTrackedKeyboard();
     if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
-      m.device->Reorient();
+      auto transform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+      transform.PostMultiplyInPlace(m.lockModeInitialTransform.Inverse());
+      m.device->Reorient(transform);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
@@ -1281,6 +1294,9 @@ BrowserWorld::TogglePassthrough() {
 void
 BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
+  if (m.lockMode == lockMode)
+      return;
+  m.lockModeInitialTransform = lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
   m.lockMode = lockMode;
 }
 

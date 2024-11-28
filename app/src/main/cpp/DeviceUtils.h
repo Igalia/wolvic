@@ -18,7 +18,7 @@ namespace crow {
 class DeviceUtils {
 public:
   static vrb::Matrix CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition);
-  static vrb::Matrix CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition);
+  static vrb::Matrix CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform);
   static void GetTargetImmersiveSize(const uint32_t aRequestedWidth, const uint32_t  aRequestedHeight,
                                      const uint32_t aRecommendedWidth, const uint32_t aRecommendedHeight,
                                      uint32_t& aTargetWidth, uint32_t& aTargetHeight) {

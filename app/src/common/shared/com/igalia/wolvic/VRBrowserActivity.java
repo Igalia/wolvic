@@ -1763,6 +1763,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void startWindowMove() {
+        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.CONTROLLER_LOCK));
+    }
+
+    @Override
+    public void finishWindowMove() {
+        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.NO_LOCK));
+    }
+
+    @Override
     public void addUpdateListener(@NonNull UpdateListener aUpdateListener) {
         if (!mWidgetUpdateListeners.contains(aUpdateListener)) {
             mWidgetUpdateListeners.add(aUpdateListener);

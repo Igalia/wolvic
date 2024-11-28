@@ -152,7 +152,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     if (background != null) {
                         background.setColorFilter(getContext().getColor(R.color.design_default_color_primary), PorterDuff.Mode.ADD);
                     }
-                    mWidgetManager.startWidgetMove(mWidgetManager.getWindows().getFrontWindow(), WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_WINDOW);
+                    mWidgetManager.startWindowMove();
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
@@ -161,7 +161,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     if (background != null) {
                         background.clearColorFilter();
                     }
-                    mWidgetManager.finishWidgetMove();
+                    mWidgetManager.finishWindowMove();
                     break;
                 default:
                     return false;

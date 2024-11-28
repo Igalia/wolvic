@@ -103,6 +103,7 @@ private:
 #if defined(OCULUSVR) && defined(STORE_BUILD)
   void ProcessOVRPlatformEvents();
 #endif
+  vrb::Matrix GetActiveControllerOrientation() const;
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)

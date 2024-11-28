@@ -90,6 +90,8 @@ public interface WidgetManagerDelegate {
     void finishWidgetResize(WindowWidget aWidget);
     void startWidgetMove(Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
     void finishWidgetMove();
+    void startWindowMove();
+    void finishWindowMove();
     void addUpdateListener(@NonNull UpdateListener aUpdateListener);
     void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
     void pushBackHandler(@NonNull Runnable aRunnable);
