@@ -63,10 +63,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.centerWindowsSwitch.setOnCheckedChangeListener(mCenterWindowsListener);
         setCenterWindows(SettingsStore.getInstance(getContext()).isCenterWindows(), false);
 
-        float windowDistance = SettingsStore.getInstance(getContext()).getWindowDistance();
-        mBinding.windowDistanceSlider.setOnValueChangeListener(mWindowDistanceListener);
-        setWindowDistance(windowDistance, false);
-
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
         mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
         setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
@@ -163,10 +159,6 @@ class DisplayOptionsView extends SettingsView {
 
         return editing;
     }
-
-    private SliderSetting.OnValueChangeListener mWindowDistanceListener = (slider, value, doApply) -> {
-        setWindowDistance(value, true);
-    };
 
     private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
         setUaMode(checkedId, true);
@@ -277,7 +269,6 @@ class DisplayOptionsView extends SettingsView {
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
-        setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -370,14 +361,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.homepageEdit.setFirstText(newHomepage);
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
         mBinding.homepageEdit.setOnClickListener(mHomepageListener);
-    }
-
-    private void setWindowDistance(float value, boolean doApply) {
-        mBinding.windowDistanceSlider.setOnValueChangeListener(null);
-        mBinding.windowDistanceSlider.setValue(value, doApply);
-        mBinding.windowDistanceSlider.setOnValueChangeListener(mWindowDistanceListener);
-
-        SettingsStore.getInstance(getContext()).setWindowDistance(mBinding.windowDistanceSlider.getValue());
     }
 
     private void setUaMode(int checkId, boolean doApply) {

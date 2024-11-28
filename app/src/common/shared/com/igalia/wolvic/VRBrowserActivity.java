@@ -2200,6 +2200,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public boolean isEyeTrackingSupported() { return mIsEyeTrackingSupported; }
 
+    // Sigmoid transform to allow faster window movements as the distance increases.
+    private static float sigmoidTransform(float x, float xMax, float k, float xMid) {
+        float xNorm = x / xMax;
+        return (float) (1 / (1 + Math.exp(-k * (xNorm - xMid))));
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void setWindowDistance(float aDistance) {
+        float xMid = 0.5f; // sigmoid centered in y axis
+        float xMax = 0.7f; // 70cm as a good average value for adult human arm
+        mSettings.setWindowDistance(sigmoidTransform(aDistance, 0.5f, 10, xMid));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();

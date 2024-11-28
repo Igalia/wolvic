@@ -91,6 +91,9 @@ const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
 const float kPointerSize = 3.0;
 
+// When moving windows, the minimum amount of movement required to start moving the window
+float kWindowMoveZThreshold = 0.01;
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -1220,6 +1223,11 @@ BrowserWorld::StartFrame() {
       auto transform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
       transform.PostMultiplyInPlace(m.lockModeInitialTransform.Inverse());
       m.device->Reorient(transform);
+      if (m.lockMode == LockMode::CONTROLLER) {
+          float deltaZ = m.lockModeInitialTransform.GetTranslation().z() - GetActiveControllerOrientation().GetTranslation().z();
+          if (abs(deltaZ) > kWindowMoveZThreshold)
+            VRBrowser::SetWindowDistance(deltaZ);
+      }
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
