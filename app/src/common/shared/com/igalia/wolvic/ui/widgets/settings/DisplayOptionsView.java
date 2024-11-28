@@ -100,9 +100,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
         setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
 
-        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
-        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled(), false);
-
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -188,10 +185,6 @@ class DisplayOptionsView extends SettingsView {
         setLatinAutoComplete(enabled, true);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
-        setHeadLock(value, true);
-    };
-
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -265,7 +258,6 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
-        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT, true);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
@@ -331,17 +323,6 @@ class DisplayOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setLatinAutoComplete(value);
-        }
-    }
-
-    private void setHeadLock(boolean value, boolean doApply) {
-        mBinding.headLockSwitch.setOnCheckedChangeListener(null);
-        mBinding.headLockSwitch.setValue(value, false);
-        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
-
-        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
-        if (doApply) {
-            settingsStore.setHeadLockEnabled(value);
         }
     }
 
