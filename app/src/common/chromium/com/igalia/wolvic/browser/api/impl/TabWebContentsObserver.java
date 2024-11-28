@@ -1,7 +1,6 @@
 package com.igalia.wolvic.browser.api.impl;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +22,7 @@ import org.chromium.ui.base.ViewAndroidDelegate;
 import org.chromium.ui.base.WindowAndroid;
 import org.chromium.url.GURL;
 import org.chromium.wolvic.TabCompositorView;
+import org.chromium.wolvic.WolvicWebContentsFactory;
 
 import java.security.cert.X509Certificate;
 
@@ -120,48 +120,53 @@ public class TabWebContentsObserver extends WebContentsObserver {
         dispatchCanGoBackOrForward();
 
         // Test code
-        if (mTab.getActiveWebContents() == mWebContents.get()) {
-            WebContents paymentHandlerWebContents = mTab.createWebContents(false);
-            if (paymentHandlerWebContents != null) {
-                Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-                ActivityWindowAndroid windowAndroid = new ActivityWindowAndroid(context, false,
-                        IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
+        // if (mTab.getActiveWebContents() == mWebContents.get()) {
+        //     WebContents paymentHandlerWebContents = WolvicWebContentsFactory.createWebContents(false);
+        //     if (paymentHandlerWebContents != null) {
+        //         Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        //         ActivityWindowAndroid windowAndroid = new ActivityWindowAndroid(context, false,
+        //                 IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
 
-                ContentView contentView =
-                        ContentView.createContentView(context, null /* eventOffsetHandler */, paymentHandlerWebContents);
-                paymentHandlerWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(contentView),
-                        contentView, windowAndroid, WebContents.createDefaultInternalsHolder());
+        //         ContentView contentView =
+        //                 ContentView.createContentView(context, null /* eventOffsetHandler */, paymentHandlerWebContents);
+        //         paymentHandlerWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(contentView),
+        //                 contentView, windowAndroid, WebContents.createDefaultInternalsHolder());
 
-                paymentHandlerWebContents
-                    .getNavigationController()
-                    .loadUrl(new LoadUrlParams("https://bobbucks.dev/pay"));
+        //         paymentHandlerWebContents
+        //             .getNavigationController()
+        //             .loadUrl(new LoadUrlParams("https://www.google.com")); // https://bobbucks.dev/pay
 
-                onCreateNewPaymentHandler(paymentHandlerWebContents, contentView);
-            }
-        }
+        //         onCreateNewPaymentHandler(paymentHandlerWebContents);
+        //     }
+        // }
     }
 
-    public void onCreateNewPaymentHandler(@NonNull WebContents paymentHandlerWebContents, ContentView contentView) {
-        Log.e("MYSH", "create payment webcontents");
+    @Override
+    public void onCreateNewPaymentHandler(WebContents newWebContents) {
         WSession.ContentDelegate contentDelegate = mSession.getContentDelegate();
         if (contentDelegate == null) {
-            Log.e("MYSH", "null ContentDelegate");
             return;
         }
 
-        WindowAndroid windowAndroid = paymentHandlerWebContents.getTopLevelNativeWindow();
+        assert newWebContents.getViewAndroidDelegate() != null
+             : "WebContents should be initialized.";
+        WindowAndroid windowAndroid = newWebContents.getTopLevelNativeWindow();
         Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
         TabCompositorView compositorView = new TabCompositorView(context);
         compositorView.onNativeLibraryLoaded(windowAndroid);
         windowAndroid.setAnimationPlaceholderView(compositorView);
 
-        mTab.setPaymentWebContents(paymentHandlerWebContents, contentView, compositorView);
+        ViewAndroidDelegate viewDelegate = newWebContents.getViewAndroidDelegate();
+        assert viewDelegate.getContainerView() instanceof ContentView
+                : "WebContents should not set container views other than ContentView.";
+
+        mTab.setPaymentWebContents(newWebContents, (ContentView) viewDelegate.getContainerView(), compositorView);
 
         WDisplay display = mSession.acquireOverlayDisplay(compositorView);
         contentDelegate.onPaymentHandler(mSession, display);
 
         // Show Compositor View after attaching to the parent view.
-        compositorView.setCurrentWebContents(paymentHandlerWebContents);
+        compositorView.setCurrentWebContents(newWebContents);
     }
 
     @Override
