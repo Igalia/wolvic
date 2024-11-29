@@ -98,7 +98,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
-        ContentType panelType = ContentType.WEB_CONTENT;
+        // NOTE: Enum values may be null when deserialized by GSON.
+        ContentType contentType = ContentType.WEB_CONTENT;
 
         public void load(@NonNull WindowWidget aWindow, WindowsState aState, int aTabIndex) {
             WidgetPlacement widgetPlacement;
@@ -118,10 +119,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             worldWidth = widgetPlacement.worldWidth;
             tabIndex = aTabIndex;
             if (aWindow.isNativeContentVisible()) {
-                panelType = aWindow.getSelectedPanel();
+                contentType = aWindow.getSelectedPanel();
 
             } else {
-                panelType = ContentType.WEB_CONTENT;
+                contentType = ContentType.WEB_CONTENT;
             }
         }
     }
@@ -171,9 +172,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS),
         ADDONS(UrlUtils.ABOUT_ADDONS),
         NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS);
-        public final String URL;
 
-        ContentType(String url) {
+        @NonNull
+        public final String URL;
+        ContentType(@NonNull String url) {
             this.URL = url;
         }
     }
@@ -365,13 +367,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (aSession != null) {
             aSession.setActive(true);
         }
+        if (aState.contentType == null) {
+            aState.contentType = ContentType.WEB_CONTENT;
+        }
         WindowWidget newWindow = createWindow(aSession);
         newWindow.getPlacement().width = aState.textureWidth;
         newWindow.getPlacement().height = aState.textureHeight;
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         placeWindow(newWindow, aState.placement);
         if (newWindow.getSession() != null) {
-            switch (aState.panelType) {
+            switch (aState.contentType) {
                 case BOOKMARKS:
                     newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
                     break;
