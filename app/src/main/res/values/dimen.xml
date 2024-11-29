@@ -16,10 +16,12 @@
 
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">720dp</dimen>
-    <dimen name="navigation_bar_height">44dp</dimen>
+    <dimen name="navigation_bar_height">74dp</dimen>
     <dimen name="url_bar_item_width">28dp</dimen>
     <dimen name="url_bar_first_item_width">36dp</dimen>
     <dimen name="url_bar_last_item_width">36dp</dimen>
+    <dimen name="move_bar_width">60dp</dimen>
+    <dimen name="move_bar_hover_width">80dp</dimen>
 
     <!-- Title bar -->
     <dimen name="title_bar_width">300dp</dimen>

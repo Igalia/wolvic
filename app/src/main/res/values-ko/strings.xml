@@ -1796,7 +1796,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="video_mode_3d_top_bottom">3D 상하 화면</string>
     <string name="clear_user_data_dialog_text">%1$s이 초기화 됩니다. 동기화하지 않은 경우, 저장된 로그인 정보, 방문 기록과 북마크를 포함한 모든 데이터가 완전히 삭제됩니다. %1$s은 초기화가 완료된 후 자동으로 종료됩니다. 계속하시겠습니까?</string>
     <string name="security_options_use_system_root_ca">시스템에서 신뢰할 수 있는 루트 인증서 사용</string>
-    <string name="display_options_windows_can_move">드래그로 창 이동하기</string>
     <string name="display_options_latin_auto_complete">라틴어 키보드 입력 시 자동 완성</string>
     <string name="display_options_windows_distance">창 간 거리</string>
     <string name="controller_options_haptic_feedback">햅틱 피드백</string>

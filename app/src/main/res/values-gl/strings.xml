@@ -332,7 +332,6 @@
     <string name="history_context_add_bookmarks">Engadir aos marcadores</string>
     <string name="history_context_remove_bookmarks">Eliminar dos marcadores</string>
     <string name="download_context_delete">Borrar</string>
-    <string name="display_options_windows_can_move">As xanelas poden moverse</string>
     <string name="display_options_sound_effect">Usar efectos de son</string>
     <string name="display_options_head_lock">Activar Head Lock</string>
     <string name="display_options_windows_distance">Distancia das xanelas</string>

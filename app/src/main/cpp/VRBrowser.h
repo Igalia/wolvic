@@ -53,6 +53,7 @@ void OnAppFocusChanged(const bool aIsFocused);
 void SetEyeTrackingSupported(bool aIsSupported);
 void SetHandTrackingSupported(bool aIsSupported);
 void OnControllersAvailable();
+void SetWindowDistance(jfloat aDistance);
 } // namespace VRBrowser;
 
 } // namespace crow

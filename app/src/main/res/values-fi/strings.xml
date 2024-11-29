@@ -1563,7 +1563,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="developer_options_ua_vr">VR</string>
     <string name="developer_options_center_windows">Keskitä ikkunat pystysuoraan</string>
     <string name="display_options_head_lock">Ota päälukko käyttöön</string>
-    <string name="display_options_windows_can_move">Siirrä ikkunaa raahamalla</string>
     <string name="display_options_sound_effect">Käytä äänitehosteita</string>
     <string name="display_options_latin_auto_complete">Latinalaisen näppäimistön automaattinen täydennys</string>
     <string name="display_options_windows_distance">Ikkunan etäisyys</string>

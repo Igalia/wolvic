@@ -71,6 +71,12 @@ public interface WidgetManagerDelegate {
     int TRACKED_POINTER = 0;
     int TRACKED_EYE = 1;
 
+    @IntDef(value = { NO_LOCK, HEAD_LOCK, CONTROLLER_LOCK})
+    @interface LockMode {}
+    int NO_LOCK = 0;
+    int HEAD_LOCK = 1;
+    int CONTROLLER_LOCK = 2;
+
     enum OriginatorType {WEBSITE, APPLICATION}
 
     int newWidgetHandle();
@@ -84,6 +90,8 @@ public interface WidgetManagerDelegate {
     void finishWidgetResize(WindowWidget aWidget);
     void startWidgetMove(Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
     void finishWidgetMove();
+    void startWindowMove();
+    void finishWindowMove();
     void addUpdateListener(@NonNull UpdateListener aUpdateListener);
     void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
     void pushBackHandler(@NonNull Runnable aRunnable);
@@ -103,7 +111,7 @@ public interface WidgetManagerDelegate {
     boolean isPassthroughEnabled();
     boolean isPassthroughSupported();
     boolean isPageZoomEnabled();
-    void setHeadLockEnabled(boolean isHeadLockEnabled);
+    void setLockMode(@LockMode int lockMode);
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     void setCylinderDensityForce(float aDensity);

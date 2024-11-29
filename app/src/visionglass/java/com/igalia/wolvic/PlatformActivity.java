@@ -594,7 +594,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mBinding.headlockToggleButton.setChecked(
                     SettingsStore.getInstance(PlatformActivity.this).isHeadLockEnabled());
             mBinding.headlockToggleButton.setOnClickListener(v -> {
-                mDelegate.setHeadLockEnabled(mBinding.headlockToggleButton.isChecked());
+                mDelegate.setLockMode(mBinding.headlockToggleButton.isChecked() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
             });
 
             mBinding.playButton.setOnClickListener(v -> {

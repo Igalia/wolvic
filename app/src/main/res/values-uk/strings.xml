@@ -778,7 +778,6 @@
     <string name="fxa_account_options_device_name">Найменування пристрою</string>
     <string name="experimental_features">Експериментальні можливості</string>
     <string name="move_tooltip">Перемістити</string>
-    <string name="display_options_windows_can_move">Перетягування для переміщення вікон</string>
     <string name="display_options_sound_effect">Використовувати звукові ефекти</string>
     <string name="device_name">%1$s на %2$s</string>
     <string name="hamburger_menu_zoom">Масштабування</string>

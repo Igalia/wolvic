@@ -63,10 +63,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.centerWindowsSwitch.setOnCheckedChangeListener(mCenterWindowsListener);
         setCenterWindows(SettingsStore.getInstance(getContext()).isCenterWindows(), false);
 
-        float windowDistance = SettingsStore.getInstance(getContext()).getWindowDistance();
-        mBinding.windowDistanceSlider.setOnValueChangeListener(mWindowDistanceListener);
-        setWindowDistance(windowDistance, false);
-
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
         mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
         setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
@@ -103,12 +99,6 @@ class DisplayOptionsView extends SettingsView {
 
         mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
         setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
-
-        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
-        setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled(), false);
-
-        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
-        setWindowMovement(SettingsStore.getInstance(getContext()).isWindowMovementEnabled(), false);
 
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
@@ -167,10 +157,6 @@ class DisplayOptionsView extends SettingsView {
         return editing;
     }
 
-    private SliderSetting.OnValueChangeListener mWindowDistanceListener = (slider, value, doApply) -> {
-        setWindowDistance(value, true);
-    };
-
     private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
         setUaMode(checkedId, true);
     };
@@ -197,14 +183,6 @@ class DisplayOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mLatinAutoCompleteListener = (compoundButton, enabled, apply) -> {
         setLatinAutoComplete(enabled, true);
-    };
-
-    private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
-        setHeadLock(value, true);
-    };
-
-    private SwitchSetting.OnCheckedChangeListener mWindowMovementListener = (compoundButton, enabled, apply) -> {
-        setWindowMovement(enabled, true);
     };
 
     private OnClickListener mHomepageListener = (view) -> {
@@ -280,12 +258,9 @@ class DisplayOptionsView extends SettingsView {
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
-        setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT, true);
         setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
-        setWindowMovement(SettingsStore.WINDOW_MOVEMENT_DEFAULT, true);
-        setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
 
         if (mBinding.startWithPassthroughSwitch.isChecked() != SettingsStore.shouldStartWithPassthrougEnabled()) {
             setStartWithPassthrough(SettingsStore.shouldStartWithPassthrougEnabled());
@@ -351,23 +326,6 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
-    private void setHeadLock(boolean value, boolean doApply) {
-        mBinding.headLockSwitch.setOnCheckedChangeListener(null);
-        mBinding.headLockSwitch.setValue(value, false);
-        mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
-
-        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
-        if (doApply) {
-            settingsStore.setHeadLockEnabled(value);
-        }
-
-        if (value && settingsStore.isWindowMovementEnabled()) {
-            // Disable window movement if head lock is enabled,
-            // otherwise the windows might be moved out of the user's reach.
-            setWindowMovement(false, true);
-        }
-    }
-
     private void setSoundEffect(boolean value, boolean doApply) {
         mBinding.soundEffectSwitch.setOnCheckedChangeListener(null);
         mBinding.soundEffectSwitch.setValue(value, false);
@@ -379,36 +337,11 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
-    private void setWindowMovement(boolean value, boolean doApply) {
-        mBinding.windowMovementSwitch.setOnCheckedChangeListener(null);
-        mBinding.windowMovementSwitch.setValue(value, false);
-        mBinding.windowMovementSwitch.setOnCheckedChangeListener(mWindowMovementListener);
-
-        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
-        if (doApply) {
-            settingsStore.setWindowMovementEnabled(value);
-        }
-
-        if (value && settingsStore.isHeadLockEnabled()) {
-            // Disable head lock if window movement is enabled,
-            // otherwise the windows might be moved out of the user's reach.
-            setHeadLock(false, true);
-        }
-    }
-
     private void setHomepage(String newHomepage) {
         mBinding.homepageEdit.setOnClickListener(null);
         mBinding.homepageEdit.setFirstText(newHomepage);
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
         mBinding.homepageEdit.setOnClickListener(mHomepageListener);
-    }
-
-    private void setWindowDistance(float value, boolean doApply) {
-        mBinding.windowDistanceSlider.setOnValueChangeListener(null);
-        mBinding.windowDistanceSlider.setValue(value, doApply);
-        mBinding.windowDistanceSlider.setOnValueChangeListener(mWindowDistanceListener);
-
-        SettingsStore.getInstance(getContext()).setWindowDistance(mBinding.windowDistanceSlider.getValue());
     }
 
     private void setUaMode(int checkId, boolean doApply) {

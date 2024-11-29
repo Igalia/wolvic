@@ -391,19 +391,6 @@ public class SettingsStore {
         editor.apply();
     }
 
-    public boolean isWindowMovementEnabled() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_window_movement), WINDOW_MOVEMENT_DEFAULT);
-    }
-
-    public void setWindowMovementEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_window_movement), isEnabled);
-        editor.apply();
-
-        mSettingsViewModel.setWindowMovementEnabled(isEnabled);
-    }
-
     public boolean isEnvironmentOverrideEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_environment_override), ENV_OVERRIDE_DEFAULT);

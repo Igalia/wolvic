@@ -20,8 +20,8 @@ DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, con
 }
 
 vrb::Matrix
-DeviceUtils::CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
-  return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.0f, 0.0f, 0.0f);
+DeviceUtils::CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform) {
+  return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeadTransform.GetTranslation(), 0.0f, 0.0f, 0.0f);
 }
 
 vrb::Matrix

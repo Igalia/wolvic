@@ -183,9 +183,8 @@ DeviceDelegateVisionGlass::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
-DeviceDelegateVisionGlass::Reorient() {
-    vrb::Matrix head = GetHeadTransform();
-    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
+DeviceDelegateVisionGlass::Reorient(vrb::Matrix& transform) {
+    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(transform);
 }
 
 void

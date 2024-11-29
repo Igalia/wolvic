@@ -374,7 +374,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (false)
             checkForCrash();
 
-        setHeadLockEnabled(mSettings.isHeadLockEnabled());
+        setLockMode(mSettings.isHeadLockEnabled() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
         if (mSettings.getPointerMode() == WidgetManagerDelegate.TRACKED_EYE)
             checkEyeTrackingPermissions(aPermissionGranted -> setPointerMode(aPermissionGranted ? WidgetManagerDelegate.TRACKED_EYE : WidgetManagerDelegate.TRACKED_POINTER));
         else
@@ -736,7 +736,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 initializeSpeechRecognizer();
             } else if (key.equals(getString(R.string.settings_key_head_lock))) {
                 boolean isHeadLockEnabled = SettingsStore.getInstance(this).isHeadLockEnabled();
-                setHeadLockEnabled(isHeadLockEnabled);
+                setLockMode(isHeadLockEnabled ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
                 if (!isHeadLockEnabled)
                     recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
             }
@@ -1388,10 +1388,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     public void resetWindowsPosition() {
-        // Reset the position of the windows when we are not in headlock and window movement is enabled.
-        if (!mSettings.isHeadLockEnabled() && mSettings.isWindowMovementEnabled()) {
-            runOnUiThread(() -> mWindows.resetWindowsPosition());
-        }
+        // Reset the position of the windows when we are not in headlock.
+        if (mSettings.isHeadLockEnabled())
+            return;
+        runOnUiThread(() -> mWindows.resetWindowsPosition());
     }
 
     @Keep
@@ -1763,6 +1763,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void startWindowMove() {
+        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.CONTROLLER_LOCK));
+    }
+
+    @Override
+    public void finishWindowMove() {
+        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.NO_LOCK));
+    }
+
+    @Override
     public void addUpdateListener(@NonNull UpdateListener aUpdateListener) {
         if (!mWidgetUpdateListeners.contains(aUpdateListener)) {
             mWidgetUpdateListeners.add(aUpdateListener);
@@ -1998,8 +2008,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void setHeadLockEnabled(boolean isHeadLockEnabled) {
-        queueRunnable(() -> setHeadLockEnabledNative(isHeadLockEnabled));
+    public void setLockMode(@LockMode int lockMode) {
+        queueRunnable(() -> setLockEnabledNative(lockMode));
     }
 
     @Override
@@ -2190,6 +2200,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public boolean isEyeTrackingSupported() { return mIsEyeTrackingSupported; }
 
+    // Sigmoid transform to allow faster window movements as the distance increases.
+    private static float sigmoidTransform(float x, float xMax, float k, float xMid) {
+        float xNorm = x / xMax;
+        return (float) (1 / (1 + Math.exp(-k * (xNorm - xMid))));
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void setWindowDistance(float aDistance) {
+        float xMid = 0.5f; // sigmoid centered in y axis
+        float xMax = 0.7f; // 70cm as a good average value for adult human arm
+        mSettings.setWindowDistance(sigmoidTransform(aDistance, 0.5f, 10, xMid));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();
@@ -2209,7 +2233,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
     private native void hideVRVideoNative();
     private native void togglePassthroughNative();
-    private native void setHeadLockEnabledNative(boolean isEnabled);
+    private native void setLockEnabledNative(@LockMode int aLockMode);
     private native void recenterUIYawNative(@YawTarget int aTarget);
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
