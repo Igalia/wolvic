@@ -1,7 +1,6 @@
 package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WSession;
 
@@ -21,13 +21,14 @@ import org.chromium.base.Log;
 
 import java.util.concurrent.Executor;
 
-public class OverlayContentWidget extends UIWidget {
+public class OverlayContentWidget extends UIWidget implements WidgetManagerDelegate.WorldClickListener {
     private Surface mSurface;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
     private Runnable mFirstDrawCallback;
     private WSession mSession;
     private WDisplay mDisplay;
+    private WSession.ContentDelegate.OnPaymentHandlerCallback mCallback;
     private Executor mUIThreadExecutor;
     private Handler mHandler;
 
@@ -46,25 +47,30 @@ public class OverlayContentWidget extends UIWidget {
         initialize(aContext);
     }
 
-    public void setDelegates(@NonNull WSession session, @NonNull WDisplay display) {
+    public void setDelegates(@NonNull WSession session, @NonNull WDisplay display,
+                             @NonNull WSession.ContentDelegate.OnPaymentHandlerCallback callback) {
         Log.e("MYSH", "OverlayContentWidget setDelegates");
         mSession = session;
         mDisplay = display;
+        mCallback = callback;
     }
 
     @Override
     public void releaseWidget() {
         Log.e("MYSH", "OverlayContentWidget releaseWidget");
+        mWidgetManager.removeWorldClickListener(this);
+
         super.releaseWidget();
-    }   
+    }
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        Log.e("MYSH", "OverlayContentWidget initializeWidgetPlacement");
         aPlacement.visible = false;
-        // TODO: Define own placement value
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_height);
+
+        // aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth() / 2;
+        // aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight() / 2;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.anchorX = 0.5f;
@@ -76,23 +82,21 @@ public class OverlayContentWidget extends UIWidget {
 
     @Override
     public void updatePlacementTranslationZ() {
-        Log.e("MYSH", "OverlayContentWidget updatePlacementTranslationZ");
         getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
                                       WidgetPlacement.getWindowWorldZMeters(getContext());
     }
 
     private void initialize(Context aContext) {
-        Log.e("MYSH", "OverlayContentWidget initialize");
         mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
         mHandler = new Handler(Looper.getMainLooper());
+
+        mWidgetManager.addWorldClickListener(this);
     }
 
     @Override
     public void attachToWindow(@NonNull WindowWidget window) {
-        Log.e("MYSH", "OverlayContentWidget attachToWindow");
         mWidgetPlacement.parentHandle = window.getHandle();
     }
-
 
     // View
     @Override
@@ -137,13 +141,11 @@ public class OverlayContentWidget extends UIWidget {
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "OverlayContentWidget handleHoverEvent");
         mSession.getPanZoomController().onMotionEvent(aEvent);
     }
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "OverlayContentWidget handleTouchEvent");
         if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
             requestFocus();
             requestFocusFromTouch();
@@ -154,14 +156,12 @@ public class OverlayContentWidget extends UIWidget {
 
     @Override
     public boolean onTouchEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "OverlayContentWidget onTouchEvent");
         mSession.getPanZoomController().onTouchEvent(aEvent);
         return true;
     }
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "OverlayContentWidget onGenericMotionEvent");
         mSession.getPanZoomController().onMotionEvent(aEvent);
         return true;
     }
@@ -190,7 +190,7 @@ public class OverlayContentWidget extends UIWidget {
 
     @Override
     public void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
-        Log.e("MYSH", "OverlayContentWidget setSurface aSurface=" + aSurface);
+        Log.e("MYSH", "OverlayContentWidget setSurface aSurface=" + aSurface + "aWidth=" + aWidth + " aHeight=" + aHeight);
         mSurfaceWidth = aWidth;
         mSurfaceHeight = aHeight;
         mSurface = aSurface;
@@ -227,5 +227,16 @@ public class OverlayContentWidget extends UIWidget {
         if (mTexture != null && mSurface != null) {
             callSurfaceChanged();
         }
+    }
+
+    @Override
+    public void onWorldClick() {
+        post(this::onDismiss);
+        mCallback.onDismiss();
+    }
+
+    @Override
+    public boolean isDialog() {
+        return true;
     }
 }

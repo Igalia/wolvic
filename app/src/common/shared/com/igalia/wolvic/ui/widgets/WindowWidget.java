@@ -1877,10 +1877,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onPaymentHandler(@NonNull WSession session, @NonNull WDisplay display) {
+    public void onPaymentHandler(@NonNull WSession session, @NonNull WDisplay display, @NonNull OnPaymentHandlerCallback callback) {
         Log.e("MYSH", "WindowWidget onPaymentHandler");
         mPaymentHandler = new OverlayContentWidget(getContext());
-        mPaymentHandler.setDelegates(session, display);
+        mPaymentHandler.setDelegates(session, display, callback);
 
         mPaymentHandler.getPlacement().parentHandle = getHandle();
         mPaymentHandler.attachToWindow(this);

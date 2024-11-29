@@ -318,14 +318,21 @@ public interface WSession {
         @UiThread
         default void onShowDynamicToolbar(@NonNull final WSession aSession) {}
 
+        public interface OnPaymentHandlerCallback {
+            void onDismiss();
+        }
+
         /**
-         * The app should display its dynamic toolbar, fully expanded to the height that was previously.
+         * The view should display its payment handler, overlayed on the active tab.
          *
          * @param aSession ISession that initiated the callback.
          * @param aDisplay IDisplay that initiated the callback.
+         * @param callback Callback interface.
          */
         @UiThread
-        default void onPaymentHandler(@NonNull final WSession aSession, @NonNull final WDisplay aDisplay) {}
+        default void onPaymentHandler(@NonNull final WSession aSession,
+                @NonNull final WDisplay aDisplay,
+                @NonNull final OnPaymentHandlerCallback callback) {}
     }
 
     interface NavigationDelegate {

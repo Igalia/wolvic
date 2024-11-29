@@ -120,29 +120,29 @@ public class TabWebContentsObserver extends WebContentsObserver {
         dispatchCanGoBackOrForward();
 
         // Test code
-        // if (mTab.getActiveWebContents() == mWebContents.get()) {
-        //     WebContents paymentHandlerWebContents = WolvicWebContentsFactory.createWebContents(false);
-        //     if (paymentHandlerWebContents != null) {
-        //         Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-        //         ActivityWindowAndroid windowAndroid = new ActivityWindowAndroid(context, false,
-        //                 IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
+        //  if (mTab.getActiveWebContents() == mWebContents.get()) {
+        //      WebContents paymentHandlerWebContents = WolvicWebContentsFactory.createWebContents(false);
+        //      if (paymentHandlerWebContents != null) {
+        //          Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        //          ActivityWindowAndroid windowAndroid = new ActivityWindowAndroid(context, false,
+        //                  IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
 
-        //         ContentView contentView =
-        //                 ContentView.createContentView(context, null /* eventOffsetHandler */, paymentHandlerWebContents);
-        //         paymentHandlerWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(contentView),
-        //                 contentView, windowAndroid, WebContents.createDefaultInternalsHolder());
+        //          ContentView contentView =
+        //                  ContentView.createContentView(context, null /* eventOffsetHandler */, paymentHandlerWebContents);
+        //          paymentHandlerWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(contentView),
+        //                  contentView, windowAndroid, WebContents.createDefaultInternalsHolder());
 
-        //         paymentHandlerWebContents
-        //             .getNavigationController()
-        //             .loadUrl(new LoadUrlParams("https://www.google.com")); // https://bobbucks.dev/pay
+        //          paymentHandlerWebContents
+        //              .getNavigationController()
+        //              .loadUrl(new LoadUrlParams("https://www.google.com")); // https://bobbucks.dev/pay
 
-        //         onCreateNewPaymentHandler(paymentHandlerWebContents);
-        //     }
-        // }
+        //          onCreateNewPaymentHandler(paymentHandlerWebContents);
+        //      }
+        //  }
     }
 
     @Override
-    public void onCreateNewPaymentHandler(WebContents newWebContents) {
+    public void onCreateNewPaymentHandler(final WebContents newWebContents) {
         WSession.ContentDelegate contentDelegate = mSession.getContentDelegate();
         if (contentDelegate == null) {
             return;
@@ -163,7 +163,13 @@ public class TabWebContentsObserver extends WebContentsObserver {
         mTab.setPaymentWebContents(newWebContents, (ContentView) viewDelegate.getContainerView(), compositorView);
 
         WDisplay display = mSession.acquireOverlayDisplay(compositorView);
-        contentDelegate.onPaymentHandler(mSession, display);
+        contentDelegate.onPaymentHandler(mSession, display, () -> {
+            if (newWebContents.isDestroyed()) {
+                return;
+            }
+            mTab.setPaymentWebContents(null, null, null);
+            newWebContents.destroy();
+        });
 
         // Show Compositor View after attaching to the parent view.
         compositorView.setCurrentWebContents(newWebContents);

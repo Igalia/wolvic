@@ -1423,9 +1423,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     @Override
-    public void onPaymentHandler(@NonNull final WSession aSession, @NonNull WDisplay aDisplay) {
+    public void onPaymentHandler(@NonNull final WSession aSession, @NonNull WDisplay aDisplay, @NonNull OnPaymentHandlerCallback callback) {
         for (WSession.ContentDelegate listener : mContentListeners) {
-            listener.onPaymentHandler(aSession, aDisplay);
+            listener.onPaymentHandler(aSession, aDisplay, callback);
         }
     }
 
