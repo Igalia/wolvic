@@ -181,12 +181,11 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
         callSurfaceChanged();
-        mHandler.postDelayed(() -> {
-            if (mFirstDrawCallback != null) {
-                mUIThreadExecutor.execute(mFirstDrawCallback);
-                mFirstDrawCallback = null;
-            }
-        }, 100);
+        // TODO(jfernandez): Should this call be async ?
+        if (mFirstDrawCallback != null) {
+             mUIThreadExecutor.execute(mFirstDrawCallback);
+             mFirstDrawCallback = null;
+        }
     }
 
     @Override
@@ -201,12 +200,11 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
         } else {
             mDisplay.surfaceDestroyed();
         }
-        mHandler.postDelayed(() -> {
-            if (mFirstDrawCallback != null) {
-                mUIThreadExecutor.execute(mFirstDrawCallback);
-                mFirstDrawCallback = null;
-            }
-        }, 100);
+        // TODO(jfernandez): Should this call be async ?
+        if (mFirstDrawCallback != null) {
+            mUIThreadExecutor.execute(mFirstDrawCallback);
+            mFirstDrawCallback = null;
+        }
     }
 
     private void callSurfaceChanged() {
