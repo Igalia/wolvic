@@ -29,6 +29,7 @@ import java.security.cert.X509Certificate;
 public class TabWebContentsObserver extends WebContentsObserver {
     private @NonNull SessionImpl mSession;
     private @NonNull TabImpl mTab;
+    private WebContentsObserver mPaymentWebContentsObserver;
 
     public TabWebContentsObserver(TabImpl tab, @NonNull SessionImpl session) {
         super(tab.getActiveWebContents());
@@ -152,7 +153,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
              : "WebContents should be initialized.";
         WindowAndroid windowAndroid = newWebContents.getTopLevelNativeWindow();
         Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-        TabCompositorView compositorView = new TabCompositorView(context);
+        final TabCompositorView compositorView = new TabCompositorView(context);
         compositorView.onNativeLibraryLoaded(windowAndroid);
         windowAndroid.setAnimationPlaceholderView(compositorView);
 
@@ -163,7 +164,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
         mTab.setPaymentWebContents(newWebContents, (ContentView) viewDelegate.getContainerView(), compositorView);
 
         WDisplay display = mSession.acquireOverlayDisplay(compositorView);
-        contentDelegate.onPaymentHandler(mSession, display, () -> {
+        contentDelegate.onShowPaymentHandler(mSession, display, () -> {
             if (newWebContents.isDestroyed()) {
                 return;
             }
@@ -173,6 +174,17 @@ public class TabWebContentsObserver extends WebContentsObserver {
 
         // Show Compositor View after attaching to the parent view.
         compositorView.setCurrentWebContents(newWebContents);
+
+        mPaymentWebContentsObserver = new WebContentsObserver(newWebContents) {
+            @Override
+            public void destroy() {
+                mSession.releaseOverlayDisplay(compositorView);
+                mTab.setPaymentWebContents(null, null, null);
+
+                contentDelegate.onHidePaymentHandler(mSession);
+                newWebContents.removeObserver(this);
+            }
+        };
     }
 
     @Override

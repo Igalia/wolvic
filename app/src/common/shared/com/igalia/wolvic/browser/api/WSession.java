@@ -330,9 +330,16 @@ public interface WSession {
          * @param callback Callback interface.
          */
         @UiThread
-        default void onPaymentHandler(@NonNull final WSession aSession,
+        default void onShowPaymentHandler(@NonNull final WSession aSession,
                 @NonNull final WDisplay aDisplay,
                 @NonNull final OnPaymentHandlerCallback callback) {}
+        /**
+         * The view should hide its payment handler.
+         *
+         * @param aSession ISession that initiated the callback.
+         */
+        @UiThread
+        default void onHidePaymentHandler(@NonNull final WSession aSession) {}
     }
 
     interface NavigationDelegate {

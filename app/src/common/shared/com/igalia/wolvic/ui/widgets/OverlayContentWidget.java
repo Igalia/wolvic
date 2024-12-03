@@ -59,6 +59,7 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
     public void releaseWidget() {
         Log.e("MYSH", "OverlayContentWidget releaseWidget");
         mWidgetManager.removeWorldClickListener(this);
+        mCallback.onDismiss();
 
         super.releaseWidget();
     }

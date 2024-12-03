@@ -841,7 +841,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "WindowWidget handleTouchEvent");
         if (aEvent.getAction() == MotionEvent.ACTION_DOWN) {
             if (!mActive) {
                 mClickedAfterFocus = true;
@@ -878,7 +877,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "WindowWidget handleHoverEvent");
         if (aEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
             mHovered = true;
             updateBorder();
@@ -1336,7 +1334,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onTouchEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "WindowWidget onTouchEvent");
         WSession session = mSession.getWSession();
         if (session == null) {
             return false;
@@ -1347,7 +1344,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
-        Log.e("MYSH", "WindowWidget onGenericMotionEvent");
         if (mView != null) {
             return super.onGenericMotionEvent(aEvent);
         } else {
@@ -1877,8 +1873,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onPaymentHandler(@NonNull WSession session, @NonNull WDisplay display, @NonNull OnPaymentHandlerCallback callback) {
-        Log.e("MYSH", "WindowWidget onPaymentHandler");
+    public void onShowPaymentHandler(@NonNull WSession session, @NonNull WDisplay display, @NonNull OnPaymentHandlerCallback callback) {
+        assert mPaymentHandler == null;
         mPaymentHandler = new OverlayContentWidget(getContext());
         mPaymentHandler.setDelegates(session, display, callback);
 
@@ -1887,9 +1883,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mPaymentHandler.show(KEEP_FOCUS);
     }
 
-    public void hidePaymentHandler() {
-        Log.e("MYSH", "WindowWidget hidePaymentHandler");
+    @Override
+    public void onHidePaymentHandler(@NonNull WSession session) {
         if (mPaymentHandler != null) {
+            mPaymentHandler.hide(REMOVE_WIDGET);
             mPaymentHandler.releaseWidget();
             mPaymentHandler = null;
         }
