@@ -113,6 +113,13 @@ private:
   VRB_NO_NEW_DELETE
 };
 
+// template method that returns the data size of a std::array of type T
+template <typename T, size_t N>
+size_t
+arraySize(const std::array<T, N>&) {
+  return sizeof(T) * N;
+}
+
 } // namespace
 
 namespace crow {
@@ -160,8 +167,8 @@ struct ExternalVR::State {
     system.displayState.isMounted = true;
     system.displayState.nativeFramebufferScaleFactor = 1.0f;
     const vrb::Matrix identity = vrb::Matrix::Identity();
-    memcpy(&(system.sensorState.leftViewMatrix), identity.Data(), sizeof(system.sensorState.leftViewMatrix));
-    memcpy(&(system.sensorState.rightViewMatrix), identity.Data(), sizeof(system.sensorState.rightViewMatrix));
+    memcpy(system.sensorState.leftViewMatrix.data(), identity.Data(), arraySize(system.sensorState.leftViewMatrix));
+    memcpy(system.sensorState.rightViewMatrix.data(), identity.Data(), arraySize(system.sensorState.rightViewMatrix));
     system.sensorState.pose.orientation[3] = 1.0f;
     lastFrameId = 0;
     firstPresentingFrame = false;
@@ -292,7 +299,7 @@ ExternalVR::SetDeviceName(const std::string& aName) {
   if (aName.length() == 0) {
     return;
   }
-  strncpy(m.system.displayState.displayName, aName.c_str(),
+  strncpy(m.system.displayState.displayName.data(), aName.c_str(),
           mozilla::gfx::kVRDisplayNameMaxLen - 1);
   m.system.displayState.displayName[mozilla::gfx::kVRDisplayNameMaxLen - 1] = '\0';
 }
@@ -362,7 +369,7 @@ ExternalVR::SetEyeTransform(const device::Eye aEye, const vrb::Matrix& aTransfor
   mozilla::gfx::VRDisplayState::Eye which = (aEye == device::Eye::Right
                                              ? mozilla::gfx::VRDisplayState::Eye_Right
                                              : mozilla::gfx::VRDisplayState::Eye_Left);
-  memcpy(&(m.system.displayState.eyeTransform[which]), aTransform.Data(), sizeof(m.system.displayState.eyeTransform[which]));
+  memcpy(m.system.displayState.eyeTransform[which].data(), aTransform.Data(), arraySize(m.system.displayState.eyeTransform[which]));
   m.eyeTransforms[device::EyeIndex(aEye)] = aTransform;
 }
 
@@ -385,12 +392,12 @@ ExternalVR::SetStageSize(const float aWidth, const float aDepth) {
 
 void
 ExternalVR::SetSittingToStandingTransform(const vrb::Matrix& aTransform) {
-  memcpy(&(m.system.displayState.sittingToStandingTransform), aTransform.Data(), sizeof(m.system.displayState.sittingToStandingTransform));
+  memcpy(m.system.displayState.sittingToStandingTransform.data(), aTransform.Data(), arraySize(m.system.displayState.sittingToStandingTransform));
 }
 
 void
 ExternalVR::SetBlendModes(std::vector<device::BlendMode> aBlendModes) {
-  memset(&m.system.displayState.blendModes, (int) mozilla::gfx::VRDisplayBlendMode::_empty, sizeof(m.system.displayState.blendModes));
+  std::fill(m.system.displayState.blendModes.begin(), m.system.displayState.blendModes.end(), mozilla::gfx::VRDisplayBlendMode::_empty);
   int i = 0;
   for (const auto& blendMode : aBlendModes) {
     switch (blendMode) {
@@ -513,29 +520,24 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
   const vrb::Matrix inverseHeadTransform = aHeadTransform.Inverse();
   vrb::Quaternion quaternion(inverseHeadTransform);
   vrb::Vector translation = aHeadTransform.GetTranslation();
-  memcpy(&(m.system.sensorState.pose.orientation), quaternion.Data(),
-         sizeof(m.system.sensorState.pose.orientation));
-  memcpy(&(m.system.sensorState.pose.position), translation.Data(),
-         sizeof(m.system.sensorState.pose.position));
+  memcpy(m.system.sensorState.pose.orientation.data(), quaternion.Data(), arraySize(m.system.sensorState.pose.orientation));
+  memcpy(m.system.sensorState.pose.position.data(), translation.Data(), arraySize(m.system.sensorState.pose.position));
   m.system.sensorState.inputFrameID++;
   m.system.displayState.lastSubmittedFrameId = m.lastFrameId;
 
   vrb::Matrix leftView = m.eyeTransforms[device::EyeIndex(device::Eye::Left)].Inverse().PostMultiply(inverseHeadTransform);
   vrb::Matrix rightView = m.eyeTransforms[device::EyeIndex(device::Eye::Right)].Inverse().PostMultiply(inverseHeadTransform);
-  memcpy(&(m.system.sensorState.leftViewMatrix), leftView.Data(),
-         sizeof(m.system.sensorState.leftViewMatrix));
-  memcpy(&(m.system.sensorState.rightViewMatrix), rightView.Data(),
-         sizeof(m.system.sensorState.rightViewMatrix));
+  memcpy(m.system.sensorState.leftViewMatrix.data(), leftView.Data(), arraySize(m.system.sensorState.leftViewMatrix));
+  memcpy(m.system.sensorState.rightViewMatrix.data(), rightView.Data(), arraySize(m.system.sensorState.rightViewMatrix));
 
-
-  memset(m.system.controllerState, 0, sizeof(m.system.controllerState));
+  memset(m.system.controllerState.data(), 0, arraySize(m.system.controllerState));
   for (int i = 0; i < aControllers.size(); ++i) {
     const Controller& controller = aControllers[i];
     if (controller.immersiveName.empty() || !controller.enabled) {
       continue;
     }
     mozilla::gfx::VRControllerState& immersiveController = m.system.controllerState[i];
-    memcpy(immersiveController.controllerName, controller.immersiveName.c_str(), controller.immersiveName.size() + 1);
+    memcpy(immersiveController.controllerName.data(), controller.immersiveName.c_str(), controller.immersiveName.size() + 1);
     immersiveController.numButtons = controller.numButtons;
     immersiveController.buttonPressed = controller.immersivePressedState;
     immersiveController.buttonTouched = controller.immersiveTouchedState;
@@ -557,11 +559,11 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
       immersiveController.isOrientationValid = true;
 
       vrb::Quaternion rotate(controller.transformMatrix.AfineInverse());
-      memcpy(&(immersiveController.targetRayPose.orientation), rotate.Data(), sizeof(immersiveController.targetRayPose.orientation));
+      memcpy(immersiveController.targetRayPose.orientation.data(), rotate.Data(), arraySize(immersiveController.targetRayPose.orientation));
 
       if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Position) || flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_PositionEmulated)) {
         vrb::Vector position(controller.transformMatrix.GetTranslation());
-        memcpy(&(immersiveController.targetRayPose.position), position.Data(), sizeof(immersiveController.targetRayPose.position));
+        memcpy(immersiveController.targetRayPose.position.data(), position.Data(), arraySize(immersiveController.targetRayPose.position));
       }
     }
 
@@ -573,8 +575,8 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
 #endif
       vrb::Vector position(immersiveBeamTransform.GetTranslation());
       vrb::Quaternion rotate(immersiveBeamTransform.AfineInverse());
-      memcpy(&(immersiveController.pose.position), position.Data(), sizeof(immersiveController.pose.position));
-      memcpy(&(immersiveController.pose.orientation), rotate.Data(), sizeof(immersiveController.pose.orientation));
+      memcpy(immersiveController.pose.position.data(), position.Data(), arraySize(immersiveController.pose.position));
+      memcpy(immersiveController.pose.orientation.data(), rotate.Data(), arraySize(immersiveController.pose.orientation));
     }
 
     // TODO:: We should add TargetRayMode::_end in moz_external_vr.h to help this check.
@@ -598,7 +600,7 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
       // Since the palm joint is at index zero, we pass joints from 1 to 25 (omitting the palm).
       assert(controller.handJointTransforms.size() == mozilla::gfx::kHandTrackingNumJoints + 1);
       for (int j = 0; j < mozilla::gfx::kHandTrackingNumJoints; j++) {
-        memcpy(&immersiveController.handTrackingData.handJointData[j].transform,
+        memcpy(immersiveController.handTrackingData.handJointData[j].transform.data(),
                &controller.handJointTransforms[j + 1], sizeof(vrb::Matrix));
         immersiveController.handTrackingData.handJointData[j].radius = controller.handJointRadii[j + 1];
       }
@@ -627,7 +629,7 @@ ExternalVR::WaitFrameResult() {
     }
 
 #if CHROMIUM
-    if(m.browser.dropFame) {
+    if(m.browser.dropFrame) {
        m.system.displayState.droppedFrameCount++;
        return false;
     }
