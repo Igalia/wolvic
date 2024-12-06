@@ -112,7 +112,6 @@
     <string name="close_history_tooltip">Fechar histórico</string>
     <string name="open_downloads_tooltip">Abrir descargas</string>
     <string name="close_downloads_tooltip">Fechar descargas</string>
-    <string name="close_library_tooltip">Fechar biblioteca</string>
     <string name="private_browsing_body">&lt;p&gt;Quando navega numa janela privada, %1$s &lt;strong&gt;não salva&lt;/strong&gt;:&lt;/p&gt; &lt;ul class=two-column&gt; &lt;li&gt;páginas visitadas&lt;/li&gt; &lt;li&gt;pesquisas&lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;ficheiros temporários&lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Navegação privada &lt;strong&gt;não o torna anônimo&lt;/strong&gt; na Internet. O seu empregador ou provedor de serviços de Internet ainda pode saber qual página visita.&lt;/p&gt; &lt;p class=about-info&gt;Saiba mais sobre &lt;a id=learnMore&gt;Navegação privada&lt;/a&gt;.&lt;/p&gt;</string>
     <string name="authentication_username">Nome de utilizador:</string>
     <string name="authentication_password">Palavra-passe:</string>
@@ -607,7 +606,6 @@
     <string name="col_date_last_modified">Última modificação</string>
     <string name="back_tooltip">Voltar</string>
     <string name="context_menu_copy_link">Copiar ligação</string>
-    <string name="open_library_tooltip">Abrir biblioteca</string>
     <string name="private_browsing_title">Navegação privada</string>
     <string name="no_internet_message">Verifique a configuração do aparelho para corrigir o problema.</string>
     <string name="tabs_selected_counter_plural">%1$s guias selecionadas</string>
