@@ -37,6 +37,7 @@ public class WindowViewModel extends AndroidViewModel {
     private int mURLWebsiteColor;
 
     private MutableLiveData<Spannable> url;
+    private MutableLiveData<Spannable> urlForwardFromNewTab;
     private MutableLiveData<String> hint;
     private MutableLiveData<ObservableBoolean> isWindowVisible;
     private MutableLiveData<Windows.WindowPlacement> placement;
@@ -54,7 +55,9 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isActiveWindow;
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
     private MutableLiveData<Windows.ContentType> currentContentType;
+    public MutableLiveData<Windows.ContentType> lastContentType;
     private MediatorLiveData<ObservableBoolean> isNativeContentVisible;
+    private MutableLiveData<ObservableBoolean> backToNewTabEnabled;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
     private MutableLiveData<ObservableBoolean> isBookmarked;
@@ -65,6 +68,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isPopUpAvailable;
     private MutableLiveData<ObservableBoolean> isPopUpBlocked;
     private MutableLiveData<ObservableBoolean> canGoForward;
+    private MutableLiveData<ObservableBoolean> canGoForwardFromNewTab;
     private MutableLiveData<ObservableBoolean> canGoBack;
     private MutableLiveData<ObservableBoolean> isInVRVideo;
     private MutableLiveData<ObservableBoolean> autoEnteredVRVideo;
@@ -93,6 +97,7 @@ public class WindowViewModel extends AndroidViewModel {
         mURLWebsiteColor = typedValue.data;
 
         url = new MutableLiveData<>(new SpannableString(""));
+        urlForwardFromNewTab = new MutableLiveData<>(new SpannableString(""));
         hint = new MutableLiveData<>("");
         isWindowVisible = new MutableLiveData<>(new ObservableBoolean(true));
         placement = new MutableLiveData<>(Windows.WindowPlacement.FRONT);
@@ -135,11 +140,15 @@ public class WindowViewModel extends AndroidViewModel {
         isTitleBarVisible.setValue(new ObservableBoolean(true));
 
         currentContentType = new MutableLiveData<>(Windows.ContentType.WEB_CONTENT);
+        lastContentType = new MutableLiveData<>(Windows.ContentType.WEB_CONTENT);
+
         isNativeContentVisible = new MediatorLiveData<>();
         isNativeContentVisible.addSource(currentContentType, contentType ->
-                isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT))
+                isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT && contentType != Windows.ContentType.NEW_TAB))
         );
-        isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT));
+        isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT && currentContentType.getValue() != Windows.ContentType.NEW_TAB));
+
+        backToNewTabEnabled = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
@@ -151,6 +160,7 @@ public class WindowViewModel extends AndroidViewModel {
         isPopUpAvailable = new MutableLiveData<>(new ObservableBoolean(false));
         isPopUpBlocked = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
+        canGoForwardFromNewTab = new MutableLiveData<>(new ObservableBoolean(false));
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
         isInVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
         autoEnteredVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
@@ -260,8 +270,11 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isNativeContentVisible.getValue().get()) {
+            if (isNativeContentVisible.getValue().get() && currentContentType.getValue() != Windows.ContentType.NEW_TAB) {
                 url = getApplication().getString(R.string.url_library_title);
+
+            } else if (currentContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                url = getApplication().getString(R.string.url_new_tab_title);
 
             } else {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
@@ -357,6 +370,7 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void refresh() {
         url.postValue(url.getValue());
+        urlForwardFromNewTab.postValue(urlForwardFromNewTab.getValue());
         hint.postValue(getHintValue());
         isWindowVisible.postValue(isWindowVisible.getValue());
         placement.postValue(placement.getValue());
@@ -373,6 +387,7 @@ public class WindowViewModel extends AndroidViewModel {
         isPopUpAvailable.postValue(isPopUpAvailable.getValue());
         isPopUpBlocked.postValue(isPopUpBlocked.getValue());
         canGoForward.postValue(canGoForward.getValue());
+        canGoForwardFromNewTab.postValue(canGoForwardFromNewTab.getValue());
         canGoBack.postValue(canGoBack.getValue());
         isInVRVideo.postValue(isInVRVideo.getValue());
         autoEnteredVRVideo.postValue(autoEnteredVRVideo.getValue());
@@ -395,10 +410,18 @@ public class WindowViewModel extends AndroidViewModel {
         return url;
     }
 
+    public MutableLiveData<Spannable> getUrlForwardFromNewTab() {
+        if (urlForwardFromNewTab == null) {
+            urlForwardFromNewTab = new MutableLiveData<>(new SpannableString(""));
+        }
+        return urlForwardFromNewTab;
+    }
+
     public void setUrl(@Nullable String url) {
         if (url == null) {
             return;
         }
+
         setUrl(new SpannableString(url));
     }
 
@@ -442,9 +465,15 @@ public class WindowViewModel extends AndroidViewModel {
                 spannable.setSpan(color1, 0, index + 3, 0);
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
                 this.url.postValue(spannable);
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                    urlForwardFromNewTab.postValue(spannable);
+                }
 
             } else {
                 this.url.postValue(url);
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                    urlForwardFromNewTab.postValue(url);
+                }
             }
         }
     }
@@ -455,8 +484,11 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isNativeContentVisible.getValue().get()) {
+        if (isNativeContentVisible.getValue().get() && currentContentType.getValue() != Windows.ContentType.NEW_TAB) {
             return getApplication().getString(R.string.url_library_title);
+
+        } else if (currentContentType.getValue() == Windows.ContentType.NEW_TAB) {
+            return getApplication().getString(R.string.url_new_tab_title);
 
         } else {
             return getApplication().getString(R.string.search_placeholder);
@@ -597,6 +629,11 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setCurrentContentType(Windows.ContentType contentType) {
+        // No need to store lastContentType when we switch content types in library
+        if (!currentContentType.getValue().isLibraryContent() || !contentType.isLibraryContent()) {
+            lastContentType.postValue(currentContentType.getValue());
+        }
+
         currentContentType.postValue(contentType);
     }
 
@@ -607,6 +644,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public MutableLiveData<ObservableBoolean> getIsNativeContentVisible() {
         return isNativeContentVisible;
+    }
+
+    public void enableBackToNewTab(boolean backToNewTabEnabled) {
+        this.backToNewTabEnabled.postValue(new ObservableBoolean(backToNewTabEnabled));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getBackToNewTabEnabled() {
+        return backToNewTabEnabled;
     }
 
     @NonNull
@@ -697,6 +743,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setCanGoForward(boolean canGoForward) {
         this.canGoForward.postValue(new ObservableBoolean(canGoForward));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getCanGoForwardFromNewTab() {
+        return canGoForwardFromNewTab;
+    }
+
+    public void setCanGoForwardFromNewTab(boolean canGoForwardFromNewTab) {
+        this.canGoForwardFromNewTab.postValue(new ObservableBoolean(canGoForwardFromNewTab));
     }
 
     @NonNull
