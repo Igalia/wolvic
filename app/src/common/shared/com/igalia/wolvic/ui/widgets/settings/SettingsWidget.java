@@ -15,9 +15,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -42,6 +41,7 @@ import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
+import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.ClearUserDataDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
@@ -74,22 +74,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private SettingsView.SettingViewType mOpenDialog;
     private SettingsViewModel mSettingsViewModel;
     private boolean mAreMozillaAccountsDisabled;
+    private final Pair<String, String> mVersionDetail = new Pair<>(
+            "versionCode " + BuildConfig.VERSION_CODE,
+            BuildConfig.GIT_HASH + " (AC " + Build.version + ")");
+    private boolean mIsFirstVersionDetail;
 
-    class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private boolean mIsHash;
-
-        @Override
-        public boolean onDown (MotionEvent e) {
-            mBinding.buildText.setText(mIsHash ?
-                    "versionCode " + BuildConfig.VERSION_CODE :
-                    BuildConfig.GIT_HASH + " (AC " + Build.version + ")");
-
-            mIsHash = !mIsHash;
-
-            return true;
-        }
-    }
 
     public SettingsWidget(Context aContext) {
         super(aContext);
@@ -193,18 +182,19 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                     Html.FROM_HTML_MODE_LEGACY));
 
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e(LOGTAG, "Error when getting package info:" + e.getMessage());
+            mBinding.versionText.setText(R.string.app_name);
         }
 
-        mBinding.buildText.setText("versionCode " + BuildConfig.VERSION_CODE);
+        mIsFirstVersionDetail = false;
+        mBinding.buildText.setText(mVersionDetail.first);
 
-        final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
-        mBinding.settingsMasthead.setOnTouchListener((view, motionEvent) -> {
-            if (gd.onTouchEvent(motionEvent)) {
-                return true;
-            }
-            return view.performClick();
-        });
+        OnClickListener updateVersionDetail = v -> {
+            mIsFirstVersionDetail = !mIsFirstVersionDetail;
+            mBinding.buildText.setText(mIsFirstVersionDetail ? mVersionDetail.first : mVersionDetail.second);
+        };
+        mBinding.ffLogoSettings.setOnClickListener(updateVersionDetail);
+        mBinding.versionText.setOnClickListener(updateVersionDetail);
 
         if (DeviceType.getStoreType() == DeviceType.StoreType.MAINLAND_CHINA) {
             mBinding.chinaLicenseNumber.setOnClickListener(v -> {
@@ -224,6 +214,14 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 exitWholeSettings();
             });
         }
+
+        mBinding.addonsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            mWidgetManager.getFocusedWindow().showPanel(Windows.ContentType.ADDONS);
+            onDismiss();
+        });
 
         mBinding.helpButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -264,9 +262,13 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
             SettingsStore.getInstance(getContext()).setRemotePropsVersionName(BuildConfig.VERSION_NAME);
             RemoteProperties props = mSettingsViewModel.getProps().getValue().get(BuildConfig.VERSION_NAME);
+            String whatsNewUrl;
             if (props != null) {
-                mWidgetManager.openNewTabForeground(props.getWhatsNewUrl());
+                whatsNewUrl = props.getWhatsNewUrl();
+            } else {
+                whatsNewUrl = getContext().getString(R.string.home_page_url);
             }
+            mWidgetManager.openNewTabForeground(whatsNewUrl);
             onDismiss();
         });
 
