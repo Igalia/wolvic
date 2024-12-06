@@ -398,8 +398,6 @@
     <string name="open_downloads_tooltip">Abrir descargas</string>
     <string name="close_history_tooltip">Pechar historial</string>
     <string name="close_downloads_tooltip">Pechar descargas</string>
-    <string name="open_library_tooltip">Abrir biblioteca</string>
-    <string name="close_library_tooltip">Pechar biblioteca</string>
     <string name="whats_new_tooltip">Novidades</string>
     <string name="remove_all">Borrar todo</string>
     <string name="homepage_hint">Páxina de inicio de %1$s (por defecto)</string>

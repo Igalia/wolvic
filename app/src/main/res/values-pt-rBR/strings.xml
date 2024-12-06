@@ -312,9 +312,7 @@
     <string name="context_menu_web_search">Pesquisar com %1$s</string>
     <string name="bookmark_tooltip">Favoritar esta página</string>
     <string name="open_bookmarks_tooltip">Abrir favoritos</string>
-    <string name="open_library_tooltip">Biblioteca aberta</string>
     <string name="remove_all">Deletar tudo</string>
-    <string name="close_library_tooltip">Fechar biblioteca</string>
     <string name="close_downloads_tooltip">Fechar downloads</string>
     <string name="homepage_hint">%1$s Início (Padrão)</string>
     <string name="max_windows_msg">Apenas janelas %1$s podem ser abertas. Feche uma para abrir outra.</string>

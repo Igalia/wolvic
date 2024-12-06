@@ -317,7 +317,6 @@
     <string name="close_downloads_tooltip">Закрити завантаження</string>
     <string name="addons_authors_title">Автори</string>
     <string name="addons_version_title">Версія</string>
-    <string name="close_library_tooltip">Закрити бібліотеку</string>
     <string name="whats_new_tooltip">Що нового</string>
     <string name="addons_homepage_title">Домашня сторінка</string>
     <string name="remove_all">Видалити все</string>
@@ -563,7 +562,6 @@
     <string name="remove_bookmark_tooltip">Видалити з закладок</string>
     <string name="open_bookmarks_tooltip">Відкрити закладки</string>
     <string name="close_history_tooltip">Закрити історію</string>
-    <string name="open_library_tooltip">Відкрити бібліотеку</string>
     <string name="authentication_required">Потрібна автентифікація</string>
     <string name="authentication_password">Пароль:</string>
     <string name="authentication_show_password">Показати пароль:</string>
