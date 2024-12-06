@@ -247,6 +247,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             if (getSession().canGoBack()) {
                 getSession().goBack();
+            } else if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
+                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
             }
 
             if (mAudio != null) {
@@ -257,7 +259,18 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.navigationBarNavigation.forwardButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            getSession().goForward();
+            if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
+                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
+                getSession().loadUri(forwardUrl);
+
+                mAttachedWindow.hideNewTab();
+
+                mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
+                mViewModel.setUrl(forwardUrl);
+                mViewModel.setCanGoForwardFromNewTab(false);
+            } else {
+                getSession().goForward();
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -1024,7 +1037,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             updateTrackingProtection();
         }
 
-        mBinding.navigationBarNavigation.reloadButton.setEnabled(!UrlUtils.isPrivateAboutPage(getContext(), url));
+        mBinding.navigationBarNavigation.reloadButton.setEnabled(
+                mViewModel.getCurrentContentType().getValue() != Windows.ContentType.NEW_TAB
+                        && !mViewModel.getIsNativeContentVisible().getValue().get()
+                        && !UrlUtils.isPrivateAboutPage(getContext(), url));
     }
 
     // Content delegate
@@ -1390,7 +1406,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onAddons() {
                 hideMenu();
 
-                mAttachedWindow.showPanel(Windows.ContentType.ADDONS);
+                mAttachedWindow.showLibraryPanel(Windows.ContentType.ADDONS);
             }
 
             @Override
