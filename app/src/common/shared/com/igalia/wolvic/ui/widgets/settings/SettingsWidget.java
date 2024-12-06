@@ -219,7 +219,8 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
-                mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
+                String uri = getResources().getString(R.string.feedback_link, BuildConfig.VERSION_NAME, DeviceType.getType());
+                mWidgetManager.openNewPageNoInterrupt(uri);
                 exitWholeSettings();
             });
         }

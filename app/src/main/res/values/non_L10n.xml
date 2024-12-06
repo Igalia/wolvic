@@ -226,7 +226,6 @@
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
     <!-- Settings Survey link -->
-    <string name="survey_link" translatable="false">https://github.com/Igalia/wolvic/issues/</string>
     <string name="feedback_link" translatable="false">https://wolvic.com/en/feedback/index.html?version=%1$s&amp;device=%2$d</string>
 
     <!-- Phone UI links -->
