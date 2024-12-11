@@ -59,9 +59,9 @@ public class SliderSetting extends LinearLayout {
 
         mSlider = findViewById(R.id.settings_slider);
         mSlider.setStepSize(mStepSize);
-        mSlider.setValue(mInitialValue);
         mSlider.setValueFrom(mValueFrom);
         mSlider.setValueTo(mValueTo);
+        mSlider.setValue(adjustValueToSliderRange(mInitialValue));
         mSlider.clearOnChangeListeners();
         mSlider.addOnChangeListener(mInternalOnChangeListener);
 
@@ -81,9 +81,15 @@ public class SliderSetting extends LinearLayout {
         }
     };
 
+    private float adjustValueToSliderRange(float value) {
+        // Prevent an exception if the value does not respect the step size, and min and max values.
+        float roundedValue = Math.round((value - mValueFrom) / mStepSize) * mStepSize + mValueFrom;
+        return Math.max(mValueFrom, Math.min(mValueTo, roundedValue));
+    }
+
     public void setValue(float value, boolean doApply) {
         mSlider.clearOnChangeListeners();
-        mSlider.setValue(value);
+        mSlider.setValue(adjustValueToSliderRange(value));
         mSlider.addOnChangeListener(mInternalOnChangeListener);
 
         if (mSliderListener != null && doApply) {
