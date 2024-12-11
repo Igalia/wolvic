@@ -1,24 +1,39 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WWebRequestError;
 
+import org.chromium.base.ContextUtils;
+import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.content_public.browser.LifecycleState;
+import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.NavigationHandle;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
+import org.chromium.ui.base.ActivityWindowAndroid;
+import org.chromium.ui.base.IntentRequestTracker;
+import org.chromium.ui.base.ViewAndroidDelegate;
+import org.chromium.ui.base.WindowAndroid;
 import org.chromium.url.GURL;
+import org.chromium.wolvic.TabCompositorView;
+import org.chromium.wolvic.WolvicWebContentsFactory;
 
 import java.security.cert.X509Certificate;
 
 public class TabWebContentsObserver extends WebContentsObserver {
     private @NonNull SessionImpl mSession;
+    private @NonNull TabImpl mTab;
+    private WebContentsObserver mPaymentWebContentsObserver;
 
-    public TabWebContentsObserver(WebContents webContents, @NonNull SessionImpl session) {
-        super(webContents);
+    public TabWebContentsObserver(TabImpl tab, @NonNull SessionImpl session) {
+        super(tab.getActiveWebContents());
+        mTab = tab;
         mSession = session;
     }
 
@@ -104,6 +119,51 @@ public class TabWebContentsObserver extends WebContentsObserver {
             delegate.onPageStop(mSession, true);
         }
         dispatchCanGoBackOrForward();
+    }
+
+    @Override
+    public void onCreateNewPaymentHandler(final WebContents newWebContents) {
+        WSession.ContentDelegate contentDelegate = mSession.getContentDelegate();
+        if (contentDelegate == null) {
+            return;
+        }
+
+        assert newWebContents.getViewAndroidDelegate() != null
+             : "WebContents should be initialized.";
+        WindowAndroid windowAndroid = newWebContents.getTopLevelNativeWindow();
+        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        final TabCompositorView compositorView = new TabCompositorView(context);
+        compositorView.onNativeLibraryLoaded(windowAndroid);
+        windowAndroid.setAnimationPlaceholderView(compositorView);
+
+        ViewAndroidDelegate viewDelegate = newWebContents.getViewAndroidDelegate();
+        assert viewDelegate.getContainerView() instanceof ContentView
+                : "WebContents should not set container views other than ContentView.";
+
+        mTab.setPaymentWebContents(newWebContents, (ContentView) viewDelegate.getContainerView(), compositorView);
+
+        WDisplay display = mSession.acquireOverlayDisplay(compositorView);
+        contentDelegate.onShowPaymentHandler(mSession, display, () -> {
+            if (newWebContents.isDestroyed()) {
+                return;
+            }
+            mTab.setPaymentWebContents(null, null, null);
+            newWebContents.destroy();
+        });
+
+        // Show Compositor View after attaching to the parent view.
+        compositorView.setCurrentWebContents(newWebContents);
+
+        mPaymentWebContentsObserver = new WebContentsObserver(newWebContents) {
+            @Override
+            public void destroy() {
+                mSession.releaseOverlayDisplay(compositorView);
+                mTab.setPaymentWebContents(null, null, null);
+
+                contentDelegate.onHidePaymentHandler(mSession);
+                newWebContents.removeObserver(this);
+            }
+        };
     }
 
     @Override
