@@ -1359,6 +1359,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             }
 
             @Override
+            public void onFullScreen() {
+                mAttachedWindow.setIsFullScreen(true);
+            }
+
+            @Override
             public void onPassthrough() {
                 mWidgetManager.togglePassthrough();
 
