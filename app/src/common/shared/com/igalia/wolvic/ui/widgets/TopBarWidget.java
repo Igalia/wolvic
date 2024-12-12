@@ -77,6 +77,16 @@ public class TopBarWidget extends UIWidget {
             aPlacement.layer = false;
     }
 
+    private void adjustWindowPlacement(boolean isHorizontalTabsVisible) {
+        if (isHorizontalTabsVisible) {
+            // Move this widget upwards to make space for the horizontal tabs bar.
+            getPlacement().verticalOffset = -WidgetPlacement.dpDimension(getContext(), R.dimen.horizontal_tabs_bar_height) * WidgetPlacement.worldToDpRatio(getContext());
+        } else {
+            getPlacement().verticalOffset = 0;
+        }
+        mWidgetManager.updateWidget(TopBarWidget.this);
+    }
+
     private void updateUI() {
         removeAllViews();
 
@@ -141,6 +151,8 @@ public class TopBarWidget extends UIWidget {
 
         if (mViewModel != null) {
             mViewModel.getIsTopBarVisible().removeObserver(mIsVisible);
+            mViewModel.getIsTabsBarVisible().removeObserver(mIsTabsBarVisible);
+            mViewModel.getUsesHorizontalTabsBar().removeObserver(mUsesHorizontalTabsBar);
             mViewModel = null;
         }
     }
@@ -163,7 +175,9 @@ public class TopBarWidget extends UIWidget {
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsTopBarVisible().observe((VRBrowserActivity)getContext(), mIsVisible);
+        mViewModel.getIsTopBarVisible().observe((VRBrowserActivity) getContext(), mIsVisible);
+        mViewModel.getIsTabsBarVisible().observe((VRBrowserActivity) getContext(), mIsTabsBarVisible);
+        mViewModel.getUsesHorizontalTabsBar().observe((VRBrowserActivity) getContext(), mUsesHorizontalTabsBar);
     }
 
     public @Nullable WindowWidget getAttachedWindow() {
@@ -178,7 +192,7 @@ public class TopBarWidget extends UIWidget {
         super.releaseWidget();
     }
 
-    Observer<ObservableBoolean> mIsVisible = isVisible -> {
+    private Observer<ObservableBoolean> mIsVisible = isVisible -> {
         mWidgetPlacement.visible = isVisible.get();
         if (!mWidgetAdded) {
             mWidgetManager.addWidget(TopBarWidget.this);
@@ -186,6 +200,14 @@ public class TopBarWidget extends UIWidget {
         } else {
             mWidgetManager.updateWidget(TopBarWidget.this);
         }
+    };
+
+    private Observer<ObservableBoolean> mIsTabsBarVisible = isTabsBarVisible -> {
+        adjustWindowPlacement(isTabsBarVisible.get() && mViewModel.getUsesHorizontalTabsBar().getValue().get());
+    };
+
+    private Observer<ObservableBoolean> mUsesHorizontalTabsBar = usesHorizontalTabsBar -> {
+        adjustWindowPlacement(mViewModel.getIsTabsBarVisible().getValue().get() && usesHorizontalTabsBar.get());
     };
 
     public void setDelegate(TopBarWidget.Delegate aDelegate) {

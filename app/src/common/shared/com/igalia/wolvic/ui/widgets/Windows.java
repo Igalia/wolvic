@@ -65,7 +65,7 @@ import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
-        WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
+        WindowWidget.WindowListener, TabDelegate, Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
@@ -935,6 +935,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.parentAnchorX = 0.0f;
                 placement.parentAnchorY = 0.0f;
                 placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
+                placement.horizontalOffset = - WidgetPlacement.dpDimension(mContext, R.dimen.vertical_tabs_bar_width) * WidgetPlacement.worldToDpRatio(mContext);
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -954,6 +955,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placement.parentAnchorX = 1.0f;
                 placement.parentAnchorY = 0.0f;
                 placement.parentAnchorGravity = centerWindow ? WidgetPlacement.GRAVITY_CENTER_Y : WidgetPlacement.GRAVITY_DEFAULT;
+                placement.horizontalOffset = WidgetPlacement.dpDimension(mContext, R.dimen.vertical_tabs_bar_width) * WidgetPlacement.worldToDpRatio(mContext);
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
                 if (curvedMode) {
@@ -1425,6 +1427,7 @@ public void selectTab(@NonNull Session aTab) {
     public void onTabSelect(Session aTab) {
         if (mFocusedWindow.getSession() != aTab) {
             TelemetryService.Tabs.activatedEvent();
+            aTab.updateLastUse();
         }
 
         WindowWidget targetWindow = mFocusedWindow;

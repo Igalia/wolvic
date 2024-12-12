@@ -107,6 +107,10 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
         setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled(), false);
 
+        @SettingsStore.TabsLocation int tabsLocation = SettingsStore.getInstance(getContext()).getTabsLocation();
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
+        setTabsLocation(mBinding.tabsLocationRadio.getIdForValue(tabsLocation), false);
+
         mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
 
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
@@ -200,6 +204,10 @@ class DisplayOptionsView extends SettingsView {
         setHeadLock(value, true);
     };
 
+    private RadioGroupSetting.OnCheckedChangeListener mTabsLocationChangeListener = (radioGroup, checkedId, doApply) -> {
+        setTabsLocation(checkedId, true);
+    };
+
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
             setHomepage(mBinding.homepageEdit.getFirstText());
@@ -258,6 +266,9 @@ class DisplayOptionsView extends SettingsView {
         if (!prevMSAA.equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
             restart = true;
+        }
+        if (!mBinding.tabsLocationRadio.getValueForId(mBinding.tabsLocationRadio.getCheckedRadioButtonId()).equals(SettingsStore.TABS_LOCATION_DEFAULT)) {
+            setTabsLocation(mBinding.tabsLocationRadio.getIdForValue(SettingsStore.TABS_LOCATION_DEFAULT), true);
         }
 
         if (mBinding.windowsSize.getCheckedRadioButtonId() != SettingsStore.WINDOW_SIZE_PRESET_DEFAULT.ordinal()) {
@@ -362,6 +373,17 @@ class DisplayOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setAudioEnabled(value);
             AudioEngine.fromContext(getContext()).setEnabled(value);
+        }
+    }
+
+    private void setTabsLocation(int checkedId, boolean doApply) {
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(null);
+        mBinding.tabsLocationRadio.setChecked(checkedId, doApply);
+        mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
+
+        if (doApply) {
+            int tabsLocationValue = (Integer) mBinding.tabsLocationRadio.getValueForId(checkedId);
+            SettingsStore.getInstance(getContext()).setTabsLocation(tabsLocationValue);
         }
     }
 
