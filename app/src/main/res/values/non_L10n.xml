@@ -48,7 +48,7 @@
     <string name="settings_key_crash_restart_count_timestamp" translatable="false">settings_key_crash_restart_count_timestamp</string>
     <string name="settings_key_keyboard_move" translatable="false">settings_key_keyboard_move</string>
     <string name="settings_key_pointer_mode" translatable="false">settings_key_pointer_mode</string>
-    <string name="private_browsing_support_url" translatable="false">https://support.mozilla.org/kb/private-mode-firefox-reality</string>
+    <string name="private_browsing_support_url" translatable="false">https://wolvic.com/en/support/private-mode</string>
     <string name="settings_key_browser_world_width" translatable="false">settings_browser_world_width</string>
     <string name="settings_key_browser_world_height" translatable="false">settings_browser_world_height</string>
     <string name="settings_key_notifications" translatable="false">settings_key_notifications</string>
