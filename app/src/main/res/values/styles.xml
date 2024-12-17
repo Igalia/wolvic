@@ -506,6 +506,15 @@
         <!-- Phone window decoration -->
         <item name="android:statusBarColor">@color/midnight</item>
         <item name="android:navigationBarColor">@color/midnight</item>
+
+        <!-- Basic colors for Material buttons and other elements -->
+        <item name="colorOnSurface">@color/fog</item>
+        <item name="colorSurface">@color/asphalt</item>
+        <item name="colorOnContainer">@color/fog</item>
+        <item name="colorContainer">@color/asphalt</item>
+        <item name="colorOnSecondaryContainer">@color/fog</item>
+        <item name="colorSecondaryContainer">@color/azure</item>
+
     </style>
 
     <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>
