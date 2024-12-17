@@ -305,6 +305,20 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="SettingsLinkButtonStyle" parent="Widget.Material3.Button.Icon">
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:layout_height">@dimen/settings_outline_button_height</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">116dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_smaller_size</item>
+        <item name="iconSize">14dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
     <style name="tabsButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -498,6 +512,15 @@
         <!-- Phone window decoration -->
         <item name="android:statusBarColor">@color/midnight</item>
         <item name="android:navigationBarColor">@color/midnight</item>
+
+        <!-- Basic colors for Material buttons and other elements -->
+        <item name="colorOnSurface">@color/fog</item>
+        <item name="colorSurface">@color/asphalt</item>
+        <item name="colorOnContainer">@color/fog</item>
+        <item name="colorContainer">@color/asphalt</item>
+        <item name="colorOnSecondaryContainer">@color/fog</item>
+        <item name="colorSecondaryContainer">@color/azure</item>
+
     </style>
 
     <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>
