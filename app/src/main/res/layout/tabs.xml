@@ -16,9 +16,7 @@
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/tabsBackButton"
-            style="?attr/navigationBarButtonStyle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            style="?attr/headerBarButtonStyle"
             android:padding="8dp"
             app:tintColorList="@drawable/main_button_icon_color_active"
             android:tint="@color/midnight"

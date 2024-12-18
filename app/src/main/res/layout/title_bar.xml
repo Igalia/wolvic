@@ -78,7 +78,7 @@
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/mediaButton"
-            style="?attr/navigationBarButtonStyle"
+            style="?attr/headerBarButtonStyle"
             android:src="@{viewmodel.isMediaPlaying ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"
             android:onClick="@{(view) -> viewmodel.isMediaPlaying ? delegate.onMediaPauseClicked(widget) : delegate.onMediaPlayClicked(widget)}"
             android:tooltipText="@{viewmodel.isMediaPlaying ? @string/media_pause_tooltip : @string/media_resume_tooltip}"
