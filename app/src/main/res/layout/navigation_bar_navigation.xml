@@ -16,6 +16,7 @@
         android:id="@+id/navigationBarContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/navigation_bar_height"
         android:orientation="vertical"
         android:padding="0dp">
 
@@ -23,7 +24,7 @@
     <LinearLayout
         style="?attr/navigationBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="0dp">
 
@@ -40,7 +41,7 @@
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/forwardButton"
             style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:src="@drawable/ic_icon_forward"
             android:tooltipText="@string/forward_tooltip"
@@ -49,28 +50,33 @@
 
         <RelativeLayout
             style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:padding="0dp" >
 
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/reloadButton"
                 style="?attr/navigationBarButtonStyle"
+                android:layout_centerInParent="true"
                 android:src="@{viewmodel.isLoading ? @drawable/ic_icon_exit : @drawable/ic_icon_reload}"
+                android:padding="@{viewmodel.isLoading ? @dimen/nav_button_padding : @dimen/nav_button_progress_padding}"
                 android:tooltipText="@{viewmodel.isLoading ? @string/stop_tooltip : @string/refresh_tooltip}"
                 app:privateMode="@{viewmodel.isPrivateSession}" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@drawable/main_button_icon_color"
+                android:layout_margin="4dp"
                 android:visibility="@{viewmodel.isLoading ? View.VISIBLE : View.GONE}" />
         </RelativeLayout>
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/homeButton"
             style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:src="@drawable/ic_icon_home"
             android:tooltipText="@string/home_tooltip"
@@ -80,9 +86,9 @@
         <com.igalia.wolvic.ui.views.NavigationURLBar
             android:id="@+id/urlBar"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="@dimen/nav_button_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="100"
             android:orientation="horizontal"
             app:visibleGone="@{!viewmodel.isKioskMode || viewmodel.isFindInPage}" />
@@ -91,14 +97,14 @@
             android:id="@+id/urlBarPlaceholder"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="100"
             app:visibleGone="@{viewmodel.isKioskMode &amp;&amp; !viewmodel.isFindInPage}" />
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/userFeedbackButton"
             style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:checked="true"
             android:src="@drawable/baseline_contact_support_24"
@@ -109,7 +115,7 @@
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/desktopModeButton"
             style="?attr/accentedNavigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:checked="true"
             android:src="@drawable/ic_icon_ua_desktop"
@@ -118,10 +124,10 @@
             app:visibleGone="@{viewmodel.isDesktopMode &amp;&amp; !viewmodel.isKioskMode}" />
 
         <RelativeLayout
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/nav_button_size"
+            android:layout_height="@dimen/nav_button_size"
             android:layout_weight="0"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:scaleType="fitCenter"
             android:layout_gravity="center_vertical"
             app:visibleGone="@{settingsmodel.isWhatsNewVisible &amp;&amp; viewmodel.width > 640 &amp;&amp; !viewmodel.isKioskMode}">
@@ -134,8 +140,8 @@
                 app:privateMode="@{viewmodel.isPrivateSession}" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:layout_width="6dp"
-                android:layout_height="6dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentTop="true"
@@ -146,7 +152,7 @@
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/nav_button_margin"
             android:layout_weight="0"
             android:src="@drawable/ic_icon_hamburger_menu"
             android:tooltipText="@string/hamburger_menu_tooltip"

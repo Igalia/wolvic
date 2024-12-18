@@ -14,10 +14,8 @@
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/backButton"
-            style="?attr/navigationBarButtonStyle"
-            android:layout_width="40dp"
+            style="?attr/headerBarButtonStyle"
             android:layout_marginStart="-34dp"
-            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:src="@drawable/ic_icon_back"
             android:tint="@color/midnight"
