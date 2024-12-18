@@ -78,7 +78,7 @@
 
                     <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/backButton"
-                        style="?attr/navigationBarButtonStyle"
+                        style="?attr/headerBarButtonStyle"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_icon_back"
@@ -112,7 +112,7 @@
 
                     <com.igalia.wolvic.ui.views.UIButton
                         android:id="@+id/closeButton"
-                        style="?attr/navigationBarButtonStyle"
+                        style="?attr/headerBarButtonStyle"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_icon_exit"
