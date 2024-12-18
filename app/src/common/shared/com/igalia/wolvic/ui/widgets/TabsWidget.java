@@ -77,7 +77,7 @@ public class TabsWidget extends UIDialog {
 
     @Override
     public void updatePlacementTranslationZ() {
-        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
+        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tray_world_z) -
                 WidgetPlacement.getWindowWorldZMeters(getContext());
     }
 
