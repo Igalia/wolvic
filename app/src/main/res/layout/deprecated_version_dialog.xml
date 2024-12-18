@@ -31,7 +31,7 @@
 
         <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/dismissButton"
-            style="?attr/navigationBarButtonStyle"
+            style="?attr/headerBarButtonStyle"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:src="@drawable/ic_icon_exit"
