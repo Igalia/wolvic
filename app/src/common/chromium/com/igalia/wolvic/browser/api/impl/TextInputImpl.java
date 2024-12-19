@@ -19,6 +19,7 @@ import com.igalia.wolvic.browser.api.WTextInput;
 
 import org.chromium.content_public.browser.ImeAdapter;
 import org.chromium.content_public.browser.InputMethodManagerWrapper;
+import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.WindowAndroid;
 
 public class TextInputImpl implements WTextInput {
@@ -180,6 +181,7 @@ public class TextInputImpl implements WTextInput {
     }
 
     private ImeAdapter getImeAdapter() {
-        return mSession.getTab() != null ? mSession.getTab().getImeAdapter() : null;
+        WebContents webContents = mSession.getTab() != null ? mSession.getTab().getActiveWebContents() : null;
+        return webContents != null ? ImeAdapter.fromWebContents(webContents) : null;
     }
 }
