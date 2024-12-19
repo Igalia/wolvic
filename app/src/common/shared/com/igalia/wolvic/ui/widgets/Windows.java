@@ -1225,15 +1225,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mTabsWidget.setTabDelegate(this);
         }
 
-        if (mFocusedWindow != null) {
-            mTabsWidget.getPlacement().parentHandle = mFocusedWindow.getHandle();
-            mTabsWidget.attachToWindow(mFocusedWindow);
-            mTabsWidget.show(UIWidget.KEEP_FOCUS);
-            // If we're signed-in, poll for any new device events (e.g. received tabs)
-            // There's no push support right now, so this helps with the perception of speedy tab delivery.
-            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().refreshDevicesAsync();
-            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().pollForEventsAsync();
-        }
+        mTabsWidget.getPlacement().parentHandle = mWidgetManager.getTray().getHandle();
+        mTabsWidget.setPrivateMode(mPrivateMode);
+        mTabsWidget.setDelegate(() -> mWidgetManager.getTray().setTabsWidgetVisible(false));
+        mWidgetManager.getTray().setTabsWidgetVisible(true);
+        mTabsWidget.show(UIWidget.KEEP_FOCUS);
+
+        // If we're signed-in, poll for any new device events (e.g. received tabs)
+        // There's no push support right now, so this helps with the perception of speedy tab delivery.
+        ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().refreshDevicesAsync();
+        ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().pollForEventsAsync();
 
         // Capture active session snapshots when showing the tabs menu
         for (WindowWidget window: getCurrentWindows()) {

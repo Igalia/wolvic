@@ -170,6 +170,7 @@
                 app:tooltipPosition="bottom"
                 app:tooltipLayout="@layout/tooltip_tray"
                 android:src="@drawable/ic_icon_tray_tabs"
+                app:activeMode="@{traymodel.isTabsWidgetVisible}"
                 app:regularModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_unchecked_start : @drawable/tray_background_unchecked_middle}"
                 app:privateModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_start_private : @drawable/tray_background_middle_private}"
                 app:activeModeBackground="@{traymodel.isMaxWindows ? @drawable/tray_background_checked_start : @drawable/tray_background_checked_middle}"/>

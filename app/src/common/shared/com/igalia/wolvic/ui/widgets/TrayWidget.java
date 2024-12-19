@@ -659,6 +659,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayViewModel.setIsMaxWindows(!aVisible);
     }
 
+    public void setTabsWidgetVisible(boolean aVisible) {
+        mTrayViewModel.setIsTabsWidgetVisible(aVisible);
+    }
+
     // WidgetManagerDelegate.UpdateListener
 
     @Override
