@@ -67,18 +67,12 @@ public class TabsWidget extends UIDialog {
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_height);
         aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.0f;
+        aPlacement.parentAnchorY = 1.0f;
         aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
-                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
-        updatePlacementTranslationZ();
-    }
-
-    @Override
-    public void updatePlacementTranslationZ() {
-        getPlacement().translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tray_world_z) -
-                WidgetPlacement.getWindowWorldZMeters(getContext());
+        aPlacement.anchorY = 0.0f;
+        // Undo the rotation of the parent widget (tray).
+        aPlacement.rotationAxisX = 1.0f;
+        aPlacement.rotation = (float) Math.toRadians(45);
     }
 
     private void initialize() {
@@ -168,9 +162,8 @@ public class TabsWidget extends UIDialog {
         updateUI();
     }
 
-    public void attachToWindow(WindowWidget aWindow) {
-        mPrivateMode = aWindow.getSession().isPrivateMode();
-        mWidgetPlacement.parentHandle = aWindow.getHandle();
+    public void setPrivateMode(boolean privateMode) {
+        mPrivateMode = privateMode;
     }
 
     @Override
@@ -394,6 +387,9 @@ public class TabsWidget extends UIDialog {
     protected void onDismiss() {
         exitSelectMode();
         hide(KEEP_WIDGET);
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
