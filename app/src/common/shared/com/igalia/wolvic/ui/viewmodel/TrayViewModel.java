@@ -19,6 +19,7 @@ public class TrayViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isKeyboardVisible;
     private MutableLiveData<ObservableInt> downloadsNumber;
     private MediatorLiveData<ObservableBoolean> isVisible;
+    private MutableLiveData<ObservableBoolean> isTabsWidgetVisible;
     private MutableLiveData<String> time;
     private MutableLiveData<String> pm;
     private MutableLiveData<ObservableBoolean> wifiConnected;
@@ -41,6 +42,7 @@ public class TrayViewModel extends AndroidViewModel {
         isVisible.addSource(shouldBeVisible, mIsVisibleObserver);
         isVisible.addSource(isKeyboardVisible, mIsVisibleObserver);
         isVisible.setValue(new ObservableBoolean(false));
+        isTabsWidgetVisible = new MutableLiveData<>(new ObservableBoolean(false));
         time = new MutableLiveData<>();
         pm = new MutableLiveData<>();
         pm = new MutableLiveData<>();
@@ -67,6 +69,7 @@ public class TrayViewModel extends AndroidViewModel {
         isMaxWindows.setValue(isMaxWindows.getValue());
         shouldBeVisible.setValue(shouldBeVisible.getValue());
         isKeyboardVisible.setValue(isKeyboardVisible.getValue());
+        isTabsWidgetVisible.postValue(isTabsWidgetVisible.getValue());
         time.postValue(time.getValue());
         pm.postValue(pm.getValue());
         wifiConnected.postValue(wifiConnected.getValue());
@@ -93,6 +96,14 @@ public class TrayViewModel extends AndroidViewModel {
 
     public void setIsKeyboardVisible(boolean isVisible) {
         this.isKeyboardVisible.setValue(new ObservableBoolean(isVisible));
+    }
+
+    public void setIsTabsWidgetVisible(boolean isTabsWidgetVisible) {
+        this.isTabsWidgetVisible.setValue(new ObservableBoolean(isTabsWidgetVisible));
+    }
+
+    public MutableLiveData<ObservableBoolean> getIsTabsWidgetVisible() {
+        return isTabsWidgetVisible;
     }
 
     public void setIsVisible(boolean isVisible) {
