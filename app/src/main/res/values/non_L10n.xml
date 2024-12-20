@@ -225,6 +225,9 @@
     <string name="keyboard_nl_NL_popup_u" translatable="false">uúüûùūůų</string>
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
+    <!-- Homepage link -->
+    <string name="home_page_url" translatable="false">https://wolvic.com/</string>
+
     <!-- Settings Survey link -->
     <string name="feedback_link" translatable="false">https://wolvic.com/en/feedback/index.html?version=%1$s&amp;device=%2$d</string>
 
