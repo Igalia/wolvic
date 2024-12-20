@@ -48,6 +48,8 @@ struct WidgetPlacement {
   int borderColor;
   std::string name;
   int clearColor;
+  float horizontalOffset;
+  float verticalOffset;
 
   int32_t GetTextureWidth() const;
   int32_t GetTextureHeight() const;

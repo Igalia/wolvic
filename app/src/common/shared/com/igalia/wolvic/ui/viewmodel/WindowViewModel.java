@@ -46,6 +46,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isKioskMode;
     private MutableLiveData<ObservableBoolean> isDesktopMode;
     private MediatorLiveData<ObservableBoolean> isTopBarVisible;
+    private MediatorLiveData<ObservableBoolean> isTabsBarVisible;
     private MutableLiveData<ObservableBoolean> isResizeMode;
     private MutableLiveData<ObservableBoolean> isPrivateSession;
     private MediatorLiveData<ObservableBoolean> showClearButton;
@@ -158,6 +159,14 @@ public class WindowViewModel extends AndroidViewModel {
         titleBarUrl.addSource(url, mTitleBarUrlObserver);
         titleBarUrl.setValue("");
 
+        isTabsBarVisible = new MediatorLiveData<>();
+        isTabsBarVisible.addSource(isActiveWindow, mIsTabsBarVisibleObserver);
+        isTabsBarVisible.addSource(isFullscreen, mIsTabsBarVisibleObserver);
+        isTabsBarVisible.addSource(isKioskMode, mIsTabsBarVisibleObserver);
+        isTabsBarVisible.addSource(isResizeMode, mIsTabsBarVisibleObserver);
+        isTabsBarVisible.addSource(isWindowVisible, mIsTabsBarVisibleObserver);
+        isTabsBarVisible.setValue(new ObservableBoolean(true));
+
         isInsecureVisible = new MediatorLiveData<>();
         isInsecureVisible.addSource(isInsecure, mIsInsecureVisibleObserver);
         isInsecureVisible.addSource(isPrivateSession, mIsInsecureVisibleObserver);
@@ -209,6 +218,18 @@ public class WindowViewModel extends AndroidViewModel {
                 } else {
                     isTopBarVisible.postValue(new ObservableBoolean(true));
                 }
+            }
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsTabsBarVisibleObserver = new Observer<ObservableBoolean>() {
+        @Override
+        public void onChanged(ObservableBoolean o) {
+            if (!isActiveWindow.getValue().get() || isFullscreen.getValue().get() || isKioskMode.getValue().get() || isResizeMode.getValue().get() || !isWindowVisible.getValue().get()) {
+                isTabsBarVisible.postValue(new ObservableBoolean(false));
+
+            } else {
+                isTabsBarVisible.postValue(new ObservableBoolean(true));
             }
         }
     };
@@ -518,6 +539,11 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsTopBarVisible(boolean isTopBarVisible) {
         this.isTopBarVisible.postValue(new ObservableBoolean(isTopBarVisible));
+    }
+
+    @NonNull
+    public MediatorLiveData<ObservableBoolean> getIsTabsBarVisible() {
+        return isTabsBarVisible;
     }
 
     @NonNull
