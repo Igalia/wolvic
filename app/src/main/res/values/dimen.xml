@@ -15,8 +15,8 @@
     <item name="window_world_z_max" format="float" type="dimen">-5.2</item>
 
     <!-- Navigation bar -->
-    <dimen name="navigation_bar_width">720dp</dimen>
-    <dimen name="navigation_bar_height">74dp</dimen>
+    <dimen name="navigation_bar_width">800dp</dimen>
+    <dimen name="navigation_bar_height">96dp</dimen>
     <dimen name="url_bar_item_width">28dp</dimen>
     <dimen name="url_bar_first_item_width">36dp</dimen>
     <dimen name="url_bar_last_item_width">36dp</dimen>
@@ -190,6 +190,11 @@
     <item name="url_bar_popup_world_x" format="float" type="dimen">1.25</item>
     <item name="url_bar_popup_world_y" format="float" type="dimen">0.15</item>
     <item name="url_bar_popup_world_z" format="float" type="dimen">0.1</item>
+
+    <dimen name="nav_button_size">44dp</dimen>
+    <dimen name="nav_button_padding">12dp</dimen>
+    <dimen name="nav_button_progress_padding">9dp</dimen>
+    <dimen name="nav_button_margin">8dp</dimen>
 
     <dimen name="tray_icon_padding_max">10dp</dimen>
     <dimen name="tray_icon_padding_min">8dp</dimen>
