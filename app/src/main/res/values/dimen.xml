@@ -75,6 +75,7 @@
     <dimen name="settings_width">680dp</dimen>
     <dimen name="settings_height">490dp</dimen>
     <dimen name="settings_main_button_text_width">125dp</dimen>
+    <dimen name="settings_outline_button_height">24dp</dimen>
 
     <!-- Lang Selector -->
     <dimen name="lang_selector_narrow_col_item_width">100dp</dimen>
