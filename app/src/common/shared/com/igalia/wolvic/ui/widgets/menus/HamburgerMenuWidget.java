@@ -211,6 +211,12 @@ public class HamburgerMenuWidget extends UIWidget implements
                             return;
                         }
 
+                        // Do not show builtin extensions in the hamburger menu. As they are inside the APK, their URLs
+                        // always start with "resource://android".
+                        if (extension.getUrl().startsWith("resource://android")) {
+                            return;
+                        }
+
                         final WebExtensionState tabExtensionState = tab.getExtensionState().get(extension.getId());
                         if (extension.getBrowserAction() != null) {
                             addOrUpdateAddonMenuItem(
