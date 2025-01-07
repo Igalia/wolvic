@@ -23,13 +23,7 @@
                 advancedVisible = !advancedVisible;
             }
             function acceptAndContinue(temporary) {
-                document.addCertException(temporary).then(() => {
-                        location.reload();
-                    },
-                    err => {
-                        console.error("Unexpected error: " + err)
-                    }
-                );
+                window.certificateErrorPageController.proceed();
             }
         </script>
     </head>
