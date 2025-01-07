@@ -146,13 +146,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 case MotionEvent.ACTION_POINTER_DOWN:
                 case MotionEvent.ACTION_DOWN:
                     v.setPressed(true);
-                    mWidgetManager.startWidgetMove(mWidgetManager.getWindows().getFrontWindow(), WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_WINDOW);
+                    mWidgetManager.startWindowMove();
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     v.setPressed(false);
-                    mWidgetManager.finishWidgetMove();
+                    mWidgetManager.finishWindowMove();
                     break;
                 default:
                     return false;
