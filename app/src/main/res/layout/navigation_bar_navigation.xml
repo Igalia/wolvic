@@ -4,6 +4,7 @@
     <data>
         <import type="android.view.View" />
         <import type="com.igalia.wolvic.BuildConfig"/>
+        <import type="com.igalia.wolvic.ui.widgets.Windows.WindowPlacement"/>
         <variable
             name="viewmodel"
             type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
@@ -169,7 +170,7 @@
             android:layout_height="32dp"
             android:tooltipText="@string/move_tooltip"
             android:layout_gravity="center_horizontal"
-            app:visibleGone="@{viewmodel.isCurved}">
+            android:visibility="@{(viewmodel.placement == WindowPlacement.FRONT) ? View.VISIBLE : View.GONE}">
 
             <View
                 android:layout_width="@dimen/move_bar_width"

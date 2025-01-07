@@ -208,13 +208,16 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
-  bool inHeadLockMode = false;
+  LockMode lockMode = LockMode::NO_LOCK;
+  vrb::Matrix lockModeLastTransform;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
   bool isApplicationEntitled = false;
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
+  float selectThreshold;
+  std::optional<vrb::Quaternion> prevReorient;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1146,6 +1149,15 @@ BrowserWorld::ProcessOVRPlatformEvents() {
 }
 #endif
 
+vrb::Matrix
+BrowserWorld::GetActiveControllerOrientation() const {
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (controller.enabled)
+      return controller.transform->GetTransform();
+  }
+  return vrb::Matrix::Identity();
+}
+
 void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
@@ -1202,9 +1214,22 @@ BrowserWorld::StartFrame() {
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
     m.UpdateTrackedKeyboard();
-    if (m.inHeadLockMode) {
+    if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
-      m.device->Reorient();
+      auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+      // Interpolate consecutive rotations to enable smooth window movements.
+      if (m.lockMode == LockMode::CONTROLLER) {
+        if (m.prevReorient) {
+          Quaternion reorientQuaternion(reorientTransform);
+          m.prevReorient = vrb::Quaternion::Slerp(*m.prevReorient, reorientQuaternion, 0.1f);
+          auto translation = reorientTransform.GetTranslation();
+          reorientTransform = vrb::Matrix::Rotation(m.prevReorient->Conjugate());
+          reorientTransform.TranslateInPlace(translation);
+        } else {
+          m.prevReorient = vrb::Quaternion(reorientTransform);
+        }
+      }
+      m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
@@ -1277,9 +1302,12 @@ BrowserWorld::TogglePassthrough() {
 }
 
 void
-BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
-  m.inHeadLockMode = isEnabled;
+  if (m.lockMode == lockMode)
+      return;
+  m.lockModeLastTransform = lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+  m.lockMode = lockMode;
 }
 
 void
@@ -2137,9 +2165,9 @@ JNI_METHOD(void, togglePassthroughNative)
   crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
-JNI_METHOD(void, setHeadLockEnabledNative)
-(JNIEnv*, jobject, jboolean isEnabled) {
-  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
+JNI_METHOD(void, setLockEnabledNative)
+(JNIEnv*, jobject, jint lockMode) {
+    crow::BrowserWorld::Instance().SetLockMode(static_cast<crow::BrowserWorld::LockMode>(lockMode));
 }
 
 JNI_METHOD(void, exitImmersiveNative)

@@ -183,9 +183,17 @@ DeviceDelegateVisionGlass::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
-DeviceDelegateVisionGlass::Reorient() {
-    vrb::Matrix head = GetHeadTransform();
-    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
+DeviceDelegateVisionGlass::Reorient(const vrb::Matrix& transform, ReorientMode mode) {
+  switch (mode) {
+    case ReorientMode::SIX_DOF:
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(transform, GetHeadTransform().GetTranslation());
+      break;
+    case ReorientMode::NO_ROLL:
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixWithoutRoll(transform, GetHeadTransform().GetTranslation());
+      break;
+    default:
+      VRB_ERROR("Unsupported reorient mode %d", mode);
+  }
 }
 
 void
