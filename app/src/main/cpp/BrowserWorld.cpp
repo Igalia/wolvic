@@ -216,6 +216,8 @@ struct BrowserWorld::State {
   bool isApplicationEntitled = false;
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
+  float selectThreshold;
+  std::optional<vrb::Quaternion> prevReorient;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1216,6 +1218,18 @@ BrowserWorld::StartFrame() {
     if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
       auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+      // Interpolate consecutive rotations to enable smooth window movements.
+      if (m.lockMode == LockMode::CONTROLLER) {
+        if (m.prevReorient) {
+          Quaternion reorientQuaternion(reorientTransform);
+          m.prevReorient = vrb::Quaternion::Slerp(*m.prevReorient, reorientQuaternion, 0.1f);
+          auto translation = reorientTransform.GetTranslation();
+          reorientTransform = vrb::Matrix::Rotation(m.prevReorient->Conjugate());
+          reorientTransform.TranslateInPlace(translation);
+        } else {
+          m.prevReorient = vrb::Quaternion(reorientTransform);
+        }
+      }
       m.device->Reorient(reorientTransform);
     }
     if (m.reorientRequested)
