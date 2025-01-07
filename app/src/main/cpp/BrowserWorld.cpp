@@ -208,7 +208,8 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
-  bool inHeadLockMode = false;
+  LockMode lockMode = LockMode::NO_LOCK;
+  vrb::Matrix lockModeLastTransform;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1146,6 +1147,16 @@ BrowserWorld::ProcessOVRPlatformEvents() {
 }
 #endif
 
+vrb::Matrix
+BrowserWorld::GetActiveControllerOrientation() const {
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (!controller.enabled)
+      continue;
+    return controller.transform->GetTransform();
+  }
+  return vrb::Matrix::Identity();
+}
+
 void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
@@ -1202,9 +1213,10 @@ BrowserWorld::StartFrame() {
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
     m.UpdateTrackedKeyboard();
-    if (m.inHeadLockMode) {
+    if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
-      m.device->Reorient();
+      auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+      m.device->Reorient(reorientTransform);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
@@ -1277,9 +1289,12 @@ BrowserWorld::TogglePassthrough() {
 }
 
 void
-BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
-  m.inHeadLockMode = isEnabled;
+  if (m.lockMode == lockMode)
+      return;
+  m.lockModeLastTransform = lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+  m.lockMode = lockMode;
 }
 
 void
@@ -2137,9 +2152,9 @@ JNI_METHOD(void, togglePassthroughNative)
   crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
-JNI_METHOD(void, setHeadLockEnabledNative)
-(JNIEnv*, jobject, jboolean isEnabled) {
-  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
+JNI_METHOD(void, setLockEnabledNative)
+(JNIEnv*, jobject, jint lockMode) {
+    crow::BrowserWorld::Instance().SetLockMode(static_cast<crow::BrowserWorld::LockMode>(lockMode));
 }
 
 JNI_METHOD(void, exitImmersiveNative)

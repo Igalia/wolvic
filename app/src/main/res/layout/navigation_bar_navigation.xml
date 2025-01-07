@@ -168,8 +168,7 @@
             android:layout_width="128dp"
             android:layout_height="32dp"
             android:tooltipText="@string/move_tooltip"
-            android:layout_gravity="center_horizontal"
-            app:visibleGone="@{viewmodel.isCurved}">
+            android:layout_gravity="center_horizontal">
 
             <View
                 android:layout_width="@dimen/move_bar_width"

@@ -657,9 +657,8 @@ DeviceDelegateWaveVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
-DeviceDelegateWaveVR::Reorient() {
-  vrb::Matrix head = GetHeadTransform();
-  m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
+DeviceDelegateWaveVR::Reorient(vrb::Matrix& transform) {
+  m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixWithoutRoll(transform, GetHeadTransform().GetTranslation());
 }
 
 void
