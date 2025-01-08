@@ -217,6 +217,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mLibrary = new LibraryPanel(aContext);
+        mLibrary.setController(this::showPanel);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 

@@ -440,6 +440,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             return;
         }
 
+        if (button.getAnimation() != null) {
+            button.getAnimation().cancel();
+        }
+
         int paddingStart = button.getPaddingLeft();
         button.animate()
                 .setDuration(duration)
@@ -605,6 +609,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private Observer<Windows.ContentType> mCurrentContentTypeObserver = contentType -> {
+        // Prevent a race condition in case the animation runs faster than the data binding.
+        mBinding.bookmarksButton.setActiveMode(contentType != Windows.ContentType.WEB_CONTENT && contentType != Windows.ContentType.DOWNLOADS);
+        mBinding.downloadsButton.setActiveMode(contentType == Windows.ContentType.DOWNLOADS);
+
         if (contentType == Windows.ContentType.WEB_CONTENT) {
             animateButtonPadding(mBinding.bookmarksButton, mMaxPadding, ICON_ANIMATION_DURATION);
             animateButtonPadding(mBinding.downloadsButton, mMaxPadding, ICON_ANIMATION_DURATION);

@@ -189,7 +189,7 @@
                 style="@style/trayButtonMiddleTheme"
                 android:src="@drawable/ic_icon_bookmark"
                 android:tooltipText="@{viewmodel.currentContentType == ContentType.BOOKMARKS ? @string/close_bookmarks_tooltip : @string/open_bookmarks_tooltip}"
-                app:activeMode="@{viewmodel.currentContentType == ContentType.BOOKMARKS}"
+                app:activeMode="@{viewmodel.currentContentType != ContentType.WEB_CONTENT &amp;&amp; viewmodel.currentContentType != ContentType.DOWNLOADS}"
                 app:clipDrawable="@drawable/ic_icon_library_clip"
                 app:tooltipDensity="@dimen/tray_tooltip_density"
                 app:tooltipLayout="@layout/tooltip_tray"
