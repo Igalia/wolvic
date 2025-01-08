@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="com.igalia.wolvic.ui.widgets.Windows.ContentType"/>
         <variable
             name="delegate"
             type="com.igalia.wolvic.ui.delegates.LibraryNavigationDelegate" />
@@ -31,32 +32,32 @@
                         style="@style/libraryButtonStartTheme"
                         android:src="@drawable/ic_icon_bookmark"
                         android:id="@+id/bookmarks"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.BOOKMARKS) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_webapps"
                         android:id="@+id/web_apps"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.WEB_APPS) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_history"
                         android:id="@+id/history"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.HISTORY) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_downloads"
                         android:id="@+id/downloads"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.DOWNLOADS) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_addons"
                         android:id="@+id/addons"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"/>
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.ADDONS) : void}"/>
                     <com.igalia.wolvic.ui.views.UIButton
                         style="@style/libraryButtonMiddleTheme"
                         android:src="@drawable/ic_icon_dialog_notification"
                         android:id="@+id/notifications"
-                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(view) : void}"
+                        android:onClick="@{(view) -> delegate != null ? delegate.onButtonClick(ContentType.NOTIFICATIONS) : void}"
                         visibleGone="@{supportsSystemNotifications}"/>
                 </LinearLayout>
             </FrameLayout>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,6 +39,11 @@ public class LibraryPanel extends FrameLayout {
     private SystemNotificationsView mSystemNotificationsView;
     private LibraryView mCurrentView;
     private Windows.ContentType mCurrentPanel;
+    private Controller mController;
+
+    public interface Controller {
+        void setPanelContent(Windows.ContentType contentType);
+    }
 
     public LibraryPanel(@NonNull Context context) {
         super(context);
@@ -113,9 +119,11 @@ public class LibraryPanel extends FrameLayout {
             }
 
             @Override
-            public void onButtonClick(@NonNull View view) {
+            public void onButtonClick(Windows.ContentType contentType) {
                 requestFocus();
-                selectTab(view);
+                if (mController != null) {
+                    mController.setPanelContent(contentType);
+                }
             }
         });
         mBinding.executePendingBindings();
@@ -177,6 +185,10 @@ public class LibraryPanel extends FrameLayout {
         mSystemNotificationsView.onDestroy();
     }
 
+    public void setController(Controller controller) {
+        mController = controller;
+    }
+
     public Windows.ContentType getSelectedPanelType() {
         if (mCurrentView == mBookmarksView) {
             return Windows.ContentType.BOOKMARKS;
@@ -201,7 +213,13 @@ public class LibraryPanel extends FrameLayout {
         }
     }
 
-    private void selectTab(@NonNull View view) {
+    public void selectPanel(Windows.ContentType panelType) {
+        mCurrentPanel = panelType;
+
+        if (panelType == Windows.ContentType.WEB_CONTENT) {
+            panelType = getSelectedPanelType();
+        }
+
         mBinding.tabcontent.removeAllViews();
 
         if (BuildConfig.FLAVOR_backend.equals("chromium")) {
@@ -214,23 +232,28 @@ public class LibraryPanel extends FrameLayout {
         mBinding.downloads.setActiveMode(false);
         mBinding.addons.setActiveMode(false);
         mBinding.notifications.setActiveMode(false);
-        if(view.getId() == R.id.bookmarks){
-            selectBookmarks();
 
-        } else if(view.getId() == R.id.history){
-            selectHistory();
-
-        } else if(view.getId() == R.id.downloads){
-            selectDownloads();
-
-        } else if(view.getId() == R.id.addons){
-            selectAddons();
-
-        } else if (view.getId() == R.id.notifications) {
-            selectNotifications();
-
-        } else if (view.getId() == R.id.web_apps) {
-            selectWebApps();
+        switch (panelType) {
+            case WEB_CONTENT:
+                break;
+            case BOOKMARKS:
+                selectBookmarks();
+                break;
+            case WEB_APPS:
+                selectWebApps();
+                break;
+            case HISTORY:
+                selectHistory();
+                break;
+            case DOWNLOADS:
+                selectDownloads();
+                break;
+            case ADDONS:
+                selectAddons();
+                break;
+            case NOTIFICATIONS:
+                selectNotifications();
+                break;
         }
 
         mBinding.setCanGoBack(mCurrentView.canGoBack());
@@ -239,35 +262,6 @@ public class LibraryPanel extends FrameLayout {
         mBinding.searchBar.setQuery("", false);
         mBinding.searchBar.clearFocus();
         mBinding.searchBar.setVisibility(mCurrentView.supportsSearch() ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    public void selectPanel(Windows.ContentType panelType) {
-        mCurrentPanel = panelType;
-
-        if (panelType == Windows.ContentType.WEB_CONTENT) {
-            panelType = getSelectedPanelType();
-        }
-        switch (panelType) {
-            case WEB_CONTENT:
-            case BOOKMARKS:
-                selectTab(mBinding.bookmarks);
-                break;
-            case WEB_APPS:
-                selectTab(mBinding.webApps);
-                break;
-            case HISTORY:
-                selectTab(mBinding.history);
-                break;
-            case DOWNLOADS:
-                selectTab(mBinding.downloads);
-                break;
-            case ADDONS:
-                selectTab(mBinding.addons);
-                break;
-            case NOTIFICATIONS:
-                selectTab(mBinding.notifications);
-                break;
-        }
     }
 
     private void selectBookmarks() {
