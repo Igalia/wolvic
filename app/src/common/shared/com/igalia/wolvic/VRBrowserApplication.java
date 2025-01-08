@@ -53,8 +53,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
 
     protected void onActivityCreate(@NonNull Context activityContext) {
         onConfigurationChanged(activityContext.getResources().getConfiguration());
-        TelemetryService.init(activityContext);
         mAppExecutors = new AppExecutors();
+        TelemetryService.init(activityContext);
         mConnectivityManager = new ConnectivityReceiver(activityContext);
         mConnectivityManager.init();
         mPlaces = new Places(activityContext);
