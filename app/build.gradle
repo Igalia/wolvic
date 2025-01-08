@@ -619,13 +619,16 @@ android {
     lint {
         disable 'ExtraTranslation'
     }
-    androidResources {
+
+    aaptOptions {
+        noCompress 'ja'
+        noCompress 'dat'
+        noCompress 'bin'
         noCompress 'pak'
         noCompress 'ja'
         noCompress 'dat'
         noCompress 'bin'
     }
-
 }
 
 configurations {
