@@ -20,6 +20,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -170,7 +171,11 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         // Alternatively: android.hardware.usb.action.USB_DEVICE_ATTACHED, USB_DEVICE_DETACHED.
         IntentFilter usbPermissionFilter = new IntentFilter();
         usbPermissionFilter.addAction(HUAWEI_USB_PERMISSION);
-        registerReceiver(mUsbPermissionReceiver, usbPermissionFilter, Context.RECEIVER_NOT_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mUsbPermissionReceiver, usbPermissionFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mUsbPermissionReceiver, usbPermissionFilter);
+        }
 
         initializeAGConnect();
 
