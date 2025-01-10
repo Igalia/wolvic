@@ -241,7 +241,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
     private void initVisionGlassPhoneUI() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setTheme(R.style.FxR_Dark);
 
         ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.Theme_WolvicPhone);
@@ -249,6 +248,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         mBinding = DataBindingUtil.setContentView(this, R.layout.visionglass_layout);
         mBinding = DataBindingUtil.inflate(themedInflater, R.layout.visionglass_layout, null, false);
         setContentView(mBinding.getRoot());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mViewModel = new ViewModelProvider(this).get(PhoneUIViewModel.class);
         mBinding.setViewModel(mViewModel);
@@ -265,8 +265,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> onBackPressed());
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private void showAlertDialog(String description) {
@@ -404,6 +402,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     protected void onPause() {
         Log.d(LOGTAG, "PlatformActivity onPause");
         super.onPause();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // This check is needed to prevent a crash when pausing before 3D mode has started.
         if (mActivePresentation != null) {
@@ -425,6 +424,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     protected void onResume() {
         Log.d(LOGTAG, "PlatformActivity onResume");
         super.onResume();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         registerPhoneIMUListener();
 
