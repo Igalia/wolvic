@@ -527,7 +527,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
-        hideNewTab();
+        hideNewTab(false);
         mViewModel.setIsFindInPage(false);
         mViewModel.setCurrentContentType(contentType);
         mViewModel.setUrl(contentType.URL);
@@ -599,18 +599,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void hideNewTab() {
+    public void hideNewTab(boolean enableBackToNewTab) {
         if (mViewModel.getCurrentContentType().getValue() == Windows.ContentType.NEW_TAB) {
-            mViewModel.enableBackToNewTab(true);
-            hideNewTab(true);
+            mViewModel.enableBackToNewTab(enableBackToNewTab);
+            hideNewTab();
         }
     }
 
-    private void hideNewTab(boolean switchSurface) {
+    private void hideNewTab() {
         if (mView != null && mNewTab != null) {
-            unsetView(mNewTab, switchSurface);
+            unsetView(mNewTab, true);
         }
-        if (switchSurface && mRestoreFirstPaint != null) {
+        if (mRestoreFirstPaint != null) {
             mRestoreFirstPaint.run();
             mRestoreFirstPaint = null;
         }
@@ -2071,12 +2071,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
             } else {
                hideLibraryPanel();
-               hideNewTab();
+               hideNewTab(true);
            }
 
         } else {
             hideLibraryPanel();
-            hideNewTab();
+            hideNewTab(true);
             mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
             mViewModel.setUrl(uri.toString());
         }

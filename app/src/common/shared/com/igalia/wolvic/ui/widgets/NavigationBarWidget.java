@@ -263,7 +263,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
                 getSession().loadUri(forwardUrl);
 
-                mAttachedWindow.hideNewTab();
+                mAttachedWindow.hideNewTab(true);
 
                 mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
                 mViewModel.setUrl(forwardUrl);
