@@ -444,13 +444,15 @@ public class WindowViewModel extends AndroidViewModel {
                 spannable.setSpan(color1, 0, index + 3, 0);
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
                 this.url.postValue(spannable);
-                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                //TODO: Allow other about links outside of library
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
                     urlForwardFromNewTab.postValue(spannable);
                 }
 
             } else {
                 this.url.postValue(url);
-                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                //TODO: Allow other about links outside of library
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
                     urlForwardFromNewTab.postValue(url);
                 }
             }
