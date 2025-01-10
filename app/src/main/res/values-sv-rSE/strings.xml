@@ -1829,4 +1829,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_pointer_mode">Blickläge</string>
     <string name="developer_options_pointer_mode_tracked_pointer">Pekare</string>
     <string name="eye_tracking_permission_message">Att aktivera ögonspårning för att surfa på webben innebär betydande integritetsrisker. Denna teknik fångar var och hur länge en användare tittar på specifika delar av en webbsida och avslöjar intima detaljer om deras intressen och känslomässiga reaktioner. Annonsörer och tredje part kan utnyttja denna data för påträngande marknadsföring och profilering. Dessutom kan ögonrörelsemönster sluta sig till känslig information som medicinska tillstånd, kognitiva tillstånd eller personliga vanor. Därför är det avgörande att överväga integritetskonsekvenserna innan du beviljar tillgång till ögonspårningsinformation till/för webbsidor.</string>
+    <string name="display_options_tabs_location">Plats för flikar</string>
+    <string name="display_options_tabs_location_tray">Fack</string>
+    <string name="display_options_tabs_location_horizontal">Horisontell</string>
+    <string name="display_options_tabs_location_vertical">Vertikal</string>
+    <string name="settings_window_size">Standard fönsterstorlek</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="download_addon_install_blocked_permissions_body">Tillåt lagringsbehörigheter i sekretessalternativ för att fortsätta.</string>
 </resources>
