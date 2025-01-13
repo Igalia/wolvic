@@ -706,10 +706,11 @@
     <string name="context_menu_paste_text">ஒட்டு</string>
     <string name="context_menu_select_all_text">அனைத்தையும் தெரிவுசெய்</string>
     <string name="authentication_show_password">கடவுச்சொல்லைக் காட்டு:</string>
-    <string name="display_options_tabs_location">தாவல்கள் இருப்பிடம்</string>
+    <string name="display_options_tabs_location">தாவல்கள் இடம்</string>
     <string name="display_options_tabs_location_tray">தட்டு</string>
     <string name="display_options_tabs_location_horizontal">கிடைமட்டம்</string>
     <string name="display_options_tabs_location_vertical">செங்குத்து</string>
     <string name="settings_window_size">இயல்புநிலை சாளர அளவு</string>
-    <string name="download_addon_install_blocked_permissions_body">தொடர தனியுரிமை விருப்பங்களில் சேமிப்பு அனுமதிகளை இயக்கவும்.</string>
+    <string name="download_addon_install_blocked_permissions_body">தொடர, தனியுரிமை விருப்பங்களில் சேமிப்பக அனுமதிகளை அனுமதிக்கவும்.</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
 </resources>
