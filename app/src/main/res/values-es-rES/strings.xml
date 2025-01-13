@@ -1825,4 +1825,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="developer_options_pointer_mode_tracked_eye">Seguimiento ocular</string>
     <string name="eye_tracking_permission_title">Permisos de seguimiento ocular</string>
     <string name="eye_tracking_permission_message">Habilitar el seguimiento ocular para navegar por la web plantea riesgos significativos de privacidad. Esta tecnología captura dónde y cuánto tiempo un usuario mira partes específicas de una página web, revelando detalles íntimos sobre sus intereses y reacciones emocionales. Los anunciantes y terceros pueden explotar estos datos para el marketing intrusivo y la elaboración de perfiles. Además, los patrones de movimiento del ojo podrían deducir información sensible como condiciones médicas, estados cognitivos o hábitos personales. Por lo tanto, es crucial considerar las implicaciones de la privacidad antes de conceder acceso a la información de seguimiento ocular a páginas web.</string>
+    <string name="display_options_tabs_location">Ubicación de las pestañas</string>
+    <string name="display_options_tabs_location_tray">Panel</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="settings_window_size">Tamaño predeterminado de la ventana</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="download_addon_install_blocked_permissions_body">Permita los permisos de almacenamiento en Opciones de privacidad para continuar.</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
 </resources>
