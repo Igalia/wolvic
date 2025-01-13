@@ -21,6 +21,7 @@ import org.chromium.ui.base.IntentRequestTracker;
 import org.chromium.ui.base.ViewAndroidDelegate;
 import org.chromium.ui.base.WindowAndroid;
 import org.chromium.url.GURL;
+import org.chromium.wolvic.Tab;
 import org.chromium.wolvic.TabCompositorView;
 import org.chromium.wolvic.WolvicWebContentsFactory;
 
@@ -128,13 +129,10 @@ public class TabWebContentsObserver extends WebContentsObserver {
             return;
         }
 
+        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        final TabCompositorView compositorView = Tab.createNewTab(context, newWebContents);
         assert newWebContents.getViewAndroidDelegate() != null
              : "WebContents should be initialized.";
-        WindowAndroid windowAndroid = newWebContents.getTopLevelNativeWindow();
-        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-        final TabCompositorView compositorView = new TabCompositorView(context);
-        compositorView.onNativeLibraryLoaded(windowAndroid);
-        windowAndroid.setAnimationPlaceholderView(compositorView);
 
         ViewAndroidDelegate viewDelegate = newWebContents.getViewAndroidDelegate();
         assert viewDelegate.getContainerView() instanceof ContentView
