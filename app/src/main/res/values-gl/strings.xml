@@ -800,4 +800,12 @@
     <string name="incompatible_os_version_message">A versión actual do sistema non está soportada. Wolvic require polo menos a versión %1$s</string>
     <string name="controller_options_handtracking">Seguimento de mans</string>
     <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, apunte o seu teléfono cara adiante e toque o botón.</string>
+    <string name="controller_options_pointer_mode">Modo de control do punteiro</string>
+    <string name="display_options_tabs_location_tray">Panel</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
+    <string name="settings_window_size">Tamaño predeterminado da xanela</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="download_addon_install_blocked_permissions_body">Permita os permisos de almacenamento en Opcións de privacidade para continuar.</string>
+    <string name="display_options_tabs_location">Localización das pestanas</string>
 </resources>
