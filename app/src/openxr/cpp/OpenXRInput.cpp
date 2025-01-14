@@ -380,4 +380,10 @@ bool OpenXRInput::updateEyeGaze(XrFrameState frameState, const vrb::Matrix& head
     return true;
 }
 
+
+float OpenXRInput::GetSelectThreshold(int32_t aControllerIndex) const {
+  ASSERT(mInputSources.at(aControllerIndex));
+  return mInputSources.at(aControllerIndex)->GetSelectThreshold();
+}
+
 } // namespace crow

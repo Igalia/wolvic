@@ -76,6 +76,7 @@ public:
   void InitializeEyeGaze(ControllerDelegate&);
   void InitializeEyeGazeSpaces();
   bool updateEyeGaze(XrFrameState, const vrb::Matrix& head, ControllerDelegate&);
+  float GetSelectThreshold(int32_t aControllerIndex) const;
 };
 
 } // namespace crow
