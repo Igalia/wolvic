@@ -14,6 +14,13 @@ namespace crow {
 // Otherwise single (slow) clicks would easily trigger scrolling.
 const XrDuration kEyeTrackingScrollThreshold = 250000000;
 
+// Threshold to consider a trigger value as a click
+// Used when devices don't map the click value for triggers;
+const float kControllerClickThreshold = 0.25f;
+// Threshold to consider a pinch as a click. Hand tracking is not as precise as controllers, that's
+// why we need to be extra careful in order not to generate false positives.
+const float kPinchThreshold = 0.91f;
+
 OpenXRInputSourcePtr OpenXRInputSource::Create(XrInstance instance, XrSession session, OpenXRActionSet& actionSet, const XrSystemProperties& properties, OpenXRHandFlags handeness, int index)
 {
     OpenXRInputSourcePtr input(new OpenXRInputSource(instance, session, actionSet, properties, handeness, index));
@@ -31,6 +38,7 @@ OpenXRInputSource::OpenXRInputSource(XrInstance instance, XrSession session, Ope
     , mIndex(index)
 {
   elbow = ElbowModel::Create();
+  mClickThreshold = kControllerClickThreshold;
 }
 
 OpenXRInputSource::~OpenXRInputSource()
@@ -267,7 +275,7 @@ std::optional<OpenXRInputSource::OpenXRButtonState> OpenXRInputSource::GetButton
     queryActionState(button.flags & OpenXRButtonFlags::Value, actions.value, result.value, result.clicked ? 1.0 : 0.0);
     queryActionState(button.flags & OpenXRButtonFlags::Ready, actions.ready, result.ready, true);
 
-    if (!clickedHasValue && result.value > kClickThreshold) {
+    if (!clickedHasValue && result.value > mClickThreshold) {
       result.clicked = true;
     }
 
@@ -815,6 +823,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             std::vector<float> jointRadii;
             PopulateHandJointLocations(renderMode, jointTransforms, jointRadii);
             if (!mIsHandInteractionSupported) {
+                mClickThreshold = kPinchThreshold;
                 EmulateControllerFromHand(renderMode, frameState.predictedDisplayTime, head, jointTransforms[HAND_JOINT_FOR_AIM], pointerMode, usingEyeTracking, eyeTrackingTransform, delegate);
                 delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
                 return;
@@ -831,6 +840,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     bool usingTrackedPointer = pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER;
     bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
+    mClickThreshold = mUsingHandInteractionProfile ? kPinchThreshold : kControllerClickThreshold;
 
     // When using hand interaction profiles we still get valid aim even if the hand is facing
     // the head like when performing system gestures. In that case we don't want to show the beam.
@@ -937,7 +947,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         auto immersiveButton = GetImmersiveButton(button);
 
         if (isHandActionEnabled && button.type == OpenXRButtonType::Trigger) {
-            delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= kClickThreshold,
+            delegate.SetButtonState(mIndex, ControllerDelegate::BUTTON_APP, -1, state->value >= mClickThreshold,
                                     state->value > 0, 1.0);
         } else {
             delegate.SetButtonState(mIndex, browserButton, immersiveButton.has_value() ? immersiveButton.value() : -1,

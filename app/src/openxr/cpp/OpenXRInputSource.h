@@ -88,6 +88,7 @@ private:
     vrb::Vector mControllerPositionOnScrollStart;
     vrb::Matrix mEyeGazeTransformOnPinchStart;
     XrTime mEyeTrackingPinchStartTime { 0 };
+    float mClickThreshold;
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
@@ -122,6 +123,7 @@ public:
     bool HasPhysicalControllersAvailable() const;
     void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
     HandMeshBufferPtr GetNextHandMeshBuffer();
+    float GetSelectThreshold() const { return mClickThreshold; }
 };
 
 } // namespace crow

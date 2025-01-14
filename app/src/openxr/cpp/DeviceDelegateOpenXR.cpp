@@ -1751,8 +1751,8 @@ void DeviceDelegateOpenXR::SetHandTrackingEnabled(bool value) {
   m.handTrackingEnabled = value;
 }
 
-float DeviceDelegateOpenXR::GetSelectThreshold() {
-  return kClickThreshold;
+float DeviceDelegateOpenXR::GetSelectThreshold(int32_t aControllerIndex) {
+  return m.input->GetSelectThreshold(aControllerIndex);
 }
 
 void
