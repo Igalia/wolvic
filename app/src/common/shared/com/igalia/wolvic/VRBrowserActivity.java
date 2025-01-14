@@ -2248,6 +2248,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public boolean isEyeTrackingSupported() { return mIsEyeTrackingSupported; }
 
+    @Keep
+    @SuppressWarnings("unused")
+    private void changeWindowDistance(float aDelta) {
+        float increment = 0.05f;
+        float clamped = Math.max(0.0f, Math.min(mSettings.getWindowDistance() + (aDelta > 0 ? increment : -increment), 1.0f));
+        mSettings.setWindowDistance(clamped);
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();
