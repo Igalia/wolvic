@@ -130,13 +130,8 @@ XrResult OpenXRInputSource::Initialize()
                                                                       &mHandTracker));
 
         mSupportsHandJointsMotionRangeInfo = OpenXRExtensions::IsExtensionSupported(XR_EXT_HAND_JOINTS_MOTION_RANGE_EXTENSION_NAME);
-
-#if defined(PICOXR)
-        // Pico's runtime does not advertise it but it does work.
-        mSupportsFBHandTrackingAim = true;
-#else
         mSupportsFBHandTrackingAim = OpenXRExtensions::IsExtensionSupported(XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME);
-#endif
+
         if (!mIsHandInteractionSupported) {
             if (mSupportsFBHandTrackingAim) {
                 mGestureManager = std::make_unique<OpenXRGestureManagerFBHandTrackingAim>();
