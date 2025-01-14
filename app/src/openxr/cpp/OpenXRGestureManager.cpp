@@ -117,15 +117,8 @@ OpenXRGestureManagerFBHandTrackingAim::systemGestureDetected(const vrb::Matrix& 
 void
 OpenXRGestureManagerFBHandTrackingAim::getTriggerPinchStatusAndFactor(const HandJointsArray& handJoints,
                                                                          bool& isPinching, double& pinchFactor) {
-#ifdef PICOXR
-    // Pico's support for XR_FB_hand_tracking_aim extension doesn't give correct
-    // values for flags and piching strength, so fallback to our own pinch detection
-    // algorithm.
-    OpenXRGestureManager::getTriggerPinchStatusAndFactor(handJoints, isPinching, pinchFactor);
-#else
     isPinching = mFBAimState.status & XR_HAND_TRACKING_AIM_INDEX_PINCHING_BIT_FB;
     pinchFactor = mFBAimState.pinchStrengthIndex;
-#endif
 }
 
 OpenXRGestureManagerHandJoints::OpenXRGestureManagerHandJoints(HandJointsArray& handJoints, OneEuroFilterParams* filterParams)
