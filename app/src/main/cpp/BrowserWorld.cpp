@@ -91,6 +91,9 @@ const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
 const float kPointerSize = 3.0;
 
+// When moving windows, the minimum amount of movement required to start moving the window
+float kWindowMoveZThreshold = 0.01;
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -209,7 +212,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   LockMode lockMode = LockMode::NO_LOCK;
-  vrb::Matrix lockModeLastTransform;
+  std::optional<vrb::Vector> lockModeLastPosition;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -218,6 +221,7 @@ struct BrowserWorld::State {
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
   float selectThreshold;
   std::optional<vrb::Quaternion> prevReorient;
+  std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1159,6 +1163,33 @@ BrowserWorld::GetActiveControllerOrientation() const {
 }
 
 void
+BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform) {
+    const float kThrottleMs = 100;
+    const float kDirectionTolerance = 0.75f;
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - m.lastTimeWindowDistanceComputation).count();
+    if (duration < kThrottleMs)
+        return;
+
+    auto currentPosition = reorientTransform.GetTranslation();
+    if (!m.lockModeLastPosition) {
+        m.lockModeLastPosition = currentPosition;
+        return;
+    }
+
+    auto didMoveSignificantly = (currentPosition - *m.lockModeLastPosition).Magnitude() > 0.01f;
+    if (!didMoveSignificantly)
+        return;
+
+    auto forward = reorientTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
+    auto directionOfMovement = (currentPosition - *m.lockModeLastPosition).Normalize();
+    auto dotProduct = directionOfMovement.Dot(forward);
+    if (abs(dotProduct) > kDirectionTolerance)
+      VRBrowser::ChangeWindowDistance(dotProduct);
+    m.lockModeLastPosition = currentPosition;
+}
+
+void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
   if (!m.device) {
@@ -1228,6 +1259,7 @@ BrowserWorld::StartFrame() {
         } else {
           m.prevReorient = vrb::Quaternion(reorientTransform);
         }
+        ThrottledWindowDistanceComputation(reorientTransform);
       }
       m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     }
@@ -1306,7 +1338,6 @@ BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
   if (m.lockMode == lockMode)
       return;
-  m.lockModeLastTransform = lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
   m.lockMode = lockMode;
 }
 

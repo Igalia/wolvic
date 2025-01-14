@@ -78,7 +78,8 @@ const char* const kSetHandTrackingSupported = "setHandTrackingSupported";
 const char* const kSetHandTrackingSupportedSignature = "(Z)V";
 const char* const kOnControllersAvailable = "onControllersAvailable";
 const char* const kOnControllersAvailableSignature = "()V";
-
+const char* const kChangeWindowDistance = "changeWindowDistance";
+const char* const kChangeWindowDistanceSignature = "(F)V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -117,6 +118,7 @@ jmethodID sOnAppFocusChanged = nullptr;
 jmethodID sSetEyeTrackingSupported = nullptr;
 jmethodID sSetHandTrackingSupported = nullptr;
 jmethodID sOnControllersAvailable = nullptr;
+jmethodID sChangeWindowDistance = nullptr;
 
 } // namespace
 
@@ -171,6 +173,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sSetEyeTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetEyeTrackingSupported, kSetEyeTrackingSupportedSignature);
   sSetHandTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetHandTrackingSupported, kSetHandTrackingSupportedSignature);
   sOnControllersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnControllersAvailable, kOnControllersAvailableSignature);
+  sChangeWindowDistance = FindJNIMethodID(sEnv, sBrowserClass, kChangeWindowDistance, kChangeWindowDistanceSignature);
 }
 
 JNIEnv * VRBrowser::Env()
@@ -220,6 +223,7 @@ VRBrowser::ShutdownJava() {
   sDisableLayers = nullptr;
   sEnv = nullptr;
   sAppendAppNotesToCrashReport = nullptr;
+  sChangeWindowDistance = nullptr;
 }
 
 void
@@ -504,6 +508,13 @@ VRBrowser::OnControllersAvailable() {
     sEnv->CallVoidMethod(sActivity, sOnControllersAvailable);
     CheckJNIException(sEnv, __FUNCTION__);
 
+}
+
+void
+VRBrowser::ChangeWindowDistance(jfloat aDelta) {
+    if (!ValidateMethodID(sEnv, sActivity, sChangeWindowDistance, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sChangeWindowDistance, aDelta);
+    CheckJNIException(sEnv, __FUNCTION__);
 }
 
 } // namespace crow
