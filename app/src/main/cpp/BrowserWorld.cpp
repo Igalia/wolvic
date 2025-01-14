@@ -91,6 +91,9 @@ const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
 const float kPointerSize = 3.0;
 
+// When moving windows, the minimum amount of movement required to start moving the window
+float kWindowMoveZThreshold = 0.01;
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -209,7 +212,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   LockMode lockMode = LockMode::NO_LOCK;
-  vrb::Matrix lockModeLastTransform;
+  std::optional<vrb::Matrix> lockModeLastTransform;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1228,6 +1231,11 @@ BrowserWorld::StartFrame() {
           reorientTransform.TranslateInPlace(translation);
         } else {
           m.prevReorient = vrb::Quaternion(reorientTransform);
+        }
+        auto delta = reorientTransform.GetTranslation().Magnitude() - m.lockModeLastTransform->GetTranslation().Magnitude();
+        if (abs(delta) > kWindowMoveZThreshold) {
+          m.lockModeLastTransform = reorientTransform;
+          VRBrowser::ChangeWindowDistance(delta);
         }
       }
       m.device->Reorient(reorientTransform);
