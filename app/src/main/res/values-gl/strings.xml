@@ -808,4 +808,8 @@
     <string name="window_size_preset">%1$d×%2$d</string>
     <string name="download_addon_install_blocked_permissions_body">Permita os permisos de almacenamento en Opcións de privacidade para continuar.</string>
     <string name="display_options_tabs_location">Localización das pestanas</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Co controlador ou a man</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Coa mirada</string>
+    <string name="eye_tracking_permission_title">Permisos de seguimiento ocular</string>
+    <string name="eye_tracking_permission_message">Habilitar o seguimento ocular para navegar pola web supón riscos significativos para a privacidade. Esta tecnoloxía captura onde e canto tempo un usuario mira partes específicas dunha páxina web, revelando detalles íntimos sobre os seus intereses e reaccións emocionais. Os anunciantes e terceiros poden explotar estes datos para o márketing intrusivo e a creación de perfís. Ademais, os patróns de movemento dos ollos poderían deducir información sensible, como condicións médicas, estados cognitivos ou hábitos persoais. Por iso, é crucial considerar as implicacións para a privacidade antes de conceder acceso á información de seguimento ocular a páxinas web.</string>
 </resources>
