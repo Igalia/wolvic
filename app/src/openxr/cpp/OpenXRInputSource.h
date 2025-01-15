@@ -88,7 +88,7 @@ private:
     vrb::Vector mControllerPositionOnScrollStart;
     vrb::Matrix mEyeGazeTransformOnPinchStart;
     XrTime mEyeTrackingPinchStartTime { 0 };
-    float mClickThreshold;
+    float mClickThreshold { 1.0f };
 
     struct HandMeshMSFT {
         XrSpace space = XR_NULL_HANDLE;
