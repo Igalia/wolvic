@@ -45,7 +45,7 @@
     <string name="security_options_block_pup_up_windows">Bloquear janelas Pop-Up</string>
     <string name="security_options_speech_data_collect">Permitir que %1$s colete dados de fala</string>
     <string name="voice_search_example">Exemplo: Diga \"vídeos 360, previsão do tempo, notícias...\"</string>
-    <string name="crash_dialog_message">Ajude a Mozilla a melhorar o %1$s enviando os seus dados de falha. &lt;a href=more&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="crash_dialog_message"><![CDATA[Ajude a Mozilla a melhorar o %1$s enviando os seus dados de falha. <a href="more">Saiba mais</a>]]></string>
     <string name="do_not_sent_button">Não envie</string>
     <string name="video_controls_seek_backward">Retroceder %1$s segundos</string>
     <string name="video_controls_live">AO VIVO</string>
@@ -112,7 +112,7 @@
     <string name="close_history_tooltip">Fechar histórico</string>
     <string name="open_downloads_tooltip">Abrir descargas</string>
     <string name="close_downloads_tooltip">Fechar descargas</string>
-    <string name="private_browsing_body">&lt;p&gt;Quando navega numa janela privada, %1$s &lt;strong&gt;não salva&lt;/strong&gt;:&lt;/p&gt; &lt;ul class=two-column&gt; &lt;li&gt;páginas visitadas&lt;/li&gt; &lt;li&gt;pesquisas&lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;ficheiros temporários&lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Navegação privada &lt;strong&gt;não o torna anônimo&lt;/strong&gt; na Internet. O seu empregador ou provedor de serviços de Internet ainda pode saber qual página visita.&lt;/p&gt; &lt;p class=about-info&gt;Saiba mais sobre &lt;a id=learnMore&gt;Navegação privada&lt;/a&gt;.&lt;/p&gt;</string>
+    <string name="private_browsing_body"><![CDATA[<p>Quando navega numa janela privada, %1$s <strong>não salva</strong>:</p> <ul class=two-column> <li>páginas visitadas</li> <li>pesquisas</li> <li>cookies</li> <li>ficheiros temporários</li> </ul> <p>Navegação privada <strong>não o torna anônimo</strong> na Internet. O seu empregador ou provedor de serviços de Internet ainda pode saber qual página visita.</p> <p class=about-info>Saiba mais sobre <a id=learnMore>Navegação privada</a>.</p>]]></string>
     <string name="authentication_username">Nome de utilizador:</string>
     <string name="authentication_password">Palavra-passe:</string>
     <string name="authentication_show_password">Mostrar palavra-passe:</string>
@@ -126,7 +126,7 @@
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar a sua app.</string>
     <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s recolha amostras de voz para pesquisa?</string>
-    <string name="voice_samples_collect_dialog_description2">Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem informações de identificação. Sempre poderá usar a pesquisa por voz, mesmo que não permita a coleta. &lt;a href=&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem informações de identificação. Sempre poderá usar a pesquisa por voz, mesmo que não permita a coleta. <a href="">Saiba mais</a>]]></string>
     <string name="voice_samples_collect_dialog_do_not_allow">Não permitir</string>
     <string name="url_home_title">%1$s Início</string>
     <string name="url_library_title">Biblioteca</string>
@@ -146,11 +146,11 @@
     <string name="popup_dialog_button_off">Desligado</string>
     <string name="webxr_dialog_button_on">Ligado</string>
     <string name="tracking_dialog_button_off">Desligado</string>
-    <string name="drm_dialog_message">Alguns áudios ou vídeos neste site usam software DRM, o que pode limitar o que o %1$s pode permitir que faça com ele. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="drm_dialog_message"><![CDATA[Alguns áudios ou vídeos neste site usam software DRM, o que pode limitar o que o %1$s pode permitir que faça com ele. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="drm_dialog_button_on">Ligado</string>
     <string name="drm_dialog_button_off">Desligado</string>
     <string name="drm_first_use_title_v1">Este site contém conteúdo DRM.</string>
-    <string name="drm_first_use_body_v2">Permitir o DRM permite que os sites identifiquem esse aparelho toda vez que o visita. &lt;a href=%1$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="drm_first_use_body_v2"><![CDATA[Permitir o DRM permite que os sites identifiquem esse aparelho toda vez que o visita. <a href="%1$s">Saiba mais</a>]]></string>
     <string name="exit_confirm_dialog_button_cancel">Cancelar</string>
     <string name="exit_confirm_dialog_button_quit">Sair</string>
     <string name="download_open_file_unsupported_title">Tipo de ficheiro não suportado</string>
@@ -379,7 +379,7 @@
     <string name="fxa_syncing">Sincronizando…</string>
     <string name="addons_loading">Carregando Add-ons</string>
     <string name="video_controls_mute">Mudo</string>
-    <string name="tracking_dialog_message">A proteção aprimorada contra rastreamento é %1$s para este site. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="tracking_dialog_message"><![CDATA[A proteção aprimorada contra rastreamento é %1$s para este site. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="autofill_item_autogenerated">Gerado automaticamente</string>
     <string name="developer_options_foveated_webvr">Nível de Foveação (WebVR)</string>
     <string name="privacy_options_tracking_etp">Padrão</string>
@@ -476,7 +476,7 @@
     <string name="settings_privacy_policy_popups_description">Pode especificar quais sites são permitidos a abrir janelas pop-up</string>
     <string name="developer_options_clear_cache_web_content_description">Conteúdo da Web em cache</string>
     <string name="video_controls_volume">Volume</string>
-    <string name="addons_install_dialog_body">&lt;p ALIGN=LEFT&gt;Requer a sua permissão para:&lt;ul&gt;%1$s&lt;/ul&gt;&lt;/p&gt;</string>
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Requer a sua permissão para:<ul>%1$s</ul></p>]]></string>
     <string name="settings_language_choose_language_voice_search_service_title">Serviço de Busca por Voz</string>
     <string name="settings_terms_service">Termos de Serviço</string>
     <string name="permission_location">Permite %1$s acessar a sua localização?</string>
@@ -490,7 +490,7 @@
     <string name="settings_privacy_policy_webxr_title">Permissões de Realidade Virtual</string>
     <string name="settings_privacy_policy_popups_title_v1">Exceções para Pop-Ups</string>
     <string name="video_mode_3d_side">3D lado a lado</string>
-    <string name="privacy_options_tracking">Proteção de rastreamento aprimorada. (&lt;a href=%1$s&gt;Saiba mais&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[Proteção de rastreamento aprimorada. (<a href="%1$s">Saiba mais</a>)]]></string>
     <string name="security_options_login_fxa">Conta…</string>
     <string name="settings_fxa_account_manage">Configurar Conta</string>
     <string name="settings_developer_options">Opções de Programador</string>
@@ -547,7 +547,7 @@
     <string name="fxa_account_sync_settings">Configurações de Sincronização</string>
     <string name="fxa_account_last_no_synced">Ainda não sincronizado</string>
     <string name="fxa_account_syncing_off">A sincronização está desativada</string>
-    <string name="security_options_drm_content_v1">Permitir automaticamente que os sites identifiquem o seu aparelho para reproduzir conteúdo controlado por DRM. (&lt;a href=%1$s&gt;Saiba Mais&lt;/a&gt;)</string>
+    <string name="security_options_drm_content_v1"><![CDATA[Permitir automaticamente que os sites identifiquem o seu aparelho para reproduzir conteúdo controlado por DRM. (<a href="%1$s">Saiba Mais</a>)]]></string>
     <string name="security_options_autocomplete">Preenchimento Automático da Barra de Endereços</string>
     <string name="security_options_login_save">Gravar logins e palavras-passe</string>
     <string name="security_options_login_autofill">Preenchimento automático</string>
@@ -614,7 +614,7 @@
     <string name="send_tab_dialog_button">Enviar</string>
     <string name="whats_new_button_start_browsing">Iniciar navegação</string>
     <string name="popup_dialog_button_on">Ligado</string>
-    <string name="webxr_permission_dialog_message">WebXR é %1$s para este site. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR é %1$s para este site. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="privacy_policy_section_3">Esta Política de Privacidade está sujeita à lei espanhola. O idioma da Política de Privacidade desta aplicação é o espanhol. Por esse motivo, qualquer possível divergência entre a versão original em espanhol e a tradução dela para outro idioma será considerada predominante na versão em espanhol que encontra-se aqui: https://wolvic.com/es/legal/privacy/ .</string>
     <string name="voice_service_metkai">MeetKai</string>
     <string name="permissions_dialog_remember_choice">Lembrar esta decisão</string>
@@ -795,4 +795,16 @@
     <string name="tabs_bookmark_selected">Adicionar aos favoritos</string>
     <string name="controller_options_handtracking">Rastreamento de mãos</string>
     <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, aponte o seu telefone para a frente e toque no botão.</string>
+    <string name="display_options_tabs_location">Localização das abas</string>
+    <string name="display_options_tabs_location_tray">Painel</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
+    <string name="settings_window_size">Tamanho padrão da janela</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Com o olhar</string>
+    <string name="eye_tracking_permission_title">Permissões de rastreamento ocular</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Com o controlador ou a mão</string>
+    <string name="controller_options_pointer_mode">Modo de controle do ponteiro</string>
+    <string name="eye_tracking_permission_message">Habilitar o rastreamento ocular para navegar na web apresenta riscos significativos à privacidade. Essa tecnologia captura onde e por quanto tempo um usuário olha para partes específicas de uma página da web, revelando detalhes íntimos sobre seus interesses e reações emocionais. Anunciantes e terceiros podem explorar esses dados para marketing intrusivo e criação de perfis. Além disso, os padrões de movimento ocular podem revelar informações sensíveis, como condições médicas, estados cognitivos ou hábitos pessoais. Portanto, é crucial considerar as implicações para a privacidade antes de conceder acesso às informações de rastreamento ocular a páginas da web.</string>
+    <string name="download_addon_install_blocked_permissions_body">Permita as permissões de armazenamento em Opções de privacidade para continuar.</string>
 </resources>
