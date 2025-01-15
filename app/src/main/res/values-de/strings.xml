@@ -2227,4 +2227,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_wifi_unavailable_ssid">SSID nicht verfügbar</string>
     <string name="download_addon_install_confirm_install">Installieren</string>
     <string name="voice_input_start">Was würdest du gerne eingeben\?</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="display_options_tabs_location_vertical">Vertikal</string>
+    <string name="controller_options_pointer_mode">Zeigersteuerungsmodus</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Mit Controller oder Hand</string>
+    <string name="eye_tracking_permission_title">Berechtigungen für Augenverfolgung</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Mit Blicksteuerung</string>
+    <string name="display_options_tabs_location">Position der Tabs</string>
+    <string name="display_options_tabs_location_tray">Leiste</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
 </resources>
