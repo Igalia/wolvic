@@ -1237,7 +1237,7 @@ BrowserWorld::StartFrame() {
           VRBrowser::ChangeWindowDistance(delta);
         }
       }
-      m.device->Reorient(reorientTransform);
+      m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
