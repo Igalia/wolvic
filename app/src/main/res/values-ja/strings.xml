@@ -1827,4 +1827,16 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="incompatible_os_version_title">サポートされていないバージョンです</string>
     <string name="incompatible_os_version_message">現在のシステムバージョンはサポートされていません。Wolvicは少なくともバージョン%1$sが必要です。</string>
     <string name="vision_glass_realign_dialog_explanation">コントローラーを設定するには、電話をまっすぐ前に向けてボタンをタップしてください。</string>
+    <string name="display_options_tabs_location">タブの位置</string>
+    <string name="display_options_tabs_location_tray">ツールトレイ</string>
+    <string name="display_options_tabs_location_horizontal">水平</string>
+    <string name="display_options_tabs_location_vertical">垂直</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="developer_options_pointer_mode_tracked_eye">視線追跡で操作</string>
+    <string name="eye_tracking_permission_title">視線追跡の権限</string>
+    <string name="settings_window_size">デフォルトのウィンドウサイズ</string>
+    <string name="eye_tracking_permission_message">ウェブ閲覧にアイトラッキングを有効化することは、重大なプライバシーリスクを伴います。この技術は、ユーザーがウェブページの特定の部分をどこで、どのくらいの時間見ているかを記録し、興味や感情的な反応に関する親密な詳細を明らかにします。広告主や第三者がこれらのデータを侵入的なマーケティングやプロファイリングに利用する可能性があります。さらに、視線の動きのパターンから、医療状態、認知状態、または個人的な習慣のような機微な情報を推測される恐れがあります。そのため、ウェブページにアイトラッキング情報へのアクセスを許可する前に、プライバシーへの影響を慎重に検討することが重要です。</string>
+    <string name="controller_options_pointer_mode">ポインター制御モード</string>
+    <string name="download_addon_install_blocked_permissions_body">続行するには、プライバシーオプションでストレージ権限を許可してください。</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">コントローラーまたは手で操作</string>
 </resources>
