@@ -1155,9 +1155,8 @@ BrowserWorld::ProcessOVRPlatformEvents() {
 vrb::Matrix
 BrowserWorld::GetActiveControllerOrientation() const {
   for (Controller& controller: m.controllers->GetControllers()) {
-    if (!controller.enabled)
-      continue;
-    return controller.transform->GetTransform();
+    if (controller.enabled)
+      return controller.transform->GetTransform();
   }
   return vrb::Matrix::Identity();
 }
