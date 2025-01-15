@@ -2573,9 +2573,9 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="vision_glass_error_message">An error happened.\nPlease try again.</string>
     <!-- Vision Glass: instruct the user to point the phone straight ahead to re-align the controller. -->
     <string name="vision_glass_realign_dialog_explanation">To set up the controller, please point your phone straight ahead and tap the button.</string>
-    <string name="controller_options_pointer_mode">Gaze Mode</string>
-    <string name="developer_options_pointer_mode_tracked_pointer">Pointer</string>
-    <string name="developer_options_pointer_mode_tracked_eye">Eye Tracking</string>
+    <string name="controller_options_pointer_mode">Pointer control mode</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">With controller or hand</string>
+    <string name="developer_options_pointer_mode_tracked_eye">With eye tracking</string>
     <string name="eye_tracking_permission_title">Eye Tracking Permissions</string>
     <string name="eye_tracking_permission_message">Enabling eye tracking for browsing the web poses significant privacy risks. This technology captures where and how long a user looks at specific parts of a webpage, revealing intimate details about their interests and emotional reactions. Advertisers and third parties can exploit this data for intrusive marketing and profiling. Moreover, eye movement patterns could infer sensitive information such as medical conditions, cognitive states, or personal habits. Therefore, it is crucial to consider the privacy implications before granting access to eye tracking information to webpages.</string>
 
