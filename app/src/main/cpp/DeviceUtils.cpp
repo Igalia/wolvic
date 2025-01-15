@@ -19,6 +19,11 @@ DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, con
   return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.2f, 0.5f, 0.35f);
 }
 
+vrb::Matrix
+DeviceUtils::CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition) {
+  return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.0f, 0.0f, 0.0f);
+}
+
 // CAUTION: using Euler angles is dangerous because they could cause gimbal lock issues.
 vrb::Matrix
 DeviceUtils::CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition, const float kPitchUpThreshold, const float kPitchDownThreshold, const float kRollThreshold) {
