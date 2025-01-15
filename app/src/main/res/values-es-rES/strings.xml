@@ -1820,9 +1820,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_handtracking">Seguimiento de manos</string>
     <string name="tabs_bookmark_selected">Añadir a marcadores</string>
     <string name="vision_glass_realign_dialog_explanation">Para configurar el controlador, apunte su teléfono hacia adelante y toque el botón.</string>
-    <string name="developer_options_pointer_mode_tracked_pointer">Puntero</string>
-    <string name="controller_options_pointer_mode">Modo de mirar</string>
-    <string name="developer_options_pointer_mode_tracked_eye">Seguimiento ocular</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Con el controlador o la mano</string>
+    <string name="controller_options_pointer_mode">Modo de control del puntero</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Con la mirada</string>
     <string name="eye_tracking_permission_title">Permisos de seguimiento ocular</string>
     <string name="eye_tracking_permission_message">Habilitar el seguimiento ocular para navegar por la web plantea riesgos significativos de privacidad. Esta tecnología captura dónde y cuánto tiempo un usuario mira partes específicas de una página web, revelando detalles íntimos sobre sus intereses y reacciones emocionales. Los anunciantes y terceros pueden explotar estos datos para el marketing intrusivo y la elaboración de perfiles. Además, los patrones de movimiento del ojo podrían deducir información sensible como condiciones médicas, estados cognitivos o hábitos personales. Por lo tanto, es crucial considerar las implicaciones de la privacidad antes de conceder acceso a la información de seguimiento ocular a páginas web.</string>
     <string name="display_options_tabs_location">Ubicación de las pestañas</string>
