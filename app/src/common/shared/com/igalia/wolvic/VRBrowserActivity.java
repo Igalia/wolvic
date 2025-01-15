@@ -2250,11 +2250,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void changeWindowDistance(float aDelta) {
-        // First we need to adapt the range of movement of the hand/controller to the actual range
-        // of movement of the window in space. We use 40cm for arm length
-        float windowWorldZRange = Math.abs(WidgetPlacement.floatDimension(getApplicationContext(), R.dimen.window_world_z_max) - WidgetPlacement.floatDimension(getApplicationContext(), R.dimen.window_world_z_min));
-        float conversionRatio = windowWorldZRange / 0.4f;
-        float clamped = Math.max(0.0f, Math.min(mSettings.getWindowDistance() + aDelta * conversionRatio, 1.0f));
+        float increment = 0.05f;
+        float clamped = Math.max(0.0f, Math.min(mSettings.getWindowDistance() + (aDelta > 0 ? increment : -increment), 1.0f));
         mSettings.setWindowDistance(clamped);
     }
 
