@@ -1818,4 +1818,19 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_disconnected_message">Veuillez connecter vos lunettes Vision Glass</string>
     <string name="vision_glass_error_message">Une erreur est survenue.
 \nVeuillez ressayer.</string>
+    <string name="display_options_tabs_location_tray">Panneau</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="settings_window_size">Taille par défaut de la fenêtre</string>
+    <string name="tabs_bookmark_selected">Ajouter les onglets aux favoris</string>
+    <string name="download_addon_install_blocked_permissions_body">Autorisez les permissions de stockage dans les options de confidentialité pour continuer.</string>
+    <string name="eye_tracking_permission_title">Autorisations de suivi oculaire</string>
+    <string name="vision_glass_realign_dialog_explanation">Pour configurer le contrôleur, veuillez pointer votre téléphone droit devant vous et appuyer sur le bouton.</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Avec le contrôleur ou la main</string>
+    <string name="controller_options_pointer_mode">Mode de contrôle du pointeur</string>
+    <string name="display_options_tabs_location">Emplacement des onglets</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
+    <string name="controller_options_handtracking">Suivi des mains</string>
+    <string name="eye_tracking_permission_message">Activer le suivi oculaire pour naviguer sur le web présente des risques significatifs pour la vie privée. Cette technologie capture où et combien de temps un utilisateur regarde des parties spécifiques d\'une page web, révélant des détails intimes sur ses intérêts et réactions émotionnelles. Les annonceurs et tiers peuvent exploiter ces données pour du marketing intrusif et la création de profils. De plus, les mouvements oculaires peuvent révéler des informations sensibles comme des conditions médicales, des états cognitifs ou des habitudes personnelles. Il est donc crucial de considérer les implications pour la vie privée avant d\'accorder l\'accès aux informations de suivi oculaire aux pages web.</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Avec le regard</string>
 </resources>
