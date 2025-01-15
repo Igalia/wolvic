@@ -873,7 +873,12 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
+#ifdef LYNX
+    // Lynx runtime incorrectly never sets the TRACKED bit.
+    const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+#else
     const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
+#endif
     flags |= positionTracked ? device::Position : device::PositionEmulated;
 
     vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
