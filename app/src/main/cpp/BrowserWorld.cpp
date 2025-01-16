@@ -222,6 +222,7 @@ struct BrowserWorld::State {
   float selectThreshold;
   std::optional<vrb::Quaternion> prevReorient;
   std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
+  std::optional<vrb::Matrix> navigationBarToWindowTransform;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1250,12 +1251,22 @@ BrowserWorld::StartFrame() {
       auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
       // Interpolate consecutive rotations to enable smooth window movements.
       if (m.lockMode == LockMode::CONTROLLER) {
+        if (!m.navigationBarToWindowTransform) {
+            // Users click on move bar to reorient the window, but the reorient code operates
+            // on the window so there is a mismatch there which causes an initial pitch down move
+            // when the move bar is grabbed.
+            // FIXME: this is ad-hoc and should be replaced with a proper solution.
+            vrb::Quaternion rotation;
+            rotation.SetFromEulerAngles(M_PI_4 / 2.35, 0, 0);
+            m.navigationBarToWindowTransform = vrb::Matrix::Rotation(rotation);
+        }
         if (m.prevReorient) {
           Quaternion reorientQuaternion(reorientTransform);
           m.prevReorient = vrb::Quaternion::Slerp(*m.prevReorient, reorientQuaternion, 0.1f);
           auto translation = reorientTransform.GetTranslation();
           reorientTransform = vrb::Matrix::Rotation(m.prevReorient->Conjugate());
-          reorientTransform.TranslateInPlace(translation);
+          reorientTransform = reorientTransform.PostMultiply(*m.navigationBarToWindowTransform);
+          reorientTransform.TranslateInPlace(translation + m.navigationBarToWindowTransform->GetTranslation());
         } else {
           m.prevReorient = vrb::Quaternion(reorientTransform);
         }
@@ -1403,6 +1414,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     UpdateWidget(aHandle, aPlacement);
     return;
   }
+
   float worldWidth = aPlacement->worldWidth;
   if (worldWidth <= 0.0f) {
     worldWidth = aPlacement->width * WidgetPlacement::kWorldDPIRatio;
