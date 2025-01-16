@@ -818,4 +818,11 @@
     <string name="new_tab">Нова вкладка</string>
     <string name="new_private_tab">Нова приватна вкладка</string>
     <string name="close_tab">Закрити вкладку</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="display_options_tabs_location">Розташування вкладок</string>
+    <string name="display_options_tabs_location_tray">В лотку</string>
+    <string name="display_options_tabs_location_horizontal">Горизонтально</string>
+    <string name="display_options_tabs_location_vertical">Вертикально</string>
+    <string name="settings_window_size">Розмір вікна за замовчуванням</string>
+    <string name="download_addon_install_blocked_permissions_body">Для продовження увімкніть дозволи на зберігання в Параметрах конфіденційності.</string>
 </resources>
