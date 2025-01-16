@@ -1811,12 +1811,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void startWindowMove() {
-        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.CONTROLLER_LOCK));
+        SettingsStore.getInstance(this).setHeadLockEnabled(false);
+        setLockMode(WidgetManagerDelegate.CONTROLLER_LOCK);
     }
 
     @Override
     public void finishWindowMove() {
-        queueRunnable(() -> setLockEnabledNative(WidgetManagerDelegate.NO_LOCK));
+        setLockMode(WidgetManagerDelegate.NO_LOCK);
     }
 
     @Override
