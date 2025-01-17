@@ -2,11 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <import type="com.igalia.wolvic.BuildConfig"/>
-        <import type="android.view.View" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -60,13 +55,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_autoplay" />
-
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/soundEffectSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="@{BuildConfig.FLAVOR_backend == &quot;chromium&quot; ? View.VISIBLE : View.GONE}"
-                    app:description="@string/display_options_sound_effect" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/latinAutoCompleteSwitch"

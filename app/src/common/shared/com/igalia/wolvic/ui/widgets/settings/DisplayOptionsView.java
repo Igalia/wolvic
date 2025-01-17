@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsDisplayBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
@@ -97,9 +96,6 @@ class DisplayOptionsView extends SettingsView {
         } else {
             mBinding.startWithPassthroughSwitch.setVisibility(View.GONE);
         }
-
-        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
-        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), false);
 
         mBinding.latinAutoCompleteSwitch.setOnCheckedChangeListener(mLatinAutoCompleteListener);
         setLatinAutoComplete(SettingsStore.getInstance(getContext()).isLatinAutoCompleteEnabled(), false);
@@ -192,10 +188,6 @@ class DisplayOptionsView extends SettingsView {
         setStartWithPassthrough(value);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mSoundEffectListener = (compoundButton, enabled, apply) -> {
-        setSoundEffect(enabled, true);
-    };
-
     private SwitchSetting.OnCheckedChangeListener mLatinAutoCompleteListener = (compoundButton, enabled, apply) -> {
         setLatinAutoComplete(enabled, true);
     };
@@ -285,7 +277,6 @@ class DisplayOptionsView extends SettingsView {
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
         setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT, true);
-        setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setLatinAutoComplete(SettingsStore.LATIN_AUTO_COMPLETE_ENABLED, true);
         setCenterWindows(SettingsStore.CENTER_WINDOWS_DEFAULT, true);
         setWindowDistance(SettingsStore.WINDOW_DISTANCE_DEFAULT, true);
@@ -362,17 +353,6 @@ class DisplayOptionsView extends SettingsView {
         SettingsStore settingsStore = SettingsStore.getInstance(getContext());
         if (doApply) {
             settingsStore.setHeadLockEnabled(value);
-        }
-    }
-
-    private void setSoundEffect(boolean value, boolean doApply) {
-        mBinding.soundEffectSwitch.setOnCheckedChangeListener(null);
-        mBinding.soundEffectSwitch.setValue(value, false);
-        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
-
-        if (doApply) {
-            SettingsStore.getInstance(getContext()).setAudioEnabled(value);
-            AudioEngine.fromContext(getContext()).setEnabled(value);
         }
     }
 
