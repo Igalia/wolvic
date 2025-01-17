@@ -6,16 +6,19 @@
 package com.igalia.wolvic.ui.widgets.settings;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsControllerBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
+import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 class ControllerOptionsView extends SettingsView {
 
@@ -55,6 +58,9 @@ class ControllerOptionsView extends SettingsView {
         mBinding.scrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
         setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(scrollDirection), false);
 
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+        setSoundEffect(SettingsStore.getInstance(getContext()).isAudioEnabled(), false);
+
         mBinding.hapticFeedbackSwitch.setOnCheckedChangeListener(mHapticFeedbackListener);
         setHapticFeedbackEnabled(SettingsStore.getInstance(getContext()).isHapticFeedbackEnabled(), false);
 
@@ -79,6 +85,7 @@ class ControllerOptionsView extends SettingsView {
         if (!mBinding.scrollDirectionRadio.getValueForId(mBinding.scrollDirectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.SCROLL_DIRECTION_DEFAULT)) {
             setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(SettingsStore.SCROLL_DIRECTION_DEFAULT), true);
         }
+        setSoundEffect(SettingsStore.AUDIO_ENABLED, true);
         setHapticFeedbackEnabled(SettingsStore.HAPTIC_FEEDBACK_ENABLED, true);
         setPointerMode(SettingsStore.POINTER_MODE_DEFAULT, true);
         setHandTrackingEnabled(true, true);
@@ -102,6 +109,17 @@ class ControllerOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setScrollDirection((int)mBinding.scrollDirectionRadio.getValueForId(checkedId));
+        }
+    }
+
+    private void setSoundEffect(boolean value, boolean doApply) {
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(null);
+        mBinding.soundEffectSwitch.setValue(value, false);
+        mBinding.soundEffectSwitch.setOnCheckedChangeListener(mSoundEffectListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setAudioEnabled(value);
+            AudioEngine.fromContext(getContext()).setEnabled(value);
         }
     }
 
@@ -144,6 +162,10 @@ class ControllerOptionsView extends SettingsView {
         setScrollDirection(checkedId, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mSoundEffectListener = (compoundButton, enabled, apply) -> {
+        setSoundEffect(enabled, true);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mHapticFeedbackListener = (compoundButton, enabled, apply) ->
     setHapticFeedbackEnabled(enabled, true);
 
@@ -165,6 +187,12 @@ class ControllerOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mHandtrackingListener = (compoundButton, enabled, apply) ->
             setHandTrackingEnabled(enabled, true);
+
+    @Override
+    public Point getDimensions() {
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.controller_options_height));
+    }
 
     @Override
     protected SettingViewType getType() {
