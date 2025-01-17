@@ -1616,4 +1616,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Uusi välilehti</string>
     <string name="new_private_tab">Uusi yksityinen välilehti</string>
     <string name="close_tab">Sulje välilehti</string>
+    <string name="addons_download_success_dialog_ok">Hyvä on</string>
 </resources>
