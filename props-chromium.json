@@ -1,4 +1,231 @@
 {
+  "1.2": {
+    "whatsNewUrl": "https://wolvic.com/blog/chromium_release_1.2",
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      },
+      {
+        "value": "myzithres",
+        "title": "Myzithres Rocks by H. Raab (CC BY-NC-ND)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/myzithres/myzithres.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/myzithres/myzithres.zip",
+        "source": "https://www.flickr.com/photos/herbraab/53768758722/"
+      },
+      {
+        "value": "arkongel",
+        "title": "Kleiner Ankogel by H. Raab (CC BY-NC-ND)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/arkongel/arkongel.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/arkongel/arkongel.zip",
+        "source": "https://www.flickr.com/photos/herbraab/53864577512/"
+      },
+      {
+        "value": "kaiwi",
+        "title": "Ka'iwi Coast by Kaleomokuokanalu Chock (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/kaiwi/kaiwi.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/kaiwi/kaiwi.zip",
+        "source": "https://www.flickr.com/photos/kanalu/31192933158/"
+      },
+      {
+        "value": "valleyoffire",
+        "title": "Valley of Fire State Park by Bob Cass (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/valleyoffire/valleyoffire.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/valleyoffire/valleyoffire.zip",
+        "source": "https://www.flickr.com/photos/54144402@N03/31271410664"
+      },
+      {
+        "value": "lobos",
+        "title": "Lobos, Fuerteventura by Simon Waldherr (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/lobos/lobos.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/lobos/lobos.zip",
+        "source": "https://www.flickr.com/photos/simonwaldherr/51638698181/"
+      },
+      {
+        "value": "nostalgiablue",
+        "title": "Colors of Nostalgia (Blue) by Duncan Rawlinson (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nostalgiablue/nostalgiablue.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nostalgiablue/nostalgiablue.zip",
+        "source": "https://www.flickr.com/photos/thelastminute/52426821655/"
+      },
+      {
+        "value": "nostalgiaorange",
+        "title": "Colors of Nostalgia (Orange) by Duncan Rawlinson (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nostalgiaorange/nostalgiaorange.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nostalgiaorange/nostalgiaorange.zip",
+        "source": "https://www.flickr.com/photos/thelastminute/52425863182"
+      },
+      {
+        "value": "fantasylandscape3",
+        "title": "Fantasy Landscape 3 by Giimann (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/fantasylandscape3/fantasylandscape3.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/fantasylandscape3/fantasylandscape3.zip",
+        "source": "https://sketchfab.com/3d-models/fantasy-landscape-3-ded6e2bb0cfd4ef785b81fed2178c2fd"
+      },
+      {
+        "value": "goatrock",
+        "title": "Goat Rock State Beach by Bob Dass (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/goatrock/goatrock.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/goatrock/goatrock.zip",
+        "source": "https://www.flickr.com/photos/54144402@N03/49263489461/"
+      },
+      {
+        "value": "kinderdijk",
+        "title": "Kinderdijk by Aldo Hoeben (CC BY-NC)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/kinderdijk/kinderdijk.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/kinderdijk/kinderdijk.zip",
+        "source": "https://flickr.com/photos/aldo/4584265973/"
+      },
+      {
+        "value": "wadakura",
+        "title": "Wadakura fountain park by heiwa4126 (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/wadakura/wadakura.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/wadakura/wadakura.zip",
+        "source": "https://www.flickr.com/photos/heiwa4126/4231022562/"
+      },
+      {
+        "value": "notredameparis",
+        "title": " Notre-Dame de Paris by Alexandre Duret-Lutz (CC BY-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/notredameparis/notredameparis.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/notredameparis/notredameparis.zip",
+        "source": "https://www.flickr.com/photos/gadl/403173357/"
+      },
+      {
+        "value": "japanesegarden",
+        "title": "Japanese Garden by Masakazu Matsumoto (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/japanesegarden/japanesegarden.zip",
+        "source": "https://www.flickr.com/photos/vitroids/48868845128/"
+      },
+      {
+        "value": "doublearch",
+        "title": "Double Arch by Masakazu Matsumoto (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/doublearch/doublearch.zip",
+        "source": "https://www.flickr.com/photos/vitroids/48822338172/"
+      },
+      {
+        "value": "ploumanach",
+        "title": "Ploumanac'h by Alexandre Duret-Lutz (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/ploumanach/ploumanach.zip",
+        "source": "https://www.flickr.com/photos/gadl/22026335904/"
+      },
+      {
+        "value": "tullinge",
+        "title": "Tullinge by Simon Inns (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/tullinge/tullinge.zip",
+        "source": "https://www.flickr.com/photos/simoninns/24120710880/"
+      },
+      {
+        "value": "meadow",
+        "title": "Meadow by Sergej Majboroda (CC0)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/meadow/meadow.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/meadow/meadow.zip"
+      },
+      {
+        "value": "abovetheclouds",
+        "title": "Above The Clouds by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/abovetheclouds/abovetheclouds.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/abovetheclouds/abovetheclouds.zip"
+      },
+      {
+        "value": "milkyway2020",
+        "title": "Milky Way (2020) by NASA",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/milkyway2020/milkyway2020.zip"
+      },
+      {
+        "value": "autumnforest",
+        "title": "Autumn Forest by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/autumnforest/autumnforest.zip"
+      },
+      {
+        "value": "basicsky",
+        "title": "Basic Sky by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/basicsky/basicsky.zip"
+      },
+      {
+        "value": "bcnrooftop",
+        "title": "Barcelona Rooftops by MozillaHubs (CC BY-NC-SA)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/bcnrooftop/bcnrooftop.zip"
+      },
+      {
+        "value": "nightforest",
+        "title": "Night Forest With Aurora Sky by Architecture_Interior (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/nightforest/nightforest.zip"
+      },
+      {
+        "value": "pretville_cinema",
+        "title": "Pretville Cinema by D. Savva and J. Guest (CC0)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/pretvillecinema/pretvillecinema.zip"
+      },
+      {
+        "value": "winternight",
+        "title": "Winter Night by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/winternight/winternight.zip"
+      }
+    ],
+    "dictionaries": [
+      {
+        "lang": "da_DK",
+        "payload": "https://igalia.github.io/wolvic/dics/da_wordlist.db"
+      },
+      {
+        "lang": "es",
+        "payload": "https://igalia.github.io/wolvic/dics/es_wordlist.db"
+      },
+      {
+        "lang": "it",
+        "payload": "https://igalia.github.io/wolvic/dics/it_wordlist.db"
+      },
+      {
+        "lang": "pl_PL",
+        "payload": "https://igalia.github.io/wolvic/dics/pl_wordlist.db"
+      },
+      {
+        "lang": "de",
+        "payload": "https://igalia.github.io/wolvic/dics/de_wordlist.db"
+      },
+      {
+        "lang": "fi_FI",
+        "payload": "https://igalia.github.io/wolvic/dics/fi_wordlist.db"
+      },
+      {
+        "lang": "nb_NO",
+        "payload": "https://igalia.github.io/wolvic/dics/nb_wordlist.db"
+      },
+      {
+        "lang": "ru_RU",
+        "payload": "https://igalia.github.io/wolvic/dics/ru_wordlist.db"
+      },
+      {
+        "lang": "fr",
+        "payload": "https://igalia.github.io/wolvic/dics/fr_wordlist.db"
+      },
+      {
+        "lang": "nl_NL",
+        "payload": "https://igalia.github.io/wolvic/dics/nl_wordlist.db"
+      },
+      {
+        "lang": "en",
+        "payload": "https://igalia.github.io/wolvic/dics/en_wordlist.db"
+      },
+      {
+        "lang": "sv_SE",
+        "payload": "https://igalia.github.io/wolvic/dics/sv_wordlist.db"
+      }
+    ]
+  },
   "1.1": {
     "whatsNewUrl": "https://wolvic.com/blog/chromium_release_1.1",
     "environments": [
