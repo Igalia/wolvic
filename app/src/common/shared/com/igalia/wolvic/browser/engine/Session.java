@@ -1247,6 +1247,11 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         return WResult.fromValue(InternalPages.createErrorPageDataURI(mContext, uri, error.code()));
     }
 
+    @Override
+    public byte[] onLoadErrorData(@NonNull WSession session, @Nullable String uri, @NonNull WWebRequestError error) {
+        return InternalPages.createErrorPageData(mContext, uri, error.code());
+    }
+
     // Progress Listener
 
     @Override

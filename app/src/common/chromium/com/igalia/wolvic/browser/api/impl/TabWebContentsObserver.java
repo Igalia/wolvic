@@ -116,7 +116,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
 
         WSession.NavigationDelegate navigationDelegate = mSession.getNavigationDelegate();
         if (navigationDelegate != null) {
-            navigationDelegate.onLoadError(mSession, failingUrl.getSpec(), new WWebRequestError() {
+            byte[] errorData = navigationDelegate.onLoadErrorData(mSession, failingUrl.getSpec(), new WWebRequestError() {
                 @Override
                 public int code() {
                     return errorCode;
@@ -135,6 +135,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
                     return null;
                 }
             });
+            mSession.loadData(errorData, "text/html");
         }
     }
 
