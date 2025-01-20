@@ -26,12 +26,15 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 
 import androidx.annotation.Keep;
@@ -596,10 +599,40 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 mDelegate.getWindows().getFocusedWindow().loadHome();
             });
 
-            mBinding.headlockToggleButton.setChecked(
-                    SettingsStore.getInstance(PlatformActivity.this).isHeadLockEnabled());
+            SettingsStore settings = SettingsStore.getInstance(PlatformActivity.this);
+            mBinding.headlockToggleButton.setChecked(settings.isHeadLockEnabled());
             mBinding.headlockToggleButton.setOnClickListener(v -> {
                 mDelegate.setLockMode(mBinding.headlockToggleButton.isChecked() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
+            });
+
+            mBinding.windowDistanceButton.setOnClickListener(v -> {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.window_distance_popup_layout, null);
+
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true; // Let taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                SeekBar seekBar = popupView.findViewById(R.id.windowDistancePopupSeekBar);
+                float max = seekBar.getMax();
+                seekBar.setProgress((int) (settings.getWindowDistance() * max));
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        settings.setWindowDistance((float) progress / max);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // Automatically hide the popup after the user has selected a value.
+                        popupWindow.dismiss();
+                    }
+                });
+                popupWindow.showAsDropDown(v, 0, 0);
             });
 
             mBinding.playButton.setOnClickListener(v -> {
