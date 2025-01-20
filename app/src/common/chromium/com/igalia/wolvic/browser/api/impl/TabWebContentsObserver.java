@@ -130,8 +130,9 @@ public class TabWebContentsObserver extends WebContentsObserver {
             return;
         }
 
-        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-        PaymentRequestUI paymentHandler = new PaymentRequestUI(context, newWebContents, null);
+        PaymentRequestUI paymentHandler = PaymentRequestUI.fromWebContents(newWebContents);
+        assert paymentHandler != null
+                : "PaymentRequestUI should have been created.";
         final TabCompositorView compositorView = paymentHandler.getCompositorView();
         assert newWebContents.getViewAndroidDelegate() != null
              : "WebContents should be initialized.";
@@ -144,11 +145,9 @@ public class TabWebContentsObserver extends WebContentsObserver {
 
         WDisplay display = mSession.acquireOverlayDisplay(compositorView);
         contentDelegate.onShowPaymentHandler(mSession, display, () -> {
-            if (newWebContents.isDestroyed()) {
-                return;
-            }
+            // Called when the payment handler window is dismissed.
+            paymentHandler.destroy();
             mTab.setPaymentWebContents(null, null, null);
-            newWebContents.destroy();
         });
 
         // Show Compositor View after attaching to the parent view.
@@ -157,6 +156,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
         mPaymentWebContentsObserver = new WebContentsObserver(newWebContents) {
             @Override
             public void destroy() {
+                // Called when the payment request is cancelled explicitly.
                 mSession.releaseOverlayDisplay(compositorView);
                 mTab.setPaymentWebContents(null, null, null);
 
