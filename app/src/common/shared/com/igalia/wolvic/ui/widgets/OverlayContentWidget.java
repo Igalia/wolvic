@@ -2,8 +2,6 @@ package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -15,6 +13,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WSession;
+import com.igalia.wolvic.utils.ViewUtils;
 
 import java.util.concurrent.Executor;
 
@@ -27,7 +26,6 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
     private WDisplay mDisplay;
     private WSession.ContentDelegate.OnPaymentHandlerCallback mCallback;
     private Executor mUIThreadExecutor;
-    private Handler mHandler;
 
     public OverlayContentWidget(Context aContext) {
         super(aContext);
@@ -53,6 +51,7 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.popWorldBrightness(OverlayContentWidget.this);
         mWidgetManager.removeWorldClickListener(this);
         mCallback.onDismiss();
 
@@ -62,9 +61,8 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_height);
-
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_width) + mBorderWidth * 2;
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.tabs_height) + mBorderWidth * 2;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.anchorX = 0.5f;
@@ -72,6 +70,8 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
                                   WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
         updatePlacementTranslationZ();
+
+        mWidgetPlacement.borderColor = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.rhino_blur));
     }
 
     @Override
@@ -82,9 +82,11 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
 
     private void initialize(Context aContext) {
         mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
-        mHandler = new Handler(Looper.getMainLooper());
-
         mWidgetManager.addWorldClickListener(this);
+        mWidgetManager.pushWorldBrightness(OverlayContentWidget.this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+
+        // TODO: Fix the compositor in the browser engine to support correct border offset
+        mBorderWidth = 0;
     }
 
     @Override
@@ -198,7 +200,8 @@ public class OverlayContentWidget extends UIWidget implements WidgetManagerDeleg
 
     private void callSurfaceChanged() {
         if (mSurface != null) {
-            mDisplay.surfaceChanged(mSurface, 0, 0, mSurfaceWidth, mSurfaceHeight);
+            int borderWidth = WidgetPlacement.convertDpToPixel(getContext(), mBorderWidth);
+            mDisplay.surfaceChanged(mSurface, borderWidth, borderWidth, mSurfaceWidth - borderWidth * 2, mSurfaceHeight - borderWidth * 2);
         }
     }
 
