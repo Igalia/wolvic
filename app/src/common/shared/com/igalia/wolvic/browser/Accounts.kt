@@ -21,6 +21,7 @@ import com.igalia.wolvic.utils.SystemUtils
 import com.igalia.wolvic.utils.ViewUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -68,6 +69,7 @@ class Accounts constructor(val context: Context) {
     private var otherDevices = emptyList<Device>()
     private val syncStorage = SyncEnginesStorage(context)
     var isSyncing = false
+    private var refreshJob: Job? = null
 
     private val syncStatusObserver = object : SyncStatusObserver {
         override fun onStarted() {
@@ -154,6 +156,16 @@ class Accounts constructor(val context: Context) {
                 }
                 originSessionId = null
             }
+
+            runBlocking {
+                refreshJob = launch {
+                    while (isSignedIn()) {
+                        Log.d(LOGTAG, "Polling for events")
+                        pollForEventsAsync()
+                        kotlinx.coroutines.delay(10000)
+                    }
+                }
+            }
         }
 
         override fun onAuthenticationProblems() {
@@ -162,6 +174,7 @@ class Accounts constructor(val context: Context) {
             TelemetryService.FxA.signInResult(false)
 
             originSessionId = null
+            refreshJob?.cancel(null)
 
             accountStatus = AccountStatus.NEEDS_RECONNECT
             accountListeners.toMutableList().forEach {
@@ -175,6 +188,7 @@ class Accounts constructor(val context: Context) {
             Log.d(LOGTAG, "The user has been logged out")
 
             originSessionId = null
+            refreshJob?.cancel(null)
 
             accountStatus = AccountStatus.SIGNED_OUT
             accountListeners.toMutableList().forEach {
