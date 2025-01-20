@@ -22,6 +22,7 @@ import org.chromium.ui.base.ViewAndroidDelegate;
 import org.chromium.ui.base.WindowAndroid;
 import org.chromium.url.GURL;
 import org.chromium.wolvic.Tab;
+import org.chromium.wolvic.payments.ui.PaymentRequestUI;
 import org.chromium.wolvic.TabCompositorView;
 import org.chromium.wolvic.WolvicWebContentsFactory;
 
@@ -130,7 +131,8 @@ public class TabWebContentsObserver extends WebContentsObserver {
         }
 
         Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
-        final TabCompositorView compositorView = Tab.createNewTab(context, newWebContents);
+        PaymentRequestUI paymentHandler = new PaymentRequestUI(context, newWebContents, null);
+        final TabCompositorView compositorView = paymentHandler.getCompositorView();
         assert newWebContents.getViewAndroidDelegate() != null
              : "WebContents should be initialized.";
 
