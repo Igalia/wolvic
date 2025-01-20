@@ -166,7 +166,7 @@ DeviceDelegateNoAPI::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
-DeviceDelegateNoAPI::Reorient() {
+DeviceDelegateNoAPI::Reorient(const vrb::Matrix&, ReorientMode) {
   // Ignore reorient
 }
 

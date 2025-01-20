@@ -24,6 +24,7 @@ DeviceUtils::CalculateReorientationMatrixOnHeadLock(const vrb::Matrix& aHeadTran
   return CalculateReorientationMatrixWithThreshold(aHeadTransform, aHeightPosition, 0.0f, 0.0f, 0.0f);
 }
 
+// CAUTION: using Euler angles is dangerous because they could cause gimbal lock issues.
 vrb::Matrix
 DeviceUtils::CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadTransform, const vrb::Vector& aHeightPosition, const float kPitchUpThreshold, const float kPitchDownThreshold, const float kRollThreshold) {
   float rx, ry, rz;
@@ -57,6 +58,27 @@ DeviceUtils::CalculateReorientationMatrixWithThreshold(const vrb::Matrix& aHeadT
 
   return result;
 
+}
+
+vrb::Matrix
+DeviceUtils::CalculateReorientationMatrixWithoutRoll(const vrb::Matrix& transform, const vrb::Vector& aHeightPosition) {
+  auto forward = -transform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+  // Project forward on the XZ plane to compute a roll-free right vector. Then use the cross product
+  // to compute the actual up vector. Rebuild the rotation matrix with up, right, forward vectors.
+  auto forwardProjected = vrb::Vector(forward.x(), 0, forward.z()).Normalize();
+  auto right = vrb::Vector(0,1,0).Cross(forwardProjected).Normalize();
+  auto up = forward.Cross(right);
+
+  auto result = vrb::Matrix(right.x(), right.y(), right.z(), 0.0f,
+                            up.x(), up.y(), up.z(), 0.0f,
+                            forward.x(), forward.y(), forward.z(), 0.0f,
+                            0.0f, 0.0f, 0.0f, 1.0f);
+
+  // Rotate UI reorientation matrix from origin so user height translation doesn't affect the sphere.
+  result.PreMultiplyInPlace(vrb::Matrix::Position(aHeightPosition));
+  result.PostMultiplyInPlace(vrb::Matrix::Position(-aHeightPosition));
+
+  return result;
 }
 
 void DeviceUtils::GetTargetImmersiveSize(const uint32_t aRequestedWidth,

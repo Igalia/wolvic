@@ -930,9 +930,17 @@ DeviceDelegateOpenXR::SetReorientTransform(const vrb::Matrix& aMatrix) {
 }
 
 void
-DeviceDelegateOpenXR::Reorient() {
-  vrb::Matrix head = GetHeadTransform();
-  m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(head, kAverageHeight);
+DeviceDelegateOpenXR::Reorient(const vrb::Matrix& transform, ReorientMode mode) {
+  switch (mode) {
+    case ReorientMode::SIX_DOF:
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixOnHeadLock(transform, GetHeadTransform().GetTranslation());
+      break;
+    case ReorientMode::NO_ROLL:
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrixWithoutRoll(transform, GetHeadTransform().GetTranslation());
+      break;
+    default:
+      VRB_ERROR("Unsupported reorient mode %d", mode);
+  }
 }
 
 void

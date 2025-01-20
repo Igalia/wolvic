@@ -91,6 +91,9 @@ const vrb::Color kPointerColorSelected = vrb::Color(0.32f, 0.56f, 0.88f);
 // How big is the pointer target while in hand-tracking mode
 const float kPointerSize = 3.0;
 
+// When moving windows, the minimum amount of movement required to start moving the window
+float kWindowMoveZThreshold = 0.01;
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -208,13 +211,18 @@ struct BrowserWorld::State {
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
-  bool inHeadLockMode = false;
+  LockMode lockMode = LockMode::NO_LOCK;
+  std::optional<vrb::Vector> lockModeLastPosition;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
   bool isApplicationEntitled = false;
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
+  float selectThreshold;
+  std::optional<vrb::Quaternion> prevReorient;
+  std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
+  std::optional<vrb::Matrix> navigationBarToWindowTransform;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1146,6 +1154,42 @@ BrowserWorld::ProcessOVRPlatformEvents() {
 }
 #endif
 
+vrb::Matrix
+BrowserWorld::GetActiveControllerOrientation() const {
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (controller.enabled)
+      return controller.transform->GetTransform();
+  }
+  return vrb::Matrix::Identity();
+}
+
+void
+BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform) {
+    const float kThrottleMs = 100;
+    const float kDirectionTolerance = 0.75f;
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - m.lastTimeWindowDistanceComputation).count();
+    if (duration < kThrottleMs)
+        return;
+
+    auto currentPosition = reorientTransform.GetTranslation();
+    if (!m.lockModeLastPosition) {
+        m.lockModeLastPosition = currentPosition;
+        return;
+    }
+
+    auto didMoveSignificantly = (currentPosition - *m.lockModeLastPosition).Magnitude() > 0.01f;
+    if (!didMoveSignificantly)
+        return;
+
+    auto forward = reorientTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
+    auto directionOfMovement = (currentPosition - *m.lockModeLastPosition).Normalize();
+    auto dotProduct = directionOfMovement.Dot(forward);
+    if (abs(dotProduct) > kDirectionTolerance)
+      VRBrowser::ChangeWindowDistance(dotProduct);
+    m.lockModeLastPosition = currentPosition;
+}
+
 void
 BrowserWorld::StartFrame() {
   ASSERT_ON_RENDER_THREAD();
@@ -1202,9 +1246,33 @@ BrowserWorld::StartFrame() {
     m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
     m.UpdateTrackedKeyboard();
-    if (m.inHeadLockMode) {
+    if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
-      m.device->Reorient();
+      auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
+      // Interpolate consecutive rotations to enable smooth window movements.
+      if (m.lockMode == LockMode::CONTROLLER) {
+        if (!m.navigationBarToWindowTransform) {
+            // Users click on move bar to reorient the window, but the reorient code operates
+            // on the window so there is a mismatch there which causes an initial pitch down move
+            // when the move bar is grabbed.
+            // FIXME: this is ad-hoc and should be replaced with a proper solution.
+            vrb::Quaternion rotation;
+            rotation.SetFromEulerAngles(M_PI_4 / 2.35, 0, 0);
+            m.navigationBarToWindowTransform = vrb::Matrix::Rotation(rotation);
+        }
+        if (m.prevReorient) {
+          Quaternion reorientQuaternion(reorientTransform);
+          m.prevReorient = vrb::Quaternion::Slerp(*m.prevReorient, reorientQuaternion, 0.1f);
+          auto translation = reorientTransform.GetTranslation();
+          reorientTransform = vrb::Matrix::Rotation(m.prevReorient->Conjugate());
+          reorientTransform = reorientTransform.PostMultiply(*m.navigationBarToWindowTransform);
+          reorientTransform.TranslateInPlace(translation + m.navigationBarToWindowTransform->GetTranslation());
+        } else {
+          m.prevReorient = vrb::Quaternion(reorientTransform);
+        }
+        ThrottledWindowDistanceComputation(reorientTransform);
+      }
+      m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
@@ -1277,9 +1345,11 @@ BrowserWorld::TogglePassthrough() {
 }
 
 void
-BrowserWorld::SetHeadLockEnabled(const bool isEnabled) {
+BrowserWorld::SetLockMode(LockMode lockMode) {
   ASSERT_ON_RENDER_THREAD();
-  m.inHeadLockMode = isEnabled;
+  if (m.lockMode == lockMode)
+      return;
+  m.lockMode = lockMode;
 }
 
 void
@@ -1344,6 +1414,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     UpdateWidget(aHandle, aPlacement);
     return;
   }
+
   float worldWidth = aPlacement->worldWidth;
   if (worldWidth <= 0.0f) {
     worldWidth = aPlacement->width * WidgetPlacement::kWorldDPIRatio;
@@ -2137,9 +2208,9 @@ JNI_METHOD(void, togglePassthroughNative)
   crow::BrowserWorld::Instance().TogglePassthrough();
 }
 
-JNI_METHOD(void, setHeadLockEnabledNative)
-(JNIEnv*, jobject, jboolean isEnabled) {
-  crow::BrowserWorld::Instance().SetHeadLockEnabled(isEnabled);
+JNI_METHOD(void, setLockEnabledNative)
+(JNIEnv*, jobject, jint lockMode) {
+    crow::BrowserWorld::Instance().SetLockMode(static_cast<crow::BrowserWorld::LockMode>(lockMode));
 }
 
 JNI_METHOD(void, exitImmersiveNative)
