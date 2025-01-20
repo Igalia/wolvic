@@ -106,8 +106,23 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconTint="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/window_distance_button"
                 app:layout_constraintStart_toEndOf="@id/realign_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/window_distance_button"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize"
+                android:backgroundTint="@color/azure"
+                android:contentDescription="@string/display_options_windows_distance"
+                android:scaleType="fitCenter"
+                app:icon="@drawable/unfold_more_24px"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/voice_search_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
