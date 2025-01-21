@@ -55,7 +55,7 @@ struct DeviceDelegateVisionGlass::State {
   crow::ElbowModelPtr elbow;
   std::unique_ptr<OneEuroFilterQuaternion> orientationFilter;
   vrb::Quaternion headOrientation;
-  vrb::Quaternion controllerCalibration;
+  vrb::Quaternion headToControllerRelativeRotation;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , clicked(false)
@@ -273,7 +273,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
       timestamp = m.context.lock()->GetTimestamp() * 1e9;
   }
   float* filteredOrientation = m.orientationFilter->filter(timestamp, m.controllerOrientation.Data());
-  auto calibratedControllerOrientation = m.controllerCalibration * vrb::Quaternion(filteredOrientation);
+  auto calibratedControllerOrientation = m.headToControllerRelativeRotation * vrb::Quaternion(filteredOrientation);
   vrb::Matrix transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
   m.controller->SetTransform(kControllerIndex, pointerTransform);
@@ -376,7 +376,7 @@ DeviceDelegateVisionGlass::setControllerOrientation(const double aX, const doubl
 
 void
 DeviceDelegateVisionGlass::CalibrateController() {
-  m.controllerCalibration = CorrectedHeadOrientation();
+  m.headToControllerRelativeRotation = CorrectedHeadOrientation() * m.controllerOrientation.Inverse();
   m.SetupOrientationFilter();
 }
 

@@ -78,7 +78,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private int mDisplayModeRetryCount = 0;
     private int mUSBPermissionRequestCount = 0;
     private boolean mSwitchedTo3DMode = false;
-    private boolean mShouldRecalibrateAfterIMURestart = false;
     private AlignPhoneDialogFragment mAlignDialogFragment;
     private AlignNotificationUIDialog mAlignNotificationUIDialog;
 
@@ -211,8 +210,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     }
 
     private void registerPhoneIMUListener() {
-        mShouldRecalibrateAfterIMURestart = true;
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_UI);
     }
 
     private void reorientController() {
@@ -223,10 +221,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mAlignNotificationUIDialog = null;
         }
 
-        mSensorManager.unregisterListener(this);
-        registerPhoneIMUListener();
+        queueRunnable(this::calibrateController);
 
-        runVRBrowserActivityCallback(activity -> activity.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL));
     }
 
     private void onConnectionStateChanged(PhoneUIViewModel.ConnectionState connectionState) {
@@ -362,17 +358,12 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     @Override
     public void onSensorChanged(SensorEvent event) {
         // retrieve the device orientation from sensorevent in the form of quaternion
-        if (event.sensor.getType() != Sensor.TYPE_GAME_ROTATION_VECTOR)
+        if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR)
             return;
 
         final float[] quaternion = fromSensorManagerToWorld(event.values);
 
         queueRunnable(() -> setControllerOrientation(quaternion[0], quaternion[1], quaternion[2], quaternion[3]));
-
-        if (mShouldRecalibrateAfterIMURestart) {
-            mShouldRecalibrateAfterIMURestart = false;
-            queueRunnable(this::calibrateController);
-        }
 
         mBinding.realignButton.updatePosition(-quaternion[1], -quaternion[0]);
 
