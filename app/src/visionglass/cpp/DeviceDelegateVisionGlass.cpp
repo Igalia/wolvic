@@ -365,12 +365,12 @@ DeviceDelegateVisionGlass::ControllerButtonPressed(const bool aDown) {
 }
 
 void
-DeviceDelegateVisionGlass::setHead(const float aX, const float aY, const float aZ, const float aW) {
+DeviceDelegateVisionGlass::setHead(const double aX, const double aY, const double aZ, const double aW) {
   m.headOrientation = vrb::Quaternion(aX, aY, aZ, aW);
 }
 
 void
-DeviceDelegateVisionGlass::setControllerOrientation(const float aX, const float aY, const float aZ, const float aW) {
+DeviceDelegateVisionGlass::setControllerOrientation(const double aX, const double aY, const double aZ, const double aW) {
     m.controllerOrientation = vrb::Quaternion(aX, aY, aZ, aW);
 }
 
