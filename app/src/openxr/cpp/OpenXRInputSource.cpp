@@ -265,14 +265,12 @@ std::optional<OpenXRInputSource::OpenXRButtonState> OpenXRInputSource::GetButton
     };
 
     queryActionState(button.flags & OpenXRButtonFlags::Click, actions.click, result.clicked, false);
-    bool clickedHasValue = hasValue;
     queryActionState(button.flags & OpenXRButtonFlags::Touch, actions.touch, result.touched, result.clicked);
     queryActionState(button.flags & OpenXRButtonFlags::Value, actions.value, result.value, result.clicked ? 1.0 : 0.0);
     queryActionState(button.flags & OpenXRButtonFlags::Ready, actions.ready, result.ready, true);
 
-    if (!clickedHasValue && result.value > mClickThreshold) {
-      result.clicked = true;
-    }
+    if (!result.clicked)
+      result.clicked = result.value > mClickThreshold;
 
     if (result.clicked) {
       VRB_DEBUG("OpenXR button clicked: %s", OpenXRButtonTypeNames->at((int) button.type));
