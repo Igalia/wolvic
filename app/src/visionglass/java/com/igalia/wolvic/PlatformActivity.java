@@ -527,16 +527,18 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     }
 
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) {
-        return new PlatformActivityPluginVisionGlass(delegate);
+        return new PlatformActivityPluginVisionGlass(delegate, this);
     }
 
     private class PlatformActivityPluginVisionGlass extends PlatformActivityPlugin {
-        private WidgetManagerDelegate mDelegate;
+        private final WidgetManagerDelegate mDelegate;
         private WMediaSession.Delegate mMediaSessionDelegate;
         private GestureDetector mGestureDetector;
+        private final Context mContext;
 
-        PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate) {
+        PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate, Context context) {
             mDelegate = delegate;
+            mContext = context;
             setupPhoneUI();
         }
 
@@ -650,7 +652,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 }
             });
 
-            mGestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+            mGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onScroll(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
                     // Use inverted axis so the scroll feels more natural.
