@@ -1,6 +1,7 @@
 package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableBoolean;
@@ -106,6 +107,7 @@ public abstract class AbstractTabsBar extends UIWidget implements SessionChangeL
 
     @Override
     public void onSessionAdded(Session aSession) {
+        Log.e(LOGTAG, "TabReceived : AbstractTabsBar.onSessionAdded");
         refreshTabs();
     }
 

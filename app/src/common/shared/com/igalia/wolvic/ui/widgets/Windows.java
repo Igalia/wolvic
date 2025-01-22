@@ -1683,17 +1683,28 @@ public void selectTab(@NonNull Session aTab) {
 
     @Override
     public void onTabsReceived(@NonNull List<TabData> aTabs) {
+
+        Log.e(LOGTAG, "TabReceived : onTabsReceived");
+
         WindowWidget targetWindow = mFocusedWindow;
 
         boolean fullscreen = targetWindow.getSession().isInFullScreen();
         for (int i = aTabs.size() - 1; i >= 0; --i) {
+
+            Log.e(LOGTAG, "TabReceived :   received " + aTabs.get(i) + "  " + aTabs.get(i).getTitle() + " " + aTabs.get(i).getUrl());
+
             Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
             // Cache the provided data to avoid delays if the tabs are loaded at the same time the
             // tabs panel is shown.
-            session.getSessionState().mTitle = aTabs.get(i).getTitle();
-            session.getSessionState().mUri = aTabs.get(i).getUrl();
+            session.onTitleChange(session.getWSession(), aTabs.get(i).getTitle());
+            session.onLocationChange(session.getWSession(), aTabs.get(i).getUrl());
+
+//            session.getSessionState().mTitle = aTabs.get(i).getTitle();
+//            session.getSessionState().mUri = aTabs.get(i).getUrl();
             session.loadUri(aTabs.get(i).getUrl());
             session.updateLastUse();
+
+            Log.e(LOGTAG, "TabReceived :   created " + session);
 
             TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.RECEIVED);
 

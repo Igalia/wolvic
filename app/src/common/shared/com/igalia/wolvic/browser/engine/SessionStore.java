@@ -183,6 +183,9 @@ public class SessionStore implements
 
     @NonNull
     private Session addSession(@NonNull Session aSession) {
+
+        Log.e(LOGTAG, "TabReceived : addSession " + aSession);
+
         aSession.setPermissionDelegate(this);
         aSession.addNavigationListener(mServices);
         mSessions.add(aSession);
@@ -220,6 +223,9 @@ public class SessionStore implements
 
     @NonNull
     public Session createSession(boolean aPrivateMode) {
+
+        Log.e(LOGTAG, "TabReceived : createSession(boolean aPrivateMode)");
+
         SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
         return createSession(settings, Session.SESSION_OPEN);
     }
@@ -232,7 +238,13 @@ public class SessionStore implements
 
     @NonNull
     Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
+
+        Log.e(LOGTAG, "TabReceived : createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode)");
+
         Session session = Session.createSession(mContext, mRuntime, aSettings, aOpenMode, this);
+
+        Log.e(LOGTAG, "TabReceived :   created " + session);
+
         return addSession(session);
     }
 
@@ -528,6 +540,9 @@ public class SessionStore implements
 
     @Override
     public void onSessionAdded(Session aSession) {
+
+        Log.e(LOGTAG, "TabReceived : SessionStore.onSessionAdded");
+
         ComponentsAdapter.get().addSession(aSession);
         for (SessionChangeListener listener : mSessionChangeListeners) {
             listener.onSessionAdded(aSession);

@@ -676,6 +676,10 @@ dependencies {
     implementation deps.android_components.support_webextensions
     implementation deps.android_components.support_ktx
     implementation deps.android_components.feature_accounts
+    implementation deps.android_components.concept_push
+    implementation deps.android_components.feature_push
+    implementation deps.android_components.feature_accounts_push
+    implementation deps.android_components.lib_push_firebase
     implementation deps.android_components.feature_webcompat
     implementation deps.android_components.feature_webcompat_reporter
     implementation deps.android_components.feature_addons

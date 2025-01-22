@@ -25,18 +25,37 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import mozilla.components.concept.sync.*
+import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthFlowError
+import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.ConstellationState
+import mozilla.components.concept.sync.Device
+import mozilla.components.concept.sync.DeviceCapability
+import mozilla.components.concept.sync.DeviceCommandOutgoing
+import mozilla.components.concept.sync.DeviceConstellationObserver
+import mozilla.components.concept.sync.OAuthAccount
+import mozilla.components.concept.sync.Profile
+import mozilla.components.feature.accounts.push.FxaPushSupportFeature
+import mozilla.components.feature.accounts.push.SendTabFeature
+import mozilla.components.feature.push.AutoPushFeature
+import mozilla.components.feature.push.PushConfig
+import mozilla.components.feature.push.PushScope
+import mozilla.components.lib.push.firebase.AbstractFirebasePushService
 import mozilla.components.service.fxa.FirefoxAccount
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
+import mozilla.components.support.base.log.logger.Logger
+import org.json.JSONObject
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
 const val PROFILE_PICTURE_TAG = "fxa_profile_picture"
+
+class FirebasePushService : AbstractFirebasePushService()
 
 class Accounts constructor(val context: Context) {
 
@@ -74,6 +93,7 @@ class Accounts constructor(val context: Context) {
     private val syncStatusObserver = object : SyncStatusObserver {
         override fun onStarted() {
             Log.d(LOGTAG, "Account syncing has started")
+            Logger(LOGTAG).error("TabReceived : SyncStatusObserver Account syncing has started")
 
             isSyncing = true
             syncListeners.toMutableList().forEach {
@@ -85,6 +105,7 @@ class Accounts constructor(val context: Context) {
 
         override fun onIdle() {
             Log.d(LOGTAG, "Account syncing has finished")
+            Logger(LOGTAG).error("TabReceived : SyncStatusObserver Account syncing has finished")
 
             isSyncing = false
 
@@ -101,6 +122,7 @@ class Accounts constructor(val context: Context) {
 
         override fun onError(error: Exception?) {
             Log.d(LOGTAG, "There was an error while syncing the account: " + error?.localizedMessage)
+            Logger(LOGTAG).error("TabReceived : SyncStatusObserver There was an error while syncing the account: " + error?.localizedMessage)
 
             isSyncing = false
             syncListeners.toMutableList().forEach {
@@ -127,12 +149,16 @@ class Accounts constructor(val context: Context) {
     private val accountObserver = object : AccountObserver {
         override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
             Log.d(LOGTAG, "The user has been successfully logged in")
+            Logger(LOGTAG).error("TabReceived : AccountObserver The user has been successfully logged in account: " + account)
+
+            Logger(LOGTAG).error("TabReceived : " + account.toJSONString())
 
             if (authType !== AuthType.Existing) {
                 TelemetryService.FxA.signInResult(true)
             }
 
             accountStatus = AccountStatus.SIGNED_IN
+            Logger(LOGTAG).error("TabReceived : onAuthenticated account status $accountStatus")
 
             // We must delay applying the device name from settings after we are authenticated
             // as we will stuck if we get it directly when initializing services.accountManager
@@ -155,21 +181,60 @@ class Accounts constructor(val context: Context) {
                     it.onAuthenticated(account, authType)
                 }
                 originSessionId = null
-            }
 
-            runBlocking {
-                refreshJob = launch {
-                    while (isSignedIn()) {
-                        Log.d(LOGTAG, "Polling for events")
-                        pollForEventsAsync()
-                        kotlinx.coroutines.delay(10000)
+                var jsonString = (account as FirefoxAccount).toJSONString()
+                var senderId: String? = runCatching {
+                    JSONObject(jsonString).optJSONObject("config")?.optString("client_id", null)
+                }.getOrNull()
+
+
+                senderId = runCatching {
+                    JSONObject(jsonString).optJSONObject("server_local_device_info")
+                        ?.optString("id", null)
+                }.getOrNull()
+
+                Logger(LOGTAG).error("TabReceived : onAuthenticated client_id $senderId")
+
+                var pushConfig = PushConfig(
+                    senderId = senderId.toString()
+                )
+                Logger(LOGTAG).error("TabReceived : onAuthenticated push config $pushConfig")
+
+                var autoPushFeature = AutoPushFeature(
+                    context = context,
+                    service = FirebasePushService(),
+                    config = pushConfig
+                )
+                autoPushFeature.register(object : AutoPushFeature.Observer {
+                    override fun onSubscriptionChanged(scope: PushScope) {
+                        Logger(LOGTAG).error("TabReceived : autoPushFeature onSubscriptionChanged $scope")
+                    }
+
+                    override fun onMessageReceived(scope: PushScope, message: ByteArray?) {
+                        Logger(LOGTAG).error("TabReceived : autoPushFeature onMessageReceived $scope $message")
+                    }
+                })
+                Logger(LOGTAG).error("TabReceived : onAuthenticated auto push feature $autoPushFeature")
+
+                // this works, but the push configuration does not
+                SendTabFeature(services.accountManager) { device, tabs ->
+                    tabs.forEach { tab ->
+                        Logger(LOGTAG).error("TabReceived : Received tab: Device=$device Title=${tab.title}, URL=${tab.url}")
                     }
                 }
+
+                // manual sync shows "Current device needs push endpoint registration, so checking for missed commands"
+                var fxaPushSupportFeature =
+                    FxaPushSupportFeature(context, services.accountManager, autoPushFeature)
+                fxaPushSupportFeature.initialize()
+                Logger(LOGTAG).error("TabReceived : onAuthenticated auto push feature $fxaPushSupportFeature")
             }
+
         }
 
         override fun onAuthenticationProblems() {
             Log.d(LOGTAG, "There was a problem authenticating the user")
+            Logger(LOGTAG).error("TabReceived : AccountObserver There was a problem authenticating the user")
 
             TelemetryService.FxA.signInResult(false)
 
@@ -177,6 +242,7 @@ class Accounts constructor(val context: Context) {
             refreshJob?.cancel(null)
 
             accountStatus = AccountStatus.NEEDS_RECONNECT
+            Logger(LOGTAG).error("TabReceived : onAuthenticationProblems account status $accountStatus")
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
                     it.onAuthenticationProblems()
@@ -186,11 +252,13 @@ class Accounts constructor(val context: Context) {
 
         override fun onLoggedOut() {
             Log.d(LOGTAG, "The user has been logged out")
+            Logger(LOGTAG).error("TabReceived : AccountObserver The user has been logged out")
 
             originSessionId = null
             refreshJob?.cancel(null)
 
             accountStatus = AccountStatus.SIGNED_OUT
+            Logger(LOGTAG).error("TabReceived : onLoggedOut account status $accountStatus")
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
                     it.onLoggedOut()
@@ -202,6 +270,7 @@ class Accounts constructor(val context: Context) {
 
         override fun onProfileUpdated(profile: Profile) {
             Log.d(LOGTAG, "The user profile has been updated")
+            Logger(LOGTAG).error("TabReceived : AccountObserver The user profile has been updated profile: " + profile)
 
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -211,14 +280,27 @@ class Accounts constructor(val context: Context) {
 
             loadProfilePicture(profile)
         }
+
+        override fun onFlowError(error: AuthFlowError) {
+            Logger(LOGTAG).error("TabReceived : AccountObserver onFlowError $error")
+            super.onFlowError(error)
+        }
+
+        override fun onReady(authenticatedAccount: OAuthAccount?) {
+            Logger(LOGTAG).error("TabReceived : AccountObserver onReady account: $authenticatedAccount")
+            super.onReady(authenticatedAccount)
+        }
     }
 
     init {
+        Logger(LOGTAG).error("TabReceived : ${services.accountManager} register")
+        services.accountManager.register(accountObserver)
+        Logger(LOGTAG).error("TabReceived : ${services.accountManager} registerForSyncEvents")
         services.accountManager.registerForSyncEvents(
                 syncStatusObserver, ProcessLifecycleOwner.get(), false
         )
-        services.accountManager.register(accountObserver)
         accountStatus = if (services.accountManager.authenticatedAccount() != null) {
+            Logger(LOGTAG).error("TabReceived : account " + services.accountManager.authenticatedAccount())
             if (services.accountManager.accountNeedsReauth()) {
                 AccountStatus.NEEDS_RECONNECT
 
@@ -229,6 +311,11 @@ class Accounts constructor(val context: Context) {
         } else {
             AccountStatus.SIGNED_OUT
         }
+        Logger(LOGTAG).error("TabReceived : init account status $accountStatus")
+        // accountStatus is SIGNED_OUT at this point
+
+
+
     }
 
     private fun loadProfilePicture(profile: Profile) {
@@ -331,6 +418,9 @@ class Accounts constructor(val context: Context) {
     }
 
     fun updateProfileAsync(): CompletableFuture<Profile?>? {
+
+        Logger("Accounts").error("TabReceived : needs reauth " + services.accountManager.accountNeedsReauth())
+
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.accountProfile()
         }
@@ -379,7 +469,13 @@ class Accounts constructor(val context: Context) {
     }
 
     fun lastSync(): Long {
+
+        Logger("Accounts").error("TabReceived : lastSync()")
+        Logger("Accounts").error("TabReceived : lastSync() ${services.accountManager.accountProfile()}")
+        Logger("Accounts").error("TabReceived : lastSync() ${services.accountManager.accountProfile()?.email}")
+
         services.accountManager.accountProfile()?.email?.let {
+            Logger("Accounts").error("TabReceived :   getFxALastSync $it")
             return SettingsStore.getInstance(context).getFxALastSync(it)
         }
         return 0

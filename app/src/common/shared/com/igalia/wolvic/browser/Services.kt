@@ -73,13 +73,23 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
         private val logTag = "DeviceEventsObserver"
 
         override fun onEvents(events: List<AccountEvent>) {
+
+            Logger(logTag).error("TabReceived : AccountEventsObserver onEvents")
+
             CoroutineScope(Dispatchers.Main).launch {
                 Logger(logTag).info("Received ${events.size} device event(s)")
+                Logger(logTag).error("TabReceived : onEvents Received ${events.size} device event(s)")
+
+                events.forEach { event ->
+                    Logger(logTag).error("TabReceived : event $event")
+                }
+
                 events
                         .filterIsInstance<AccountEvent.DeviceCommandIncoming>()
                         .map { it.command }
                         .filterIsInstance<DeviceCommandIncoming.TabReceived>()
                         .forEach { command ->
+                            Logger(logTag).error("TabReceived : Received a TabReceived event")
                             command.from?.deviceType?.let { TelemetryService.FxA.receivedTab(it) }
                             tabReceivedDelegate?.onTabsReceived(command.entries)
                         }
@@ -101,6 +111,9 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
         syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords), PeriodicSyncConfig(periodMinutes = 1440))
 
     ).also {
+
+        Logger("Services").error("TabReceived : $it registerForAccountEvents")
+
         it.registerForAccountEvents(deviceEventObserver, ProcessLifecycleOwner.get(), true)
     }
 
@@ -117,7 +130,10 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
     }
 
     private fun init() {
+        Logger("Services").error("TabReceived : init() will call $accountManager start")
         CoroutineScope(Dispatchers.Main).launch {
+            Logger("Services").error("TabReceived : $accountManager start")
+
             accountManager.start()
         }
     }

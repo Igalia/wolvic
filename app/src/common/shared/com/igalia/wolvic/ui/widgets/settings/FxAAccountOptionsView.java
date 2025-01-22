@@ -241,31 +241,47 @@ class FxAAccountOptionsView extends SettingsView {
     void updateCurrentAccountState() {
         switch(mAccounts.getAccountStatus()) {
             case NEEDS_RECONNECT:
+                Log.e(LOGTAG, "TabReceived : updateCurrentAccountState NEEDS_RECONNECT");
                 mBinding.signButton.setButtonText(R.string.settings_fxa_account_reconnect);
                 break;
 
             case SIGNED_IN:
+                Log.e(LOGTAG, "TabReceived : updateCurrentAccountState SIGNED_IN");
                 mBinding.signButton.setButtonText(R.string.settings_fxa_account_sign_out);
                 Profile profile = mAccounts.accountProfile();
                 if (profile != null) {
+                    Log.e(LOGTAG, "TabReceived : updateCurrentAccountState updateProfile(profile)");
                     updateProfile(profile);
 
                 } else {
+                    Log.e(LOGTAG, "TabReceived : updateCurrentAccountState profile is NULL, refreshing");
                     try {
+
+                        // authenticatedAccount()
+
+
                         Objects.requireNonNull(mAccounts.updateProfileAsync()).
-                                thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
+                                thenAcceptAsync((u) -> {
+                                            Log.e(LOGTAG, "TabReceived : updateCurrentAccountState refreshed profile received: " + u);
+                                            Log.e(LOGTAG, "TabReceived : updateCurrentAccountState refreshed profile   stored: " + mAccounts.accountProfile());
+                                            updateProfile(mAccounts.accountProfile());
+                                        }
+                                        , mUIThreadExecutor).
                                 exceptionally(throwable -> {
+                                    Log.e(LOGTAG, "TabReceived : updateCurrentAccountState Error getting the account profile");
                                     Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
                                     return null;
                                 });
 
                     } catch (NullPointerException e) {
                         Log.d(LOGTAG, "Error getting the account profile: " + e.getLocalizedMessage());
+                        Log.e(LOGTAG, "TabReceived : updateCurrentAccountState Error getting the account profile");
                     }
                 }
                 break;
 
             case SIGNED_OUT:
+                Log.e(LOGTAG, "TabReceived : updateCurrentAccountState SIGNED_OUT");
                 mBinding.signButton.setButtonText(R.string.settings_fxa_account_sign_in);
                 break;
 
@@ -275,12 +291,20 @@ class FxAAccountOptionsView extends SettingsView {
     }
 
     private void updateProfile(Profile profile) {
+
+
         if (profile != null) {
+            Log.e(LOGTAG, "TabReceived : updateProfile is " + profile.getEmail() + " " + profile.getDisplayName());
             mBinding.accountEmail.setText(profile.getEmail());
+        } else {
+            Log.e(LOGTAG, "TabReceived : updateProfile was NULL");
         }
     }
 
     private void sync(View view) {
+
+        Log.e(LOGTAG, "TabReceived : sync button");
+
         mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         mAccounts.updateProfileAsync();
     }

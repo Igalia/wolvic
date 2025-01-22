@@ -928,9 +928,14 @@ public class SettingsStore {
     }
 
     public long getFxALastSync(@NonNull String email) {
+
+        Log.e(LOGTAG, "TabReceived : getFxALastSync " + email);
+
         String json = mPrefs.getString(
                 mContext.getString(R.string.settings_key_fxa_last_sync),
                 null);
+
+        Log.e(LOGTAG, "TabReceived :   " + json);
 
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -938,13 +943,19 @@ public class SettingsStore {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 if (key.equals(email)) {
+
+                    Log.e(LOGTAG, "TabReceived :   found " + jsonObject.getLong(key));
+
                     return jsonObject.getLong(key);
                 }
             }
 
+            Log.e(LOGTAG, "TabReceived :   not found");
+
             return FXA_LAST_SYNC_NEVER;
 
         } catch (Exception e) {
+            Log.e(LOGTAG, "TabReceived :   error");
             return FXA_LAST_SYNC_NEVER;
         }
     }

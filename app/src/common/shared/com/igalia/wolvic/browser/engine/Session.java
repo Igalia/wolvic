@@ -145,6 +145,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     @NonNull
     static Session createSession(Context aContext, WRuntime aRuntime, @NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode, @NonNull SessionChangeListener listener) {
+
+        Log.e(LOGTAG, "TabReceived : Session createSession");
+
         Session session = new Session(aContext, aRuntime, aSettings);
         session.addSessionChangeListener(listener);
         listener.onSessionAdded(session);
