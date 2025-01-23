@@ -28,7 +28,7 @@
             app:navigationIcon="@drawable/ff_logo_icon_48"
             app:popupTheme="@style/Theme.WolvicPhone.PopupOverlay"
             app:title="@string/app_name" />
-<!--
+
         <TextView
             style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
             android:text="@string/vision_glass_error_message"
             android:textAlignment="center"
             app:visibleGone="@{viewModel.isError}" />
--->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -115,9 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
                 android:backgroundTint="@color/azure"
-                android:checkable="true"
-                android:checked="false"
-                android:contentDescription="nothing"
+                android:contentDescription="@string/display_options_windows_distance"
                 android:scaleType="fitCenter"
                 app:icon="@drawable/unfold_more_24px"
                 app:iconGravity="textStart"

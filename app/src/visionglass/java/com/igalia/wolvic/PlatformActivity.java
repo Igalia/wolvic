@@ -606,7 +606,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             });
 
             mBinding.windowDistanceButton.setOnClickListener(v -> {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                ContextThemeWrapper themedContext = new ContextThemeWrapper(PlatformActivity.this, R.style.Theme_WolvicPhone);
+                LayoutInflater inflater = getLayoutInflater().cloneInContext(themedContext);
                 View popupView = inflater.inflate(R.layout.window_distance_popup_layout, null);
 
                 int width = LinearLayout.LayoutParams.WRAP_CONTENT;
