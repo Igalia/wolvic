@@ -221,8 +221,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mAlignNotificationUIDialog = null;
         }
 
+        runVRBrowserActivityCallback(activity -> activity.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL));
         queueRunnable(this::calibrateController);
-
     }
 
     private void onConnectionStateChanged(PhoneUIViewModel.ConnectionState connectionState) {
