@@ -118,8 +118,7 @@
             android:theme="@style/FxR.Dark"
             android:layout_marginTop="10dp"
             app:icon="@drawable/ic_whats_new"
-            app:layout_constraintEnd_toEndOf="@id/ff_logo_settings"
-            app:layout_constraintStart_toStartOf="@id/ff_logo_settings"
+            app:layout_constraintStart_toStartOf="@id/scrollView2"
             app:layout_constraintTop_toBottomOf="@id/scrollView2" />
 
         <ScrollView
@@ -221,7 +220,8 @@
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_icon_addons"
                             app:honeycombButtonText="@string/url_addons_title"
-                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width"
+                            app:visibleGone="@{BuildConfig.FLAVOR_backend != &quot;chromium&quot;}"/>
 
                         <com.igalia.wolvic.ui.views.HoneycombButton
                             android:id="@+id/helpButton"
