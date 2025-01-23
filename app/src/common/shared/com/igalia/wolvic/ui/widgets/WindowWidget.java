@@ -62,6 +62,7 @@ import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.adapters.WebApp;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
+import com.igalia.wolvic.ui.views.NewTabView;
 import com.igalia.wolvic.ui.views.library.LibraryPanel;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.SelectionActionWidget;
@@ -134,6 +135,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Session mSession;
     private int mWindowId;
     private LibraryPanel mLibrary;
+    private NewTabView mNewTab;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
@@ -217,7 +219,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mLibrary = new LibraryPanel(aContext);
-        mLibrary.setController(this::showPanel);
+        mLibrary.setController(this::showLibraryPanel);
+
+        mNewTab = new NewTabView(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
@@ -502,31 +506,30 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mWidgetPlacement.height;
     }
 
+    @NonNull
     public Windows.ContentType getSelectedPanel() {
         return mLibrary.getSelectedPanelType();
     }
 
     private void hideLibraryPanel() {
-        if (mViewModel.getIsNativeContentVisible().getValue().get()) {
+        if (getCurrentContentType().isLibraryContent()) {
             hidePanel(true);
         }
     }
 
     Runnable mRestoreFirstPaint;
 
-    public void showPanel(Windows.ContentType panelType) {
-        if (panelType == Windows.ContentType.WEB_CONTENT) {
-            hidePanel();
-        } else {
-            showPanel(panelType, true);
-        }
+    public void showLibraryPanel(Windows.ContentType panelType) {
+        assert panelType != Windows.ContentType.NEW_TAB && panelType != Windows.ContentType.WEB_CONTENT && panelType != Windows.ContentType.NOTIFICATIONS;
+        showLibraryPanel(panelType, true);
     }
 
-    private void showPanel(Windows.ContentType contentType, boolean switchSurface) {
+    private void showLibraryPanel(Windows.ContentType contentType, boolean switchSurface) {
         if (mLibrary == null) {
             return;
         }
 
+        hideNewTab(false);
         mViewModel.setIsFindInPage(false);
         mViewModel.setCurrentContentType(contentType);
         mViewModel.setUrl(contentType.URL);
@@ -534,12 +537,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             setView(mLibrary, switchSurface);
             mLibrary.selectPanel(contentType);
             mLibrary.onShow();
-            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
-                final Runnable firstDrawCallback = mFirstDrawCallback;
+            if (mRestoreFirstPaint == null) {
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
                     setFirstPaintReady(false);
-                    setFirstDrawCallback(firstDrawCallback);
+                    if (mFirstDrawCallback != null) {
+                        final Runnable firstDrawCallback = mFirstDrawCallback;
+                        setFirstDrawCallback(firstDrawCallback);
+                    }
                     if (mWidgetManager != null) {
                         mWidgetManager.updateWidget(WindowWidget.this);
                     }
@@ -547,6 +552,32 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
         } else if (mView == mLibrary) {
             mLibrary.selectPanel(contentType);
+        }
+    }
+
+    public void showNewTab() {
+        if (mNewTab != null) {
+            mViewModel.setIsFindInPage(false);
+            mViewModel.setCurrentContentType(Windows.ContentType.NEW_TAB);
+            mViewModel.setUrl(Windows.ContentType.NEW_TAB.URL);
+            setView(mNewTab, true);
+            if (mRestoreFirstPaint == null) {
+                onFirstContentfulPaint(mSession.getWSession());
+                mRestoreFirstPaint = () -> {
+                    setFirstPaintReady(false);
+                    if (mFirstDrawCallback != null) {
+                        final Runnable firstDrawCallback = mFirstDrawCallback;
+                        setFirstDrawCallback(firstDrawCallback);
+                    }
+                    if (mWidgetManager != null) {
+                        mWidgetManager.updateWidget(WindowWidget.this);
+                    }
+                };
+            }
+        }
+        if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
+            mViewModel.enableBackToNewTab(false);
+            mViewModel.setCanGoForwardFromNewTab(true);
         }
     }
 
@@ -558,9 +589,30 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mView != null && mLibrary != null) {
             unsetView(mLibrary, switchSurface);
             mLibrary.onHide();
-            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
         }
         if (switchSurface && mRestoreFirstPaint != null) {
+            mRestoreFirstPaint.run();
+            mRestoreFirstPaint = null;
+        }
+        if (mViewModel.lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+            showNewTab();
+        } else {
+            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
+        }
+    }
+
+    public void hideNewTab(boolean enableBackToNewTab) {
+        if (mViewModel.getCurrentContentType().getValue() == Windows.ContentType.NEW_TAB) {
+            mViewModel.enableBackToNewTab(enableBackToNewTab);
+            hideNewTab();
+        }
+    }
+
+    private void hideNewTab() {
+        if (mView != null && mNewTab != null) {
+            unsetView(mNewTab, true);
+        }
+        if (mRestoreFirstPaint != null) {
             mRestoreFirstPaint.run();
             mRestoreFirstPaint = null;
         }
@@ -2010,24 +2062,31 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         Uri uri = Uri.parse(aRequest.uri);
         if (UrlUtils.isAboutPage(uri.toString())) {
-            if(UrlUtils.isBookmarksUrl(uri.toString())) {
-                showPanel(Windows.ContentType.BOOKMARKS);
+           if(UrlUtils.isBookmarksUrl(uri.toString())) {
+               showLibraryPanel(Windows.ContentType.BOOKMARKS);
 
             } else if (UrlUtils.isHistoryUrl(uri.toString())) {
-                showPanel(Windows.ContentType.HISTORY);
+               showLibraryPanel(Windows.ContentType.HISTORY);
 
             } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-                showPanel(Windows.ContentType.DOWNLOADS);
+               showLibraryPanel(Windows.ContentType.DOWNLOADS);
 
             } else if (UrlUtils.isAddonsUrl(uri.toString())) {
-                showPanel(Windows.ContentType.ADDONS);
+               showLibraryPanel(Windows.ContentType.ADDONS);
+
+            } else if (UrlUtils.isNewTabUrl(uri.toString())) {
+               showNewTab();
 
             } else {
-                hideLibraryPanel();
-            }
+               hideLibraryPanel();
+               hideNewTab(true);
+           }
 
         } else {
             hideLibraryPanel();
+            hideNewTab(true);
+            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
+            mViewModel.setUrl(uri.toString());
         }
 
         if ("file".equalsIgnoreCase(uri.getScheme())) {

@@ -623,7 +623,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mBinding.bookmarksButton.setActiveMode(contentType != Windows.ContentType.WEB_CONTENT && contentType != Windows.ContentType.DOWNLOADS);
         mBinding.downloadsButton.setActiveMode(contentType == Windows.ContentType.DOWNLOADS);
 
-        if (contentType == Windows.ContentType.WEB_CONTENT) {
+        if (contentType == Windows.ContentType.WEB_CONTENT || contentType == Windows.ContentType.NEW_TAB) {
             animateButtonPadding(mBinding.bookmarksButton, mMaxPadding, ICON_ANIMATION_DURATION);
             animateButtonPadding(mBinding.downloadsButton, mMaxPadding, ICON_ANIMATION_DURATION);
         } else if (contentType == Windows.ContentType.DOWNLOADS) {
