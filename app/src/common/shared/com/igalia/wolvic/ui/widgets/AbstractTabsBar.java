@@ -1,8 +1,10 @@
 package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,13 +17,22 @@ import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.utils.SystemUtils;
 
-public abstract class AbstractTabsBar extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
+import org.jetbrains.annotations.NotNull;
+
+import mozilla.components.concept.sync.AccountObserver;
+import mozilla.components.concept.sync.AuthFlowError;
+import mozilla.components.concept.sync.AuthType;
+import mozilla.components.concept.sync.OAuthAccount;
+import mozilla.components.concept.sync.Profile;
+
+public abstract class AbstractTabsBar extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener, AccountObserver {
 
     protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
 
     protected boolean mPrivateMode;
     protected WindowWidget mAttachedWindow;
     protected WindowViewModel mWindowViewModel;
+    protected Button mSyncTabButton;
 
     public AbstractTabsBar(Context aContext) {
         super(aContext);
@@ -143,4 +154,32 @@ public abstract class AbstractTabsBar extends UIWidget implements SessionChangeL
     public void onUnstackSession(Session aSession, Session aParent) {
         refreshTabs();
     }
+
+    // AccountObserver
+
+    @Override
+    public void onLoggedOut() {
+        if (mSyncTabButton != null) {
+            mSyncTabButton.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
+        if (mSyncTabButton != null) {
+            mSyncTabButton.setVisibility(VISIBLE);
+        }
+    }
+
+    @Override
+    public void onProfileUpdated(@NonNull Profile profile) {}
+
+    @Override
+    public void onAuthenticationProblems() {}
+
+    @Override
+    public void onFlowError(@NotNull AuthFlowError authFlowError) {}
+
+    @Override
+    public void onReady(@Nullable OAuthAccount oAuthAccount) {}
 }

@@ -9,6 +9,20 @@
     android:orientation="horizontal">
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/sync_tabs"
+        android:layout_width="64dp"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:background="@drawable/tab_add_background"
+        android:scaleType="fitCenter"
+        app:backgroundTint="@null"
+        app:icon="@drawable/ic_icon_tabs_sync"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/fog" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_tab"
         android:layout_width="64dp"
         android:layout_height="match_parent"

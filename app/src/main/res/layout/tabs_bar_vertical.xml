@@ -9,6 +9,20 @@
     android:orientation="vertical">
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/sync_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/tab_add_background"
+        android:scaleType="fitCenter"
+        app:backgroundTint="@null"
+        app:icon="@drawable/ic_icon_tabs_sync"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="36dp"
+        app:iconTint="@color/rhino" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_tab"
         android:layout_width="match_parent"
         android:layout_height="48dp"

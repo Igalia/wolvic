@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets;
 import android.content.Context;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,10 @@ public class HorizontalTabsBar extends AbstractTabsBar {
 
         mAddTabButton = findViewById(R.id.add_tab);
         mAddTabButton.setOnClickListener(v -> mTabDelegate.onTabAdd());
+
+        mSyncTabButton = findViewById(R.id.sync_tabs);
+        mSyncTabButton.setOnClickListener(v -> mTabDelegate.onTabSync());
+        mSyncTabButton.setVisibility(mTabDelegate.accountIsConnected() ? VISIBLE : GONE);
 
         mTabsList = findViewById(R.id.tabsRecyclerView);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -68,4 +73,5 @@ public class HorizontalTabsBar extends AbstractTabsBar {
     public void refreshTabs() {
         mAdapter.updateTabs(SessionStore.get().getSessions(mPrivateMode));
     }
+
 }

@@ -461,13 +461,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
 
         // Create Tabs bar widget
-        if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_HORIZONTAL) {
-            mTabsBar = new HorizontalTabsBar(this, mWindows);
-        } else if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL) {
-            mTabsBar = new VerticalTabsBar(this, mWindows);
-        } else {
-            mTabsBar = null;
-        }
+        createTabsBar();
 
         attachToWindow(mWindows.getFocusedWindow(), null);
 
@@ -763,30 +757,37 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (!isHeadLockEnabled)
                 recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
         } else if (Objects.equals(key, getString(R.string.settings_key_tabs_location))) {
-            // remove the previous widget
+            createTabsBar();
             if (mTabsBar != null) {
-                removeWidget(mTabsBar);
-                mTabsBar.releaseWidget();
+                addWidget(mTabsBar);
+                mTabsBar.attachToWindow(mWindows.getFocusedWindow());
+                updateWidget(mTabsBar);
+                mWindows.adjustWindowOffsets();
             }
-
-            switch (mSettings.getTabsLocation()) {
-                case SettingsStore.TABS_LOCATION_HORIZONTAL:
-                    mTabsBar = new HorizontalTabsBar(this, mWindows);
-                    break;
-                case SettingsStore.TABS_LOCATION_VERTICAL:
-                    mTabsBar = new VerticalTabsBar(this, mWindows);
-                    break;
-                case SettingsStore.TABS_LOCATION_TRAY:
-                default:
-                    mTabsBar = null;
-                    mWindows.adjustWindowOffsets();
-                    return;
-            }
-            addWidget(mTabsBar);
-            mTabsBar.attachToWindow(mWindows.getFocusedWindow());
-            updateWidget(mTabsBar);
-            mWindows.adjustWindowOffsets();
         }
+    }
+
+    private void createTabsBar() {
+        // remove the previous widget
+        if (mTabsBar != null) {
+            ((VRBrowserApplication)getApplicationContext()).getAccounts().removeAccountListener(mTabsBar);
+            removeWidget(mTabsBar);
+            mTabsBar.releaseWidget();
+        }
+
+        switch (mSettings.getTabsLocation()) {
+            case SettingsStore.TABS_LOCATION_HORIZONTAL:
+                mTabsBar = new HorizontalTabsBar(this, mWindows);
+                break;
+            case SettingsStore.TABS_LOCATION_VERTICAL:
+                mTabsBar = new VerticalTabsBar(this, mWindows);
+                break;
+            case SettingsStore.TABS_LOCATION_TRAY:
+            default:
+                mTabsBar = null;
+                return;
+        }
+        ((VRBrowserApplication)getApplicationContext()).getAccounts().addAccountListener(mTabsBar);
     }
 
     void loadFromIntent(final Intent intent) {
