@@ -283,6 +283,8 @@ class FxAAccountOptionsView extends SettingsView {
     private void sync(View view) {
         mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         mAccounts.updateProfileAsync();
+        mAccounts.refreshDevicesAsync();
+        mAccounts.pollForEventsAsync();
     }
 
     private void signOut(View view) {

@@ -137,7 +137,11 @@ class Accounts constructor(val context: Context) {
             runBlocking { setDeviceName(SettingsStore.getInstance(context).deviceName) }
 
             // Enable syncing after signing in
-            syncNowAsync(SyncReason.EngineChange, true)
+            syncNowAsync(SyncReason.EngineChange, true)?.thenRun {
+                accountProfile()?.email?.let {
+                    SettingsStore.getInstance(context).setFxALastSync(it, getLastSynced(context))
+                }
+            }
 
             Handler(Looper.getMainLooper()).post {
                 // Update device list
@@ -197,13 +201,26 @@ class Accounts constructor(val context: Context) {
 
             loadProfilePicture(profile)
         }
+
+        override fun onFlowError(error: AuthFlowError) {
+            Log.w(LOGTAG, "Error during authentication or migration flow: $error.")
+            super.onFlowError(error)
+        }
+
+        override fun onReady(authenticatedAccount: OAuthAccount?) {
+            Log.d(LOGTAG, "Account state has been resolved and is now ready.")
+            super.onReady(authenticatedAccount)
+            accountProfile()?.email?.let {
+                SettingsStore.getInstance(context).setFxALastSync(it, getLastSynced(context))
+            }
+        }
     }
 
     init {
+        services.accountManager.register(accountObserver)
         services.accountManager.registerForSyncEvents(
                 syncStatusObserver, ProcessLifecycleOwner.get(), false
         )
-        services.accountManager.register(accountObserver)
         accountStatus = if (services.accountManager.authenticatedAccount() != null) {
             if (services.accountManager.accountNeedsReauth()) {
                 AccountStatus.NEEDS_RECONNECT
