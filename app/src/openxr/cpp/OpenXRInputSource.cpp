@@ -795,17 +795,17 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         return;
     }
 
-#if defined(PICOXR)
-    // Pico does continuously track the controllers even when left alone. That's why we return
-    // always true so that we always check hand tracking just in case.
-    bool isControllerUnavailable = true;
-#else
     bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
-#endif
-
     auto gotHandTrackingInfo = false;
     auto handFacesHead = false;
-    if (isControllerUnavailable || mUsingHandInteractionProfile) {
+#if defined(PICOXR)
+    // Pico does continuously track the controllers even when left alone. That's why we return
+    // always true so that we always check hand tracking just in case (unless it's disabled).
+    bool mustAlwaysCheckHandTracking = handTrackingEnabled;
+#else
+    bool mustAlwaysCheckHandTracking = false;
+#endif
+    if (isControllerUnavailable || mUsingHandInteractionProfile || mustAlwaysCheckHandTracking) {
         if (!handTrackingEnabled) {
             delegate.SetEnabled(mIndex, false);
             return;
