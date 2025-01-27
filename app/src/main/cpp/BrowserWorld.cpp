@@ -429,6 +429,14 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   int rightBatteryLevel = -1;
   for (Controller& controller: controllers->GetControllers()) {
     if (!controller.enabled || (controller.index < 0)) {
+      if (controller.widget) {
+          // If the controller became unavailable while dragging we must synthesize a UP event
+          // so that the widget it was interacting with does not get stuck and does not allow
+          // other controllers to interact with it.
+          VRBrowser::HandleMotionEvent(controller.widget, controller.index, jboolean(controller.focused),
+                                       jboolean(false), controller.pointerX, controller.pointerY);
+          controller.widget = 0;
+      }
       continue;
     }
     if (controller.index != device->GazeModeIndex()) {
