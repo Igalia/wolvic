@@ -1,21 +1,22 @@
 package com.igalia.wolvic.ui.widgets;
 
 import android.content.Context;
-import android.widget.Button;
+import android.view.LayoutInflater;
 
-import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.SessionStore;
+import com.igalia.wolvic.databinding.TabsBarVerticalBinding;
 import com.igalia.wolvic.ui.adapters.TabsBarAdapter;
 
 public class VerticalTabsBar extends AbstractTabsBar {
 
-    protected Button mAddTabButton;
-    protected RecyclerView mTabsList;
+    private TabsBarVerticalBinding mBinding;
     protected LinearLayoutManager mLayoutManager;
     protected TabsBarAdapter mAdapter;
     protected final TabDelegate mTabDelegate;
@@ -29,17 +30,20 @@ public class VerticalTabsBar extends AbstractTabsBar {
     private void updateUI() {
         removeAllViews();
 
-        inflate(getContext(), R.layout.tabs_bar_vertical, this);
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.tabs_bar_vertical, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
+        mBinding.setSyncAccountEnabled(mSyncAccountEnabled);
 
-        mAddTabButton = findViewById(R.id.add_tab);
-        mAddTabButton.setOnClickListener(v -> mTabDelegate.onTabAdd());
+        mBinding.addTab.setOnClickListener(v -> mTabDelegate.onTabAdd());
 
-        mTabsList = findViewById(R.id.tabsRecyclerView);
+        mBinding.syncTabs.setOnClickListener(v -> mTabDelegate.onTabSync());
+
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mTabsList.setLayoutManager(mLayoutManager);
+        mBinding.tabsRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new TabsBarAdapter(mTabDelegate, TabsBarAdapter.Orientation.VERTICAL);
-        mTabsList.setAdapter(mAdapter);
+        mBinding.tabsRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
