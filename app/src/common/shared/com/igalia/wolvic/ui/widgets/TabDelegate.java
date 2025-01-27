@@ -9,4 +9,5 @@ public interface TabDelegate {
     void onTabSelect(Session aTab);
     void onTabsClose(List<Session> aTabs);
     void onTabsBookmark(List<Session> aTabs);
+    void onTabSync();
 }

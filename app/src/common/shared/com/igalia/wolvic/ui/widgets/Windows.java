@@ -1617,6 +1617,14 @@ public void selectTab(@NonNull Session aTab) {
         }
     }
 
+    @Override
+    public void onTabSync() {
+        // If we're signed-in, poll for any new device events (e.g. received tabs)
+        // There's no push support right now, so this helps with the perception of speedy tab delivery.
+        mAccounts.refreshDevicesAsync();
+        mAccounts.pollForEventsAsync();
+    }
+
     public void closeTab(@NonNull Session aTab) {
         if (isSessionFocused(aTab)) {
             closeTabs(Collections.singletonList(aTab), mPrivateMode, true);
