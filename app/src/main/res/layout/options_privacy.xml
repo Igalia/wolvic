@@ -4,6 +4,7 @@
 
     <data>
         <import type="com.igalia.wolvic.utils.DeviceType"/>
+        <import type="com.igalia.wolvic.BuildConfig"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -133,7 +134,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:buttonText="@string/privacy_options_tracking_exceptions_v1"
-                    app:description="@string/privacy_options_tracking"/>
+                    app:description="@string/privacy_options_tracking"
+                    app:visibleGone="@{BuildConfig.FLAVOR_backend != &quot;chromium&quot;}" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/trackingProtectionRadio"
@@ -143,7 +145,8 @@
                     app:layout="@layout/setting_radio_group_v"
                     app:options="@array/privacy_options_tracking"
                     app:descriptions="@array/privacy_options_tracking_description"
-                    app:values="@array/privacy_options_tracking_values" />
+                    app:values="@array/privacy_options_tracking_values"
+                    app:visibleGone="@{BuildConfig.FLAVOR_backend != &quot;chromium&quot;}" />
 
                 <com.igalia.wolvic.ui.views.settings.ButtonSetting
                     android:id="@+id/clearCookiesSite"
