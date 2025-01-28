@@ -2417,4 +2417,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="phone_ui_usb_alert_dialog_description">無法取得USB權限。 嘗試拔下眼鏡插頭並重新插上，然後重新啟動 Wolvic。</string>
     <string name="permission_read_external_storage_rationale">開啟裝置上的檔案需要讀取外部儲存的權限。</string>
     <string name="permission_persistent_storage_rationale">在設備上儲存和開啟檔案需要在持久性儲存中儲存資料的權限。</string>
+    <string name="new_tab">開新分頁</string>
+    <string name="new_private_tab">開新隱私分頁</string>
+    <string name="close_tab">關閉分頁</string>
 </resources>

@@ -1833,4 +1833,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_handtracking">Suivi des mains</string>
     <string name="eye_tracking_permission_message">Activer le suivi oculaire pour naviguer sur le web présente des risques significatifs pour la vie privée. Cette technologie capture où et combien de temps un utilisateur regarde des parties spécifiques d\'une page web, révélant des détails intimes sur ses intérêts et réactions émotionnelles. Les annonceurs et tiers peuvent exploiter ces données pour du marketing intrusif et la création de profils. De plus, les mouvements oculaires peuvent révéler des informations sensibles comme des conditions médicales, des états cognitifs ou des habitudes personnelles. Il est donc crucial de considérer les implications pour la vie privée avant d\'accorder l\'accès aux informations de suivi oculaire aux pages web.</string>
     <string name="developer_options_pointer_mode_tracked_eye">Avec le regard</string>
+    <string name="new_tab">Nouvel onglet</string>
+    <string name="new_private_tab">Nouvel onglet privé</string>
+    <string name="close_tab">Fermer l’onglet</string>
 </resources>

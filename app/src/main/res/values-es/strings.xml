@@ -2013,5 +2013,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Este sitio contiene contenido DRM.</string>
-  
-    </resources>
+
+    <string name="new_tab">Nueva pestaña</string>
+    <string name="new_private_tab">Nueva pestaña privada</string>
+    <string name="close_tab">Cerrar pestaña</string>
+
+</resources>
