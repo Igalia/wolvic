@@ -3,6 +3,7 @@ package com.igalia.wolvic.ui.widgets;
 import android.content.Context;
 import android.view.LayoutInflater;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,7 @@ public class HorizontalTabsBar extends AbstractTabsBar {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.tabs_bar_horizontal, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setSyncAccountEnabled(mSyncAccountEnabled);
+        mBinding.setViewModel(mWindowViewModel);
 
         mBinding.addTab.setOnClickListener(v -> mTabDelegate.onTabAdd());
 
@@ -72,5 +74,11 @@ public class HorizontalTabsBar extends AbstractTabsBar {
 
     public void refreshTabs() {
         mAdapter.updateTabs(SessionStore.get().getSessions(mPrivateMode));
+    }
+
+    @Override
+    public void attachToWindow(@NonNull WindowWidget window) {
+        super.attachToWindow(window);
+        mBinding.setViewModel(mWindowViewModel);
     }
 }

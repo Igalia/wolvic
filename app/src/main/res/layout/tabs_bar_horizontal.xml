@@ -8,6 +8,10 @@
         <variable
             name="syncAccountEnabled"
             type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
+
+        <variable
+            name="viewModel"
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
     </data>
 
     <LinearLayout
@@ -17,7 +21,7 @@
         android:orientation="horizontal"
         tools:layout_height="@dimen/horizontal_tabs_bar_height">
 
-        <com.google.android.material.button.MaterialButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/sync_tabs"
             android:layout_width="64dp"
             android:layout_height="match_parent"
@@ -25,17 +29,15 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="4dp"
+            app:tooltipPosition="bottom"
+            android:scaleType="centerInside"
             android:background="@drawable/tab_add_background"
-            android:scaleType="fitCenter"
-            app:backgroundTint="@null"
-            app:icon="@drawable/ic_icon_settings_sign_in"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@color/rhino"
+            android:src="@drawable/ic_icon_settings_sign_in"
+            android:tint="@color/rhino"
+            android:tooltipText="@string/fxa_sync"
             app:visibleGone="@{syncAccountEnabled}" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.igalia.wolvic.ui.views.UIButton
             android:id="@+id/add_tab"
             android:layout_width="64dp"
             android:layout_height="match_parent"
@@ -44,13 +46,11 @@
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="4dp"
             android:background="@drawable/tab_add_background"
-            android:scaleType="fitCenter"
-            app:backgroundTint="@null"
-            app:icon="@drawable/ic_icon_newtab"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@color/rhino" />
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_icon_newtab"
+            android:tint="@color/rhino"
+            android:tooltipText="@{viewModel.isPrivateSession ? @string/new_private_tab : @string/new_tab}" />
 
         <com.igalia.wolvic.ui.views.CustomRecyclerView
             android:id="@+id/tabsRecyclerView"

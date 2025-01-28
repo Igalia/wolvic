@@ -1788,6 +1788,15 @@
          '%1$s' will be replaced at runtime with the search engine name. -->
     <string name="context_menu_web_search">Search with %1$s</string>
 
+    <!-- Generic text for opening a new tab. -->
+    <string name="new_tab">New tab</string>
+
+    <!-- Generic text for opening a new private tab. -->
+    <string name="new_private_tab">New private tab</string>
+
+    <!-- Generic text for closing a tab. -->
+    <string name="close_tab">Close tab</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
     <string name="bookmark_tooltip">Bookmark this page</string>
