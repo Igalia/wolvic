@@ -8,6 +8,10 @@
         <variable
             name="syncAccountEnabled"
             type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
+
+        <variable
+            name="viewModel"
+            type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
     </data>
 
     <LinearLayout
@@ -27,11 +31,13 @@
             android:layout_marginBottom="0dp"
             android:background="@drawable/tab_add_background"
             android:scaleType="fitCenter"
+            android:text="@string/fxa_sync"
+            android:textColor="@color/rhino"
             app:backgroundTint="@null"
             app:icon="@drawable/ic_icon_settings_sign_in"
-            app:iconGravity="textStart"
+            app:iconGravity="start"
             app:iconPadding="0dp"
-            app:iconSize="36dp"
+            app:iconSize="24dp"
             app:iconTint="@color/rhino"
             app:visibleGone="@{syncAccountEnabled}" />
 
@@ -45,11 +51,13 @@
             android:layout_marginBottom="0dp"
             android:background="@drawable/tab_add_background"
             android:scaleType="fitCenter"
+            android:text="@{viewModel.isPrivateSession ? @string/new_private_tab : @string/new_tab}"
+            android:textColor="@color/rhino"
             app:backgroundTint="@null"
             app:icon="@drawable/ic_icon_newtab"
-            app:iconGravity="textStart"
+            app:iconGravity="start"
             app:iconPadding="0dp"
-            app:iconSize="36dp"
+            app:iconSize="24dp"
             app:iconTint="@color/rhino" />
 
         <com.igalia.wolvic.ui.views.CustomRecyclerView
