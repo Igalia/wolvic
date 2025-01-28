@@ -1836,4 +1836,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_window_size">Standard fönsterstorlek</string>
     <string name="window_size_preset">%1$d×%2$d</string>
     <string name="download_addon_install_blocked_permissions_body">Tillåt lagringsbehörigheter i sekretessalternativ för att fortsätta.</string>
+    <string name="new_tab">Ny flik</string>
+    <string name="new_private_tab">Ny privat flik</string>
+    <string name="close_tab">Stäng flik</string>
 </resources>

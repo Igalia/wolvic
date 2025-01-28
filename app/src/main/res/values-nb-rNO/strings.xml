@@ -2157,4 +2157,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     '%1$s' Will be replaced at runtime with headset battery level. -->
     <string name="tray_status_headset">Hodesett: %1$s</string>
 
+    <string name="new_tab">Ny fane</string>
+    <string name="new_private_tab">Ny privat fane</string>
+    <string name="close_tab">Lukk fane</string>
+
 </resources>

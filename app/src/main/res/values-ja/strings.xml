@@ -1839,4 +1839,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_pointer_mode">ポインター制御モード</string>
     <string name="download_addon_install_blocked_permissions_body">続行するには、プライバシーオプションでストレージ権限を許可してください。</string>
     <string name="developer_options_pointer_mode_tracked_pointer">コントローラーまたは手で操作</string>
+    <string name="new_tab">新しいタブ</string>
+    <string name="new_private_tab">新しいプライベートタブ</string>
+    <string name="close_tab">タブを閉じる</string>
 </resources>

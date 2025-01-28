@@ -1613,4 +1613,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="developer_options_foveated_webvr">Foveation-taso (WebVR)</string>
     <string name="fxa_account_options_reset">Nollaa</string>
     <string name="security_options_drm_content_v1">Salli sivustojen automaattisesti tunnistaa laitteesi DRM-ohjatun sisällön toistamiseksi. (&lt;a href=%1$s&gt;Lue lisää&lt;/a&gt;)</string>
+    <string name="new_tab">Uusi välilehti</string>
+    <string name="new_private_tab">Uusi yksityinen välilehti</string>
+    <string name="close_tab">Sulje välilehti</string>
 </resources>

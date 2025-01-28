@@ -1817,4 +1817,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="phone_ui_set3dmode_alert_dialog_description">3D 모드로 전환에 실패했습니다. 안경의 전원을 뽑고 다시 연결해 주신 후, Wolvic을 다시 실행해 주세요.</string>
     <string name="vision_glass_error_message">에러가 발생했습니다.
 \n다시 시도해주세요.</string>
+    <string name="new_tab">새 탭</string>
+    <string name="new_private_tab">새 사생활 보호 탭</string>
+    <string name="close_tab">탭 닫기</string>
 </resources>
