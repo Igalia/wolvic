@@ -41,6 +41,7 @@ import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.DownloadsContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.LibraryContextMenuWidget;
 import com.igalia.wolvic.ui.widgets.menus.library.SortingContextMenuWidget;
+import com.igalia.wolvic.utils.DeviceType;
 import com.igalia.wolvic.utils.SystemUtils;
 import com.igalia.wolvic.browser.extensions.LocalExtension;
 import com.igalia.wolvic.utils.UrlUtils;
@@ -163,7 +164,11 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
             if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
                 if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
-                    if (mWidgetManager.isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    // Meta Horizon OS does not require any special permission. See
+                    // https://developers.meta.com/horizon/resources/permissions-review-required/
+                    boolean isPermissionGranted = DeviceType.isOculusBuild() ||
+                            mWidgetManager.isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (isPermissionGranted) {
                         mWidgetManager.getFocusedWindow().showConfirmPrompt(
                                 getContext().getString(R.string.download_addon_install),
                                 item.getFilename(),
