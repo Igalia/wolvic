@@ -103,22 +103,14 @@ class PrivacyOptionsView extends SettingsView {
         } else {
             mPermissionButtons.add(Pair.create(mBinding.storagePermissionSwitch, Manifest.permission.WRITE_EXTERNAL_STORAGE));
             mPermissionButtons.add(Pair.create(mBinding.locationPermissionSwitch, Manifest.permission.ACCESS_FINE_LOCATION));
-
-            // Display a warning message if approximate location is available but precise location is not.
-            boolean hasCoarseLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION);
-            boolean hasFineLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION);
-            mBinding.locationPermissionWarning.setVisibility((hasCoarseLocation && !hasFineLocation) ? VISIBLE : GONE);
         }
 
         for (Pair<SwitchSetting, String> button : mPermissionButtons) {
-            if (button.second.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                button.first.setChecked(mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION));
-            } else {
-                button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
-            }
             button.first.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
                     togglePermission(button.first, button.second));
         }
+
+        refreshPermissions();
 
         mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
         mBinding.drmContentPlaybackSwitch.setDescription(getResources().getString(R.string.security_options_drm_content_v1, getResources().getString(R.string.sumo_drm_url)));
@@ -176,7 +168,9 @@ class PrivacyOptionsView extends SettingsView {
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
-        if (mWidgetManager.isPermissionGranted(aPermission)) {
+        if (mWidgetManager.isPermissionGranted(aPermission) ||
+                aPermission.equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
+                        mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             showAlert(aButton.getDescription(), getContext().getString(R.string.security_options_permissions_reject_message));
             aButton.setChecked(true);
 
@@ -191,6 +185,20 @@ class PrivacyOptionsView extends SettingsView {
 
                 }
             });
+        }
+    }
+
+    private void refreshPermissions() {
+        for (Pair<SwitchSetting, String> button : mPermissionButtons) {
+            if (button.second.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Display a warning message if approximate location is available but precise location is not.
+                boolean hasCoarseLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION);
+                boolean hasFineLocation = mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION);
+                mBinding.locationPermissionWarning.setVisibility((hasCoarseLocation && !hasFineLocation) ? VISIBLE : GONE);
+                button.first.setChecked(mWidgetManager.isPermissionGranted(Manifest.permission.ACCESS_COARSE_LOCATION));
+            } else {
+                button.first.setChecked(mWidgetManager.isPermissionGranted(button.second));
+            }
         }
     }
 
@@ -428,9 +436,7 @@ class PrivacyOptionsView extends SettingsView {
         @Override
         public void onActivityResumed(Activity activity) {
             // Refresh permission settings status after a permission has been requested
-            for (Pair<SwitchSetting, String> button: mPermissionButtons) {
-                button.first.setValue(mWidgetManager.isPermissionGranted(button.second), false);
-            }
+            refreshPermissions();
         }
 
         @Override
