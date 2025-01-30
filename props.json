@@ -1,6 +1,6 @@
 {
   "1.8.0": {
-    "whatsNewUrl": "https://wolvic.com/blog/release_1.8",
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.8.0",
     "environments": [
       {
         "value": "spring",
