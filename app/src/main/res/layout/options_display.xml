@@ -38,6 +38,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/homepage_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="textWebEmailAddress"
+                    app:description="@string/developer_options_homepage"
+                    app:highlightedTextColor="@color/fog"
+                    app:hintTextColor="@color/iron_blur" />
+
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/curved_display_switch"
                     android:layout_width="match_parent"
@@ -45,10 +55,22 @@
                     app:description="@string/developer_options_curved_display" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/center_windows_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_center_windows" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/startWithPassthroughSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/display_options_start_with_passthrough" />
+
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/headLockSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_head_lock" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting
                     android:id="@+id/autoplaySwitch"
@@ -63,36 +85,18 @@
                     app:description="@string/display_options_latin_auto_complete" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
-                    android:id="@+id/ua_radio"
+                    android:id="@+id/tabs_location_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_ua_mode"
-                    app:options="@array/developer_options_ua_modes"
-                    app:values="@array/developer_options_ua_mode_values" />
-
-                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
-                    android:id="@+id/msaa_radio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_msaa"
-                    app:options="@array/developer_options_msaa"
-                    app:values="@array/developer_options_msaa_mode_values" />
+                    app:description="@string/display_options_tabs_location"
+                    app:options="@array/display_options_tabs_location"
+                    app:values="@array/display_options_tabs_location_values" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/windows_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:description="@string/settings_window_size" />
-
-                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
-                    android:id="@+id/homepage_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:width="300dp"
-                    android:inputType="textWebEmailAddress"
-                    app:description="@string/developer_options_homepage"
-                    app:hintTextColor="@color/iron_blur"
-                    app:highlightedTextColor="@color/fog" />
 
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/density_edit"
@@ -116,25 +120,21 @@
                     app:hintTextColor="@color/iron_blur"
                     app:highlightedTextColor="@color/fog" />
 
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/center_windows_switch"
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/ua_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_center_windows" />
-
-                <com.igalia.wolvic.ui.views.settings.SwitchSetting
-                    android:id="@+id/headLockSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/display_options_head_lock" />
+                    app:description="@string/developer_options_ua_mode"
+                    app:options="@array/developer_options_ua_modes"
+                    app:values="@array/developer_options_ua_mode_values" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
-                    android:id="@+id/tabs_location_radio"
+                    android:id="@+id/msaa_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/display_options_tabs_location"
-                    app:options="@array/display_options_tabs_location"
-                    app:values="@array/display_options_tabs_location_values" />
+                    app:description="@string/developer_options_msaa"
+                    app:options="@array/developer_options_msaa"
+                    app:values="@array/developer_options_msaa_mode_values" />
 
             </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
