@@ -1,0 +1,13 @@
+[versions]
+desugar_jdk_libs = "2.1.4"
+opentelemetryApi = "1.46.0"
+opentelemetryAndroid = "0.9.1-alpha"
+
+[libraries]
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+opentelemetry-exporter-logging = { module = "io.opentelemetry:opentelemetry-exporter-logging", version.ref = "opentelemetryApi" }
+opentelemetry-android-core = { module = "io.opentelemetry.android:core", version.ref = "opentelemetryAndroid" }
+opentelemetry-android-instrumentation-activity = { module = "io.opentelemetry.android:instrumentation-activity", version.ref = "opentelemetryAndroid" }
+opentelemetry-android-instrumentation-anr = { module = "io.opentelemetry.android:instrumentation-anr", version.ref = "opentelemetryAndroid" }
+opentelemetry-android-instrumentation-crash = { module = "io.opentelemetry.android:instrumentation-crash", version.ref = "opentelemetryAndroid" }
+opentelemetry-android-instrumentation-sessions = { module = "io.opentelemetry.android:instrumentation-sessions", version.ref = "opentelemetryAndroid" }
