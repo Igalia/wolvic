@@ -164,6 +164,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     packagingOptions {
@@ -690,6 +691,15 @@ dependencies {
 
     // openwnn (bundled because it is not published outside of JCenter, which is deprecated)
     implementation fileTree(dir: "${project.rootDir}/libs/openwnn/", include: ['*.aar'])
+
+    // OpenTelemetry
+    implementation libs.opentelemetry.android.core
+    implementation libs.opentelemetry.android.instrumentation.activity
+    implementation libs.opentelemetry.android.instrumentation.anr
+    implementation libs.opentelemetry.android.instrumentation.crash
+    implementation libs.opentelemetry.android.instrumentation.sessions
+    implementation libs.opentelemetry.exporter.logging
+    coreLibraryDesugaring libs.desugar.jdk.libs
 }
 
 if (findProject(':servo')) {
