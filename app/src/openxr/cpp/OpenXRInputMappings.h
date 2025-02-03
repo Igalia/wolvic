@@ -47,6 +47,7 @@ namespace crow {
     constexpr const char* kPathActionReady { "ready_ext" };
     constexpr const char* kInteractionProfileHandInteraction { "/interaction_profiles/ext/hand_interaction_ext" };
     constexpr const char* kInteractionProfileMSFTHandInteraction { "/interaction_profiles/microsoft/hand_interaction" };
+    constexpr const char* kInteractionProfileKHRSimple { "/interaction_profiles/khr/simple_controller" };
 
     // OpenXR Button List
     enum class OpenXRButtonType {
@@ -460,7 +461,7 @@ namespace crow {
 
     // Default fallback: https://github.com/immersive-web/webxr-input-profiles/blob/master/packages/registry/profiles/generic/generic-button.json
     const OpenXRInputMapping KHRSimple {
-            "/interaction_profiles/khr/simple_controller",
+            kInteractionProfileKHRSimple,
             "generic-trigger.obj",
             "generic-trigger.obj",
             device::UnknownType,
