@@ -70,8 +70,8 @@ public class DownloadsManager {
 
     public void init() {
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            mContext.registerReceiver(mDownloadReceiver, filter, null, mMainHandler, Context.RECEIVER_NOT_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mContext.registerReceiver(mDownloadReceiver, filter, null, mMainHandler, Context.RECEIVER_EXPORTED);
         } else {
             mContext.registerReceiver(mDownloadReceiver, filter, null, mMainHandler);
         }
