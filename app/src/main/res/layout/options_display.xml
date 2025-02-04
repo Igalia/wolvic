@@ -84,6 +84,12 @@
                     android:layout_height="wrap_content"
                     app:description="@string/display_options_latin_auto_complete" />
 
+                <com.igalia.wolvic.ui.views.settings.SwitchSetting
+                    android:id="@+id/openTabsInBackgroundSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/display_options_open_tabs_in_background" />
+
                 <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
                     android:id="@+id/tabs_location_radio"
                     android:layout_width="match_parent"

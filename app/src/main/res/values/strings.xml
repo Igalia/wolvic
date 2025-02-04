@@ -523,6 +523,10 @@
          and is used to customize the windows distance. -->
     <string name="display_options_windows_distance">Windows Distance</string>
 
+    <!-- This string labels an On/Off switch in the 'Display Options' dialog and is used to choose
+         whether new tabs will be activated immediately or they will remain in the background. -->
+    <string name="display_options_open_tabs_in_background">Open new tabs in the background</string>
+
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
     <string name="developer_options_env_override">Enable Environment Override</string>
