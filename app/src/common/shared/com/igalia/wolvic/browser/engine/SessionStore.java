@@ -192,6 +192,10 @@ public class SessionStore implements
             mStoreSubscription.resume();
         }
 
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionAdded(aSession);
+        }
+
         return aSession;
     }
 

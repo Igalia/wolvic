@@ -20,6 +20,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
+import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
 import java.util.Objects;
@@ -99,8 +100,14 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             mSession.addNavigationListener(this);
             mSession.addSessionChangeListener(this);
 
-            mTitle.setText(mSession.getCurrentTitle());
-            mSubtitle.setText(UrlUtils.stripProtocol(mSession.getCurrentUri()));
+            String title = mSession.getCurrentTitle();
+            String uri = mSession.getCurrentUri();
+            if (StringUtils.isEmpty(title)) {
+                title = UrlUtils.stripCommonSubdomains(UrlUtils.getHost(uri));
+            }
+            mTitle.setText(title);
+            mSubtitle.setText(UrlUtils.stripProtocol(uri));
+
             SessionStore.get().getBrowserIcons().loadIntoView(
                     mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
 
