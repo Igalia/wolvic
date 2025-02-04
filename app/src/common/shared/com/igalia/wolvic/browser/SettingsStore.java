@@ -158,6 +158,7 @@ public class SettingsStore {
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean HEAD_LOCK_DEFAULT = false;
+    public final static boolean OPEN_TABS_IN_BACKGROUND_DEFAULT = true;
     public final static boolean DEBUG_LOGGING_DEFAULT = BuildConfig.DEBUG;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
     public final static boolean WEBXR_ENABLED_DEFAULT = true;
@@ -395,6 +396,17 @@ public class SettingsStore {
     public void setHeadLockEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_head_lock), isEnabled);
+        editor.apply();
+    }
+
+    public boolean isOpenTabsInBackgroundEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_open_tabs_in_background), OPEN_TABS_IN_BACKGROUND_DEFAULT);
+    }
+
+    public void setOpenTabsInBackgroundEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_open_tabs_in_background), isEnabled);
         editor.apply();
     }
 
