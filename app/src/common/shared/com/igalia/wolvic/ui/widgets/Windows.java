@@ -238,7 +238,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             WindowsState state = new WindowsState();
             state.privateMode = mPrivateMode;
             state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
-            ArrayList<Session> sessions = SessionStore.get().getSortedSessions(false);
+            List<Session> sessions;
+            if (SettingsStore.getInstance(mContext).getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY) {
+                // Tabs in the tray are sorted by recently used, so we preserve their current order.
+                sessions = SessionStore.get().getSortedSessions(false);
+            } else {
+                // Tabs in the visible bars keep a fixed order.
+                sessions = SessionStore.get().getSessions(false);
+            }
             state.tabs = sessions.stream()
                     .map(Session::getSessionState)
                     .filter(sessionState -> HistoryStore.getBLOCK_LIST().stream().noneMatch(uri ->
