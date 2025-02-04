@@ -101,7 +101,7 @@ public class ContextMenuWidget extends MenuWidget {
             // Open link in a new tab
             mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_link_new_tab_1), 0, () -> {
                 if (!StringUtils.isEmpty(aContextElement.linkUri)) {
-                    widgetManager.openNewTabForeground(aContextElement.linkUri);
+                    widgetManager.openNewTab(aContextElement.linkUri);
                     TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.CONTEXT_MENU);
                 }
                 onDismiss();
