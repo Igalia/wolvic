@@ -289,7 +289,7 @@ namespace crow {
     };
 
     const OpenXRInputMapping Pico4U {
-            "/interaction_profiles/bytedance/pico4_controller",
+            "/interaction_profiles/bytedance/pico4s_controller",
             "vr_controller_pico4u_left.obj",
             "vr_controller_pico4u_right.obj",
             device::Pico4U,
