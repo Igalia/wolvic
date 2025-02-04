@@ -16,7 +16,6 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsDisplayBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
-import com.igalia.wolvic.ui.views.settings.SliderSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
@@ -98,6 +97,9 @@ class DisplayOptionsView extends SettingsView {
 
         mBinding.headLockSwitch.setOnCheckedChangeListener(mHeadLockListener);
         setHeadLock(SettingsStore.getInstance(getContext()).isHeadLockEnabled(), false);
+
+        mBinding.openTabsInBackgroundSwitch.setOnCheckedChangeListener(mOpenTabsInBackgroundListener);
+        setOpenTabsInBackground(SettingsStore.getInstance(getContext()).isOpenTabsInBackgroundEnabled(), false);
 
         @SettingsStore.TabsLocation int tabsLocation = SettingsStore.getInstance(getContext()).getTabsLocation();
         mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
@@ -186,6 +188,10 @@ class DisplayOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mHeadLockListener = (compoundButton, value, doApply) -> {
         setHeadLock(value, true);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mOpenTabsInBackgroundListener = (compoundButton, value, doApply) -> {
+        setOpenTabsInBackground(value, true);
     };
 
     private RadioGroupSetting.OnCheckedChangeListener mTabsLocationChangeListener = (radioGroup, checkedId, doApply) -> {
@@ -344,6 +350,17 @@ class DisplayOptionsView extends SettingsView {
         SettingsStore settingsStore = SettingsStore.getInstance(getContext());
         if (doApply) {
             settingsStore.setHeadLockEnabled(value);
+        }
+    }
+
+    private void setOpenTabsInBackground(boolean value, boolean doApply) {
+        mBinding.openTabsInBackgroundSwitch.setOnCheckedChangeListener(null);
+        mBinding.openTabsInBackgroundSwitch.setValue(value, false);
+        mBinding.openTabsInBackgroundSwitch.setOnCheckedChangeListener(mOpenTabsInBackgroundListener);
+
+        SettingsStore settingsStore = SettingsStore.getInstance(getContext());
+        if (doApply) {
+            settingsStore.setOpenTabsInBackgroundEnabled(value);
         }
     }
 

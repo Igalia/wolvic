@@ -262,7 +262,7 @@
     <dimen name="privacy_options_height">490dp</dimen>
 
     <!-- Display settings -->
-    <dimen name="display_options_height">420dp</dimen>
+    <dimen name="display_options_height">450dp</dimen>
 
     <!-- Language and voice settings -->
     <dimen name="language_options_height">400dp</dimen>
