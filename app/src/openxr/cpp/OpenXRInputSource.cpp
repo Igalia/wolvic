@@ -81,12 +81,6 @@ XrResult OpenXRInputSource::Initialize()
     for (auto& mapping: OpenXRInputMappings) {
       // Always populate default/fall-back profiles
       if (mapping.controllerType == device::UnknownType) {
-#if PICOXR
-          // Pico4U runtime incorrectly prioritize the Khronos simple controller over Pico's
-          // specific one. Workaround that bad behaviour by skipping the simple controller profile.
-          if (mDeviceType == device::Pico4U && !strcmp(mapping.path, kInteractionProfileKHRSimple))
-              continue;
-#endif
           mMappings.push_back(mapping);
           // Use the system's deviceType instead to ensure we get a valid VRController on WebXR sessions
           mMappings.back().controllerType = mDeviceType;
