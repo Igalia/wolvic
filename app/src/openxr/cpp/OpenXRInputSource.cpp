@@ -829,6 +829,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             }
             handFacesHead = OpenXRGestureManager::handFacesHead(jointTransforms[HAND_JOINT_FOR_AIM], head);
             delegate.SetHandJointLocations(mIndex, std::move(jointTransforms), std::move(jointRadii));
+        } else if (isControllerUnavailable) {
+            delegate.SetEnabled(mIndex, false);
+            return;
         }
     }
 
