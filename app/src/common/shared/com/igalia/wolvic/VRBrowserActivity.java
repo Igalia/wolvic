@@ -136,6 +136,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public static final String EXTRA_LAUNCH_IMMERSIVE_PARENT_XPATH = "launch_immersive_parent_xpath";
     public static final String EXTRA_LAUNCH_IMMERSIVE_ELEMENT_XPATH = "launch_immersive_element_xpath";
 
+    private boolean shouldRestoreHeadLockOnVRVideoExit;
+
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2022,12 +2024,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void showVRVideo(final int aWindowHandle, final @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection) {
+        if (mSettings.isHeadLockEnabled()) {
+            mSettings.setHeadLockEnabled(false);
+            shouldRestoreHeadLockOnVRVideoExit = true;
+        }
         queueRunnable(() -> showVRVideoNative(aWindowHandle, aVideoProjection));
     }
 
     @Override
     public void hideVRVideo() {
         queueRunnable(this::hideVRVideoNative);
+
+        if (shouldRestoreHeadLockOnVRVideoExit) {
+            mSettings.setHeadLockEnabled(true);
+        }
     }
 
     @Override
