@@ -75,6 +75,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MediatorLiveData<ObservableBoolean> isUrlBarIconsVisible;
     private MutableLiveData<ObservableInt> mWidth;
     private MutableLiveData<ObservableInt> mHeight;
+    private MutableLiveData<ObservableBoolean> keepFullscreenInHamburgerMenu;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -183,6 +184,7 @@ public class WindowViewModel extends AndroidViewModel {
 
         mWidth = new MutableLiveData<>(new ObservableInt());
         mHeight = new MutableLiveData<>(new ObservableInt());
+        keepFullscreenInHamburgerMenu = new MutableLiveData<>(new ObservableBoolean(false));
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -353,6 +355,7 @@ public class WindowViewModel extends AndroidViewModel {
         isDrmUsed.postValue(isDrmUsed.getValue());
         mWidth.postValue(mWidth.getValue());
         mHeight.postValue(mHeight.getValue());
+        keepFullscreenInHamburgerMenu.postValue(keepFullscreenInHamburgerMenu.getValue());
     }
 
     @NonNull
@@ -442,6 +445,14 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsWindowVisible(boolean isWindowVisible) {
         this.isWindowVisible.postValue(new ObservableBoolean(isWindowVisible));
+    }
+
+    public MutableLiveData<ObservableBoolean> getKeepFullscreenInHamburgerMenu() {
+        return keepFullscreenInHamburgerMenu;
+    }
+
+    public void setKeepFullscreenInHamburgerMenu(boolean keepFullscreenInHamburgerMenu) {
+        this.keepFullscreenInHamburgerMenu.postValue(new ObservableBoolean(keepFullscreenInHamburgerMenu));
     }
 
     @NonNull
