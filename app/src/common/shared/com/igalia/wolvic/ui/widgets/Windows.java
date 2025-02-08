@@ -184,11 +184,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
 
         public boolean isLibraryContent() {
-            return (this.URL == UrlUtils.ABOUT_BOOKMARKS ||
-                    this.URL == UrlUtils.ABOUT_WEBAPPS ||
-                    this.URL == UrlUtils.ABOUT_HISTORY ||
-                    this.URL == UrlUtils.ABOUT_DOWNLOADS ||
-                    this.URL == UrlUtils.ABOUT_ADDONS);
+            switch (this) {
+                case BOOKMARKS:
+                case WEB_APPS:
+                case HISTORY:
+                case DOWNLOADS:
+                case ADDONS:
+                    return true;
+                default:
+                    return false;
+            }
         };
     }
 

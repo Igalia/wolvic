@@ -144,9 +144,9 @@ public class WindowViewModel extends AndroidViewModel {
 
         isNativeContentVisible = new MediatorLiveData<>();
         isNativeContentVisible.addSource(currentContentType, contentType ->
-                isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT && contentType != Windows.ContentType.NEW_TAB))
+                isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT))
         );
-        isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT && currentContentType.getValue() != Windows.ContentType.NEW_TAB));
+        isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT));
 
         backToNewTabEnabled = new MutableLiveData<>(new ObservableBoolean(false));
 
@@ -465,13 +465,13 @@ public class WindowViewModel extends AndroidViewModel {
                 spannable.setSpan(color1, 0, index + 3, 0);
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
                 this.url.postValue(spannable);
-                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
                     urlForwardFromNewTab.postValue(spannable);
                 }
 
             } else {
                 this.url.postValue(url);
-                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+                if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
                     urlForwardFromNewTab.postValue(url);
                 }
             }
