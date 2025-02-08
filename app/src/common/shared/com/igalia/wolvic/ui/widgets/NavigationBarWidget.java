@@ -367,6 +367,12 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             if (mAttachedWindow != null) {
                 mAttachedWindow.setIsFullScreen(false);
             }
+            if (mAttachedWindow.getKeepFullscreenInHamburgerMenu()) {
+                postDelayed(() -> {
+                    mAttachedWindow.setIsFullScreen(true);
+                    mAttachedWindow.setKeepFullscreenInHamburgerMenu(false);
+                }, 2000);
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -791,6 +797,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         postDelayed(() -> {
             if (getSession().isInFullScreen()) {
                 getSession().exitFullScreen();
+            }
+            if (mAttachedWindow.getKeepFullscreenInHamburgerMenu()) {
+                mAttachedWindow.setIsFullScreen(false);
+                mAttachedWindow.setFullscreenInHamburgerMenuEnabled(false);
+                mAttachedWindow.setKeepFullscreenInHamburgerMenu(false);
             }
         }, 50);
 
@@ -1356,6 +1367,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 hideMenu();
 
                 enterResizeMode();
+            }
+
+            @Override
+            public void onFullScreen() {
+                mAttachedWindow.setFullscreenInHamburgerMenu();
             }
 
             @Override
