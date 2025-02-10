@@ -22,11 +22,12 @@ import android.hardware.display.DisplayManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,6 +43,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.huawei.hms.mlsdk.common.MLApplication;
@@ -61,6 +64,7 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -125,6 +129,34 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         }
     };
     private final Runnable activityResumedRunnable = this::activityResumed;
+
+    // Unfortunately, the usual solutions for keeping the screen active (WakeLock, KEEP_SCREEN_ON)
+    // do not work when the Vision Glass is connected, so we need to simulate a touch periodically.
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private static final String KEEP_SCREEN_ON_COMMAND = "input touchscreen tap 1 1";
+    private static final int KEEP_SCREEN_ON_DELAY = 10_000;
+
+    private final Runnable keepScreenOnRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                return;
+            }
+            try {
+                Runtime.getRuntime().exec(KEEP_SCREEN_ON_COMMAND);
+                mMainHandler.postDelayed(this, KEEP_SCREEN_ON_DELAY);
+            } catch (IOException e) {
+                Log.w(LOGTAG, "Error while simulating touch", e);
+            }
+        }
+    };
+
+    private void keepScreenOn(boolean enable) {
+        mMainHandler.removeCallbacks(keepScreenOnRunnable);
+        if (enable) {
+            mMainHandler.post(keepScreenOnRunnable);
+        }
+    }
 
     private interface VRBrowserActivityCallback {
         void run(VRBrowserActivity activity);
@@ -418,6 +450,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         }
 
         mSensorManager.unregisterListener(this);
+        mMainHandler.removeCallbacks(keepScreenOnRunnable);
     }
 
     @Override
@@ -432,9 +465,10 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         if (VisionGlass.getInstance().isConnected() && VisionGlass.getInstance().hasUsbPermission() && mSwitchedTo3DMode && mActivePresentation == null) {
             updateDisplays();
         }
-
-        if (mActivePresentation != null && mActivePresentation.mGLView != null)
+        if (mActivePresentation != null && mActivePresentation.mGLView != null) {
             mActivePresentation.mGLView.onResume();
+            keepScreenOn(true);
+        }
 
         queueRunnable(activityResumedRunnable);
     }
@@ -494,6 +528,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
         if (displays.length > 0) {
             runOnUiThread(() -> showPresentation(displays[0]));
+            keepScreenOn(true);
             return;
         }
 
@@ -505,6 +540,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
         if (!VisionGlass.getInstance().isConnected()) {
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISCONNECTED);
+            keepScreenOn(false);
             return;
         }
 
