@@ -44,7 +44,6 @@ This repo is only available to Igalia members. If you have access to the relevan
 
  - `third_party/OVRPlatformSDK/` for Oculus (should contain a `Android` and `Include` folders)
  - `third_party/hvr/` for Huawei (should contain  `arm64-v8a`, `armeabi-v7a` and `include` folders)
- - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
  - `third_party/picoxr` [Pico OpenXR Mobile SDK](https://developer-global.pico-interactive.com/sdk?deviceId=1&platformId=3&itemId=11) (should contain `libs` folders, among other things that are not necessary for Wolvic)
  - `third_party/spaces` [for Snapdragon Spaces](https://spaces.qualcomm.com/)(should contain `libopenxr_loader.aar`)
  - `third_party/aliceimu/` for [Huawei Vision Glass](https://consumer.huawei.com/cn/wearables/vision-glass/) (should contain an `.aar` file with the IMU library for the glasses)
@@ -67,32 +66,21 @@ You can build for different devices:
 
 - **`oculusvr`**: Oculus Quest
 - **`hvr`**: Huawei VR Glasses
-- **`wavevr`**: VIVE Focus
 - **`picoxr`**: Pico 4 and (untested) Pico Neo 3
 - **`lynx`**: Lynx R1
 - **`spaces`**: Lenovo A3
 - **`visionglass`**: Huawei Vision Glass
+- **`aosp`**: MagicLeap2 (but should work for any other AOSP device using OpenXR)
 
 For testing on a non-VR device:
 
 - **`noapi`**: Runs on standard Android phones without a headset
 
-Building for Huawei and WaveVR requires access to their respective SDKs which are not included in this repo.
+Building for Huawei requires access to its SDKs which is not included in this repo.
 
 The command line version of `gradlew` requires JDK 11. If you see an error that Gradle doesn't understand your Java version, check which version of you're using by running `java -showversion` or `java -version`. You're probably using and older JDK, which won't work.
 
 *Open the project with [Android Studio](https://developer.android.com/studio/index.html)* then build and run it. Depending on what you already have installed in Android Studio, the build may fail and then may prompt you to install dependencies. Just keep doing as it suggests. To select the device to build for, go to `Tool Windows > Build Variants` and select a build variant corresponding to your device.
-
-*If you want to build Wolvic for WaveVR SDK:*
-
-Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://developer.vive.com/resources/vive-wave/download/archive/320/), and unzip it. Then, from the top-level project directory, run:
-
-```bash
-mkdir -p third_party/wavesdk
-cp wave_3.2.0_native_1/repo/com/htc/vr/wvr_client/3.2.0/wvr_client-3.2.0.aar third_party/wavesdk/wvr_client.aar
-```
-
-Make certain to set the build flavor to `wavevrDebug` in Android Studio before building the project.
 
 ## Local Development
 
