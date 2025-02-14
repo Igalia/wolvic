@@ -251,9 +251,6 @@ struct BrowserWorld::State {
     wasInGazeMode = false;
     webXRInterstialState = WebXRInterstialState::FORCED;
     widgetsYaw = vrb::Matrix::Identity();
-#if defined(WAVEVR)
-    monitor->SetPerformanceDelta(15.0);
-#endif
   }
 
   void CheckBackButton();

@@ -51,14 +51,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/WidgetResizer.cpp
            )
 
-if(WAVEVR)
-target_sources(
-    native-lib
-    PUBLIC
-    ${CMAKE_SOURCE_DIR}/src/wavevr/cpp/native-lib.cpp
-    ${CMAKE_SOURCE_DIR}/src/wavevr/cpp/DeviceDelegateWaveVR.cpp
-    )
-elseif(NOAPI)
+if(NOAPI)
 target_sources(
     native-lib
     PUBLIC
@@ -164,10 +157,6 @@ find_library( # Sets the name of the path variable.
 add_library(ovrplatform-lib SHARED IMPORTED)
 set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so )
-
-add_library(wavevr-lib SHARED IMPORTED)
-set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client-${WAVE_SDK_VERSION}/jni/${ANDROID_ABI}/libwvr_api.so )
 
 add_library(hvr-lib SHARED IMPORTED)
 set_target_properties(hvr-lib PROPERTIES IMPORTED_LOCATION
