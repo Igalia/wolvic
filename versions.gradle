@@ -53,7 +53,6 @@ versions.gson = "2.10.1"
 versions.robolectric = "4.11.1"
 versions.work = "2.8.1"
 versions.jna = "5.13.0"
-versions.wavevr = "3.2.0"
 ext.versions = versions
 
 def deps = [:]
@@ -184,10 +183,8 @@ ext.deps = deps
 
 def build_versions = [:]
 build_versions.min_sdk = 24
-build_versions.min_sdk_wave = 25
 build_versions.target_sdk = 34
 build_versions.target_sdk_oculusvr = 32
-build_versions.target_sdk_wave = 31
 build_versions.target_sdk_aosp = 29
 build_versions.target_sdk_spaces = 29
 build_versions.target_sdk_visionglass = 33
