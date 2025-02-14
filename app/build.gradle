@@ -233,33 +233,6 @@ android {
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
-        wavevr {
-            minSdkVersion build_versions.min_sdk_wave
-            targetSdkVersion build_versions.target_sdk_wave
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/include").absolutePath +
-                            " -DWAVEVR"
-                    arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON", "-DWAVE_SDK_VERSION=${versions.wavevr}"
-                }
-            }
-            applicationIdSuffix ".internal"
-        }
-
-        wavevrStore {
-            minSdkVersion build_versions.min_sdk_wave
-            targetSdkVersion build_versions.target_sdk_wave
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/include").absolutePath +
-                            " -DWAVEVR"
-                    arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON", "-DWAVE_SDK_VERSION=${versions.wavevr}"
-                }
-            }
-        }
-
         picoxr {
             dimension "platform"
             externalNativeBuild {
@@ -473,72 +446,6 @@ android {
             java.srcDirs = [
                     'src/oculusvr/java'
             ]
-        }
-
-        wavevr {
-            java.srcDirs = [
-                    'src/wavevr/java'
-            ]
-            res.srcDirs = [
-                    'src/wavevr/res'
-            ]
-            jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/jni"]
-            packagingOptions {
-                jniLibs.pickFirsts.add("lib/**/libwvr_api.so")
-                jniLibs.pickFirsts.add("lib/**/liboverlay_api.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
-                jniLibs.pickFirsts.add("lib/**/libdummy.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
-                jniLibs.pickFirsts.add("lib/**/libdummy.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
-                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
-                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
-                jniLibs.pickFirsts.add("lib/**/libsvrapi.so")
-            }
-        }
-
-        wavevrStore {
-            java.srcDirs = [
-                    'src/wavevr/java'
-            ]
-            res.srcDirs = [
-                    'src/wavevr/res'
-            ]
-            assets.srcDirs = [
-                    'src/wavevr/assets'
-            ]
-            jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client-${versions.wavevr}/jni"]
-            manifest.srcFile "src/wavevr/AndroidManifest.xml"
-            packagingOptions {
-                jniLibs.pickFirsts.add("lib/**/libwvr_api.so")
-                jniLibs.pickFirsts.add("lib/**/liboverlay_api.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
-                jniLibs.pickFirsts.add("lib/**/libdummy.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
-                jniLibs.pickFirsts.add("lib/**/libdummy.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
-                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore_component.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_runtime.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_internal_using_assimp.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_ctf_internal_common.so")
-                jniLibs.pickFirsts.add("lib/**/libvr_jni.so")
-                jniLibs.pickFirsts.add("lib/**/libvrcore.so")
-                jniLibs.pickFirsts.add("lib/**/libwvr_monitor.so")
-                jniLibs.pickFirsts.add("lib/**/libsvrapi.so")
-            }
         }
 
         hvr {
@@ -757,28 +664,6 @@ dependencies {
     visionglassImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
     visionglassImplementation 'com.huawei.agconnect:agconnect-core:1.9.1.301'
     visionglassImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
-
-    // HTC Vive
-    if (!gradle.startParameter.taskNames.isEmpty() &&
-            gradle.startParameter.taskNames.get(0).toLowerCase().contains("wavevr")) {
-        configurations.maybeCreate("default")
-        artifacts.add("default", file('wvr_client.aar'))
-
-        def aarFilename = "wvr_client"
-
-        // unzip aar
-        def unzipDir = file("${rootDir}/third_party/wavesdk/build/${aarFilename}-${versions.wavevr}")
-        def aarFile = file("${rootDir}/third_party/wavesdk/${aarFilename}.aar")
-        if (aarFile != null) {
-            copy {
-                println 'unzip ' + aarFile
-                from zipTree(aarFile)
-                into unzipDir
-            }
-            wavevrImplementation fileTree(dir: "${rootDir}/third_party/wavesdk/", include: ['*.aar'])
-            wavevrStoreImplementation fileTree(dir: "${rootDir}/third_party/wavesdk/", include: ['*.aar'])
-        }
-    }
 
     // gecko
     def branch = "nightly" // "release", "nightly" or "beta"

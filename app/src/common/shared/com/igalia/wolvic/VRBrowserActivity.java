@@ -1224,11 +1224,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     void handleBack() {
         runOnUiThread(() -> {
-            // On WAVE VR, the back button no longer seems to work.
-            if (DeviceType.isWaveBuild()) {
-                onBackPressed();
-                return;
-            }
             dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
             dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
         });
