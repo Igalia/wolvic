@@ -53,24 +53,8 @@ function mediaSessionFix() {
     });
 }
 
-document.addEventListener('fullscreenchange', (event) => {
-  if (!document.fullscreenElement) {
-    if (video) {
-        video.removeEventListener('ratechange', handleVideoUpdate);
-        video.removeEventListener('timeupdate', handleVideoUpdate);
-    }
-    video = null;
-    return;
-  }
-
-  if (document.fullscreenElement.tagName.toLowerCase() === "video") {
-    video = document.fullscreenElement;
-  } else {
-    video = document.fullscreenElement.getElementsByTagName("video")[0] || null;
-  }
-
-  if (video) {
-    logDebug("Apply MediaSession fixes for video");
+addEventListener('playing', (event) => {
+    logDebug('Playing event:', event.target.src);
+    video = event.target;
     mediaSessionFix();
-  }
-});
+}, {capture: true});
