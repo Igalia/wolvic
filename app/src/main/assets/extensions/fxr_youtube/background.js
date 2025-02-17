@@ -40,8 +40,9 @@ function redirect(details) {
         }
 
         // Add app=desktop to the query string if it's not already there. Don't do it for
-        // the consent page as it breaks the request.
-        if (!uri.searchParams.has("app") && !uri.hostname.startsWith("consent.youtube.com")) {
+        // the consent page as it breaks the request. Same for the service worker.
+        if (!uri.searchParams.has("app") && !uri.hostname.startsWith("consent.youtube.com")
+            && !uri.pathname.startsWith("/sw.js")) {
             uri.searchParams.append('app', 'desktop');
             return { redirectUrl: uri.href };
         }
