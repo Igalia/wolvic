@@ -107,6 +107,10 @@ def isWebKitAvailable = {
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
 
+// Version names for Gecko and Chromium releases.
+def GECKO_RELEASE_VERSION_NAME = '1.8.1'
+def CHROMIUM_RELEASE_VERSION_NAME = '1.2.1'
+
 android {
     namespace 'com.igalia.wolvic'
     compileSdkVersion build_versions.compile_sdk
@@ -195,10 +199,22 @@ android {
     }
 
     applicationVariants.configureEach { variant ->
+        // Use different version names for release builds for each backend.
+        def backend = variant.productFlavors.get(2).name
         variant.outputs.each { output ->
+            if (variant.buildType.name == "release") {
+                if (backend == "gecko") {
+                    output.versionNameOverride = GECKO_RELEASE_VERSION_NAME
+                } else if (backend == "chromium") {
+                    output.versionNameOverride = CHROMIUM_RELEASE_VERSION_NAME
+                }
+            }
             if (shouldUseStaticVersionCode()) {
                 // Overrides any build created with a generated version code from now to 2115
                 output.versionCodeOverride = 1_99_365_2300
+            } else if (variant.productFlavors[0].name.toLowerCase().startsWith('picoxr')) {
+                // PICO store requires a slightly different version code.
+                output.versionCodeOverride = generatedVersionCode + 1900000000
             }
         }
     }
