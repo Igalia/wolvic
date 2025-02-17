@@ -20,16 +20,16 @@ import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 
 public class OpenTelemetry implements ITelemetry {
-    private final Application application;
-    private OpenTelemetryRum rum;
-    private OpenTelemetryRumBuilder rumBuilder;
-    private final String instrumentationScopeName = BuildConfig.APPLICATION_ID;
-    private final String instrumentationScopeVersion = "1.0.0";
-    private final Executor diskIOExecutor;
+    private final Application mApplication;
+    private OpenTelemetryRum mRUM;
+    private OpenTelemetryRumBuilder mRUMBuilder;
+    private final String INSTRUMENTATION_SCOPE_NAME = BuildConfig.APPLICATION_ID;
+    private final String INSTRUMENTATION_SCOPE_VERSION = "1.0.0";
+    private final Executor mDiskIOExecutor;
 
     public OpenTelemetry(Application app) {
-        application = app;
-        diskIOExecutor = ((VRBrowserApplication) application).getExecutors().diskIO();
+        mApplication = app;
+        mDiskIOExecutor = ((VRBrowserApplication) mApplication).getExecutors().diskIO();
     }
 
     private void initializeOpenTelemetryAndroid() {
@@ -40,36 +40,36 @@ public class OpenTelemetry implements ITelemetry {
                 .build();
         OtelRumConfig config = new OtelRumConfig()
                 .setDiskBufferingConfiguration(diskBufferingConfiguration);
-        rumBuilder = OpenTelemetryRum.builder(application, config)
+        mRUMBuilder = OpenTelemetryRum.builder(mApplication, config)
                 .addSpanExporterCustomizer(exporter -> LoggingSpanExporter.create())
                 .addInstrumentation(new SessionInstrumentation())
                 .addInstrumentation(new ActivityLifecycleInstrumentation());
         try {
-            rum = rumBuilder.build();
+            mRUM = mRUMBuilder.build();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void runOnDiskIO(Runnable runnable) { diskIOExecutor.execute(runnable); }
+    private void runOnDiskIO(Runnable runnable) { mDiskIOExecutor.execute(runnable); }
 
     @Override
     public void start() {
-        assert rum == null;
+        assert mRUM == null;
         initializeOpenTelemetryAndroid();
     }
 
     @Override
     public void stop() {
-        rum = null;
-        rumBuilder = null;
+        mRUM = null;
+        mRUMBuilder = null;
     }
 
     @Override
     public void customEvent(String name) {
-        assert rum != null;
+        assert mRUM != null;
         runOnDiskIO(() -> {
-            rum.getOpenTelemetry().getTracer(instrumentationScopeName, instrumentationScopeVersion)
+            mRUM.getOpenTelemetry().getTracer(INSTRUMENTATION_SCOPE_NAME, INSTRUMENTATION_SCOPE_VERSION)
                     .spanBuilder(name)
                     .startSpan()
                     .end();
@@ -78,9 +78,9 @@ public class OpenTelemetry implements ITelemetry {
 
     @Override
     public void customEvent(String name, Bundle bundle) {
-        assert rum != null;
+        assert mRUM != null;
         runOnDiskIO(() -> {
-            SpanBuilder spanBuilder = rum.getOpenTelemetry().getTracer(instrumentationScopeName, instrumentationScopeVersion)
+            SpanBuilder spanBuilder = mRUM.getOpenTelemetry().getTracer(INSTRUMENTATION_SCOPE_NAME, INSTRUMENTATION_SCOPE_VERSION)
                     .spanBuilder(name);
             for (String key : bundle.keySet()) {
                 spanBuilder.setAttribute(key, bundle.get(key).toString());
