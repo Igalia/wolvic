@@ -68,7 +68,6 @@ deps.gecko_view = gecko_view
 
 def android_components = [:]
 android_components.telemetry = "org.mozilla.components:service-telemetry:$versions.android_components"
-android_components.glean = "org.mozilla.components:service-glean:$versions.android_components"
 android_components.browser_errorpages = "org.mozilla.components:browser-errorpages:$versions.android_components"
 android_components.browser_state = "org.mozilla.components:browser-state:$versions.android_components"
 android_components.browser_storage = "org.mozilla.components:browser-storage-sync:$versions.android_components"
