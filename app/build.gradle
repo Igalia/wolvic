@@ -7,15 +7,12 @@ plugins {
 apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
-apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 // Apply AGConnect plugin only for Huawei builds
 if (getGradle().getStartParameter().getTaskRequests().toString() =~ /[Hh]vr/
         || getGradle().getStartParameter().getTaskRequests().toString() =~ /[Vv]isionglass/) {
     apply plugin: 'com.huawei.agconnect'
 }
-
-deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-native-forUnitTests:$project.ext.glean_version"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -102,10 +99,6 @@ def isWebKitAvailable = {
     }
     return false
 }
-
-// Glean: Generate markdown docs for the collected metrics.
-ext.gleanGenerateMarkdownDocs = true
-ext.gleanDocsDirectory = "$rootDir/docs"
 
 // Version names for Gecko and Chromium releases.
 def GECKO_RELEASE_VERSION_NAME = '1.8.1'
@@ -603,7 +596,6 @@ dependencies {
     implementation deps.android_components.feature_webcompat
     implementation deps.android_components.feature_webcompat_reporter
     implementation deps.android_components.feature_addons
-    implementation deps.android_components.glean
     implementation deps.android_components.preference
 
     // Kotlin dependency
@@ -635,7 +627,6 @@ dependencies {
     testImplementation deps.android_components.support_test_appservices
     jnaForTest deps.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
-    testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
 
     // MeetKai
