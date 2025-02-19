@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.31"
+    alias libs.plugins.jetbrains.python.envs
 }
 
 apply plugin: 'com.android.application'
@@ -555,97 +555,97 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Common
-    implementation deps.lifecycle.runtime
-    implementation deps.lifecycle.viewmodel
-    implementation deps.lifecycle.java8
-    implementation deps.lifecycle.process
-    implementation deps.support.annotations
-    implementation deps.support.app_compat
-    implementation deps.support.recyclerview
-    implementation deps.support.cardview
-    implementation deps.support.design
-    implementation deps.support.vector_drawable
-    implementation deps.support.viewpager2
-    implementation deps.constraint_layout
-    implementation deps.gson
-    implementation deps.room.runtime
-    annotationProcessor deps.room.compiler
+    implementation libs.lifecycle.runtime
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.java8
+    implementation libs.lifecycle.process
+    implementation libs.support.annotations
+    implementation libs.support.appcompat
+    implementation libs.support.recyclerview
+    implementation libs.support.cardview
+    implementation libs.support.design
+    implementation libs.support.vectordrawable
+    implementation libs.support.viewpager2
+    implementation libs.constraintlayout
+    implementation libs.gson
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
 
     // Android Components
-    implementation deps.android_components.browser_errorpages
-    implementation deps.android_components.browser_state
-    implementation deps.android_components.browser_storage
-    implementation deps.android_components.browser_domains
-    implementation deps.android_components.browser_icons
-    implementation deps.android_components.feature_findinpage
-    implementation deps.android_components.feature_search
-    implementation deps.android_components.feature_toolbar
-    implementation deps.android_components.service_accounts
-    implementation deps.android_components.service_sync_logins
-    implementation deps.android_components.mozilla_service_location
-    implementation deps.android_components.ui_autocomplete
-    implementation deps.android_components.concept_engine
-    implementation deps.android_components.concept_fetch
-    implementation deps.android_components.lib_fetch
-    implementation deps.android_components.lib_dataprotect
-    implementation deps.android_components.support_rustlog
-    implementation deps.android_components.support_rusthttp
-    implementation deps.android_components.support_webextensions
-    implementation deps.android_components.support_ktx
-    implementation deps.android_components.feature_accounts
-    implementation deps.android_components.feature_webcompat
-    implementation deps.android_components.feature_webcompat_reporter
-    implementation deps.android_components.feature_addons
-    implementation deps.android_components.preference
+    implementation libs.androidcomponents.browser.errorpages
+    implementation libs.androidcomponents.browser.state
+    implementation libs.androidcomponents.browser.storage
+    implementation libs.androidcomponents.browser.domains
+    implementation libs.androidcomponents.browser.icons
+    implementation libs.androidcomponents.feature.findinpage
+    implementation libs.androidcomponents.feature.search
+    implementation libs.androidcomponents.feature.toolbar
+    implementation libs.androidcomponents.service.accounts
+    implementation libs.androidcomponents.service.sync.logins
+    implementation libs.androidcomponents.mozilla.service.location
+    implementation libs.androidcomponents.ui.autocomplete
+    implementation libs.androidcomponents.concept.engine
+    implementation libs.androidcomponents.concept.fetch
+    implementation libs.androidcomponents.lib.fetch
+    implementation libs.androidcomponents.lib.dataprotect
+    implementation libs.androidcomponents.support.rustlog
+    implementation libs.androidcomponents.support.rusthttp
+    implementation libs.androidcomponents.support.webextensions
+    implementation libs.androidcomponents.support.ktx
+    implementation libs.androidcomponents.feature.accounts
+    implementation libs.androidcomponents.feature.webcompat
+    implementation libs.androidcomponents.feature.webcompat.reporter
+    implementation libs.androidcomponents.feature.addons
+    implementation libs.support.preference
 
     // Kotlin dependency
-    implementation deps.kotlin.stdlib
-    implementation deps.kotlin.coroutines
-    implementation deps.kotlin.coroutines_jdk8
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.coroutines
+    implementation libs.kotlin.coroutines.jdk8
 
     // DiskLRUCache used to cache snapshots
-    implementation deps.disklrucache.disklrucache
+    implementation libs.disklrucache
 
     // Color picker library
-    implementation deps.colorpicker
+    implementation libs.colorpicker
 
     // Required for targeting S+
-    implementation deps.work.runtime
-    implementation deps.work.runtime_ktx
+    implementation libs.work.runtime
+    implementation libs.work.runtime.ktx
 
     // OpenXR standard loader
-    implementation 'org.khronos.openxr:openxr_loader_for_android:1.0.34'
+    implementation libs.openxrloader
 
     // Testing
-    androidTestImplementation deps.atsl.runner
-    androidTestImplementation deps.atsl.junit
-    androidTestImplementation deps.espresso.core
-    testImplementation deps.junit
-    testImplementation deps.atsl.core
-    testImplementation deps.robolectric
-    testImplementation deps.android_components.support_test
-    testImplementation deps.android_components.support_test_appservices
-    jnaForTest deps.jna
+    androidTestImplementation libs.atsl.runner
+    androidTestImplementation libs.atsl.junit
+    androidTestImplementation libs.espresso.core
+    testImplementation libs.junit
+    testImplementation libs.atsl.core
+    testImplementation libs.robolectric
+    testImplementation libs.androidcomponents.support.test
+    testImplementation libs.androidcomponents.support.test.appservices
+    jnaForTest libs.jna
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
-    testImplementation deps.work.testing
+    testImplementation libs.work.testing
 
     // MeetKai
     implementation fileTree(dir: "${project.rootDir}/libs/meetkai/", include: ['*.aar'])
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'net.lingala.zip4j:zip4j:2.11.5'
-    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation libs.okhttp
+    implementation libs.zip4j
+    implementation libs.apache.commonsmath3
 
     // AOSP
-    aospImplementation 'androidx.games:games-activity:3.0.5'
+    aospImplementation libs.games.activity
 
     // HVR
     hvrImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
-    hvrImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
-    hvrImplementation 'com.huawei.agconnect:agconnect-core:1.9.1.301'
-    hvrImplementation 'com.huawei.hms:hianalytics:6.3.2.300'
-    hvrImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
-    hvrImplementation 'com.huawei.hms:location:6.2.0.300'
-    hvrImplementation 'com.huawei.hms:push:6.5.0.300'
+    hvrImplementation libs.huawei.agconnect.core
+    hvrImplementation libs.huawei.agconnect.core.harmony
+    hvrImplementation libs.huawei.hms.hianaalytics
+    hvrImplementation libs.huawei.hms.location
+    hvrImplementation libs.huawei.hms.mlcomputervoiceasr
+    hvrImplementation libs.huawei.hms.push
 
     // Snapdragon Spaces
     spacesImplementation fileTree(dir: "${project.rootDir}/third_party/spaces", include: ['*.aar'])
@@ -653,9 +653,9 @@ dependencies {
     // Vision Glass
     visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/aliceimu/", include: ['*.aar'])
     visionglassImplementation fileTree(dir: "${project.rootDir}/third_party/hvr", include: ['*.jar'])
-    visionglassImplementation 'com.huawei.agconnect:agconnect-core-harmony:1.1.0.300'
-    visionglassImplementation 'com.huawei.agconnect:agconnect-core:1.9.1.301'
-    visionglassImplementation 'com.huawei.hms:ml-computer-voice-asr:3.1.0.300'
+    visionglassImplementation libs.huawei.agconnect.core
+    visionglassImplementation libs.huawei.agconnect.core.harmony
+    visionglassImplementation libs.huawei.hms.mlcomputervoiceasr
 
     // gecko
     def branch = "nightly" // "release", "nightly" or "beta"
