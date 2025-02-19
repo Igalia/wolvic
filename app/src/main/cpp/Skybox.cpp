@@ -96,6 +96,7 @@ struct Skybox::State {
   }
 
   void LoadGeometry() {
+    VRB_LOG("Skybox::LoadGeometry() - %s", basePath.c_str());
     LoadTask task = [=](CreationContextPtr &aContext) -> GroupPtr {
       std::array<GLfloat, 24> cubeVertices{
           -1.0f, 1.0f, 1.0f, // 0
@@ -165,6 +166,7 @@ struct Skybox::State {
   }
 
   void LoadLayer() {
+    VRB_LOG("Skybox::LoadLayer() - %s %d", basePath.c_str(), layerTextureHandle);
     if (basePath.empty() || layerTextureHandle == 0) {
       return;
     }
@@ -178,6 +180,7 @@ struct Skybox::State {
 
 void
 Skybox::Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aBasePath, const std::string& aExtension) {
+  VRB_LOG("Skybox::Load() - %s (current) %s (new)", m.basePath.c_str(), aBasePath.c_str());
   if (m.basePath == aBasePath) {
     return;
   }
@@ -283,6 +286,10 @@ Skybox::ValidateCustomSkyboxAndFindFileExtension(const std::string& aBasePath) {
 
 SkyboxPtr
 Skybox::Create(vrb::CreationContextPtr aContext, const VRLayerCubePtr& aLayer) {
+  VRB_LOG("Skybox::Create()");
+  if (aLayer == nullptr) {
+    VRB_ERROR("Skybox::Create() - Layer is null");
+  }
   SkyboxPtr result = std::make_shared<vrb::ConcreteClass<Skybox, Skybox::State> >(aContext);
   result->m.layer = aLayer;
   result->m.Initialize();

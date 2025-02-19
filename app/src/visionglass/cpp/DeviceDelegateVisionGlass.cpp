@@ -120,6 +120,7 @@ struct DeviceDelegateVisionGlass::State {
 
 DeviceDelegateVRGlassPtr
 DeviceDelegateVisionGlass::Create(vrb::RenderContextPtr& aContext) {
+  VRB_LOG("DeviceDelegateVisionGlass::Create()");
   DeviceDelegateVRGlassPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateVisionGlass, DeviceDelegateVisionGlass::State > > ();
   result->m.context = aContext;
   result->m.Initialize();
