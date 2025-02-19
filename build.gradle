@@ -4,10 +4,10 @@ buildscript {
     apply from: 'versions.gradle'
     addRepos(repositories)
     dependencies {
-        classpath "com.android.tools.build:gradle:$versions.android_gradle_plugin"
-        classpath 'com.android.tools:r8:8.7.18'
-        classpath "$deps.kotlin.plugin"
-        classpath 'com.huawei.agconnect:agcp:1.9.1.301'
+        classpath libs.agp
+        classpath libs.r8
+        classpath libs.kotlin.plugin
+        classpath libs.huawei.agconnect.agcp
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
