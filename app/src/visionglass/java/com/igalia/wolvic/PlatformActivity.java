@@ -19,6 +19,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
@@ -75,6 +77,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static final String HUAWEI_USB_PERMISSION = "com.huawei.usblib.USB_PERMISSION";
+    public static final int VISION_GLASS_VENDOR_ID = 18455;
+    public static final int VISION_GLASS_PRODUCT_ID = 16962;
 
     private boolean mIsAskingForPermission;
     private PhoneUIViewModel mViewModel;
@@ -178,10 +182,21 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(LOGTAG, "USB permission broadcast; waiting for permission: " + mIsAskingForPermission + "; intent: " + intent.toString());
+            if (HUAWEI_USB_PERMISSION.equals(intent.getAction())) {
+                Log.d("MainActivity", "USB permission broadcast; waiting for permission: " + mIsAskingForPermission + "; intent: " + intent.toString());
 
-            mIsAskingForPermission = false;
-            initVisionGlass();
+                mIsAskingForPermission = false;
+                initVisionGlass();
+            } else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {
+                Log.d("MainActivity", "USB device attached");
+                UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                if (device != null && device.getVendorId() == VISION_GLASS_VENDOR_ID && device.getProductId() == VISION_GLASS_PRODUCT_ID) {
+                    Log.d("MainActivity", "USB device attached: " + device.getDeviceName());
+                    if (!VisionGlass.getInstance().hasUsbPermission()) {
+                        VisionGlass.getInstance().requestUsbPermission();
+                    }
+                }
+            }
         }
     };
 
@@ -206,6 +221,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         // Alternatively: android.hardware.usb.action.USB_DEVICE_ATTACHED, USB_DEVICE_DETACHED.
         IntentFilter usbPermissionFilter = new IntentFilter();
         usbPermissionFilter.addAction(HUAWEI_USB_PERMISSION);
+        usbPermissionFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(mUsbPermissionReceiver, usbPermissionFilter, Context.RECEIVER_NOT_EXPORTED);
         } else {
