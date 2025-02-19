@@ -933,6 +933,7 @@ BrowserWorld::WasButtonAppPressed() {
 void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   ASSERT_ON_RENDER_THREAD();
+  VRB_LOG("BrowserWorld::RegisterDeviceDelegate");
   DeviceDelegatePtr previousDevice = std::move(m.device);
   m.device = std::move(aDelegate);
   if (m.device) {
@@ -1414,6 +1415,7 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
 void
 BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   ASSERT_ON_RENDER_THREAD();
+  VRB_LOG("Adding widget with handle %d", aHandle);
   if (m.GetWidget(aHandle)) {
     VRB_LOG("Widget with handle %d already added, updating it.", aHandle);
     UpdateWidget(aHandle, aPlacement);
@@ -1463,6 +1465,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
 void
 BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   ASSERT_ON_RENDER_THREAD();
+  VRB_LOG("Updating widget with handle %d", aHandle);
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
       VRB_ERROR("Can't find Widget with handle: %d", aHandle);
@@ -1834,6 +1837,7 @@ BrowserWorld::Create() {
   result->m.self = result;
   result->m.surfaceObserver = std::make_shared<SurfaceObserver>(result->m.self);
   result->m.context->GetSurfaceTextureFactory()->AddGlobalObserver(result->m.surfaceObserver);
+  VRB_LOG("BrowserWorld created");
   return result;
 }
 
@@ -2073,10 +2077,13 @@ BrowserWorld::DrawSplashAnimation(device::Eye aEye) {
 void
 BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExtension) {
   ASSERT_ON_RENDER_THREAD();
+  VRB_LOG("BrowserWorld::CreateSkyBox - Creating skybox with path: %s", aBasePath.c_str());
   vrb::PausePerformanceMonitor pauseMonitor(*m.monitor);
   const bool empty = aBasePath == "cubemap/void";
   if (empty) {
+    VRB_LOG("BrowserWorld::CreateSkyBox - Removing skybox");
     if (m.skybox) {
+      VRB_LOG("BrowserWorld::CreateSkyBox - Removing skybox layer");
       VRLayerCubePtr layer = m.skybox->GetLayer();
       if (layer) {
         m.device->DeleteLayer(layer);
@@ -2106,6 +2113,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 
   const int32_t size = 1024;
   if (m.skybox) {
+    VRB_LOG("BrowserWorld::CreateSkyBox - Updating skybox");
     m.skybox->SetVisible(true);
     if (m.skybox->GetLayer() && (m.skybox->GetLayer()->GetWidth() != size || m.skybox->GetLayer()->GetFormat() != glFormat)) {
       VRLayerCubePtr oldLayer = m.skybox->GetLayer();
@@ -2115,6 +2123,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     }
     m.skybox->Load(m.loader, aBasePath, extension);
   } else {
+    VRB_LOG("BrowserWorld::CreateSkyBox - Creating skybox");
     VRLayerCubePtr layer = m.device->CreateLayerCube(size, size, glFormat);
     m.skybox = Skybox::Create(m.create, layer);
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());

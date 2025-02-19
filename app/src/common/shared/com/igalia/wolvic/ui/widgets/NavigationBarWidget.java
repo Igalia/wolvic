@@ -749,6 +749,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mProjectionMenu.setParentWidget(this);
             mProjectionMenuPlacement = new WidgetPlacement(getContext());
             mWidgetManager.addWidget(mProjectionMenu);
+            mWidgetManager.addWidget(mProjectionMenu);
             mProjectionMenu.setDelegate((projection)-> {
                 if (mViewModel.getIsInVRVideo().getValue().get()) {
                     if (projection == VIDEO_PROJECTION_NONE) {

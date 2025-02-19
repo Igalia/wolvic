@@ -402,6 +402,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     protected void initializeWidgets() {
+        Log.d(LOGTAG, "VRBrowserActivity initializeWidgets");
         UISurfaceTextureRenderer.setRenderActive(true);
 
         // Empty widget just for handling focus on empty space
@@ -1649,6 +1650,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return mWidgetHandleIndex++;
     }
 
+    @Override
+    public void restoreWidgets()  {
+        Log.d(LOGTAG, "VRBrowserActivity restoreWidgets");
+        for (Widget aWidget : mWidgets.values()) {
+            final int handle = aWidget.getHandle();
+            final WidgetPlacement clone = aWidget.getPlacement().clone();
+            queueRunnable(() -> addWidgetNative(handle, clone));
+        }
+    }
 
     public void addWidgets(final Iterable<? extends Widget> aWidgets) {
         for (Widget widget : aWidgets) {
