@@ -27,3 +27,4 @@ prefs:
   browser.gesture.pinch.out.shift: ''
   browser.gesture.pinch.in.shift: ''
   apz.one_touch_pinch.enabled: false
+  media.peerconnection.ice.obfuscate_host_addresses: true
