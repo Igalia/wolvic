@@ -659,8 +659,8 @@ dependencies {
 
     // gecko
     def branch = "nightly" // "release", "nightly" or "beta"
-    geckoImplementation deps.gecko_view."${branch}_x86_64"
-    geckoImplementation deps.gecko_view."${branch}_arm64"
+    geckoImplementation libs.geckoview."${branch}".x64
+    geckoImplementation libs.geckoview."${branch}".arm64
     configurations.all {
          resolutionStrategy.capabilitiesResolution.withCapability('org.mozilla.geckoview:geckoview') {
             def abi = getName().toLowerCase().contains('x64') ? 'x86_64' : 'arm64'

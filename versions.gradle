@@ -20,28 +20,6 @@
  * Shared file between builds so that they can all use the same dependencies and
  * maven repositories.
  **/
-ext.deps = [:]
-def versions = [:]
-// GeckoView versions can be found here:
-// https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view_release = "128.0.20240725162350"
-versions.gecko_view_nightly = "128.0.20240609205151"
-versions.gecko_view_beta = "128.0.20240628091536"
-ext.versions = versions
-
-def deps = [:]
-
-def gecko_view = [:]
-gecko_view.nightly_arm64 = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a:$versions.gecko_view_nightly"
-gecko_view.nightly_x86_64 = "org.mozilla.geckoview:geckoview-nightly-x86_64:$versions.gecko_view_nightly"
-gecko_view.beta_arm64 = "org.mozilla.geckoview:geckoview-beta-arm64-v8a:$versions.gecko_view_beta"
-gecko_view.beta_x86_64 = "org.mozilla.geckoview:geckoview-beta-x86_64:$versions.gecko_view_beta"
-gecko_view.release_arm64 = "org.mozilla.geckoview:geckoview-arm64-v8a:$versions.gecko_view_release"
-gecko_view.release_x86_64 = "org.mozilla.geckoview:geckoview-x86_64:$versions.gecko_view_release"
-deps.gecko_view = gecko_view
-
-ext.deps = deps
-
 def build_versions = [:]
 build_versions.min_sdk = 24
 build_versions.target_sdk = 34
@@ -52,8 +30,6 @@ build_versions.target_sdk_visionglass = 33
 build_versions.compile_sdk = 35
 build_versions.build_tools = "35.0.0"
 ext.build_versions = build_versions
-
-ext.deps = deps
 
 def addRepos(RepositoryHandler handler) {
     handler.google()
