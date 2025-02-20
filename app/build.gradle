@@ -106,11 +106,11 @@ def CHROMIUM_RELEASE_VERSION_NAME = '1.2.1'
 
 android {
     namespace 'com.igalia.wolvic'
-    compileSdkVersion build_versions.compile_sdk
+    compileSdkVersion 35
     defaultConfig {
         applicationId "com.igalia.wolvic"
-        minSdkVersion build_versions.min_sdk
-        targetSdkVersion build_versions.target_sdk
+        minSdkVersion 24
+        targetSdkVersion 34
         versionCode generatedVersionCode
         versionName "1.8.1"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
@@ -217,7 +217,7 @@ android {
         // Supported platforms
         oculusvr {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_oculusvr
+            targetSdkVersion 32
             externalNativeBuild {
                 cmake {
                     cppFlags "-DOCULUSVR -DOPENXR"
@@ -249,7 +249,7 @@ android {
 
         spaces {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_spaces
+            targetSdkVersion 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -260,7 +260,7 @@ android {
 
         aosp {
             dimension "platform"
-            targetSdkVersion build_versions.target_sdk_aosp
+            targetSdkVersion 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DAOSP -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -304,7 +304,7 @@ android {
             applicationId "com.igalia.wolvic"
             applicationIdSuffix ".visionglass"
             resValue "string", "app_name", "Wolvic Vision"
-            targetSdkVersion build_versions.target_sdk_visionglass
+            targetSdkVersion 33
             externalNativeBuild {
                 cmake {
                     cppFlags " -DVISIONGLASS"
