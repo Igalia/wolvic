@@ -35,6 +35,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import com.igalia.wolvic.PlatformActivityPlugin;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -64,7 +65,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener,
+public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, PlatformActivityPlugin.TrayDelegate,
         DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -691,6 +692,34 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mTrayViewModel.setIsKeyboardVisible(aWidget.isVisible());
     }
+
+    // PlatformActivityPlugin.TrayDelegate
+    @Override
+    public void onAddWindowClicked() {
+        mBinding.addwindowButton.performClick();
+    }
+
+    @Override
+    public void onPrivateBrowsingClicked() {
+        mBinding.privateButton.performClick();
+    }
+
+    @Override
+    public void onBookmarksClicked() {
+        mBinding.bookmarksButton.performClick();
+    }
+
+    @Override
+    public void onDownloadsClicked() {
+        mBinding.downloadsButton.performClick();
+    }
+
+    @Override
+    public void onSettingsClicked() {
+        mBinding.settingsButton.performClick();
+    }
+
+
 
     public void showTabAddedNotification() {
         showNotification(TAB_ADDED_NOTIFICATION_ID, mBinding.tabsButton, R.string.tab_added_notification);
