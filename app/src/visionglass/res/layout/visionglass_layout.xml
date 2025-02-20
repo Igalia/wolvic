@@ -18,16 +18,8 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:elevation="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:logoAdjustViewBounds="true"
-            app:navigationIcon="@drawable/ff_logo_icon_48"
-            app:popupTheme="@style/Theme.WolvicPhone.PopupOverlay"
-            app:title="@string/app_name" />
+            app:title="@string/app_name"
+            style="@style/ToolbarStyle" />
 
         <TextView
             style="@style/TextAppearance.AppCompat.Headline"
@@ -68,62 +60,43 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/headlock_toggle_button"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
-                android:backgroundTint="@color/bg_button_checkable"
-                android:checkable="true"
-                android:checked="false"
                 android:contentDescription="@string/display_options_head_lock"
-                android:scaleType="fitCenter"
-                app:icon="@drawable/headlock_toggle_button_states"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/white"
-                app:layout_constraintEnd_toStartOf="@id/realign_button"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toStartOf="@id/realign_button"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/HeadlockToggleButtonStyle" />
 
             <com.igalia.wolvic.AlignDynamicButton
                 android:id="@+id/realign_button"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:backgroundTint="@color/azure"
-                app:iconTint="@color/white"
-                app:layout_constraintEnd_toStartOf="@id/voice_search_button"
                 app:layout_constraintStart_toEndOf="@id/headlock_toggle_button"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toStartOf="@id/voice_search_button"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/RealignButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/voice_search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
-                android:backgroundTint="@color/azure"
-                android:checkable="true"
-                android:checked="false"
                 android:contentDescription="@string/voice_search_tooltip"
-                android:scaleType="fitCenter"
-                app:icon="@drawable/ic_icon_microphone"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/white"
-                app:layout_constraintEnd_toStartOf="@id/window_distance_button"
                 app:layout_constraintStart_toEndOf="@id/realign_button"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/window_distance_button"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
-                android:backgroundTint="@color/azure"
-                android:contentDescription="@string/display_options_windows_distance"
-                android:scaleType="fitCenter"
-                app:icon="@drawable/unfold_more_24px"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/voice_search_button"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/VoiceSearchButtonStyle" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="headlock_toggle_button,realign_button,voice_search_button" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/distance_slider"
+                style="@style/DistanceSliderStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barrier" />
 
             <FrameLayout
                 android:id="@+id/touchpad_container"
@@ -134,22 +107,16 @@
                 app:layout_constraintBottom_toTopOf="@id/media_controls"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/headlock_toggle_button">
+                app:layout_constraintTop_toBottomOf="@id/distance_slider">
+
                 <View
                     android:id="@+id/touchpad"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/touchpad_ripple_bg"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                    style="@style/TouchpadStyle" />
+
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:text="@string/vision_glass_touchpad_instructions"/>
+                    style="@style/TouchpadInstructionsStyle" />
             </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/media_controls"
                 android:layout_width="match_parent"
@@ -165,8 +132,7 @@
 
                 <SeekBar
                     android:id="@+id/media_seekbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize" />
+                    style="@style/MediaSeekBarStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -175,36 +141,15 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/seek_backward_button"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        app:icon="@drawable/ic_icon_media_seek_backward"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconTint="@color/white" />
+                        style="@style/SeekBackwardButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/play_button"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        app:icon="@android:drawable/ic_media_play"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconTint="@color/white" />
+                        style="@style/PlayButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/seek_forward_button"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        app:icon="@drawable/ic_icon_media_seek_forward"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconTint="@color/white" />
+                        style="@style/SeekForwardButtonStyle" />
 
                     <Space
                         android:layout_width="16dp"
@@ -213,13 +158,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/mute_button"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:layout_width="64dp"
-                        android:layout_height="match_parent"
-                        app:icon="@drawable/ic_icon_media_volume"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconTint="@color/white" />
+                        style="@style/MuteButtonStyle" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -237,16 +176,9 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/back_button"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_weight="3"
-                    android:backgroundTint="@color/azure"
                     android:contentDescription="@string/back_tooltip"
-                    android:scaleType="fitCenter"
-                    app:icon="@drawable/ic_icon_back"
-                    app:iconGravity="textStart"
-                    app:iconPadding="0dp"
-                    app:iconTint="@color/white" />
+                    android:layout_weight="3"
+                    style="@style/BackButtonButtonStyle" />
 
                 <Space
                     android:layout_width="16dp"
@@ -254,17 +186,11 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/home_button"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:backgroundTint="@color/azure"
                     android:contentDescription="@string/home_tooltip"
-                    android:scaleType="fitCenter"
-                    app:icon="@drawable/ic_icon_home"
-                    app:iconGravity="textStart"
-                    app:iconPadding="0dp"
-                    app:iconTint="@color/white" />
+                    style="@style/HomeButtonStyle" />
 
             </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </layout>

@@ -35,7 +35,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 
 import androidx.annotation.Keep;
@@ -47,6 +46,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.slider.Slider;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.usblib.DisplayMode;
 import com.huawei.usblib.DisplayModeCallback;
@@ -87,7 +87,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private boolean mSwitchedTo3DMode = false;
     private AlignPhoneDialogFragment mAlignDialogFragment;
     private AlignNotificationUIDialog mAlignNotificationUIDialog;
-    private PopupWindow mWindowDistancePopupWindow;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -515,9 +514,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     }
 
     private void updateDisplays() {
-        if (mWindowDistancePopupWindow.isShowing())
-            mWindowDistancePopupWindow.dismiss();
-
         // a display may be added before we receive the USB permission
         if (!VisionGlass.getInstance().hasUsbPermission()) {
             Log.d(LOGTAG, "updateDisplays: no USB permissions yet");
@@ -638,35 +634,14 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 mDelegate.setLockMode(mBinding.headlockToggleButton.isChecked() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
             });
 
-            ContextThemeWrapper themedContext = new ContextThemeWrapper(PlatformActivity.this, R.style.Theme_WolvicPhone);
-            LayoutInflater inflater = getLayoutInflater().cloneInContext(themedContext);
-            View popupView = inflater.inflate(R.layout.window_distance_popup_layout, null);
-
-            final int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-            final int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-            final boolean focusable = true; // Let taps outside the popup also dismiss it
-            mWindowDistancePopupWindow = new PopupWindow(popupView, width, height, focusable);
-
-            SeekBar seekBar = popupView.findViewById(R.id.windowDistancePopupSeekBar);
-            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            Slider distanceSlider = findViewById(R.id.distance_slider);
+            float maxValue = distanceSlider.getValueTo();
+            distanceSlider.setValue(settings.getWindowDistance() * maxValue);
+            distanceSlider.addOnChangeListener(new Slider.OnChangeListener() {
                 @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    settings.setWindowDistance((float) progress / seekBar.getMax());
+                public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                    settings.setWindowDistance((float) value / maxValue);
                 }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {}
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    // Automatically hide the popup after the user has selected a value.
-                    mWindowDistancePopupWindow.dismiss();
-                }
-            });
-
-            mBinding.windowDistanceButton.setOnClickListener(v -> {
-                seekBar.setProgress((int) (settings.getWindowDistance() * seekBar.getMax()));
-                mWindowDistancePopupWindow.showAsDropDown(v, 0, 0);
             });
 
             mBinding.playButton.setOnClickListener(v -> {

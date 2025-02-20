@@ -15,6 +15,137 @@
         <item name="backgroundColor">@color/midnight</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.Button.Rounded" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Slider" parent="">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="BaseToolbarButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:backgroundTint">@color/bg_button_checkable</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Button.Rounded</item>"
+    </style>
+
+    <style name="BaseFooterButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:backgroundTint">@color/asphalt</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Button.Rounded</item>"
+    </style>
+
+    <style name="BaseBorderlessButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/white</item>
+    </style>
+
+    <style name="BaseMediaButton" parent="BaseBorderlessButton">
+        <item name="android:layout_weight">1</item>
+    </style>
+
+
+    <!-- Specific Styles -->
+    <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="logoAdjustViewBounds">true</item>
+        <item name="navigationIcon">@drawable/ff_logo_icon_48</item>
+        <item name="popupTheme">@style/Theme.WolvicPhone.PopupOverlay</item>
+    </style>
+
+    <style name="HeadlockToggleButtonStyle" parent="BaseToolbarButton">
+        <item name="icon">@drawable/headlock_toggle_button_states</item>
+        <item name="android:checkable">true</item>
+        <item name="android:checked">false</item>
+    </style>
+
+    <style name="RealignButtonStyle" parent="BaseToolbarButton">
+    </style>
+
+    <style name="VoiceSearchButtonStyle" parent="BaseToolbarButton">
+        <item name="icon">@drawable/ic_icon_microphone</item>
+    </style>
+
+    <style name="BackButtonButtonStyle" parent="BaseFooterButton">
+        <item name="icon">@drawable/ic_icon_back</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="HomeButtonStyle" parent="BaseFooterButton">
+        <item name="icon">@drawable/ic_icon_home</item>
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="DistanceSliderStyle" parent="Widget.MaterialComponents.Slider">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Slider</item>
+        <item name="android:valueFrom">0.0</item>
+        <item name="android:valueTo">100.0</item>
+        <item name="android:stepSize">10.0</item>
+    </style>
+
+    <style name="TouchpadStyle">
+        <item name="android:background">@drawable/touchpad_ripple_bg</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="TouchpadInstructionsStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:text">@string/vision_glass_touchpad_instructions</item>
+    </style>
+
+    <style name="MediaSeekBarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+    </style>
+
+    <style name="SeekBackwardButtonStyle" parent="BaseMediaButton">
+        <item name="icon">@drawable/ic_icon_media_seek_backward</item>
+    </style>
+
+    <style name="PlayButtonStyle" parent="BaseMediaButton">
+        <item name="android:layout_weight">2</item>
+        <item name="icon">@android:drawable/ic_media_play</item>
+    </style>
+
+    <style name="SeekForwardButtonStyle" parent="BaseMediaButton">
+        <item name="icon">@drawable/ic_icon_media_seek_forward</item>
+    </style>
+
+    <style name="MuteButtonStyle" parent="BaseBorderlessButton">
+        <item name="android:layout_width">64dp</item>
+        <item name="icon">@drawable/ic_icon_media_volume</item>
+    </style>
+
+
     <style name="Theme.WolvicPhone.Bar" parent="Widget.MaterialComponents.Toolbar.Primary" />
 
     <style name="Theme.WolvicPhone.PopupOverlay" parent="ThemeOverlay.MaterialComponents" />
