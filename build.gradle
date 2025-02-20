@@ -1,8 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    apply from: 'versions.gradle'
-    addRepos(repositories)
     dependencies {
         classpath libs.agp
         classpath libs.r8
@@ -14,11 +12,18 @@ buildscript {
     }
     repositories {
         google()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 
 allprojects {
-    addRepos(repositories)
+    repositories {
+        google()
+        maven { url 'https://maven.mozilla.org/maven2' }
+        maven { url 'https://developer.huawei.com/repo/' }
+        maven { url 'https://storage.googleapis.com/r8-releases/raw' }
+    }
 }
 
 tasks.register("clean", Delete) {
