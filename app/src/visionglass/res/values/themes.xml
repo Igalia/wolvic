@@ -20,6 +20,11 @@
         <item name="cornerSize">32dp</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.Button.Circle" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="ThemeOverlay.App.Slider" parent="">
         <item name="colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -37,11 +42,23 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Button.Rounded</item>"
     </style>
 
+    <style name="BaseTrayButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">58dp</item>
+        <item name="android:layout_height">58dp</item>
+        <item name="android:backgroundTint">@color/bg_button_checkable</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Button.Circle</item>"
+    </style>
+
     <style name="BaseFooterButton" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:backgroundTint">@color/asphalt</item>
+        <item name="android:backgroundTint">@color/bg_button_checkable</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">0dp</item>
         <item name="iconTint">@color/white</item>
@@ -96,6 +113,35 @@
         <item name="icon">@drawable/ic_icon_home</item>
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="TrayStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:background">@drawable/tray_background_rounded</item>
+    </style>
+
+    <style name="NewWindowButtonStyle" parent="BaseTrayButton">"
+        <item name="icon">@drawable/ic_icon_tray_newwindow</item>
+    </style>
+
+    <style name="PrivateWindowButtonStyle" parent="BaseTrayButton">"
+        <item name="icon">@drawable/ic_icon_tray_private_browsing_v2</item>
+    </style>
+
+    <style name="BookmarksButtonStyle" parent="BaseTrayButton">"
+        <item name="icon">@drawable/ic_icon_bookmark</item>
+    </style>
+
+    <style name="DownloadsButtonStyle" parent="BaseTrayButton">"
+        <item name="icon">@drawable/ic_icon_downloads</item>
+    </style>
+
+    <style name="SettingsButtonStyle" parent="BaseTrayButton">"
+        <item name="icon">@drawable/ic_icon_tray_settings_v3</item>
     </style>
 
     <style name="DistanceSliderStyle" parent="Widget.MaterialComponents.Slider">
