@@ -82,11 +82,41 @@
                 style="@style/VoiceSearchButtonStyle" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier"
+                android:id="@+id/toolbar_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="headlock_toggle_button,realign_button,voice_search_button" />
+
+            <LinearLayout
+                android:id="@+id/tray_buttons"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_barrier"
+                style="@style/TrayStyle">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/new_window_button"
+                    android:contentDescription="@string/new_window_tooltip"
+                    style="@style/NewWindowButtonStyle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/private_button"
+                    style="@style/PrivateWindowButtonStyle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/bookmark_button"
+                    style="@style/BookmarksButtonStyle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/downloads_button"
+                    style="@style/DownloadsButtonStyle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settings_button"
+                    style="@style/SettingsButtonStyle" />
+
+            </LinearLayout>
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/distance_slider"
@@ -96,7 +126,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier" />
+                app:layout_constraintTop_toBottomOf="@id/tray_buttons" />
 
             <FrameLayout
                 android:id="@+id/touchpad_container"
