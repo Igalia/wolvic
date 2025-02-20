@@ -67,6 +67,7 @@ import com.igalia.wolvic.utils.SystemUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Arrays;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -571,12 +572,14 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
     private class PlatformActivityPluginVisionGlass extends PlatformActivityPlugin {
         private final WidgetManagerDelegate mDelegate;
+        private final TrayDelegate mTrayDelegate;
         private WMediaSession.Delegate mMediaSessionDelegate;
         private GestureDetector mGestureDetector;
         private final Context mContext;
 
         PlatformActivityPluginVisionGlass(WidgetManagerDelegate delegate, Context context) {
             mDelegate = delegate;
+            mTrayDelegate = delegate.getTray();
             mContext = context;
             setupPhoneUI();
         }
@@ -632,6 +635,26 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mBinding.headlockToggleButton.setChecked(settings.isHeadLockEnabled());
             mBinding.headlockToggleButton.setOnClickListener(v -> {
                 mDelegate.setLockMode(mBinding.headlockToggleButton.isChecked() ? WidgetManagerDelegate.HEAD_LOCK : WidgetManagerDelegate.NO_LOCK);
+            });
+
+            mBinding.newWindowButton.setOnClickListener(v -> {
+                mTrayDelegate.onAddWindowClicked();
+            });
+
+            mBinding.privateButton.setOnClickListener(v -> {
+                mTrayDelegate.onPrivateBrowsingClicked();
+            });
+
+            mBinding.bookmarkButton.setOnClickListener(v -> {
+                mTrayDelegate.onBookmarksClicked();
+            });
+
+            mBinding.downloadsButton.setOnClickListener(v -> {
+                mTrayDelegate.onDownloadsClicked();
+            });
+
+            mBinding.settingsButton.setOnClickListener(v -> {
+                mTrayDelegate.onSettingsClicked();
             });
 
             Slider distanceSlider = findViewById(R.id.distance_slider);
