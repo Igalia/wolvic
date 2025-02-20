@@ -21,6 +21,9 @@ desugarJdkLibs = "2.1.4"
 diskLruCache = "2.0.2"
 espresso= "3.5.1"
 gamesActivity = "4.0.0"
+geckoviewBeta = "128.0.20240628091536"
+geckoviewNightly = "128.0.20240609205151"
+geckoviewRelease = "128.0.20240725162350"
 googleMaterial = "1.9.0"
 gson = "2.10.1"
 huaweiAGConnectCore = "1.9.1.301"
@@ -90,6 +93,13 @@ disklrucache = { module = "com.jakewharton:disklrucache", version.ref = "diskLru
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 # Games Activity
 games-activity = { module = "androidx.games:games-activity", version.ref = "gamesActivity" }
+# GeckoView
+geckoview-beta-arm64 = { module = "org.mozilla.geckoview:geckoview-beta-arm64-v8", version.ref = "geckoviewBeta" }
+geckoview-beta-x64 = { module = "org.mozilla.geckoview:geckoview-beta-x86_64", version.ref = "geckoviewBeta" }
+geckoview-nightly-arm64 = { module = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a", version.ref = "geckoviewNightly" }
+geckoview-nightly-x64 = { module = "org.mozilla.geckoview:geckoview-nightly-x86_64", version.ref = "geckoviewNightly" }
+geckoview-release-arm64 = { module = "org.mozilla.geckoview:geckoview-arm64-v8a", version.ref = "geckoviewRelease" }
+geckoview-release-x64 = { module = "org.mozilla.geckoview:geckoview-x86_64", version.ref = "geckoviewRelease" }
 # GSON
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 # Huawei
