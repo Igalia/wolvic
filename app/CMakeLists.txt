@@ -113,6 +113,12 @@ if(OPENXR)
             ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
         )
+    elseif(PFDMXR)
+        add_custom_command(TARGET native-lib POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/../third_party/pfdmxr/Libs/Android/${ANDROID_ABI}/Release/libopenxr_loader.so
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libopenxr_loader.so
+        )
     else ()
         target_link_libraries(native-lib PRIVATE OpenXR::openxr_loader)
     endif ()
@@ -165,6 +171,10 @@ set_target_properties(hvr-lib PROPERTIES IMPORTED_LOCATION
 add_library(picoxr-lib SHARED IMPORTED)
 set_target_properties(picoxr-lib PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/../third_party/picoxr/libs/android.${ANDROID_ABI}/libopenxr_loader.so)
+        
+add_library(pfdmxr-lib SHARED IMPORTED)
+set_target_properties(pfdmxr-lib PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/../third_party/pfdmxr/Libs/Android/${ANDROID_ABI}/Release/libopenxr_loader.so )
 
 if(SPACES)
     find_package(loader REQUIRED CONFIG)

@@ -237,6 +237,16 @@ android {
             }
         }
 
+        pfdmxr {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DPFDMXR -DOPENXR  -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DVR_SDK_LIB=pfdmxr-lib", "-DPFDMXR=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         lynx {
             dimension "platform"
             externalNativeBuild {
@@ -395,7 +405,7 @@ android {
             variant.setIgnore(platform != 'noapi' && platform !='aosp');
 
         // Create variants for China only for HVR and Pico platforms
-        if (store == 'mainlandChina' && !(platform.startsWith('hvr') || platform.startsWith('visionglass') || platform.startsWith('picoxr')))
+        if (store == 'mainlandChina' && !(platform.startsWith('hvr') || platform.startsWith('visionglass') || platform.startsWith('picoxr') || platform.startsWith('pfdmxr')))
             variant.setIgnore(true);
 
         // Create variants for chromium/webkit, only when they are available
@@ -741,6 +751,9 @@ android.applicationVariants.configureEach { variant ->
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('picoxr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        }  else if (platform.toLowerCase().startsWith('pfdmxr')) {
+            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pfdm.html"'
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }
     }

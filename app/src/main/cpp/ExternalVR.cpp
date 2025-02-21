@@ -273,6 +273,13 @@ mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aT
       // FIXME: Gecko does not support LynxR1 device yet, so let's use a similar one for WebXR.
       result = mozilla::gfx::VRControllerType::OculusTouch3;
       break;
+    case device::PfdmYVR1:
+    case device::PfdmYVR2:
+      result = mozilla::gfx::VRControllerType::YvrTouch;
+      break;
+    case device::PfdmMR:
+      result = mozilla::gfx::VRControllerType::YvrTouch2;
+      break;
     case device::UnknownType:
     default:
       result = mozilla::gfx::VRControllerType::_empty;
