@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+
+import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.input.Keyboard;
 import android.os.Handler;
 import android.os.LocaleList;
@@ -36,7 +38,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
-import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
@@ -119,6 +120,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private boolean mInternalDeleteHint = false;
     private Session mSession;
     private boolean mInputRestarted = false;
+    private AudioEngine mAudioEngine;
+
     public int mPopUpHoverDeviceId = -1;
     public int mLanguageHoverDeviceId = -1;
     public int mDomainHoverDeviceId = -1;
@@ -372,6 +375,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView.setDelegate(this);
 
         updateCandidates(ResetComposingText.Yes);
+
+        mAudioEngine = AudioEngine.fromContext(aContext);
     }
 
     @Override
@@ -809,6 +814,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleBackspace() {
         final InputConnection connection = mInputConnection;
+        mAudioEngine.playSound(AudioEngine.Sound.BACK);
         postInputCommand(() -> {
             if (mComposingText.length() > 0) {
                 CharSequence selectedText = connection.getSelectedText(0);
@@ -1068,6 +1074,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mKeyboardView.isShifted() && Character.isLowerCase(str.charAt(0))) {
             str = str.toUpperCase();
         }
+        mAudioEngine.playSound(AudioEngine.Sound.CLICK);
         handleText(str);
     }
 
