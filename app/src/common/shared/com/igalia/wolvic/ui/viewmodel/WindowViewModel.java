@@ -55,9 +55,11 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isActiveWindow;
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
     private MutableLiveData<Windows.ContentType> currentContentType;
-    public MutableLiveData<Windows.ContentType> lastContentType;
+    private MutableLiveData<Windows.ContentType> lastContentType;
     private MediatorLiveData<ObservableBoolean> isNativeContentVisible;
     private MutableLiveData<ObservableBoolean> backToNewTabEnabled;
+    private MutableLiveData<ObservableBoolean> forwardToNewTabEnabled;
+    private MutableLiveData<ObservableBoolean> isNewTabHomePageClicked;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
     private MutableLiveData<ObservableBoolean> isBookmarked;
@@ -69,6 +71,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isPopUpBlocked;
     private MutableLiveData<ObservableBoolean> canGoForward;
     private MutableLiveData<ObservableBoolean> canGoForwardFromNewTab;
+    private MutableLiveData<ObservableBoolean> canGoBackFromNewTab;
     private MutableLiveData<ObservableBoolean> canGoBack;
     private MutableLiveData<ObservableBoolean> isInVRVideo;
     private MutableLiveData<ObservableBoolean> autoEnteredVRVideo;
@@ -149,6 +152,8 @@ public class WindowViewModel extends AndroidViewModel {
         isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT));
 
         backToNewTabEnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        forwardToNewTabEnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        isNewTabHomePageClicked = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
@@ -161,6 +166,7 @@ public class WindowViewModel extends AndroidViewModel {
         isPopUpBlocked = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForwardFromNewTab = new MutableLiveData<>(new ObservableBoolean(false));
+        canGoBackFromNewTab = new MutableLiveData<>(new ObservableBoolean(false));
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
         isInVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
         autoEnteredVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
@@ -388,7 +394,11 @@ public class WindowViewModel extends AndroidViewModel {
         isPopUpBlocked.postValue(isPopUpBlocked.getValue());
         canGoForward.postValue(canGoForward.getValue());
         canGoForwardFromNewTab.postValue(canGoForwardFromNewTab.getValue());
+        canGoBackFromNewTab.postValue(canGoBackFromNewTab.getValue());
         canGoBack.postValue(canGoBack.getValue());
+        backToNewTabEnabled.postValue(backToNewTabEnabled.getValue());
+        forwardToNewTabEnabled.postValue(forwardToNewTabEnabled.getValue());
+        isNewTabHomePageClicked.postValue(isNewTabHomePageClicked.getValue());
         isInVRVideo.postValue(isInVRVideo.getValue());
         autoEnteredVRVideo.postValue(autoEnteredVRVideo.getValue());
         titleBarUrl.setValue(titleBarUrl.getValue());
@@ -642,6 +652,10 @@ public class WindowViewModel extends AndroidViewModel {
         return currentContentType;
     }
 
+    public MutableLiveData<Windows.ContentType> getLastContentType() {
+        return lastContentType;
+    }
+
     public MutableLiveData<ObservableBoolean> getIsNativeContentVisible() {
         return isNativeContentVisible;
     }
@@ -653,6 +667,24 @@ public class WindowViewModel extends AndroidViewModel {
     @NonNull
     public MutableLiveData<ObservableBoolean> getBackToNewTabEnabled() {
         return backToNewTabEnabled;
+    }
+
+    public void enableForwardToNewTab(boolean forwardToNewTabEnabled) {
+        this.forwardToNewTabEnabled.postValue(new ObservableBoolean(forwardToNewTabEnabled));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getForwardToNewTabEnabled() {
+        return forwardToNewTabEnabled;
+    }
+
+    public void setIsNewTabHomePageClicked(boolean isNewTabHomePageClicked) {
+        this.forwardToNewTabEnabled.postValue(new ObservableBoolean(isNewTabHomePageClicked));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsNewTabHomePageClicked() {
+        return isNewTabHomePageClicked;
     }
 
     @NonNull
@@ -755,11 +787,24 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     @NonNull
+    public MutableLiveData<ObservableBoolean> getCanGoBackFromNewTab() {
+        return canGoBackFromNewTab;
+    }
+
+    public void setCanGoBackFromNewTab(boolean canGoBackFromNewTab) {
+        this.canGoBackFromNewTab.postValue(new ObservableBoolean(canGoBackFromNewTab));
+    }
+
+    @NonNull
     public MutableLiveData<ObservableBoolean> getCanGoBack() {
         return canGoBack;
     }
 
     public void setCanGoBack(boolean canGoBack) {
+        /*if (getCanGoBackFromNewTab().getValue().get()) {
+            canGoBack = true;
+        }*/
+
         this.canGoBack.postValue(new ObservableBoolean(canGoBack));
     }
 

@@ -245,10 +245,21 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
-            if (getSession().canGoBack()) {
+            /*if (getSession().canGoBack()) {
                 getSession().goBack();
+                if (mViewModel.getIsNewTabHomePageClicked().getValue().get()) {
+                    mAttachedWindow.hideNewTab(true);
+                    mViewModel.enableForwardToNewTab(true);
+                    mViewModel.setIsNewTabHomePageClicked(false);
+                }
             } else if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
                 getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
+            } else*/
+            if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
+                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
+                getSession().loadUri(forwardUrl);
+
+                mAttachedWindow.hideNewTab();
             }
 
             if (mAudio != null) {
@@ -268,6 +279,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
                 mViewModel.setUrl(forwardUrl);
                 mViewModel.setCanGoForwardFromNewTab(false);
+            } else if (mViewModel.getForwardToNewTabEnabled().getValue().get()) {
+                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
+                mViewModel.enableForwardToNewTab(false);
             } else {
                 getSession().goForward();
             }
@@ -306,6 +320,16 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         });
 
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
+            if (SettingsStore.getInstance(getContext()).getHomepage().equals(UrlUtils.ABOUT_NEWTAB)) {
+                mViewModel.setIsNewTabHomePageClicked(true);
+                //if (mViewModel.getLastContentType().equals(Windows.ContentType.WEB_CONTENT)) {
+                    mViewModel.setCanGoBackFromNewTab(true);
+                    mViewModel.setCanGoForwardFromNewTab(false);
+                    mViewModel.setCanGoForward(false);
+                    //getSession().getSessionState().mCanGoBack = true;
+                //}
+            }
+
             v.requestFocusFromTouch();
             getSession().loadUri(getSession().getHomeUri());
             if (mAudio != null) {
@@ -1038,8 +1062,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         }
 
         mBinding.navigationBarNavigation.reloadButton.setEnabled(
-                mViewModel.getCurrentContentType().getValue() != Windows.ContentType.NEW_TAB
-                        && !mViewModel.getIsNativeContentVisible().getValue().get()
+                !mViewModel.getIsNativeContentVisible().getValue().get()
                         && !UrlUtils.isPrivateAboutPage(getContext(), url));
     }
 

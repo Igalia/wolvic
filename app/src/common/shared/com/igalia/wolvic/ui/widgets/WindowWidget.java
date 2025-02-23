@@ -510,7 +510,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mLibrary.getSelectedPanelType();
     }
 
-    private void hideLibraryPanel() {
+    public void hideLibraryPanel() {
         if (getCurrentContentType().isLibraryContent()) {
             hidePanel(true);
         }
@@ -528,7 +528,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
-        hideNewTab();
+        hideNewTab(true);
         mViewModel.setIsFindInPage(false);
         mViewModel.setCurrentContentType(contentType);
         mViewModel.setUrl(contentType.URL);
@@ -574,10 +574,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 };
             }
         }
-        if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
+        /*if (mViewModel.getIsNewTabHomePageClicked().getValue().get()) {
+            mViewModel.setCanGoBackFromNewTab(true);
+        } else*/
+        /*if (mViewModel.getBackToNewTabEnabled().getValue().get() && !mViewModel.getCanGoBackFromNewTab().getValue().get()) {
             mViewModel.enableBackToNewTab(false);
             mViewModel.setCanGoForwardFromNewTab(true);
-        }
+        }*/
     }
 
     public void hidePanel() {
@@ -593,13 +596,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mRestoreFirstPaint.run();
             mRestoreFirstPaint = null;
         }
-        if (mViewModel.lastContentType.getValue() == Windows.ContentType.NEW_TAB) {
+        if (mViewModel.getLastContentType().getValue() == Windows.ContentType.NEW_TAB) {
             showNewTab();
         } else {
             mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
         }
     }
 
+    // Only use this when you want the back button to go back to New Tab.
+    // If you don't, use hideNewTab(true) instead.
     public void hideNewTab() {
         if (mViewModel.getCurrentContentType().getValue() == Windows.ContentType.NEW_TAB) {
             mViewModel.enableBackToNewTab(true);
@@ -607,7 +612,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    private void hideNewTab(boolean switchSurface) {
+    public void hideNewTab(boolean switchSurface) {
         if (mView != null && mNewTab != null) {
             unsetView(mNewTab, switchSurface);
         }
