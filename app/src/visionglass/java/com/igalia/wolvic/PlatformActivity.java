@@ -783,6 +783,11 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         }
     }
 
+    private void startIMUService() {
+        Log.d(LOGTAG, "Starting IMU service");
+        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
+    }
+
     private final DisplayManager.DisplayListener mDisplayListener =
             new DisplayManager.DisplayListener() {
                 private void callUpdateIfIsPresentation(int displayId) {
@@ -796,6 +801,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 @Override
                 public void onDisplayAdded(int displayId) {
                     Log.d(LOGTAG, "display listener: onDisplayAdded displayId = " + displayId);
+                    startIMUService();
                     callUpdateIfIsPresentation(displayId);
                 }
 
@@ -827,9 +833,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
             return;
         }
-
-        Log.d(LOGTAG, "Starting IMU");
-        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
 
         VisionGlassPresentation presentation = new VisionGlassPresentation(this, presentationDisplay);
         Display.Mode[] modes = presentationDisplay.getSupportedModes();
