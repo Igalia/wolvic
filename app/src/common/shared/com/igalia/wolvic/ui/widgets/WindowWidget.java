@@ -559,6 +559,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             unsetView(mLibrary, switchSurface);
             mLibrary.onHide();
             mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
+            mViewModel.setUrl(mSession.getCurrentUri());
         }
         if (switchSurface && mRestoreFirstPaint != null) {
             mRestoreFirstPaint.run();
