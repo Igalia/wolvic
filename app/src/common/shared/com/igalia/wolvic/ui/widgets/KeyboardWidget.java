@@ -1074,7 +1074,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mKeyboardView.isShifted() && Character.isLowerCase(str.charAt(0))) {
             str = str.toUpperCase();
         }
-        mAudioEngine.playSound(AudioEngine.Sound.CLICK);
+        mAudioEngine.playSound(AudioEngine.Sound.KEYBOARD);
         handleText(str);
     }
 
