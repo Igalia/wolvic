@@ -42,7 +42,7 @@ opentelemetryAndroid = "0.9.1-alpha"
 opentelemetryApi = "1.46.0"
 openxrLoader = "1.0.34"
 r8 = "8.7.18"
-robolectric = "4.11.1"
+robolectric = "4.14.1"
 zip4j = "2.11.5"
 
 [libraries]
