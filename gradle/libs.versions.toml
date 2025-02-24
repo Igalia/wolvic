@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.2"
-androidComponents = "128.0"
+androidComponents = "135.0.1"
 androidxAnnotation = "1.6.0"
 androidxAppcompat = "1.6.1"
 androidxCardview = "1.0.0"
