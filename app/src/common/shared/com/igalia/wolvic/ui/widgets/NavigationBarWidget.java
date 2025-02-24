@@ -246,11 +246,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             v.requestFocusFromTouch();
 
             if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
-                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
-                getSession().loadUri(forwardUrl);
-                mViewModel.enableForwardToNewTab(true);
+                String url = mViewModel.getUrlNavigatedFromNewTab().getValue().toString();
+                getSession().loadUri(url);
 
                 mAttachedWindow.hideNewTab();
+
+                mViewModel.setCanGoBackFromNewTab(false);
+                mViewModel.enableForwardToNewTab(true);
             } else if (getSession().canGoBack()) {
                 getSession().goBack();
                 if (mViewModel.getIsNewTabHomePageClicked().getValue().get()) {
@@ -275,7 +277,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mViewModel.enableForwardToNewTab(false);
                 mViewModel.setCanGoBackFromNewTab(true);
             } else if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
-                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
+                String forwardUrl = mViewModel.getUrlNavigatedFromNewTab().getValue().toString();
                 getSession().loadUri(forwardUrl);
 
                 mAttachedWindow.hideNewTab();
@@ -283,9 +285,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
                 mViewModel.setUrl(forwardUrl);
                 mViewModel.setCanGoForwardFromNewTab(false);
-            } else if (mViewModel.getForwardToNewTabEnabled().getValue().get()) {
-                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
-                mViewModel.enableForwardToNewTab(false);
             } else {
                 getSession().goForward();
             }

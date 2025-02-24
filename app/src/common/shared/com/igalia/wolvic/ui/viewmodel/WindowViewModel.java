@@ -37,7 +37,7 @@ public class WindowViewModel extends AndroidViewModel {
     private int mURLWebsiteColor;
 
     private MutableLiveData<Spannable> url;
-    private MutableLiveData<Spannable> urlForwardFromNewTab;
+    private MutableLiveData<Spannable> urlNavigatedFromNewTab;
     private MutableLiveData<String> hint;
     private MutableLiveData<ObservableBoolean> isWindowVisible;
     private MutableLiveData<Windows.WindowPlacement> placement;
@@ -100,7 +100,7 @@ public class WindowViewModel extends AndroidViewModel {
         mURLWebsiteColor = typedValue.data;
 
         url = new MutableLiveData<>(new SpannableString(""));
-        urlForwardFromNewTab = new MutableLiveData<>(new SpannableString(""));
+        urlNavigatedFromNewTab = new MutableLiveData<>(new SpannableString(""));
         hint = new MutableLiveData<>("");
         isWindowVisible = new MutableLiveData<>(new ObservableBoolean(true));
         placement = new MutableLiveData<>(Windows.WindowPlacement.FRONT);
@@ -376,7 +376,7 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void refresh() {
         url.postValue(url.getValue());
-        urlForwardFromNewTab.postValue(urlForwardFromNewTab.getValue());
+        urlNavigatedFromNewTab.postValue(urlNavigatedFromNewTab.getValue());
         hint.postValue(getHintValue());
         isWindowVisible.postValue(isWindowVisible.getValue());
         placement.postValue(placement.getValue());
@@ -420,11 +420,11 @@ public class WindowViewModel extends AndroidViewModel {
         return url;
     }
 
-    public MutableLiveData<Spannable> getUrlForwardFromNewTab() {
-        if (urlForwardFromNewTab == null) {
-            urlForwardFromNewTab = new MutableLiveData<>(new SpannableString(""));
+    public MutableLiveData<Spannable> getUrlNavigatedFromNewTab() {
+        if (urlNavigatedFromNewTab == null) {
+            urlNavigatedFromNewTab = new MutableLiveData<>(new SpannableString(""));
         }
-        return urlForwardFromNewTab;
+        return urlNavigatedFromNewTab;
     }
 
     public void setUrl(@Nullable String url) {
@@ -476,13 +476,13 @@ public class WindowViewModel extends AndroidViewModel {
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
                 this.url.postValue(spannable);
                 if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
-                    urlForwardFromNewTab.postValue(spannable);
+                    urlNavigatedFromNewTab.postValue(spannable);
                 }
 
             } else {
                 this.url.postValue(url);
                 if (currentContentType.getValue() == Windows.ContentType.WEB_CONTENT && lastContentType.getValue() == Windows.ContentType.NEW_TAB && !aURL.startsWith("about")) {
-                    urlForwardFromNewTab.postValue(url);
+                    urlNavigatedFromNewTab.postValue(url);
                 }
             }
         }
@@ -801,10 +801,6 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setCanGoBack(boolean canGoBack) {
-        /*if (getCanGoBackFromNewTab().getValue().get()) {
-            canGoBack = true;
-        }*/
-
         this.canGoBack.postValue(new ObservableBoolean(canGoBack));
     }
 
