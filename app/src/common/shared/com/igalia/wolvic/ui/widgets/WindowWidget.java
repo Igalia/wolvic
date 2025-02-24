@@ -574,13 +574,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 };
             }
         }
-        /*if (mViewModel.getIsNewTabHomePageClicked().getValue().get()) {
-            mViewModel.setCanGoBackFromNewTab(true);
-        } else*/
-        /*if (mViewModel.getBackToNewTabEnabled().getValue().get() && !mViewModel.getCanGoBackFromNewTab().getValue().get()) {
+        if (mViewModel.getBackToNewTabEnabled().getValue().get() && !mViewModel.getCanGoBackFromNewTab().getValue().get()) {
             mViewModel.enableBackToNewTab(false);
             mViewModel.setCanGoForwardFromNewTab(true);
-        }*/
+        }
     }
 
     public void hidePanel() {

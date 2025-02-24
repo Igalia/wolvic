@@ -245,7 +245,13 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
-            /*if (getSession().canGoBack()) {
+            if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
+                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
+                getSession().loadUri(forwardUrl);
+                mViewModel.enableForwardToNewTab(true);
+
+                mAttachedWindow.hideNewTab();
+            } else if (getSession().canGoBack()) {
                 getSession().goBack();
                 if (mViewModel.getIsNewTabHomePageClicked().getValue().get()) {
                     mAttachedWindow.hideNewTab(true);
@@ -254,12 +260,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 }
             } else if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
                 getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
-            } else*/
-            if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
-                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
-                getSession().loadUri(forwardUrl);
-
-                mAttachedWindow.hideNewTab();
             }
 
             if (mAudio != null) {
@@ -270,7 +270,11 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.navigationBarNavigation.forwardButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
+            if (mViewModel.getForwardToNewTabEnabled().getValue().get()) {
+                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
+                mViewModel.enableForwardToNewTab(false);
+                mViewModel.setCanGoBackFromNewTab(true);
+            } else if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
                 String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
                 getSession().loadUri(forwardUrl);
 
@@ -285,6 +289,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             } else {
                 getSession().goForward();
             }
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -326,7 +331,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     mViewModel.setCanGoBackFromNewTab(true);
                     mViewModel.setCanGoForwardFromNewTab(false);
                     mViewModel.setCanGoForward(false);
-                    //getSession().getSessionState().mCanGoBack = true;
                 //}
             }
 
