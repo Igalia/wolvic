@@ -17,6 +17,7 @@ public class VRAudioTheme implements AudioEngine.AudioTheme {
 
     private String filename(AudioEngine.Sound aSound) {
         switch (aSound) {
+            case KEYBOARD: return "keyboard_sound.wav";
             case CLICK: return "click.wav";
             case BACK: return "back.wav";
             case EXIT: return "exit.wav";
