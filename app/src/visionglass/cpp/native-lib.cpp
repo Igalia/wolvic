@@ -25,6 +25,7 @@ extern "C" {
 
 JNI_METHOD(void, activityPaused)
 (JNIEnv*, jobject) {
+    VRB_LOG("native-lib - activityPaused");
     if (sAppContext->mDevice) {
         sAppContext->mDevice->Pause();
     }
@@ -34,6 +35,7 @@ JNI_METHOD(void, activityPaused)
 
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
+    VRB_LOG("native-lib - activityResumed");
     if (sAppContext->mDevice) {
         sAppContext->mDevice->Resume();
     }
@@ -43,6 +45,7 @@ JNI_METHOD(void, activityResumed)
 
 JNI_METHOD(void, activityCreated)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
+    VRB_LOG("native-lib - activityCreated");
     sAppContext->mJavaContext.activity = aEnv->NewGlobalRef(aActivity);
     sAppContext->mJavaContext.env = aEnv;
     sAppContext->mJavaContext.vm->AttachCurrentThread(&sAppContext->mJavaContext.env, nullptr);
@@ -69,6 +72,7 @@ JNI_METHOD(void, updateViewport)
 
 JNI_METHOD(void, activityDestroyed)
 (JNIEnv*, jobject) {
+    VRB_LOG("native-lib - activityDestroyed");
     BrowserWorld::Instance().ShutdownJava();
     BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
     BrowserWorld::Destroy();

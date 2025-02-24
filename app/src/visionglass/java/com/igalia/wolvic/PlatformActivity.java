@@ -88,6 +88,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private AlignPhoneDialogFragment mAlignDialogFragment;
     private AlignNotificationUIDialog mAlignNotificationUIDialog;
     private PopupWindow mWindowDistancePopupWindow;
+    private boolean mWidgetsNeedIpdate = false;
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -185,11 +186,16 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         }
     };
 
+    protected void restoreWidgets() {
+        Log.d(LOGTAG, "PlatformActivity restoreWidgets");
+    }
+
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
+
 
         // Before we do anything else, we need to ensure that the user has accepted the legal terms.
         SettingsStore settings = SettingsStore.getInstance(this);
@@ -515,6 +521,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     }
 
     private void updateDisplays() {
+        Log.d(LOGTAG, "updateDisplays");
         if (mWindowDistancePopupWindow.isShowing())
             mWindowDistancePopupWindow.dismiss();
 
@@ -539,10 +546,12 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         }
 
         if (!VisionGlass.getInstance().isConnected()) {
+            Log.d(LOGTAG, "updateDisplays: glasses disconnected");
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.DISCONNECTED);
             keepScreenOn(false);
             return;
         }
+
 
         // This can happen after switching to 3D mode because the user has not accepted permissions
         // but also when the system is about to replace the display.
@@ -787,8 +796,10 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             new DisplayManager.DisplayListener() {
                 private void callUpdateIfIsPresentation(int displayId) {
                     Display display = mDisplayManager.getDisplay(displayId);
-                    if (display != null && (display.getFlags() & Display.FLAG_PRESENTATION) == 0)
+                    if (display != null && (display.getFlags() & Display.FLAG_PRESENTATION) == 0) {
+                        Log.d(LOGTAG, "display listener: not a presentation display");
                         return;
+                    }
                     Log.d(LOGTAG, "display listener: calling updateDisplay with " + displayId);
                     updateDisplays();
                 }
@@ -816,7 +827,9 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
+                    Log.d(LOGTAG, "onDismissListener: onDismiss");
                     if (dialog.equals(mActivePresentation)) {
+                        Log.d(LOGTAG, "onDismissListener: presentation dismissed");
                         mActivePresentation = null;
                     }
                 }
@@ -824,11 +837,12 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
     private void showPresentation(@NonNull Display presentationDisplay) {
         if (presentationDisplay.equals(mPresentationDisplay) && mActivePresentation != null) {
+            Log.d(LOGTAG, "showPresentation: already showing presentation");
             mViewModel.updateConnectionState(PhoneUIViewModel.ConnectionState.ACTIVE);
             return;
         }
 
-        Log.d(LOGTAG, "Starting IMU");
+        Log.d(LOGTAG, "showPresentation: Starting IMU");
         VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
 
         VisionGlassPresentation presentation = new VisionGlassPresentation(this, presentationDisplay);
@@ -850,6 +864,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
         public VisionGlassPresentation(Context context, Display display) {
             super(context, display);
+            Log.d(LOGTAG, "VisionGlassPresentation constructor for display: " + display);
         }
 
         /**
@@ -882,6 +897,13 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                     Log.d(LOGTAG, "VisionGlassPresentation onSurfaceCreated");
                     activityCreated(getAssets());
                     notifyPendingEvents();
+                    if (mWidgetsNeedIpdate) {
+                        Log.d(LOGTAG, "VisionGlassPresentation onSurfaceCreated: widgets need update");
+                        runOnUiThread(() -> {
+                            restoreWidgets();
+                            mWidgetsNeedIpdate = false;
+                        });
+                    }
                 }
 
                 @Override
@@ -894,6 +916,23 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 public void onDrawFrame(GL10 gl) {
                     drawGL();
                 }
+            });
+        }
+
+        @Override
+        public void onDisplayRemoved() {
+            Log.d(LOGTAG, "VisionGlassPresentation onDisplayRemoved");
+            super.onDisplayRemoved();
+            cleanup();
+        }
+
+        public void cleanup() {
+            Log.d(LOGTAG, "VisionGlassPresentation destroy");
+            mGLView.queueEvent(() -> {
+                activityDestroyed();
+                mGLView = null;
+                mActivePresentation = null;
+                mWidgetsNeedIpdate = true;
             });
         }
     }
