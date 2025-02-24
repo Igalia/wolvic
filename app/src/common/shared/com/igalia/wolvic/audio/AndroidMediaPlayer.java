@@ -1,8 +1,8 @@
 package com.igalia.wolvic.audio;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.util.Log;
 
 import com.igalia.wolvic.utils.SystemUtils;
@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class AndroidMediaPlayer implements AudioEngine.AudioEngineImpl {
     private Context mContext;
     private HashMap<AudioEngine.Sound, MediaPlayer> mMediaPlayerList;
+    private static String ANDROID_RESOURCE_SCHEME = "android.resource://";
     protected static final String LOGTAG = SystemUtils.createLogtag(AndroidMediaPlayer.class);
 
     public AndroidMediaPlayer(Context aContext) {
@@ -28,10 +29,10 @@ public class AndroidMediaPlayer implements AudioEngine.AudioEngineImpl {
                 continue;
             }
             try {
+                Uri uri = Uri.parse(ANDROID_RESOURCE_SCHEME + mContext.getPackageName() + "/" + vrAudioTheme.getResourceId(sound));
                 MediaPlayer mediaPlayer = new MediaPlayer();
                 Log.d(LOGTAG, "Preloading Android Media Player for " + sound);
-                AssetFileDescriptor fd = mContext.getAssets().openFd(vrAudioTheme.getPath(sound));
-                mediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+                mediaPlayer.setDataSource(mContext, uri);
                 mediaPlayer.prepare();
                 mMediaPlayerList.put(sound, mediaPlayer);
             } catch (IOException e) {

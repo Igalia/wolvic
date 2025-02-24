@@ -49,7 +49,7 @@ public class AudioEngine {
     }
 
     public interface AudioTheme {
-        String getPath(Sound aSound);
+        int getResourceId(Sound aSound);
     }
 
     public interface AudioEngineImpl {
