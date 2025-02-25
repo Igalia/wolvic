@@ -248,7 +248,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
                 getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
             } else if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
-                String url = mViewModel.getUrlNavigatedFromNewTab().getValue().toString();
+                String url = mViewModel.getUrlBackFromNewTab().getValue().toString();
                 getSession().loadUri(url);
 
                 mAttachedWindow.hideNewTab();
@@ -277,7 +277,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                 mViewModel.enableForwardToNewTab(false);
                 mViewModel.setCanGoBackFromNewTab(true);
             } else if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
-                String forwardUrl = mViewModel.getUrlNavigatedFromNewTab().getValue().toString();
+                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
                 getSession().loadUri(forwardUrl);
 
                 mAttachedWindow.hideNewTab();
@@ -326,11 +326,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
             if (SettingsStore.getInstance(getContext()).getHomepage().equals(UrlUtils.ABOUT_NEWTAB)) {
                 mViewModel.setIsNewTabHomePageClicked(true);
-                //if (mViewModel.getLastContentType().equals(Windows.ContentType.WEB_CONTENT)) {
-                    mViewModel.setCanGoBackFromNewTab(true);
-                    mViewModel.setCanGoForwardFromNewTab(false);
-                    mViewModel.setCanGoForward(false);
-                //}
+                mViewModel.setCanGoBackFromNewTab(true);
+                mViewModel.setCanGoForwardFromNewTab(false);
+                mViewModel.setCanGoForward(false);
             }
 
             v.requestFocusFromTouch();
