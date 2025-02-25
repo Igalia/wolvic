@@ -574,7 +574,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 };
             }
         }
-        if (mViewModel.getBackToNewTabEnabled().getValue().get() && !mViewModel.getCanGoBackFromNewTab().getValue().get()) {
+        if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
             mViewModel.enableBackToNewTab(false);
             mViewModel.setCanGoForwardFromNewTab(true);
         }

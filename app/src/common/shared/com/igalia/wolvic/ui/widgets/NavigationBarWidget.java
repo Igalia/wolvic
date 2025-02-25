@@ -245,7 +245,9 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
         mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
-            if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
+            if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
+                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
+            } else if (mViewModel.getCanGoBackFromNewTab().getValue().get()) {
                 String url = mViewModel.getUrlNavigatedFromNewTab().getValue().toString();
                 getSession().loadUri(url);
 
@@ -260,8 +262,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
                     mViewModel.enableForwardToNewTab(true);
                     mViewModel.setIsNewTabHomePageClicked(false);
                 }
-            } else if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
-                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
             }
 
             if (mAudio != null) {
