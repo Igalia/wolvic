@@ -8,6 +8,8 @@ public abstract class PlatformActivityPlugin {
         void onPlatformScrollEvent(float distanceX, float distanceY);
     }
     abstract void onVideoAvailabilityChange();
+    abstract void onPresentingImmersiveChange(boolean isPresentingImmersive);
+
     abstract boolean onBackPressed();
     void registerListener(PlatformActivityPluginListener listener) {
         if (mListeners == null)
