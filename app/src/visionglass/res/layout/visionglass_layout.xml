@@ -64,6 +64,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/realign_button"
                 app:layout_constraintTop_toTopOf="parent"
+                app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                 style="@style/HeadlockToggleButtonStyle" />
 
             <com.igalia.wolvic.AlignDynamicButton
@@ -71,6 +72,7 @@
                 app:layout_constraintStart_toEndOf="@id/headlock_toggle_button"
                 app:layout_constraintEnd_toStartOf="@id/voice_search_button"
                 app:layout_constraintTop_toTopOf="parent"
+                app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                 style="@style/RealignButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
@@ -79,6 +81,7 @@
                 app:layout_constraintStart_toEndOf="@id/realign_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                 style="@style/VoiceSearchButtonStyle" />
 
             <androidx.constraintlayout.widget.Barrier
@@ -98,35 +101,38 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/new_window_button"
                     android:contentDescription="@string/new_window_tooltip"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/NewWindowButtonStyle" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/private_button"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/PrivateWindowButtonStyle" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/bookmark_button"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/BookmarksButtonStyle" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/downloads_button"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/DownloadsButtonStyle" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/settings_button"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/SettingsButtonStyle" />
 
             </LinearLayout>
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/distance_slider"
-                style="@style/DistanceSliderStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tray_buttons" />
+                app:layout_constraintTop_toBottomOf="@id/tray_buttons"
+                app:visibleDimmed="@{viewModel.isPresentingImmersive}"
+                style="@style/DistanceSliderStyle" />
 
             <FrameLayout
                 android:id="@+id/touchpad_container"
@@ -217,6 +223,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/home_button"
                     android:contentDescription="@string/home_tooltip"
+                    app:visibleDimmed="@{viewModel.isPresentingImmersive}"
                     style="@style/HomeButtonStyle" />
 
             </LinearLayout>

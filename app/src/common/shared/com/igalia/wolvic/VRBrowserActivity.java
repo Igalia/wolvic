@@ -43,6 +43,7 @@ import androidx.fragment.app.FragmentController;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
@@ -233,7 +234,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<WorldClickListener> mWorldClickListeners;
     LinkedList<WebXRListener> mWebXRListeners;
     LinkedList<Runnable> mBackHandlers;
-    private boolean mIsPresentingImmersive = false;
+    private final MutableLiveData<Boolean> mIsPresentingImmersive = new MutableLiveData<>(false);
     private Thread mUiThread;
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
@@ -336,6 +337,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
         mWidgets = new ConcurrentHashMap<>();
+
+        mIsPresentingImmersive.observe(this, this::onPresentingImmersiveChange);
 
         super.onCreate(savedInstanceState);
 
@@ -490,6 +493,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWindows.restoreSessions();
     }
 
+    private void onPresentingImmersiveChange(boolean presenting) {
+        if (mPlatformPlugin != null) {
+            mPlatformPlugin.onIsPresentingImmersiveChange(presenting);
+        }
+    }
+
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {
         mPermissionDelegate.setParentWidgetHandle(aWindow.getHandle());
         mNavigationBar.attachToWindow(aWindow);
@@ -626,7 +635,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onPause() {
-        if (mIsPresentingImmersive) {
+        if (mIsPresentingImmersive.getValue()) {
             // This needs to be sync to ensure that WebVR is correctly paused.
             // Also prevents a deadlock in onDestroy when the BrowserWidget is released.
             exitImmersiveSync();
@@ -1033,7 +1042,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mPlatformPlugin != null && mPlatformPlugin.onBackPressed()) {
             return;
         }
-        if (mIsPresentingImmersive) {
+        if (mIsPresentingImmersive.getValue()) {
             queueRunnable(this::exitImmersiveNative);
             return;
         }
@@ -1302,7 +1311,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (Thread.currentThread() == mUiThread) {
             return;
         }
-        mIsPresentingImmersive = true;
+        mIsPresentingImmersive.postValue(true);
         runOnUiThread(() -> {
             mWindows.enterImmersiveMode();
             for (WebXRListener listener: mWebXRListeners) {
@@ -1331,7 +1340,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (Thread.currentThread() == mUiThread) {
             return;
         }
-        mIsPresentingImmersive = false;
+        mIsPresentingImmersive.postValue(false);
         TelemetryService.stopImmersive();
 
         if (mLaunchImmersive) {
@@ -1495,7 +1504,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
             // Don't block poorly performing immersive pages.
-            if (mIsPresentingImmersive) {
+            if (mIsPresentingImmersive.getValue()) {
                 return;
             }
             WindowWidget window = mWindows.getFocusedWindow();
@@ -1895,7 +1904,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public boolean isWebXRPresenting() {
-        return mIsPresentingImmersive;
+        return mIsPresentingImmersive.getValue();
     }
 
     @Override
