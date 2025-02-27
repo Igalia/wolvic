@@ -13,6 +13,9 @@ public class PhoneUIViewModel extends ViewModel {
 
     private final MutableLiveData<ConnectionState> mConnectionState = new MutableLiveData<>(ConnectionState.DISCONNECTED);
     private final MutableLiveData<Boolean> mIsPlayingMedia = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> mIsPresentingImmersive = new MutableLiveData<>(false);
+
+
 
     public LiveData<ConnectionState> getConnectionState() {
         return mConnectionState;
@@ -51,6 +54,14 @@ public class PhoneUIViewModel extends ViewModel {
 
     public LiveData<Boolean> getIsPlayingMedia() {
         return mIsPlayingMedia;
+    }
+
+    public LiveData<Boolean> getIsPresentingImmersive() {
+        return mIsPresentingImmersive;
+    }
+
+    public void updateIsPresentingImmersive(boolean isPresentingImmersive) {
+        mIsPresentingImmersive.postValue(isPresentingImmersive);
     }
 
     public void updateIsPlayingMedia(boolean isPlayingMedia) {
