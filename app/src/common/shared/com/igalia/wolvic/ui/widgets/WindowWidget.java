@@ -162,6 +162,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
         default void onContentFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {}
         default void onMediaFullScreen(@NonNull final WMediaSession mediaSession, boolean aFullScreen) {}
+        default void onIsWindowFullscreenChanged(boolean aFullScreen) {}
         default void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {}
         default void onKioskMode(WindowWidget aWindow, boolean isKioskMode) {}
     }
@@ -212,6 +213,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         // re-center the front window when its height changes
         mViewModel.getHeight().observe((VRBrowserActivity) getContext(), observableInt -> centerFrontWindowIfNeeded());
+
+        mViewModel.getIsFullscreen().observe((VRBrowserActivity) getContext(), observableBoolean -> onIsFullscreenChanged(observableBoolean.get()));
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
@@ -652,6 +655,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public @NonNull Windows.WindowPlacement getWindowPlacement() {
         return mWindowPlacement;
+    }
+
+    private void onIsFullscreenChanged(boolean isFullscreen) {
+        for (WindowListener listener: mListeners) {
+            listener.onIsWindowFullscreenChanged(isFullscreen);
+        }
     }
 
     @Override

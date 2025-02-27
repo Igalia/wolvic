@@ -200,6 +200,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         void onWindowsMoved();
         void onWindowClosed();
         void onWindowVideoAvailabilityChanged(@NonNull WindowWidget aWindow);
+        void onIsWindowFullscreenChanged(boolean aFullscreen);
     }
 
     public Windows(Context aContext) {
@@ -1442,6 +1443,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         updateMaxWindowScales();
         updateCurvedMode(true);
 
+    }
+
+    @Override
+    public void onIsWindowFullscreenChanged(boolean aFullScreen) {
+        if (mDelegate != null) {
+            mDelegate.onIsWindowFullscreenChanged(aFullScreen);
+        }
     }
 
     @Override
