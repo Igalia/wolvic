@@ -18,6 +18,7 @@ public abstract class PlatformActivityPlugin {
 
     abstract void onVideoAvailabilityChange();
     abstract void onIsPresentingImmersiveChange(boolean isPresentingImmersive);
+    abstract void onIsFullscreenChange(boolean isFullscreen);
 
     abstract boolean onBackPressed();
     void registerListener(PlatformActivityPluginListener listener) {
