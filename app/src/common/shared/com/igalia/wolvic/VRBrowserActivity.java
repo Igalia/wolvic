@@ -466,6 +466,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     mPlatformPlugin.onVideoAvailabilityChange();
                 }
             }
+
+            @Override
+            public void onIsWindowFullscreenChanged(boolean isFullscreen) {
+                if (mPlatformPlugin != null) {
+                    mPlatformPlugin.onIsFullscreenChange(isFullscreen);
+                }
+            }
         });
 
         // Create the tray

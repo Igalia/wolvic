@@ -623,6 +623,11 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             mViewModel.updateIsPresentingImmersive(isPresentingImmersive);
         }
 
+        @Override
+        public void onIsFullscreenChange(boolean isFullScreen) {
+            mViewModel.updateIsFullscreen(isFullScreen);
+        }
+
         private Media getActiveMedia() {
             assert mDelegate.getWindows() != null;
             assert mDelegate.getWindows().getFocusedWindow() != null;
