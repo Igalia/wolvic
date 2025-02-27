@@ -587,6 +587,7 @@ dependencies {
     implementation deps.android_components.feature_findinpage
     implementation deps.android_components.feature_search
     implementation deps.android_components.feature_toolbar
+    implementation deps.android_components.feature_top_sites
     implementation deps.android_components.service_accounts
     implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location

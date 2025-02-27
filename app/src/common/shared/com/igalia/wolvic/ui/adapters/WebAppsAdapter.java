@@ -27,7 +27,7 @@ public class WebAppsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     static final String LOGTAG = SystemUtils.createLogtag(WebAppsAdapter.class);
 
-    private List<WebApp> mWebAppsList;
+    protected List<WebApp> mWebAppsList;
     private boolean mIsNarrowLayout;
 
     @Nullable
