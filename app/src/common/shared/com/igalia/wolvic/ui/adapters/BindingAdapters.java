@@ -43,6 +43,12 @@ public class BindingAdapters {
         view.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
+    @BindingAdapter("visibleDimmed")
+    public static void showDimmed(@NonNull View view, boolean dimmed) {
+        view.setAlpha(dimmed ? 0.3f : 1.0f);
+        view.setEnabled(!dimmed);
+    }
+
     @BindingAdapter("typeface")
     public static void setTypeface(@NonNull TextView v, @NonNull String style) {
         switch (style) {

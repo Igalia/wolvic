@@ -145,6 +145,9 @@
     </style>
 
     <style name="DistanceSliderStyle" parent="Widget.MaterialComponents.Slider">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Slider</item>
         <item name="android:valueFrom">0.0</item>
         <item name="android:valueTo">100.0</item>

@@ -17,6 +17,8 @@ public abstract class PlatformActivityPlugin {
     }
 
     abstract void onVideoAvailabilityChange();
+    abstract void onIsPresentingImmersiveChange(boolean isPresentingImmersive);
+
     abstract boolean onBackPressed();
     void registerListener(PlatformActivityPluginListener listener) {
         if (mListeners == null)
