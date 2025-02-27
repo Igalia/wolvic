@@ -46,6 +46,7 @@ This repo is only available to Igalia members. If you have access to the relevan
  - `third_party/hvr/` for Huawei (should contain  `arm64-v8a`, `armeabi-v7a` and `include` folders)
  - `third_party/picoxr` [Pico OpenXR Mobile SDK](https://developer-global.pico-interactive.com/sdk?deviceId=1&platformId=3&itemId=11) (should contain `libs` folders, among other things that are not necessary for Wolvic)
  - `third_party/spaces` [for Snapdragon Spaces](https://spaces.qualcomm.com/)(should contain `libopenxr_loader.aar`)
+ - `third_party/pfdmxr` [PFDM OpenXR Mobile SDK](https://developer.pfdm.cn/#/) (should contain `Libs` folders, among other things that are not necessary for Wolvic)
  - `third_party/aliceimu/` for [Huawei Vision Glass](https://consumer.huawei.com/cn/wearables/vision-glass/) (should contain an `.aar` file with the IMU library for the glasses)
 
 The [repo in `third_party`](https://github.com/Igalia/wolvic-third-parties) can be updated like so:
@@ -71,6 +72,7 @@ You can build for different devices:
 - **`spaces`**: Lenovo A3
 - **`visionglass`**: Huawei Vision Glass
 - **`aosp`**: MagicLeap2 (but should work for any other AOSP device using OpenXR)
+- **`pfdmxr`**: PFDM YVR1, PFDM YVR2 and PFDM MR
 
 For testing on a non-VR device:
 

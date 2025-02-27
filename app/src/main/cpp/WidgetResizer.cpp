@@ -37,7 +37,7 @@ typedef std::shared_ptr<ResizeBar> ResizeBarPtr;
 static const float kBarSize = 0.04f;
 // Additional padding, note that without padding bars and handles overlap the edge of the widget.
 static const float kPadding = 0.04f;
-#if defined(OCULUSVR)
+#if defined(OCULUSVR) || defined(PFDMXR)
   static const float kBorder = 0.0f;
 #else
   static const float kBorder = kBarSize * 0.15f;

@@ -20,7 +20,7 @@ public class EnvironmentUtils {
 
     public static final String ENVS_FOLDER = "envs";
     public static final String BUILTIN_ENVS_PREFIX = "cubemap/";
-    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isOculusBuild()) ?
+    public static String[] SUPPORTED_ENV_EXTENSIONS = (DeviceType.isOculusBuild() || DeviceType.isPfdmXR()) ?
             new String[]{".jpg", ".png"} : new String[]{".ktx", ".jpg", ".png"};
 
     /**
@@ -209,10 +209,10 @@ public class EnvironmentUtils {
      */
     @Nullable
     public static String getEnvironmentPayload(Environment env) {
-        if (DeviceType.isPicoXR() || DeviceType.isOculusBuild()) {
+        if (DeviceType.isPicoXR() || DeviceType.isOculusBuild() || DeviceType.isPfdmXR()) {
             String payload = env.getPayload();
             // Meta Quest (after v69) do not support compressed textures for the cubemap.
-            String format = DeviceType.isOculusBuild() ? "_misc" : "_ktx";
+            String format = DeviceType.isOculusBuild() || DeviceType.isPfdmXR() ? "_misc" : "_ktx";
             int at = payload.lastIndexOf(".");
             return payload.substring(0, at) + format + "_srgb" + payload.substring(at);
         }
