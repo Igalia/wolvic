@@ -615,6 +615,11 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
             });
         }
 
+        @Override
+        public void onPresentingImmersiveChange(boolean isPresentingImmersive) {
+            mViewModel.updateIsPresentingImmersive(isPresentingImmersive);
+        }
+
         private Media getActiveMedia() {
             assert mDelegate.getWindows() != null;
             assert mDelegate.getWindows().getFocusedWindow() != null;
