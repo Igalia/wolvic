@@ -793,7 +793,7 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                     // This means that we're forced to recreate all the native resources, which is not really
                     // possible with the current architecture (for example widgets are only created when
                     // the application is created). So we play safe and restart the activity instead.
-                    if (mActivePresentation != null && !isFinishing()) {
+                    if (mActivePresentation != null && !isFinishing() && mPresentationDisplay.getDisplayId() == displayId) {
                         runVRBrowserActivityCallback(activity -> activity.saveState());
                         SystemUtils.restart(getApplicationContext());
                         return;
