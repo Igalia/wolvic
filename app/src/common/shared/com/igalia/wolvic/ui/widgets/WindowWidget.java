@@ -212,12 +212,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // re-center the front window when its height changes
         mViewModel.getHeight().observe((VRBrowserActivity) getContext(), observableInt -> centerFrontWindowIfNeeded());
 
-        mViewModel.getIsFullscreen().observe((VRBrowserActivity) getContext(), observableBoolean -> onIsFullscreenChanged(observableBoolean.get()));
-
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mListeners = new CopyOnWriteArrayList<>();
         setupListeners(mSession);
+
+        mViewModel.getIsFullscreen().observe((VRBrowserActivity) getContext(), observableBoolean -> onIsFullscreenChanged(observableBoolean.get()));
 
         mLibrary = new LibraryPanel(aContext);
         mLibrary.setController(this::showPanel);
