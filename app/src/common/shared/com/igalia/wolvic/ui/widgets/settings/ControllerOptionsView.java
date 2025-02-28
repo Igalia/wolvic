@@ -50,6 +50,10 @@ class ControllerOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
 
+        int selectionMethod = SettingsStore.getInstance(getContext()).getWindowSelectionMethod();
+        mBinding.windowSelectionRadio.setOnCheckedChangeListener(mWindowSelectionMethodListener);
+        setWindowSelectionMethod(mBinding.windowSelectionRadio.getIdForValue(selectionMethod), false);
+
         int color = SettingsStore.getInstance(getContext()).getPointerColor();
         mBinding.pointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
         setPointerColor(mBinding.pointerColorRadio.getIdForValue(color), false);
@@ -79,6 +83,9 @@ class ControllerOptionsView extends SettingsView {
     }
 
     private void resetOptions() {
+        if (!mBinding.windowSelectionRadio.getValueForId(mBinding.windowSelectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.WINDOW_SELECTION_METHOD_DEFAULT)) {
+            setWindowSelectionMethod(mBinding.windowSelectionRadio.getIdForValue(SettingsStore.WINDOW_SELECTION_METHOD_DEFAULT), true);
+        }
         if (!mBinding.pointerColorRadio.getValueForId(mBinding.pointerColorRadio.getCheckedRadioButtonId()).equals(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT)) {
             setPointerColor(mBinding.pointerColorRadio.getIdForValue(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT), true);
         }
@@ -89,6 +96,16 @@ class ControllerOptionsView extends SettingsView {
         setHapticFeedbackEnabled(SettingsStore.HAPTIC_FEEDBACK_ENABLED, true);
         setPointerMode(SettingsStore.POINTER_MODE_DEFAULT, true);
         setHandTrackingEnabled(true, true);
+    }
+
+    private void setWindowSelectionMethod(int checkedId, boolean doApply) {
+        mBinding.windowSelectionRadio.setOnCheckedChangeListener(null);
+        mBinding.windowSelectionRadio.setChecked(checkedId, doApply);
+        mBinding.windowSelectionRadio.setOnCheckedChangeListener(mWindowSelectionMethodListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setWindowSelectionMethod((int)mBinding.windowSelectionRadio.getValueForId(checkedId));
+        }
     }
 
     private void setPointerColor(int checkedId, boolean doApply) {
@@ -153,6 +170,10 @@ class ControllerOptionsView extends SettingsView {
             mWidgetManager.setHandTrackingEnabled(value);
         }
     }
+
+    private RadioGroupSetting.OnCheckedChangeListener mWindowSelectionMethodListener = (radioGroup, checkedId, doApply) -> {
+        setWindowSelectionMethod(checkedId, doApply);
+    };
 
     private RadioGroupSetting.OnCheckedChangeListener mPointerColorListener = (radioGroup, checkedId, doApply) -> {
         setPointerColor(checkedId, doApply);

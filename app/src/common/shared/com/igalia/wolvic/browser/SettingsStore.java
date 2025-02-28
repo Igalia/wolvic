@@ -75,6 +75,11 @@ public class SettingsStore {
     public static final int TABS_LOCATION_HORIZONTAL = 1;
     public static final int TABS_LOCATION_VERTICAL = 2;
 
+    @IntDef(value = {WINDOW_SELECTION_METHOD_CLICK, WINDOW_SELECTION_METHOD_HOVER})
+    public @interface WindowSelectionMethod {}
+    public static final int WINDOW_SELECTION_METHOD_CLICK = 0;
+    public static final int WINDOW_SELECTION_METHOD_HOVER = 1;
+
     private Context mContext;
     private SharedPreferences mPrefs;
     private SettingsViewModel mSettingsViewModel;
@@ -141,6 +146,7 @@ public class SettingsStore {
     }
     public final static WindowSizePreset WINDOW_SIZE_PRESET_DEFAULT = WindowSizePreset.PRESET_0;
 
+    public final static @WindowSelectionMethod int WINDOW_SELECTION_METHOD_DEFAULT = WINDOW_SELECTION_METHOD_HOVER;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
@@ -584,6 +590,17 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
+        editor.apply();
+    }
+
+    @WindowSelectionMethod
+    public int getWindowSelectionMethod() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_window_selection_method), WINDOW_SELECTION_METHOD_DEFAULT);
+    }
+
+    public void setWindowSelectionMethod(int method) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_window_selection_method), method);
         editor.apply();
     }
 
