@@ -73,6 +73,15 @@
                     app:description="@string/controller_options_handtracking" />
 
                 <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
+                    android:id="@+id/window_selection_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/controller_options_window_selection"
+                    app:layout="@layout/setting_radio_group_v"
+                    app:options="@array/controller_options_window_selection"
+                    app:values="@array/controller_options_window_selection_values" />
+
+                <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/pointer_color_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
