@@ -789,15 +789,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                 @Override
                 public void onDisplayRemoved(int displayId) {
                     Log.d(LOGTAG, "display listener: onDisplayRemoved displayId = " + displayId);
-                    // When the display changes due to disconnection we are forced to recreate the presentation.
-                    // This means that we're forced to recreate all the native resources, which is not really
-                    // possible with the current architecture (for example widgets are only created when
-                    // the application is created). So we play safe and restart the activity instead.
-                    if (mActivePresentation != null && !isFinishing()) {
-                        runVRBrowserActivityCallback(activity -> activity.saveState());
-                        SystemUtils.restart(getApplicationContext());
-                        return;
-                    }
                     callUpdateIfIsPresentation(displayId);
                 }
             };
@@ -882,6 +873,20 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
                     drawGL();
                 }
             });
+        }
+
+        @Override
+        public void onDisplayRemoved() {
+            super.onDisplayRemoved();
+            if (mActivePresentation == null || isFinishing())
+                return;
+
+            // When the display changes due to disconnection we are forced to recreate the presentation.
+            // This means that we're forced to recreate all the native resources, which is not really
+            // possible with the current architecture (for example widgets are only created when
+            // the application is created). So we play safe and restart the activity instead.
+            runVRBrowserActivityCallback(activity -> activity.saveState());
+            SystemUtils.restart(getApplicationContext());
         }
     }
 
