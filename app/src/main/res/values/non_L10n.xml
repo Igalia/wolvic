@@ -31,6 +31,7 @@
     <string name="settings_key_display_dpi" translatable="false">settings_display_dpi</string>
     <string name="settings_key_device_name" translatable="false">settings_device_name</string>
     <string name="settings_key_env" translatable="false">settings_env</string>
+    <string name="settings_key_window_selection_method" translatable="false">settings_window_selection_method</string>
     <string name="settings_key_pointer_color" translatable="false">settings_pointer_color</string>
     <string name="settings_key_scroll_direction" translatable="false">settings_scroll_direction</string>
     <string name="settings_key_msaa" translatable="false">settings_gfx_msaa_v3</string>
