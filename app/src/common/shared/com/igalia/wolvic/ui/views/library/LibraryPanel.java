@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -108,7 +107,7 @@ public class LibraryPanel extends FrameLayout {
             @Override
             public void onClose(@NonNull View view) {
                 requestFocus();
-                mWidgetManager.getFocusedWindow().hidePanel();
+                mWidgetManager.getFocusedWindow().closeLibrary();
             }
 
             @Override

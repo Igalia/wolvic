@@ -6,7 +6,6 @@
 package com.igalia.wolvic.browser
 
 import android.content.Context
-import android.util.Log
 import com.igalia.wolvic.browser.engine.SessionStore
 import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.log.logger.Logger
@@ -47,6 +47,7 @@ class Places(var context: Context) {
 
     var bookmarks = PlacesBookmarksStorage(context)
     var history = PlacesHistoryStorage(context)
+    var pinned = PinnedSiteStorage(context)
     var logins = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
 
     fun clear() {
@@ -73,6 +74,7 @@ class Places(var context: Context) {
         // history.cleanup()
         // We create a new storage, otherwise we would need to restart the app so it's created in the Application onCreate
         history = PlacesHistoryStorage(context)
+        pinned = PinnedSiteStorage(context)
         // Update the storage in the proxy class
         SessionStore.get().historyStore.updateStorage()
 

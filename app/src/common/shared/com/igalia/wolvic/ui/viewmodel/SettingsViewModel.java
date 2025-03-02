@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
+import com.igalia.wolvic.utils.RemoteExperiences;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
 
@@ -31,6 +32,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isWebXREnabled;
     private MutableLiveData<String> propsVersionName;
     private MutableLiveData<Map<String, RemoteProperties>> props;
+    private MutableLiveData<RemoteExperiences> experiences;
     private MutableLiveData<ObservableBoolean> isWhatsNewVisible;
 
     public SettingsViewModel(@NonNull Application application) {
@@ -126,6 +128,20 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public MutableLiveData<Map<String, RemoteProperties>> getProps() {
         return props;
+    }
+
+    public void setExperiences(String json) {
+        try {
+            Gson gson = new GsonBuilder().create();
+            RemoteExperiences experiences = gson.fromJson(json, RemoteExperiences.class);
+            this.experiences.postValue(experiences);
+        } catch (Exception e) {
+            Log.e(LOGTAG, String.valueOf(e.getLocalizedMessage()));
+        }
+    }
+
+    public MutableLiveData<RemoteExperiences> getExperiences() {
+        return experiences;
     }
 
     public MutableLiveData<ObservableBoolean> getIsWhatsNewVisible() {

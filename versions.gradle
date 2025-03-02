@@ -77,6 +77,7 @@ android_components.browser_icons = "org.mozilla.components:browser-icons:$versio
 android_components.feature_findinpage = "org.mozilla.components:feature-findinpage:$versions.android_components"
 android_components.feature_search = "org.mozilla.components:feature-search:$versions.android_components"
 android_components.feature_toolbar = "org.mozilla.components:feature-toolbar:$versions.android_components"
+android_components.feature_top_sites = "org.mozilla.components:feature-top-sites:$versions.android_components"
 android_components.service_accounts = "org.mozilla.components:service-firefox-accounts:$versions.android_components"
 android_components.service_sync_logins = "org.mozilla.components:service-sync-logins:$versions.android_components"
 android_components.mozilla_service_location = "org.mozilla.components:service-location:$versions.android_components"
