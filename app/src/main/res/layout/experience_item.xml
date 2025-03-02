@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="experience"
+            type="com.igalia.wolvic.utils.Experience" />
+
+        <variable
+            name="callback"
+            type="com.igalia.wolvic.ui.callbacks.NewTabItemCallback" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="@dimen/new_tab_experience_width"
+        android:layout_height="@dimen/new_tab_experience_height"
+        android:addStatesFromChildren="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="@{(view) ->  callback.onClick(view, experience.title, experience.url)}"
+        android:padding="2dp">
+
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_icon_globe" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@color/text_shadow"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text="@{experience.title}"
+                android:textColor="@color/library_panel_title_text_color"
+                android:textSize="@dimen/new_tab_item_title_text_size"
+                android:textStyle="bold"
+                tools:text="Experience Name" />
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

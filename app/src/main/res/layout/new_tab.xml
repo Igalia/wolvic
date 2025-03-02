@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="webAppsViewModel"
-            type="com.igalia.wolvic.ui.viewmodel.WebAppsViewModel" />
-    </data>
-
     <com.igalia.wolvic.ui.views.CustomScrollView
         android:id="@+id/scrollbar"
         style="@style/customScrollViewStyle"
@@ -40,7 +33,7 @@
             <!-- Search bar -->
 
             <com.igalia.wolvic.ui.views.UITextButton
-                android:id="@+id/url_bar"
+                android:id="@+id/search_bar"
                 style="@style/navigationBarTextButtonTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/nav_button_size"
@@ -58,82 +51,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/favicon" />
 
-            <!-- Web Apps -->
-
-            <RelativeLayout
-                android:id="@+id/web_apps_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                app:layout_constraintTop_toBottomOf="@id/url_bar">
-
-
-                <LinearLayout
-                    android:id="@+id/empty_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:orientation="vertical"
-                    app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; webAppsViewModel.isEmpty}">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@string/web_apps_empty"
-                        android:src="@drawable/ic_icon_webapps"
-                        app:srcCompat="@drawable/ic_icon_webapps"
-                        app:tint="@color/concrete" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/web_apps_empty"
-                        android:textAlignment="center"
-                        android:textColor="@color/fog"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:text="@{@string/web_apps_description}"
-                        android:textAlignment="center"
-                        android:textAllCaps="false"
-                        android:textColor="@color/concrete"
-                        android:textSize="12sp"
-                        android:textStyle="normal"
-                        tools:text="@string/web_apps_description" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/loading_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="@string/web_apps_loading"
-                    android:textColor="@color/fog"
-                    android:visibility="gone"
-                    app:visibleGone="@{webAppsViewModel.isLoading}" />
-
-                <com.igalia.wolvic.ui.views.CustomRecyclerView
-                    android:id="@+id/web_apps_list"
-                    style="@style/customRecyclerViewStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/web_apps_title"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; !webAppsViewModel.isEmpty}"
-                    tools:itemCount="8"
-                    tools:listitem="@layout/new_tab_item" />
-
-            </RelativeLayout>
+            <!-- Top sites -->
 
             <com.igalia.wolvic.ui.views.CustomRecyclerView
                 android:id="@+id/top_sites_list"
@@ -149,11 +67,30 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/web_apps_container"
-                app:visibleGone="@{!webAppsViewModel.isLoading &amp;&amp; !webAppsViewModel.isEmpty}"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
                 tools:itemCount="8"
                 tools:listitem="@layout/new_tab_item" />
 
+
+            <!-- Top sites -->
+
+            <com.igalia.wolvic.ui.views.CustomRecyclerView
+                android:id="@+id/experiences_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Top sites"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
+                tools:itemCount="8"
+                tools:listitem="@layout/new_tab_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
