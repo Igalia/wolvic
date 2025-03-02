@@ -16,7 +16,7 @@ data class RemoteExperiences(
     val thumbnailroot: String,
     val categories: Map<String, Category>
 ) {
-    fun getCategories(): List<String> =
+    fun getCategoryNames(): List<String> =
         categories.keys.toList()
 
     fun getExperiencesForCategory(category: String): List<Experience> =

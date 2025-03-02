@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.cn.igalia.wolvic",
+  "variantName": "hvrArm64GeckoMainlandChinaRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 190501403,
+      "versionName": "1.8.1",
+      "outputFile": "Wolvic-hvr-arm64-gecko-mainlandChina-release.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/Wolvic-hvr-arm64-gecko-mainlandChina-release.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/Wolvic-hvr-arm64-gecko-mainlandChina-release.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 24
+}
