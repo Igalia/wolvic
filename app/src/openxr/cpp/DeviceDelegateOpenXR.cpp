@@ -186,7 +186,7 @@ struct DeviceDelegateOpenXR::State {
     if (OpenXRExtensions::IsExtensionSupported(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME)) {
         extensions.push_back(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME);
     }
-#ifdef OCULUSVR
+#if defined(OCULUSVR) || defined(PFDMXR)
     if (OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME)) {
       extensions.push_back(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME);
     }
@@ -509,7 +509,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   XrSwapchainCreateInfo GetSwapChainCreateInfo(uint32_t w = 0, uint32_t h = 0) {
-#if OCULUSVR
+#if OCULUSVR || PFDMXR
     const int64_t colorFormat = GL_SRGB8_ALPHA8;
 #else
     const int64_t colorFormat = GL_RGBA8;
@@ -745,6 +745,9 @@ struct DeviceDelegateOpenXR::State {
       // is disabled we'll select 72hz which is the only one advertised by OpenXR in that case.
       case device::Pico4x:
       case device::Pico4U:
+      case device::PfdmYVR1:
+      case device::PfdmYVR2:
+      case device::PfdmMR:
         suggestedRefreshRate = 90.0;
         break;
       case device::OculusQuest:
@@ -1072,7 +1075,7 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
     return;
   }
 
-#if OCULUSVR || PICOXR
+#if OCULUSVR || PICOXR || PFDMXR
   // Fix brigthness issue.
   glDisable(GL_FRAMEBUFFER_SRGB_EXT);
 #endif
