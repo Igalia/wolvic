@@ -27,7 +27,7 @@ import java.util.List;
 
 import mozilla.components.feature.top.sites.TopSite;
 import mozilla.components.feature.top.sites.view.TopSitesView;
-import mozilla.components.support.base.feature.LifecycleAwareFeature;
+import mozilla.components.feature.top.sites.TopSitesFeature;
 
 public class NewTabView extends FrameLayout implements TopSitesView {
 
@@ -39,7 +39,7 @@ public class NewTabView extends FrameLayout implements TopSitesView {
     private NewTabBinding mBinding;
     private Handler mHandler;
     private TopSitesAdapter mTopSitesAdapter;
-    LifecycleAwareFeature mTopSitesFeature;
+    private TopSitesFeature mTopSitesFeature; // ✅ FIXED TYPE
     private ExperiencesAdapter mExperiencesAdapter;
 
     public NewTabView(Context context) {
@@ -64,15 +64,11 @@ public class NewTabView extends FrameLayout implements TopSitesView {
 
         mBinding.favicon.setOnClickListener(v -> {
             openUrl(getContext().getString(R.string.home_page_url));
-            // do I need to close this?
             Log.e(LOGTAG, "favicon onClick " + v);
         });
 
         mBinding.searchBar.setOnClickListener(v -> {
-
             Log.e(LOGTAG, "URL bar onClick " + v);
-
-//            mWidgetManager.getNavigationBar().focusURLBar();
         });
 
         // Top sites
@@ -81,7 +77,7 @@ public class NewTabView extends FrameLayout implements TopSitesView {
         mBinding.topSitesList.setLayoutManager(new GridLayoutManager(getContext(), TOP_SITES_COLUMNS));
         mBinding.topSitesList.setHasFixedSize(true);
 
-        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext());
+        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getLifecycleScope());
         mTopSitesFeature = topSitesHelper.createFeature(this);
         mTopSitesFeature.start();
 
@@ -90,7 +86,6 @@ public class NewTabView extends FrameLayout implements TopSitesView {
         mBinding.experiencesList.setAdapter(mExperiencesAdapter);
         mBinding.experiencesList.setLayoutManager(new GridLayoutManager(getContext(), EXPERIENCES_COLUMNS));
         mBinding.experiencesList.setHasFixedSize(true);
-
     }
 
     private void openUrl(@NonNull String url) {
@@ -100,7 +95,6 @@ public class NewTabView extends FrameLayout implements TopSitesView {
 
     @Override
     public void displayTopSites(@NonNull List<? extends TopSite> list) {
-
         Log.e(LOGTAG, "displayTopSites");
         for (TopSite site : list) {
             Log.e(LOGTAG, "    " + site.getTitle() + "  " + site.getUrl());
@@ -114,7 +108,6 @@ public class NewTabView extends FrameLayout implements TopSitesView {
         super.onAttachedToWindow();
         mTopSitesFeature.start();
     }
-
 
     @Override
     protected void onDetachedFromWindow() {
