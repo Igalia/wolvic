@@ -77,7 +77,7 @@ public class NewTabView extends FrameLayout implements TopSitesView {
         mBinding.topSitesList.setLayoutManager(new GridLayoutManager(getContext(), TOP_SITES_COLUMNS));
         mBinding.topSitesList.setHasFixedSize(true);
 
-        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getLifecycleScope());
+        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getLifecycle().getCoroutineScope());
         mTopSitesFeature = topSitesHelper.createFeature(this);
         mTopSitesFeature.start();
 
