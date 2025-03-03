@@ -23,7 +23,7 @@ public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHo
 
     private static final String LOGTAG = TopSitesAdapter.class.getSimpleName();
 
-    private List<TopSite> mTopSites = Collections.emptyList();
+    private final List<TopSite> mTopSites = new ArrayList();
     private final OnTopSiteClickListener listener;
 
 
@@ -64,7 +64,8 @@ public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHo
             Log.e(LOGTAG, "    " + site.getTitle() + "  " + site.getUrl());
         }
 
-        mTopSites = new ArrayList<>(newTopSites);
+        mTopSites.clear();
+        mTopSites.addAll(newTopSites)
         notifyDataSetChanged();
     }
 
