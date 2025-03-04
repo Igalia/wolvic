@@ -1,18 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <com.igalia.wolvic.ui.views.CustomScrollView
+        android:id="@+id/scrollbar"
+        style="@style/customScrollViewStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/void_color">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/favicon"
-                android:layout_width="128dp"
-                android:layout_height="128dp"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ff_logo" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </FrameLayout>
+            <!-- Header -->
+
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/favicon"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/wolvic_header"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/wolvic_header_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Search bar -->
+
+            <com.igalia.wolvic.ui.views.UITextButton
+                android:id="@+id/search_bar"
+                style="@style/navigationBarTextButtonTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/nav_button_size"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="16dp"
+                android:background="@drawable/url_background"
+                android:foreground="@drawable/url_background_outline"
+                android:gravity="center"
+                android:minWidth="256dp"
+                android:paddingStart="@dimen/nav_button_size"
+                android:paddingEnd="@dimen/nav_button_size"
+                android:text="@string/search_placeholder"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/favicon" />
+
+            <!-- Top sites -->
+
+            <com.igalia.wolvic.ui.views.CustomRecyclerView
+                android:id="@+id/top_sites_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Top sites"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
+                tools:itemCount="8"
+                tools:listitem="@layout/new_tab_item" />
+
+
+            <!-- Top sites -->
+
+            <com.igalia.wolvic.ui.views.CustomRecyclerView
+                android:id="@+id/experiences_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Top sites"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
+                tools:itemCount="8"
+                tools:listitem="@layout/new_tab_item" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.igalia.wolvic.ui.views.CustomScrollView>
+
 </layout>

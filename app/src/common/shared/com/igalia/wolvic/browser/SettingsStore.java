@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import mozilla.components.concept.fetch.Request;
 import mozilla.components.concept.fetch.Response;
@@ -208,17 +209,22 @@ public class SettingsStore {
 
         mSettingsViewModel.refresh();
 
-        update();
+        updateRemoteContent(BuildConfig.PROPS_ENDPOINT,
+                R.string.settings_key_remote_props,
+                mSettingsViewModel::setProps);
+        updateRemoteContent(BuildConfig.EXPERIENCES_ENDPOINT,
+                R.string.settings_key_remote_experiences,
+                mSettingsViewModel::setExperiences);
     }
 
     /**
      * Synchronizes the remote properties with the settings storage and notifies the model.
      * Any consumer listening to the SettingsViewModel will get notified of the properties updates.
      */
-    private void update() {
+    private void updateRemoteContent(String endpoint, int prefsKey, Consumer<String> onContentAvailable) {
         ((VRBrowserApplication) mContext.getApplicationContext()).getExecutors().backgroundThread().post(() -> {
             Request request = new Request(
-                    BuildConfig.PROPS_ENDPOINT,
+                    endpoint,
                     Request.Method.GET,
                     null,
                     null,
@@ -235,14 +241,13 @@ public class SettingsStore {
                 if (response.getStatus() == 200) {
                     String json = response.getBody().string(StandardCharsets.UTF_8);
                     SharedPreferences.Editor editor = mPrefs.edit();
-                    editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
+                    editor.putString(mContext.getString(prefsKey), json);
                     editor.apply();
-
-                    mSettingsViewModel.setProps(json);
+                    // Once the JSON content has been received, execute the callback.
+                    onContentAvailable.accept(json);
                 }
-
             } catch (IOException e) {
-                Log.d(LOGTAG, "Remote properties error: " + e.getLocalizedMessage());
+                Log.d(LOGTAG, "Remote data fetch error for " + endpoint + ": " + e.getLocalizedMessage());
             }
         });
     }

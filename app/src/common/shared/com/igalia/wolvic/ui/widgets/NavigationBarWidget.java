@@ -15,9 +15,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -247,8 +245,6 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
             if (getSession().canGoBack()) {
                 getSession().goBack();
-            } else if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
-                getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
             }
 
             if (mAudio != null) {
@@ -259,18 +255,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
 
         mBinding.navigationBarNavigation.forwardButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            if (mViewModel.getCanGoForwardFromNewTab().getValue().get()) {
-                String forwardUrl = mViewModel.getUrlForwardFromNewTab().getValue().toString();
-                getSession().loadUri(forwardUrl);
-
-                mAttachedWindow.hideNewTab();
-
-                mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
-                mViewModel.setUrl(forwardUrl);
-                mViewModel.setCanGoForwardFromNewTab(false);
-            } else {
-                getSession().goForward();
-            }
+            getSession().goForward();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -1362,8 +1347,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             @Override
             public void onFindInPage() {
                 hideMenu();
-                mAttachedWindow.hidePanel();
-
+                mAttachedWindow.closeLibrary();
                 mViewModel.setIsFindInPage(true);
             }
 
@@ -1406,7 +1390,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onAddons() {
                 hideMenu();
 
-                mAttachedWindow.showLibraryPanel(Windows.ContentType.ADDONS);
+                mAttachedWindow.showLibrary(Windows.ContentType.ADDONS);
             }
 
             @Override

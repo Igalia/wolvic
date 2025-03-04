@@ -75,7 +75,7 @@
                 android:paddingStart="10dp">
 
                 <TextView
-                    android:id="@+id/_webapp_name"
+                    android:id="@+id/web_app_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="middle"
