@@ -74,7 +74,6 @@ class Places(var context: Context) {
         // history.cleanup()
         // We create a new storage, otherwise we would need to restart the app so it's created in the Application onCreate
         history = PlacesHistoryStorage(context)
-        pinned = PinnedSiteStorage(context)
         // Update the storage in the proxy class
         SessionStore.get().historyStore.updateStorage()
 
@@ -82,6 +81,12 @@ class Places(var context: Context) {
             // The login storage has a wipe method the should bring us back to the state before the first sync
             // (although it actually just deletes everything) so there is no need to delete the whole database.
             logins.value.wipeLocal()
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            pinned.getPinnedSites().forEach { site ->
+                pinned.removePinnedSite(site)
+            }
         }
     }
 }

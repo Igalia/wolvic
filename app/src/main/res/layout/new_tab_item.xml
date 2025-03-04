@@ -5,16 +5,12 @@
     <data>
 
         <variable
-            name="title"
-            type="String" />
+            name="site"
+            type="mozilla.components.feature.top.sites.TopSite" />
 
         <variable
-            name="url"
-            type="String" />
-
-        <variable
-            name="callback"
-            type="com.igalia.wolvic.ui.callbacks.NewTabItemCallback" />
+            name="listener"
+            type="com.igalia.wolvic.browser.components.TopSitesAdapter.ClickListener" />
     </data>
 
     <FrameLayout
@@ -31,7 +27,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:onClick="@{(view) ->  callback.onClick(view, title, url)}"
+            android:onClick="@{(view) ->  listener.onClicked(site)}"
             android:orientation="horizontal"
             android:soundEffectsEnabled="false">
 
@@ -41,10 +37,7 @@
                 android:layout_height="match_parent"
                 android:layout_above="@id/name_url"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{(view) ->  callback.onClick(view, title, url)}">
+                android:layout_centerHorizontal="true">
 
                 <ImageView
                     android:id="@+id/web_app_icon"
@@ -73,7 +66,7 @@
                     android:maxLines="2"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:text="@{title}"
+                    android:text="@{site.title}"
                     android:textColor="@color/library_panel_title_text_color"
                     android:textSize="@dimen/new_tab_item_title_text_size"
                     android:textStyle="bold"

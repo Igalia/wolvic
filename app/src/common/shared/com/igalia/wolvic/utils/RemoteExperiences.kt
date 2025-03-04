@@ -13,8 +13,8 @@ data class Category(
 )
 
 data class RemoteExperiences(
-    val thumbnailroot: String,
-    val categories: Map<String, Category>
+    val thumbnailroot: String = "",
+    val categories: Map<String, Category> = emptyMap()
 ) {
     fun getCategoryNames(): List<String> =
         categories.keys.toList()

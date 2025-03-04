@@ -8,6 +8,7 @@ package com.igalia.wolvic.browser
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.igalia.wolvic.VRBrowserApplication
 import com.igalia.wolvic.utils.SystemUtils

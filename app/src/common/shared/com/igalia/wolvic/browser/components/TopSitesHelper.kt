@@ -5,7 +5,15 @@ import com.igalia.wolvic.VRBrowserApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.components.feature.top.sites.*
+import mozilla.components.concept.storage.FrecencyThresholdOption
+import mozilla.components.feature.top.sites.DefaultTopSitesStorage
+import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.feature.top.sites.TopSitesConfig
+import mozilla.components.feature.top.sites.TopSitesFeature
+import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
+import mozilla.components.feature.top.sites.TopSitesProviderConfig
+import mozilla.components.feature.top.sites.TopSitesStorage
+import mozilla.components.feature.top.sites.TopSitesUseCases
 
 /**
  * Helper class to simplify working with top sites (frequent, recent, pinned).
@@ -16,28 +24,43 @@ class TopSitesHelper(context: Context, private val scope: CoroutineScope) {
     private val useCases: TopSitesUseCases
     private val config: TopSitesConfig
 
+    private val TOTAL_SITES = 16
+
     init {
         val app = context.applicationContext as VRBrowserApplication
         storage = DefaultTopSitesStorage(
             pinnedSitesStorage = app.places.pinned,
-            historyStorage = app.places.history
+            historyStorage = app.places.history,
+            defaultTopSites = listOf(
+                Pair("Wolvic", "https://www.wolvic.com"), Pair("Igalia", "http://www.igalia.com")
+            )
         )
         useCases = TopSitesUseCases(storage)
-        config = TopSitesConfig(totalSites = 8)
+        config = TopSitesConfig(
+            totalSites = TOTAL_SITES,
+            frecencyConfig = TopSitesFrecencyConfig(
+                frecencyTresholdOption = FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
+                frecencyFilter = { topSite ->
+                    !topSite.url.lowercase().startsWith("about:")
+                }
+            ),
+            providerConfig = TopSitesProviderConfig(
+                showProviderTopSites = true
+            )
+        )
     }
 
     /**
      * Creates and returns a TopSitesFeature connected to the given view.
      *
-     * @param view The view that will display the top sites
+     * @param adapter The view that will display the top sites
      * @return A `TopSitesFeature` that should be started/stopped with the lifecycle.
      */
-    fun createFeature(view: TopSitesView): TopSitesFeature {
+    fun createFeature(adapter: TopSitesAdapter): TopSitesFeature {
         return TopSitesFeature(
-            view = view,
+            view = TopSitesAdapterView(adapter),
             storage = storage,
-            config = { config }
-        )
+            config = { config })
     }
 
     /**

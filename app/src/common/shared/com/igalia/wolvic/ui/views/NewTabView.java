@@ -6,40 +6,40 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
+import com.igalia.wolvic.browser.components.TopSitesAdapter;
 import com.igalia.wolvic.browser.components.TopSitesHelper;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NewTabBinding;
 import com.igalia.wolvic.ui.adapters.ExperiencesAdapter;
-import com.igalia.wolvic.ui.adapters.TopSitesAdapter;
+import com.igalia.wolvic.ui.adapters.TopSitesAdapterImpl;
+import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
-import java.util.List;
-
 import mozilla.components.feature.top.sites.TopSite;
-import mozilla.components.feature.top.sites.view.TopSitesView;
 import mozilla.components.feature.top.sites.TopSitesFeature;
 
-public class NewTabView extends FrameLayout implements TopSitesView {
+public class NewTabView extends FrameLayout {
 
     static final String LOGTAG = SystemUtils.createLogtag(NewTabView.class);
-    public static final int TOP_SITES_COLUMNS = 8;
-    public static final int EXPERIENCES_COLUMNS = 4;
 
     private WidgetManagerDelegate mWidgetManager;
     private NewTabBinding mBinding;
     private Handler mHandler;
-    private TopSitesAdapter mTopSitesAdapter;
-    private TopSitesFeature mTopSitesFeature; // ✅ FIXED TYPE
+    private SettingsViewModel mSettingsViewModel;
+    private TopSitesAdapterImpl mTopSitesAdapter;
+    private TopSitesFeature mTopSitesFeature;
     private ExperiencesAdapter mExperiencesAdapter;
 
     public NewTabView(Context context) {
@@ -59,48 +59,58 @@ public class NewTabView extends FrameLayout implements TopSitesView {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
+        mSettingsViewModel = new ViewModelProvider((VRBrowserActivity) getContext(), ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication())).get(SettingsViewModel.class);
+
         mBinding = DataBindingUtil.inflate(inflater, R.layout.new_tab, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
+        mBinding.setSettingsmodel(mSettingsViewModel);
 
-        mBinding.favicon.setOnClickListener(v -> {
-            openUrl(getContext().getString(R.string.home_page_url));
-            Log.e(LOGTAG, "favicon onClick " + v);
-        });
+        mBinding.logo.setOnClickListener(v -> openUrl(getContext().getString(R.string.home_page_url)));
 
         mBinding.searchBar.setOnClickListener(v -> {
             Log.e(LOGTAG, "URL bar onClick " + v);
         });
 
         // Top sites
-        mTopSitesAdapter = new TopSitesAdapter(null);
+        mTopSitesAdapter = new TopSitesAdapterImpl(mTopSitesClickListener);
         mBinding.topSitesList.setAdapter(mTopSitesAdapter);
-        mBinding.topSitesList.setLayoutManager(new GridLayoutManager(getContext(), TOP_SITES_COLUMNS));
         mBinding.topSitesList.setHasFixedSize(true);
 
-        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getLifecycle().getCoroutineScope());
-        mTopSitesFeature = topSitesHelper.createFeature(this);
+        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getCoroutineScope());
+        mTopSitesFeature = topSitesHelper.createFeature(mTopSitesAdapter);
         mTopSitesFeature.start();
 
         // Experiences
         mExperiencesAdapter = new ExperiencesAdapter(getContext());
+        mExperiencesAdapter.setClickListener(experience -> {
+            openUrl(experience.getUrl());
+        });
         mBinding.experiencesList.setAdapter(mExperiencesAdapter);
-        mBinding.experiencesList.setLayoutManager(new GridLayoutManager(getContext(), EXPERIENCES_COLUMNS));
         mBinding.experiencesList.setHasFixedSize(true);
+        mSettingsViewModel.getExperiences().observe((VRBrowserActivity) getContext(), experiences -> {
+            mExperiencesAdapter.updateExperiences(experiences.getAllExperiences(), experiences.getThumbnailroot());
+        });
     }
+
+    private final TopSitesAdapter.ClickListener mTopSitesClickListener =
+            new TopSitesAdapter.ClickListener() {
+                @Override
+                public void onClicked(@NonNull TopSite site) {
+                    openUrl(site.getUrl());
+                }
+
+                @Override
+                public void onRemoved(@NonNull TopSite site) {
+                }
+
+                @Override
+                public void onPinned(@NonNull TopSite site) {
+                }
+            };
 
     private void openUrl(@NonNull String url) {
         Session session = SessionStore.get().getActiveSession();
         session.loadUri(url);
-    }
-
-    @Override
-    public void displayTopSites(@NonNull List<? extends TopSite> list) {
-        Log.e(LOGTAG, "displayTopSites");
-        for (TopSite site : list) {
-            Log.e(LOGTAG, "    " + site.getTitle() + "  " + site.getUrl());
-        }
-
-        mTopSitesAdapter.updateTopSites(list);
     }
 
     @Override

@@ -27,20 +27,20 @@ public class ExperiencesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final Context mContext;
     private final List<Experience> mExperiences = new ArrayList<>();
     private String mThumbnailRoot;
-    private OnExperienceClickListener mListener;
+    private ClickListener mListener;
 
-    public interface OnExperienceClickListener {
-        void onExperienceClicked(Experience experience);
+    public interface ClickListener {
+        void onClicked(Experience experience);
     }
 
     public ExperiencesAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(List<Experience> experiences, String thumbnailRoot) {
-        mExperiences.clear();
+    public void updateExperiences(List<Experience> experiences, String thumbnailRoot) {
         mThumbnailRoot = thumbnailRoot;
 
+        mExperiences.clear();
         if (experiences != null) {
             mExperiences.addAll(experiences);
         }
@@ -48,7 +48,7 @@ public class ExperiencesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
-    public void setOnExperienceClickListener(OnExperienceClickListener listener) {
+    public void setClickListener(ClickListener listener) {
         mListener = listener;
     }
 
@@ -56,7 +56,7 @@ public class ExperiencesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ExperienceItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.experience_item,
+                .inflate(LayoutInflater.from(mContext), R.layout.experience_item,
                         parent, false);
 
         return new ExperienceViewHolder(binding);
@@ -81,7 +81,7 @@ public class ExperiencesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         viewHolder.itemView.setOnClickListener(v -> {
             if (mListener != null) {
-                mListener.onExperienceClicked(experience);
+                mListener.onClicked(experience);
             }
         });
     }

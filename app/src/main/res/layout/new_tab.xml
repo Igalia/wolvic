@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="settingsmodel"
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
+    </data>
+
     <com.igalia.wolvic.ui.views.CustomScrollView
         android:id="@+id/scrollbar"
         style="@style/customScrollViewStyle"
@@ -17,16 +24,16 @@
             <!-- Header -->
 
             <com.igalia.wolvic.ui.views.UIButton
-                android:id="@+id/favicon"
+                android:id="@+id/logo"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
+                android:background="@drawable/wolvic_header_bg"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/wolvic_header"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/wolvic_header_bg"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,7 +45,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/nav_button_size"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
                 android:background="@drawable/url_background"
                 android:foreground="@drawable/url_background_outline"
                 android:gravity="center"
@@ -46,10 +55,11 @@
                 android:paddingStart="@dimen/nav_button_size"
                 android:paddingEnd="@dimen/nav_button_size"
                 android:text="@string/search_placeholder"
+                android:textColor="@drawable/main_button_text_color"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/favicon" />
+                app:layout_constraintTop_toBottomOf="@id/logo" />
 
             <!-- Top sites -->
 
@@ -59,38 +69,43 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
                 android:contentDescription="Top sites"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.widgets.NonScrollingGridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/search_bar"
-                tools:itemCount="8"
+                app:spanCount="8"
+                tools:itemCount="16"
                 tools:listitem="@layout/new_tab_item" />
-
 
             <!-- Top sites -->
 
             <com.igalia.wolvic.ui.views.CustomRecyclerView
                 android:id="@+id/experiences_list"
                 style="@style/customRecyclerViewStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="Top sites"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                android:contentDescription="Experiences"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.widgets.NonScrollingGridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_bar"
-                tools:itemCount="8"
-                tools:listitem="@layout/new_tab_item" />
+                app:layout_constraintTop_toBottomOf="@id/top_sites_list"
+                app:spanCount="4"
+                tools:itemCount="12"
+                tools:listitem="@layout/experience_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

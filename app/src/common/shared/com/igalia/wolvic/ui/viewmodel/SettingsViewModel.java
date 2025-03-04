@@ -44,6 +44,7 @@ public class SettingsViewModel extends AndroidViewModel {
         isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(false));
         propsVersionName = new MutableLiveData<>();
         props = new MutableLiveData<>(Collections.emptyMap());
+        experiences = new MutableLiveData<>(new RemoteExperiences());
         isWhatsNewVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         propsVersionName.observeForever(props -> isWhatsNewVisible());

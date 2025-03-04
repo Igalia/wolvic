@@ -9,25 +9,25 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.browser.components.TopSitesAdapter;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NewTabItemBinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import mozilla.components.browser.icons.IconRequest;
 import mozilla.components.feature.top.sites.TopSite;
 
-public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHolder> {
+public class TopSitesAdapterImpl extends RecyclerView.Adapter<TopSitesAdapterImpl.ViewHolder> implements TopSitesAdapter {
 
-    private static final String LOGTAG = TopSitesAdapter.class.getSimpleName();
+    private static final String LOGTAG = TopSitesAdapterImpl.class.getSimpleName();
 
     private final List<TopSite> mTopSites = new ArrayList();
-    private final OnTopSiteClickListener listener;
+    private final TopSitesAdapter.ClickListener mClickListener;
 
-    public TopSitesAdapter(OnTopSiteClickListener listener) {
-        this.listener = listener;
+    public TopSitesAdapterImpl(@NonNull TopSitesAdapter.ClickListener listener) {
+        this.mClickListener = listener;
     }
 
     @NonNull
@@ -36,7 +36,7 @@ public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHo
         NewTabItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.new_tab_item,
                         parent, false);
-        // binding.setCallback(mItemCallback);
+        binding.setListener(mClickListener);
         return new ViewHolder(binding);
     }
 
@@ -47,8 +47,7 @@ public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHo
         Log.e(LOGTAG, "onBindViewHolder " + site.getTitle() + " " + site.getUrl());
 
         NewTabItemBinding binding = holder.binding;
-        binding.setTitle(site.getTitle());
-        binding.setUrl(site.getUrl());
+        binding.setSite(site);
         SessionStore.get().getBrowserIcons().loadIntoView(binding.webAppIcon, site.getUrl(), IconRequest.Size.LAUNCHER);
     }
 
@@ -58,14 +57,19 @@ public class TopSitesAdapter extends RecyclerView.Adapter<TopSitesAdapter.ViewHo
     }
 
     public void updateTopSites(@NonNull List<? extends TopSite> topSites) {
-        Log.e(LOGTAG, "updateTopSites: "+topSites.size());
+        Log.e(LOGTAG, "updateTopSites: " + topSites.size());
         for (TopSite site : topSites) {
-            Log.e(LOGTAG, "    " + site.getTitle() + "  " + site.getUrl());
+            Log.e(LOGTAG, "    " + site.getTitle() + "  " + site.getUrl() + " " + site.getType());
         }
 
         mTopSites.clear();
         mTopSites.addAll(topSites);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void setClickListener(@NonNull TopSitesAdapter.ClickListener clickListener) {
+
     }
 
     public interface OnTopSiteClickListener {

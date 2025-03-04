@@ -9,8 +9,8 @@
             type="com.igalia.wolvic.utils.Experience" />
 
         <variable
-            name="callback"
-            type="com.igalia.wolvic.ui.callbacks.NewTabItemCallback" />
+            name="listener"
+            type="com.igalia.wolvic.ui.adapters.ExperiencesAdapter.ClickListener" />
     </data>
 
     <FrameLayout
@@ -19,13 +19,14 @@
         android:addStatesFromChildren="true"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{(view) ->  callback.onClick(view, experience.title, experience.url)}"
+        android:onClick="@{(view) ->  listener.onClicked(experience)}"
         android:padding="2dp">
 
         <RelativeLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/asphalt">
 
             <ImageView
                 android:id="@+id/thumbnail"
@@ -33,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_icon_globe" />
+                android:src="@drawable/empty_drawable" />
 
             <TextView
                 android:id="@+id/title"
