@@ -5,6 +5,7 @@
         <import type="android.view.View" />
         <import type="com.igalia.wolvic.BuildConfig"/>
         <import type="com.igalia.wolvic.ui.widgets.Windows.WindowPlacement"/>
+        <import type="com.igalia.wolvic.ui.widgets.Windows.ContentType" />
         <variable
             name="viewmodel"
             type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
@@ -36,7 +37,7 @@
             android:src="@drawable/ic_icon_back"
             android:tint="@color/midnight"
             android:tooltipText="@string/back_tooltip"
-            android:enabled="@{viewmodel.canGoBack}"
+            android:enabled="@{viewmodel.canGoBack || viewmodel.backToNewTabEnabled}"
             app:privateMode="@{viewmodel.isPrivateSession}" />
 
         <com.igalia.wolvic.ui.views.UIButton
@@ -46,7 +47,7 @@
             android:layout_weight="0"
             android:src="@drawable/ic_icon_forward"
             android:tooltipText="@string/forward_tooltip"
-            android:enabled="@{viewmodel.canGoForward}"
+            android:enabled="@{viewmodel.canGoForward || viewmodel.canGoForwardFromNewTab}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <RelativeLayout
@@ -62,6 +63,7 @@
                 android:src="@{viewmodel.isLoading ? @drawable/ic_icon_exit : @drawable/ic_icon_reload}"
                 android:padding="@{viewmodel.isLoading ? @dimen/nav_button_padding : @dimen/nav_button_progress_padding}"
                 android:tooltipText="@{viewmodel.isLoading ? @string/stop_tooltip : @string/refresh_tooltip}"
+                android:enabled="@{!viewmodel.isNativeContentVisible &amp;&amp; viewmodel.currentContentType != ContentType.NEW_TAB}"
                 app:privateMode="@{viewmodel.isPrivateSession}" />
 
             <ProgressBar

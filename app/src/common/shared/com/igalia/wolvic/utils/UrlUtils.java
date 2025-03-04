@@ -188,6 +188,12 @@ public class UrlUtils {
         return url != null && url.equalsIgnoreCase(ABOUT_BOOKMARKS);
     }
 
+    public static final String ABOUT_NEWTAB = "about://newtab";
+
+    public static boolean isNewTabUrl(@Nullable String url) {
+        return url != null && url.equalsIgnoreCase(ABOUT_NEWTAB);
+    }
+
     public static final String ABOUT_DOWNLOADS = "about://downloads";
 
     public static boolean isDownloadsUrl(@Nullable String url) {
@@ -246,7 +252,7 @@ public class UrlUtils {
 
     public static boolean isAboutPage(@Nullable String url) {
         return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isAddonsUrl(url) ||
-                isWebAppsUrl(url) || isNotificationsUrl(url) || isPrivateUrl(url);
+                isWebAppsUrl(url) || isNotificationsUrl(url) || isPrivateUrl(url) || isNewTabUrl(url);
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {
