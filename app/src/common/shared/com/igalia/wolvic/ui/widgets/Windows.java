@@ -98,6 +98,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
+
         // NOTE: Enum values may be null when deserialized by GSON.
         ContentType contentType = ContentType.WEB_CONTENT;
 
@@ -120,7 +121,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             tabIndex = aTabIndex;
             if (aWindow.isNativeContentVisible()) {
                 contentType = aWindow.getSelectedPanel();
-
+            } else if (aWindow.getCurrentContentType() == ContentType.NEW_TAB) {
+                contentType = ContentType.NEW_TAB;
             } else {
                 contentType = ContentType.WEB_CONTENT;
             }
@@ -171,13 +173,28 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         HISTORY(UrlUtils.ABOUT_HISTORY),
         DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS),
         ADDONS(UrlUtils.ABOUT_ADDONS),
-        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS);
+        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS),
+        NEW_TAB(UrlUtils.ABOUT_NEWTAB);
 
         @NonNull
         public final String URL;
+
         ContentType(@NonNull String url) {
             this.URL = url;
         }
+
+        public boolean isLibraryContent() {
+            switch (this) {
+                case BOOKMARKS:
+                case WEB_APPS:
+                case HISTORY:
+                case DOWNLOADS:
+                case ADDONS:
+                    return true;
+                default:
+                    return false;
+            }
+        };
     }
 
     public enum WindowPlacement{
@@ -396,6 +413,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                     break;
                 case ADDONS:
                     newWindow.getSession().loadUri(UrlUtils.ABOUT_ADDONS);
+                    break;
+                case NEW_TAB:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_NEWTAB);
                     break;
                 case WEB_CONTENT:
                     break;
@@ -645,7 +665,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void closeLibraryPanelInFocusedWindowIfNeeded() {
-        if (!mFocusedWindow.isNativeContentVisible())
+        if (!mFocusedWindow.getCurrentContentType().isLibraryContent())
             return;
         mFocusedWindow.hidePanel();
     }
@@ -1237,7 +1257,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mFocusedWindow.getCurrentContentType() == ContentType.BOOKMARKS) {
             mFocusedWindow.hidePanel();
         } else {
-            mFocusedWindow.showPanel(ContentType.BOOKMARKS);
+            mFocusedWindow.showLibraryPanel(ContentType.BOOKMARKS);
         }
     }
 
@@ -1246,7 +1266,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mFocusedWindow.getCurrentContentType() == ContentType.DOWNLOADS) {
             mFocusedWindow.hidePanel();
         } else {
-            mFocusedWindow.showPanel(ContentType.DOWNLOADS);
+            mFocusedWindow.showLibraryPanel(ContentType.DOWNLOADS);
         }
     }
 
