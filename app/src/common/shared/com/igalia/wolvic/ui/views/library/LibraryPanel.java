@@ -189,6 +189,7 @@ public class LibraryPanel extends FrameLayout {
         mController = controller;
     }
 
+    @NonNull
     public Windows.ContentType getSelectedPanelType() {
         if (mCurrentView == mBookmarksView) {
             return Windows.ContentType.BOOKMARKS;
