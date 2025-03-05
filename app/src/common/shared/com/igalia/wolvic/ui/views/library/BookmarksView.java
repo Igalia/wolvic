@@ -192,9 +192,6 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
-
-            WindowWidget window = mWidgetManager.getFocusedWindow();
-            window.hidePanel();
         }
 
         @Override
@@ -263,9 +260,6 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
                             mAccounts.setOrigin(Accounts.LoginOrigin.BOOKMARKS, sessionId);
 
                             TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.FXA_LOGIN);
-
-                            WindowWidget window = mWidgetManager.getFocusedWindow();
-                            window.hidePanel();
                         }
 
                     }, mUIThreadExecutor).exceptionally(throwable -> {

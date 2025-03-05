@@ -194,9 +194,6 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
-
-            WindowWidget window = mWidgetManager.getFocusedWindow();
-            window.hidePanel();
         }
 
         @Override
@@ -267,9 +264,6 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                             mAccounts.setOrigin(Accounts.LoginOrigin.HISTORY, sessionId);
 
                             TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.FXA_LOGIN);
-
-                            WindowWidget window = mWidgetManager.getFocusedWindow();
-                            window.hidePanel();
                         }
 
                     }, mUIThreadExecutor).exceptionally(throwable -> {
