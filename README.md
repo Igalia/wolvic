@@ -71,6 +71,7 @@ You can build for different devices:
 - **`spaces`**: Lenovo A3
 - **`visionglass`**: Huawei Vision Glass
 - **`aosp`**: MagicLeap2 (but should work for any other AOSP device using OpenXR)
+- **`pfdmxr`**: PFDM YVR1, PFDM YVR2 and PFDM MR
 
 For testing on a non-VR device:
 

@@ -32,7 +32,7 @@
 namespace crow {
 
 static const float kFrameSize = 0.02f;
-#if defined(OCULUSVR)
+#if defined(OCULUSVR) || defined(PFDMXR)
 static const float kBorder = 0.0f;
 #else
 static const float kBorder = kFrameSize * 0.15f;

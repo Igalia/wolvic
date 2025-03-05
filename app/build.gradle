@@ -239,6 +239,16 @@ android {
             }
         }
 
+        pfdmxr {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DPFDMXR -DOPENXR  -I" + file("src/openxr/cpp").absolutePath
+                    arguments "-DPFDMXR=ON", "-DOPENXR=ON"
+                }
+            }
+        }
+
         lynx {
             dimension "platform"
             externalNativeBuild {
@@ -743,6 +753,9 @@ android.applicationVariants.configureEach { variant ->
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('picoxr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        }  else if (platform.toLowerCase().startsWith('pfdmxr')) {
+            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pfdm.html"'
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }
     }
