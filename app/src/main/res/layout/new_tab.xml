@@ -37,6 +37,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Top sites -->
+
+            <com.igalia.wolvic.ui.views.ExpandedRecyclerView
+                android:id="@+id/top_sites_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="32dp"
+                android:contentDescription="Top sites"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.views.NonScrollingGridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo"
+                app:spanCount="8"
+                tools:itemCount="16"
+                tools:listitem="@layout/top_sites_item" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.igalia.wolvic.ui.views.CustomScrollView>

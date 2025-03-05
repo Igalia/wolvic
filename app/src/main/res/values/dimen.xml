@@ -206,6 +206,12 @@
     <dimen name="tray_icon_padding_max">10dp</dimen>
     <dimen name="tray_icon_padding_min">8dp</dimen>
 
+    <!-- New Tab -->
+    <dimen name="top_site_item_height">72dp</dimen>
+    <dimen name="top_site_item_width">72dp</dimen>
+    <dimen name="top_site_item_title_text_size">12sp</dimen>
+    <dimen name="top_site_item_url_text_size">12sp</dimen>
+
     <!-- Library -->
     <dimen name="library_item_row_height">38dp</dimen>
     <dimen name="library_item_row_height_narrow">64dp</dimen>
