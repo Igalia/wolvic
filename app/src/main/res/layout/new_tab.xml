@@ -1,18 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <data>
+
+        <variable
+            name="settingsmodel"
+            type="com.igalia.wolvic.ui.viewmodel.SettingsViewModel" />
+    </data>
+
+    <com.igalia.wolvic.ui.views.CustomScrollView
+        android:id="@+id/scrollbar"
+        style="@style/customScrollViewStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/void_color">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/favicon"
-                android:layout_width="128dp"
-                android:layout_height="128dp"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ff_logo" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </FrameLayout>
+            <!-- Header -->
+
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/logo"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:background="@drawable/wolvic_header_bg"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/wolvic_header"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.igalia.wolvic.ui.views.CustomScrollView>
+
 </layout>
