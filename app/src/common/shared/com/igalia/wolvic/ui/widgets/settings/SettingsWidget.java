@@ -219,7 +219,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            mWidgetManager.getFocusedWindow().showLibraryPanel(Windows.ContentType.ADDONS);
+            mWidgetManager.getFocusedWindow().showLibrary(Windows.ContentType.ADDONS);
             onDismiss();
         });
 
