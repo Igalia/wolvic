@@ -16,6 +16,7 @@ import com.igalia.wolvic.browser.components.TopSitesHelper;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NewTabBinding;
+import com.igalia.wolvic.ui.adapters.ExperiencesAdapter;
 import com.igalia.wolvic.ui.adapters.TopSitesAdapterImpl;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -33,6 +34,7 @@ public class NewTabView extends FrameLayout {
     private WidgetManagerDelegate mWidgetManager;
     private TopSitesAdapterImpl mTopSitesAdapter;
     private TopSitesFeature mTopSitesFeature;
+    private ExperiencesAdapter mExperiencesAdapter;
 
     public NewTabView(Context context) {
         super(context);
@@ -70,6 +72,15 @@ public class NewTabView extends FrameLayout {
         TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getCoroutineScope());
         mTopSitesFeature = topSitesHelper.createFeature(mTopSitesAdapter);
         mTopSitesFeature.start();
+
+        // Experiences
+        mExperiencesAdapter = new ExperiencesAdapter(getContext());
+        mExperiencesAdapter.setClickListener(experience -> openUrl(experience.getUrl()));
+        mBinding.experiencesList.setAdapter(mExperiencesAdapter);
+        mBinding.experiencesList.setHasFixedSize(true);
+        mSettingsViewModel.getExperiences().observe((VRBrowserActivity) getContext(), experiences -> {
+            mExperiencesAdapter.updateExperiences(experiences.getAllExperiences(), experiences.getThumbnailroot());
+        });
     }
 
     private final TopSitesAdapter.ClickListener mTopSitesClickListener =

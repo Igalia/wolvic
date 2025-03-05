@@ -211,6 +211,10 @@
     <dimen name="top_site_item_width">72dp</dimen>
     <dimen name="top_site_item_title_text_size">12sp</dimen>
     <dimen name="top_site_item_url_text_size">12sp</dimen>
+    <dimen name="experience_item_height">96dp</dimen>
+    <dimen name="experience_item_width">144dp</dimen>
+    <dimen name="experience_item_title_text_size">12sp</dimen>
+    <dimen name="experience_item_url_text_size">12sp</dimen>
 
     <!-- Library -->
     <dimen name="library_item_row_height">38dp</dimen>
