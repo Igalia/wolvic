@@ -66,6 +66,7 @@ androidcomponents-concept-engine = { module = "org.mozilla.components:concept-en
 androidcomponents-concept-fetch = { module = "org.mozilla.components:concept-fetch", version.ref = "androidComponents" }
 androidcomponents-lib-fetch = { module = "org.mozilla.components:lib-fetch-httpurlconnection", version.ref = "androidComponents" }
 androidcomponents-lib-dataprotect = { module = "org.mozilla.components:lib-dataprotect", version.ref = "androidComponents" }
+androidcomponents-support-images = { module = "org.mozilla.components:support-images", version.ref = "androidComponents" }
 androidcomponents-support-rustlog = { module = "org.mozilla.components:support-rustlog", version.ref = "androidComponents" }
 androidcomponents-support-rusthttp = { module = "org.mozilla.components:support-rusthttp", version.ref = "androidComponents" }
 androidcomponents-support-webextensions = { module = "org.mozilla.components:support-webextensions", version.ref = "androidComponents" }
