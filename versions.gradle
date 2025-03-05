@@ -86,6 +86,7 @@ android_components.concept_engine = "org.mozilla.components:concept-engine:$vers
 android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versions.android_components"
 android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"
 android_components.lib_dataprotect = "org.mozilla.components:lib-dataprotect:$versions.android_components"
+android_components.support_images = "org.mozilla.components:support-images:$versions.android_components"
 android_components.support_rustlog = "org.mozilla.components:support-rustlog:$versions.android_components"
 android_components.support_rusthttp = "org.mozilla.components:support-rusthttp:$versions.android_components"
 android_components.support_webextensions = "org.mozilla.components:support-webextensions:$versions.android_components"

@@ -84,6 +84,29 @@
                 tools:itemCount="16"
                 tools:listitem="@layout/top_sites_item" />
 
+            <!-- Experiences -->
+
+            <com.igalia.wolvic.ui.views.CustomRecyclerView
+                android:id="@+id/experiences_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="32dp"
+                android:contentDescription="Experiences"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.widgets.NonScrollingGridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_sites_list"
+                app:spanCount="4"
+                tools:itemCount="12"
+                tools:listitem="@layout/experience_item" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.igalia.wolvic.ui.views.CustomScrollView>
