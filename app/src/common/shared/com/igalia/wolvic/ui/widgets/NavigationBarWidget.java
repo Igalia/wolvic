@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +32,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
@@ -1217,6 +1217,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     @Override
     public void onWebAppButtonClicked() {
         showSaveWebAppDialog();
+    }
+
+    public void focusSearchBar() {
+        mBinding.navigationBarNavigation.urlBar.requestSearchFocus();
     }
 
     // VoiceSearch Delegate

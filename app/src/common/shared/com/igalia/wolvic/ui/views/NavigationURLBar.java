@@ -54,11 +54,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Executor;
 
-import kotlin.coroutines.Continuation;
 import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
-import mozilla.components.concept.toolbar.AutocompleteResult;
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
+import mozilla.components.concept.toolbar.AutocompleteResult;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
@@ -398,6 +398,10 @@ public class NavigationURLBar extends FrameLayout {
     public void setClickable(boolean clickable) {
         super.setClickable(clickable);
         mBinding.urlEditText.setEnabled(clickable);
+    }
+
+    public void requestSearchFocus() {
+        mBinding.urlEditText.requestFocus();
     }
 
     private OnClickListener mMicrophoneListener = view -> {

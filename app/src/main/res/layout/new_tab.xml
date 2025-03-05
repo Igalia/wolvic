@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -36,6 +35,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Search bar -->
+
+            <com.igalia.wolvic.ui.views.UITextButton
+                android:id="@+id/search_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/nav_button_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/url_background"
+                android:foreground="@drawable/url_background_outline"
+                android:gravity="center"
+                android:minWidth="256dp"
+                android:paddingStart="@dimen/nav_button_size"
+                android:paddingEnd="@dimen/nav_button_size"
+                android:text="@string/search_placeholder"
+                android:textColor="@color/fog"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
