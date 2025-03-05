@@ -23,6 +23,7 @@ import com.igalia.wolvic.browser.api.WResult;
 import com.igalia.wolvic.browser.api.WRuntime;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.components.BrowserIconsHelper;
+import com.igalia.wolvic.browser.components.RemoteImageHelper;
 import com.igalia.wolvic.browser.components.WolvicWebExtensionRuntime;
 import com.igalia.wolvic.browser.content.TrackingProtectionStore;
 import com.igalia.wolvic.browser.extensions.BuiltinExtension;
@@ -44,6 +45,7 @@ import mozilla.components.feature.accounts.FxaCapability;
 import mozilla.components.feature.accounts.FxaWebChannelFeature;
 import mozilla.components.feature.webcompat.WebCompatFeature;
 import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature;
+import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 import mozilla.components.lib.state.Store;
 
 public class SessionStore implements
@@ -85,6 +87,7 @@ public class SessionStore implements
     private FxaWebChannelFeature mWebChannelsFeature;
     private Store.Subscription mStoreSubscription;
     private BrowserIconsHelper mBrowserIconsHelper;
+    private RemoteImageHelper mRemoteImageHelper;
     private final LinkedHashSet<SessionChangeListener> mSessionChangeListeners;
 
     private SessionStore() {
@@ -135,6 +138,8 @@ public class SessionStore implements
         // Web Extensions initialization
         BUILTIN_WEB_EXTENSIONS.forEach(extension -> BuiltinExtension.install(mWebExtensionRuntime, extension.first, extension.second));
         mBrowserIconsHelper = new BrowserIconsHelper(context, mWebExtensionRuntime, ComponentsAdapter.get().getStore());
+
+        mRemoteImageHelper = new RemoteImageHelper(context, new HttpURLConnectionClient());
 
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
         WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime, context.getString(R.string.app_name));
@@ -416,6 +421,11 @@ public class SessionStore implements
     @NonNull
     public BrowserIconsHelper getBrowserIcons() {
         return mBrowserIconsHelper;
+    }
+
+    @NonNull
+    public RemoteImageHelper getRemoteImageHelper() {
+        return mRemoteImageHelper;
     }
 
     public void purgeSessionHistory() {
