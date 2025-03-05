@@ -203,9 +203,6 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                 }
             } else {
                 SessionStore.get().getActiveSession().loadUri(item.getOutputFileUriAsString());
-
-                WindowWidget window = mWidgetManager.getFocusedWindow();
-                window.hidePanel();
             }
         }
 

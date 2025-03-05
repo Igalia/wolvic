@@ -1172,7 +1172,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             }
         }
 
-        if (mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
+        if (UrlUtils.isPrivateUrl(uri) || mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
             return WResult.deny();
         }
 
@@ -1211,10 +1211,6 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
                     result.complete(allowed.get() ? WAllowOrDeny.ALLOW : WAllowOrDeny.DENY);
                 }
             }
-        }
-
-        if (UrlUtils.isAboutPage(aRequest.uri)) {
-            return WResult.deny();
         }
 
         return result;
