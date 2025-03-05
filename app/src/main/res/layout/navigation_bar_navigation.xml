@@ -37,7 +37,7 @@
             android:src="@drawable/ic_icon_back"
             android:tint="@color/midnight"
             android:tooltipText="@string/back_tooltip"
-            android:enabled="@{viewmodel.canGoBack || viewmodel.backToNewTabEnabled}"
+            android:enabled="@{viewmodel.canGoBack}"
             app:privateMode="@{viewmodel.isPrivateSession}" />
 
         <com.igalia.wolvic.ui.views.UIButton
@@ -47,7 +47,7 @@
             android:layout_weight="0"
             android:src="@drawable/ic_icon_forward"
             android:tooltipText="@string/forward_tooltip"
-            android:enabled="@{viewmodel.canGoForward || viewmodel.canGoForwardFromNewTab}"
+            android:enabled="@{viewmodel.canGoForward}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <RelativeLayout

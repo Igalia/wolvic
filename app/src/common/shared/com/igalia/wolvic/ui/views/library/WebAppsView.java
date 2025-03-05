@@ -139,9 +139,6 @@ public class WebAppsView extends LibraryView implements WebAppsStore.WebAppsList
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getStartUrl());
-
-            WindowWidget window = mWidgetManager.getFocusedWindow();
-            window.hidePanel();
         }
 
         @Override
