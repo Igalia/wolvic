@@ -33,7 +33,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_yvr1_left"
+                android:src="@drawable/vr_controller_yvr_touch_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_yvr2_left"
+                android:src="@drawable/vr_controller_yvr_touch_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -115,7 +115,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_mr_left"
+                android:src="@drawable/vr_controller_yvr_touch_2_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_yvr1_right"
+                android:src="@drawable/vr_controller_yvr_touch_right"
                 tools:ignore="RtlHardcoded" />
         </RelativeLayout>
 
@@ -173,7 +173,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_yvr2_right"
+                android:src="@drawable/vr_controller_yvr_touch_right"
                 tools:ignore="RtlHardcoded" />
         </RelativeLayout>
 
@@ -190,7 +190,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/vr_controller_pfdm_mr_right"
+                android:src="@drawable/vr_controller_yvr_touch_2_right"
                 tools:ignore="RtlHardcoded" />
         </RelativeLayout>
 

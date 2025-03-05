@@ -242,7 +242,7 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -DPFDMXR -DOPENXR  -I" + file("src/openxr/cpp").absolutePath
-                    arguments "-DVR_SDK_LIB=pfdmxr-lib", "-DPFDMXR=ON", "-DOPENXR=ON"
+                    arguments "-DPFDMXR=ON", "-DOPENXR=ON"
                 }
             }
         }
