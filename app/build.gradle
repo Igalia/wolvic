@@ -582,6 +582,7 @@ dependencies {
     implementation libs.androidcomponents.feature.findinpage
     implementation libs.androidcomponents.feature.search
     implementation libs.androidcomponents.feature.toolbar
+    implementation libs.androidcomponents.feature.top.sites
     implementation libs.androidcomponents.service.accounts
     implementation libs.androidcomponents.service.sync.logins
     implementation libs.androidcomponents.mozilla.service.location
