@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -59,6 +60,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo" />
+
+            <!-- Top sites -->
+
+            <com.igalia.wolvic.ui.views.CustomRecyclerView
+                android:id="@+id/top_sites_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="32dp"
+                android:contentDescription="Top sites"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.widgets.NonScrollingGridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
+                app:spanCount="8"
+                tools:itemCount="16"
+                tools:listitem="@layout/top_sites_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

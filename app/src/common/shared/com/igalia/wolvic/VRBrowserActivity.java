@@ -42,6 +42,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentController;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -115,6 +116,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import kotlinx.coroutines.CoroutineScope;
+
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate,
         ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner, SharedPreferences.OnSharedPreferenceChangeListener, PlatformActivityPlugin.PlatformActivityPluginListener {
 
@@ -169,6 +172,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mLifeCycle = new LifecycleRegistry(this);
         }
         return mLifeCycle;
+    }
+
+    public CoroutineScope getCoroutineScope() {
+        return LifecycleOwnerKt.getLifecycleScope(this);
     }
 
     private final ViewModelStore mViewModelStore;
