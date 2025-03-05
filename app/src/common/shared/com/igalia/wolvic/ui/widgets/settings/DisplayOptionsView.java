@@ -418,12 +418,13 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void setHomepage(String newHomepage) {
-        if (mBinding.homepageEdit.getVisibility() == VISIBLE) {
-            mBinding.homepageEdit.setOnClickListener(null);
-            mBinding.homepageEdit.setFirstText(newHomepage);
-            SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
-            mBinding.homepageEdit.setOnClickListener(mHomepageListener);
+        if (mBinding.homepageEdit.getVisibility() != VISIBLE) {
+            return;
         }
+        mBinding.homepageEdit.setOnClickListener(null);
+        mBinding.homepageEdit.setFirstText(newHomepage);
+        SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
+        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
     }
 
     private void setUaMode(int checkId, boolean doApply) {

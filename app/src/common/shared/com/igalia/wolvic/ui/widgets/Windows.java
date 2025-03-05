@@ -190,6 +190,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 case HISTORY:
                 case DOWNLOADS:
                 case ADDONS:
+                case NOTIFICATIONS:
                     return true;
                 default:
                     return false;
@@ -432,7 +433,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget leftWindow = getLeftWindow();
         WindowWidget rightWindow = getRightWindow();
 
-        aWindow.hidePanel();
+        aWindow.closeLibrary();
 
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
@@ -667,7 +668,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private void closeLibraryPanelInFocusedWindowIfNeeded() {
         if (!mFocusedWindow.getCurrentContentType().isLibraryContent())
             return;
-        mFocusedWindow.hidePanel();
+        mFocusedWindow.closeLibrary();
     }
 
     public void enterPrivateMode() {
@@ -1255,18 +1256,18 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onBookmarksClicked() {
         if (mFocusedWindow.getCurrentContentType() == ContentType.BOOKMARKS) {
-            mFocusedWindow.hidePanel();
+            mFocusedWindow.closeLibrary();
         } else {
-            mFocusedWindow.showLibraryPanel(ContentType.BOOKMARKS);
+            mFocusedWindow.showLibrary(ContentType.BOOKMARKS);
         }
     }
 
     @Override
     public void onDownloadsClicked() {
         if (mFocusedWindow.getCurrentContentType() == ContentType.DOWNLOADS) {
-            mFocusedWindow.hidePanel();
+            mFocusedWindow.closeLibrary();
         } else {
-            mFocusedWindow.showLibraryPanel(ContentType.DOWNLOADS);
+            mFocusedWindow.showLibrary(ContentType.DOWNLOADS);
         }
     }
 

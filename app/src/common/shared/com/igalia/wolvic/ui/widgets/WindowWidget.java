@@ -210,7 +210,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(hashCode()), WindowViewModel.class);
         mViewModel.setIsPrivateSession(mSession.isPrivateMode());
-        mViewModel.setUrl(mSession.getCurrentUri());
+        String url = mSession.getCurrentUri();
+        mViewModel.setUrl(url);
+        mViewModel.setCurrentContentType(UrlUtils.getContentType(url));
         mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
         // re-center the front window when its height changes
@@ -224,7 +226,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.getIsFullscreen().observe((VRBrowserActivity) getContext(), observableBoolean -> onIsFullscreenChanged(observableBoolean.get()));
 
         mLibrary = new LibraryPanel(aContext);
-        mLibrary.setController(this::showLibraryPanel);
+        mLibrary.setController(this::showLibrary);
         mNewTab = new NewTabView(aContext);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
@@ -341,7 +343,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     protected void onDismiss() {
         if (mViewModel.getIsNativeContentVisible().getValue().get()) {
             if (!mLibrary.onBack()) {
-                hidePanel();
+                this.closeLibrary();
             }
 
         } else {
@@ -515,17 +517,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mLibrary.getSelectedPanelType();
     }
 
-    private void hideLibraryPanel() {
-        if (getCurrentContentType().isLibraryContent()) {
-            hidePanel(true);
-        }
-    }
-
     Runnable mRestoreFirstPaint;
 
-    public void showLibraryPanel(Windows.ContentType panelType) {
-        assert panelType != Windows.ContentType.NEW_TAB && panelType != Windows.ContentType.WEB_CONTENT && panelType != Windows.ContentType.NOTIFICATIONS;
-        showLibraryPanel(panelType, true);
+    public void showLibrary(Windows.ContentType panelType) {
+        if (panelType.isLibraryContent()) {
+            showLibraryPanel(panelType, true);
+        } else {
+            Log.w(LOGTAG, "Tried to open library panel with wrong content type: " + panelType);
+        }
     }
 
     private void showLibraryPanel(Windows.ContentType contentType, boolean switchSurface) {
@@ -533,7 +532,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
-        hideNewTab(true);
+        hideNewTabPanel(true);
         mViewModel.setIsFindInPage(false);
         mViewModel.setCurrentContentType(contentType);
         mViewModel.setUrl(contentType.URL);
@@ -559,12 +558,42 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void showNewTab() {
-        if (mNewTab != null) {
-            mViewModel.setIsFindInPage(false);
-            mViewModel.setCurrentContentType(Windows.ContentType.NEW_TAB);
-            mViewModel.setUrl(Windows.ContentType.NEW_TAB.URL);
-            setView(mNewTab, true);
+    public void closeLibrary() {
+        hideLibraryPanel(true);
+
+        mViewModel.setUrl(mSession.getCurrentUri());
+        Windows.ContentType contentType = UrlUtils.getContentType(mSession.getCurrentUri());
+        mViewModel.setCurrentContentType(contentType);
+
+        if (contentType == Windows.ContentType.NEW_TAB) {
+            showNewTabPanel(true);
+        } else if (contentType.isLibraryContent()) {
+            showLibrary(contentType);
+        } else {
+            hideNewTabPanel(true);
+        }
+    }
+
+    private void hideLibraryPanel(boolean switchSurface) {
+        if (mView != null && mLibrary != null && mView == mLibrary) {
+            unsetView(mLibrary, switchSurface);
+            mLibrary.onHide();
+
+            if (switchSurface && mRestoreFirstPaint != null) {
+                mRestoreFirstPaint.run();
+                mRestoreFirstPaint = null;
+            }
+        }
+    }
+
+    private void showNewTabPanel(boolean switchSurface) {
+        if (mNewTab == null) {
+            return;
+        }
+        hideLibraryPanel(true);
+        mViewModel.setIsFindInPage(false);
+        if (mView == null) {
+            setView(mNewTab, switchSurface);
             if (mRestoreFirstPaint == null) {
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
@@ -579,49 +608,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 };
             }
         }
-        if (mViewModel.getBackToNewTabEnabled().getValue().get()) {
-            mViewModel.enableBackToNewTab(false);
-            mViewModel.setCanGoForwardFromNewTab(true);
-        }
     }
 
-    public void hidePanel() {
-        hidePanel(true);
-    }
-
-    private void hidePanel(boolean switchSurface) {
-        if (mView != null && mLibrary != null) {
-            unsetView(mLibrary, switchSurface);
-            mLibrary.onHide();
-        }
-        if (switchSurface && mRestoreFirstPaint != null) {
-            mRestoreFirstPaint.run();
-            mRestoreFirstPaint = null;
-        }
-        if (mViewModel.getLastContentType().getValue() == Windows.ContentType.NEW_TAB) {
-            showNewTab();
-        } else {
-            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
-            mViewModel.setUrl(mSession.getCurrentUri());
-        }
-    }
-
-    // Only use this when you want the back button to go back to New Tab.
-    // If you don't, use hideNewTab(true) instead.
-    public void hideNewTab() {
-        if (mViewModel.getCurrentContentType().getValue() == Windows.ContentType.NEW_TAB) {
-            mViewModel.enableBackToNewTab(true);
-            hideNewTab(true);
-        }
-    }
-
-    private void hideNewTab(boolean switchSurface) {
-        if (mView != null && mNewTab != null) {
+    private void hideNewTabPanel(boolean switchSurface) {
+        if (mView != null && mNewTab != null && mView == mNewTab) {
             unsetView(mNewTab, switchSurface);
-        }
-        if (switchSurface && mRestoreFirstPaint != null) {
-            mRestoreFirstPaint.run();
-            mRestoreFirstPaint = null;
+            if (switchSurface && mRestoreFirstPaint != null) {
+                mRestoreFirstPaint.run();
+                mRestoreFirstPaint = null;
+            }
         }
     }
 
@@ -1275,7 +1270,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mCaptureOnPageStop = false;
 
         if (hidePanel) {
-            hideLibraryPanel();
+            closeLibrary();
         }
     }
 
@@ -1715,17 +1710,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private NavigationBarWidget.NavigationListener mNavigationBarListener = new NavigationBarWidget.NavigationListener() {
         @Override
         public void onBack() {
-            hideLibraryPanel();
+            closeLibrary();
         }
 
         @Override
         public void onForward() {
-            hideLibraryPanel();
+            closeLibrary();
         }
 
         @Override
         public void onReload() {
-            hideLibraryPanel();
+            closeLibrary();
         }
 
         @Override
@@ -1735,7 +1730,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onHome() {
-            hideLibraryPanel();
+            closeLibrary();
         }
     };
 
@@ -2066,6 +2061,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsWebApp(false);
         mViewModel.setIsFindInPage(false);
 
+        Windows.ContentType contentType = UrlUtils.getContentType(url);
+        mViewModel.setCurrentContentType(contentType);
+
+        if (contentType == Windows.ContentType.NEW_TAB) {
+            showNewTabPanel(true);
+        } else if (contentType.isLibraryContent()) {
+            showLibraryPanel(contentType, true);
+        } else {
+            hideLibraryPanel(true);
+            hideNewTabPanel(true);
+        }
+
         if (StringUtils.isEmpty(url)) {
             mViewModel.setIsBookmarked(false);
 
@@ -2097,35 +2104,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     WResult<WAllowOrDeny> onLoadRequest(WSession aSession, @NonNull LoadRequest aRequest) {
         final WResult<WAllowOrDeny> result = WResult.create();
 
-        Uri uri = Uri.parse(aRequest.uri);
-        if (UrlUtils.isAboutPage(uri.toString())) {
-           if(UrlUtils.isBookmarksUrl(uri.toString())) {
-               showLibraryPanel(Windows.ContentType.BOOKMARKS);
-
-            } else if (UrlUtils.isHistoryUrl(uri.toString())) {
-               showLibraryPanel(Windows.ContentType.HISTORY);
-
-            } else if (UrlUtils.isDownloadsUrl(uri.toString())) {
-               showLibraryPanel(Windows.ContentType.DOWNLOADS);
-
-            } else if (UrlUtils.isAddonsUrl(uri.toString())) {
-               showLibraryPanel(Windows.ContentType.ADDONS);
-
-            } else if (UrlUtils.isNewTabUrl(uri.toString())) {
-               showNewTab();
-
-            } else {
-               hideLibraryPanel();
-               hideNewTab();
-           }
-
-        } else {
-            hideLibraryPanel();
-            hideNewTab();
-            mViewModel.setCurrentContentType(Windows.ContentType.WEB_CONTENT);
-            mViewModel.setUrl(uri.toString());
+        Windows.ContentType contentType = UrlUtils.getContentType(aRequest.uri);
+        if (contentType.isLibraryContent()) {
+            showLibrary(contentType);
+            result.complete(WAllowOrDeny.DENY);
+            return result;
         }
 
+        Uri uri = Uri.parse(aRequest.uri);
         if ("file".equalsIgnoreCase(uri.getScheme())) {
             // Check that we have permission to open the file, otherwise try to request it.
             File file = new File(uri.getPath());
