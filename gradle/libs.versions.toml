@@ -57,6 +57,7 @@ androidcomponents-browser-icons = { module = "org.mozilla.components:browser-ico
 androidcomponents-feature-findinpage = { module = "org.mozilla.components:feature-findinpage", version.ref = "androidComponents" }
 androidcomponents-feature-search = { module = "org.mozilla.components:feature-search", version.ref = "androidComponents" }
 androidcomponents-feature-toolbar = { module = "org.mozilla.components:feature-toolbar", version.ref = "androidComponents" }
+androidcomponents-feature-top-sites = { module = "org.mozilla.components:feature-top-sites", version.ref = "androidComponents" }
 androidcomponents-service-accounts = { module = "org.mozilla.components:service-firefox-accounts", version.ref = "androidComponents" }
 androidcomponents-service-sync-logins = { module = "org.mozilla.components:service-sync-logins", version.ref = "androidComponents" }
 androidcomponents-mozilla-service-location = { module = "org.mozilla.components:service-location", version.ref = "androidComponents" }
