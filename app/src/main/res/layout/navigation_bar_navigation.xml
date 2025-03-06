@@ -5,6 +5,7 @@
         <import type="android.view.View" />
         <import type="com.igalia.wolvic.BuildConfig"/>
         <import type="com.igalia.wolvic.ui.widgets.Windows.WindowPlacement"/>
+        <import type="com.igalia.wolvic.ui.widgets.Windows.ContentType" />
         <variable
             name="viewmodel"
             type="com.igalia.wolvic.ui.viewmodel.WindowViewModel" />
@@ -62,6 +63,7 @@
                 android:src="@{viewmodel.isLoading ? @drawable/ic_icon_exit : @drawable/ic_icon_reload}"
                 android:padding="@{viewmodel.isLoading ? @dimen/nav_button_padding : @dimen/nav_button_progress_padding}"
                 android:tooltipText="@{viewmodel.isLoading ? @string/stop_tooltip : @string/refresh_tooltip}"
+                android:enabled="@{!viewmodel.isNativeContentVisible &amp;&amp; viewmodel.currentContentType != ContentType.NEW_TAB}"
                 app:privateMode="@{viewmodel.isPrivateSession}" />
 
             <ProgressBar
