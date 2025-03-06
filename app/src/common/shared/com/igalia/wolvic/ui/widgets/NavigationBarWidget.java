@@ -15,9 +15,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -1024,7 +1022,10 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             updateTrackingProtection();
         }
 
-        mBinding.navigationBarNavigation.reloadButton.setEnabled(!UrlUtils.isPrivateAboutPage(getContext(), url));
+        mBinding.navigationBarNavigation.reloadButton.setEnabled(
+                mViewModel.getCurrentContentType().getValue() != Windows.ContentType.NEW_TAB
+                        && !mViewModel.getIsNativeContentVisible().getValue().get()
+                        && !UrlUtils.isPrivateAboutPage(getContext(), url));
     }
 
     // Content delegate
@@ -1346,8 +1347,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             @Override
             public void onFindInPage() {
                 hideMenu();
-                mAttachedWindow.hidePanel();
-
+                mAttachedWindow.closeLibrary();
                 mViewModel.setIsFindInPage(true);
             }
 
@@ -1390,7 +1390,7 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             public void onAddons() {
                 hideMenu();
 
-                mAttachedWindow.showPanel(Windows.ContentType.ADDONS);
+                mAttachedWindow.showLibrary(Windows.ContentType.ADDONS);
             }
 
             @Override

@@ -22,6 +22,7 @@ import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.databinding.TitleBarBinding;
 import com.igalia.wolvic.ui.viewmodel.WindowViewModel;
 import com.igalia.wolvic.utils.DeviceType;
+import com.igalia.wolvic.utils.UrlUtils;
 
 public class TitleBarWidget extends UIWidget {
 
@@ -155,7 +156,9 @@ public class TitleBarWidget extends UIWidget {
         }
 
         if (mAttachedWindow.getSession() != null) {
-            mViewModel.setUrl(mAttachedWindow.getSession().getCurrentUri());
+            String url = mAttachedWindow.getSession().getCurrentUri();
+            mViewModel.setUrl(url);
+            mViewModel.setCurrentContentType(UrlUtils.getContentType(url));
         }
     };
 
