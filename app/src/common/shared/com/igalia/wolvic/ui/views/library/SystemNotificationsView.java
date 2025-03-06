@@ -120,9 +120,6 @@ public class SystemNotificationsView extends LibraryView implements SystemNotifi
             if (action.getType() == SystemNotification.Action.OPEN_URL && action.getUrl() != null) {
                 Session session = SessionStore.get().getActiveSession();
                 session.loadUri(action.getUrl());
-
-                WindowWidget window = mWidgetManager.getFocusedWindow();
-                window.hidePanel();
             } else if (action.getType() == SystemNotification.Action.OPEN_APP_PAGE) {
                 Intent intent;
                 if (action.getAction() == null) {

@@ -37,7 +37,7 @@ public class WindowViewModel extends AndroidViewModel {
     private int mURLWebsiteColor;
 
     private MutableLiveData<Spannable> url;
-    private MutableLiveData<String> hint;
+    private MediatorLiveData<String> hint;
     private MutableLiveData<ObservableBoolean> isWindowVisible;
     private MutableLiveData<Windows.WindowPlacement> placement;
     private MutableLiveData<ObservableBoolean> isOnlyWindow;
@@ -93,7 +93,6 @@ public class WindowViewModel extends AndroidViewModel {
         mURLWebsiteColor = typedValue.data;
 
         url = new MutableLiveData<>(new SpannableString(""));
-        hint = new MutableLiveData<>("");
         isWindowVisible = new MutableLiveData<>(new ObservableBoolean(true));
         placement = new MutableLiveData<>(Windows.WindowPlacement.FRONT);
         isOnlyWindow = new MutableLiveData<>(new ObservableBoolean(false));
@@ -140,6 +139,11 @@ public class WindowViewModel extends AndroidViewModel {
                 isNativeContentVisible.setValue(new ObservableBoolean(contentType != Windows.ContentType.WEB_CONTENT))
         );
         isNativeContentVisible.setValue(new ObservableBoolean(currentContentType.getValue() != Windows.ContentType.WEB_CONTENT));
+        hint = new MediatorLiveData<>("");
+        hint.addSource(currentContentType, contentType -> {
+            hint.postValue(getHintValue());
+        });
+        hint.setValue(getHintValue());
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
@@ -260,8 +264,12 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isNativeContentVisible.getValue().get()) {
+            Windows.ContentType contentType = UrlUtils.getContentType(url);
+            if (contentType.isLibraryContent()) {
                 url = getApplication().getString(R.string.url_library_title);
+
+            } else if (contentType == Windows.ContentType.NEW_TAB) {
+                url = getApplication().getString(R.string.url_new_tab_title);
 
             } else {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
@@ -313,7 +321,7 @@ public class WindowViewModel extends AndroidViewModel {
             if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
                     (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get()) ||
                     UrlUtils.isHomeUri(getApplication(), aUrl.toString()) ||
-                    isNativeContentVisible.getValue().get() ||
+                    UrlUtils.getContentType(url) != Windows.ContentType.WEB_CONTENT ||
                     UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
                 navigationBarUrl.postValue("");
 
@@ -330,7 +338,7 @@ public class WindowViewModel extends AndroidViewModel {
             isUrlBarButtonsVisible.postValue(new ObservableBoolean(
                     !isFocused.getValue().get() &&
                             !isNativeContentVisible.getValue().get() &&
-                            !UrlUtils.isContentFeed(getApplication(), aUrl) &&
+                            !UrlUtils.isContentFeed(getApplication(), aUrl) && // need to ignore this in new tab
                             !UrlUtils.isPrivateAboutPage(getApplication(), aUrl) &&
                             (URLUtil.isHttpUrl(aUrl) || URLUtil.isHttpsUrl(aUrl)) &&
                             (
@@ -340,7 +348,6 @@ public class WindowViewModel extends AndroidViewModel {
                                     isWebXRUsed.getValue().get()
                             )
             ));
-            hint.postValue(getHintValue());
         }
     };
 
@@ -455,8 +462,11 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isNativeContentVisible.getValue().get()) {
+        if (currentContentType.getValue().isLibraryContent()) {
             return getApplication().getString(R.string.url_library_title);
+
+        } else if (currentContentType.getValue() == Windows.ContentType.NEW_TAB) {
+            return getApplication().getString(R.string.url_new_tab_title);
 
         } else {
             return getApplication().getString(R.string.search_placeholder);

@@ -38,6 +38,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <com.igalia.wolvic.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/homepage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_homepage"
+                    app:options="@array/developer_options_homepage" />
+
                 <com.igalia.wolvic.ui.views.settings.SingleEditSetting
                     android:id="@+id/homepage_edit"
                     android:layout_width="match_parent"

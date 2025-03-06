@@ -1213,7 +1213,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             }
         }
 
-        if (UrlUtils.isAboutPage(aRequest.uri)) {
+        if (UrlUtils.isPrivateUrl(aRequest.uri)) {
             return WResult.deny();
         }
 
