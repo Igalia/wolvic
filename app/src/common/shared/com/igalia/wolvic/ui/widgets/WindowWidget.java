@@ -850,16 +850,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mWidgetPlacement;
     }
 
+    private void focusWindow() {
+        updateBorder();
+        // The handlers will set this window as active.
+        for (WindowListener listener: mListeners)
+            listener.onFocusRequest(this);
+    }
+
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
         if (aEvent.getAction() == MotionEvent.ACTION_DOWN) {
             if (!mActive) {
                 mClickedAfterFocus = true;
-                updateBorder();
-                // Focus this window
-                for (WindowListener listener: mListeners) {
-                    listener.onFocusRequest(this);
-                }
+                focusWindow();
             }
         } else if (aEvent.getAction() == MotionEvent.ACTION_UP || aEvent.getAction() == MotionEvent.ACTION_CANCEL) {
             mClickedAfterFocus = false;
@@ -890,7 +893,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void handleHoverEvent(MotionEvent aEvent) {
         if (aEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
             mHovered = true;
-            updateBorder();
+            if (SettingsStore.getInstance(getContext()).getWindowSelectionMethod() == SettingsStore.WINDOW_SELECTION_METHOD_HOVER)
+                focusWindow();
         } else if (aEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
             mHovered = false;
             updateBorder();

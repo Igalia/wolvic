@@ -135,4 +135,15 @@
         <item>2</item>
         <item>3</item>
     </integer-array>
+
+    <integer-array name="controller_options_window_selection" translatable="true">
+        <item>@string/controller_options_click_to_select</item>
+        <item>@string/controller_options_hover_to_select</item>
+    </integer-array>
+
+    <integer-array name="controller_options_window_selection_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
 </resources>
