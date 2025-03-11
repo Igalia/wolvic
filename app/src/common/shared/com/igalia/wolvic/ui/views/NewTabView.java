@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
@@ -70,9 +71,13 @@ public class NewTabView extends FrameLayout {
         mExperiencesAdapter = new ExperiencesAdapter(getContext());
         mExperiencesAdapter.setClickListener(experience -> openUrl(experience.getUrl()));
         mBinding.experiencesList.setAdapter(mExperiencesAdapter);
-        mBinding.experiencesList.setHasFixedSize(true);
+        // The grid items have different sizes and span a different nr of cells.
+        mBinding.experiencesList.setHasFixedSize(false);
+        GridLayoutManager layoutManager = (GridLayoutManager) mBinding.experiencesList.getLayoutManager();
+        layoutManager.setSpanSizeLookup(mExperiencesAdapter.getSpanSizeLookup(layoutManager.getSpanCount()));
+
         mSettingsViewModel.getExperiences().observe((VRBrowserActivity) getContext(), experiences -> {
-            mExperiencesAdapter.updateExperiences(experiences.getAllExperiences());
+            mExperiencesAdapter.updateExperiences(experiences);
         });
     }
 
