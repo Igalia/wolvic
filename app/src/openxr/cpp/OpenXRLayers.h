@@ -235,7 +235,7 @@ protected:
   };
   XrBaseInStructure* mCompositionLayerColorScaleBias { OpenXRExtensions::IsExtensionSupported(XR_KHR_COMPOSITION_LAYER_COLOR_SCALE_BIAS_EXTENSION_NAME) ? (XrBaseInStructure*)&mCompositionLayerColorScaleBiasStruct : XR_NULL_HANDLE };
 
-#if OCULUSVR \
+#if OCULUSVR || PFDMXR \
   // Oculus OpenXR backend flips layers vertically.
   XrCompositionLayerImageLayoutFB mLayerImageLayoutStruct {
     .type = XR_TYPE_COMPOSITION_LAYER_IMAGE_LAYOUT_FB,
@@ -269,7 +269,7 @@ public:
   virtual void
   Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwapchain aClearSwapChain) override {
     OpenXRLayerBase<T , U>::Update(aSpace, aReorientPose, aClearSwapChain);
-#ifdef OCULUSVR
+#if defined(OCULUSVR) || defined(PFDMXR)
     if (this->mLayerImageLayout != XR_NULL_HANDLE) {
       const uint numXRLayers = this->GetNumXRLayers();
       for (uint i = 0; i < numXRLayers; ++i) {

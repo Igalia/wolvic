@@ -234,7 +234,7 @@ OpenXRLayerEquirect::Update(XrSpace aSpace, const XrPosef &aReorientPose, XrSwap
     xrLayers[i].bias.x = translation.x();
     xrLayers[i].bias.y = translation.y();
 
-#ifdef OCULUSVR
+#if defined(OCULUSVR) || defined(PFDMXR)
     if (mLayerImageLayout != XR_NULL_HANDLE)
       PushNextXrStructureInChain((XrBaseInStructure&)xrLayers[i], (XrBaseInStructure&)*mLayerImageLayout);
 #endif

@@ -181,6 +181,8 @@ enum class VRControllerType : uint8_t {
   Pico4,
   MetaQuest3,
   MagicLeap2,
+  YvrTouch,
+  YvrTouch2,
   _end
 };
 
@@ -211,6 +213,8 @@ inline constexpr bool IsEnumCase<gfx::VRControllerType>(
     case gfx::VRControllerType::MetaQuest3:
     case gfx::VRControllerType::MagicLeap2:
     case gfx::VRControllerType::PicoNeo3:
+    case gfx::VRControllerType::YvrTouch:
+    case gfx::VRControllerType::YvrTouch2:
     case gfx::VRControllerType::_end:
       return true;
   }
