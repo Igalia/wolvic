@@ -15,6 +15,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NewTabBinding;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
+import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.SystemUtils;
 
 public class NewTabView extends FrameLayout {
@@ -23,6 +24,7 @@ public class NewTabView extends FrameLayout {
 
     private NewTabBinding mBinding;
     private SettingsViewModel mSettingsViewModel;
+    private WidgetManagerDelegate mWidgetManager;
 
     public NewTabView(Context context) {
         super(context);
@@ -30,6 +32,7 @@ public class NewTabView extends FrameLayout {
     }
 
     protected void initialize() {
+        mWidgetManager = ((VRBrowserActivity) getContext());
         updateUI();
     }
 
@@ -46,6 +49,10 @@ public class NewTabView extends FrameLayout {
         mBinding.setSettingsmodel(mSettingsViewModel);
 
         mBinding.logo.setOnClickListener(v -> openUrl(getContext().getString(R.string.home_page_url)));
+
+        mBinding.searchBar.setOnClickListener(v -> {
+            mWidgetManager.getNavigationBar().focusSearchBar();
+        });
     }
 
     private void openUrl(@NonNull String url) {
