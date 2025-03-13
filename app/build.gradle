@@ -125,6 +125,7 @@ android {
         buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
         buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "false"
         buildConfigField "Boolean", "USE_SOUNDPOOL", "true"
+        buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://darker.ink/wolvic/experiences.json"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'app_name', 'Wolvic'
@@ -592,6 +593,7 @@ dependencies {
     implementation libs.androidcomponents.feature.findinpage
     implementation libs.androidcomponents.feature.search
     implementation libs.androidcomponents.feature.toolbar
+    implementation libs.androidcomponents.feature.top.sites
     implementation libs.androidcomponents.service.accounts
     implementation libs.androidcomponents.service.sync.logins
     implementation libs.androidcomponents.mozilla.service.location
@@ -600,6 +602,7 @@ dependencies {
     implementation libs.androidcomponents.concept.fetch
     implementation libs.androidcomponents.lib.fetch
     implementation libs.androidcomponents.lib.dataprotect
+    implementation libs.androidcomponents.support.images
     implementation libs.androidcomponents.support.rustlog
     implementation libs.androidcomponents.support.rusthttp
     implementation libs.androidcomponents.support.webextensions

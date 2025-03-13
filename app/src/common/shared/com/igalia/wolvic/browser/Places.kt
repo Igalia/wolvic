@@ -6,7 +6,6 @@
 package com.igalia.wolvic.browser
 
 import android.content.Context
-import android.util.Log
 import com.igalia.wolvic.browser.engine.SessionStore
 import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.log.logger.Logger
@@ -47,6 +47,7 @@ class Places(var context: Context) {
 
     var bookmarks = PlacesBookmarksStorage(context)
     var history = PlacesHistoryStorage(context)
+    var pinned = PinnedSiteStorage(context)
     var logins = lazy { SyncableLoginsStorage(context, passwordsEncryptionKey) }
 
     fun clear() {
@@ -80,6 +81,13 @@ class Places(var context: Context) {
             // The login storage has a wipe method the should bring us back to the state before the first sync
             // (although it actually just deletes everything) so there is no need to delete the whole database.
             logins.value.wipeLocal()
+        }
+
+        // Remove pinned sites, if any.
+        CoroutineScope(Dispatchers.IO).launch {
+            pinned.getPinnedSites().forEach { site ->
+                pinned.removePinnedSite(site)
+            }
         }
     }
 }
