@@ -937,7 +937,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         // If there is a target URI we open it
-        if (targetUri != null) {
+        if (targetUri != null && !targetUri.toString().isEmpty()) {
             Log.d(LOGTAG, "Loading URI from intent: " + targetUri);
 
             int location = Windows.OPEN_IN_FOREGROUND;
