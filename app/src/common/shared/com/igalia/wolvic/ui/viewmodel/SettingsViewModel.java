@@ -14,12 +14,15 @@ import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
+import com.igalia.wolvic.utils.Experience;
 import com.igalia.wolvic.utils.RemoteExperiences;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class SettingsViewModel extends AndroidViewModel {
@@ -132,16 +135,46 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public void setExperiences(String json) {
-        RemoteExperiences updatedExperiences = null;
+        if (json == null || json.isEmpty()) {
+            return;
+        }
+
         try {
             Gson gson = new GsonBuilder().create();
-            updatedExperiences = gson.fromJson(json, RemoteExperiences.class);
-        } catch (Exception e) {
-            Log.w(LOGTAG, String.valueOf(e.getLocalizedMessage()));
-        } finally {
-            if (updatedExperiences != null) {
-                this.experiences.postValue(updatedExperiences);
+            RemoteExperiences newExperiences = gson.fromJson(json, RemoteExperiences.class);
+
+            RemoteExperiences currentExperiences = this.experiences.getValue();
+            if (currentExperiences == null) {
+                // Initialize a new experiences object if one doesn't exist yet.
+                this.experiences.postValue(newExperiences);
+            } else {
+                currentExperiences.setRemoteExperiences(newExperiences);
+                this.experiences.postValue(currentExperiences);
             }
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Error processing experiences data: " + e.getLocalizedMessage());
+        }
+    }
+
+    public void setHeyVRExperiences(String json) {
+        if (json == null || json.isEmpty()) {
+            return;
+        }
+
+        try {
+            Gson gson = new GsonBuilder().create();
+            Experience[] experiencesArray = gson.fromJson(json, Experience[].class);
+            List<Experience> heyVRExperiences = Arrays.asList(experiencesArray);
+
+            RemoteExperiences currentExperiences = this.experiences.getValue();
+            if (currentExperiences == null) {
+                // Initialize a new experiences object if one doesn't exist yet.
+                currentExperiences = new RemoteExperiences();
+            }
+            currentExperiences.setHeyVRExperiences(heyVRExperiences);
+            this.experiences.postValue(currentExperiences);
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Error processing HeyVR data: " + e.getLocalizedMessage());
         }
     }
 
