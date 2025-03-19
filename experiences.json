@@ -14,68 +14,50 @@
       "items": [
         {
           "title": "Magical Reflections",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/magical-reflections_480x270.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/magical-reflections.webp",
           "url": "https://www.magische-spiegelungen.de/",
           "device": "dof3"
         },
         {
           "title": "The National Gallery",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/national-gallery_480x270.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/national-gallery.webp",
           "url": "https://www.nationalgallery.org.uk/visiting/virtual-tours",
           "device": "dof3"
         },
         {
-          "title": "Dreamwave",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/dreamwave_480x270.webp",
-          "url": "https://dreamwave.live/",
-          "device": "dof3"
-        },
-        {
-          "title": "ExposéXR",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/expose-xr.png",
-          "url": "https://www.exposexr.com/webxr-showcase.html",
-          "device": "dof3"
-        },
-        {
           "title": "The Magic of Flight",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/magicofflight_480x270.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/magicofflight.webp",
           "url": "https://liquidcinemavr.com/fly/",
           "device": "dof3"
         },
         {
           "title": "XR Dinosaurs",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/xrdinosaurs_480x270.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/xrdinosaurs.webp",
           "url": "https://www.xrdinosaurs.com/",
           "device": "dof3"
         },
         {
           "title": "FLOW immersive",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/babytime_480x270.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/babytime.webp",
           "url": "https://a.flow.gl/",
           "device": "dof3"
         },
         {
-          "title": "Raw Emotions",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/raw_480x270.webp",
-          "url": "https://raw-emotions.phoria.com.au/",
-          "device": "dof3"
-        },
-        {
-          "title": "Hello WebXR!",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/mixedreality_480x270.webp",
-          "url": "https://msub2.github.io/hello-webxr/",
-          "device": "dof3"
-        },
-        {
-          "title": "Ball Shooter",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/ballshooter_480x270.webp",
-          "url": "https://threejs.org/examples/#webxr_xr_ballshooter",
-          "device": "dof3"
-        },
-        {
           "title": "Matterport",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/matterport_480x270.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/matterport.webp",
           "url": "https://matterport.com/discover",
+          "device": "dof3"
+        },
+        {
+          "title": "ExposéXR",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/expose-xr.webp",
+          "url": "https://www.exposexr.com/webxr-showcase.html",
+          "device": "dof3"
+        },
+        {
+          "title": "three.js XR",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/ballshooter.webp",
+          "url": "https://threejs.org/examples/#webxr_xr_ballshooter",
           "device": "dof3"
         }
       ]
@@ -93,51 +75,51 @@
       },
       "items": [
         {
+          "title": "Moon Rider",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/moonrider.webp",
+          "url": "https://moonrider.xyz/",
+          "device": "dof6"
+        },
+        {
+          "title": "The Escape Artist",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/escape-artist.webp",
+          "url": "https://esc.art/",
+          "device": "dof6"
+        },
+        {
           "title": "Castle Builder",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/game-castle-builder.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/game-castle-builder.webp",
           "url": "https://castle.needle.tools/",
           "device": "dof6"
         },
         {
           "title": "Jumpy Balls",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/jumpy-balls.webp",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/jumpy-balls.webp",
           "url": "https://msub2.github.io/jumpy-balls/",
           "device": "dof6"
         },
         {
-          "title": "Moon Rider",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/moonrider_480x270.webp",
-          "url": "https://moonrider.xyz/",
-          "device": "dof6"
-        },
-        {
-          "title": "Rogue Saber",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/roguesaber.jpg",
-          "url": "https://roguesaber.rvdleun.com",
-          "device": "dof6"
-        },
-        {
           "title": "Plockle",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/plockle.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/plockle.webp",
           "url": "https://plockle.com/play",
           "device": "dof6"
         },
         {
           "title": "Worlds Demolisher",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/worldsdemolisher.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/worldsdemolisher.webp",
           "url": "https://worldsdemolisher.totalviz.com/",
           "device": "dof6"
         },
         {
-          "title": "City Sling VR Experience",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/spidermain_box.jpg",
-          "url": "https://cityslingvr.arvr.social/",
+          "title": "Rogue Saber",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/roguesaber.webp",
+          "url": "https://roguesaber.rvdleun.com",
           "device": "dof6"
         },
         {
-          "title": "The Escape Artist",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/escape-artist_480x270.jpg",
-          "url": "https://esc.art/",
+          "title": "City Sling VR Experience",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/cityslingvr.webp",
+          "url": "https://cityslingvr.arvr.social/",
           "device": "dof6"
         }
       ]
@@ -156,13 +138,13 @@
       "items": [
         {
           "title": "Brush Work",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/brushworkvr.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/brushworkvr.webp",
           "url": "https://brushworkvr.com/webxr",
           "device": "dof6"
         },
         {
           "title": "VARTISTE",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/vartiste.jpg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/vartiste.webp",
           "url": "https://vartiste.xyz/",
           "device": "dof6"
         }
@@ -181,75 +163,51 @@
       },
       "items": [
         {
-          "title": "Airline Pilot's View",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/360-video-airline-pilots-view_480x270.webp",
-          "url": "https://www.youtube.com/watch?v=f2vpuTU7sio",
-          "device": "dof3"
-        },
-        {
-          "title": "Oreo Cookies",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/360-video-oreo-cookies_480x270.webp",
-          "url": "https://www.youtube.com/watch?v=ENau7AkayN8",
-          "device": "dof3"
-        },
-        {
-          "title": "Tails VR Flight on Sky Sanctuary",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/tailsflight_480x270.webp",
-          "url": "https://www.youtube.com/watch?v=VnAcrtLGM08",
-          "device": "dof3"
-        },
-        {
-          "title": "Kobe Bryant's Last Game",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/kobebryant_480x270.webp",
-          "url": "https://www.youtube.com/watch?v=ydBKIXWXxsk",
-          "device": "dof3"
-        },
-        {
-          "title": "Bright Side VR",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/brightside-vr.png",
-          "url": "https://www.youtube.com/c/BrightSideVR360/featured",
-          "device": "dof3"
-        },
-        {
           "title": "AirPano VR",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/airpano_480x270.webp",
-          "url": "https://www.youtube.com/c/AirPanoVR/videos",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/airpano.webp",
+          "url": "https://www.airpano.com/",
           "device": "dof3"
         },
         {
           "title": "360cities",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/360cities.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/360cities.webp",
           "url": "https://www.360cities.net/",
           "device": "dof3"
         },
         {
-          "title": "Hugh Hou",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/hughhou_480x270.webp",
-          "url": "https://www.youtube.com/@hughhou",
-          "device": "dof3"
-        },
-        {
           "title": "Virtual Reality",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/360_yt.png",
-          "url": "https://www.youtube.com/@360/videos",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/360_yt.webp",
+          "url": "https://www.youtube.com/@360",
           "device": "dof3"
         },
         {
           "title": "VR Gorilla",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/vrgorilla.png",
-          "url": "https://www.youtube.com/@Vrgorilla1/videos",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/vrgorilla.webp",
+          "url": "https://www.youtube.com/@Vrgorilla1",
           "device": "dof3"
         },
         {
-          "title": "Chengdu Giant Panda Base",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/panda_yt.jpg",
-          "url": "https://www.youtube.com/watch?v=XYLQFCqM4Dc",
+          "title": "DEO VR",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/deovr.webp",
+          "url": "https://deovr.com/",
           "device": "dof3"
         },
         {
-          "title": "Lions | National Geographic",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/lions_natgeo.jpg",
-          "url": "https://www.youtube.com/watch?v=sPyAQQklc1s",
+          "title": "Bright Side VR",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/brightside-vr.webp",
+          "url": "https://www.youtube.com/c/BrightSideVR360",
+          "device": "dof3"
+        },
+        {
+          "title": "Hugh Hou",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/hughhou.webp",
+          "url": "https://www.youtube.com/@hughhou",
+          "device": "dof3"
+        },
+        {
+          "title": "720云",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/720yun.webp",
+          "url": "https://www.720yun.com/",
           "device": "dof3"
         }
       ]
@@ -268,73 +226,73 @@
       "items": [
         {
           "title": "Amazon Prime Video",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/amazon_prime.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/amazon_prime.webp",
           "url": "https://primevideo.com",
           "device": "dof3"
         },
         {
           "title": "AppleTV+",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/apple_tv_plus.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/apple_tv_plus.webp",
           "url": "https://tv.apple.com/",
           "device": "dof3"
         },
         {
           "title": "Disney+",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/disney_plus.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/disney_plus.webp",
           "url": "https://www.disneyplus.com/",
           "device": "dof3"
         },
         {
           "title": "filmin",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/filmin.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/filmin.webp",
           "url": "https://www.filmin.es/",
           "device": "dof3"
         },
         {
           "title": "HBOmax",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/hbomax.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/hbomax.webp",
           "url": "https://www.hbomax.com/",
           "device": "dof3"
         },
         {
           "title": "YouTube",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/youtube.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/youtube.webp",
           "url": "https://www.youtube.com/",
           "device": "dof3"
         },
         {
           "title": "Spotify",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/spotify.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/spotify.webp",
           "url": "https://www.spotify.com/",
           "device": "dof3"
         },
         {
           "title": "iQiyi",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/iqiyi.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/iqiyi.webp",
           "url": "https://www.iqiyi.com/",
           "device": "dof3"
         },
         {
           "title": "腾讯视频",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/tencent.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/tencent.webp",
           "url": "https://v.qq.com/",
           "device": "dof3"
         },
         {
           "title": "Youku",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/youku.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/youku.webp",
           "url": "https://www.youku.com",
           "device": "dof3"
         },
         {
           "title": "bilibili",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/bilibili.png",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/bilibili.webp",
           "url": "https://www.bilibili.com/",
           "device": "dof3"
         },
         {
           "title": "西瓜视频",
-          "thumbnail": "https://darker.ink/wolvic/thumbnails/ixigua.svg",
+          "thumbnail": "https://igalia.github.io/wolvic/images/experiences/ixigua.webp",
           "url": "https://www.ixigua.com/",
           "device": "dof3"
         }
