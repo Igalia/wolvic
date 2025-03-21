@@ -18,6 +18,7 @@ locales = [
   "pl",
   "ru",
   "sv-SE",
+  "uk",
   "zh-CN",
   "zh-TW",
 ]
