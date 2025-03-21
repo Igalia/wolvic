@@ -127,6 +127,7 @@ struct DeviceDelegateOpenXR::State {
   bool isEyeTrackingSupported { false };
   bool handTrackingEnabled { true };
   bool shouldUsePassthrough { false };
+  float eyeResolutionRatio { 1.0f };
 
   bool IsPositionTrackingSupported() {
       CHECK(system != XR_NULL_SYSTEM_ID);
@@ -462,7 +463,7 @@ struct DeviceDelegateOpenXR::State {
     CHECK(viewConfig.size() > 0);
 
     immersiveDisplay->SetDeviceName(systemProperties.systemName);
-    immersiveDisplay->SetEyeResolution(viewConfig.front().recommendedImageRectWidth, viewConfig.front().recommendedImageRectHeight);
+    immersiveDisplay->SetEyeResolution(viewConfig.front().recommendedImageRectWidth * eyeResolutionRatio, viewConfig.front().recommendedImageRectHeight * eyeResolutionRatio);
     immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
     auto toDeviceBlendModes = [](std::vector<XrEnvironmentBlendMode> aOpenXRBlendModes) {
         std::vector<device::BlendMode> deviceBlendModes;
@@ -518,9 +519,16 @@ struct DeviceDelegateOpenXR::State {
 
     CHECK(viewConfig.size() > 0);
 
+    // since the PFDM MR device uses two 4K screens, and the recommended eye buffer
+    // size is 2880x2664, using this recommended eyeBuffer size would cause severe
+    // performance issues, so a ratio is added to reduce the rendering resolution
+    if (deviceType == device::PfdmMR) {
+      eyeResolutionRatio = 0.61111f;
+    }
+
     if (w == 0 || h == 0) {
-      w = viewConfig.front().recommendedImageRectWidth;
-      h = viewConfig.front().recommendedImageRectHeight;
+      w = viewConfig.front().recommendedImageRectWidth * eyeResolutionRatio;
+      h = viewConfig.front().recommendedImageRectHeight * eyeResolutionRatio;
     }
 
     XrSwapchainCreateInfo info{XR_TYPE_SWAPCHAIN_CREATE_INFO};
@@ -722,8 +730,7 @@ struct DeviceDelegateOpenXR::State {
   void UpdateClockLevels() {
       if (!OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME))
           return;
-
-      if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal) {
+      if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal && deviceType != device::PfdmMR) {
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
       } else {
