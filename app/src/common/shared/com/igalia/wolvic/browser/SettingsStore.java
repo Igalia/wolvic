@@ -216,6 +216,9 @@ public class SettingsStore {
         String experiencesJson = mPrefs.getString(mContext.getString(R.string.settings_key_remote_experiences), null);
         mSettingsViewModel.setExperiences(experiencesJson);
 
+        String heyVRJson = mPrefs.getString(mContext.getString(R.string.settings_key_heyvr_experiences), null);
+        mSettingsViewModel.setHeyVRExperiences(heyVRJson);
+
         mSettingsViewModel.refresh();
 
         updateRemoteContent(BuildConfig.PROPS_ENDPOINT,
@@ -224,6 +227,9 @@ public class SettingsStore {
         updateRemoteContent(BuildConfig.EXPERIENCES_ENDPOINT,
                 R.string.settings_key_remote_experiences,
                 mSettingsViewModel::setExperiences);
+        updateRemoteContent(BuildConfig.HEYVR_ENDPOINT,
+                R.string.settings_key_heyvr_experiences,
+                mSettingsViewModel::setHeyVRExperiences);
     }
 
     /**
