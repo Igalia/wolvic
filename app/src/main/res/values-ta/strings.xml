@@ -713,4 +713,5 @@
     <string name="settings_window_size">இயல்புநிலை சாளர அளவு</string>
     <string name="download_addon_install_blocked_permissions_body">தொடர, தனியுரிமை விருப்பங்களில் சேமிப்பக அனுமதிகளை அனுமதிக்கவும்.</string>
     <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>இதற்கு உங்கள் அனுமதி தேவை:<ul>%1$s</ul></p>]]></string>
 </resources>
