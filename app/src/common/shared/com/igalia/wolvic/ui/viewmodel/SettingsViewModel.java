@@ -132,13 +132,16 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public void setExperiences(String json) {
+        RemoteExperiences updatedExperiences = null;
         try {
             Gson gson = new GsonBuilder().create();
-            RemoteExperiences experiences = gson.fromJson(json, RemoteExperiences.class);
-            this.experiences.postValue(experiences);
-
+            updatedExperiences = gson.fromJson(json, RemoteExperiences.class);
         } catch (Exception e) {
             Log.w(LOGTAG, String.valueOf(e.getLocalizedMessage()));
+        } finally {
+            if (updatedExperiences != null) {
+                this.experiences.postValue(updatedExperiences);
+            }
         }
     }
 
