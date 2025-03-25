@@ -15,6 +15,7 @@ import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.utils.Experience;
+import com.igalia.wolvic.utils.RemoteAnnouncements;
 import com.igalia.wolvic.utils.RemoteExperiences;
 import com.igalia.wolvic.utils.RemoteProperties;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -35,6 +36,7 @@ public class SettingsViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isWebXREnabled;
     private MutableLiveData<String> propsVersionName;
     private MutableLiveData<Map<String, RemoteProperties>> props;
+    private MutableLiveData<RemoteAnnouncements> announcements;
     private MutableLiveData<RemoteExperiences> experiences;
     private MutableLiveData<ObservableBoolean> isWhatsNewVisible;
 
@@ -47,6 +49,7 @@ public class SettingsViewModel extends AndroidViewModel {
         isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(false));
         propsVersionName = new MutableLiveData<>();
         props = new MutableLiveData<>(Collections.emptyMap());
+        announcements = new MutableLiveData<>(new RemoteAnnouncements());
         experiences = new MutableLiveData<>(new RemoteExperiences());
         isWhatsNewVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
@@ -134,6 +137,20 @@ public class SettingsViewModel extends AndroidViewModel {
         return props;
     }
 
+    public void setAnnouncements(String json) {
+        RemoteAnnouncements updatedAnnouncements = null;
+        try {
+            Gson gson = new GsonBuilder().create();
+            updatedAnnouncements = gson.fromJson(json, RemoteAnnouncements.class);
+        } catch (Exception e) {
+            Log.w(LOGTAG, String.valueOf(e.getLocalizedMessage()));
+        } finally {
+            if (updatedAnnouncements != null) {
+                this.announcements.postValue(updatedAnnouncements);
+            }
+        }
+    }
+
     public void setExperiences(String json) {
         if (json == null || json.isEmpty()) {
             return;
@@ -176,6 +193,10 @@ public class SettingsViewModel extends AndroidViewModel {
         } catch (Exception e) {
             Log.w(LOGTAG, "Error processing HeyVR data: " + e.getLocalizedMessage());
         }
+    }
+
+    public MutableLiveData<RemoteAnnouncements> getAnnouncements() {
+        return announcements;
     }
 
     public MutableLiveData<RemoteExperiences> getExperiences() {

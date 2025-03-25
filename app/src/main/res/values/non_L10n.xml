@@ -72,6 +72,7 @@
     <string name="settings_key_downloads_sorting_order" translatable="false">settings_key_downloads_sorting_order</string>
     <string name="settings_key_remote_props_version_name" translatable="false">settings_key_remote_props_version_name</string>
     <string name="settings_key_remote_props" translatable="false">settings_key_remote_props</string>
+    <string name="settings_key_remote_announcements" translatable="false">settings_key_remote_announcements</string>
     <string name="settings_key_remote_experiences" translatable="false">settings_key_remote_experiences</string>
     <string name="settings_key_heyvr_experiences" translatable="false">settings_key_heyvr_experiences</string>
     <string name="settings_key_autocomplete" translatable="false">settings_key_autocomplete</string>

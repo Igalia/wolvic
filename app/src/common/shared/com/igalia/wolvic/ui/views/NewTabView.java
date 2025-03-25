@@ -17,6 +17,7 @@ import com.igalia.wolvic.browser.components.TopSitesHelper;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.NewTabBinding;
+import com.igalia.wolvic.ui.adapters.AnnouncementsAdapter;
 import com.igalia.wolvic.ui.adapters.ExperiencesAdapter;
 import com.igalia.wolvic.ui.adapters.TopSitesAdapterImpl;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
@@ -31,6 +32,7 @@ public class NewTabView extends FrameLayout {
 
     private NewTabBinding mBinding;
     private SettingsViewModel mSettingsViewModel;
+    private AnnouncementsAdapter mAnnouncementsAdapter;
     private TopSitesAdapterImpl mTopSitesAdapter;
     private TopSitesFeature mTopSitesFeature;
     private ExperiencesAdapter mExperiencesAdapter;
@@ -57,6 +59,20 @@ public class NewTabView extends FrameLayout {
         mBinding.setSettingsmodel(mSettingsViewModel);
 
         mBinding.logo.setOnClickListener(v -> openUrl(getContext().getString(R.string.home_page_url)));
+
+        // Announcements
+        mAnnouncementsAdapter = new AnnouncementsAdapter(getContext());
+        mAnnouncementsAdapter.setClickListener(announcement -> {
+            if (announcement.getLink() != null) {
+                openUrl(announcement.getLink());
+            }
+        });
+        mBinding.announcementsList.setAdapter(mAnnouncementsAdapter);
+        mBinding.announcementsList.setHasFixedSize(false);
+
+        mSettingsViewModel.getAnnouncements().observe((VRBrowserActivity) getContext(), remoteAnnouncements -> {
+            mAnnouncementsAdapter.updateAnnouncements(remoteAnnouncements);
+        });
 
         // Top sites
         mTopSitesAdapter = new TopSitesAdapterImpl(mTopSitesClickListener);

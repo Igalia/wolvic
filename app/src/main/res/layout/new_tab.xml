@@ -37,6 +37,43 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Announcements -->
+            <TextView
+                android:id="@+id/announcements_header"
+                android:layout_width="@dimen/announcement_item_header_width"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="start|center_vertical"
+                android:minHeight="@dimen/experience_header_item_height"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="@string/announcements_title"
+                android:textColor="@color/fog"
+                android:textSize="18sp"
+                android:visibility="@{settingsmodel.announcements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo" />
+
+            <com.igalia.wolvic.ui.views.ExpandedRecyclerView
+                android:id="@+id/announcements_list"
+                style="@style/customRecyclerViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/announcements_title"
+                android:foregroundGravity="center_horizontal"
+                android:nestedScrollingEnabled="false"
+                android:scrollbars="none"
+                android:visibility="@{settingsmodel.announcements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                app:customFastScrollEnabled="false"
+                app:layoutManager="com.igalia.wolvic.ui.views.NonScrollingGridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/announcements_header"
+                app:spanCount="1"
+                tools:itemCount="2"
+                tools:listitem="@layout/announcement_item" />
+
             <!-- Top sites -->
 
             <com.igalia.wolvic.ui.views.ExpandedRecyclerView
@@ -55,7 +92,7 @@
                 app:layoutManager="com.igalia.wolvic.ui.views.NonScrollingGridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/logo"
+                app:layout_constraintTop_toBottomOf="@id/announcements_list"
                 app:spanCount="8"
                 tools:itemCount="16"
                 tools:listitem="@layout/top_sites_item" />

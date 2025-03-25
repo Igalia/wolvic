@@ -213,6 +213,9 @@ public class SettingsStore {
         String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
         mSettingsViewModel.setProps(json);
 
+        String announcementsJson = mPrefs.getString(mContext.getString(R.string.settings_key_remote_announcements), null);
+        mSettingsViewModel.setAnnouncements(announcementsJson);
+
         String experiencesJson = mPrefs.getString(mContext.getString(R.string.settings_key_remote_experiences), null);
         mSettingsViewModel.setExperiences(experiencesJson);
 
@@ -224,6 +227,9 @@ public class SettingsStore {
         updateRemoteContent(BuildConfig.PROPS_ENDPOINT,
                 R.string.settings_key_remote_props,
                 mSettingsViewModel::setProps);
+        updateRemoteContent(BuildConfig.ANNOUNCEMENTS_ENDPOINT,
+                R.string.settings_key_remote_announcements,
+                mSettingsViewModel::setAnnouncements);
         updateRemoteContent(BuildConfig.EXPERIENCES_ENDPOINT,
                 R.string.settings_key_remote_experiences,
                 mSettingsViewModel::setExperiences);
