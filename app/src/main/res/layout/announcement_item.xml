@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="announcement"
+            type="com.igalia.wolvic.utils.Announcement" />
+
+        <variable
+            name="listener"
+            type="com.igalia.wolvic.ui.adapters.AnnouncementsAdapter.ClickListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="@dimen/announcement_item_width"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@color/asphalt"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{(view) -> listener.onClicked(announcement)}">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/link_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_below="@id/announcement_image"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/mozac_ic_open_in" />
+
+            <ImageView
+                android:id="@+id/announcement_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/announcement_item_image_height"
+                android:scaleType="centerCrop"
+                android:src="@drawable/empty_drawable" />
+
+            <TextView
+                android:id="@+id/announcement_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/announcement_image"
+                android:minHeight="32dp"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="24dp"
+                android:textColor="@color/library_panel_title_text_color"
+                android:textSize="@dimen/top_site_item_title_text_size"
+                android:textStyle="bold"
+                tools:text="Announcement Title" />
+
+            <TextView
+                android:id="@+id/announcement_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/announcement_title"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/library_panel_title_text_color"
+                android:textSize="@dimen/announcement_item_title_text_size"
+                tools:text="Announcement body text here." />
+
+            <TextView
+                android:id="@+id/announcement_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/announcement_body"
+                android:layout_alignParentEnd="true"
+                android:padding="12dp"
+                android:textColor="@color/library_panel_title_text_color"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                tools:text="March 25, 2025" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
