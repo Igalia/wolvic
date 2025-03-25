@@ -2613,5 +2613,6 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="controller_options_window_selection">Window Selection Method</string>
     <string name="controller_options_click_to_select">Click</string>
     <string name="controller_options_hover_to_select">Hover</string>
+    <string name="announcements_title">Announcements</string>
 
 </resources>
