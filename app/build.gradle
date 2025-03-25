@@ -125,6 +125,7 @@ android {
         buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
         buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "false"
         buildConfigField "Boolean", "USE_SOUNDPOOL", "true"
+        buildConfigField 'String', 'ANNOUNCEMENTS_ENDPOINT', '"https://igalia.github.io/wolvic/announcements.json"'
         buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://igalia.github.io/wolvic/experiences.json"'
         buildConfigField 'String', 'HEYVR_ENDPOINT', '"https://api.heyvr.io/v1/public/global/feed/featured?limit=50"'
 
