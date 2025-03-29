@@ -1800,6 +1800,12 @@ public void selectTab(@NonNull Session aTab) {
             }
         }
 
+        if (mFocusedWindow.getFullscreenInHamburgerMenuEnabled()) {
+            mFocusedWindow.postDelayed(() -> {
+                mFocusedWindow.setIsFullScreen(true);
+                mFocusedWindow.setKeepFullscreenInHamburgerMenu(false);
+            }, 2000);
+        }
     }
 
     public void showTabSentNotification() {
