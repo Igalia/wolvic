@@ -208,6 +208,7 @@ struct BrowserWorld::State {
   bool wasInGazeMode = false;
   WebXRInterstialState webXRInterstialState;
   vrb::Matrix widgetsYaw;
+  vrb::Vector widgetsTranslation;
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
@@ -1282,9 +1283,13 @@ BrowserWorld::StartFrame() {
         ThrottledWindowDistanceComputation(reorientTransform);
         m.device->Reorient(reorientTransform, DeviceDelegate::ReorientMode::NO_ROLL);
       } else if (m.lockMode == LockMode::STICKY) {
-        // For sticky mode, we calculate a reorient transform that keeps windows in the user's field of view
-        reorientTransform = CalculateStickyLockTransform();
-        m.device->Reorient(reorientTransform, DeviceDelegate::ReorientMode::SIX_DOF);
+        vrb::Matrix headTransform = m.device->GetHeadTransform();
+        vrb::Vector headPosition = headTransform.GetTranslation();
+        m.widgetsTranslation = vrb::Vector(headPosition.x(), 0.0f, headPosition.z());
+
+        float stickyYaw = CalculateStickyLockWidgetsYaw();
+        vrb::Matrix yawRotation = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), stickyYaw);
+        m.widgetsYaw.PostMultiplyInPlace(yawRotation);
       }
     }
     if (m.reorientRequested)
@@ -1868,7 +1873,12 @@ BrowserWorld::TickWorld() {
     return;
 
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
-  m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw));
+
+
+  vrb::Vector horizontalHeadPosition(headPosition.x(), 0.0f, headPosition.z());
+
+  m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw).Translate(horizontalHeadPosition));
+
   if (m.rootEnvironment) {
     m.rootEnvironment->SetTransform(m.device->GetReorientTransform());
   }
@@ -2138,116 +2148,69 @@ void BrowserWorld::OnReorient() {
   VRBrowser::ResetWindowsPosition();
 }
 
-vrb::Matrix
-BrowserWorld::CalculateStickyLockTransform() {
-  // We are assuming horizontal rotation for simplicity, so we start by calculating the head yaw.
+float
+BrowserWorld::CalculateStickyLockWidgetsYaw() {
   vrb::Matrix headTransform = m.device->GetHeadTransform();
-  vrb::Vector headPosition = headTransform.GetTranslation();
-  vrb::Vector headDirection = headTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
-  float headYaw = atan2f(headDirection.x(), -headDirection.z());
 
-  VRB_LOG("StickyLock: head position  %f  %f  %f", headPosition.x(), headPosition.y(), headPosition.z());
-  VRB_LOG("StickyLock: head yaw  %f", headYaw);
+  vrb::Vector headDirection = headTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
+  float headYaw = atan2f(-headDirection.z(), headDirection.x());
+  const float fovHalfWidth = M_PI / 4.0f; // 45 degrees to each side
+  float fovStartAngle = headYaw - fovHalfWidth;
+  float fovEndAngle = headYaw + fovHalfWidth;
 
-  // Define a FOV of 90 degrees (might need to change depending on device).
-  const float horizontalFOV = (float) M_PI / 2.0f;
-
-  float fovLeftEdge = headYaw - horizontalFOV * 0.5f;
-  float fovRightEdge = headYaw + horizontalFOV * 0.5f;
-
-  VRB_LOG("StickyLock: FOV is between  %f  and  %f", fovLeftEdge, fovRightEdge);
-
-  float leftContentEdge = FLT_MAX;
-  float rightContentEdge = -FLT_MAX;
+  float contentStartAngle = FLT_MAX;
+  float contentEndAngle = -FLT_MAX;
   bool foundContent = false;
 
   for (const WidgetPtr &widget: m.widgets) {
-    // Take into account only the visible windows.
     if (!widget->IsVisible() || widget->GetPlacement()->name.find("Window") == std::string::npos) {
       continue;
     }
+
+    float widgetStartAngle, widgetEndAngle;
+    widget->GetAngularBoundsFromCenter(widgetStartAngle, widgetEndAngle);
+
+    contentStartAngle = std::min(contentStartAngle, widgetStartAngle);
+    contentEndAngle = std::max(contentEndAngle, widgetEndAngle);
     foundContent = true;
-
-    // Calculate widget position relative to the user's head.
-    vrb::Vector widgetPos = widget->GetTransform().GetTranslation();
-    vrb::Vector relativePos = widgetPos - headPosition;
-
-    VRB_LOG("StickyLock: relative widget position  %f  %f  %f", relativePos.x(), relativePos.y(), relativePos.z());
-
-    // Calculate horizontal angle to widget.
-    float widgetAngle = atan2f(relativePos.x(), -relativePos.z());
-
-    VRB_LOG("StickyLock: widget angle  %f", widgetAngle);
-
-    float angularWidth;
-
-    if (widget->GetCylinder()) {
-      // For cylindrical widgets, simply use the cylinder's arc angle.
-      angularWidth = widget->GetCylinder()->GetCylinderTheta();
-      VRB_LOG("StickyLock: widget angular width (cylindrical)  %f", angularWidth);
-    } else {
-      // For flat widgets, calculate based on their width and horizontal distance to the head.
-      float widgetWidth = 0.0f;
-      float widgetHeight = 0.0f;
-      widget->GetWorldSize(widgetWidth, widgetHeight);
-      VRB_LOG("StickyLock: widget world size  width %f  height %f", widgetWidth, widgetHeight);
-
-      float horizontalDistance = sqrtf(relativePos.x() * relativePos.x() + relativePos.z() * relativePos.z());
-      VRB_LOG("StickyLock: horizontal distance from head to widget  %f", horizontalDistance);
-
-      angularWidth = 2.0f * atan2f(widgetWidth * 0.5f, horizontalDistance);
-      VRB_LOG("StickyLock: widget angular width (flat)  %f", angularWidth);
-    }
-
-    // TODO there might be an issue with the above calculations
-    angularWidth = angularWidth * 1.5f;
-
-    // Calculate widget edges in angular space.
-    float widgetLeftEdge = widgetAngle - angularWidth * 0.5f;
-    float widgetRightEdge = widgetAngle + angularWidth * 0.5f;
-
-    VRB_LOG("StickyLock: widget angular bounds between  %f  and  %f", widgetLeftEdge, widgetRightEdge);
-
-    leftContentEdge = std::min(leftContentEdge, widgetLeftEdge);
-    rightContentEdge = std::max(rightContentEdge, widgetRightEdge);
   }
 
   if (!foundContent) {
-    VRB_LOG("StickyLock: No windows found, return identity matrix");
-    return vrb::Matrix::Identity();
+    return 0.0f;
   }
 
-  VRB_LOG("StickyLock: window bounds between  %f  and  %f", leftContentEdge, rightContentEdge);
+  float targetYaw = 0.0f;
 
-  // Check if the edges are outside the FOV.
-  bool leftEdgeOut = leftContentEdge < fovLeftEdge;
-  bool rightEdgeOut = rightContentEdge > fovRightEdge;
-  float yawAdjustment = 0.0f;
-
-  // TODO this code only stops doing adjustments when the windows are back at their initial position
-
-  if (leftEdgeOut ^ rightEdgeOut) {
-    // Exactly one edge is outside, so we compute the smallest possible adjustment.
-    float leftAdjustment = fovLeftEdge - leftContentEdge;
-    float rightAdjustment = fovRightEdge - rightContentEdge;
-
-    if (fabsf(leftAdjustment) <= fabsf(rightAdjustment)) {
-      yawAdjustment = leftAdjustment;
-      VRB_LOG("StickyLock: Using left adjustment: %f (left edge to left FOV)", yawAdjustment);
-    } else {
-      yawAdjustment = rightAdjustment;
-      VRB_LOG("StickyLock: Using right adjustment: %f (right edge to right FOV)", yawAdjustment);
-    }
+  // If content is entirely within FOV - no adjustment needed
+  if (contentStartAngle >= fovStartAngle && contentEndAngle <= fovEndAngle) {
+    targetYaw = 0.0f;
   } else {
-    // Both edges are within the FOV or both are outside.
-    VRB_LOG("StickyLock: All windows within FOV or FOV filled, no adjustment needed");
-    return vrb::Matrix::Identity();
+    float leftAdjustment = 0.0f;
+    float rightAdjustment = 0.0f;
+
+    if (contentStartAngle < fovStartAngle) {
+      leftAdjustment = fovStartAngle - contentStartAngle;
+    }
+
+    if (contentEndAngle > fovEndAngle) {
+      rightAdjustment = fovEndAngle - contentEndAngle;
+    }
+
+    if (contentStartAngle < fovStartAngle && contentEndAngle > fovEndAngle) {
+      targetYaw = (fabsf(leftAdjustment) < fabsf(rightAdjustment)) ? leftAdjustment : rightAdjustment;
+    } else if (contentStartAngle < fovStartAngle) {
+      targetYaw = leftAdjustment;
+    } else if (contentEndAngle > fovEndAngle) {
+      targetYaw = rightAdjustment;
+    }
   }
 
-  VRB_LOG("StickyLock: applying rotation adjustment of %f", -yawAdjustment);
+  VRB_LOG("StickyLock: ");
+  VRB_LOG("StickyLock: FOV is between %.2f and %.2f", fovStartAngle, fovEndAngle);
+  VRB_LOG("StickyLock: Window bounds between %.2f and %.2f", contentStartAngle, contentEndAngle);
+  VRB_LOG("StickyLock: adjusting yaw by %.2f", targetYaw);
 
-  // Return rotation matrix for the yaw adjustment.
-  return vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yawAdjustment);
+  return targetYaw;
 }
 
 } // namespace crow

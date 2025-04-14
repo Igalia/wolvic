@@ -105,7 +105,7 @@ private:
 #endif
   vrb::Matrix GetActiveControllerOrientation() const;
   void ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform);
-  vrb::Matrix CalculateStickyLockTransform();
+  float CalculateStickyLockWidgetsYaw();
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
