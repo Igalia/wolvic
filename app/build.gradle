@@ -101,8 +101,8 @@ def isWebKitAvailable = {
 }
 
 // Version names for Gecko and Chromium releases.
-def GECKO_RELEASE_VERSION_NAME = '1.8.1'
-def CHROMIUM_RELEASE_VERSION_NAME = '1.2.1'
+def GECKO_RELEASE_VERSION_NAME = '1.8.2'
+def CHROMIUM_RELEASE_VERSION_NAME = '1.2.2'
 
 // Homepage and new tab URLs. HOMEPAGE_URL points at a website
 // and NEW_TAB_DEFAULT_URL determines the default content of a new tab.
@@ -121,7 +121,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 34
         versionCode generatedVersionCode
-        versionName "1.8.1"
+        versionName "1.8.2"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
