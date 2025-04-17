@@ -109,6 +109,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public static final int DEACTIVATE_CURRENT_SESSION = 0;
     public static final int LEAVE_CURRENT_SESSION_ACTIVE = 1;
 
+    @IntDef(value = { VIEW_BRIGHTNESS_UNCHANGED, VIEW_BRIGHTNESS_DIMMED})
+    public @interface ViewBrightness {}
+    public static final int VIEW_BRIGHTNESS_UNCHANGED = 0;
+    public static final int VIEW_BRIGHTNESS_DIMMED = 1;
+
     private final float MIN_SCALE = 0.5f;
     private final float DEFAULT_SCALE = 1.0f;
     private final float MAX_SCALE = 3.0f;
@@ -427,7 +432,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetManager.recreateWidgetSurface(this);
     }
 
-    private void setView(View view, boolean switchSurface) {
+    private void setView(View view, boolean switchSurface,  @ViewBrightness int viewBrightness) {
         Runnable setView = () -> {
             if (switchSurface) {
                 pauseCompositor();
@@ -448,7 +453,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                     mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
                 }
                 mWidgetManager.updateWidget(WindowWidget.this);
-                mWidgetManager.pushWorldBrightness(WindowWidget.this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                if (viewBrightness == VIEW_BRIGHTNESS_DIMMED) {
+                    mWidgetManager.pushWorldBrightness(WindowWidget.this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                }
                 mWidgetManager.pushBackHandler(mBackHandler);
                 setWillNotDraw(false);
                 postInvalidate();
@@ -465,7 +472,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    private void unsetView(View view, boolean switchSurface) {
+    private void unsetView(View view, boolean switchSurface, @ViewBrightness int viewBrightness) {
         mSetViewQueuedCalls.clear();
         if (mView != null && mView == view) {
             mView = null;
@@ -486,7 +493,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 float prevDensity = mWidgetPlacement.density;
                 mWidgetPlacement.density = getBrowserDensity();
                 mWidgetManager.updateWidget(WindowWidget.this);
-                mWidgetManager.popWorldBrightness(WindowWidget.this);
+                if (viewBrightness == VIEW_BRIGHTNESS_DIMMED) {
+                    mWidgetManager.popWorldBrightness(WindowWidget.this);
+                }
                 mWidgetManager.popBackHandler(mBackHandler);
                 if (mTexture != null) {
                     resumeCompositor();
@@ -537,7 +546,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setCurrentContentType(contentType);
         mViewModel.setUrl(contentType.URL);
         if (mView == null) {
-            setView(mLibrary, switchSurface);
+            setView(mLibrary, switchSurface, VIEW_BRIGHTNESS_DIMMED);
             mLibrary.selectPanel(contentType);
             mLibrary.onShow();
             if (mRestoreFirstPaint == null) {
@@ -576,7 +585,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private void hideLibraryPanel(boolean switchSurface) {
         if (mView != null && mLibrary != null && mView == mLibrary) {
-            unsetView(mLibrary, switchSurface);
+            unsetView(mLibrary, switchSurface, VIEW_BRIGHTNESS_DIMMED);
             mLibrary.onHide();
 
             if (switchSurface && mRestoreFirstPaint != null) {
@@ -593,7 +602,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideLibraryPanel(true);
         mViewModel.setIsFindInPage(false);
         if (mView == null) {
-            setView(mNewTab, switchSurface);
+            setView(mNewTab, switchSurface, VIEW_BRIGHTNESS_UNCHANGED);
             if (mRestoreFirstPaint == null) {
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
@@ -612,7 +621,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private void hideNewTabPanel(boolean switchSurface) {
         if (mView != null && mNewTab != null && mView == mNewTab) {
-            unsetView(mNewTab, switchSurface);
+            unsetView(mNewTab, switchSurface, VIEW_BRIGHTNESS_UNCHANGED);
             if (switchSurface && mRestoreFirstPaint != null) {
                 mRestoreFirstPaint.run();
                 mRestoreFirstPaint = null;
