@@ -2822,6 +2822,20 @@ public interface WSession {
     @NonNull
     WPanZoomController getPanZoomController();
 
+    /**
+     * Sets the clear color used when rendering the session.
+     * This color will be visible before content is rendered.
+     *
+     * @param color The clear color to set, in ARGB format. Default white.
+     */
+    void setClearColor(int color);
+
+    /**
+     * The current clear color.
+     *
+     * @return The current clear color, in ARGB format.
+     */
+    int getClearColor();
 
     /**
      * Set the content callback handler. This will replace the current handler.
