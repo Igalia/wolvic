@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.IntDef;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
@@ -21,15 +22,22 @@ import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.utils.UrlUtils;
 
-import java.util.Objects;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 class DisplayOptionsView extends SettingsView {
 
     private OptionsDisplayBinding mBinding;
     private String mDefaultHomepageUrl;
+
+    @IntDef(value = {CHOICE_NEW_TAB, CHOICE_HOMEPAGE_URL, CHOICE_CUSTOM})
+    public @interface HomepageChoiceValues {
+    }
+
+    public static final int CHOICE_NEW_TAB = 0;
+    public static final int CHOICE_HOMEPAGE_URL = 1;
+    public static final int CHOICE_CUSTOM = 2;
 
     public DisplayOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -83,9 +91,10 @@ class DisplayOptionsView extends SettingsView {
         SettingsStore.WindowSizePreset windowSizePreset = SettingsStore.WindowSizePreset.fromValues(windowWidth, windowHeight);
         setWindowsSizePreset(windowSizePreset.ordinal(), false);
 
-        int homepageId = getHomepageId(SettingsStore.getInstance(getContext()).getHomepage());
+        mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
+        @HomepageChoiceValues int initialHomepageChoice = getHomepageChoice(SettingsStore.getInstance(getContext()).getHomepage());
         mBinding.homepage.setOnCheckedChangeListener(mHomepageChangeListener);
-        setHomepage(homepageId, false);
+        setHomepageChoice(initialHomepageChoice, false);
 
         mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SettingsStore.getInstance(getContext()).isAutoplayEnabled(), false);
@@ -112,13 +121,12 @@ class DisplayOptionsView extends SettingsView {
         mBinding.tabsLocationRadio.setOnCheckedChangeListener(mTabsLocationChangeListener);
         setTabsLocation(mBinding.tabsLocationRadio.getIdForValue(tabsLocation), false);
 
-        mDefaultHomepageUrl = getContext().getString(R.string.HOMEPAGE_URL);
-
-        mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
-        mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
+        // For clarity, we use the current homepage for the edit field.
+        mBinding.homepageEdit.setHint1(SettingsStore.getInstance(getContext()).getHomepage());
+        mBinding.homepageEdit.setDefaultFirstValue(SettingsStore.getInstance(getContext()).getHomepage());
         mBinding.homepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
         mBinding.homepageEdit.setOnSaveClickedListener(mHomepageListener);
-        setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
+        setHomepageValue(SettingsStore.getInstance(getContext()).getHomepage());
 
         mBinding.densityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mBinding.densityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
@@ -182,7 +190,7 @@ class DisplayOptionsView extends SettingsView {
     };
 
     private RadioGroupSetting.OnCheckedChangeListener mHomepageChangeListener = (radioGroup, checkedId, doApply) -> {
-        setHomepage(checkedId, true);
+        setHomepageChoice(checkedId, true);
     };
 
     private SwitchSetting.OnCheckedChangeListener mAutoplayListener = (compoundButton, enabled, apply) -> {
@@ -211,10 +219,11 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mHomepageListener = (view) -> {
         if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
-            setHomepage(mBinding.homepageEdit.getFirstText());
+            setHomepageValue(mBinding.homepageEdit.getFirstText());
 
         } else {
-            setHomepage(mDefaultHomepageUrl);
+            // Reset the edit field to the current value.
+            setHomepageValue(SettingsStore.getInstance(getContext()).getHomepage());
         }
     };
 
@@ -275,10 +284,10 @@ class DisplayOptionsView extends SettingsView {
         if (mBinding.windowsSize.getCheckedRadioButtonId() != SettingsStore.WINDOW_SIZE_PRESET_DEFAULT.ordinal()) {
             setWindowsSizePreset(SettingsStore.WINDOW_SIZE_PRESET_DEFAULT.ordinal(), true);
         }
-        
-        int defaultHomepageId = getHomepageId(mDefaultHomepageUrl);
+
+        @HomepageChoiceValues int defaultHomepageId = getHomepageChoice(mDefaultHomepageUrl);
         if (mBinding.homepage.getCheckedRadioButtonId() != defaultHomepageId) {
-            setHomepage(defaultHomepageId, true);
+            setHomepageChoice(defaultHomepageId, true);
         }
 
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
@@ -287,7 +296,7 @@ class DisplayOptionsView extends SettingsView {
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
 
 
-        setHomepage(mDefaultHomepageUrl);
+        setHomepageValue(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
         setHeadLock(SettingsStore.HEAD_LOCK_DEFAULT, true);
@@ -391,39 +400,40 @@ class DisplayOptionsView extends SettingsView {
         }
     }
 
-    private void setHomepage(int checkedId, boolean doApply) {
+    private void setHomepageChoice(@HomepageChoiceValues int checkedId, boolean doApply) {
         mBinding.homepage.setOnCheckedChangeListener(null);
         mBinding.homepage.setChecked(checkedId, doApply);
         mBinding.homepage.setOnCheckedChangeListener(mHomepageChangeListener);
 
-        if (checkedId == 0) {
-            mBinding.homepageEdit.setVisibility(View.GONE);
-            SettingsStore.getInstance(getContext()).setHomepage(UrlUtils.ABOUT_NEWTAB);
-        } else if (checkedId == 1) {
-            mBinding.homepageEdit.setVisibility(View.GONE);
-            SettingsStore.getInstance(getContext()).setHomepage(mDefaultHomepageUrl);
-        } else if (checkedId == 2) {
-            mBinding.homepageEdit.setVisibility(View.VISIBLE);
+        mBinding.homepageEdit.setVisibility(checkedId == CHOICE_CUSTOM ? View.VISIBLE : View.GONE);
+
+        if (doApply && checkedId != CHOICE_CUSTOM) {
+            if (checkedId == CHOICE_NEW_TAB) {
+                setHomepageValue(UrlUtils.ABOUT_NEWTAB);
+            } else if (checkedId == CHOICE_HOMEPAGE_URL) {
+                setHomepageValue(mDefaultHomepageUrl);
+            }
         }
     }
 
-    private int getHomepageId(String homepage) {
+    private @HomepageChoiceValues int getHomepageChoice(String homepage) {
         if (Objects.equals(homepage, UrlUtils.ABOUT_NEWTAB)) {
-            return 0;
+            return CHOICE_NEW_TAB;
         } else if (Objects.equals(homepage, getContext().getString(R.string.HOMEPAGE_URL))) {
-            return 1;
+            return CHOICE_HOMEPAGE_URL;
         } else {
-            return 2;
+            return CHOICE_CUSTOM;
         }
     }
 
-    private void setHomepage(String newHomepage) {
-        if (mBinding.homepageEdit.getVisibility() != VISIBLE) {
-            return;
-        }
+    private void setHomepageValue(String newHomepage) {
         mBinding.homepageEdit.setOnSaveClickedListener(null);
+        mBinding.homepageEdit.setHint1(newHomepage);
+        mBinding.homepageEdit.setDefaultFirstValue(newHomepage);
         mBinding.homepageEdit.setFirstText(newHomepage);
+
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
+
         mBinding.homepageEdit.setOnSaveClickedListener(mHomepageListener);
     }
 
