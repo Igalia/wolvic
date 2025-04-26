@@ -118,13 +118,17 @@ public class SingleEditSetting extends RelativeLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
+        // If the edit field was visible when the click happened, this is a "save" action.
+        boolean isCurrentlyEditing = mEdit1.getVisibility() == View.VISIBLE;
+
         mText1.setVisibility(mEdit1.getVisibility());
         mEdit1.setVisibility(mEdit1.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         @StringRes int buttonText = mEdit1.getVisibility() == View.VISIBLE ?
                 R.string.developer_options_save : R.string.developer_options_edit;
         mButton.setText(buttonText);
 
-        if (mListener != null) {
+        // Only call the listener when the user clicked the "save" button.
+        if (isCurrentlyEditing && mListener != null) {
             mListener.onClick(v);
         }
 
@@ -156,7 +160,7 @@ public class SingleEditSetting extends RelativeLayout {
         mEdit1.setHint(hint);
     }
 
-    public void setOnClickListener(OnClickListener aListener) {
+    public void setOnSaveClickedListener(OnClickListener aListener) {
         mListener = aListener;
     }
 

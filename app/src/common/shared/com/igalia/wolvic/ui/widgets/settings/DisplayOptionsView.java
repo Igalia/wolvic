@@ -117,19 +117,19 @@ class DisplayOptionsView extends SettingsView {
         mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
         mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
         mBinding.homepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
-        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
+        mBinding.homepageEdit.setOnSaveClickedListener(mHomepageListener);
         setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
 
         mBinding.densityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mBinding.densityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mBinding.densityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
-        mBinding.densityEdit.setOnClickListener(mDensityListener);
+        mBinding.densityEdit.setOnSaveClickedListener(mDensityListener);
         setDisplayDensity(SettingsStore.getInstance(getContext()).getDisplayDensity());
 
         mBinding.dpiEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
         mBinding.dpiEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
         mBinding.dpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
-        mBinding.dpiEdit.setOnClickListener(mDpiListener);
+        mBinding.dpiEdit.setOnSaveClickedListener(mDpiListener);
         setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
     }
 
@@ -421,10 +421,10 @@ class DisplayOptionsView extends SettingsView {
         if (mBinding.homepageEdit.getVisibility() != VISIBLE) {
             return;
         }
-        mBinding.homepageEdit.setOnClickListener(null);
+        mBinding.homepageEdit.setOnSaveClickedListener(null);
         mBinding.homepageEdit.setFirstText(newHomepage);
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
-        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
+        mBinding.homepageEdit.setOnSaveClickedListener(mHomepageListener);
     }
 
     private void setUaMode(int checkId, boolean doApply) {
@@ -457,7 +457,7 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private boolean setDisplayDensity(float newDensity) {
-        mBinding.densityEdit.setOnClickListener(null);
+        mBinding.densityEdit.setOnSaveClickedListener(null);
         boolean restart = false;
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
         if (newDensity <= 0) {
@@ -468,13 +468,13 @@ class DisplayOptionsView extends SettingsView {
             restart = true;
         }
         mBinding.densityEdit.setFirstText(Float.toString(newDensity));
-        mBinding.densityEdit.setOnClickListener(mDensityListener);
+        mBinding.densityEdit.setOnSaveClickedListener(mDensityListener);
 
         return restart;
     }
 
     private boolean setDisplayDpi(int newDpi) {
-        mBinding.dpiEdit.setOnClickListener(null);
+        mBinding.dpiEdit.setOnSaveClickedListener(null);
         boolean restart = false;
         int prevDpi = SettingsStore.getInstance(getContext()).getDisplayDpi();
         if (newDpi < SettingsStore.DISPLAY_DPI_MIN || newDpi > SettingsStore.DISPLAY_DPI_MAX) {
@@ -485,7 +485,7 @@ class DisplayOptionsView extends SettingsView {
             restart = true;
         }
         mBinding.dpiEdit.setFirstText(Integer.toString(newDpi));
-        mBinding.dpiEdit.setOnClickListener(mDpiListener);
+        mBinding.dpiEdit.setOnSaveClickedListener(mDpiListener);
 
         return restart;
     }
