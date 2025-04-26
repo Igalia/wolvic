@@ -70,13 +70,13 @@ class LoginEditOptionsView extends SettingsView {
 
         mBinding.usernameEdit.setHint1(getContext().getString(R.string.username_hint));
         mBinding.usernameEdit.setFirstText(mLogin.getUsername());
-        mBinding.usernameEdit.setOnClickListener(mUsernameListener);
+        mBinding.usernameEdit.setOnSaveClickedListener(mUsernameListener);
         setUsername(mLogin.getUsername());
 
         mBinding.passwordEdit.setHint1(getContext().getString(R.string.password_hint));
         mBinding.passwordEdit.setFirstText(mLogin.getPassword());
         mBinding.passwordEdit.setPasswordToggleVisibility(View.VISIBLE);
-        mBinding.passwordEdit.setOnClickListener(mPasswordListener);
+        mBinding.passwordEdit.setOnSaveClickedListener(mPasswordListener);
         setPassword(mLogin.getPassword());
     }
 
@@ -135,9 +135,9 @@ class LoginEditOptionsView extends SettingsView {
     };
 
     private void setUsername(String username) {
-        mBinding.usernameEdit.setOnClickListener(null);
+        mBinding.usernameEdit.setOnSaveClickedListener(null);
         mBinding.usernameEdit.setFirstText(username);
-        mBinding.usernameEdit.setOnClickListener(mUsernameListener);
+        mBinding.usernameEdit.setOnSaveClickedListener(mUsernameListener);
         final Login newLogin = mLogin.copy(
                 mLogin.getGuid(),
                 username,
@@ -167,9 +167,9 @@ class LoginEditOptionsView extends SettingsView {
 
         } else {
             mBinding.passwordError.setVisibility(View.GONE);
-            mBinding.passwordEdit.setOnClickListener(null);
+            mBinding.passwordEdit.setOnSaveClickedListener(null);
             mBinding.passwordEdit.setFirstText(password);
-            mBinding.passwordEdit.setOnClickListener(mPasswordListener);
+            mBinding.passwordEdit.setOnSaveClickedListener(mPasswordListener);
             final Login newLogin = mLogin.copy(
                     mLogin.getGuid(),
                     mLogin.getUsername(),
