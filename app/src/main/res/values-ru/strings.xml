@@ -672,7 +672,7 @@
     <string name="crash_dialog_heading">У нас возникла проблема и мы упали</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[Пожалуйста, помогите Mozilla улучшить %1$s, отправив сообщение о падении.]]></string>
+    <string name="crash_dialog_message"><![CDATA[Пожалуйста, помогите Mozilla улучшить %1$s отправив данные о сбое . <a href="more">Узнать больше</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Всегда отправлять данные, не спрашивая</string>
@@ -1016,7 +1016,7 @@
     <string name="privacy_options_saved_login_delete">Удалить</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking">Улучшенная защита от отслеживания. (&lt;a href=%1$s&gt;Подробнее&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[Улучшенная защита от отслеживания. (<a href="%1$s">Подробнее</a>)]]></string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Дополнительно</string>
@@ -1638,7 +1638,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="notifications_loading">Загрузка уведомлений</string>
     <string name="settings_language_portuguese">Португальский</string>
     <string name="terms_service_title">Правила пользования</string>
-    <string name="terms_service_section_2"/>
+    <string name="terms_service_section_2">Wolvic использует информационные веб-сервисы («Сервисы») для предоставления некоторых возможностей, предоставляемых для вашего использования с этой версией Wolvic на условиях, описанных ниже.\n\n• Igalia and its contributors, licensors, and partners work to provide the most accurate and up-to-date Services. However, we cannot guarantee that this information is comprehensive and error-free. For example, the Safe Browsing Service may not identify some risky sites and may identify some safe sites in error, and in the Location Aware Service all locations returned by our service providers are estimates only and neither we nor our service providers guarantee the accuracy of the locations provided.\n\n• Igalia may discontinue or change the Services at its discretion.\n\n• You are welcome to use these Services with the accompanying version of Wolvic, and Igalia grants you its rights to do so. Igalia and its licensors reserve all other rights in the Services. These terms are not intended to limit any rights granted under open source licenses applicable to Wolvic and to corresponding source code versions of Wolvic.\n\n• The Services are provided “as-is.” Igalia, its contributors, licensors, and distributors, disclaim all warranties, whether express or implied, including without limitation, warranties that the Services are merchantable and fit for your particular purposes. You bear the entire risk as to selecting the Services for your purposes and as to the quality and performance of the Services.\n\n• Except as required by law, Igalia, its contributors, licensors, and distributors will not be liable for any indirect, special, incidental, consequential, punitive, or exemplary damages arising out of or in any way relating to the use of Wolvic and the Services. The collective liability under these terms will not exceed $500 (five hundred dollars). Some jurisdictions do not allow the exclusion or limitation of certain damages, so this exclusion and limitation may not apply to you.\n\n• Igalia may update these terms as necessary from time to time. These terms may not be modified or canceled without Igalia’s written agreement.\n\n• These terms are governed by the laws of Spain, excluding its conflict of law provisions. If any portion of these terms is held to be invalid or unenforceable, the remaining portions will remain in full force and effect. In the event of a conflict between a translated version of these terms and the Spanish language version, the Spanish language version shall control.\n\n• If you do not want to use one or more of the Services or the terms above are unacceptable, you may disable the feature or Service(s). Instructions on how to disable a particular feature or Service may be found below. Other features and Services can be disabled in the application preferences.\n\n◦ Safe browsing is enabled by default. Disabling the Safe Browsing feature is not recommended as it may result in you going to unsafe sites. If you wish to disable the feature completely, follow these steps:\n\n⁃ In the URL bar, type about:config\n\n⁃ Type browser.safebrowsing.malware.enabled\n\n⁃ Double click on the browser.safebrowsing.malware.enabled preference\n\n⁃ Type browser.safebrowsing.phishing.enabled\n\n⁃ Double click on the browser.safebrowsing.phishing.enabled preference\n\n⁃ Safe browsing is now disabled\n\n◦ Location Aware Browsing: is always opt-in. No location information is ever sent without your permission. If you wish to disable the feature completely, follow these steps:\n\n⁃ In the URL bar, type about:config\n\n⁃ Type geo.enabled\n\n⁃ Double click on the geo.enabled preference\n\n⁃ Location-Aware Browsing is now disabled\n\n◦ Enhanced Tracking Protection in Wolvic automatically protects your privacy while you browse. It blocks trackers that follow you around online to collect information about your browsing habits and interests without breaking site functionality. It also includes protections against harmful scripts, such as malware that drains your battery. There are three modes of tracking protection: Standard, Strict and Off. If you wish to switch it off, follow these steps:\n\n⁃ Go to “Privacy &amp; Security” settings.\n\n⁃ Select “Off” radio button.\n\n⁃ Enhanced Tracking Protection is now disabled.</string>
     <string name="upload_button">Загрузить</string>
     <string name="web_apps_dialog_cancel">Отмена</string>
     <string name="web_apps_saved_notification">Веб-приложение добавлено!</string>
@@ -1683,8 +1683,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="keyboardview_keycode_alt">Alt</string>
     <string name="keyboardview_keycode_cancel">Отменить</string>
     <string name="keyboardview_keycode_delete">Удалить</string>
-    <string name="keyboardview_keycode_done">Done</string>
-    <string name="keyboardview_keycode_mode_change">Mode change</string>
+    <string name="keyboardview_keycode_done">Готово</string>
+    <string name="keyboardview_keycode_mode_change">Изменение режима</string>
     <string name="keyboardview_keycode_enter">Enter</string>
     <string name="tray_wifi_unavailable_ssid">SSID недоступен</string>
     <string name="clear_user_data_dialog_title">Очистить данные пользователя %1$s</string>
@@ -1715,7 +1715,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \nВы можете ознакомиться с полным текстом пользовательского соглашения и политики конфиденциальности.</string>
     <string name="privacy_policy_section_3">Эта политика конфиденциальности регулируется законодательством Испании. Оригинальный язык политики — испанский. Любые возможные отличия между оригинальной версией и переводами на другие языки будут трактоваться в соответствии с испанской версией, которая доступна по адресу: https://wolvic.com/es/legal/privacy/ .</string>
     <string name="hamburger_menu_zoom">Увеличение</string>
-    <string name="permission_camera_rationale">Получение изображений окружающего мира требует разрешения использовать вашу камеру.</string>
+    <string name="permission_camera_rationale">Для съёмки вокруг вас требуется разрешение использовать вашу камеру.</string>
     <string name="permission_location_rationale">Показ местных новостей и материалов требует разрешения запрашивать ваше местоположение.</string>
     <string name="permission_notification_rationale">Уведомления о новостях и обновлениях требуют разрешения отправлять вам уведомления.</string>
     <string name="permission_microphone_rationale">Выполнение голосового поиска и текстового ввода требует разрешения использовать ваш микрофон.</string>
@@ -1726,4 +1726,26 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Новая вкладка</string>
     <string name="new_private_tab">Новая приватная вкладка</string>
     <string name="close_tab">Закрыть вкладку</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Не удалось перейти на 3D-режим. Попробуйте отключить очки и подключить их обратно и перезапустить Wolvic.</string>
+    <string name="tray_status_phone">Телефон: %1$s</string>
+    <string name="vision_glass_touchpad_instructions">Нажмите чтобы кликнуть. Проведите пальцем, чтобы прокрутить</string>
+    <string name="phone_ui_alert_dialog_title">Ошибка</string>
+    <string name="display_options_tabs_location_tray">В трэе</string>
+    <string name="display_options_tabs_location_horizontal">Горизонтально</string>
+    <string name="display_options_tabs_location_vertical">Вертикально</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="tabs_bookmark_selected">Добавить вкладки в закладки</string>
+    <string name="download_addon_install_blocked_permissions_body">Для продолжения разрешите доступ к хранилищу в Настройках приватности.</string>
+    <string name="vision_glass_disconnected_message">Пожалуйста подключите Vision Glass</string>
+    <string name="vision_glass_error_message">Произошла ошибка.\nПопробуйте ещё раз.</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">С помощью контролера или вручную</string>
+    <string name="developer_options_pointer_mode_tracked_eye">С помощью отслеживание глаз</string>
+    <string name="eye_tracking_permission_title">Разрешения на отслеживание глаз</string>
+    <string name="settings_window_size">Размер окна по умолчанию</string>
+    <string name="display_options_tabs_location">Расположение вкладок</string>
+    <string name="controller_options_handtracking">Отслеживание рук</string>
+    <string name="phone_ui_usb_alert_dialog_description">Не удалось получить разрешения USB. Попробуйте отключить очки и подключить их обратно и перезапустить Wolvic.</string>
+    <string name="vision_glass_realign_dialog_explanation">Чтобы настроить контроллер, наведите телефон прямо перед и нажмите кнопку.</string>
+    <string name="controller_options_pointer_mode">Режим контроля указателя</string>
+    <string name="eye_tracking_permission_message">Включение отслеживания глаз для просмотра веба имеет значительные риски для приватности. Эта технология фиксирует, куда и как долго пользователь смотрит на конкретные части веб-страницы, раскрывая интимные детали об его интересах и эмоциональных реакциях. Рекламодатели и третьи лица могут использовать эти данные для навязчивого маркетинга и профилирования. Более того, шаблоны движения глаз могут указывать на чувствительную информацию, такую как медицинские состояния, когнитивные состояния или личные привычки. Поэтому важно учитывать последствия конфиденциальности перед предоставлением доступа к информации об отслеживании глаз для веб-страниц.</string>
 </resources>
