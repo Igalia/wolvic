@@ -41,10 +41,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import mozilla.components.concept.fetch.Request;
@@ -271,6 +273,38 @@ public class SettingsStore {
                 Log.d(LOGTAG, "Remote data fetch error for " + endpoint + ": " + e.getLocalizedMessage());
             }
         });
+    }
+
+    public Set<String> getDismissedAnnouncementIds() {
+        Set<String> dismissedIds = new HashSet<>();
+        String json = mPrefs.getString(mContext.getString(R.string.settings_key_dismissed_remote_announcements), "[]");
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                dismissedIds.add(jsonArray.getString(i));
+            }
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Error loading dismissed announcements: " + e.getMessage());
+        }
+        return dismissedIds;
+    }
+
+    public void addDismissedAnnouncementId(String announcementId) {
+        Set<String> dismissedIds = getDismissedAnnouncementIds();
+        if (dismissedIds.contains(announcementId)) {
+            return;
+        }
+
+        dismissedIds.add(announcementId);
+
+        JSONArray jsonArray = new JSONArray();
+        for (String id : dismissedIds) {
+            jsonArray.put(id);
+        }
+
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_dismissed_remote_announcements), jsonArray.toString());
+        editor.apply();
     }
 
     public boolean isCrashReportingEnabled() {

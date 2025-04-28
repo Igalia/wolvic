@@ -43,6 +43,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public interface ClickListener {
         void onClicked(Announcement announcement);
+        void onDismissed(Announcement announcement);
     }
 
     public AnnouncementsAdapter(Context context) {

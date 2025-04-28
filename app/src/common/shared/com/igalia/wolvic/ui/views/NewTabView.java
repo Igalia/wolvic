@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
+import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.components.TopSitesAdapter;
 import com.igalia.wolvic.browser.components.TopSitesHelper;
 import com.igalia.wolvic.browser.engine.Session;
@@ -21,6 +22,7 @@ import com.igalia.wolvic.ui.adapters.AnnouncementsAdapter;
 import com.igalia.wolvic.ui.adapters.ExperiencesAdapter;
 import com.igalia.wolvic.ui.adapters.TopSitesAdapterImpl;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
+import com.igalia.wolvic.utils.Announcement;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import mozilla.components.feature.top.sites.TopSite;
@@ -62,15 +64,11 @@ public class NewTabView extends FrameLayout {
 
         // Announcements
         mAnnouncementsAdapter = new AnnouncementsAdapter(getContext());
-        mAnnouncementsAdapter.setClickListener(announcement -> {
-            if (announcement.getLink() != null) {
-                openUrl(announcement.getLink());
-            }
-        });
+        mAnnouncementsAdapter.setClickListener(mAnnouncementsClickListener);
         mBinding.announcementsList.setAdapter(mAnnouncementsAdapter);
         mBinding.announcementsList.setHasFixedSize(false);
 
-        mSettingsViewModel.getAnnouncements().observe((VRBrowserActivity) getContext(), remoteAnnouncements -> {
+        mSettingsViewModel.getVisibleAnnouncements().observe((VRBrowserActivity) getContext(), remoteAnnouncements -> {
             mAnnouncementsAdapter.updateAnnouncements(remoteAnnouncements);
         });
 
@@ -96,6 +94,21 @@ public class NewTabView extends FrameLayout {
             mExperiencesAdapter.updateExperiences(experiences);
         });
     }
+
+    private final AnnouncementsAdapter.ClickListener mAnnouncementsClickListener = new AnnouncementsAdapter.ClickListener() {
+        @Override
+        public void onClicked(Announcement announcement) {
+            if (announcement.getLink() != null) {
+                openUrl(announcement.getLink());
+            }
+        }
+
+        @Override
+        public void onDismissed(@NonNull Announcement announcement) {
+            SettingsStore.getInstance(getContext()).addDismissedAnnouncementId(announcement.getId());
+            mSettingsViewModel.updateVisibleAnnouncements();
+        }
+    };
 
     private final TopSitesAdapter.ClickListener mTopSitesClickListener =
             new TopSitesAdapter.ClickListener() {
