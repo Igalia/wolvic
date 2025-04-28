@@ -28,32 +28,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <RelativeLayout
+                android:id="@+id/top_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/announcement_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/announcement_item_image_height"
+                    android:layout_centerInParent="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/empty_drawable" />
+
+                <com.igalia.wolvic.ui.views.UIButton
+                    android:id="@+id/dismiss_button"
+                    style="?attr/headerBarButtonStyle"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="4dp"
+                    android:onClick="@{(view) -> listener.onDismissed(announcement)}"
+                    android:src="@drawable/ic_icon_exit"
+                    android:tint="@color/midnight" />
+            </RelativeLayout>
+
             <ImageView
                 android:id="@+id/link_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_below="@id/announcement_image"
+                android:layout_below="@id/top_content"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/mozac_ic_open_in" />
-
-            <ImageView
-                android:id="@+id/announcement_image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/announcement_item_image_height"
-                android:scaleType="centerCrop"
-                android:src="@drawable/empty_drawable" />
 
             <TextView
                 android:id="@+id/announcement_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/announcement_image"
+                android:layout_below="@id/top_content"
                 android:minHeight="32dp"
                 android:paddingStart="12dp"
                 android:paddingTop="12dp"
-                android:paddingEnd="24dp"
+                android:paddingEnd="36dp"
                 android:textColor="@color/library_panel_title_text_color"
                 android:textSize="@dimen/top_site_item_title_text_size"
                 android:textStyle="bold"
