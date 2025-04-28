@@ -20,6 +20,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
+import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.utils.StringUtils;
 import com.igalia.wolvic.utils.UrlUtils;
 
@@ -102,10 +103,7 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
 
             String title = mSession.getCurrentTitle();
             String uri = mSession.getCurrentUri();
-            if (StringUtils.isEmpty(title)) {
-                title = UrlUtils.stripCommonSubdomains(UrlUtils.getHost(uri));
-            }
-            mTitle.setText(title);
+            mTitle.setText(getTitleForDisplay(uri, title));
             mSubtitle.setText(UrlUtils.stripProtocol(uri));
 
             SessionStore.get().getBrowserIcons().loadIntoView(
@@ -141,7 +139,7 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
         if (mSession == null || mSession.getWSession() != session) {
             return;
         }
-        mTitle.setText(title);
+        mTitle.setText(getTitleForDisplay(mSession.getCurrentUri(), title));
     }
 
     @Override
@@ -150,7 +148,7 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             return;
         }
 
-        if (url == null) {
+        if (url == null || UrlUtils.isAboutPage(url)) {
             mSubtitle.setText(null);
             mFavicon.setImageDrawable(null);
         } else {
@@ -158,6 +156,14 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             SessionStore.get().getBrowserIcons().loadIntoView(
                     mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
         }
+    }
+
+    private String getTitleForDisplay(String url, String title) {
+        Windows.ContentType contentType = UrlUtils.getContentType(url);
+        if (contentType == Windows.ContentType.WEB_CONTENT) {
+            return StringUtils.isEmpty(title) ? UrlUtils.stripCommonSubdomains(UrlUtils.getHost(url)) : title;
+        }
+        return getContext().getString(contentType.titleResId);
     }
 
     @Override
