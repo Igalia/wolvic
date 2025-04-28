@@ -387,6 +387,10 @@ android {
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
         }
+
+        magicleap {
+            dimension "store"
+        }
     }
 
     variantFilter { variant ->
@@ -411,6 +415,10 @@ android {
 
         // MetaStore only apply to oculusvr builds.
         if (store == 'metaStore' && !platform.startsWith('oculusvr'))
+            variant.setIgnore(true);
+
+        // MagicLeap only for AOSP x64 builds.
+        if (store == 'magicleap' && (platform != 'aosp' || abi != 'x64'))
             variant.setIgnore(true);
         
     }
