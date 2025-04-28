@@ -50,7 +50,7 @@
                 android:text="@string/announcements_title"
                 android:textColor="@color/fog"
                 android:textSize="18sp"
-                android:visibility="@{settingsmodel.announcements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                android:visibility="@{settingsmodel.visibleAnnouncements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo" />
@@ -64,7 +64,7 @@
                 android:foregroundGravity="center_horizontal"
                 android:nestedScrollingEnabled="false"
                 android:scrollbars="none"
-                android:visibility="@{settingsmodel.announcements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                android:visibility="@{settingsmodel.visibleAnnouncements.announcements.size() > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
                 app:customFastScrollEnabled="false"
                 app:layoutManager="com.igalia.wolvic.ui.views.NonScrollingGridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
