@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
@@ -167,20 +168,22 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private ConnectivityReceiver mConnectivityReceived;
 
     public enum ContentType {
-        WEB_CONTENT(""),
-        BOOKMARKS(UrlUtils.ABOUT_BOOKMARKS),
-        WEB_APPS(UrlUtils.ABOUT_WEBAPPS),
-        HISTORY(UrlUtils.ABOUT_HISTORY),
-        DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS),
-        ADDONS(UrlUtils.ABOUT_ADDONS),
-        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS),
-        NEW_TAB(UrlUtils.ABOUT_NEWTAB);
+        WEB_CONTENT("", android.R.string.untitled),
+        BOOKMARKS(UrlUtils.ABOUT_BOOKMARKS, R.string.url_bookmarks_title),
+        WEB_APPS(UrlUtils.ABOUT_WEBAPPS, R.string.web_apps_title),
+        HISTORY(UrlUtils.ABOUT_HISTORY, R.string.history_title),
+        DOWNLOADS(UrlUtils.ABOUT_DOWNLOADS, R.string.url_downloads_title),
+        ADDONS(UrlUtils.ABOUT_ADDONS, R.string.url_addons_title),
+        NOTIFICATIONS(UrlUtils.ABOUT_NOTIFICATIONS, R.string.notifications_title),
+        NEW_TAB(UrlUtils.ABOUT_NEWTAB, R.string.url_new_tab_title);
 
         @NonNull
         public final String URL;
+        public final @StringRes int titleResId;
 
-        ContentType(@NonNull String url) {
+        ContentType(@NonNull String url, int titleResId) {
             this.URL = url;
+            this.titleResId = titleResId;
         }
 
         public boolean isLibraryContent() {
