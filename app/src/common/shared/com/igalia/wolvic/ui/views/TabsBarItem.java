@@ -148,14 +148,9 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             return;
         }
 
-        if (url == null || UrlUtils.isAboutPage(url)) {
-            mSubtitle.setText(null);
-            mFavicon.setImageDrawable(null);
-        } else {
-            mSubtitle.setText(UrlUtils.stripProtocol(mSession.getCurrentUri()));
-            SessionStore.get().getBrowserIcons().loadIntoView(
-                    mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
-        }
+        mSubtitle.setText(UrlUtils.isAboutPage(url) ? "" : UrlUtils.stripProtocol(url));
+        SessionStore.get().getBrowserIcons().loadIntoView(
+                mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
     }
 
     private String getTitleForDisplay(String url, String title) {
