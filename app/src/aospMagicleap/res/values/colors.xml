@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fog">#ffffff</color>
+    <color name="fog_blur">#30ffffff</color>
+    <color name="fog_url_protocol">#b7b7b8</color>
+    <color name="silver">#ffffff</color>
+    <color name="smoke">#ffffff</color>
+    <color name="rhino">#b7b7b8</color>
+    <color name="rhino_blur">#80b7b7b8</color>
+    <color name="concrete">#b7b7b8</color>
+    <color name="asphalt">#292929</color>
+    <color name="asphalt_blur">#30292929</color>
+    <color name="window_blank_clear_color">#272727</color>
+    <color name="void_color">#17181A</color>
+    <color name="void_color_blur">#8017181A</color>
+    <color name="midnight">#12171E</color>
+</resources>
