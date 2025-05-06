@@ -282,7 +282,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
         ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.Theme_WolvicPhone);
         LayoutInflater themedInflater = getLayoutInflater().cloneInContext(themedContext);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.visionglass_layout);
         mBinding = DataBindingUtil.inflate(themedInflater, R.layout.visionglass_layout, null, false);
         setContentView(mBinding.getRoot());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
