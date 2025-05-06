@@ -1263,22 +1263,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
             if (hidePanel) {
-                if (oldSession != null) {
-                    onCurrentSessionChange(oldSession.getWSession(), aSession.getWSession());
-                } else {
-                    onCurrentSessionChange(null, aSession.getWSession());
-                }
+                hideNewTabPanel(true);
+                hideLibraryPanel(true);
+                onCurrentSessionChange((oldSession != null ? oldSession.getWSession() : null), aSession.getWSession());
             }
 
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
             }
-        }
-        mCaptureOnPageStop = false;
-
-        if (hidePanel) {
+        } else if (hidePanel) {
             closeLibrary();
         }
+        mCaptureOnPageStop = false;
     }
 
     public void setDrmUsed(boolean isEnabled) {
