@@ -547,14 +547,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             setView(mLibrary, switchSurface, VIEW_BRIGHTNESS_DIMMED);
             mLibrary.selectPanel(contentType);
             mLibrary.onShow();
-            if (mRestoreFirstPaint == null) {
+            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
                     setFirstPaintReady(false);
-                    if (mFirstDrawCallback != null) {
-                        final Runnable firstDrawCallback = mFirstDrawCallback;
-                        setFirstDrawCallback(firstDrawCallback);
-                    }
+                    setFirstDrawCallback(firstDrawCallback);
                     if (mWidgetManager != null) {
                         mWidgetManager.updateWidget(WindowWidget.this);
                     }
@@ -601,14 +599,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setIsFindInPage(false);
         if (mView == null) {
             setView(mNewTab, switchSurface, VIEW_BRIGHTNESS_UNCHANGED);
-            if (mRestoreFirstPaint == null) {
+            if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                final Runnable firstDrawCallback = mFirstDrawCallback;
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
                     setFirstPaintReady(false);
-                    if (mFirstDrawCallback != null) {
-                        final Runnable firstDrawCallback = mFirstDrawCallback;
-                        setFirstDrawCallback(firstDrawCallback);
-                    }
+                    setFirstDrawCallback(firstDrawCallback);
                     if (mWidgetManager != null) {
                         mWidgetManager.updateWidget(WindowWidget.this);
                     }
