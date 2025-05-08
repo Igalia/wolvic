@@ -575,6 +575,12 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         WSession session = WFactory.createSession(settings);
         setupSessionListeners(session);
 
+        if (settings.getUsePrivateMode()) {
+            session.setClearColor(mContext.getColor(R.color.window_private_clear_color));
+        } else {
+            session.setClearColor(mContext.getColor(R.color.window_blank_clear_color));
+        }
+
         return session;
     }
 

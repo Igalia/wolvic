@@ -1,5 +1,6 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.graphics.Color;
 import android.graphics.Matrix;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,7 @@ public class SessionImpl implements WSession {
     private PanZoomControllerImpl mPanZoomController;
     private Method mGeckoLocationMethod;
     private UrlUtilsVisitor mUrlUtilsVisitor;
+    private int mClearColor = Color.WHITE;
 
     // The difference between "Mobile" and "VR" matches GeckoViewSettings.jsm
     private static final String WOLVIC_USER_AGENT_MOBILE = GeckoSession.getDefaultUserAgent() + " Wolvic/" + BuildConfig.VERSION_NAME;
@@ -237,6 +239,17 @@ public class SessionImpl implements WSession {
     @Override
     public WPanZoomController getPanZoomController() {
         return mPanZoomController;
+    }
+
+    @Override
+    public void setClearColor(int color) {
+        mClearColor = color;
+        mSession.getCompositorController().setClearColor(mClearColor);
+    }
+
+    @Override
+    public int getClearColor() {
+        return mClearColor;
     }
 
     @Override
