@@ -17,6 +17,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Pair;
@@ -281,6 +283,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     void setupListeners(Session aSession) {
+
+        if (aSession != mSession) {
+            Log.e(LOGTAG, "setupListeners tried to set up the listeners to a session that is not active!!!!");
+            return;
+        }
+
         aSession.addSessionChangeListener(this);
         aSession.addContentListener(this);
         aSession.addVideoAvailabilityListener(this);
@@ -422,29 +430,49 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void recreateWidgetSurfaceIfNeeded(float prevDensity) {
+
+        Log.e(LOGTAG, "recreateWidgetSurfaceIfNeeded :  densities " + prevDensity + " " + mWidgetPlacement.density + "  isLayer " + isLayer());
+
         if (prevDensity != mWidgetPlacement.density || !isLayer())
             return;
 
         // If the densities are the same updateWidget won't generate a new surface as the resulting
         // texture sizes are equal. We need to force a new surface creation when using layers.
+        Log.e(LOGTAG, "recreateWidgetSurfaceIfNeeded :  calls mWidgetManager.recreateWidgetSurface");
+        // TODO but if we fall here then what happens with the existing renderer?
         mWidgetManager.recreateWidgetSurface(this);
     }
 
     private void setView(View view, boolean switchSurface,  @ViewBrightness int viewBrightness) {
+        Log.e(LOGTAG, "setView " + view + "   mView = " + mView);
         Runnable setView = () -> {
+
+            Log.e(LOGTAG, "setView runnable : view = " + view + "   mView = " + mView + "  " + switchSurface);
+
+            // shouldn't this check that the view is already set?
+
             if (switchSurface) {
+                Log.e(LOGTAG, "setView runnable : pauseCompositor");
+                // this causes an error because "The compositor has detached from the session" at GeckoSession$Compositor.syncPauseCompositor
                 pauseCompositor();
             }
 
+            Log.e(LOGTAG, "setView runnable : removeView");
             mView = view;
             removeView(view);
+
+            Log.e(LOGTAG, "setView runnable : addView");
             mView.setVisibility(VISIBLE);
             addView(mView);
 
             if (switchSurface) {
+                Log.e(LOGTAG, "setView runnable : implement switchSurface");
                 float prevDensity = mWidgetPlacement.density;
                 mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
+                Log.e(LOGTAG, "setView runnable :  old density " + prevDensity + "  new density" + mWidgetPlacement.density);
+                Log.e(LOGTAG, "setView runnable :  mTexture " + mTexture + "  mSurface " + mSurface + "  mRenderer " + mRenderer);
                 if (mTexture != null && mSurface != null && mRenderer == null) {
+                    Log.e(LOGTAG, "setView runnable : new UISurfaceTextureRenderer on surface " + mSurface);
                     // Create the UI Renderer for the current surface.
                     // Surface must be released when switching back to WebView surface or the browser
                     // will not render it correctly. See release code in unsetView().
@@ -455,37 +483,51 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                     mWidgetManager.pushWorldBrightness(WindowWidget.this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
                 }
                 mWidgetManager.pushBackHandler(mBackHandler);
+                Log.e(LOGTAG, "setView runnable :  setWillNotDraw(false) and postInvalidate()");
                 setWillNotDraw(false);
                 postInvalidate();
 
+                Log.e(LOGTAG, "setView runnable :  call recreateWidgetSurfaceIfNeeded");
                 recreateWidgetSurfaceIfNeeded(prevDensity);
             }
         };
 
         if (mAfterFirstPaint) {
+            Log.e(LOGTAG, "setView: mAfterFirstPaint");
             setView.run();
 
         } else {
+            Log.e(LOGTAG, "setView: add to mSetViewQueuedCalls");
             mSetViewQueuedCalls.add(setView);
         }
     }
 
     private void unsetView(View view, boolean switchSurface, @ViewBrightness int viewBrightness) {
+        Log.e(LOGTAG, "unsetView " + view + "   mView = " + mView + "  mSetViewQueuedCalls " + mSetViewQueuedCalls.size());
+
+        // we need to release these resources when changing UI content
+        // this might be the key to fixing the bug
+        // the real problem is that we should just use a separate widget and not do this dance
+
         mSetViewQueuedCalls.clear();
         if (mView != null && mView == view) {
+            Log.e(LOGTAG, "unsetView: removing view");
             mView = null;
             removeView(view);
             view.setVisibility(GONE);
 
             if (switchSurface) {
+                Log.e(LOGTAG, "unsetView: switchSurface");
                 setWillNotDraw(true);
                 if (mTexture != null) {
                     // Surface must be recreated here when not using layers.
                     // When using layers the new Surface is received via the setSurface() method.
                     if (mRenderer != null) {
+                        Log.e(LOGTAG, "unsetView: release renderer");
                         mRenderer.release();
                         mRenderer = null;
                     }
+                    Log.e(LOGTAG, "unsetView: create new surface"); // and what about the previous?
                     mSurface = new Surface(mTexture);
                 }
                 float prevDensity = mWidgetPlacement.density;
@@ -535,6 +577,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void showLibraryPanel(Windows.ContentType contentType, boolean switchSurface) {
+        Log.e(LOGTAG, "showLibraryPanel");
         if (mLibrary == null) {
             return;
         }
@@ -571,6 +614,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setCurrentContentType(contentType);
 
         if (contentType == Windows.ContentType.NEW_TAB) {
+            Log.e(LOGTAG, "closeLibrary: calls showNewTabPanel");
             showNewTabPanel(true);
         } else if (contentType.isLibraryContent()) {
             showLibrary(contentType);
@@ -580,6 +624,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void hideLibraryPanel(boolean switchSurface) {
+        Log.e(LOGTAG, "hideLibraryPanel");
         if (mView != null && mLibrary != null && mView == mLibrary) {
             unsetView(mLibrary, switchSurface, VIEW_BRIGHTNESS_DIMMED);
             mLibrary.onHide();
@@ -592,17 +637,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void showNewTabPanel(boolean switchSurface) {
+        Log.e(LOGTAG, "showNewTabPanel: mView = " + mView);
         if (mNewTab == null) {
             return;
         }
         hideLibraryPanel(true);
         mViewModel.setIsFindInPage(false);
+        Log.e(LOGTAG, "showNewTabPanel: " + mView + " " + mRestoreFirstPaint + " " + isFirstPaintReady() + " " + mFirstDrawCallback + " " + mSurface);
         if (mView == null) {
+            Log.e(LOGTAG, "showNewTabPanel: calls setView");
             setView(mNewTab, switchSurface, VIEW_BRIGHTNESS_UNCHANGED);
             if (mRestoreFirstPaint == null && !isFirstPaintReady() && (mFirstDrawCallback != null) && (mSurface != null)) {
+                Log.e(LOGTAG, "showNewTabPanel: calls onFirstContentfulPaint and updates mRestoreFirstPaint");
                 final Runnable firstDrawCallback = mFirstDrawCallback;
                 onFirstContentfulPaint(mSession.getWSession());
                 mRestoreFirstPaint = () -> {
+                    Log.e(LOGTAG, "mRestoreFirstPaint created by showNewTabPanel");
                     setFirstPaintReady(false);
                     setFirstDrawCallback(firstDrawCallback);
                     if (mWidgetManager != null) {
@@ -611,12 +661,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 };
             }
         }
+        Log.e(LOGTAG, "showNewTabPanel: done");
     }
 
     private void hideNewTabPanel(boolean switchSurface) {
+        Log.e(LOGTAG, "hideNewTabPanel " + switchSurface);
         if (mView != null && mNewTab != null && mView == mNewTab) {
             unsetView(mNewTab, switchSurface, VIEW_BRIGHTNESS_UNCHANGED);
             if (switchSurface && mRestoreFirstPaint != null) {
+                Log.e(LOGTAG, "hideNewTabPanel calls mRestoreFirstPaint");
                 mRestoreFirstPaint.run();
                 mRestoreFirstPaint = null;
             }
@@ -624,14 +677,21 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void pauseCompositor() {
+        Log.e(LOGTAG, "pauseCompositor " + mSurface);
         if (mSession == null) {
             return;
         }
 
-        mSession.surfaceDestroyed();
+        // this fixes the bug
+        if (mSurface != null) {
+            mSurface.release();
+            mSurface = null;
+        }
+        mSession.surfaceDestroyed(); // what the fuck
     }
 
     public void resumeCompositor() {
+        Log.e(LOGTAG, "resumeCompositor " + mSurface);
         if (mSession == null) {
             return;
         }
@@ -821,16 +881,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
+        Log.e(LOGTAG, "setSurfaceTexture : " + aTexture);
         mFirstDrawCallback = aFirstDrawCallback;
         if (mView != null) {
+            Log.e(LOGTAG, "setSurfaceTexture : mView != null, calling super.setSurfaceTexture");
             super.setSurfaceTexture(aTexture, aWidth, aHeight, aFirstDrawCallback);
 
         } else {
             WSession session = mSession.getWSession();
             if (session == null) {
+                Log.e(LOGTAG, "setSurfaceTexture : session == null");
                 return;
             }
             if (aTexture == null) {
+                Log.e(LOGTAG, "setSurfaceTexture : aTexture == null, calling setWillNotDraw(true)");
                 setWillNotDraw(true);
                 return;
             }
@@ -840,7 +904,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mHeight = (int) (aHeight / getPlacement().textureScale);
             mTexture = aTexture;
             aTexture.setDefaultBufferSize(aWidth, aHeight);
+            Log.e(LOGTAG, "setSurfaceTexture : mSurface was " + mSurface);
             mSurface = new Surface(aTexture);
+            Log.e(LOGTAG, "setSurfaceTexture : mSurface becomes " + mSurface);
+            Log.e(LOGTAG, "setSurfaceTexture : will call callSurfaceChanged");
             callSurfaceChanged();
         }
     }
@@ -848,6 +915,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
         if (mView != null) {
+            Log.e(LOGTAG, "setSurface : mView != null, calling super.setSurface " + aSurface);
             super.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
 
         } else {
@@ -855,17 +923,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mSurfaceHeight = aHeight;
             mWidth = (int) (aWidth / getPlacement().textureScale);
             mHeight = (int) (aHeight / getPlacement().textureScale);
+            Log.e(LOGTAG, "setSurface : mSurface was " + mSurface);
             mSurface = aSurface;
+            Log.e(LOGTAG, "setSurface : mSurface becomes " + mSurface);
             mFirstDrawCallback = aFirstDrawCallback;
             if (mSurface != null) {
+                Log.e(LOGTAG, "setSurface : will call callSurfaceChanged");
                 callSurfaceChanged();
             } else {
+                Log.e(LOGTAG, "setSurface : will call mSession.surfaceDestroyed()");
                 mSession.surfaceDestroyed();
             }
         }
     }
 
     private void callSurfaceChanged() {
+        Log.e(LOGTAG, "callSurfaceChanged: " + mSession + " " + mSurface);
         if (mSession != null && mSurface != null) {
             mSession.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mSurfaceWidth - mBorderWidth * 2, mSurfaceHeight - mBorderWidth * 2);
             mSession.updateLastUse();
@@ -1073,8 +1146,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void waitForFirstPaint() {
+        Log.e(LOGTAG, "waitForFirstPaint");
         setFirstPaintReady(false);
         setFirstDrawCallback(() -> {
+            Log.e(LOGTAG, "mFirstDrawCallback: isFirstPaintReady " + isFirstPaintReady());
             if (!isFirstPaintReady()) {
                 setFirstPaintReady(true);
                 mWidgetManager.updateWidget(WindowWidget.this);
@@ -1238,29 +1313,44 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction, @SetSessionActiveState int previousSessionState, boolean hidePanel) {
+        Log.e(LOGTAG, "setSession: mSession: " + mSession + " aSession: " + aSession + " aDisplayAction: " + aDisplayAction + " previousSessionState: " + previousSessionState + " hidePanel: " + hidePanel + " -------");
         if (mSession != aSession) {
             Session oldSession = mSession;
+            Log.e(LOGTAG, "setSession: oldSession != mSession");
             if (oldSession != null) {
+                Log.e(LOGTAG, "setSession: cleanListeners(oldSession)");
                 cleanListeners(oldSession);
                 if (previousSessionState == DEACTIVATE_CURRENT_SESSION) {
+                    Log.e(LOGTAG, "setSession: oldSession.setActive(false)");
                     oldSession.setActive(false);
                 }
                 if (aDisplayAction == SESSION_RELEASE_DISPLAY) {
+                    Log.e(LOGTAG, "setSession: oldSession.releaseDisplay()");
                     oldSession.releaseDisplay();
                 }
             }
 
+            if (hidePanel) {
+                Log.e(LOGTAG, "setSession: calls hideNewTabPanel hideLibraryPanel");
+                // they need to release the UI renderer
+                hideNewTabPanel(true);
+                hideLibraryPanel(true);
+            }
+
             mSession = aSession;
 
-            setupListeners(mSession);
+            // this is called synchronously and will try to show the new tab right away
+            (new Handler(Looper.getMainLooper())).post(() -> setupListeners(mSession));
             SessionStore.get().setActiveSession(mSession);
 
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
             mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
             if (hidePanel) {
-                hideNewTabPanel(true);
-                hideLibraryPanel(true);
+//                Log.e(LOGTAG, "setSession: calls hideNewTabPanel hideLibraryPanel");
+//                hideNewTabPanel(true);
+//                hideLibraryPanel(true);
+                Log.e(LOGTAG, "setSession: calls onCurrentSessionChange");
                 onCurrentSessionChange((oldSession != null ? oldSession.getWSession() : null), aSession.getWSession());
             }
 
@@ -1271,6 +1361,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             closeLibrary();
         }
         mCaptureOnPageStop = false;
+        Log.e(LOGTAG, "setSession: done -------");
     }
 
     public void setDrmUsed(boolean isEnabled) {
@@ -1280,9 +1371,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     // Session.ISessionChange
     @Override
     public void onCurrentSessionChange(WSession aOldSession, WSession aSession) {
-        Log.d(LOGTAG, "onCurrentSessionChange: " + this.hashCode());
-
-        Log.d(LOGTAG, "surfaceChanged: " + aSession.hashCode());
+        Log.e(LOGTAG, "onCurrentSessionChange: " + aOldSession + "   " + aSession);
+        Log.e(LOGTAG, "onCurrentSessionChange: calls callSurfaceChanged()");
         callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
@@ -1302,6 +1392,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mViewModel.setIsMediaPlaying(false);
         }
 
+        Log.e(LOGTAG, "onCurrentSessionChange: calls waitForFirstPaint()");
         waitForFirstPaint();
     }
 
@@ -1882,7 +1973,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             // view queue calls need to be delayed to avoid a deadlock
             // caused by ISession.syncResumeResizeCompositor()
             // See: https://github.com/MozillaReality/FirefoxReality/issues/2889
+
+            Log.e(LOGTAG, "onFirstContentfulPaint: will call mSetViewQueuedCalls: " + mSetViewQueuedCalls.size());
+
+            // TODO this is actually where an error happens because of GeckoSession$Compositor.syncPauseCompositor
+            // maybe mSetViewQueuedCalls has been accidentally cleared?
+
             mUIThreadExecutor.execute(() -> {
+                Log.e(LOGTAG, "onFirstContentfulPaint: mUIThreadExecutor calls mSetViewQueuedCalls: " + mSetViewQueuedCalls.size());
                 mSetViewQueuedCalls.forEach(Runnable::run);
                 mSetViewQueuedCalls.clear();
             });
@@ -2026,6 +2124,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onLocationChange(@NonNull WSession session, @Nullable String url) {
+
+        Log.e(LOGTAG, "onLocationChange: URL " + url);
+
         if (mPromptDelegate != null &&
                 mViewModel.getUrl().getValue() != null &&
                 UrlUtils.getHost(url) != null &&
@@ -2044,10 +2145,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setCurrentContentType(contentType);
 
         if (contentType == Windows.ContentType.NEW_TAB) {
+            Log.e(LOGTAG, "onLocationChange: calls showNewTabPanel");
             showNewTabPanel(true);
         } else if (contentType.isLibraryContent()) {
+            Log.e(LOGTAG, "onLocationChange: calls showLibraryPanel");
             showLibraryPanel(contentType, true);
         } else {
+            Log.e(LOGTAG, "onLocationChange: calls hideNewTabPanel hideLibraryPanel");
             hideLibraryPanel(true);
             hideNewTabPanel(true);
         }

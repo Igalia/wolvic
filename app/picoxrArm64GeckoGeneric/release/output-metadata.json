@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.igalia.wolvic",
+  "variantName": "picoxrArm64GeckoGenericRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 2091271559,
+      "versionName": "1.8.2",
+      "outputFile": "Wolvic-picoxr-arm64-gecko-generic-release.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/Wolvic-picoxr-arm64-gecko-generic-release.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/Wolvic-picoxr-arm64-gecko-generic-release.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 24
+}

@@ -292,6 +292,7 @@ Widget::SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight) {
 
 void
 Widget::RecreateSurface() {
+  VRB_ERROR("Widget.cpp : RecreateSurface()");
   if (m.quad) {
     m.quad->RecreateSurface();
   } else {

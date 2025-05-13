@@ -1113,6 +1113,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 Log.d(LOGTAG, "Widget: " + aHandle + " (" + aWidth + "x" + aHeight + ") received a null surface texture.");
             } else {
                 Runnable aFirstDrawCallback = () -> {
+                    Log.e("WindowWidget", "mFirstDrawCallback: from VRBrowserActivity, widget.isFirstPaintReady() "+widget.isFirstPaintReady());
                     if (!widget.isFirstPaintReady()) {
                         widget.setFirstPaintReady(true);
                         updateWidget(widget);
@@ -1800,6 +1801,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void recreateWidgetSurface(Widget aWidget) {
+        Log.e("WindowWidget", "WidgetManager.recreateWidgetSurface");
         queueRunnable(() -> recreateWidgetSurfaceNative(aWidget.getHandle()));
     }
 

@@ -1506,6 +1506,9 @@ public void selectTab(@NonNull Session aTab) {
             targetWindow.setActiveWindow(true);
 
         } else {
+
+            Log.e("WindowWidget", "Windows.onTabSelect: calls setFirstPaint");
+
             setFirstPaint(targetWindow, aTab);
             // The Web Extensions require an active target session so we need to make sure we always keep the
             // Web Extension target session active when switching tabs.
@@ -1518,6 +1521,9 @@ public void selectTab(@NonNull Session aTab) {
             if (popUpSession != null) {
                 parentPopupSession = SessionStore.get().getSession(popUpSession.getSessionState().mParentId);
             }
+
+            Log.e("WindowWidget", "Windows.onTabSelect: calls setSession");
+
             targetWindow.setSession(aTab,
                     (popUpSession == null && aTab.isWebExtensionSession()) || parentPopupSession == currentWindowSession ?
                             WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE :

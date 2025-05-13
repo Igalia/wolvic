@@ -11,8 +11,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import androidx.preference.PreferenceManager;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -25,6 +23,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
@@ -1816,9 +1815,11 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     // Display functions
     public void releaseDisplay() {
+        Log.e("WindowWidget", "Session.releaseDisplay");
         surfaceDestroyed();
         if (mState.mDisplay != null) {
             if (mState.mSession != null) {
+                Log.e("WindowWidget", "Session.releaseDisplay: mState.mSession.releaseDisplay(mState.mDisplay) - release Gecko display");
                 mState.mSession.releaseDisplay(mState.mDisplay);
             }
             mState.mDisplay = null;
@@ -1826,20 +1827,26 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     public void surfaceDestroyed() {
+        Log.e("WindowWidget", "Session.surfaceDestroyed");
         if (mState.mDisplay != null) {
+            Log.e("WindowWidget", "Session.surfaceDestroyed: mState.mDisplay.surfaceDestroyed() - destroy Gecko surface, call syncPauseCompositor");
             mState.mDisplay.surfaceDestroyed();
         }
     }
 
     public void surfaceChanged(@NonNull final Surface surface, final int left, final int top,
                                final int width, final int height) {
+        Log.e("WindowWidget", "Session.surfaceChanged");
         if (mState.mSession == null) {
             return;
         }
         if (mState.mDisplay == null) {
             mState.mDisplay = mState.mSession.acquireDisplay();
+            Log.e("WindowWidget", "Session.surfaceChanged: acquired " + mState.mDisplay);
         }
+        Log.e("WindowWidget", "Session.surfaceChanged: calling Display.surfaceChanged " + mState.mDisplay + "  " + surface+" will call syncResumeResizeCompositor");
         mState.mDisplay.surfaceChanged(surface, left, top, width, height);
+        Log.e("WindowWidget", "Session.surfaceChanged: done");
     }
 
     public void logState() {
