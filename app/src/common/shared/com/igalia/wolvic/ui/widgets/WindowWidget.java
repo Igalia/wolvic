@@ -281,6 +281,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     void setupListeners(Session aSession) {
+        assert aSession == mSession;
+
         aSession.addSessionChangeListener(this);
         aSession.addContentListener(this);
         aSession.addVideoAvailabilityListener(this);
@@ -628,6 +630,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
+        // When using layers, ensure that the surface is not left in an inconsistent state.
+        if (isLayer() && mSurface != null) {
+            mSurface.release();
+            mSurface = null;
+        }
         mSession.surfaceDestroyed();
     }
 
@@ -1252,17 +1259,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
             mSession = aSession;
 
-            setupListeners(mSession);
             SessionStore.get().setActiveSession(mSession);
-
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
             mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
             if (hidePanel) {
+                // Release the resources used by the native UI.
                 hideNewTabPanel(true);
                 hideLibraryPanel(true);
                 onCurrentSessionChange((oldSession != null ? oldSession.getWSession() : null), aSession.getWSession());
             }
+
+            // Session listeners will be called synchronously with the new state.
+            setupListeners(mSession);
 
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
