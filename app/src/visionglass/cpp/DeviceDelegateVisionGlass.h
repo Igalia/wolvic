@@ -54,12 +54,17 @@ public:
   void setHead(const double aX, const double aY, const double aZ, const double aW);
   void setControllerOrientation(const double aX, const double aY, const double aZ, const double aW);
   void CalibrateController();
+  void EnableExternalMouse();
+  void DisableExternalMouse();
+
 protected:
   struct State;
   DeviceDelegateVisionGlass(State& aState);
   virtual ~DeviceDelegateVisionGlass();
 private:
   State& m;
+  uint32_t activeControllerIndex;
+
   vrb::Quaternion CorrectedHeadOrientation() const;
   VRB_NO_DEFAULTS(DeviceDelegateVisionGlass)
 };

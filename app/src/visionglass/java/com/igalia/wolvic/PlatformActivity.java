@@ -8,6 +8,7 @@ package com.igalia.wolvic;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Presentation;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +42,7 @@ import android.widget.SeekBar;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
@@ -59,6 +62,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.databinding.VisionglassLayoutBinding;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.speech.SpeechServices;
+import com.igalia.wolvic.ui.widgets.MousePointerWidget;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.utils.StringUtils;
@@ -88,6 +92,13 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private boolean mSwitchedTo3DMode = false;
     private AlignPhoneDialogFragment mAlignDialogFragment;
     private AlignNotificationUIDialog mAlignNotificationUIDialog;
+    private SensorEvent mSensorEvent;
+    private float mLastMouseX;
+    private float mLastMouseY;
+    private float mMouseSensitivity = 0.1f;
+    private static final float[] WORLD_UP_AXIS = {0, 1, 0};
+    private static final float[] WORLD_RIGHT_AXIS = {1, 0, 0};
+    private float[] mHeadOrientation = new float[4];
 
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
@@ -389,15 +400,85 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         return q;
     }
 
-    // SensorEventListener overrides
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        // retrieve the device orientation from sensorevent in the form of quaternion
-        if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR)
-            return;
+    private float[] fromMouseMovementToWorld(MotionEvent ev) {
+        assert(ev.getActionMasked() == MotionEvent.ACTION_HOVER_MOVE);
 
-        final float[] quaternion = fromSensorManagerToWorld(event.values);
+        float currentMouseX = ev.getX();
+        float currentMouseY = ev.getY();
+        if (mLastMouseX == -1 || mLastMouseY == -1) {
+            // Initialize last position on the first event
+            mLastMouseX = currentMouseX;
+            mLastMouseY = currentMouseY;
+            // Return the current sensor quaternion if this is the first event
+            return mHeadOrientation;
+        }
 
+        float deltaX = currentMouseX - mLastMouseX;
+        float deltaY = currentMouseY - mLastMouseY;
+        mLastMouseX = currentMouseX;
+        mLastMouseY = currentMouseY;
+
+         // Calculate rotation angles from mouse deltas
+        float yawAngle = deltaX * mMouseSensitivity;
+        float pitchAngle = deltaY * mMouseSensitivity;
+
+        // Assuming your Quaternion class takes angle in degrees or radians
+        // Adjust if your library uses a different unit
+        float[] mouseYawQuaternion = quaternionFromAxisAngle(WORLD_UP_AXIS[0], WORLD_UP_AXIS[1], WORLD_UP_AXIS[2], yawAngle);
+        float[] mousePitchQuaternion = quaternionFromAxisAngle(WORLD_RIGHT_AXIS[0], WORLD_RIGHT_AXIS[1], WORLD_RIGHT_AXIS[2], pitchAngle);
+
+        // Combine quaternions: sensor * mouseYaw * mousePitch
+        // The order might need adjustment based on your desired rotation behavior
+        float[] combinedQuat = multiplyQuaternion(multiplyQuaternion(mHeadOrientation, mouseYawQuaternion), mousePitchQuaternion);
+
+        return combinedQuat;
+    }
+
+    private static float[] quaternionFromAxisAngle(float x, float y, float z, float angle) {
+        float halfAngle = (float) Math.toRadians(angle) / 2.0f;
+        float sinHalfAngle = (float) Math.sin(halfAngle);
+        return new float[]{(float) Math.cos(halfAngle), x * sinHalfAngle, y * sinHalfAngle, z * sinHalfAngle};
+    }
+
+    /**
+     * Multiplies two quaternions represented as float arrays [x, y, z, w].
+     *
+     * @param q1 The first quaternion [x1, y1, z1, w1].
+     * @param q2 The second quaternion [x2, y2, z2, w2].
+     * @return A new float array representing the result of q1 * q2 [x_res, y_res, z_res, w_res].
+     */
+    private static float[] multiplyQuaternion(float[] q1, float[] q2) {
+        if (q1 == null || q1.length != 4 || q2 == null || q2.length != 4) {
+            throw new IllegalArgumentException("Quaternion arrays must be non-null and have a length of 4.");
+        }
+
+        // Extract components (remembering the [x, y, z, w] format)
+        float x1 = q1[0];
+        float y1 = q1[1];
+        float z1 = q1[2];
+        float w1 = q1[3];
+
+        float x2 = q2[0];
+        float y2 = q2[1];
+        float z2 = q2[2];
+        float w2 = q2[3];
+
+        // Apply the quaternion multiplication formula
+        // w_res = w1*w2 - x1*x2 - y1*y2 - z1*z2
+        // x_res = w1*x2 + x1*w2 + y1*z2 - z1*y2
+        // y_res = w1*y2 - x1*z2 + y1*w2 + z1*x2
+        // z_res = w1*z2 + x1*y2 - y1*x2 + z1*w2
+
+        float w_res = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+        float x_res = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+        float y_res = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2;
+        float z_res = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
+
+        // Return the result in the [x, y, z, w] format
+        return new float[]{x_res, y_res, z_res, w_res};
+    }
+
+    private void setControllerOrientation(float[] quaternion) {
         queueRunnable(() -> setControllerOrientation(quaternion[0], quaternion[1], quaternion[2], quaternion[3]));
 
         mBinding.realignButton.updatePosition(-quaternion[1], -quaternion[0]);
@@ -405,6 +486,89 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
         if (mAlignDialogFragment != null && mAlignDialogFragment.isVisible()) {
             mAlignDialogFragment.updatePosition(-quaternion[1], -quaternion[0]);
         }
+    }
+
+    // SensorEventListener overrides
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // retrieve the device orientation from sensorevent in the form of quaternion
+        if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR)
+            return;
+
+        mSensorEvent = event;
+
+        final float[] quaternion = fromSensorManagerToWorld(event.values);
+        setControllerOrientation(quaternion);
+    }
+
+
+    private void updateMousePointerPosition(MotionEvent ev) {
+        // Update the mouse pointer position in the UI
+        float x = ev.getX();
+        float y = ev.getY();
+
+        Log.d(LOGTAG, "Updating mouse pointer position: x=" + x + ", y=" + y);
+
+        final float[] quaternion = fromMouseMovementToWorld(ev);
+        setControllerOrientation(quaternion);
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+        if (ev.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_HOVER_MOVE:
+                    // Mouse movement
+                    // Update the pointer widget's position
+                    updateMousePointerPosition(ev);
+                    break;
+                case MotionEvent.ACTION_SCROLL:
+                    // Mouse scroll wheel
+                    float vscroll = ev.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                    float hscroll = ev.getAxisValue(MotionEvent.AXIS_HSCROLL);
+                    Log.d(LOGTAG, "Mouse Scroll: vscroll=" + vscroll + ", hscroll=" + hscroll);
+                    break;
+            }
+        }
+
+        return super.dispatchGenericMotionEvent(ev);
+    }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device connected: " + device.getName());
+        mSensorManager.unregisterListener(this);
+        queueRunnable(() -> enableExternalMouse());
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device disconnected: " + device.getName());
+        registerPhoneIMUListener();
+        queueRunnable(() -> disableExternalMouse());
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    // Mouse button down
+                    Log.d(LOGTAG, "Mouse Button Down");
+                    // You can check which button was pressed using ev.getButtonState()
+                    break;
+                case MotionEvent.ACTION_UP:
+                    // Mouse button up
+                    Log.d(LOGTAG, "Mouse Button Up");
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    // Mouse movement while a button is pressed (dragging)
+                    float x = ev.getX();
+                    float y = ev.getY();
+                    Log.d(LOGTAG, "Mouse Drag Move: x=" + x + ", y=" + y);
+                    // Update pointer position during dragging
+                    break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -792,7 +956,13 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
 
     private void startIMUService() {
         Log.d(LOGTAG, "Starting IMU service");
-        VisionGlass.getInstance().startImu((w, x, y, z) -> queueRunnable(() -> setHead(x, y, z, w)));
+        VisionGlass.getInstance().startImu((w, x, y, z) -> {
+            mHeadOrientation[0] = (float) x;
+            mHeadOrientation[1] = (float) y;
+            mHeadOrientation[2] = (float) z;
+            mHeadOrientation[3] = (float) w;
+            queueRunnable(() -> setHead(x, y, z, w));
+        });
     }
 
     private final DisplayManager.DisplayListener mDisplayListener =
@@ -921,6 +1091,8 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     @SuppressWarnings("unused")
     private void setRenderMode(final int aMode) {}
 
+    public native void enableExternalMouse();
+    public native void disableExternalMouse();
     private native void activityCreated(Object aAssetManager);
     private native void updateViewport(int width, int height);
     private native void activityPaused();
@@ -931,4 +1103,5 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     private native void setHead(double x, double y, double z, double w);
     private native void setControllerOrientation(double x, double y, double z, double w);
     private native void calibrateController();
+
 }

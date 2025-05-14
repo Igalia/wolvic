@@ -6,6 +6,8 @@
 package com.igalia.wolvic;
 
 import androidx.activity.ComponentActivity;
+
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -205,6 +207,16 @@ public class PlatformActivity extends ComponentActivity {
             }
         }
     }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device connected: " + device.getName());
+
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device disconnected: " + device.getName());
+    }
+
 
     void setImmersiveSticky() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

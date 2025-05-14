@@ -7,6 +7,7 @@ package com.igalia.wolvic;
 
 import android.Manifest;
 import android.app.NativeActivity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -126,6 +127,14 @@ public class PlatformActivity extends NativeActivity {
     }
 
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device connected: " + device.getName());
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
+        Log.d(LOGTAG, "Bluetooth HID device disconnected: " + device.getName());
+    }
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
