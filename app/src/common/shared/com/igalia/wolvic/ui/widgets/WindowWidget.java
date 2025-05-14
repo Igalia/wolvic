@@ -436,6 +436,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Runnable setView = () -> {
             if (switchSurface) {
                 pauseCompositor();
+
+                // When switching to a new session, we will receive a new Surface asynchronously.
+                // However, if pauseCompositor() has been called before that new Surface arrives,
+                // the new session will have released its resources, mView will not be null, and
+                // the new Surface will be assigned to the native UI instead of replacing mSession.
+                // If that is the case, mSurface will still point at the one used by the previous
+                // session and attempting to use it will cause instability and crashes.
+                if (isLayer()) {
+                    mSurface = null;
+                }
             }
 
             mView = view;
@@ -1254,9 +1264,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
             mSession = aSession;
 
-            setupListeners(mSession);
             SessionStore.get().setActiveSession(mSession);
-
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
             mViewModel.setIsDesktopMode(mSession.getUaMode() == WSessionSettings.USER_AGENT_MODE_DESKTOP);
 
@@ -1265,6 +1273,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 hideLibraryPanel(true);
                 onCurrentSessionChange((oldSession != null ? oldSession.getWSession() : null), aSession.getWSession());
             }
+
+            // Session listeners will be called synchronously with the new state.
+            setupListeners(mSession);
 
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
