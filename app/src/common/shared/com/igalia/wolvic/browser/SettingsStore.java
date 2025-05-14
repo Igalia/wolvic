@@ -561,7 +561,7 @@ public class SettingsStore {
     public String getHomepage() {
         return mPrefs.getString(
                 mContext.getString(R.string.settings_key_homepage),
-                mContext.getString(R.string.HOMEPAGE_URL));
+                mContext.getString(R.string.NEW_TAB_DEFAULT_URL));
     }
 
     public void setHomepage(String aHomepage) {
