@@ -49,7 +49,7 @@ public:
   void EndFrame();
   void TriggerHapticFeedback(const float aPulseDuration, const float aPulseIntensity, const int aControllerId);
   void TogglePassthrough();
-  enum class LockMode { NO_LOCK, HEAD, CONTROLLER };
+  enum class LockMode { NO_LOCK, HEAD, CONTROLLER, STICKY };
   void SetLockMode(LockMode);
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
@@ -105,6 +105,7 @@ private:
 #endif
   vrb::Matrix GetActiveControllerOrientation() const;
   void ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform);
+  float CalculateStickyLockWidgetsYaw();
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
