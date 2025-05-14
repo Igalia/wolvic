@@ -1,5 +1,6 @@
 package com.igalia.wolvic.browser.api.impl;
 
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.Base64;
 import android.view.ViewGroup;
@@ -9,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.api.WAutocomplete;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -56,6 +56,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
     private UrlUtilsVisitor mUrlUtilsVisitor;
+    private int mClearColor = Color.WHITE;
 
     private class ReadyCallback implements RuntimeImpl.Callback {
         @Override
@@ -288,6 +289,17 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public WPanZoomController getPanZoomController() {
         return mPanZoomController;
+    }
+
+    @Override
+    public void setClearColor(int color) {
+        mClearColor = color;
+        // TODO implement for Chromium
+    }
+
+    @Override
+    public int getClearColor() {
+        return mClearColor;
     }
 
     @Override
