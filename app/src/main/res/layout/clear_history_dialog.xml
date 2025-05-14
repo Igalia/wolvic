@@ -2,14 +2,25 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
-        android:id="@+id/clearHistoryRadio"
+    <com.igalia.wolvic.ui.views.CustomScrollView
+        android:id="@+id/scrollbar"
+        style="@style/customScrollViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        app:layout="@layout/setting_radio_group_v"
-        app:description="@string/history_clear_time_range"
-        app:options="@array/clear_cache_options"
-        app:values="@array/clear_cache_options_values" />
+        android:layout_marginBottom="10dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="30dp">
+
+        <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
+            android:id="@+id/clearHistoryRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:description="@string/history_clear_time_range"
+            app:layout="@layout/setting_radio_group_v"
+            app:options="@array/clear_cache_options"
+            app:values="@array/clear_cache_options_values" />
+
+    </com.igalia.wolvic.ui.views.CustomScrollView>
 
 </layout>
