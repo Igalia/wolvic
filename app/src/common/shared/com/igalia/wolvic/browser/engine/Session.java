@@ -738,8 +738,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     public String getHomeUri() {
         String homepage = SettingsStore.getInstance(mContext).getHomepage();
-        if (getWSession() != null) {
-            homepage = UrlUtils.urlForText(mContext, homepage, getWSession().getUrlUtilsVisitor());
+        WSession wSession = getWSession();
+        if (wSession != null) {
+            homepage = UrlUtils.urlForText(mContext, homepage, wSession.getUrlUtilsVisitor());
         }
         if (homepage.equals(mContext.getString(R.string.HOMEPAGE_URL)) && mState.mRegion != null) {
             homepage = homepage + "?region=" + mState.mRegion;
