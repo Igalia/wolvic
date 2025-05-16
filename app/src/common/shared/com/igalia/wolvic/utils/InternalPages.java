@@ -137,7 +137,8 @@ public class InternalPages {
                 .replace("%messageLong%", context.getString(errorType.getMessageRes(), uri))
                 .replace("<ul>", "<ul role=\"presentation\">")
                 .replace("%css%", css)
-                .replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none");
+                .replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none")
+                .replace("%pageTitle%", uri != null ? uri : "");
 
         if (uri != null) {
             html = html.replace("%url%", uri);
