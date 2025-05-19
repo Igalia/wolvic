@@ -71,6 +71,12 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         WSession.PromptDelegate, WSession.HistoryDelegate, WSession.PermissionDelegate,
         WSession.SelectionActionDelegate, SharedPreferences.OnSharedPreferenceChangeListener, SessionChangeListener {
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "[Session-" + hashCode() + "/" + (getWSession() == null ? "null" : getWSession().hashCode()) + "]";
+    }
+
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
     private static UriOverride sUserAgentOverride;
     private static UriOverride sDesktopModeOverrides;
@@ -1833,6 +1839,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     // Display functions
     public void releaseDisplay() {
+        Log.e("WindowWidget", "releaseDisplay: " + this);
         surfaceDestroyed();
         if (mState.mDisplay != null) {
             if (mState.mSession != null) {
@@ -1843,6 +1850,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     }
 
     public void surfaceDestroyed() {
+        Log.e("WindowWidget", "surfaceDestroyed: " + this);
         if (mState.mDisplay != null) {
             mState.mDisplay.surfaceDestroyed();
         }
@@ -1854,7 +1862,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             return;
         }
         if (mState.mDisplay == null) {
+            Log.e("WindowWidget", "surfaceChanged: " + this + " acquires display");
             mState.mDisplay = mState.mSession.acquireDisplay();
+        } else {
+            Log.e("WindowWidget", "surfaceChanged: " + this + " uses previous display");
         }
         mState.mDisplay.surfaceChanged(surface, left, top, width, height);
     }

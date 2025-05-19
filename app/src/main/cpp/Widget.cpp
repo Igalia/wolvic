@@ -79,6 +79,7 @@ struct Widget::State {
     quad = aQuad;
     cylinder = aCylinder;
 
+    VRB_ERROR("Initialize calls UpdateSurface");
     UpdateSurface(aTextureWidth, aTextureHeight);
 
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
@@ -102,6 +103,7 @@ struct Widget::State {
     if (layer) {
       layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
         const VRLayerQuad& layerQuad = static_cast<const VRLayerQuad&>(aLayer);
+        VRB_ERROR("UpdateSurface calls DispatchCreateWidgetLayer: texture size  %i  %i", layerQuad.GetWidth(), layerQuad.GetHeight());
         VRBrowser::DispatchCreateWidgetLayer((jint)handle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight(), aCallback);
       });
     } else {
@@ -435,6 +437,7 @@ Widget::SetQuad(const QuadPtr& aQuad) {
 
   m.RemoveResizer();
   m.RemoveBorder();
+  VRB_ERROR("SetQuad calls UpdateSurface");
   m.UpdateSurface(textureWidth, textureHeight);
 }
 
@@ -455,6 +458,7 @@ Widget::SetCylinder(const CylinderPtr& aCylinder) {
 
   m.RemoveResizer();
   m.RemoveBorder();
+  VRB_ERROR("SetCylinder calls UpdateSurface");
   m.UpdateSurface(textureWidth, textureHeight);
 }
 
@@ -481,6 +485,7 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
     m.root->ToggleAll(m.toggleState);
     int32_t textureWidth, textureHeight;
     GetSurfaceTextureSize(textureWidth, textureHeight);
+    VRB_ERROR("SetPlacement: composited went from %i to %i  size %i %i  density %f  scale %f", wasComposited, aPlacement->composited, aPlacement->width, aPlacement->height, aPlacement->density, aPlacement->textureScale);
     m.UpdateSurface(textureWidth, textureHeight);
   }
   if (m.cylinder) {
