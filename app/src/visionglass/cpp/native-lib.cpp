@@ -111,6 +111,20 @@ JNI_METHOD(void, calibrateController)
     sAppContext->mDevice->CalibrateController();
 }
 
+JNI_METHOD(void, enableExternalMouse)
+(JNIEnv*, jobject) {
+    if (!sAppContext || !sAppContext->mDevice)
+        return;
+    sAppContext->mDevice->EnableExternalMouse();
+}
+
+JNI_METHOD(void, disableExternalMouse)
+(JNIEnv*, jobject) {
+    if (!sAppContext || !sAppContext->mDevice)
+        return;
+    sAppContext->mDevice->DisableExternalMouse();
+}
+
 jint JNI_OnLoad(JavaVM* aVm, void*) {
     if (sAppContext) {
         return JNI_VERSION_1_6;
