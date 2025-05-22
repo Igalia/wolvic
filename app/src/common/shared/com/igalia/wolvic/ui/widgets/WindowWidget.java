@@ -424,7 +424,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void recreateWidgetSurfaceIfNeeded(float prevDensity) {
-        if (prevDensity != mWidgetPlacement.density || !isLayer())
+        if (prevDensity != mWidgetPlacement.density || !SettingsStore.getInstance(getContext()).getLayersEnabled())
             return;
 
         // If the densities are the same updateWidget won't generate a new surface as the resulting
