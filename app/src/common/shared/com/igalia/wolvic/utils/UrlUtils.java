@@ -13,6 +13,7 @@ import android.webkit.URLUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
@@ -189,7 +190,10 @@ public class UrlUtils {
         return url != null && url.equalsIgnoreCase(ABOUT_BOOKMARKS);
     }
 
-    public static final String ABOUT_NEWTAB = "about://newtab";
+    private static final String CHROMIUM_NEWTAB = "chrome://newtab/";
+    private static final String GECKO_NEWTAB = "about://newtab";
+    public static final String ABOUT_NEWTAB =
+            BuildConfig.FLAVOR_backend.equalsIgnoreCase("chromium") ? CHROMIUM_NEWTAB : GECKO_NEWTAB;
 
     public static boolean isNewTabUrl(@Nullable String url) {
         return url != null && url.equalsIgnoreCase(ABOUT_NEWTAB);
