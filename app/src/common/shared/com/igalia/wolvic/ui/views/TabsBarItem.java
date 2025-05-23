@@ -104,7 +104,7 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             String title = mSession.getCurrentTitle();
             String uri = mSession.getCurrentUri();
             mTitle.setText(getTitleForDisplay(uri, title));
-            mSubtitle.setText(UrlUtils.stripProtocol(uri));
+            mSubtitle.setText(UrlUtils.isAboutPage(uri) ? "" : UrlUtils.stripProtocol(uri));
 
             SessionStore.get().getBrowserIcons().loadIntoView(
                     mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
@@ -148,7 +148,13 @@ public class TabsBarItem extends RelativeLayout implements WSession.ContentDeleg
             return;
         }
 
-        mSubtitle.setText(UrlUtils.isAboutPage(url) ? "" : UrlUtils.stripProtocol(url));
+        Windows.ContentType contentType = UrlUtils.getContentType(url);
+        if (contentType != Windows.ContentType.WEB_CONTENT) {
+            mTitle.setText(contentType.titleResId);
+            mSubtitle.setText("");
+        } else {
+            mSubtitle.setText(UrlUtils.stripProtocol(url));
+        }
         SessionStore.get().getBrowserIcons().loadIntoView(
                 mFavicon, mSession.getCurrentUri(), IconRequest.Size.DEFAULT);
     }
