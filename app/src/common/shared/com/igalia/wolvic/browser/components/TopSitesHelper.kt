@@ -22,7 +22,7 @@ class TopSitesHelper(context: Context, private val scope: CoroutineScope) {
     private val useCases: TopSitesUseCases
     private val config: TopSitesConfig
 
-    private val TOTAL_SITES = 16
+    private val TOTAL_SITES = 12
 
     init {
         val app = context.applicationContext as VRBrowserApplication
