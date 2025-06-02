@@ -93,8 +93,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/announcements_list"
-                app:spanCount="8"
-                tools:itemCount="16"
+                app:spanCount="6"
+                tools:itemCount="12"
                 tools:listitem="@layout/top_sites_item" />
 
             <!-- Experiences -->
