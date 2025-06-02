@@ -36,6 +36,7 @@ public class NewTabView extends FrameLayout {
     private SettingsViewModel mSettingsViewModel;
     private AnnouncementsAdapter mAnnouncementsAdapter;
     private TopSitesAdapterImpl mTopSitesAdapter;
+    private TopSitesHelper mTopSitesHelper;
     private TopSitesFeature mTopSitesFeature;
     private ExperiencesAdapter mExperiencesAdapter;
 
@@ -73,12 +74,13 @@ public class NewTabView extends FrameLayout {
         });
 
         // Top sites
-        mTopSitesAdapter = new TopSitesAdapterImpl(mTopSitesClickListener);
+        mTopSitesAdapter = new TopSitesAdapterImpl();
+        mTopSitesAdapter.setClickListener(mTopSitesClickListener);
         mBinding.topSitesList.setAdapter(mTopSitesAdapter);
         mBinding.topSitesList.setHasFixedSize(true);
 
-        TopSitesHelper topSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getCoroutineScope());
-        mTopSitesFeature = topSitesHelper.createFeature(mTopSitesAdapter);
+        mTopSitesHelper = new TopSitesHelper(getContext(), ((VRBrowserActivity) getContext()).getCoroutineScope());
+        mTopSitesFeature = mTopSitesHelper.createFeature(mTopSitesAdapter);
         mTopSitesFeature.start();
 
         // Experiences
@@ -119,7 +121,7 @@ public class NewTabView extends FrameLayout {
 
                 @Override
                 public void onRemoved(@NonNull TopSite site) {
-                    // TODO
+                    mTopSitesHelper.removeSite(site);
                 }
 
                 @Override

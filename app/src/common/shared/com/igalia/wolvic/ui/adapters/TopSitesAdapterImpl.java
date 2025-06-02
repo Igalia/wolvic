@@ -23,11 +23,15 @@ public class TopSitesAdapterImpl extends RecyclerView.Adapter<TopSitesAdapterImp
 
     private static final String LOGTAG = SystemUtils.createLogtag(TopSitesAdapterImpl.class);
 
-    private final List<TopSite> mTopSites = new ArrayList();
-    private final TopSitesAdapter.ClickListener mClickListener;
+    private final List<TopSite> mTopSites = new ArrayList<>();
+    private TopSitesAdapter.ClickListener mClickListener;
 
-    public TopSitesAdapterImpl(@NonNull TopSitesAdapter.ClickListener listener) {
-        this.mClickListener = listener;
+    public TopSitesAdapterImpl() {
+    }
+
+    @Override
+    public void setClickListener(@NonNull TopSitesAdapter.ClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
     @NonNull
@@ -57,11 +61,6 @@ public class TopSitesAdapterImpl extends RecyclerView.Adapter<TopSitesAdapterImp
         mTopSites.clear();
         mTopSites.addAll(topSites);
         notifyDataSetChanged();
-    }
-
-    @Override
-    public void setClickListener(@NonNull TopSitesAdapter.ClickListener clickListener) {
-
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
