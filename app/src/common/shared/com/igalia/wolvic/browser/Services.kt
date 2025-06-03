@@ -7,11 +7,8 @@ package com.igalia.wolvic.browser
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.igalia.wolvic.BuildConfig
-import com.igalia.wolvic.R
 import com.igalia.wolvic.browser.api.WAllowOrDeny
 import com.igalia.wolvic.browser.api.WResult
 import com.igalia.wolvic.browser.api.WSession
@@ -28,6 +25,8 @@ import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.sync.*
 import mozilla.components.service.fxa.*
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.fxa.manager.SCOPE_PROFILE
+import mozilla.components.service.fxa.manager.SCOPE_SYNC
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
@@ -98,7 +97,8 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
             type = DeviceType.VR,
             capabilities = setOf(DeviceCapability.SEND_TAB)
         ),
-        syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords), PeriodicSyncConfig(periodMinutes = 1440))
+        syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords), PeriodicSyncConfig(periodMinutes = 240, initialDelayMinutes = 5)),
+        applicationScopes = setOf(SCOPE_PROFILE, SCOPE_SYNC)
 
     ).also {
         it.registerForAccountEvents(deviceEventObserver, ProcessLifecycleOwner.get(), true)
