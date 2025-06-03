@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
+import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -14,7 +15,7 @@ import mozilla.components.concept.sync.FxAEntryPoint;
 
 public class TelemetryService {
 
-    private final static String APP_NAME = "Wolvic";
+    private final static String APP_NAME = "wolvic";
     private final static String LOGTAG = SystemUtils.createLogtag(TelemetryService.class);
     private static boolean initialized = false;
     private static Context context = null;
@@ -249,7 +250,7 @@ public class TelemetryService {
         @NonNull
         @Override
         public String getEntryName() {
-            return "";
+            return APP_NAME;
         }
     }
 
