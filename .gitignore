@@ -81,3 +81,4 @@ app/agconnect-services.json
 
 # Token files
 .mls_token
+book_inventory_app/books.db

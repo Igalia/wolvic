@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Libraries</h2>
+<ul>
+  {% for lib in libraries %}
+  <li>{{ lib.name }}</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{{ url_for('add_library') }}">
+  <input type="text" name="name" placeholder="New library name" required>
+  <input type="submit" value="Add Library">
+</form>
+
+<h2>Books</h2>
+<ul>
+  {% for book in books %}
+  <li>{{ book.title }} by {{ book.author }} ({{ book.quantity }})</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{{ url_for('add_book') }}">
+  <input type="text" name="title" placeholder="Title" required>
+  <input type="text" name="author" placeholder="Author" required>
+  <select name="library_id">
+    {% for lib in libraries %}
+    <option value="{{ lib.id }}">{{ lib.name }}</option>
+    {% endfor %}
+  </select>
+  <input type="number" name="quantity" placeholder="Quantity" value="0" min="0">
+  <input type="submit" value="Add Book">
+</form>
+
+<h2>Sales</h2>
+<ul>
+  {% for sale in sales %}
+  <li>{{ sale.sale_date.strftime('%Y-%m-%d') }} - Book {{ sale.book_id }}: {{ sale.quantity }}</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{{ url_for('sell_form') }}">
+  <select name="book_id">
+    {% for book in books %}
+    <option value="{{ book.id }}">{{ book.title }}</option>
+    {% endfor %}
+  </select>
+  <input type="number" name="quantity" value="1" min="1">
+  <input type="submit" value="Sell Book">
+</form>
+{% endblock %}
