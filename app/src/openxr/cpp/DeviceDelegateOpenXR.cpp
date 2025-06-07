@@ -413,6 +413,15 @@ struct DeviceDelegateOpenXR::State {
 
     vrb::RenderContextPtr render = context.lock();
 
+    if (deviceType == device::PfdmMR) {
+      // since the PFDM MR device uses two 4K screens, and the recommended eye
+      // buffer size is 2880x2664, using this recommended eyeBuffer size would
+      // cause severe performance issues, so a ratio is added to reduce the
+      // rendering resolution
+      viewConfig.front().recommendedImageRectWidth *= 0.61111f;
+      viewConfig.front().recommendedImageRectHeight *= 0.61111f;
+    }
+
     // Create the main swapChain for each eye view
     for (uint32_t i = 0; i < viewCount; i++) {
       auto swapChain = OpenXRSwapChain::create();
@@ -722,7 +731,11 @@ struct DeviceDelegateOpenXR::State {
   void UpdateClockLevels() {
       if (!OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME))
           return;
-
+#ifdef PFDMXR
+      CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_HIGH_EXT));
+      CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_HIGH_EXT));
+      return;
+#endif
       if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal) {
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
