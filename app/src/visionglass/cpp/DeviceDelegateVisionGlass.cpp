@@ -39,6 +39,7 @@ namespace crow {
 static const float kDiagonalFOV = 41.0f;
 const vrb::Vector kAverageHeight(0.0f, 1.6f, 0.0f);
 static const int32_t kControllerIndex = 0;
+static const int32_t kControllerMouseIndex = 1;
 
 struct DeviceDelegateVisionGlass::State {
   vrb::RenderContextWeak context;
@@ -123,6 +124,7 @@ DeviceDelegateVisionGlass::Create(vrb::RenderContextPtr& aContext) {
   DeviceDelegateVRGlassPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateVisionGlass, DeviceDelegateVisionGlass::State > > ();
   result->m.context = aContext;
   result->m.Initialize();
+  result->activeControllerIndex = kControllerIndex;
   return result;
 }
 
@@ -221,6 +223,21 @@ DeviceDelegateVisionGlass::SetControllerDelegate(ControllerDelegatePtr& aControl
 
   m.controller->SetButtonCount(kControllerIndex, 1);
   m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, false, false);
+
+  // Create the External Mouse controller
+  m.controller->CreateController(kControllerMouseIndex, kControllerMouseIndex, "Vision Glass Controller");
+  m.controller->SetEnabled(kControllerMouseIndex, false);
+  m.controller->SetTargetRayMode(kControllerMouseIndex, device::TargetRayMode::TrackedPointer);
+  m.controller->SetControllerType(kControllerMouseIndex, device::VisionGlass);
+  m.controller->SetMode(kControllerMouseIndex, ControllerMode::Device);
+  m.controller->SetAimEnabled(kControllerMouseIndex, true);
+  m.controller->SetCapabilityFlags(kControllerMouseIndex,
+                                   device::Orientation | device::PositionEmulated);
+
+  m.controller->SetButtonCount(kControllerMouseIndex, 1);
+  m.controller->SetButtonState(kControllerMouseIndex, ControllerDelegate::BUTTON_TRIGGER,
+                               device::kImmersiveButtonTrigger, false, false);
+
 }
 
 void
@@ -247,7 +264,7 @@ DeviceDelegateVisionGlass::SetHitDistance(const float distance) {
   // Scale the beam so it reaches all the way to the pointer.
   auto beamTransform = vrb::Matrix::Identity();
   beamTransform.ScaleInPlace(vrb::Vector(1.0, 1.0, distance));
-  m.controller->SetBeamTransform(kControllerIndex, beamTransform);
+  m.controller->SetBeamTransform(activeControllerIndex, beamTransform);
 }
 
 void
@@ -284,7 +301,7 @@ DeviceDelegateVisionGlass::StartFrame(const FramePrediction aPrediction) {
   auto calibratedControllerOrientation = m.headToControllerRelativeRotation * vrb::Quaternion(filteredOrientation);
   vrb::Matrix transformMatrix = vrb::Matrix::Rotation(calibratedControllerOrientation);
   auto pointerTransform = m.elbow->GetTransform(ElbowModel::HandEnum::None, headTransform, transformMatrix);
-  m.controller->SetTransform(kControllerIndex, pointerTransform);
+  m.controller->SetTransform(activeControllerIndex, pointerTransform);
 }
 
 void
@@ -363,13 +380,29 @@ DeviceDelegateVisionGlass::ControllerButtonPressed(const bool aDown) {
     return;
   }
 
-  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, aDown, aDown);
+  m.controller->SetButtonState(activeControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, aDown, aDown);
   if (aDown && m.renderMode == device::RenderMode::Immersive) {
-    m.controller->SetSelectActionStart(kControllerIndex);
+    m.controller->SetSelectActionStart(activeControllerIndex);
   } else {
-    m.controller->SetSelectActionStop(kControllerIndex);
+    m.controller->SetSelectActionStop(activeControllerIndex);
   }
 
+}
+
+void
+DeviceDelegateVisionGlass::EnableExternalMouse() {
+    VRB_LOG("DeviceDelegateVisionGlass::EnableExternalMouse");
+    activeControllerIndex = kControllerMouseIndex;
+    m.controller->SetEnabled(kControllerIndex, false);
+    m.controller->SetEnabled(kControllerMouseIndex, true);
+}
+
+void
+DeviceDelegateVisionGlass::DisableExternalMouse() {
+    VRB_LOG("DeviceDelegateVisionGlass::DisableExternalMouse");
+    activeControllerIndex = kControllerIndex;
+    m.controller->SetEnabled(kControllerMouseIndex, false);
+    m.controller->SetEnabled(kControllerIndex, true);
 }
 
 void
