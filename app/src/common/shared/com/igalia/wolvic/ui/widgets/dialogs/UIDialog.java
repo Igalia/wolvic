@@ -73,6 +73,9 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
                 mDialogs.addLast(this);
             }
         }
+        if (visibilityListener != null) {
+            visibilityListener.onUIDialogVisibilityChanged(true);
+        }
     }
 
     @Override
@@ -87,6 +90,9 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
         UIDialog head = mDialogs.peek();
         if (head != null) {
             head.show();
+        }
+        if (visibilityListener != null) {
+            visibilityListener.onUIDialogVisibilityChanged(false);
         }
     }
 
@@ -113,5 +119,15 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     public static void closeAllDialogs() {
         new LinkedList<>(mDialogs).forEach(dialog -> dialog.onDismiss());
+    }
+
+    public interface VisibilityListener {
+        void onUIDialogVisibilityChanged(boolean isVisible);
+    }
+
+    private VisibilityListener visibilityListener;
+
+    public void setVisibilityListener(VisibilityListener listener) {
+        this.visibilityListener = listener;
     }
 }
