@@ -239,6 +239,7 @@
                 app:tooltipDensity="@dimen/tray_tooltip_density"
                 app:tooltipPosition="bottom"
                 app:tooltipLayout="@layout/tooltip_tray"
+                app:activeMode="@{traymodel.settingsWidgetVisible}"
                 android:src="@drawable/ic_icon_tray_settings_v3"/>
         </LinearLayout>
 

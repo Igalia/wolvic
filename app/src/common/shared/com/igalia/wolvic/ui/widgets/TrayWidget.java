@@ -651,9 +651,17 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         toggleSettingsDialog(SettingsView.SettingViewType.MAIN);
     }
 
+    private void createSettingsWidget() {
+        assert mSettingsWidget == null : "SettingsWidget already created";
+        mSettingsWidget = new SettingsWidget(getContext());
+        mSettingsWidget.setVisibilityListener(visible -> {
+            mTrayViewModel.setSettingsWidgetVisible(visible);
+        });
+    }
+
     public void toggleSettingsDialog(@NonNull SettingsView.SettingViewType settingDialog) {
         if (mSettingsWidget == null) {
-            mSettingsWidget = new SettingsWidget(getContext());
+            createSettingsWidget();
         }
         mSettingsWidget.attachToWindow(mAttachedWindow);
 
@@ -667,7 +675,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     public void showSettingsDialog(@NonNull SettingsView.SettingViewType settingDialog) {
         if (mSettingsWidget == null) {
-            mSettingsWidget = new SettingsWidget(getContext());
+            createSettingsWidget();
         }
         mSettingsWidget.attachToWindow(mAttachedWindow);
 
