@@ -8,6 +8,8 @@ package com.igalia.wolvic;
 import android.content.Intent;
 import android.view.KeyEvent;
 
+import android.bluetooth.BluetoothDevice;
+
 import com.google.androidgamesdk.GameActivity;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 
@@ -47,6 +49,12 @@ public class PlatformActivity extends GameActivity {
             onBackPressed();
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
     }
 
     protected native void queueRunnable(Runnable aRunnable);
