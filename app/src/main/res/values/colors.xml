@@ -44,6 +44,6 @@
     <color name="smoke">#f5f6fa</color>
     <color name="window_border_hover">@color/azure</color>
     <color name="window_border_click">#2bd2ee</color>
-    <color name="window_blank_clear_color">#5d5d5d</color>
+    <color name="window_blank_clear_color">@color/void_color</color>
     <color name="window_private_clear_color">#331a50</color>
 </resources>
