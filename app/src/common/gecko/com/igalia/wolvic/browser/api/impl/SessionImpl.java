@@ -148,10 +148,9 @@ public class SessionImpl implements WSession {
         }
     }
 
-    @NonNull
     @Override
-    public SessionFinder getSessionFinder() {
-        return new SessionFinderImpl(mSession.getFinder());
+    public void getSessionFinderAsync(WSession.GetSessionFinderCallback callback) {
+        callback.onFinderAvailable(new SessionFinderImpl(mSession.getFinder()));
     }
 
     @Override
