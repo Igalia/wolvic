@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.browser.api.WAutocomplete;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -50,12 +49,20 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     WMediaSession.Delegate mMediaSessionDelegate;
     TextInputImpl mTextInput;
     PanZoomControllerImpl mPanZoomController;
+    SessionFinderImpl mSessionFinder;
     private PermissionManagerBridge.Delegate mChromiumPermissionDelegate;
     private String mInitialUri;
     private WebContents mWebContents;
     private TabImpl mTab;
     private ReadyCallback mReadyCallback = new ReadyCallback();
     private UrlUtilsVisitor mUrlUtilsVisitor;
+    private WSession.GetSessionFinderCallback mGetSessionFinderCallback;
+
+    private void createSessionFinderIfNeeded() {
+        if (mSessionFinder != null)
+            return;
+        mSessionFinder = new SessionFinderImpl(mTab.getActiveWebContents());
+    }
 
     private class ReadyCallback implements RuntimeImpl.Callback {
         @Override
@@ -63,6 +70,11 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
             assert mTab == null;
             mTab = new TabImpl(
                     mRuntime.getContainerView().getContext(), SessionImpl.this, mWebContents);
+            if (mGetSessionFinderCallback != null) {
+                createSessionFinderIfNeeded();
+                mGetSessionFinderCallback.onFinderAvailable(mSessionFinder);
+                mGetSessionFinderCallback = null;
+            }
             if (mInitialUri != null) {
                 assert mWebContents == null;
                 mTab.loadUrl(mInitialUri);
@@ -187,11 +199,16 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         return mSettings.getDefaultUserAgent(mode);
     }
 
-    @Nullable
     @Override
-    public SessionFinder getSessionFinder() {
-        // TODO: Implement session finder
-        return null;
+    public void getSessionFinderAsync(WSession.GetSessionFinderCallback callback) {
+        if (mTab == null) {
+            if (mGetSessionFinderCallback == null) {
+                mGetSessionFinderCallback = callback;
+            }
+            return;
+        }
+        createSessionFinderIfNeeded();
+        callback.onFinderAvailable(mSessionFinder);
     }
 
     @Override
@@ -418,6 +435,9 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     public SelectionActionDelegate getSelectionActionDelegate() {
         return mSelectionActionDelegate;
     }
+
+    @Nullable
+    public TabWebContentsDelegate.FindInPageDelegate getFindInPageDelegate() { return mSessionFinder; }
 
     @Override
     public void newDownload(String url) {
