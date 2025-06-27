@@ -23,6 +23,7 @@ import com.igalia.wolvic.ui.adapters.WebApp;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.nio.file.WatchEvent;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
@@ -2608,10 +2609,6 @@ public interface WSession {
     @NonNull
     String getDefaultUserAgent(final int mode);
 
-    @AnyThread
-    @NonNull
-    WSession.SessionFinder getSessionFinder();
-
     /** Exits fullscreen mode */
     @AnyThread
     void exitFullScreen();
@@ -2692,6 +2689,14 @@ public interface WSession {
         @AnyThread
         void setDisplayFlags(int flags);
     }
+
+    interface GetSessionFinderCallback {
+        @AnyThread
+        void onFinderAvailable(WSession.SessionFinder finder);
+    }
+
+    @AnyThread
+    void getSessionFinderAsync(WSession.GetSessionFinderCallback callback);
 
     /**
      * Acquire the WDisplay instance for providing the session with a drawing Surface. Be sure to
