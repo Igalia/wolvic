@@ -224,8 +224,12 @@ struct BrowserWorld::State {
   std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
   std::optional<vrb::Matrix> navigationBarToWindowTransform;
 
+  // For debug spatial control
+  std::optional<vrb::Matrix> debugWidgetTransform;
+  int32_t debugWidgetHandle;
+
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
-            farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
+            farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0), debugWidgetHandle(0) { // Hardcode debug handle to 0
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
@@ -1639,7 +1643,31 @@ BrowserWorld::UpdateVisibleWidgets() {
 void
 BrowserWorld::LayoutWidget(int32_t aHandle) {
   WidgetPtr widget = m.GetWidget(aHandle);
+  if (!widget) {
+    VRB_ERROR("LayoutWidget: Could not find widget with handle %d", aHandle);
+    return;
+  }
+
+  // Debug spatial control override
+  if (aHandle == m.debugWidgetHandle && m.debugWidgetTransform) {
+    widget->SetTransform(*m.debugWidgetTransform);
+    // Also update the layer's model transform directly if it's a VRLayerQuad
+    // This ensures OpenXRLayerQuad gets the correct transform even if widget->SetTransform doesn't immediately propagate to VRLayer
+    if (widget->GetLayer() && widget->GetLayer()->GetLayerType() == VRLayer::LayerType::QUAD) {
+        widget->GetLayer()->SetModelTransform(device::Eye::Left, *m.debugWidgetTransform);
+        widget->GetLayer()->SetModelTransform(device::Eye::Right, *m.debugWidgetTransform);
+    }
+    // We might still want to layout children relative to this new transform,
+    // but for now, let's assume the debugged widget is standalone or its children aren't critical.
+    // For a simple single window test, this is sufficient.
+    return;
+  }
+
   WidgetPlacementPtr aPlacement = widget->GetPlacement();
+  if (!aPlacement) {
+    VRB_ERROR("LayoutWidget: Widget with handle %d has no placement info.", aHandle);
+    return;
+  }
 
   WidgetPtr parent = m.GetWidget(aPlacement->parentHandle);
 
@@ -1950,6 +1978,42 @@ BrowserWorld::TickImmersive() {
       m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(),
                                    m.context->GetTimestamp());
   }
+
+  // Programmatic animation for debug widget
+  if (m.debugWidgetHandle == 0) { // Apply only if handle is still 0 (or the one we want to debug)
+    double currentTime = m.context->GetTimestamp();
+    // Base position: 1.0m forward along Z, 0.0m along X, 0.0m along Y (relative to layersSpace origin)
+    // layersSpace is already adjusted by kAverageHeight, so this should be roughly eye level.
+    // For OpenXR, +X is right, +Y is up, -Z is forward from the viewer.
+    // So, a Z of -1.0f places it 1 meter in front.
+    float baseZ = -1.5f; // Default distance
+    float baseX = 0.0f;
+    float baseY = 0.0f; // Centered vertically
+
+    // Check if the widget we are animating exists and try to get its original Z
+    // This is a bit of a workaround to avoid it starting at (0,0,0) if its original layout is far.
+    // A more robust way would be to capture its initial placement once.
+    WidgetPtr debuggedWidget = m.GetWidget(m.debugWidgetHandle);
+    if (debuggedWidget && debuggedWidget->GetPlacement()) {
+        // Attempt to use existing Z, or a default if it's too close/far or uninitialized
+        float currentWidgetZ = debuggedWidget->GetTransform().GetTranslation().z();
+        if (abs(currentWidgetZ) > 0.1f && abs(currentWidgetZ) < 10.0f) { // Basic sanity check
+             baseZ = currentWidgetZ;
+             baseX = debuggedWidget->GetTransform().GetTranslation().x();
+             baseY = debuggedWidget->GetTransform().GetTranslation().y();
+        }
+    }
+
+    float amplitude = 0.3f; // meters
+    float frequency = 0.5f; // cycles per second
+    float offsetX = sin(currentTime * frequency * 2.0 * M_PI) * amplitude;
+
+    vrb::Matrix newTransform = vrb::Matrix::Translation(vrb::Vector(baseX + offsetX, baseY, baseZ));
+    // Optional: add some rotation or scaling animation here too if needed for testing
+    // newTransform.RotateInPlace(vrb::Vector(0,1,0), currentTime * 0.2f);
+    m.debugWidgetTransform = newTransform;
+  }
+
   int32_t surfaceHandle, textureWidth, textureHeight = 0;
   device::EyeRect leftEye, rightEye;
   bool aDiscardFrame = !m.externalVR->WaitFrameResult();
@@ -2125,6 +2189,29 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 void BrowserWorld::OnReorient() {
   m.reorientRequested = true;
   VRBrowser::ResetWindowsPosition();
+}
+
+// For debug spatial control
+void
+BrowserWorld::SetDebugWidgetHandle(int32_t handle) {
+    ASSERT_ON_RENDER_THREAD();
+    m.debugWidgetHandle = handle;
+    // Clear any existing transform if the handle changes
+    if (m.debugWidgetHandle != handle) {
+        m.debugWidgetTransform.reset();
+    }
+}
+
+void
+BrowserWorld::SetDebugWidgetTransform(const vrb::Matrix& transform) {
+    ASSERT_ON_RENDER_THREAD();
+    m.debugWidgetTransform = transform;
+}
+
+void
+BrowserWorld::ClearDebugWidgetTransform() {
+    ASSERT_ON_RENDER_THREAD();
+    m.debugWidgetTransform.reset();
 }
 
 } // namespace crow

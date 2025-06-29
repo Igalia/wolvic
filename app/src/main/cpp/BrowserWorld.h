@@ -85,6 +85,12 @@ public:
 #if HVR
   bool WasButtonAppPressed();
 #endif
+
+  // For debug spatial control
+  void SetDebugWidgetHandle(int32_t handle);
+  void SetDebugWidgetTransform(const vrb::Matrix& transform);
+  void ClearDebugWidgetTransform();
+
 protected:
   struct State;
   static BrowserWorldPtr Create();

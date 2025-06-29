@@ -416,10 +416,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void loadHome() {
         if (mSession.isPrivateMode()) {
-            mSession.loadPrivateBrowsingPage();
+            mSession.loadPrivateBrowsingPage(); // Keep private mode behavior for now
 
         } else {
-            mSession.loadUri(mSession.getHomeUri());
+            // mSession.loadUri(mSession.getHomeUri()); // STRIPPED
+            mSession.loadUri("about:blank"); // STRIPPED - Load about:blank by default
         }
     }
 

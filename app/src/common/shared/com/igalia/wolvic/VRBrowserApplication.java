@@ -57,28 +57,28 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         TelemetryService.init(activityContext);
         mConnectivityManager = new ConnectivityReceiver(activityContext);
         mConnectivityManager.init();
-        mPlaces = new Places(activityContext);
-        mServices = new Services(activityContext, mPlaces);
-        mLoginStorage = new LoginStorage(activityContext);
-        mAccounts = new Accounts(activityContext);
+        // mPlaces = new Places(activityContext); // STRIPPED
+        // mServices = new Services(activityContext, mPlaces); // STRIPPED (depends on mPlaces)
+        // mLoginStorage = new LoginStorage(activityContext); // STRIPPED
+        // mAccounts = new Accounts(activityContext); // STRIPPED
         mSessionStore = SessionStore.get();
         mSessionStore.initialize(activityContext);
         mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
-        mDownloadsManager = new DownloadsManager(activityContext);
-        mDownloadsManager.init();
-        mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
-        mEnvironmentsManager = new EnvironmentsManager(activityContext);
+        // mDownloadsManager = new DownloadsManager(activityContext); // STRIPPED
+        // if (mDownloadsManager != null) mDownloadsManager.init(); // STRIPPED
+        mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread()); // Keep for image display
+        mEnvironmentsManager = new EnvironmentsManager(activityContext); // Keep for VR environment
         mEnvironmentsManager.init();
-        mDictionariesManager = new DictionariesManager(activityContext);
+        mDictionariesManager = new DictionariesManager(activityContext); // Keep for keyboard (for now)
         mDictionariesManager.init();
-        mAddons = new Addons(activityContext, mSessionStore);
+        // mAddons = new Addons(activityContext, mSessionStore); // STRIPPED
     }
 
     protected void onActivityDestroy() {
-        mConnectivityManager.end();
-        mDownloadsManager.end();
-        mEnvironmentsManager.end();
-        mDictionariesManager.end();
+        if (mConnectivityManager != null) mConnectivityManager.end();
+        if (mDownloadsManager != null) mDownloadsManager.end(); // STRIPPED (but keep guard)
+        if (mEnvironmentsManager != null) mEnvironmentsManager.end();
+        if (mDictionariesManager != null) mDictionariesManager.end();
     }
 
     @Override
