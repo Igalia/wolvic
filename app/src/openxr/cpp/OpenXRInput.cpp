@@ -93,6 +93,28 @@ XrResult OpenXRInput::Update(const XrFrameState& frameState, XrSpace baseSpace, 
     input->Update(frameState, baseSpace, head, offsets, renderMode, pointerMode, usingEyeTracking, handTrackingEnabled, mEyeTrackingTransform, delegate);
   }
 
+  // After input sources have updated their internal states, propagate widget manipulation states
+  for (auto& inputSourcePtr : mInputSources) {
+    // Assuming OpenXRInputSource is the concrete type. If it's a base class, dynamic_cast or similar might be needed.
+    OpenXRInputSource* source = inputSourcePtr.get();
+    if (source && source->GetHand() == OpenXRHandFlags::Right) {
+      delegate.SetWidgetSelectedState(source->GetIndex(), source->IsWidgetSelected());
+      if (source->IsWidgetSelected()) {
+        delegate.SetWidgetRawPoses(source->GetIndex(),
+                                   source->GetWidgetMovePoseLocation(),
+                                   source->IsWidgetMovePoseValid(),
+                                   source->GetWidgetRotatePoseLocation(),
+                                   source->IsWidgetRotatePoseValid());
+        delegate.SetWidgetScaleValue(source->GetIndex(), source->GetWidgetScaleValue());
+      } else {
+        // Clear poses and scale if not selected
+        XrSpaceLocation emptyLocation = {XR_TYPE_SPACE_LOCATION};
+        delegate.SetWidgetRawPoses(source->GetIndex(), emptyLocation, false, emptyLocation, false);
+        delegate.SetWidgetScaleValue(source->GetIndex(), 0.0f);
+      }
+    }
+  }
+
   // Update tracked keyboard
   if (keyboardTrackingFB != nullptr)
     UpdateTrackedKeyboard(frameState, baseSpace);

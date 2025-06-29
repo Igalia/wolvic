@@ -110,6 +110,23 @@ private:
     bool mIsHandInteractionSupported { false };
 
     void HandleEyeTrackingScroll(XrTime predictedDisplayTime, bool triggerClicked, const vrb::Matrix& pointerTransform, const vrb::Matrix& eyeTrackingTransform, ControllerDelegate &controllerDelegate);
+
+    // Actions and spaces for widget manipulation (right hand only)
+    XrAction mMoveWidgetAction { XR_NULL_HANDLE };
+    XrSpace mMoveWidgetSpace { XR_NULL_HANDLE };
+    XrAction mSelectWidgetAction { XR_NULL_HANDLE };
+    XrAction mRotateWidgetAction { XR_NULL_HANDLE };
+    XrSpace mRotateWidgetSpace { XR_NULL_HANDLE };
+    XrAction mScaleWidgetAction { XR_NULL_HANDLE };
+
+    // States for widget manipulation
+    bool mIsWidgetSelected { false };
+    XrSpaceLocation mWidgetMovePoseLocation { XR_TYPE_SPACE_LOCATION }; // For position
+    XrSpaceLocation mWidgetRotatePoseLocation { XR_TYPE_SPACE_LOCATION }; // For rotation
+    bool mWidgetMovePoseValid { false };
+    bool mWidgetRotatePoseValid { false };
+    float mWidgetScaleValue { 0.0f };
+
 public:
     static OpenXRInputSourcePtr Create(XrInstance, XrSession, OpenXRActionSet&, const XrSystemProperties&, OpenXRHandFlags, int index);
     ~OpenXRInputSource();
@@ -124,6 +141,26 @@ public:
     void SetHandMeshBufferSizes(const uint32_t indexCount, const uint32_t vertexCount);
     HandMeshBufferPtr GetNextHandMeshBuffer();
     float GetSelectThreshold() const { return mClickThreshold; }
+
+    // Public getters for new widget manipulation actions and spaces (read by OpenXRInput and BrowserWorld)
+    XrAction GetMoveWidgetAction() const { return mMoveWidgetAction; }
+    XrSpace GetMoveWidgetSpace() const { return mMoveWidgetSpace; }
+    XrAction GetSelectWidgetAction() const { return mSelectWidgetAction; }
+    XrAction GetRotateWidgetAction() const { return mRotateWidgetAction; }
+    XrSpace GetRotateWidgetSpace() const { return mRotateWidgetSpace; }
+    XrAction GetScaleWidgetAction() const { return mScaleWidgetAction; }
+
+    // Getters for basic properties
+    OpenXRHandFlags GetHand() const { return mHandeness; }
+    int GetIndex() const { return mIndex; }
+
+    // Getters for widget manipulation states
+    bool IsWidgetSelected() const { return mIsWidgetSelected; }
+    const XrSpaceLocation& GetWidgetMovePoseLocation() const { return mWidgetMovePoseLocation; }
+    bool IsWidgetMovePoseValid() const { return mWidgetMovePoseValid; }
+    const XrSpaceLocation& GetWidgetRotatePoseLocation() const { return mWidgetRotatePoseLocation; }
+    bool IsWidgetRotatePoseValid() const { return mWidgetRotatePoseValid; }
+    float GetWidgetScaleValue() const { return mWidgetScaleValue; }
 };
 
 } // namespace crow

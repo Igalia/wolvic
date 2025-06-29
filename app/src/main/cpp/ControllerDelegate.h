@@ -86,6 +86,16 @@ public:
   virtual void SetHandActionEnabled(const int32_t aControllerIndex, bool aEnabled = false) = 0;
   virtual void SetMode(const int32_t aControllerIndex, ControllerMode aMode = ControllerMode::None) = 0;
   virtual void SetSelectFactor(const int32_t aControllerIndex, float aFactor = 1.0f) = 0;
+
+  // Widget Manipulation States
+  virtual void SetWidgetSelectedState(int32_t aControllerIndex, bool isSelected) = 0;
+  virtual bool IsWidgetSelected(int32_t aControllerIndex) const = 0;
+  virtual void SetWidgetRawPoses(int32_t aControllerIndex, const XrSpaceLocation& movePose, bool movePoseValid, const XrSpaceLocation& rotatePose, bool rotatePoseValid) = 0;
+  virtual bool GetWidgetMovePose(int32_t aControllerIndex, vrb::Matrix& outPose, XrTime& outTime) const = 0;
+  virtual bool GetWidgetRotatePose(int32_t aControllerIndex, vrb::Matrix& outPose, XrTime& outTime) const = 0;
+  virtual void SetWidgetScaleValue(int32_t aControllerIndex, float scaleValue) = 0;
+  virtual float GetWidgetScaleValue(int32_t aControllerIndex) const = 0;
+
 protected:
   ControllerDelegate() {}
 private:

@@ -82,6 +82,15 @@ Controller::operator=(const Controller& aController) {
   handActionButtonToggle = aController.handActionButtonToggle;
   handActionButtonTransform = aController.handActionButtonTransform;
   selectFactor = aController.selectFactor;
+
+  isWidgetSelected = aController.isWidgetSelected;
+  widgetMoveLocation = aController.widgetMoveLocation;
+  widgetMoveLocationValid = aController.widgetMoveLocationValid;
+  widgetRotateLocation = aController.widgetRotateLocation;
+  widgetRotateLocationValid = aController.widgetRotateLocationValid;
+  widgetMovePoseTime = aController.widgetMovePoseTime;
+  widgetRotatePoseTime = aController.widgetRotatePoseTime;
+  widgetScaleValue = aController.widgetScaleValue;
   return *this;
 }
 
@@ -135,6 +144,15 @@ Controller::Reset() {
   handActionButtonToggle = nullptr;
   handActionButtonTransform = nullptr;
   selectFactor = 0.0;
+
+  isWidgetSelected = false;
+  widgetMoveLocation = {XR_TYPE_SPACE_LOCATION};
+  widgetMoveLocationValid = false;
+  widgetRotateLocation = {XR_TYPE_SPACE_LOCATION};
+  widgetRotateLocationValid = false;
+  widgetMovePoseTime = 0;
+  widgetRotatePoseTime = 0;
+  widgetScaleValue = 0.0f;
 }
 
 vrb::Vector Controller::StartPoint() const {

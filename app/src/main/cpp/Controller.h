@@ -82,6 +82,18 @@ struct Controller {
 
   int32_t batteryLevel;
 
+  // Widget Manipulation States
+  bool isWidgetSelected;
+  XrSpaceLocation widgetMoveLocation;
+  bool widgetMoveLocationValid;
+  XrSpaceLocation widgetRotateLocation;
+  bool widgetRotateLocationValid;
+  // vrb::Matrix widgetMovePose; // Derived on demand
+  // vrb::Matrix widgetRotatePose; // Derived on demand
+  XrTime widgetMovePoseTime;
+  XrTime widgetRotatePoseTime;
+  float widgetScaleValue;
+
   vrb::Vector StartPoint() const;
   vrb::Vector Direction() const;
 
