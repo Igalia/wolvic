@@ -39,6 +39,7 @@ public interface SpeechRecognizer {
 
     void start(@NonNull Settings settings, @NonNull Callback callback);
     void stop();
+    boolean isActive();
     boolean shouldDisplayStoreDataPrompt();
     default boolean supportsASR(@NonNull Settings settings) {return true;}
     boolean isSpeechError(int code);

@@ -258,6 +258,12 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     }
 
     private void startVoiceSearch() {
+        // Ensure that the recognizer is in the correct state.
+        if (mCurrentSpeechRecognizer != null && mCurrentSpeechRecognizer.isActive()) {
+            Log.w(LOGTAG, "Voice recognition was already active.");
+            stopVoiceSearch();
+        }
+
         setStartListeningState();
 
         String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
