@@ -87,8 +87,14 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
         if (mRecognizer != null) {
             mRecognizer.setAsrListener(null);
             mRecognizer.destroy();
+            mRecognizer = null;
         }
         mCallback = null;
+    }
+
+    @Override
+    public boolean isActive() {
+        return mRecognizer != null;
     }
 
     @Override
