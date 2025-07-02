@@ -1114,7 +1114,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
     public void onVoiceSearchClicked() {
         if (mVoiceSearchWidget == null) {
             mVoiceSearchWidget = new VoiceSearchWidget(getContext());
-            mVoiceSearchWidget.setDelegate(this);
+            mVoiceSearchWidget.setInputMode(VoiceSearchWidget.InputMode.SEARCH_INPUT);
+            mVoiceSearchWidget.setVoiceSearchDelegate(this);
             mVoiceSearchWidget.setDelegate(() -> {
                 mVoiceSearchWidget.hide(UIWidget.REMOVE_WIDGET);
                 mVoiceSearchWidget.releaseWidget();

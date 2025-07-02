@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -37,14 +36,25 @@ import com.igalia.wolvic.utils.LocaleUtils;
 public class VoiceSearchWidget extends UIDialog implements Application.ActivityLifecycleCallbacks {
 
     public enum State {
-        LISTENING,
-        SEARCHING,
-        SPEECH_ERROR,
-        ERROR_NETWORK,
-        ERROR_SERVER,
-        ERROR_TOO_MANY_REQUESTS,
-        ERROR_LANGUAGE_NOT_SUPPORTED,
-        PERMISSIONS
+        READY_TEXT_INPUT(R.string.voice_input_start),
+        READY_SEARCH_INPUT(R.string.voice_search_start),
+        ERROR_SPEECH(R.string.voice_search_try_again),
+        ERROR_NO_VOICE(R.string.voice_search_error),
+        ERROR_NETWORK(R.string.voice_search_server_error),
+        ERROR_SERVER(R.string.voice_search_server_error),
+        ERROR_TOO_MANY_REQUESTS(R.string.voice_search_server_error),
+        ERROR_LANGUAGE_NOT_SUPPORTED(R.string.voice_search_unsupported),
+        ERROR_PERMISSIONS(R.string.voice_search_permission_after_decline);
+
+        private final int mStringResId;
+
+        State(int stringResId) {
+            mStringResId = stringResId;
+        }
+
+        public int getStringResId() {
+            return mStringResId;
+        }
     }
 
     public interface VoiceSearchDelegate {
@@ -55,13 +65,12 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
     private VoiceSearchDialogBinding mBinding;
     private VoiceSearchDelegate mDelegate;
+    private State mInitialState = State.READY_SEARCH_INPUT;
     private ClipDrawable mVoiceInputClipDrawable;
-    private AnimatedVectorDrawable mSearchingAnimation;
     private VRBrowserApplication mApplication;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
     private SpeechRecognizer mCurrentSpeechRecognizer;
-    private int mVoiceStartString = R.string.voice_search_start;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -86,7 +95,6 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
         updateUI();
 
-        mSearchingAnimation = (AnimatedVectorDrawable) mBinding.voiceSearchAnimationSearching.getDrawable();
         mBinding.voiceSearchStart.setMovementMethod(new ScrollingMovementMethod());
 
         mApplication.registerActivityLifecycleCallbacks(this);
@@ -99,6 +107,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.voice_search_dialog, this, true);
+        mBinding.setState(mInitialState);
         mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
 
         Drawable mVoiceInputBackgroundDrawable = getResources().getDrawable(R.drawable.ic_voice_search_volume_input_black, getContext().getTheme());
@@ -110,8 +119,11 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         mBinding.closeButton.setOnClickListener(view -> onDismiss());
     }
 
-    public void setVoiceStartString(int string) {
-        mVoiceStartString = string;
+    public enum InputMode {SEARCH_INPUT, TEXT_INPUT}
+
+    public void setInputMode(InputMode inputMode) {
+        mInitialState = inputMode == InputMode.SEARCH_INPUT ? State.READY_SEARCH_INPUT : State.READY_TEXT_INPUT;
+        setState(mInitialState);
     }
 
     @Override
@@ -121,7 +133,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         updateUI();
     }
 
-    public void setDelegate(VoiceSearchDelegate delegate) {
+    public void setVoiceSearchDelegate(VoiceSearchDelegate delegate) {
         mDelegate = delegate;
     }
 
@@ -166,7 +178,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         public void onStartListening() {
             // Handle when the api successfully opened the microphone and started listening
             Log.d(LOGTAG, "===> START_LISTEN");
-            mBinding.voiceSearchStart.setText( getContext().getString(mVoiceStartString));
+            setState(mInitialState);
         }
 
         @Override
@@ -180,7 +192,6 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         public void onDecoding() {
             // Handle when the speech object changes to decoding state
             Log.d(LOGTAG, "===> DECODING");
-            setDecodingState();
         }
 
         @Override
@@ -198,6 +209,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
             // When the api finished processing and returned a hypothesis
             Log.d(LOGTAG, "===> STT_RESULT");
             if (mDelegate != null) {
+                mBinding.voiceSearchStart.setText(transcription);
                 mDelegate.OnVoiceSearchResult(transcription, confidence);
             }
             hide(KEEP_WIDGET);
@@ -207,7 +219,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         public void onNoVoice() {
             // Handle when the api didn't detect any voice
             Log.d(LOGTAG, "===> NO_VOICE");
-            mBinding.voiceSearchStart.setText(getContext().getString(R.string.voice_search_error));
+            setState(State.ERROR_NO_VOICE);
         }
 
         @Override
@@ -219,16 +231,17 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         @Override
         public void onError(@ErrorType int errorType, @Nullable String error) {
             Log.e(LOGTAG, "===> ERROR: " + error);
-            setResultState(errorType);
+            stopVoiceSearch();
+            setStateforError(errorType);
             if (mDelegate != null) {
                 mDelegate.OnVoiceSearchError(errorType);
             }
         }
-
     };
 
     private void ensurePermissionsAndStartVoiceSearch() {
         if (!mWidgetManager.isPermissionGranted(Manifest.permission.RECORD_AUDIO)) {
+            setState(State.ERROR_PERMISSIONS);
             mWidgetManager.requestPermission(getContext().getString(R.string.voice_search_tooltip),
                     Manifest.permission.RECORD_AUDIO,
                     WidgetManagerDelegate.OriginatorType.APPLICATION,
@@ -247,7 +260,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
                         @Override
                         public void reject() {
-                            setPermissionNotGranted();
+                            setState(State.ERROR_PERMISSIONS);
                             hide(KEEP_WIDGET);
                             stopVoiceSearch();
                         }
@@ -264,7 +277,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
             stopVoiceSearch();
         }
 
-        setStartListeningState();
+        setState(mInitialState);
 
         String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
         boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
@@ -332,44 +345,38 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
-        mBinding.voiceSearchStart.setText(getContext().getString(mVoiceStartString));
         stopVoiceSearch();
-        mBinding.setState(State.LISTENING);
+        setState(mInitialState);
     }
 
-    private void setStartListeningState() {
-        mBinding.setState(State.LISTENING);
-        mSearchingAnimation.stop();
+    private void setState(State state) {
+        if (mBinding == null)
+            return;
+
+        mBinding.setState(state);
         mBinding.executePendingBindings();
     }
 
-    private void setDecodingState() {
-        mBinding.setState(State.SEARCHING);
-        mSearchingAnimation.start();
-        mBinding.executePendingBindings();
-    }
-
-    private void setResultState(@SpeechRecognizer.Callback.ErrorType int errorType) {
-        stopVoiceSearch();
-
-        postDelayed(() -> {
-            switch (errorType) {
-                case SpeechRecognizer.Callback.SPEECH_ERROR: mBinding.setState(State.SPEECH_ERROR); break;
-                case SpeechRecognizer.Callback.ERROR_NETWORK: mBinding.setState(State.ERROR_NETWORK); break;
-                case SpeechRecognizer.Callback.ERROR_SERVER: mBinding.setState(State.ERROR_SERVER); break;
-                case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS: mBinding.setState(State.ERROR_TOO_MANY_REQUESTS); break;
-                case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED: mBinding.setState(State.ERROR_LANGUAGE_NOT_SUPPORTED); break;
-                default: break;
-            }
-            mSearchingAnimation.stop();
-            mBinding.executePendingBindings();
-        }, 100);
-    }
-
-    private void setPermissionNotGranted() {
-        mBinding.setState(State.PERMISSIONS);
-        mSearchingAnimation.stop();
-        mBinding.executePendingBindings();
+    private void setStateforError(@SpeechRecognizer.Callback.ErrorType int errorType) {
+        switch (errorType) {
+            case SpeechRecognizer.Callback.SPEECH_ERROR:
+                setState(State.ERROR_SPEECH);
+                break;
+            case SpeechRecognizer.Callback.ERROR_NETWORK:
+                setState(State.ERROR_NETWORK);
+                break;
+            case SpeechRecognizer.Callback.ERROR_SERVER:
+                setState(State.ERROR_SERVER);
+                break;
+            case SpeechRecognizer.Callback.ERROR_TOO_MANY_REQUESTS:
+                setState(State.ERROR_TOO_MANY_REQUESTS);
+                break;
+            case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED:
+                setState(State.ERROR_LANGUAGE_NOT_SUPPORTED);
+                break;
+            default:
+                break;
+        }
     }
 
     // ActivityLifeCycle
