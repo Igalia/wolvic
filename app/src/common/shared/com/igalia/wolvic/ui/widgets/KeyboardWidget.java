@@ -9,9 +9,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-
-import com.igalia.wolvic.audio.AudioEngine;
-import com.igalia.wolvic.input.Keyboard;
 import android.os.Handler;
 import android.os.LocaleList;
 import android.text.Editable;
@@ -38,10 +35,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.audio.AudioEngine;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.input.CustomKeyboard;
+import com.igalia.wolvic.input.Keyboard;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.keyboards.ChinesePinyinKeyboard;
@@ -1149,8 +1148,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         if (mVoiceSearchWidget == null) {
             mVoiceSearchWidget = new VoiceSearchWidget(getContext());
-            mVoiceSearchWidget.setVoiceStartString(R.string.voice_input_start);
-            mVoiceSearchWidget.setDelegate(this); // VoiceSearchDelegate
+            mVoiceSearchWidget.setInputMode(VoiceSearchWidget.InputMode.TEXT_INPUT);
+            mVoiceSearchWidget.setVoiceSearchDelegate(this); // VoiceSearchDelegate
             mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
         }
         mIsInVoiceInput = true;

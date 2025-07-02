@@ -121,7 +121,7 @@ public class MKSpeechRecognizer implements SpeechRecognizer, ISpeechRecognitionL
 
     @Override
     public boolean isSpeechError(int code) {
-        return code == VoiceSearchWidget.State.SPEECH_ERROR.ordinal();
+        return code == VoiceSearchWidget.State.ERROR_SPEECH.ordinal();
     }
 
     @Override

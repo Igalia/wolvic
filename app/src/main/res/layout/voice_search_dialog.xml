@@ -32,105 +32,42 @@
                 android:layout_height="@dimen/voice_search_input_height"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_voice_search_volume_input_black"
-                visibleInvisible="@{state != State.SEARCHING }"
                 tools:src="@drawable/ic_voice_search_volume_input_black" />
-
-            <ImageView
-                android:id="@+id/voiceSearchAnimationSearching"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/spinner"
-                visibleInvisible="@{state == State.SEARCHING }"
-                tools:src="@drawable/spinner" />
         </FrameLayout>
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/titleContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/animationContainer"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
             <TextView
                 android:id="@+id/voiceSearchStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/voice_search_start"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:typeface="sans"
-                android:maxLines="4"
-                android:scrollbars="vertical"
-                visibleInvisible="@{state == State.LISTENING}"
+                android:layout_marginBottom="10dp"
+                android:text="@{state.stringResId}"
+                android:textColor="@color/fog"
+                android:textSize="16sp"
+                android:maxLines="2"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal|bottom"
                 tools:text="@string/voice_search_start" />
 
             <TextView
-                android:id="@+id/voiceSearchSearching"
+                android:id="@+id/inputText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/voice_search_decoding"
                 android:textColor="@color/white"
-                android:textSize="24sp"
-                android:typeface="sans"
-                visibleInvisible="@{state == State.SEARCHING}"
+                android:gravity="start|bottom"
+                android:maxLines="4"
+                android:scrollbars="vertical"
                 android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text="@string/voice_search_decoding" />
+                android:textSize="18sp"
+                tools:text="Voice input." />
 
-            <TextView
-                android:id="@+id/voiceSearchError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}'
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:typeface="sans"
-                visibleInvisible="@{state == State.SPEECH_ERROR}"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}' />
-
-            <TextView
-                android:id="@+id/voiceSearchUnsupportedLanguage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/voice_search_unsupported"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:typeface="sans"
-                visibleInvisible="@{state == State.ERROR_LANGUAGE_NOT_SUPPORTED}"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text="@string/voice_search_unsupported" />
-
-            <TextView
-                android:id="@+id/voiceSearchServerError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/voice_search_server_error"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:typeface="sans"
-                visibleInvisible="@{state == State.ERROR_SERVER}"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text="@string/voice_search_server_error" />
-
-            <TextView
-                android:id="@+id/voiceSearchPermissions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/voice_search_permission_after_decline"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:typeface="sans"
-                visibleInvisible="@{state == State.PERMISSIONS}"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                tools:text="@string/voice_search_permission_after_decline" />
-        </FrameLayout>
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/descriptionContainer"
@@ -138,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/buttonsContainer"
             android:layout_marginBottom="15dp"
-            visibleGone="@{state == State.LISTENING || state == State.SPEECH_ERROR}">
+            visibleGone="@{state == State.READY_TEXT_INPUT || state == State.READY_SEARCH_INPUT}">
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
