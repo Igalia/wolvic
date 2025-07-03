@@ -68,6 +68,8 @@
     <dimen name="keyboard_key_pressed_padding">0dp</dimen>
     <dimen name="keyboard_layout_padding">4dp</dimen>
     <dimen name="keyboard_margin_top_without_autocompletion">37dp</dimen>
+    <dimen name="keyboard_move_bar_width">128dp</dimen>
+    <dimen name="keyboard_move_bar_height">52dp</dimen>
 
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>

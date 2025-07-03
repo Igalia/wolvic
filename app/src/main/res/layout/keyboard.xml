@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:app="http://schemas.android.com/apk/res-auto">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,47 +10,14 @@
             android:layout_height="@dimen/keyboard_height"
             android:layout_marginTop="0dp"
             android:orientation="horizontal">
-            <LinearLayout
-                android:id="@+id/controlButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <com.igalia.wolvic.ui.views.UIButton
-                    android:id="@+id/keyboardCloseButton"
-                    android:layout_width="@dimen/keyboard_key_width"
-                    android:layout_height="@dimen/keyboard_key_width"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
-                    app:tintColorList="@drawable/main_button_icon_color"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_icon_exit"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/keyboard_button_background"/>
-                <com.igalia.wolvic.ui.views.UIButton
-                    android:id="@+id/keyboardMoveButton"
-                    android:layout_width="@dimen/keyboard_key_width"
-                    android:layout_height="@dimen/keyboard_key_width"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
-                    android:layout_marginTop="4dp"
-                    app:tintColorList="@drawable/main_button_icon_color"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_icon_move"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/keyboard_button_background"/>
-                <com.igalia.wolvic.ui.views.UIButton
-                    android:id="@+id/keyboardVoiceButton"
-                    android:layout_width="@dimen/keyboard_key_width"
-                    android:layout_height="@dimen/keyboard_key_width"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
-                    android:layout_marginTop="4dp"
-                    app:tintColorList="@drawable/main_button_icon_color"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_icon_microphone"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/keyboard_button_background"/>
-            </LinearLayout>
+
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/keyboardVoiceButton"
+                style="?attr/navigationBarButtonStyle"
+                android:layout_gravity="top"
+                android:layout_marginStart="@dimen/keyboard_layout_padding"
+                android:layout_marginEnd="@dimen/keyboard_layout_padding"
+                android:src="@drawable/ic_icon_microphone" />
 
             <RelativeLayout
                 android:id="@+id/keyboardContainer"
@@ -141,7 +107,36 @@
                     android:visibility="gone"/>
             </FrameLayout>
 
+            <com.igalia.wolvic.ui.views.UIButton
+                android:id="@+id/keyboardCloseButton"
+                style="?attr/navigationBarButtonStyle"
+                android:layout_gravity="top"
+                android:layout_marginStart="@dimen/keyboard_layout_padding"
+                android:src="@drawable/ic_icon_exit" />
+
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/keyboardMoveBar"
+            android:layout_width="@dimen/keyboard_move_bar_width"
+            android:layout_height="@dimen/keyboard_move_bar_height"
+            android:layout_below="@id/keyboardLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:radius="4dp"
+            android:tooltipText="@string/move_tooltip">
+
+            <View
+                android:layout_width="@dimen/move_bar_width"
+                android:layout_height="8dp"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_line"
+                android:duplicateParentState="true"
+                android:radius="4dp" />
+        </FrameLayout>
 
         <com.igalia.wolvic.ui.views.AutoCompletionView
             android:id="@+id/autoCompletionView"

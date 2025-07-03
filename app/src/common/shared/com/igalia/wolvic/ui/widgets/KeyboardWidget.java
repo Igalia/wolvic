@@ -101,14 +101,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private AutoCompletionView mAutoCompletionView;
     private KeyboardSelectorView mLanguageSelectorView;
     private KeyboardSelectorView mDomainSelectorView;
-    private LinearLayout mControlButtons;
     private ImageView mAutocompletionLayer;
     private ImageView mKeyboardNumericLayer;
 
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
     private ImageButton mCloseKeyboardButton;
-    private ImageButton mKeyboardMoveButton;
+    private ViewGroup mKeyboardMoveBar;
     private ImageButton mKeyboardVoiceButton;
     private boolean mIsLongPress;
     private boolean mIsMultiTap;
@@ -179,8 +178,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         return value;
     }
 
-    public boolean isValidPointer(int deviceId, int eventDeviceId) {
+    private boolean isValidPointer(int deviceId, int eventDeviceId) {
         return deviceId == -1 || deviceId == eventDeviceId;
+    }
+
+    private boolean isInsideAnyControlButton(int x, int y) {
+        return (mCloseKeyboardButton.getVisibility() == VISIBLE &&
+                ViewUtils.isInsideView(mCloseKeyboardButton, x, y)) ||
+                (mKeyboardMoveBar.getVisibility() == VISIBLE &&
+                        ViewUtils.isInsideView(mKeyboardMoveBar, x, y)) ||
+                (mKeyboardVoiceButton.getVisibility() == VISIBLE &&
+                        ViewUtils.isInsideView(mKeyboardVoiceButton, x, y));
     }
 
     private void clearKeyboardHover() {
@@ -204,7 +212,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mLanguageHoverDeviceId = updateLastDeviceId(mLanguageSelectorView, aEvent.getDeviceId(), x, y, mLanguageHoverDeviceId);
         mDomainHoverDeviceId = updateLastDeviceId(mDomainSelectorView, aEvent.getDeviceId(), x, y, mDomainHoverDeviceId);
         mAutoCompleteHoverDeviceId = updateLastDeviceId(mAutoCompletionView, aEvent.getDeviceId(), x, y, mAutoCompleteHoverDeviceId);
-        mControlHoverDeviceId = updateLastDeviceId(mControlButtons, aEvent.getDeviceId(), x, y, mControlHoverDeviceId);
+
+        mControlHoverDeviceId = isInsideAnyControlButton(x, y) ? aEvent.getDeviceId() :
+                (mControlHoverDeviceId == aEvent.getDeviceId() ? -1 : mControlHoverDeviceId);
 
         if (mPopupKeyboardView.getVisibility() == VISIBLE) {
             if (isValidPointer(mPopUpHoverDeviceId, aEvent.getDeviceId()) &&
@@ -281,7 +291,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
-        mControlButtons = findViewById(R.id.controlButtons);
 
         mDomainSelectorView = findViewById(R.id.domainSelectorView);
         mDomainSelectorView.setDelegate(this::handleDomainChange);
@@ -344,9 +353,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(v -> dismiss());
         mCloseKeyboardButton.setOnHoverListener(new ControlButtonHoverListener());
-        mKeyboardMoveButton = findViewById(R.id.keyboardMoveButton);
-        mKeyboardMoveButton.setOnTouchListener(new MoveTouchListener());
-        mKeyboardMoveButton.setOnHoverListener(new ControlButtonHoverListener());
+        mKeyboardMoveBar = findViewById(R.id.keyboardMoveBar);
+        mKeyboardMoveBar.setOnTouchListener(new MoveTouchListener());
+        mKeyboardMoveBar.setOnHoverListener(new ControlButtonHoverListener());
         mKeyboardVoiceButton = findViewById(R.id.keyboardVoiceButton);
         mKeyboardVoiceButton.setOnClickListener(v -> handleVoiceInput());
         mKeyboardVoiceButton.setOnHoverListener(new ControlButtonHoverListener());
@@ -442,18 +451,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private int getKeyboardWidth(float aAlphabeticWidth) {
         float width = aAlphabeticWidth;
-        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_layout_padding) * 2;
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_layout_padding) * 4;
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_numeric_width);
-        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_key_width); // Close button
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.nav_button_size) * 2; // Mic and Close buttons
         return (int) width;
     }
 
-     private int getKeyboardHeight(float aAlphabeticHeight) {
+    private int getKeyboardHeight(float aAlphabeticHeight) {
         float height = aAlphabeticHeight;
         height += WidgetPlacement.dpDimension(getContext(), R.dimen.autocompletion_widget_line_height);
         height += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_layout_padding);
+        height += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_move_bar_height);
         return (int) height;
-     }
+    }
 
     private void resetKeyboardLayout() {
         if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
