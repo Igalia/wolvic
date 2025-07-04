@@ -427,13 +427,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
 
         // Create Browser navigation widget
-        mNavigationBar = new NavigationBarWidget(this);
+        // mNavigationBar = new NavigationBarWidget(this); // STRIPPED
 
         // Create keyboard widget
-        mKeyboard = new KeyboardWidget(this);
+        mKeyboard = new KeyboardWidget(this); // KEEPING for potential URL input
 
         // Create the WebXR interstitial
-        mWebXRInterstitial = new WebXRInterstitialWidget(this);
+        mWebXRInterstitial = new WebXRInterstitialWidget(this); // KEEPING for WebXR core functionality
 
         // Windows
         mWindows = new Windows(this);
@@ -483,22 +483,27 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
 
         // Create the tray
-        mTray = new TrayWidget(this);
-        mTray.addListeners(mWindows);
-        mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
+        // mTray = new TrayWidget(this); // STRIPPED
+        // if (mTray != null) { // STRIPPED
+        //     mTray.addListeners(mWindows); // STRIPPED
+        //     mTray.setAddWindowVisible(mWindows.canOpenNewWindow()); // STRIPPED
+        // } // STRIPPED
 
         // Create Tabs bar widget
-        if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_HORIZONTAL) {
-            mTabsBar = new HorizontalTabsBar(this, mWindows);
-        } else if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL) {
-            mTabsBar = new VerticalTabsBar(this, mWindows);
-        } else {
-            mTabsBar = null;
-        }
+        // if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_HORIZONTAL) { // STRIPPED
+        //     mTabsBar = new HorizontalTabsBar(this, mWindows); // STRIPPED
+        // } else if (mSettings.getTabsLocation() == SettingsStore.TABS_LOCATION_VERTICAL) { // STRIPPED
+        //     mTabsBar = new VerticalTabsBar(this, mWindows); // STRIPPED
+        // } else { // STRIPPED
+        mTabsBar = null; // STRIPPED - Ensure mTabsBar is null
+        // } // STRIPPED
 
         attachToWindow(mWindows.getFocusedWindow(), null);
 
-        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mTabsBar, mWebXRInterstitial));
+        // addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mTabsBar, mWebXRInterstitial));
+        // STRIPPED: Only add essential widgets
+        addWidgets(Arrays.asList(mRootWidget, mKeyboard, mWebXRInterstitial));
+
 
         // Create the platform plugin after widgets are created to be extra safe.
         mPlatformPlugin = createPlatformPlugin(this);
@@ -516,20 +521,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {
         mPermissionDelegate.setParentWidgetHandle(aWindow.getHandle());
-        mNavigationBar.attachToWindow(aWindow);
-        mKeyboard.attachToWindow(aWindow);
-        mTray.attachToWindow(aWindow);
+        // if (mNavigationBar != null) mNavigationBar.attachToWindow(aWindow); // STRIPPED
+        if (mKeyboard != null) mKeyboard.attachToWindow(aWindow); // KEEPING Keyboard
+        // if (mTray != null) mTray.attachToWindow(aWindow); // STRIPPED
 
-        if (mTabsBar != null) {
+        if (mTabsBar != null) { // This will be false now as mTabsBar is set to null
             mTabsBar.attachToWindow(aWindow);
         }
         mWindows.adjustWindowOffsets();
 
         if (aPrevWindow != null) {
-            updateWidget(mNavigationBar);
-            updateWidget(mKeyboard);
-            updateWidget(mTray);
-            if (mTabsBar != null) {
+            // if (mNavigationBar != null) updateWidget(mNavigationBar); // STRIPPED
+            if (mKeyboard != null) updateWidget(mKeyboard); // KEEPING Keyboard
+            // if (mTray != null) updateWidget(mTray); // STRIPPED
+            if (mTabsBar != null) { // This will be false
                 updateWidget(mTabsBar);
             }
         }
@@ -617,11 +622,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onStart();
         mFragmentController.dispatchStart();
         getLifecycleRegistry().setCurrentState(Lifecycle.State.STARTED);
-        if (mTray == null) {
-            Log.e(LOGTAG, "Failed to start Tray clock");
-        } else {
+        // if (mTray == null) { // STRIPPED
+        //     Log.e(LOGTAG, "Failed to start Tray clock"); // STRIPPED
+        // } else { // STRIPPED
+        if (mTray != null) { // STRIPPED - Guard with null check
             mTray.start(this);
         }
+        // } // STRIPPED
     }
 
     @Override
@@ -630,7 +637,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onStop();
         mFragmentController.dispatchStop();
         TelemetryService.sessionStop();
-        if (mTray != null) {
+        if (mTray != null) { // STRIPPED - Guard with null check
             mTray.stop(this);
         }
     }
@@ -1601,7 +1608,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         int plugged = intent == null ? -1 : intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         boolean isCharging = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB || plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
-        mTray.setBatteryLevels(mLastBatteryLevel, isCharging, leftLevel, rightLevel);
+        // mTray.setBatteryLevels(mLastBatteryLevel, isCharging, leftLevel, rightLevel); // STRIPPED
+        if (mTray != null) { // STRIPPED - Guard with null check
+            mTray.setBatteryLevels(mLastBatteryLevel, isCharging, leftLevel, rightLevel);
+        }
     }
 
     @Keep
@@ -2005,7 +2015,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void keyboardDismissed() {
-        mNavigationBar.showVoiceSearch();
+        // mNavigationBar.showVoiceSearch(); // STRIPPED
+        if (mNavigationBar != null) { // STRIPPED - Guard with null check
+            mNavigationBar.showVoiceSearch();
+        }
     }
 
     @Override
