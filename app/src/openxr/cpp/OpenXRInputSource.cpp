@@ -47,6 +47,14 @@ OpenXRInputSource::~OpenXRInputSource()
         xrDestroySpace(mGripSpace);
     if (mPointerSpace != XR_NULL_HANDLE)
         xrDestroySpace(mPointerSpace);
+    if (mPinchSpace != XR_NULL_HANDLE)
+        xrDestroySpace(mPinchSpace);
+    if (mPokeSpace != XR_NULL_HANDLE)
+        xrDestroySpace(mPokeSpace);
+    if (mMoveWidgetSpace != XR_NULL_HANDLE)
+        xrDestroySpace(mMoveWidgetSpace);
+    if (mRotateWidgetSpace != XR_NULL_HANDLE)
+        xrDestroySpace(mRotateWidgetSpace);
     if (mHandTracker != XR_NULL_HANDLE)
         OpenXRExtensions::sXrDestroyHandTrackerEXT(mHandTracker);
 }
@@ -164,6 +172,19 @@ XrResult OpenXRInputSource::Initialize()
             auto buffer = std::make_shared<HandMeshBufferMSFT>();
             mHandMeshMSFT.buffers.push_back(buffer);
         }
+    }
+
+    // Initialize actions for widget manipulation (right hand only)
+    if (mHandeness == OpenXRHandFlags::Right) {
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "move_widget_pose", mHandeness, mMoveWidgetAction));
+        RETURN_IF_XR_FAILED(CreateActionSpace(mMoveWidgetAction, mMoveWidgetSpace));
+
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_BOOLEAN_INPUT, "select_widget_click", mHandeness, mSelectWidgetAction));
+
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_POSE_INPUT, "rotate_widget_pose", mHandeness, mRotateWidgetAction));
+        RETURN_IF_XR_FAILED(CreateActionSpace(mRotateWidgetAction, mRotateWidgetSpace));
+
+        RETURN_IF_XR_FAILED(mActionSet.GetOrCreateAction(XR_ACTION_TYPE_FLOAT_INPUT, "scale_widget_float", mHandeness, mScaleWidgetAction));
     }
 
     return XR_SUCCESS;
@@ -472,6 +493,22 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
         for (auto& haptic: mapping.haptics) {
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mHapticAction,
                                               mSubactionPathName + "/" + haptic.path, bindings));
+        }
+
+        // Suggest bindings for widget manipulation actions (right hand, oculus touch controller only)
+        if (mHandeness == OpenXRHandFlags::Right && mapping.path == std::string("/interaction_profiles/oculus/touch_controller")) {
+            if (mMoveWidgetAction != XR_NULL_HANDLE) {
+                 RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mMoveWidgetAction, mSubactionPathName + "/input/grip/pose", bindings));
+            }
+            if (mSelectWidgetAction != XR_NULL_HANDLE) {
+                RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mSelectWidgetAction, mSubactionPathName + "/input/trigger/click", bindings));
+            }
+            if (mRotateWidgetAction != XR_NULL_HANDLE) {
+                RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mRotateWidgetAction, mSubactionPathName + "/input/grip/pose", bindings));
+            }
+            if (mScaleWidgetAction != XR_NULL_HANDLE) {
+                RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mScaleWidgetAction, mSubactionPathName + "/input/thumbstick/y", bindings));
+            }
         }
     }
 
@@ -1030,6 +1067,32 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetAxes(mIndex, axesContainer.data(), axesContainer.size());
 
     UpdateHaptics(delegate);
+
+    // Update widget manipulation states (right hand only)
+    if (mHandeness == OpenXRHandFlags::Right) {
+        mIsWidgetSelected = false;
+        mWidgetMovePoseValid = false;
+        mWidgetRotatePoseValid = false;
+        mWidgetScaleValue = 0.0f;
+
+        if (mSelectWidgetAction != XR_NULL_HANDLE) {
+            GetActionState(mSelectWidgetAction, &mIsWidgetSelected);
+        }
+
+        if (mIsWidgetSelected) { // Only get poses and scale if selected
+            if (mMoveWidgetAction != XR_NULL_HANDLE && mMoveWidgetSpace != XR_NULL_HANDLE) {
+                GetPoseState(mMoveWidgetAction, mMoveWidgetSpace, localSpace, frameState, mWidgetMovePoseValid, mWidgetMovePoseLocation);
+            }
+            if (mRotateWidgetAction != XR_NULL_HANDLE && mRotateWidgetSpace != XR_NULL_HANDLE) {
+                GetPoseState(mRotateWidgetAction, mRotateWidgetSpace, localSpace, frameState, mWidgetRotatePoseValid, mWidgetRotatePoseLocation);
+            }
+            if (mScaleWidgetAction != XR_NULL_HANDLE) {
+                GetActionState(mScaleWidgetAction, &mWidgetScaleValue);
+            }
+        }
+        // These states (mIsWidgetSelected, mWidgetMovePoseLocation, mWidgetRotatePoseLocation, mWidgetScaleValue)
+        // will be read by BrowserWorld via ControllerDelegate.
+    }
 }
 
 XrResult OpenXRInputSource::UpdateInteractionProfile(ControllerDelegate& delegate)

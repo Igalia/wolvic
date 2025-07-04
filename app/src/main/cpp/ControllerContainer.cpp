@@ -698,6 +698,67 @@ ControllerContainer::SetFrameId(const uint64_t aFrameId) {
   m.immersiveFrameId = aFrameId;
 }
 
+// Helper function (similar to the one in DeviceDelegateOpenXR.cpp)
+static vrb::Matrix XrPoseToMatrix(const XrPosef& pose) {
+  vrb::Quaternion q(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w);
+  vrb::Vector p(pose.position.x, pose.position.y, pose.position.z);
+  return vrb::Matrix::Rotation(q).Translate(p);
+}
+
+void ControllerContainer::SetWidgetSelectedState(int32_t aControllerIndex, bool isSelected) {
+  if (m.Contains(aControllerIndex)) {
+    m.list[aControllerIndex].isWidgetSelected = isSelected;
+  }
+}
+
+bool ControllerContainer::IsWidgetSelected(int32_t aControllerIndex) const {
+  return m.Contains(aControllerIndex) ? m.list[aControllerIndex].isWidgetSelected : false;
+}
+
+void ControllerContainer::SetWidgetRawPoses(int32_t aControllerIndex, const XrSpaceLocation& movePose, bool movePoseValid, const XrSpaceLocation& rotatePose, bool rotatePoseValid) {
+  if (m.Contains(aControllerIndex)) {
+    Controller& controller = m.list[aControllerIndex];
+    controller.widgetMoveLocation = movePose;
+    controller.widgetMoveLocationValid = movePoseValid;
+    controller.widgetMovePoseTime = movePose.time; // Assuming XrSpaceLocation has 'time'
+
+    controller.widgetRotateLocation = rotatePose;
+    controller.widgetRotateLocationValid = rotatePoseValid;
+    controller.widgetRotatePoseTime = rotatePose.time; // Assuming XrSpaceLocation has 'time'
+  }
+}
+
+bool ControllerContainer::GetWidgetMovePose(int32_t aControllerIndex, vrb::Matrix& outPose, XrTime& outTime) const {
+  if (m.Contains(aControllerIndex) && m.list[aControllerIndex].widgetMoveLocationValid) {
+    const Controller& controller = m.list[aControllerIndex];
+    outPose = XrPoseToMatrix(controller.widgetMoveLocation.pose);
+    outTime = controller.widgetMovePoseTime;
+    return true;
+  }
+  return false;
+}
+
+bool ControllerContainer::GetWidgetRotatePose(int32_t aControllerIndex, vrb::Matrix& outPose, XrTime& outTime) const {
+  if (m.Contains(aControllerIndex) && m.list[aControllerIndex].widgetRotateLocationValid) {
+    const Controller& controller = m.list[aControllerIndex];
+    outPose = XrPoseToMatrix(controller.widgetRotateLocation.pose);
+    outTime = controller.widgetRotatePoseTime;
+    return true;
+  }
+  return false;
+}
+
+void ControllerContainer::SetWidgetScaleValue(int32_t aControllerIndex, float scaleValue) {
+  if (m.Contains(aControllerIndex)) {
+    m.list[aControllerIndex].widgetScaleValue = scaleValue;
+  }
+}
+
+float ControllerContainer::GetWidgetScaleValue(int32_t aControllerIndex) const {
+  return m.Contains(aControllerIndex) ? m.list[aControllerIndex].widgetScaleValue : 0.0f;
+}
+
+
 ControllerContainer::ControllerContainer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.Initialize(aContext);
 }

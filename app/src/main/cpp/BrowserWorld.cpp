@@ -224,8 +224,22 @@ struct BrowserWorld::State {
   std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
   std::optional<vrb::Matrix> navigationBarToWindowTransform;
 
+  // State for debug widget manipulation
+  bool isDebugWidgetGrabbed {false};
+  vrb::Matrix initialDebugWidgetTransform; // Stores widget transform at the moment of grabbing
+  vrb::Matrix initialControllerGrabTransform; // Stores controller world pose at the moment of grabbing
+  float currentDebugWidgetScale {1.0f};
+  int debugWidgetHandle {-1}; // Assuming we need to identify the debug widget
+  vrb::Matrix debugWidgetTransform;
+
+
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
+    debugWidgetTransform = vrb::Matrix::Translation(0.0f, 0.0f, -1.0f); // Initial position
+    currentDebugWidgetScale = 1.0f;
+    isDebugWidgetGrabbed = false;
+    debugWidgetHandle = -1; // Placeholder, should be set when the widget is created
+
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
@@ -730,6 +744,342 @@ BrowserWorld::State::HandleControllerScroll(Controller& controller, int handle) 
     controller.scrollStart = -1.0;
   }
 }
+
+void
+BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
+  EnsureControllerFocused();
+  int leftBatteryLevel = -1;
+  int rightBatteryLevel = -1;
+
+  // Find the right controller for widget manipulation
+  Controller* rightController = nullptr;
+  for (Controller& c : controllers->GetControllers()) {
+    if (c.enabled && !c.leftHanded) {
+      rightController = &c;
+      break;
+    }
+  }
+
+  if (rightController && device) { // Ensure device (ControllerDelegate) is valid
+    bool isSelectedNow = device->IsWidgetSelected(rightController->index);
+    vrb::Matrix controllerMovePoseMatrix;
+    XrTime movePoseTime;
+    bool movePoseIsValid = device->GetWidgetMovePose(rightController->index, controllerMovePoseMatrix, movePoseTime);
+
+    // For rotation, we'll use the orientation from the movePose (grip pose)
+    // vrb::Matrix controllerRotatePoseMatrix;
+    // XrTime rotatePoseTime;
+    // bool rotatePoseIsValid = device->GetWidgetRotatePose(rightController->index, controllerRotatePoseMatrix, rotatePoseTime);
+    // Using movePoseIsValid for rotation as well, assuming grip pose provides orientation.
+
+    float scaleInput = device->GetWidgetScaleValue(rightController->index);
+
+    if (isSelectedNow && !isDebugWidgetGrabbed) { // Grab starts
+      isDebugWidgetGrabbed = true;
+      // If debugWidgetTransform hasn't been set by an initial widget layout, this might be identity.
+      // Ideally, debugWidgetHandle is set, and its initial transform is fetched here or known.
+      // For now, we use the member m.debugWidgetTransform which was initialized.
+      initialDebugWidgetTransform = debugWidgetTransform;
+      currentDebugWidgetScale = initialDebugWidgetTransform.GetScale().x(); // Assuming uniform scale
+
+      if (movePoseIsValid) {
+        initialControllerGrabTransform = controllerMovePoseMatrix;
+      }
+      VRB_LOG("DebugWidget Grabbed. Initial Scale: %f", currentDebugWidgetScale);
+    } else if (!isSelectedNow && isDebugWidgetGrabbed) { // Grab ends
+      isDebugWidgetGrabbed = false;
+      VRB_LOG("DebugWidget Released");
+    }
+
+    if (isDebugWidgetGrabbed) {
+      vrb::Vector newPosition = initialDebugWidgetTransform.GetTranslation();
+      vrb::Quaternion newRotation = initialDebugWidgetTransform.GetRotation(); // Assuming GetRotation() gives Quaternion
+
+      if (movePoseIsValid) {
+        // Relative movement logic (more robust)
+        // vrb::Matrix controllerDeltaTransform = initialControllerGrabTransform.Inverse() * controllerMovePoseMatrix;
+        // vrb::Vector relativeTranslation = controllerDeltaTransform.GetTranslation();
+        // newPosition = initialDebugWidgetTransform.GetTranslation() + relativeTranslation;
+        // newRotation = initialDebugWidgetTransform.GetRotation() * controllerDeltaTransform.GetRotation();
+
+        // Direct follow logic (simpler for now)
+        newPosition = controllerMovePoseMatrix.GetTranslation();
+        newRotation = controllerMovePoseMatrix.GetRotation();
+      }
+
+      // Scaling
+      float deltaTime = context->GetDeltaTime(); // Use actual delta time
+      if (deltaTime <= 0.0f) { // Prevent issues if deltaTime is zero or negative
+          deltaTime = 1.0f / 60.0f; // Fallback to a typical frame duration
+      }
+      float scaleSensitivity = 0.5f;
+      currentDebugWidgetScale += scaleInput * deltaTime * scaleSensitivity;
+      currentDebugWidgetScale = std::max(0.1f, std::min(currentDebugWidgetScale, 5.0f)); // Clamp scale
+
+      // Update debugWidgetTransform
+      debugWidgetTransform = vrb::Matrix::Translation(newPosition) * vrb::Matrix::Rotation(newRotation) * vrb::Matrix::Scale(vrb::Vector(currentDebugWidgetScale, currentDebugWidgetScale, currentDebugWidgetScale));
+      aRelayoutWidgets = true; // Signal that a widget might need relayout due to transform change
+    }
+  }
+
+
+  // Original loop for general controller interactions (UI events, etc.)
+  for (Controller& controller: controllers->GetControllers()) {
+    if (!controller.enabled || (controller.index < 0)) {
+      if (controller.widget) {
+          VRBrowser::HandleMotionEvent(controller.widget, controller.index, jboolean(controller.focused),
+                                       jboolean(false), controller.pointerX, controller.pointerY);
+          controller.widget = 0;
+      }
+      continue;
+    }
+    if (controller.index != device->GazeModeIndex()) {
+      if (controller.leftHanded) {
+        leftBatteryLevel = controller.batteryLevel;
+      } else {
+        rightBatteryLevel = controller.batteryLevel;
+      }
+    }
+    if (controller.pointer && !controller.pointer->IsLoaded()) {
+      controller.pointer->Load(device);
+    }
+
+    if (wasGoBackButtonClicked(controller, externalVR->IsPresenting())) {
+      if (controller.handActionEnabled && !controller.leftHanded) {
+          VRBrowser::HandleAppExit();
+      } else {
+          SimulateBack();
+      }
+    }
+
+    const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                         controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD ||
+                         controller.buttonState & ControllerDelegate::BUTTON_A ||
+                         controller.buttonState & ControllerDelegate::BUTTON_X;
+    const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
+                            controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD ||
+                            controller.lastButtonState & ControllerDelegate::BUTTON_A ||
+                            controller.lastButtonState & ControllerDelegate::BUTTON_X;;
+
+    if (!controller.focused) {
+      const bool focusRequested = pressed && !wasPressed;
+      if (focusRequested) {
+        ChangeControllerFocus(controller);
+      }
+    }
+
+    const vrb::Vector start = controller.StartPoint();
+    const vrb::Vector direction = controller.Direction();
+
+    WidgetPtr hitWidget;
+    float hitDistance = farClip;
+    vrb::Vector hitPoint;
+    vrb::Vector hitNormal;
+
+    bool isResizing = resizingWidget && resizingWidget->IsResizingActive();
+    WidgetPtr previousWidget = controller.widget ? GetWidget(controller.widget) : nullptr;
+    bool isDragging = pressed && wasPressed && previousWidget && !isResizing;
+
+    // Skip hit-testing for the debug widget if it's being grabbed by the right controller,
+    // to prevent it from interfering with its own manipulation or other UI.
+    bool skipHitTestForDebugWidget = (rightController && isDebugWidgetGrabbed && debugWidgetHandle != -1);
+
+    if (isDragging) {
+      vrb::Vector result;
+      vrb::Vector normal;
+      float distance = 0.0f;
+      bool isInWidget = false;
+      if (previousWidget->TestControllerIntersection(start, direction, result, normal, false,
+                                                     isInWidget, distance)) {
+        hitWidget = previousWidget;
+        hitPoint = result;
+        hitNormal = normal;
+      }
+    } else if (controllers->IsVisible()){
+      for (const WidgetPtr& widget: widgets) {
+        if (skipHitTestForDebugWidget && widget->GetHandle() == debugWidgetHandle) {
+            continue;
+        }
+        if (controller.focused) {
+          if (isResizing && resizingWidget != widget) {
+            continue;
+          }
+          if (movingWidget && movingWidget->GetWidget() != widget) {
+            continue;
+          }
+        }
+        vrb::Vector result;
+        vrb::Vector normal;
+        float distance = 0.0f;
+        bool isInWidget = false;
+        const bool clamp = !widget->IsResizing() && !movingWidget;
+        if (widget->TestControllerIntersection(start, direction, result, normal, clamp, isInWidget, distance)) {
+          if (isInWidget && (distance < hitDistance)) {
+            hitWidget = widget;
+            hitDistance = distance;
+            hitPoint = result;
+            hitNormal = normal;
+          }
+        }
+      }
+    }
+
+    if (hitDistance < farClip)
+        device->SetHitDistance(hitDistance);
+
+    if (controller.focused && (!hitWidget || !hitWidget->IsResizing()) && resizingWidget) {
+      resizingWidget->HoverExitResize();
+      resizingWidget.reset();
+    }
+
+    if (controller.pointer) {
+      controller.pointer->SetVisible(hitWidget.get() != nullptr && controller.hasAim);
+      controller.pointer->SetHitWidget(hitWidget);
+      if (hitWidget && controller.hasAim) {
+        vrb::Matrix translation = vrb::Matrix::Translation(hitPoint);
+        vrb::Matrix localRotation = vrb::Matrix::Rotation(hitNormal);
+        vrb::Matrix reorient = rootTransparent->GetTransform();
+        controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
+
+        const float scale = (hitPoint - device->GetHeadTransform().MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
+        controller.pointer->SetScale(scale + kPointerSize - controller.selectFactor * kPointerSize);
+        if (controller.selectFactor >= device->GetSelectThreshold(controller.index))
+          controller.pointer->SetPointerColor(kPointerColorSelected);
+        else
+          controller.pointer->SetPointerColor(VRBrowser::GetPointerColor());
+      }
+    }
+
+    if (controller.beamToggle)
+      controller.beamToggle->ToggleAll(controller.hasAim);
+
+    if (controller.modelToggle)
+      controller.modelToggle->ToggleAll(controller.mode == ControllerMode::Device);
+
+    device->UpdateHandMesh(controller.index, controller.handJointTransforms, controllers->GetRoot(),
+                           controller.enabled && controller.mode == ControllerMode::Hand, controller.leftHanded);
+
+    if (controller.handActionEnabled && controller.handActionButtonTransform != nullptr) {
+      const int indexTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::IndexTip);
+      const int thumbTipIndex = device->GetHandTrackingJointIndex(HandTrackingJoints::ThumbTip);
+      vrb::Matrix indexTipMatrix;
+      vrb::Matrix thumbTipMatrix;
+      indexTipMatrix = controller.handJointTransforms[indexTipIndex];
+      thumbTipMatrix = controller.handJointTransforms[thumbTipIndex];
+
+      vrb::Vector center = (indexTipMatrix.GetTranslation() - thumbTipMatrix.GetTranslation()) / 2.0f;
+      vrb::Vector position = indexTipMatrix.GetTranslation() - center;
+
+      vrb::Matrix iconMatrix = vrb::Matrix::Identity();
+      float scale = 1.0 - controller.selectFactor * 0.5f;
+      scale = scale <= 0.5f ? 0.0f : scale;
+      iconMatrix.ScaleInPlace(vrb::Vector(scale, scale, scale));
+      vrb::Matrix headMatrix = device->GetHeadTransform();
+      headMatrix = headMatrix.TranslateInPlace(-headMatrix.GetTranslation());
+      iconMatrix = headMatrix.PostMultiply(iconMatrix).Translate(position);
+      controller.handActionButtonTransform->SetTransform(iconMatrix);
+    }
+
+    if (controller.focused && movingWidget && movingWidget->IsMoving(controller.index)) {
+      if (!pressed && wasPressed) {
+        movingWidget->EndMoving();
+      } else {
+        WidgetPlacementPtr updatedPlacement = movingWidget->HandleMove(start, direction);
+        if (updatedPlacement) {
+          movingWidget->GetWidget()->SetPlacement(updatedPlacement);
+          aRelayoutWidgets = true;
+        }
+      }
+    } else if (controller.focused && hitWidget && hitWidget->IsResizing()) {
+      bool aResized = false, aResizeEnded = false;
+      hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
+      resizingWidget = hitWidget;
+      if (aResized) {
+        aRelayoutWidgets = true;
+        std::shared_ptr<BrowserWorld> world = self.lock();
+        if (world) {
+          world->LayoutWidget(hitWidget->GetHandle());
+        }
+      }
+      if (aResizeEnded) {
+        float width, height;
+        hitWidget->GetWorldSize(width, height);
+        VRBrowser::HandleResize(hitWidget->GetHandle(), width, height);
+      }
+    } else if (hitWidget) {
+      float theX = 0.0f, theY = 0.0f;
+      hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY, !isDragging);
+      const uint32_t handle = hitWidget->GetHandle();
+      if (!pressed && wasPressed) {
+        controller.inDeadZone = true;
+      }
+      controller.pointerWorldPoint = hitPoint;
+      const bool moved = pressed ? OutOfDeadZone(controller, theX, theY)
+          : (controller.pointerX != theX) || (controller.pointerY != theY);
+      const bool throttled = ThrottleHoverEvent(controller, context->GetTimestamp(), pressed, wasPressed);
+
+      if ((!throttled && moved) || (controller.widget != handle) || (pressed != wasPressed)) {
+        controller.widget = handle;
+        controller.pointerX = theX;
+        controller.pointerY = theY;
+        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(controller.focused), jboolean(pressed), controller.pointerX, controller.pointerY);
+      }
+      HandleControllerScroll(controller, controller.widget);
+      if (!pressed) {
+        if (controller.touched) {
+          if (!controller.wasTouched) {
+            controller.wasTouched = controller.touched;
+          } else {
+            VRBrowser::HandleScrollEvent(controller.widget,
+                                controller.index,
+                                (controller.touchX - controller.lastTouchX) * kScrollFactor,
+                                (controller.touchY - controller.lastTouchY) * kScrollFactor);
+          }
+          controller.lastTouchX = controller.touchX;
+          controller.lastTouchY = controller.touchY;
+        } else {
+          controller.wasTouched = false;
+          controller.lastTouchX = controller.lastTouchY = 0.0f;
+        }
+      }
+    } else if (controller.widget) {
+      VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
+      controller.widget = 0;
+    } else if (wasPressed != pressed) {
+      VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
+    } else if (vrVideo != nullptr) {
+      HandleControllerScroll(controller, -1);
+      const bool togglePressed = controller.buttonState & ControllerDelegate::BUTTON_X ||
+                                 controller.buttonState & ControllerDelegate::BUTTON_A;
+      const bool toggleWasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_X ||
+                                    controller.lastButtonState & ControllerDelegate::BUTTON_A;
+      if (togglePressed != toggleWasPressed) {
+        VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) togglePressed, 0.0f, 0.0f);
+      }
+    }
+    controller.lastButtonState = controller.buttonState;
+  } // End of original controller loop
+
+  if ((context->GetTimestamp() - lastBatteryLevelUpdate) > 1.0) {
+    VRBrowser::UpdateControllerBatteryLevels(leftBatteryLevel, rightBatteryLevel);
+    lastBatteryLevelUpdate = context->GetTimestamp();
+  }
+  if (gestures) {
+    const int32_t gestureCount = gestures->GetGestureCount();
+    for (int32_t count = 0; count < gestureCount; count++) {
+      const GestureType type = gestures->GetGestureType(count);
+      jint javaType = -1;
+      if (type == GestureType::SwipeLeft) {
+        javaType = GestureSwipeLeft;
+      } else if (type == GestureType::SwipeRight) {
+        javaType = GestureSwipeRight;
+      }
+      if (javaType >= 0) {
+        VRBrowser::HandleGesture(javaType);
+      }
+    }
+  }
+} // End of UpdateControllers
 
 void
 BrowserWorld::State::ClearWebXRControllerData() {
@@ -1457,7 +1807,22 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   }
 
   m.widgets.push_back(widget);
-  UpdateWidget(widget->GetHandle(), aPlacement);
+  UpdateWidget(widget->GetHandle(), aPlacement); // This will call LayoutWidget
+
+  // If this is the debug widget, store its handle and initialize its transform
+  // Assuming debug widget has a known handle, e.g., 0, or some other way to identify it.
+  // For this example, let's assume handle 0 is the debug widget.
+  // This needs to be adjusted if the identification mechanism is different.
+  if (aHandle == 0) { // *** This condition is an assumption ***
+    m.debugWidgetHandle = aHandle;
+    // Initialize debugWidgetTransform from the widget's actual current transform
+    // as set by UpdateWidget/LayoutWidget.
+    // This ensures that the first grab doesn't cause a jump if the initial
+    // m.debugWidgetTransform in the constructor was different.
+    m.debugWidgetTransform = widget->GetTransform();
+    m.currentDebugWidgetScale = m.debugWidgetTransform.GetScale().x(); // Assuming uniform scale
+    VRB_LOG("Debug widget handle %d registered and transform initialized.", m.debugWidgetHandle);
+  }
 }
 
 void
@@ -1971,6 +2336,17 @@ BrowserWorld::TickImmersive() {
   }
   // DeviceDelegate::StartFrame() might have failed and then we should discard the frame.
   aDiscardFrame = aDiscardFrame || !m.device->ShouldRender();
+
+  // REMOVE OSCILLATION - The debugWidgetTransform is now controlled by user input in UpdateControllers
+  // Original oscillation code was here. For example:
+  // if (m.debugWidgetHandle != -1) {
+  //   float time = m.context->GetTimestamp();
+  //   float xOffset = sin(time * 2.0f) * 0.5f; // Example oscillation
+  //   vrb::Matrix currentTransform = m.debugWidgetTransform; // Or however it was fetched
+  //   vrb::Vector currentPos = currentTransform.GetTranslation();
+  //   m.debugWidgetTransform.SetTranslation(vrb::Vector(xOffset, currentPos.y(), currentPos.z()));
+  // }
+
 
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
