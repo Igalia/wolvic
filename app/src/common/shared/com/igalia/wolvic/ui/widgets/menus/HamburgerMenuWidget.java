@@ -55,6 +55,7 @@ public class HamburgerMenuWidget extends UIWidget implements
         void onPageZoomIn();
         void onPageZoomOut();
         int getCurrentZoomLevel();
+        void onFullScreen();
     }
 
     public static final int SWITCH_ITEM_ID = 0;
@@ -189,6 +190,18 @@ public class HamburgerMenuWidget extends UIWidget implements
 
         // In kiosk mode, only resize, find in page and passthrough are available.
         if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onFullScreen();
+                        }
+                        return null;
+                    })
+                    .withTitle(getContext().getString(R.string.hamburger_menu_fullscreen))
+                    .withIcon(R.drawable.fullscreen_button)
+                    .build());
+
             final Session activeSession = SessionStore.get().getActiveSession();
 
             if (!BuildConfig.FLAVOR_backend.equals("chromium")) {
