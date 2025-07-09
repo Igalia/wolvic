@@ -162,6 +162,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private SharedPreferences mPrefs;
     private DownloadsManager mDownloadsManager;
     private float mBrowserDensity;
+    private boolean fullscreenInHamburgerMenuEnabled;
+    private boolean keepFullscreenInHamburgerMenu;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -1043,7 +1045,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mIsResizing;
     }
 
+    public void setFullscreenInHamburgerMenu() {
+        setIsFullScreen(true);
+        setFullscreenInHamburgerMenuEnabled(true);
+    }
+
     public void setIsFullScreen(boolean isFullScreen) {
+        if (isFullScreen && fullscreenInHamburgerMenuEnabled) {
+            keepFullscreenInHamburgerMenu = true;
+        }
+
         if (mViewModel.getIsFullscreen().getValue().get() != isFullScreen) {
             mViewModel.setIsFullscreen(isFullScreen);
             for (WindowListener listener: mListeners) {
@@ -2438,5 +2449,21 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mBrowserDensity = EngineProvider.INSTANCE.getOrCreateRuntime(getContext()).getDensity();
         }
         return mBrowserDensity;
+    }
+
+    public boolean getFullscreenInHamburgerMenuEnabled() {
+        return fullscreenInHamburgerMenuEnabled;
+    }
+
+    public void setFullscreenInHamburgerMenuEnabled(boolean fullscreenInHamburgerMenuEnabled) {
+        this.fullscreenInHamburgerMenuEnabled = fullscreenInHamburgerMenuEnabled;
+    }
+
+    public boolean getKeepFullscreenInHamburgerMenu() {
+        return keepFullscreenInHamburgerMenu;
+    }
+
+    public void setKeepFullscreenInHamburgerMenu(boolean keepFullscreenInHamburgerMenu) {
+        this.keepFullscreenInHamburgerMenu = keepFullscreenInHamburgerMenu;
     }
 }

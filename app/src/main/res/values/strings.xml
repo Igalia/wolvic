@@ -2108,6 +2108,10 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
          it saves the Web App provided by the current page -->
     <string name="hamburger_menu_save_web_app">Save Web app…</string>
 
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it put the current window in fullscreen mode -->
+    <string name="hamburger_menu_fullscreen">Fullscreen</string>
+
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
 
