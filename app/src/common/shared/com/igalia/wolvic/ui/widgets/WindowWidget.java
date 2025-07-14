@@ -117,6 +117,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private final float MIN_SCALE = 0.5f;
     private final float DEFAULT_SCALE = 1.0f;
     private final float MAX_SCALE = 3.0f;
+    private final long FOCUS_ON_HOVER_DELAY_MS = 500;
 
     private Surface mSurface;
     private int mSurfaceWidth;
@@ -162,6 +163,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private SharedPreferences mPrefs;
     private DownloadsManager mDownloadsManager;
     private float mBrowserDensity;
+    private final Runnable focusOnHoverRunnable = () -> {
+        if (mHovered) {
+           focusWindow();
+        }
+    };
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -956,11 +962,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void handleHoverEvent(MotionEvent aEvent) {
         if (aEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
             mHovered = true;
-            if (SettingsStore.getInstance(getContext()).getWindowSelectionMethod() == SettingsStore.WINDOW_SELECTION_METHOD_HOVER)
-                focusWindow();
+            if (SettingsStore.getInstance(getContext()).getWindowSelectionMethod() == SettingsStore.WINDOW_SELECTION_METHOD_HOVER) {
+                // Do the focus switch after a delay to avoid too quick or involuntary focus changes.
+                postDelayed(focusOnHoverRunnable, FOCUS_ON_HOVER_DELAY_MS);
+            }
         } else if (aEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
             mHovered = false;
             updateBorder();
+            removeCallbacks(focusOnHoverRunnable);
         }
 
         if (!mActive
