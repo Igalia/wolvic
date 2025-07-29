@@ -2614,5 +2614,8 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="controller_options_click_to_select">Click</string>
     <string name="controller_options_hover_to_select">Hover</string>
     <string name="announcements_title">Announcements</string>
+    <!-- These two strings are displayed when the user disables hand tracking in the controllers view widget. -->
+    <string name="disable_hand_tracking_dialog_title">On disabling Hand Tracking</string>
+    <string name="disable_hand_tracking_dialog_body">Hand tracking is disabled temporarily. It will be automatically re-enabled on next launch. This option is not persistent on purpose to avoid issues when controllers are unavailable.</string>
 
 </resources>
