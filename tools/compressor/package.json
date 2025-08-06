@@ -20,6 +20,6 @@
   "dependencies": {
     "readdirp": "^3.6.0",
     "sharp": "^0.32.6",
-    "tmp": "0.2.1"
+    "tmp": "0.2.4"
   }
 }
