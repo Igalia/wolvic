@@ -233,7 +233,7 @@
     <string name="hardware_acceleration_switch">Увімкнути апаратне прискорення інтерфейсу</string>
     <string name="bypass_cache_on_reload_switch">Скидати кеш при оновленні сторінки</string>
     <string name="developer_options_servo">Увімкнути Servo</string>
-    <string name="security_options_downloads_storage">Сховище завантажень за замовчуванням</string>
+    <string name="security_options_downloads_storage">Типове сховище завантажень</string>
     <string name="developer_options_clear_user_data_description">Всі дані користувача</string>
     <string name="developer_options_msaa_4">4x</string>
     <string name="settings_whats_new">Що нового</string>
@@ -324,7 +324,7 @@
     <string name="private_browsing_title">Приватний перегляд</string>
     <string name="addons_details_enabled">Увімкнено</string>
     <string name="addons_install_dialog_cancel">Скасувати</string>
-    <string name="homepage_hint">%1$s Домівка (за замовчуванням)</string>
+    <string name="homepage_hint">%1$s Домівка (типово)</string>
     <string name="authentication_username">Ім\'я користувача:</string>
     <string name="no_internet_title">Втрачено зв\'язок з Інтернетом</string>
     <string name="no_internet_message">Перевірте конфігурацію вашого пристрою, щоб вирішити проблему.</string>
@@ -585,7 +585,7 @@
     <string name="performance_title">Низька продуктивність сайту</string>
     <string name="performance_message">Спробуйте зменшити розмір вікна, щоб покращити продуктивність. Розблокування цієї сторінки може призвести до аварійного завершення роботи програми.</string>
     <string name="voice_samples_collect_dialog_allow">Дозволити</string>
-    <string name="language_default">За замовчуванням</string>
+    <string name="language_default">Типова</string>
     <string name="url_home_title">%1$s Домівка</string>
     <string name="url_bookmarks_title">Закладки</string>
     <string name="url_history_title">Історія</string>
@@ -823,6 +823,6 @@
     <string name="display_options_tabs_location_tray">В лотку</string>
     <string name="display_options_tabs_location_horizontal">Горизонтально</string>
     <string name="display_options_tabs_location_vertical">Вертикально</string>
-    <string name="settings_window_size">Розмір вікна за замовчуванням</string>
+    <string name="settings_window_size">Типовий розмір вікна</string>
     <string name="download_addon_install_blocked_permissions_body">Для продовження увімкніть дозволи на зберігання в Параметрах конфіденційності.</string>
 </resources>
