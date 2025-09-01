@@ -17,11 +17,8 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.databinding.OptionsControllerBinding;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
 import com.igalia.wolvic.ui.views.settings.SwitchSetting;
-import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
-import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
-import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
 
 class ControllerOptionsView extends SettingsView {
 
@@ -209,22 +206,8 @@ class ControllerOptionsView extends SettingsView {
         });
     };
 
-    private SwitchSetting.OnCheckedChangeListener mHandtrackingListener = (compoundButton, enabled, apply) -> {
-        if (!enabled) {
-            PromptDialogWidget dialog = new PromptDialogWidget(getContext());
-            dialog.setTitle(R.string.disable_hand_tracking_dialog_title);
-            dialog.setBody(R.string.disable_hand_tracking_dialog_body);
-            dialog.setButtons(new int[]{R.string.ok_button});
-            dialog.setCheckboxVisible(false);
-            dialog.setDescriptionVisible(false);
-            dialog.setButtonsDelegate((index, isChecked) -> {
-                dialog.hide(UIWidget.REMOVE_WIDGET);
-                dialog.releaseWidget();
-            });
-            dialog.show(UIWidget.REQUEST_FOCUS);
-        }
-        setHandTrackingEnabled(enabled, true);
-    };
+    private SwitchSetting.OnCheckedChangeListener mHandtrackingListener = (compoundButton, enabled, apply) ->
+            setHandTrackingEnabled(enabled, true);
 
     @Override
     public Point getDimensions() {
