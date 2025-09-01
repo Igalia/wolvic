@@ -5,7 +5,9 @@
 
 package com.igalia.wolvic.ui.widgets.settings;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.view.LayoutInflater;
 
@@ -22,6 +24,8 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 
 class ControllerOptionsView extends SettingsView {
 
+    private static final int HAND_TRACKING_WARNING_HIGHLIGHT_DURATION = 1000;
+    private static final int HAND_TRACKING_WARNING_HIGHLIGHT_START_DELAY = 300;
     private OptionsControllerBinding mBinding;
 
     public ControllerOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
@@ -161,10 +165,35 @@ class ControllerOptionsView extends SettingsView {
         }
     }
 
+    private void showHandTrackingWarningIfNeeded(boolean enabled) {
+        if (enabled) {
+            mBinding.handtrackingSwitchWarning.setVisibility(GONE);
+        } else {
+            mBinding.handtrackingSwitchWarning.setVisibility(VISIBLE);
+
+            int highlightColor = getContext().getResources().getColor(R.color.eggplant);
+            int targetColor = highlightColor & 0x00FFFFFF; // clear alpha
+
+            mBinding.handtrackingSwitchWarning.setBackgroundColor(highlightColor);
+
+            ValueAnimator animator = ValueAnimator.ofArgb(highlightColor, targetColor);
+            animator.setDuration(HAND_TRACKING_WARNING_HIGHLIGHT_DURATION);
+            animator.setStartDelay(HAND_TRACKING_WARNING_HIGHLIGHT_START_DELAY);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    mBinding.handtrackingSwitchWarning.setBackgroundColor((int) valueAnimator.getAnimatedValue());
+                }
+            });
+            animator.start();
+        }
+    }
+
     private void setHandTrackingEnabled(boolean value, boolean doApply) {
         mBinding.handtrackingSwitch.setOnCheckedChangeListener(null);
         mBinding.handtrackingSwitch.setValue(value, false);
         mBinding.handtrackingSwitch.setOnCheckedChangeListener(mHandtrackingListener);
+        showHandTrackingWarningIfNeeded(value);
 
         if (doApply) {
             mWidgetManager.setHandTrackingEnabled(value);
