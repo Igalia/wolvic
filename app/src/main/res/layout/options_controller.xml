@@ -72,6 +72,36 @@
                     android:layout_height="wrap_content"
                     app:description="@string/controller_options_handtracking" />
 
+                <RelativeLayout
+                    android:id="@+id/handtracking_switch_warning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    android:paddingBottom="8dp">
+
+                    <ImageView
+                        android:id="@+id/info_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="24dp"
+                        android:src="@drawable/ic_addons_info" />
+
+                    <TextView
+                        android:id="@+id/setting_description"
+                        style="@style/settingsText"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_toEndOf="@id/info_icon"
+                        android:text="@string/disable_hand_tracking_dialog_body"
+                        android:textAlignment="textStart" />
+
+                </RelativeLayout>
+
                 <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/window_selection_radio"
                     android:layout_width="match_parent"
