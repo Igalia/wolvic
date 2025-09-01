@@ -2615,4 +2615,7 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="controller_options_hover_to_select">Hover</string>
     <string name="announcements_title">Announcements</string>
 
+    <!-- Shown in the controller options view when disabling the hand tracking switch -->
+    <string name="disable_hand_tracking_dialog_body">Hand tracking is disabled temporarily. It will be automatically re-enabled on next launch. This option is not persistent on purpose to avoid issues when controllers are unavailable.</string>
+
 </resources>
