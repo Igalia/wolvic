@@ -164,6 +164,12 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
