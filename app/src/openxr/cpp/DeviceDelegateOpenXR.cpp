@@ -495,7 +495,11 @@ struct DeviceDelegateOpenXR::State {
 
     uint32_t displayRefreshRateCount = 0;
     CHECK_XRCMD(OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB(session, 0, &displayRefreshRateCount, nullptr));
-    CHECK(displayRefreshRateCount > 0);
+    if (displayRefreshRateCount == 0) {
+        VRB_ERROR("OpenXR runtime reports 0 display refresh rates but XR_FB_display_refresh_rate is supported");
+        return;
+    }
+
     refreshRates.resize(displayRefreshRateCount);
     CHECK_XRCMD(OpenXRExtensions::sXrEnumerateDisplayRefreshRatesFB(session, displayRefreshRateCount, &displayRefreshRateCount, refreshRates.data()));
 
@@ -733,7 +737,7 @@ struct DeviceDelegateOpenXR::State {
   }
 
   void UpdateDisplayRefreshRate() {
-    if (!OpenXRExtensions::IsExtensionSupported(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME))
+    if (!OpenXRExtensions::IsExtensionSupported(XR_FB_DISPLAY_REFRESH_RATE_EXTENSION_NAME) || refreshRates.empty())
       return;
 
     float suggestedRefreshRate = 0.0;
