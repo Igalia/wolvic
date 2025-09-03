@@ -54,8 +54,6 @@ const char* const kGetActiveEnvironment = "getActiveEnvironment";
 const char* const kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 const char* const kGetPointerColor = "getPointerColor";
 const char* const kGetPointerColorSignature = "()I";
-const char* const kAreLayersEnabled = "areLayersEnabled";
-const char* const kAreLayersEnabledSignature = "()Z";
 const char* const kSetDeviceType = "setDeviceType";
 const char* const kSetDeviceTypeSignature = "(I)V";
 const char* const kHaltActivity = "haltActivity";
@@ -80,6 +78,8 @@ const char* const kOnControllersAvailable = "onControllersAvailable";
 const char* const kOnControllersAvailableSignature = "()V";
 const char* const kChangeWindowDistance = "changeWindowDistance";
 const char* const kChangeWindowDistanceSignature = "(F)V";
+const char* const kOnMaxCompositionLayersAvailableName = "onMaxCompositionLayersAvailable";
+const char* const kOnMaxCompositionLayersAvailableSignature = "(I)V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -106,7 +106,6 @@ jmethodID sCheckTogglePassthrough = nullptr;
 jmethodID sResetWindowsPosition = nullptr;
 jmethodID sGetActiveEnvironment = nullptr;
 jmethodID sGetPointerColor = nullptr;
-jmethodID sAreLayersEnabled = nullptr;
 jmethodID sSetDeviceType = nullptr;
 jmethodID sHaltActivity = nullptr;
 jmethodID sHandlePoorPerformance = nullptr;
@@ -119,6 +118,7 @@ jmethodID sSetEyeTrackingSupported = nullptr;
 jmethodID sSetHandTrackingSupported = nullptr;
 jmethodID sOnControllersAvailable = nullptr;
 jmethodID sChangeWindowDistance = nullptr;
+jmethodID sOnMaxCompositionLayersAvailable = nullptr;
 
 } // namespace
 
@@ -161,7 +161,6 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sResetWindowsPosition = FindJNIMethodID(sEnv, sBrowserClass, kResetWindowsPosition, kResetWindowsPositionSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
-  sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
   sSetDeviceType = FindJNIMethodID(sEnv, sBrowserClass, kSetDeviceType, kSetDeviceTypeSignature);
   sHaltActivity = FindJNIMethodID(sEnv, sBrowserClass, kHaltActivity, kHaltActivitySignature);
   sHandlePoorPerformance = FindJNIMethodID(sEnv, sBrowserClass, kHandlePoorPerformance, kHandlePoorPerformanceSignature);
@@ -174,6 +173,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sSetHandTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetHandTrackingSupported, kSetHandTrackingSupportedSignature);
   sOnControllersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnControllersAvailable, kOnControllersAvailableSignature);
   sChangeWindowDistance = FindJNIMethodID(sEnv, sBrowserClass, kChangeWindowDistance, kChangeWindowDistanceSignature);
+  sOnMaxCompositionLayersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnMaxCompositionLayersAvailableName, kOnMaxCompositionLayersAvailableSignature);
 }
 
 JNIEnv * VRBrowser::Env()
@@ -216,7 +216,6 @@ VRBrowser::ShutdownJava() {
   sResetWindowsPosition = nullptr;
   sGetActiveEnvironment = nullptr;
   sGetPointerColor = nullptr;
-  sAreLayersEnabled = nullptr;
   sSetDeviceType = nullptr;
   sHaltActivity = nullptr;
   sOnAppLink = nullptr;
@@ -224,6 +223,7 @@ VRBrowser::ShutdownJava() {
   sEnv = nullptr;
   sAppendAppNotesToCrashReport = nullptr;
   sChangeWindowDistance = nullptr;
+  sOnMaxCompositionLayersAvailable = nullptr;
 }
 
 void
@@ -418,15 +418,6 @@ VRBrowser::GetPointerColor() {
   return (int32_t )jHexColor;
 }
 
-bool
-VRBrowser::AreLayersEnabled() {
-  if (!ValidateMethodID(sEnv, sActivity, sAreLayersEnabled, __FUNCTION__)) { return false; }
-  jboolean enabled = sEnv->CallBooleanMethod(sActivity, sAreLayersEnabled);
-  CheckJNIException(sEnv, __FUNCTION__);
-
-  return enabled;
-}
-
 void
 VRBrowser::SetDeviceType(const jint aType) {
   if (!ValidateMethodID(sEnv, sActivity, sSetDeviceType, __FUNCTION__)) { return; }
@@ -514,6 +505,13 @@ void
 VRBrowser::ChangeWindowDistance(jfloat aDelta) {
     if (!ValidateMethodID(sEnv, sActivity, sChangeWindowDistance, __FUNCTION__)) { return; }
     sEnv->CallVoidMethod(sActivity, sChangeWindowDistance, aDelta);
+    CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::OnMaxCompositionLayersAvailable(jint aNumLayers) {
+    if (!ValidateMethodID(sEnv, sActivity, sOnMaxCompositionLayersAvailable, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sOnMaxCompositionLayersAvailable, aNumLayers);
     CheckJNIException(sEnv, __FUNCTION__);
 }
 
