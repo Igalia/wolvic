@@ -140,7 +140,6 @@ struct DeviceDelegateOpenXR::State {
     for (int i = 0; i < 2; ++i) {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
     }
-    layersEnabled = VRBrowser::AreLayersEnabled();
 
 #ifndef HVR
     PFN_xrInitializeLoaderKHR initializeLoaderKHR;
@@ -310,6 +309,7 @@ struct DeviceDelegateOpenXR::State {
     CHECK_XRCMD(xrGetSystemProperties(instance, system, &systemProperties))
     VRB_LOG("OpenXR system name: %s", systemProperties.systemName);
 
+    layersEnabled = systemProperties.graphicsProperties.maxLayerCount > 1 && OpenXRExtensions::IsExtensionSupported(XR_KHR_ANDROID_SURFACE_SWAPCHAIN_EXTENSION_NAME);
     if (systemProperties.graphicsProperties.maxLayerCount == 0)
         VRB_ERROR("OpenXR runtime reports 0 layers. There must be at least 1");
 
@@ -1786,6 +1786,14 @@ DeviceDelegateOpenXR::UpdatePassthrough() {
     OpenXRExtensions::sXrPassthroughLayerResumeFB(m.passthroughLayer->GetPassthroughLayerHandle());
   else
     OpenXRExtensions::sXrPassthroughLayerPauseFB(m.passthroughLayer->GetPassthroughLayerHandle());
+}
+
+unsigned
+DeviceDelegateOpenXR::MaxCompositionLayers() const {
+  CHECK(m.instance != XR_NULL_HANDLE && m.system != XR_NULL_SYSTEM_ID);
+  // Even if the runtime supports multiple layers, do not report them if the Android surface
+  // swapchain extension is not available, because we won't be able to create the swapchains
+  return m.layersEnabled ? m.systemProperties.graphicsProperties.maxLayerCount : 1;
 }
 
 } // namespace crow

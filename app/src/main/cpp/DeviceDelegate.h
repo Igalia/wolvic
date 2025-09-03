@@ -140,6 +140,7 @@ public:
   virtual bool PopulateTrackedKeyboardInfo(TrackedKeyboardInfo& keyboardInfo) { return false; };
   virtual void SetHandTrackingEnabled(bool value) {};
   virtual float GetSelectThreshold(int32_t controllerIndex) { return 1.f; };
+  virtual unsigned MaxCompositionLayers() const { return 1; }
 
 protected:
   DeviceDelegate() {}

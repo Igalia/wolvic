@@ -112,6 +112,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -270,6 +271,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private boolean mIsEyeTrackingSupported;
     private String mImmersiveParentElementXPath;
     private String mImmersiveTargetElementXPath;
+    private OptionalInt mMaxCompositionLayers = OptionalInt.empty();
+    private LinkedList<CheckCompositionLayersCallback> mCompositionLayersPendingCallbacks;
 
     private ViewTreeObserver.OnGlobalFocusChangeListener globalFocusListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
         @Override
@@ -343,6 +346,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWebXRListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
+        mCompositionLayersPendingCallbacks = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
         mWidgets = new ConcurrentHashMap<>();
 
@@ -1473,12 +1477,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    public boolean areLayersEnabled() {
-        return SettingsStore.getInstance(this).getLayersEnabled();
-    }
-
-    @Keep
-    @SuppressWarnings("unused")
     public String getActiveEnvironment() {
         return getServicesProvider().getEnvironmentsManager().getOrDownloadEnvironment();
     }
@@ -2291,6 +2289,35 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         float increment = 0.05f;
         float clamped = Math.max(0.0f, Math.min(mSettings.getWindowDistance() + (aDelta > 0 ? increment : -increment), 1.0f));
         mSettings.setWindowDistance(clamped);
+    }
+
+    private boolean supportsCompositionLayers() {
+        assert(mMaxCompositionLayers.isPresent());
+        return mMaxCompositionLayers.getAsInt() > 1;
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void onMaxCompositionLayersAvailable(int aNumLayers) {
+        assert(!mMaxCompositionLayers.isPresent());
+        mMaxCompositionLayers = OptionalInt.of(aNumLayers);
+        boolean supportsLayers = supportsCompositionLayers();
+        Log.i(LOGTAG, "Max composition layers: " + aNumLayers + " so " + (supportsLayers ? "enabling" : "disabling") + " layers support");
+        runOnUiThread(() -> {
+            for (CheckCompositionLayersCallback callback : mCompositionLayersPendingCallbacks) {
+                callback.onCompositionLayersSupport(supportsLayers);
+            }
+            mCompositionLayersPendingCallbacks.clear();
+        });
+    }
+
+    @Override
+    public void checkCompositionLayersSupported(@NonNull CheckCompositionLayersCallback callback) {
+        if (!mMaxCompositionLayers.isPresent()) {
+            mCompositionLayersPendingCallbacks.add(callback);
+            return;
+        }
+        callback.onCompositionLayersSupport(supportsCompositionLayers());
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);

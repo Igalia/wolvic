@@ -375,10 +375,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         super.onResume();
         if (isVisible() || mIsInVRVideoMode) {
             mSession.setActive(true);
-            if (!SettingsStore.getInstance(getContext()).getLayersEnabled() && !mSession.hasDisplay()) {
-                // Ensure the Display is correctly recreated.
-                // See: https://github.com/MozillaReality/FirefoxReality/issues/2880
-                callSurfaceChanged();
+            if (!mSession.hasDisplay()) {
+                mWidgetManager.checkCompositionLayersSupported((boolean enabled) -> {
+                    if (enabled) {
+                        // Ensure the Display is correctly recreated.
+                        // See: https://github.com/MozillaReality/FirefoxReality/issues/2880
+                        callSurfaceChanged();
+                    }
+                });
             }
         }
     }
@@ -430,12 +434,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void recreateWidgetSurfaceIfNeeded(float prevDensity) {
-        if (prevDensity != mWidgetPlacement.density || !SettingsStore.getInstance(getContext()).getLayersEnabled())
+        if (prevDensity != mWidgetPlacement.density)
             return;
 
-        // If the densities are the same updateWidget won't generate a new surface as the resulting
-        // texture sizes are equal. We need to force a new surface creation when using layers.
-        mWidgetManager.recreateWidgetSurface(this);
+        mWidgetManager.checkCompositionLayersSupported((boolean enabled) -> {
+            if (enabled) {
+                // If the densities are the same updateWidget won't generate a new surface as the resulting
+                // texture sizes are equal. We need to force a new surface creation when using layers.
+                mWidgetManager.recreateWidgetSurface(this);
+            }
+        });
     }
 
     private void setView(View view, boolean switchSurface,  @ViewBrightness int viewBrightness) {
