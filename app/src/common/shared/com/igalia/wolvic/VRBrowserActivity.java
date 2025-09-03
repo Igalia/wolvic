@@ -7,12 +7,16 @@ package com.igalia.wolvic;
 
 import static com.igalia.wolvic.ui.widgets.UIWidget.REMOVE_WIDGET;
 
+import android.Manifest;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -30,15 +34,21 @@ import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
+import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentController;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
@@ -76,6 +86,7 @@ import com.igalia.wolvic.ui.widgets.AbstractTabsBar;
 import com.igalia.wolvic.ui.widgets.AppServicesProvider;
 import com.igalia.wolvic.ui.widgets.HorizontalTabsBar;
 import com.igalia.wolvic.ui.widgets.KeyboardWidget;
+import com.igalia.wolvic.ui.widgets.MousePointerWidget;
 import com.igalia.wolvic.ui.widgets.NavigationBarWidget;
 import com.igalia.wolvic.ui.widgets.OverlayContentWidget;
 import com.igalia.wolvic.ui.widgets.RootWidget;
@@ -158,6 +169,48 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         }
     };
+
+    private BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(LOGTAG, "Bluetooth receiver triggered: " + intent.getAction());
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (device == null) {
+                Log.e(LOGTAG, "Bluetooth device is null");
+                return;
+            }
+            if (!isHidDevice(device)) {
+                Log.d(LOGTAG, "Bluetooth device is not a HID device: " + device.getName());
+                return;
+            }
+            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(intent.getAction())) {
+                handleBluetoothHidDeviceDisconnected(device);
+            } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(intent.getAction())) {
+                handleBluetoothHidDeviceConnected(device);
+            } else {
+                Log.d(LOGTAG, "Bluetooth device action not recognized: " + intent.getAction());
+            }
+        }
+    };
+
+    // Helper method to check if a device is likely a HID device
+    private boolean isHidDevice(BluetoothDevice device) {
+        Log.d(LOGTAG, "Checking if device is HID: " + device.getName());
+
+        // This is a basic check. We might need more sophisticated logic
+        // based on the device's BluetoothClass or supported UUIDs.
+        if (device.getBluetoothClass() != null) {
+            BluetoothClass bluetoothClass = device.getBluetoothClass();
+            Log.d(LOGTAG, "Bluetooth class: " + bluetoothClass.toString());
+            int deviceClass = bluetoothClass.getDeviceClass();
+            Log.d(LOGTAG, "Bluetooth device class: " + deviceClass);
+            return bluetoothClass.doesClassMatch(BluetoothClass.PROFILE_HID)
+                    && deviceClass == BluetoothClass.Device.PERIPHERAL_POINTING;
+        } else {
+            Log.d(LOGTAG, "Bluetooth device class is null");
+        }
+        return false;
+    }
 
     private LifecycleRegistry mLifeCycle;
 
@@ -289,6 +342,47 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.attachBaseContext(newContext);
     }
 
+    private void registerBluetoothReceiver() {
+        Log.d(LOGTAG, "Registering Bluetooth receiver");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            registerReceiver(mBluetoothReceiver, intentFilter, null, null, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mBluetoothReceiver, intentFilter, null, null);
+        }
+    }
+
+    private void checkAndRequestBluetoothConnectPermission() {
+        Log.d(LOGTAG, "Checking for BLUETOOTH_CONNECT permission");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Check for Android 12+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                // Permission is already granted
+                Log.d(LOGTAG, "BLUETOOTH_CONNECT permission already granted.");
+                registerBluetoothReceiver();
+            } else {
+                // Permission is not granted, request it
+                Log.d(LOGTAG, "Requesting BLUETOOTH_CONNECT permission.");
+                requestPermission(null, Manifest.permission.BLUETOOTH_CONNECT, OriginatorType.APPLICATION, new WSession.PermissionDelegate.Callback() {
+                    @Override
+                    public void grant() {
+                        registerBluetoothReceiver();
+                    }
+
+                    @Override
+                    public void reject() {
+                        Log.w(LOGTAG, "BLUETOOTH_CONNECT permission denied.");
+                    }
+                });
+            }
+        } else {
+            // On older Android versions, BLUETOOTH and BLUETOOTH_ADMIN are sufficient
+            Log.d(LOGTAG, "Running on Android version < 12. No runtime BLUETOOTH_CONNECT permission needed.");
+            registerBluetoothReceiver(); // Register the receiver directly
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(Looper.getMainLooper()), 0));
@@ -405,6 +499,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         else
             setPointerMode(mSettings.getPointerMode());
 
+        checkAndRequestBluetoothConnectPermission();
+
         // Show the launch dialogs, if needed.
         if (!showTermsServiceDialogIfNeeded()) {
             if (!showPrivacyDialogIfNeeded()) {
@@ -499,6 +595,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         attachToWindow(mWindows.getFocusedWindow(), null);
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mTabsBar, mWebXRInterstitial));
+
+
 
         // Create the platform plugin after widgets are created to be extra safe.
         mPlatformPlugin = createPlatformPlugin(this);
