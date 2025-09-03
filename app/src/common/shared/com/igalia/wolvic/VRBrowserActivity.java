@@ -1221,7 +1221,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     return;
                 }
             }
-            float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
+            float scrollDirection = mSettings.getScrollDirection() == SettingsStore.SCROLL_DIRECTION_NATURAL ? 1.0f : -1.0f;
             MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
         });
     }
