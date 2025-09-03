@@ -1021,7 +1021,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
       } else if (axis.type == OpenXRAxisType::Thumbstick) {
         axesContainer[device::kImmersiveAxisThumbstickX] = state->x;
         axesContainer[device::kImmersiveAxisThumbstickY] = -state->y;
-        delegate.SetScrolledDelta(mIndex, state->x, state->y);
+        delegate.SetScrolledDelta(mIndex, -state->x, state->y);
       } else {
         axesContainer.push_back(state->x);
         axesContainer.push_back(-state->y);
