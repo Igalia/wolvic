@@ -85,6 +85,7 @@ class SitePermissionsOptionsView extends SettingsView {
                 mBinding.contentText.setText(R.string.settings_privacy_policy_tracking_description);
                 mBinding.emptyText.setText(R.string.settings_privacy_policy_tracking_empty_description);
                 mBinding.emptySecondText.setVisibility(GONE);
+                break;
             case SitePermission.SITE_PERMISSION_AUTOFILL:
                 mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_login_exceptions_title);
                 mBinding.contentText.setText(R.string.settings_privacy_policy_login_exceptions_description);
