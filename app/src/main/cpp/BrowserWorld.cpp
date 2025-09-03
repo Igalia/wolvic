@@ -946,6 +946,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.device->SetControllerDelegate(delegate);
     m.device->SetReorientClient(this);
     m.gestures = m.device->GetGestureDelegate();
+    VRBrowser::OnMaxCompositionLayersAvailable(m.device->MaxCompositionLayers());
   } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers->Reset();

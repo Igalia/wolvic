@@ -41,8 +41,6 @@ public class HamburgerMenuWidget extends UIWidget implements
         WidgetManagerDelegate.FocusChangeListener,
         ComponentsAdapter.StoreUpdatesListener {
 
-    private boolean mProxify = SettingsStore.getInstance(getContext()).getLayersEnabled();
-
     public interface MenuDelegate {
         void onSendTab();
         void onResize();
@@ -109,10 +107,8 @@ public class HamburgerMenuWidget extends UIWidget implements
         updateUI();
     }
 
-    @Override
-    public void show(int aShowFlags) {
-        mWidgetPlacement.proxifyLayer = mProxify;
-        super.show(aShowFlags);
+    private void internalShow(boolean proxifyLayer) {
+        mWidgetPlacement.proxifyLayer = proxifyLayer;
 
         if (mWidgetManager != null) {
             mWidgetManager.addFocusChangeListener(this);
@@ -121,6 +117,18 @@ public class HamburgerMenuWidget extends UIWidget implements
         ComponentsAdapter.get().addStoreUpdatesListener(this);
 
         AnimationHelper.scaleIn(findViewById(R.id.menuContainer), 100, 0, null);
+    }
+
+    @Override
+    public void show(int aShowFlags) {
+        super.show(aShowFlags);
+        if (mWidgetManager == null) {
+            internalShow(false);
+        } else {
+            mWidgetManager.checkCompositionLayersSupported(supported -> {
+                internalShow(supported);
+            });
+        }
     }
 
     @Override

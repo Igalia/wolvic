@@ -39,6 +39,10 @@ public interface WidgetManagerDelegate {
         void onEyeTrackingPermissionRequest(boolean aPermissionGranted);
     }
 
+    interface CheckCompositionLayersCallback {
+        void onCompositionLayersSupport(boolean aSupported);
+    }
+
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
@@ -152,5 +156,5 @@ public interface WidgetManagerDelegate {
     boolean isEyeTrackingSupported();
     boolean isHandTrackingSupported();
     boolean areControllersAvailable();
-
+    void checkCompositionLayersSupported(@NonNull CheckCompositionLayersCallback callback);
 }

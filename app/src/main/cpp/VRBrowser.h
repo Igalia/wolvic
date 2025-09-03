@@ -54,6 +54,7 @@ void SetEyeTrackingSupported(bool aIsSupported);
 void SetHandTrackingSupported(bool aIsSupported);
 void OnControllersAvailable();
 void ChangeWindowDistance(jfloat aDelta);
+void OnMaxCompositionLayersAvailable(jint aNumLayers);
 } // namespace VRBrowser;
 
 } // namespace crow

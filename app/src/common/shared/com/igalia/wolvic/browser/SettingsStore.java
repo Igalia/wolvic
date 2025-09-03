@@ -705,15 +705,6 @@ public class SettingsStore {
         editor.apply();
     }
 
-    public boolean getLayersEnabled() {
-        if ((DeviceType.isOculusBuild() || DeviceType.isPicoXR()) && !mDisableLayers) {
-            Log.i(LOGTAG, "Layers are enabled");
-            return true;
-        }
-        Log.i(LOGTAG, "Layers are not supported");
-        return false;
-    }
-
     public int getTransparentBorderWidth() {
         return 1;
     }

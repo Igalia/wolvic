@@ -538,20 +538,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void proxifyLayerIfNeeded(ArrayList<WindowWidget> aWindows) {
-        if (!SettingsStore.getInstance(getContext()).getLayersEnabled()) {
-            return;
-        }
-        boolean proxify = false;
-        for (WindowWidget window: aWindows) {
-            if (window.getPlacement().borderColor != 0) {
-                proxify = true;
-                break;
+        mWidgetManager.checkCompositionLayersSupported((boolean enabled) -> {
+            if (!enabled)
+                return;
+            boolean proxify = false;
+            for (WindowWidget window: aWindows) {
+                if (window.getPlacement().borderColor != 0) {
+                    proxify = true;
+                    break;
+                }
             }
-        }
-        if (mWidgetPlacement.proxifyLayer != proxify) {
-            mWidgetPlacement.proxifyLayer = proxify;
-            mWidgetManager.updateWidget(this);
-        }
+            if (mWidgetPlacement.proxifyLayer != proxify) {
+                mWidgetPlacement.proxifyLayer = proxify;
+                mWidgetManager.updateWidget(this);
+            }
+        });
     }
 
     private void hideOverlays() {
