@@ -26,6 +26,7 @@ import com.igalia.wolvic.ui.adapters.HamburgerMenuAdapter;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.ViewUtils;
 
@@ -40,8 +41,6 @@ import mozilla.components.concept.engine.webextension.Action;
 public class HamburgerMenuWidget extends UIWidget implements
         WidgetManagerDelegate.FocusChangeListener,
         ComponentsAdapter.StoreUpdatesListener {
-
-    private boolean mProxify = SettingsStore.getInstance(getContext()).getLayersEnabled();
 
     public interface MenuDelegate {
         void onSendTab();
@@ -109,10 +108,8 @@ public class HamburgerMenuWidget extends UIWidget implements
         updateUI();
     }
 
-    @Override
-    public void show(int aShowFlags) {
-        mWidgetPlacement.proxifyLayer = mProxify;
-        super.show(aShowFlags);
+    private void internalShow(boolean proxifyLayer) {
+        mWidgetPlacement.proxifyLayer = proxifyLayer;
 
         if (mWidgetManager != null) {
             mWidgetManager.addFocusChangeListener(this);
@@ -121,6 +118,18 @@ public class HamburgerMenuWidget extends UIWidget implements
         ComponentsAdapter.get().addStoreUpdatesListener(this);
 
         AnimationHelper.scaleIn(findViewById(R.id.menuContainer), 100, 0, null);
+    }
+
+    @Override
+    public void show(int aShowFlags) {
+        super.show(aShowFlags);
+        if (mWidgetManager == null) {
+            internalShow(false);
+        } else {
+            mWidgetManager.areCompositionLayersSupported(supported -> {
+                internalShow(supported);
+            });
+        }
     }
 
     @Override
