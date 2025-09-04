@@ -83,6 +83,13 @@ public class SettingsStore {
     public static final int WINDOW_SELECTION_METHOD_CLICK = 0;
     public static final int WINDOW_SELECTION_METHOD_HOVER = 1;
 
+    // Keep in sync with developer_options_pointer_scroll_direction_values array in option_values.xml
+    @IntDef(value = {SCROLL_DIRECTION_INVALID, SCROLL_DIRECTION_NATURAL, SCROLL_DIRECTION_REVERSED})
+    public @interface ScrollDirection {}
+    public static final int SCROLL_DIRECTION_INVALID = -1;
+    public static final int SCROLL_DIRECTION_NATURAL = 0;
+    public static final int SCROLL_DIRECTION_REVERSED = 1;
+
     private Context mContext;
     private SharedPreferences mPrefs;
     private SettingsViewModel mSettingsViewModel;
@@ -151,7 +158,6 @@ public class SettingsStore {
 
     public final static @WindowSelectionMethod int WINDOW_SELECTION_METHOD_DEFAULT = WINDOW_SELECTION_METHOD_HOVER;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
-    public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
@@ -193,7 +199,7 @@ public class SettingsStore {
     public final static boolean CRASH_REPORTING_DEFAULT = false;
     public final static boolean TELEMETRY_DEFAULT = true;
 
-    private int mCachedScrollDirection = -1;
+    private @ScrollDirection int mCachedScrollDirection = SCROLL_DIRECTION_INVALID;
 
     private boolean mDisableLayers = false;
     public void setDisableLayers(final boolean aDisableLayers) {
@@ -669,9 +675,10 @@ public class SettingsStore {
         editor.apply();
     }
 
+    @ScrollDirection
     public int getScrollDirection() {
-        if (mCachedScrollDirection < 0) {
-            mCachedScrollDirection = mPrefs.getInt(mContext.getString(R.string.settings_key_scroll_direction), SCROLL_DIRECTION_DEFAULT);
+        if (mCachedScrollDirection == SCROLL_DIRECTION_INVALID) {
+            mCachedScrollDirection = mPrefs.getInt(mContext.getString(R.string.settings_key_scroll_direction), SCROLL_DIRECTION_NATURAL);
         }
         return mCachedScrollDirection;
     }
