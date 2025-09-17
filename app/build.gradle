@@ -112,7 +112,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 34
         versionCode generatedVersionCode
-        versionName "1.8"
+        versionName "1.9"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
