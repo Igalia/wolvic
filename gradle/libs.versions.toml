@@ -42,7 +42,6 @@ okhttp = "4.12.0"
 opentelemetryAndroid = "0.9.1-alpha"
 opentelemetryApi = "1.46.0"
 openxrLoader = "1.0.34"
-r8 = "8.7.18"
 robolectric = "4.11.1"
 zip4j = "2.11.5"
 
@@ -138,8 +137,6 @@ opentelemetry-android-instrumentation-crash = { module = "io.opentelemetry.andro
 opentelemetry-android-instrumentation-sessions = { module = "io.opentelemetry.android:instrumentation-sessions", version.ref = "opentelemetryAndroid" }
 # OpenXR
 openxrloader = { module = "org.khronos.openxr:openxr_loader_for_android", version.ref = "openxrLoader" }
-# R8
-r8 = { module = "com.android.tools:r8", version.ref = "r8" }
 # Robolectric
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 # Room

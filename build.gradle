@@ -3,7 +3,6 @@
 buildscript {
     dependencies {
         classpath libs.agp
-        classpath libs.r8
         classpath libs.kotlin.plugin
         classpath libs.huawei.agconnect.agcp
 
