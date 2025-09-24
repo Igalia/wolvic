@@ -28,7 +28,7 @@ on:
         description: 'Gradle version'
         required: false
         type: string
-        default: "8.9"
+        default: "8.13"
 
 jobs:
   build:
