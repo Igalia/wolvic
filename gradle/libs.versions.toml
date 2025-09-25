@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.11.1"
 androidComponents = "128.0"
 androidxAnnotation = "1.6.0"
 androidxAppcompat = "1.6.1"
@@ -18,6 +18,7 @@ atslRunner = "1.5.2"
 atslJunit = "1.1.5"
 colorpickerpreference = "2.0.6"
 desugarJdkLibs = "2.1.4"
+dependency-analysis = "3.0.1"
 diskLruCache = "2.0.2"
 espresso= "3.5.1"
 gamesActivity = "4.0.0"
@@ -41,7 +42,6 @@ okhttp = "4.12.0"
 opentelemetryAndroid = "0.9.1-alpha"
 opentelemetryApi = "1.46.0"
 openxrLoader = "1.0.34"
-r8 = "8.7.18"
 robolectric = "4.11.1"
 zip4j = "2.11.5"
 
@@ -96,12 +96,12 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 # Games Activity
 games-activity = { module = "androidx.games:games-activity", version.ref = "gamesActivity" }
 # GeckoView
-geckoview-beta-arm64 = { module = "org.mozilla.geckoview:geckoview-beta-arm64-v8", version.ref = "geckoviewBeta" }
-geckoview-beta-x64 = { module = "org.mozilla.geckoview:geckoview-beta-x86_64", version.ref = "geckoviewBeta" }
-geckoview-nightly-arm64 = { module = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a", version.ref = "geckoviewNightly" }
-geckoview-nightly-x64 = { module = "org.mozilla.geckoview:geckoview-nightly-x86_64", version.ref = "geckoviewNightly" }
-geckoview-release-arm64 = { module = "org.mozilla.geckoview:geckoview-arm64-v8a", version.ref = "geckoviewRelease" }
-geckoview-release-x64 = { module = "org.mozilla.geckoview:geckoview-x86_64", version.ref = "geckoviewRelease" }
+geckoview-beta-arm64 = { module = "org.mozilla.geckoview:geckoview-omni-beta-arm64-v8", version.ref = "geckoviewBeta" }
+geckoview-beta-x64 = { module = "org.mozilla.geckoview:geckoview-omni-beta-x86_64", version.ref = "geckoviewBeta" }
+geckoview-nightly-arm64 = { module = "org.mozilla.geckoview:geckoview-nightly-omni-arm64-v8a", version.ref = "geckoviewNightly" }
+geckoview-nightly-x64 = { module = "org.mozilla.geckoview:geckoview-nightly-omni-x86_64", version.ref = "geckoviewNightly" }
+geckoview-release-arm64 = { module = "org.mozilla.geckoview:geckoview-omni-arm64-v8a", version.ref = "geckoviewRelease" }
+geckoview-release-x64 = { module = "org.mozilla.geckoview:geckoview-omni-x86_64", version.ref = "geckoviewRelease" }
 # GSON
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 # Huawei
@@ -137,8 +137,6 @@ opentelemetry-android-instrumentation-crash = { module = "io.opentelemetry.andro
 opentelemetry-android-instrumentation-sessions = { module = "io.opentelemetry.android:instrumentation-sessions", version.ref = "opentelemetryAndroid" }
 # OpenXR
 openxrloader = { module = "org.khronos.openxr:openxr_loader_for_android", version.ref = "openxrLoader" }
-# R8
-r8 = { module = "com.android.tools:r8", version.ref = "r8" }
 # Robolectric
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 # Room
@@ -161,4 +159,5 @@ work-testing = { module = "androidx.work:work-testing", version.ref = "androidxW
 zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
 
 [plugins]
+dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 jetbrains-python-envs = { id = "com.jetbrains.python.envs", version.ref = "jetbrainsPython" }
