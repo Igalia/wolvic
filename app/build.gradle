@@ -156,6 +156,10 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    base {
+        archivesName = "Wolvic"
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
