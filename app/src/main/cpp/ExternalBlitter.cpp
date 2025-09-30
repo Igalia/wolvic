@@ -25,6 +25,31 @@ void main(void) {
 }
 )SHADER";
 
+#if defined(PICOXR)
+/* Apparently the Pico driver does not do sRGB to linear conversion automatically when using
+ * GL_OES_EGL_image_external. It does seem to work fine for the other surfaces as we need to call
+ * glDisable(GL_FRAMEBUFFER_SRGB_EXT) to avoid double conversions for widgets.
+ * Using pow() does not provide exact colorimetry results but it's very fast and close enough.
+ */
+const char* sFragmentShader = R"SHADER(
+#extension GL_OES_EGL_image_external : require
+precision mediump float;
+
+uniform samplerExternalOES u_texture0;
+
+varying vec2 v_uv;
+
+vec3 toLinear(vec3 srgb) {
+    return pow(srgb, vec3(2.2));
+}
+
+void main() {
+  vec4 color = texture2D(u_texture0, v_uv);
+  color.rgb = toLinear(color.rgb);
+  gl_FragColor = color;
+}
+)SHADER";
+#else
 const char* sFragmentShader = R"SHADER(
 #extension GL_OES_EGL_image_external : require
 precision mediump float;
@@ -37,6 +62,7 @@ void main() {
   gl_FragColor = texture2D(u_texture0, v_uv);
 }
 )SHADER";
+#endif
 
 const GLfloat sVerticies[] = {
     -1.0f, 1.0f, 0.0f,
