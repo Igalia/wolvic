@@ -16,37 +16,12 @@ buildscript {
     }
 }
 
-plugins {
-    alias libs.plugins.dependency.analysis
-}
-
 allprojects {
     repositories {
         google()
         maven { url 'https://maven.mozilla.org/maven2' }
         maven { url 'https://developer.huawei.com/repo/' }
         maven { url 'https://storage.googleapis.com/r8-releases/raw' }
-    }
-}
-
-dependencyAnalysis {
-    structure {
-        // Ignore Android KTX dependencies. See https://developer.android.com/kotlin/ktx#modules
-        ignoreKtx(true)
-    }
-    issues {
-        all {
-            onAny {
-                // Fail the run if any issues are found (default = 'warn')
-                severity('fail')
-                // Ignore warnings about kotlin-stdlib since we don't directly control its usage
-                exclude('org.jetbrains.kotlin:kotlin-stdlib')
-            }
-            onUsedTransitiveDependencies {
-                // We explicitly want to pull in these dependencies transitively from AC
-                exclude('org.mozilla.appservices.nightly:fxaclient', 'org.mozilla.geckoview:geckoview-omni')
-            }
-        }
     }
 }
 
