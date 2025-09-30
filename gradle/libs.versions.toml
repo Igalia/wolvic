@@ -18,7 +18,6 @@ atslRunner = "1.5.2"
 atslJunit = "1.1.5"
 colorpickerpreference = "2.0.6"
 desugarJdkLibs = "2.1.4"
-dependency-analysis = "3.0.1"
 diskLruCache = "2.0.2"
 espresso= "3.5.1"
 gamesActivity = "4.0.0"
@@ -159,5 +158,4 @@ work-testing = { module = "androidx.work:work-testing", version.ref = "androidxW
 zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
 
 [plugins]
-dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 jetbrains-python-envs = { id = "com.jetbrains.python.envs", version.ref = "jetbrainsPython" }
