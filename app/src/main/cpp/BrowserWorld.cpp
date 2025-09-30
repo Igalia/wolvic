@@ -208,10 +208,11 @@ struct BrowserWorld::State {
   bool wasInGazeMode = false;
   WebXRInterstialState webXRInterstialState;
   vrb::Matrix widgetsYaw;
+  vrb::Vector widgetsTranslation;
   bool wasWebXRRendering = false;
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
-  LockMode lockMode = LockMode::NO_LOCK;
+  LockMode lockMode = LockMode::STICKY; // LockMode::NO_LOCK;
   std::optional<vrb::Vector> lockModeLastPosition;
 #if HVR
   bool wasButtonAppPressed = false;
@@ -1254,17 +1255,21 @@ BrowserWorld::StartFrame() {
     m.UpdateTrackedKeyboard();
     if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
-      auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
-      // Interpolate consecutive rotations to enable smooth window movements.
-      if (m.lockMode == LockMode::CONTROLLER) {
+      vrb::Matrix reorientTransform;
+
+      if (m.lockMode == LockMode::HEAD) {
+        reorientTransform = m.device->GetHeadTransform();
+        m.device->Reorient(reorientTransform, DeviceDelegate::ReorientMode::SIX_DOF);
+      } else if (m.lockMode == LockMode::CONTROLLER) {
+        reorientTransform = GetActiveControllerOrientation();
+
         if (!m.navigationBarToWindowTransform) {
-            // Users click on move bar to reorient the window, but the reorient code operates
-            // on the window so there is a mismatch there which causes an initial pitch down move
-            // when the move bar is grabbed.
-            // FIXME: this is ad-hoc and should be replaced with a proper solution.
-            vrb::Quaternion rotation;
-            rotation.SetFromEulerAngles(M_PI_4 / 2.35, 0, 0);
-            m.navigationBarToWindowTransform = vrb::Matrix::Rotation(rotation);
+          // Users click on move bar to reorient the window, but the reorient code operates
+          // on the window so there is a mismatch there which causes an initial pitch down move
+          // when the move bar is grabbed.
+          vrb::Quaternion rotation;
+          rotation.SetFromEulerAngles(M_PI_4 / 2.35, 0, 0);
+          m.navigationBarToWindowTransform = vrb::Matrix::Rotation(rotation);
         }
         if (m.prevReorient) {
           Quaternion reorientQuaternion(reorientTransform);
@@ -1277,8 +1282,16 @@ BrowserWorld::StartFrame() {
           m.prevReorient = vrb::Quaternion(reorientTransform);
         }
         ThrottledWindowDistanceComputation(reorientTransform);
+        m.device->Reorient(reorientTransform, DeviceDelegate::ReorientMode::NO_ROLL);
+      } else if (m.lockMode == LockMode::STICKY) {
+        vrb::Matrix headTransform = m.device->GetHeadTransform();
+        vrb::Vector headPosition = headTransform.GetTranslation();
+        m.widgetsTranslation = vrb::Vector(headPosition.x(), 0.0f, headPosition.z());
+
+        float stickyYaw = CalculateStickyLockWidgetsYaw();
+        vrb::Matrix yawRotation = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), stickyYaw);
+        m.widgetsYaw.PostMultiplyInPlace(yawRotation);
       }
-      m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
@@ -1356,6 +1369,9 @@ BrowserWorld::SetLockMode(LockMode lockMode) {
   if (m.lockMode == lockMode)
       return;
   m.lockMode = lockMode;
+  ASSERT_ON_RENDER_THREAD();
+
+  m.lockMode = LockMode::STICKY;
 }
 
 void
@@ -1858,7 +1874,12 @@ BrowserWorld::TickWorld() {
     return;
 
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
-  m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw));
+
+
+  vrb::Vector horizontalHeadPosition(headPosition.x(), 0.0f, headPosition.z());
+
+  m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw).Translate(horizontalHeadPosition));
+
   if (m.rootEnvironment) {
     m.rootEnvironment->SetTransform(m.device->GetReorientTransform());
   }
@@ -2126,6 +2147,71 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 void BrowserWorld::OnReorient() {
   m.reorientRequested = true;
   VRBrowser::ResetWindowsPosition();
+}
+
+float
+BrowserWorld::CalculateStickyLockWidgetsYaw() {
+  vrb::Matrix headTransform = m.device->GetHeadTransform();
+
+  vrb::Vector headDirection = headTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
+  float headYaw = atan2f(-headDirection.z(), headDirection.x());
+  const float fovHalfWidth = M_PI / 4.0f; // 45 degrees to each side
+  float fovStartAngle = headYaw - fovHalfWidth;
+  float fovEndAngle = headYaw + fovHalfWidth;
+
+  float contentStartAngle = FLT_MAX;
+  float contentEndAngle = -FLT_MAX;
+  bool foundContent = false;
+
+  for (const WidgetPtr &widget: m.widgets) {
+    if (!widget->IsVisible() || widget->GetPlacement()->name.find("Window") == std::string::npos) {
+      continue;
+    }
+
+    float widgetStartAngle, widgetEndAngle;
+    widget->GetAngularBoundsFromCenter(widgetStartAngle, widgetEndAngle);
+
+    contentStartAngle = std::min(contentStartAngle, widgetStartAngle);
+    contentEndAngle = std::max(contentEndAngle, widgetEndAngle);
+    foundContent = true;
+  }
+
+  if (!foundContent) {
+    return 0.0f;
+  }
+
+  float targetYaw = 0.0f;
+
+  // If content is entirely within FOV - no adjustment needed
+  if (contentStartAngle >= fovStartAngle && contentEndAngle <= fovEndAngle) {
+    targetYaw = 0.0f;
+  } else {
+    float leftAdjustment = 0.0f;
+    float rightAdjustment = 0.0f;
+
+    if (contentStartAngle < fovStartAngle) {
+      leftAdjustment = fovStartAngle - contentStartAngle;
+    }
+
+    if (contentEndAngle > fovEndAngle) {
+      rightAdjustment = fovEndAngle - contentEndAngle;
+    }
+
+    if (contentStartAngle < fovStartAngle && contentEndAngle > fovEndAngle) {
+      targetYaw = (fabsf(leftAdjustment) < fabsf(rightAdjustment)) ? leftAdjustment : rightAdjustment;
+    } else if (contentStartAngle < fovStartAngle) {
+      targetYaw = leftAdjustment;
+    } else if (contentEndAngle > fovEndAngle) {
+      targetYaw = rightAdjustment;
+    }
+  }
+
+  VRB_LOG("StickyLock: ");
+  VRB_LOG("StickyLock: FOV is between %.2f and %.2f", fovStartAngle, fovEndAngle);
+  VRB_LOG("StickyLock: Window bounds between %.2f and %.2f", contentStartAngle, contentEndAngle);
+  VRB_LOG("StickyLock: adjusting yaw by %.2f", targetYaw);
+
+  return targetYaw;
 }
 
 } // namespace crow

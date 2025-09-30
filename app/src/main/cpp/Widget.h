@@ -82,6 +82,7 @@ public:
   void SetProxifyLayer(const bool aValue);
   void LayoutQuadWithCylinderParent(const WidgetPtr& aParent);
   void RecenterYawInCylinderLayer(const vrb::Matrix& reorientMatrix);
+  void GetAngularBoundsFromCenter(float& aStartAngle, float& aEndAngle) const;
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);

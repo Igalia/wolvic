@@ -695,6 +695,47 @@ void Widget::RecenterYawInCylinderLayer(const vrb::Matrix& reorientMatrix) {
   m.AdjustCylinderRotation(radius, &reorientMatrix);
 }
 
+void
+Widget::GetAngularBoundsFromCenter(float& aStartAngle, float& aEndAngle) const {
+  // Get widget bounds in local space
+  vrb::Vector min, max;
+  GetWidgetMinAndMax(min, max);
+
+  // Get the transform of the widget
+  vrb::Matrix worldTransform = m.transform->GetWorldTransform();
+
+  // Use the left and right edges at mid-height
+  float midY = (min.y() + max.y()) / 2.0f;
+  vrb::Vector leftEdge = worldTransform.MultiplyPosition(vrb::Vector(min.x(), midY, 0.0f));
+  vrb::Vector rightEdge = worldTransform.MultiplyPosition(vrb::Vector(max.x(), midY, 0.0f));
+
+  // Calculate angles (assuming cylinder center is at origin)
+  float leftAngle = atan2f(-leftEdge.z(), leftEdge.x());
+  float rightAngle = atan2f(-rightEdge.z(), rightEdge.x());
+
+  // Determine the smallest angular range (handle wraparound)
+  float diff = rightAngle - leftAngle;
+  if (diff < 0) diff += 2.0f * M_PI;
+
+  // Choose direction that gives smaller angular range
+  if (diff <= M_PI) {
+    aStartAngle = leftAngle;
+    aEndAngle = rightAngle;
+  } else {
+    aStartAngle = rightAngle;
+    aEndAngle = leftAngle;
+  }
+
+  // Ensure end angle is greater than start angle
+  if (aEndAngle < aStartAngle) {
+    aEndAngle += 2.0f * M_PI;
+  }
+
+  VRB_LOG("StickyLock: start %.2f  end %.2f  width %.2f  theta %.2f", aStartAngle, aEndAngle, (aEndAngle-aStartAngle),
+          (GetCylinder()?GetCylinder()->GetCylinderTheta():0.0f));
+  // TODO angular width and theta are different
+}
+
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
