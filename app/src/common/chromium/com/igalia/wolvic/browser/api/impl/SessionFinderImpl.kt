@@ -27,7 +27,7 @@ class SessionFinderImpl(private val webContents: WebContents) : WSession.Session
     }
 
     override fun clear() {
-        mFinder.stopFinding(true);
+        previousSearchString?.let { mFinder.stopFinding(true) }
         previousSearchString = null
     }
 
