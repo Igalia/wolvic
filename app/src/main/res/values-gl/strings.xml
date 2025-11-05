@@ -815,4 +815,15 @@
     <string name="new_tab">Nova pestana</string>
     <string name="new_private_tab">Nova pestana privada</string>
     <string name="close_tab">Pechar pestana</string>
+    <string name="settings_language_ukrainian">Ucraíno</string>
+    <string name="display_options_open_tabs_in_background">Abrir novas pestanas en segundo plano</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Nova pestana</string>
+    <string name="developer_options_homepage_other">Outra</string>
+    <string name="url_new_tab_title">Nova pestana</string>
+    <string name="controller_options_window_selection">Método de selección de xanela</string>
+    <string name="controller_options_click_to_select">Clic</string>
+    <string name="controller_options_hover_to_select">Punteiro</string>
+    <string name="announcements_title">Anuncios</string>
+    <string name="disable_hand_tracking_dialog_body">O seguimento de mans está desactivado temporalmente. Reactivarase automaticamente no próximo inicio. Esta opción non é persistente para evitar problemas cando os controladores non estean dispoñibles.</string>
 </resources>
