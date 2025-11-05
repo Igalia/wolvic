@@ -1836,4 +1836,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Nouvel onglet</string>
     <string name="new_private_tab">Nouvel onglet privé</string>
     <string name="close_tab">Fermer l’onglet</string>
+    <string name="settings_language_ukrainian">Ukrainien</string>
+    <string name="display_options_open_tabs_in_background">Ouvrir les nouveaux onglets en arrière-plan</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Nouvel onglet</string>
+    <string name="developer_options_homepage_other">Autre</string>
+    <string name="url_new_tab_title">Nouvel onglet</string>
+    <string name="controller_options_window_selection">Méthode de sélection de fenêtre</string>
+    <string name="controller_options_click_to_select">Clic</string>
+    <string name="controller_options_hover_to_select">Survol</string>
+    <string name="announcements_title">Annonces</string>
+    <string name="disable_hand_tracking_dialog_body">Le suivi des mains est temporairement désactivé. Il sera automatiquement réactivé au prochain lancement. Cette option n\'est pas persistante pour éviter les problèmes lorsque les contrôleurs ne sont pas disponibles.</string>
 </resources>
