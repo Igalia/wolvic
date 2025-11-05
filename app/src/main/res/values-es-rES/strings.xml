@@ -1832,4 +1832,18 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="window_size_preset">%1$d×%2$d</string>
     <string name="download_addon_install_blocked_permissions_body">Permita los permisos de almacenamiento en Opciones de privacidad para continuar.</string>
     <string name="display_options_tabs_location_vertical">Vertical</string>
+    <string name="settings_language_ukrainian">Ucraniano</string>
+    <string name="disable_hand_tracking_dialog_body">El seguimiento de manos está desactivado temporalmente. Se reactivará automáticamente en el próximo inicio. Esta opción no es persistente para evitar problemas cuando los controladores no estén disponibles.</string>
+    <string name="display_options_open_tabs_in_background">Abrir nuevas pestañas en segundo plano</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Nueva pestaña</string>
+    <string name="developer_options_homepage_other">Otro</string>
+    <string name="new_tab">Nueva pestaña</string>
+    <string name="new_private_tab">Nueva pestaña privada</string>
+    <string name="close_tab">Cerrar pestaña</string>
+    <string name="url_new_tab_title">Nueva pestaña</string>
+    <string name="controller_options_window_selection">Método de selección de ventana</string>
+    <string name="controller_options_click_to_select">Clic</string>
+    <string name="controller_options_hover_to_select">Puntero</string>
+    <string name="announcements_title">Anuncios</string>
 </resources>
