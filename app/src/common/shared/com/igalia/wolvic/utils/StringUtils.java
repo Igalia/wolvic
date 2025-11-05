@@ -8,12 +8,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.igalia.wolvic.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class StringUtils {
     static final String LOGTAG = SystemUtils.createLogtag(StringUtils.class);
@@ -26,7 +22,10 @@ public class StringUtils {
         return context.createConfigurationContext(configuration).getResources().getString(id);
     }
 
-    public static String removeSpaces(@NonNull String aText) {
+    public static String removeSpaces(String aText) {
+        if (isEmpty(aText)) {
+            return "";
+        }
         return aText.replaceAll("\\s", "");
     }
 
@@ -54,7 +53,10 @@ public class StringUtils {
         return "";
     }
 
-    public static String removeRange(@NonNull String aText, int aStart, int aEnd) {
+    public static String removeRange(String aText, int aStart, int aEnd) {
+        if (isEmpty(aText)) {
+            return "";
+        }
         String start = "";
         if (aStart > 0) {
             start = aText.substring(0, aStart);
@@ -67,21 +69,29 @@ public class StringUtils {
     }
 
     public static boolean contains(String[] aTarget, String aText) {
+        if (aTarget == null) {
+            return false;
+        }
         for (String str: aTarget) {
-            if (str.equals(aText)) {
+            if (Objects.equals(str, aText)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    public static long charCount(@NonNull String aString, char target) {
+    public static long charCount(String aString, char target) {
+        if (isEmpty(aString)) {
+            return 0;
+        }
         return aString.chars().filter(ch -> ch == target).count();
     }
 
     @NonNull
-    public static String capitalize(@NonNull String input) {
+    public static String capitalize(String input) {
+        if (isEmpty(input)) {
+            return "";
+        }
         try {
             return input.substring(0, 1).toUpperCase() + input.substring(1);
         } catch (StringIndexOutOfBoundsException e) {
