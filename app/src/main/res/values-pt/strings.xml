@@ -807,4 +807,18 @@
     <string name="controller_options_pointer_mode">Modo de controle do ponteiro</string>
     <string name="eye_tracking_permission_message">Habilitar o rastreamento ocular para navegar na web apresenta riscos significativos à privacidade. Essa tecnologia captura onde e por quanto tempo um usuário olha para partes específicas de uma página da web, revelando detalhes íntimos sobre seus interesses e reações emocionais. Anunciantes e terceiros podem explorar esses dados para marketing intrusivo e criação de perfis. Além disso, os padrões de movimento ocular podem revelar informações sensíveis, como condições médicas, estados cognitivos ou hábitos pessoais. Portanto, é crucial considerar as implicações para a privacidade antes de conceder acesso às informações de rastreamento ocular a páginas da web.</string>
     <string name="download_addon_install_blocked_permissions_body">Permita as permissões de armazenamento em Opções de privacidade para continuar.</string>
+    <string name="settings_language_ukrainian">Ucraniano</string>
+    <string name="display_options_open_tabs_in_background">Abrir novos separadores em segundo plano</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Novo separador</string>
+    <string name="developer_options_homepage_other">Outro</string>
+    <string name="new_tab">Novo separador</string>
+    <string name="new_private_tab">Novo separador privativo</string>
+    <string name="close_tab">Pechar separador</string>
+    <string name="url_new_tab_title">Novo separador</string>
+    <string name="controller_options_window_selection">Método de seleção de janela</string>
+    <string name="controller_options_click_to_select">Clique</string>
+    <string name="controller_options_hover_to_select">Ponteiro</string>
+    <string name="announcements_title">Anúncios</string>
+    <string name="disable_hand_tracking_dialog_body">O rastreamento de mãos está desativado temporariamente. Será reativado automaticamente na próxima inicialização. Esta opção não é persistente propositalmente para evitar problemas quando os controladores não estiverem disponíveis.</string>
 </resources>
