@@ -26,6 +26,7 @@ import com.igalia.wolvic.ui.adapters.HamburgerMenuAdapter;
 import com.igalia.wolvic.ui.widgets.UIWidget;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetPlacement;
+import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.utils.AnimationHelper;
 import com.igalia.wolvic.utils.ViewUtils;
 
@@ -297,17 +298,19 @@ public class HamburgerMenuWidget extends UIWidget implements
             mItems.add(item);
         }
 
-        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
-                HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
-                (menuItem) -> {
-                    if (mDelegate != null) {
-                        mDelegate.onFindInPage();
-                    }
-                    return null;
-                })
-                .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
-                .withIcon(R.drawable.ic_icon_search)
-                .build());
+        if (mWidgetManager.getFocusedWindow().getCurrentContentType() == Windows.ContentType.WEB_CONTENT) {
+            mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+                    HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
+                    (menuItem) -> {
+                        if (mDelegate != null) {
+                            mDelegate.onFindInPage();
+                        }
+                        return null;
+                    })
+                    .withTitle(getContext().getString(R.string.hamburger_menu_find_in_page))
+                    .withIcon(R.drawable.ic_icon_search)
+                    .build());
+        }
 
         mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                 HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
