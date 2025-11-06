@@ -704,14 +704,7 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
     // rotated relative to the corresponding pose of the controllers, and the rotation is
     // different for each hand in the case of Quest. So here correct the transformation matrix
     // by an angle that was obtained empirically.
-#if defined(OCULUSVR)
-    if (mSupportsFBHandTrackingAim) {
-        float correctionAngle = (mHandeness == OpenXRHandFlags::Left) ? M_PI_2 : M_PI_4 * 3 / 2;
-        auto correctionMatrix = vrb::Matrix::Rotation(vrb::Vector(0.0, 0.0, 1.0),
-                                                      correctionAngle);
-        pointerTransform = pointerTransform.PostMultiply(correctionMatrix);
-    }
-#elif defined(PICOXR)
+#if defined(PICOXR)
     // On Pico, this only affects system versions earlier than 5.7.1
     if (CompareBuildIdString(kPicoVersionHandTrackingUpdate)) {
         float correctionAngle = -M_PI_2;
@@ -726,22 +719,21 @@ void OpenXRInputSource::EmulateControllerFromHand(device::RenderMode renderMode,
         if (renderMode == device::RenderMode::StandAlone)
             pointerTransform.TranslateInPlace(kAverageHeight);
 
-        // TODO: removing this flag will allow us to remove the ifdef. Keeping it just to limit
-        // the scope of the changes.
         flags |= device::GripSpacePosition;
-#if CHROMIUM
-        // Blink WebXR uses the grip space instead of the local space to position the
-        // controller. Since controller's position is the same as the origin of the
-        // grip space, we just set the transform matrix to the identity.
-        // Then we need to correct the beam transform matrix to maintain origin and
-        // direction when we are not in immersive mode.
-        delegate.SetTransform(mIndex, vrb::Matrix::Identity());
-        delegate.SetBeamTransform(mIndex, pointerTransform);
+        switch (renderMode) {
+            case device::RenderMode::Immersive:
+#if defined(CHROMIUM)
+                delegate.SetTransform(mIndex, vrb::Matrix::Identity());
 #else
-        delegate.SetTransform(mIndex, pointerTransform);
-        delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
+                delegate.SetTransform(mIndex, pointerTransform);
 #endif
-        delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
+                delegate.SetImmersiveBeamTransform(mIndex, pointerTransform);
+                break;
+            case device::RenderMode::StandAlone:
+                delegate.SetTransform(mIndex, pointerTransform);
+                delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
+                break;
+        }
     } else {
         assert(pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE);
         HandleEyeTrackingScroll(predictedDisplayTime, triggerButtonPressed, pointerTransform, eyeTrackingTransform, delegate);
@@ -780,22 +772,19 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     }
 
     // Pose transforms.
-    bool isPoseActive { false };
-    XrSpaceLocation poseLocation { XR_TYPE_SPACE_LOCATION };
-#if defined(CHROMIUM) && !defined(HVR)
-    // Chromium's WebXR code expects aim space to be based on the grip space. The HVR runtime
-    // is buggy and does not support that, so we keep using the local space here and will generate
-    // an aim pose later after retrieving the grip pose.
-    XrSpace baseSpace = renderMode == device::RenderMode::StandAlone ? localSpace : mGripSpace;
+    bool isAimPoseActive { false };
+    XrSpaceLocation aimLocation { XR_TYPE_SPACE_LOCATION };
+#if defined(HVR)
+    // HVR runtime is buggy and does not return valid values unless we use local space as base space.
+    if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, localSpace, frameState, isAimPoseActive, aimLocation))) {
 #else
-    XrSpace baseSpace = localSpace;
+    if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, mGripSpace, frameState, isAimPoseActive, aimLocation))) {
 #endif
-    if (XR_FAILED(GetPoseState(mPointerAction,  mPointerSpace, baseSpace, frameState, isPoseActive, poseLocation))) {
         delegate.SetEnabled(mIndex, false);
         return;
     }
 
-    bool isControllerUnavailable = (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
+    bool isControllerUnavailable = (aimLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) == 0;
     auto gotHandTrackingInfo = false;
     auto handFacesHead = false;
 #if defined(PICOXR)
@@ -835,7 +824,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     }
 
     bool usingTrackedPointer = pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER;
-    bool hasAim = isPoseActive && (poseLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
+    bool hasAim = isAimPoseActive && (aimLocation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT);
     mClickThreshold = mUsingHandInteractionProfile ? kPinchThreshold : kControllerClickThreshold;
 
     // When using hand interaction profiles we still get valid aim even if the hand is facing
@@ -858,10 +847,10 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
 
     // HVR: adjust to local if app is using stageSpace.
     // Meta: adjust the position of the controllers which is not totally accurate.
-    auto adjustPoseLocation = [&poseLocation](const vrb::Vector& offset) {
-        poseLocation.pose.position.x += offset.x();
-        poseLocation.pose.position.y += offset.y();
-        poseLocation.pose.position.z += offset.z();
+    auto adjustPoseLocation = [&aimLocation](const vrb::Vector& offset) {
+        aimLocation.pose.position.x += offset.x();
+        aimLocation.pose.position.y += offset.y();
+        aimLocation.pose.position.z += offset.z();
     };
     adjustPoseLocation(offsets);
 
@@ -876,48 +865,74 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     device::CapabilityFlags flags = device::Orientation;
 #ifdef LYNX
     // Lynx runtime incorrectly never sets the TRACKED bit.
-    const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+    const bool aimPositionTracked = aimLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
 #else
-    const bool positionTracked = poseLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
+    const bool aimPositionTracked = aimLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
 #endif
-    flags |= positionTracked ? device::Position : device::PositionEmulated;
+    flags |= aimPositionTracked ? device::Position : device::PositionEmulated;
 
-    vrb::Matrix pointerTransform = XrPoseToMatrix(poseLocation.pose);
-    if (positionTracked) {
-        if (renderMode == device::RenderMode::StandAlone) {
-            pointerTransform.TranslateInPlace(kAverageHeight);
-        }
-    } else {
-        auto hand = mHandeness == OpenXRHandFlags::Left ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right;
-        pointerTransform = elbow->GetTransform(hand, head, pointerTransform);
-    }
-
+    vrb::Matrix controllerTransform = vrb::Matrix::Identity();
     if (pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER) {
-        delegate.SetTransform(mIndex, pointerTransform);
+        bool isGripPoseActive = false;
+        XrSpaceLocation gripLocation = {XR_TYPE_SPACE_LOCATION};
+        CHECK_XRCMD(GetPoseState(mGripAction, mGripSpace, localSpace, frameState, isGripPoseActive,
+                                 gripLocation));
+        const bool gripPositionTracked = gripLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
 
-        isPoseActive = false;
-        poseLocation = {XR_TYPE_SPACE_LOCATION};
-        CHECK_XRCMD(GetPoseState(mGripAction, mGripSpace, localSpace, frameState, isPoseActive,
-                                 poseLocation));
-        if (isPoseActive) {
-            adjustPoseLocation(offsets);
-            auto gripTransform = XrPoseToMatrix(poseLocation.pose);
-            delegate.SetImmersiveBeamTransform(mIndex,
-                                               positionTracked ? gripTransform : pointerTransform);
+        if (gripPositionTracked)
             flags |= device::GripSpacePosition;
-            delegate.SetBeamTransform(mIndex, vrb::Matrix::Identity());
-#if defined(CHROMIUM) && defined(HVR)
-            // HVR runtime incorrectly return the same values for grip and aim poses. We circumvent that
-            // by inventing a grip pose. The values are chosen to match the controller dimensions. This
-            // is only needed for Chromium because it requires the grip to be based on the aim. As the
-            // runtime returns invalid values for that case, we need to emulate the aim based on grip.
-            if (renderMode == device::RenderMode::Immersive) {
-                static const auto emulatedGripTransform = vrb::Matrix::Translation({0.0, 0.30, 0.0}).Rotation(vrb::Vector(1.0, 0.0, 0.0), -M_PI / 5);
-                delegate.SetTransform(mIndex, emulatedGripTransform);
-            }
+
+        vrb::Matrix origAimTransform = XrPoseToMatrix(aimLocation.pose);
+        vrb::Matrix beamTransform;
+        if (gripPositionTracked && aimPositionTracked) {
+#ifdef HVR
+            // HVR runtime returns aim for both grip and aim poses, so we invent the grip pose
+            auto emulatedGripToAimTransform = vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), M_PI_4);
+            controllerTransform = origAimTransform.PostMultiply(emulatedGripToAimTransform);
+            beamTransform = emulatedGripToAimTransform.Inverse();
+#else
+            controllerTransform = XrPoseToMatrix(gripLocation.pose);
+            beamTransform = origAimTransform;
 #endif
         } else {
-            delegate.SetImmersiveBeamTransform(mIndex, vrb::Matrix::Identity());
+            controllerTransform = gripPositionTracked ? XrPoseToMatrix(gripLocation.pose) : origAimTransform;
+            beamTransform = vrb::Matrix::Identity();
+        }
+        // FIXME: use local-floor space to avoid adding average height manually
+        if (aimPositionTracked || gripPositionTracked) {
+            if (renderMode == device::RenderMode::StandAlone) {
+                controllerTransform.TranslateInPlace(kAverageHeight);
+            }
+        } else {
+            auto hand = mHandeness == OpenXRHandFlags::Left ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right;
+            controllerTransform = elbow->GetTransform(hand, head, controllerTransform);
+        }
+
+        switch (renderMode) {
+            case device::RenderMode::StandAlone:
+                // VRB expects
+                // Transform: grip pose from local space
+                // Beam: aim pose from grip space
+                delegate.SetTransform(mIndex, controllerTransform);
+                delegate.SetBeamTransform(mIndex, beamTransform);
+                break;
+            case device::RenderMode::Immersive:
+                // WebXR expects
+                // Immersive Beam: grip pose from local space
+#if defined(CHROMIUM)
+                // Transform: aim pose from grip space.
+                delegate.SetTransform(mIndex, beamTransform);
+#else
+#ifdef HVR
+                // Transform: HVR always provide aim pose from local space so use it directly.
+                delegate.SetTransform(mIndex, origAimTransform);
+#else
+                // Transform: aim pose from local space. We compute it as grip * (aim relative to grip)
+                delegate.SetTransform(mIndex, controllerTransform.PostMultiply(origAimTransform));
+#endif // HVR
+#endif // CHROMIUM
+                delegate.SetImmersiveBeamTransform(mIndex,controllerTransform);
+                break;
         }
     }
     delegate.SetCapabilityFlags(mIndex, flags);
@@ -958,7 +973,7 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         if (button.type == OpenXRButtonType::Trigger) {
             delegate.SetSelectFactor(mIndex, state->value);
             if (pointerMode == DeviceDelegate::PointerMode::TRACKED_EYE) {
-                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, pointerTransform, eyeTrackingTransform, delegate);
+                HandleEyeTrackingScroll(frameState.predictedDisplayTime, state->clicked, controllerTransform, eyeTrackingTransform, delegate);
                 if (!state->clicked)
                     delegate.SetTransform(mIndex, eyeTrackingTransform);
             }
