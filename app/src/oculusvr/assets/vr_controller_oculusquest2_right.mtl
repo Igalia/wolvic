@@ -1,8 +1,8 @@
 # Blender MTL File: 'None'
 # Material Count: 1
 
-newmtl bothControllerMAT.002
-Ns 225.000000
+newmtl bothControllerMAT.001
+Ns 224.999983
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
