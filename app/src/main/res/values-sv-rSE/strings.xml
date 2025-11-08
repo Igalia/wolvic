@@ -1839,4 +1839,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Ny flik</string>
     <string name="new_private_tab">Ny privat flik</string>
     <string name="close_tab">Stäng flik</string>
+    <string name="settings_language_ukrainian">Ukrainska</string>
+    <string name="display_options_open_tabs_in_background">Öppna nya flikar i bakgrunden</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Ny flik</string>
+    <string name="developer_options_homepage_other">Andra</string>
+    <string name="url_new_tab_title">Ny flik</string>
+    <string name="controller_options_window_selection">Fönstervalsmetod</string>
+    <string name="controller_options_click_to_select">Klicka</string>
+    <string name="controller_options_hover_to_select">Sväva</string>
+    <string name="announcements_title">Annonseringar</string>
+    <string name="disable_hand_tracking_dialog_body">Handspårning är tillfälligt inaktiverat. Det kommer att återaktiveras automatiskt vid nästa uppstart. Det här alternativet är inte permanent för att undvika problem när handkontroller inte är tillgängliga.</string>
 </resources>
