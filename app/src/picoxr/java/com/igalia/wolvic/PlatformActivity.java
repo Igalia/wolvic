@@ -6,7 +6,9 @@
 package com.igalia.wolvic;
 
 import android.app.NativeActivity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -45,7 +47,15 @@ public class PlatformActivity extends NativeActivity {
                 platformExit();
             }
         });
-    }    
+    }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
+    }
+
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
 }

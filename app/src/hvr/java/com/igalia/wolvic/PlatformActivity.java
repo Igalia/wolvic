@@ -5,6 +5,7 @@
 
 package com.igalia.wolvic;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -380,6 +381,14 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
     {
         Log.d(TAG, "PlatformActivity surfaceDestroyed");
         queueRunnable(this::nativeOnSurfaceDestroyed);
+    }
+
+    protected void handleBluetoothHidDeviceConnected(BluetoothDevice device) {
+        Log.d(TAG, "Bluetooth HID device connected: " + device.getName());
+    }
+
+    protected void handleBluetoothHidDeviceDisconnected(BluetoothDevice device) {
+        Log.d(TAG, "Bluetooth HID device disconnected: " + device.getName());
     }
 
     public final PlatformActivityPlugin createPlatformPlugin(WidgetManagerDelegate delegate) { return null; }
