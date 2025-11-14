@@ -1,7 +1,7 @@
-# Blender MTL File: 'ML2-Controller_1.2.1.blend'
+# Blender MTL File: 'None'
 # Material Count: 2
 
-newmtl ML2_Controller
+newmtl ML2_Controller.003
 Ns 359.999993
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
@@ -11,7 +11,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl ML2_Glass_Black
+newmtl ML2_Glass_Black.003
 Ns 1000.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.000000 0.000000 0.000000

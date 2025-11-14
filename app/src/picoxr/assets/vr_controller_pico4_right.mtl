@@ -1,13 +1,13 @@
 # Blender MTL File: 'None'
 # Material Count: 1
 
-newmtl controllerMATphongRT
-Ns 0.000000
+newmtl vr_controller_pico4.001
+Ns 199.999995
 Ka 1.000000 1.000000 1.000000
-Kd 0.800000 0.800000 0.800000
+Kd 1.000000 1.000000 1.000000
 Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 1
-map_Kd vr_controller_metaquest3_right_tex.ktx
+map_Kd vr_controller_pico4_tex.ktx
