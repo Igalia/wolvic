@@ -863,13 +863,9 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
     delegate.SetHandActionEnabled(mIndex, isHandActionEnabled);
 
     device::CapabilityFlags flags = device::Orientation;
-#ifdef LYNX
-    // Lynx runtime incorrectly never sets the TRACKED bit.
-    const bool aimPositionTracked = aimLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
-#else
-    const bool aimPositionTracked = aimLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
-#endif
-    flags |= aimPositionTracked ? device::Position : device::PositionEmulated;
+
+    const bool aimPositionValid = aimLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+    flags |= aimPositionValid ? device::Position : device::PositionEmulated;
 
     vrb::Matrix controllerTransform = vrb::Matrix::Identity();
     if (pointerMode == DeviceDelegate::PointerMode::TRACKED_POINTER) {
@@ -877,14 +873,14 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         XrSpaceLocation gripLocation = {XR_TYPE_SPACE_LOCATION};
         CHECK_XRCMD(GetPoseState(mGripAction, mGripSpace, localSpace, frameState, isGripPoseActive,
                                  gripLocation));
-        const bool gripPositionTracked = gripLocation.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
+        const bool gridPositionValid = gripLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
 
-        if (gripPositionTracked)
+        if (gridPositionValid)
             flags |= device::GripSpacePosition;
 
         vrb::Matrix origAimTransform = XrPoseToMatrix(aimLocation.pose);
         vrb::Matrix beamTransform;
-        if (gripPositionTracked && aimPositionTracked) {
+        if (gridPositionValid && aimPositionValid) {
 #ifdef HVR
             // HVR runtime returns aim for both grip and aim poses, so we invent the grip pose
             auto emulatedGripToAimTransform = vrb::Matrix::Rotation(vrb::Vector(1.0, 0.0, 0.0), M_PI_4);
@@ -895,11 +891,11 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
             beamTransform = origAimTransform;
 #endif
         } else {
-            controllerTransform = gripPositionTracked ? XrPoseToMatrix(gripLocation.pose) : origAimTransform;
+            controllerTransform = gridPositionValid ? XrPoseToMatrix(gripLocation.pose) : origAimTransform;
             beamTransform = vrb::Matrix::Identity();
         }
         // FIXME: use local-floor space to avoid adding average height manually
-        if (aimPositionTracked || gripPositionTracked) {
+        if (aimPositionValid || gridPositionValid) {
             if (renderMode == device::RenderMode::StandAlone) {
                 controllerTransform.TranslateInPlace(kAverageHeight);
             }
