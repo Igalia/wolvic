@@ -295,8 +295,8 @@ bool OpenXRInput::PopulateTrackedKeyboardInfo(DeviceDelegate::TrackedKeyboardInf
   // Only report keyboard as active (be shown to the user) if it is connected and actively tracked.
   keyboardInfo.isActive =
     (keyboardTrackingFB->description.flags & XR_KEYBOARD_TRACKING_CONNECTED_BIT_FB) != 0 &&
-    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT) != 0 &&
-    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_TRACKED_BIT) != 0;
+    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
+    (keyboardTrackingFB->location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0;
 
   // Copy the model buffer over only if it has changed
   if (keyboardTrackingFB->modelBufferChanged) {
