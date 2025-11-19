@@ -36,7 +36,7 @@
             android:ellipsize="end"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@{StringUtils.capitalize(item.title)}"
+            android:text="@{StringUtils.capitalize(item.title ?? ``)}"
             android:textColor="@color/library_panel_folder_title_text_color"
             android:textSize="@dimen/library_item_title_text_size"
             android:textStyle="bold"
