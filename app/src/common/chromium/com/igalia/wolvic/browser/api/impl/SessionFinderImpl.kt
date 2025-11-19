@@ -40,6 +40,9 @@ class SessionFinderImpl(private val webContents: WebContents) : WSession.Session
     }
 
     override fun onFindResultAvailable(details: FindNotificationDetails) {
+        if (!details.finalUpdate)
+            return
+
         val finderResult = WSession.SessionFinder.FinderResult().apply {
             found = details.numberOfMatches > 0
             current = details.activeMatchOrdinal
