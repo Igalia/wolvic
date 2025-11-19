@@ -18,9 +18,9 @@ public class Bookmark {
 
     private boolean mIsExpanded;
     private int mLevel;
-    private String mTitle;
-    private String mURL;
-    private String mGuid;
+    private @NonNull String mTitle;
+    private @NonNull String mURL;
+    private @NonNull String mGuid;
     private int mPosition;
     private Type mType;
     private boolean mHasChildren;
@@ -29,9 +29,9 @@ public class Bookmark {
         mIsExpanded = isExpanded;
         mLevel = level;
 
-        mTitle = node.getTitle();
-        mURL = node.getUrl();
-        mGuid = node.getGuid();
+        mTitle = node.getTitle() != null ? node.getTitle() : "";
+        mURL = node.getUrl() != null ? node.getUrl() : "";
+        mGuid = node.getGuid() != null ? node.getGuid() : "";
         // TODO: We shall get the position using `node.getPosition();` instead of 0.
         // However, position is now kotlin.UInt which is not supported by Java.
         mPosition = 0;
