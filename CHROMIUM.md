@@ -50,10 +50,12 @@ git remote add wolvic-chromium https://github.com/Igalia/wolvic-chromium
 git fetch --depth=1 wolvic-chromium
 ```
 
-10. Finally, switch to the [wolvic](https://github.com/Igalia/wolvic-chromium/tree/wolvic/) branch: `git switch wolvic`
+10. Switch to the [wolvic](https://github.com/Igalia/wolvic-chromium/tree/wolvic/) branch: `git switch wolvic`
 
 > **Note**: you can omit the options `--no-history` and `--depth=1` if you want to download the entire history
 > from the repository, but be aware that this might take significantly longer.
+
+11. Finally, run `gclient sync` again
 
 ### Existing installation
 
@@ -117,7 +119,7 @@ proprietary_codecs=true
 _Build Command:_
 
 ```
-autoninja -C out/Default content_aar ui_aar
+ninja -C out/Default content_aar ui_aar
 ```
 
 This might take a lot of time.
