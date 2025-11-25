@@ -104,6 +104,15 @@ def isWebKitAvailable = {
 def GECKO_RELEASE_VERSION_NAME = '1.9'
 def CHROMIUM_RELEASE_VERSION_NAME = '1.3'
 
+// Homepage and new tab URLs. HOMEPAGE_URL points at a website
+// and NEW_TAB_DEFAULT_URL determines the default content of a new tab.
+def localNewTabUrl = "about://newtab"
+def homepageDefaultUrl = "https://wolvic.com/start"
+def homepageChinaUrl = "https://wolvic.com/zh/start/index.html"
+def homepageChinaHvgUrl = "https://wolvic.com/zh/start/hvg.html"
+def homepageChinaPicoUrl = "https://wolvic.com/zh/start/pico.html"
+def homepageChinaPfdmUrl = "https://wolvic.com/zh/start/pfdm.html"
+
 android {
     namespace 'com.igalia.wolvic'
     compileSdkVersion 35
@@ -131,7 +140,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'app_name', 'Wolvic'
-        resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
+        resValue 'string', 'HOMEPAGE_URL', homepageDefaultUrl
+        resValue 'string', 'NEW_TAB_DEFAULT_URL', localNewTabUrl
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
@@ -780,16 +790,20 @@ android.applicationVariants.configureEach { variant ->
     // HVR packages for mainland china must only use HVR speech recognition system.
     if (store == "mainlandChina") {
         if (platform.toLowerCase().startsWith('hvr')) {
-            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/index.html"'
+            variant.resValue 'string', 'HOMEPAGE_URL', homepageChinaUrl
+            variant.resValue 'string', 'NEW_TAB_DEFAULT_URL', homepageChinaUrl
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('visionglass')) {
-            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/hvg.html"'
+            variant.resValue 'string', 'HOMEPAGE_URL', homepageChinaHvgUrl
+            variant.resValue 'string', 'NEW_TAB_DEFAULT_URL', homepageChinaHvgUrl
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('picoxr')) {
-            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
+            variant.resValue 'string', 'HOMEPAGE_URL', homepageChinaPicoUrl
+            variant.resValue 'string', 'NEW_TAB_DEFAULT_URL', homepageChinaPicoUrl
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }  else if (platform.toLowerCase().startsWith('pfdmxr')) {
-            variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pfdm.html"'
+            variant.resValue 'string', 'HOMEPAGE_URL', homepageChinaPfdmUrl
+            variant.resValue 'string', 'NEW_TAB_DEFAULT_URL', homepageChinaPfdmUrl
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         }
     }
