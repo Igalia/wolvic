@@ -109,7 +109,7 @@ android {
     compileSdkVersion 35
     defaultConfig {
         applicationId "com.igalia.wolvic"
-        minSdkVersion 24
+        minSdkVersion 29
         targetSdkVersion 34
         versionCode generatedVersionCode
         versionName "1.8.3"
