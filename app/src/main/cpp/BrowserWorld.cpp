@@ -220,9 +220,9 @@ struct BrowserWorld::State {
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
   float selectThreshold;
-  std::optional<vrb::Quaternion> prevReorient;
+  std::optional<vrb::Quaternion> windowInitialOrientation;
+  std::optional<vrb::Quaternion> previousWindowRelativeRotation;
   std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
-  std::optional<vrb::Matrix> navigationBarToWindowTransform;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -1255,30 +1255,24 @@ BrowserWorld::StartFrame() {
     if (m.lockMode != LockMode::NO_LOCK) {
       OnReorient();
       auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
-      // Interpolate consecutive rotations to enable smooth window movements.
       if (m.lockMode == LockMode::CONTROLLER) {
-        if (!m.navigationBarToWindowTransform) {
-            // Users click on move bar to reorient the window, but the reorient code operates
-            // on the window so there is a mismatch there which causes an initial pitch down move
-            // when the move bar is grabbed.
-            // FIXME: this is ad-hoc and should be replaced with a proper solution.
-            vrb::Quaternion rotation;
-            rotation.SetFromEulerAngles(M_PI_4 / 2.35, 0, 0);
-            m.navigationBarToWindowTransform = vrb::Matrix::Rotation(rotation);
-        }
-        if (m.prevReorient) {
-          Quaternion reorientQuaternion(reorientTransform);
-          m.prevReorient = vrb::Quaternion::Slerp(*m.prevReorient, reorientQuaternion, 0.1f);
-          auto translation = reorientTransform.GetTranslation();
-          reorientTransform = vrb::Matrix::Rotation(m.prevReorient->Conjugate());
-          reorientTransform = reorientTransform.PostMultiply(*m.navigationBarToWindowTransform);
-          reorientTransform.TranslateInPlace(translation + m.navigationBarToWindowTransform->GetTranslation());
-        } else {
-          m.prevReorient = vrb::Quaternion(reorientTransform);
-        }
+        if (!m.windowInitialOrientation)
+          m.windowInitialOrientation = vrb::Quaternion(reorientTransform);
+        Quaternion reorientQuaternion(reorientTransform);
+        Quaternion relativeRotation = reorientQuaternion.Inverse() * *m.windowInitialOrientation;
+        // Use SLERP to interpolate the current relative rotation with the previous one to smooth out sudden jumps
+        if (m.previousWindowRelativeRotation)
+          relativeRotation = vrb::Quaternion::Slerp(*m.previousWindowRelativeRotation,relativeRotation, 0.25f);
+
+        reorientTransform = vrb::Matrix::Rotation(relativeRotation);
+        m.previousWindowRelativeRotation = std::move(relativeRotation);
+        m.reorientRequested = true;
+
         ThrottledWindowDistanceComputation(reorientTransform);
       }
       m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
+    } else {
+        m.previousWindowRelativeRotation.reset();
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
