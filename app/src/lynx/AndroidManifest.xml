@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.vr.headtracking"  android:version="1" android:required="true" />
     <!-- Required in Lynx platform to avoid a crash during app resuming -->
     <uses-permission android:name="android.permission.WAKE_LOCK" tools:node="replace"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="org.khronos.openxr.permission.OPENXR" />
