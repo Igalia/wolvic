@@ -119,6 +119,11 @@ proprietary_codecs=true
 _Build Command:_
 
 ```
+autoninja -C out/Default content_aar ui_aar
+```
+
+If the `autoninja` command fails, you can try to build directly with `ninja`:
+```
 ninja -C out/Default content_aar ui_aar
 ```
 
