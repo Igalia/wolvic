@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 
 import mozilla.components.browser.errorpages.ErrorType;
 
+import org.chromium.net.NetError;
+
 public class InternalPages {
 
     private static ErrorType fromSessionErrorToErrorType(int error) {
@@ -21,6 +23,7 @@ public class InternalPages {
             case WWebRequestError.ERROR_SECURITY_SSL: {
                 return ErrorType.ERROR_SECURITY_SSL;
             }
+            case NetError.ERR_CERT_DATE_INVALID:
             case WWebRequestError.ERROR_SECURITY_BAD_CERT: {
                 return ErrorType.ERROR_SECURITY_BAD_CERT;
             }
@@ -117,11 +120,19 @@ public class InternalPages {
     public static String createErrorPageDataURI(Context context,
                                                 @Nullable String uri,
                                                 int sessionError) {
+
+        return "data:text/html;base64," + Base64.encodeToString(createErrorPageData(context, uri, sessionError), Base64.NO_WRAP);
+    }
+
+    public static byte[] createErrorPageData(Context context,
+                                             @Nullable String uri,
+                                             int sessionError) {
         String html = readRawResourceString(context, R.raw.error_pages);
         String css = readRawResourceString(context, R.raw.error_style);
 
         boolean showSSLAdvanced;
         switch (sessionError) {
+            case NetError.ERR_CERT_DATE_INVALID:
             case WWebRequestError.ERROR_SECURITY_SSL:
             case WWebRequestError.ERROR_SECURITY_BAD_CERT:
                 showSSLAdvanced = true;
@@ -144,7 +155,7 @@ public class InternalPages {
             html = html.replace("%url%", uri);
         }
 
-        return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
+        return html.getBytes();
     }
 
     public static byte[] createAboutPage(Context context,
