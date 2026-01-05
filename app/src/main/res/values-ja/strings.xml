@@ -1842,4 +1842,5 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">新しいタブ</string>
     <string name="new_private_tab">新しいプライベートタブ</string>
     <string name="close_tab">タブを閉じる</string>
+    <string name="settings_language_ukrainian">ウクライナ語</string>
 </resources>
