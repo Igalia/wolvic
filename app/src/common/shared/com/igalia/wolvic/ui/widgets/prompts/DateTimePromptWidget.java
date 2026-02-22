@@ -112,9 +112,36 @@ public class DateTimePromptWidget extends PromptWidget {
         if (mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.TIME
                 || mPrompt.type() == WSession.PromptDelegate.DateTimePrompt.Type.DATETIME_LOCAL) {
             timePicker = findViewById(R.id.time_picker);
+
+            final java.util.Calendar minCal = (minDate != null) ? toCalendar(formatter, minDate) : null;
+            final java.util.Calendar maxCal = (maxDate != null) ? toCalendar(formatter, maxDate) : null;
+
+            clampTime(cal, minCal, maxCal, datePicker);
+
             timePicker.setHour(cal.get(java.util.Calendar.HOUR_OF_DAY));
             timePicker.setMinute(cal.get(java.util.Calendar.MINUTE));
             timePicker.setIs24HourView(DateFormat.is24HourFormat(aContext));
+
+            timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
+                cal.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
+                cal.set(java.util.Calendar.MINUTE, minute);
+                if (clampTime(cal, minCal, maxCal, datePicker)) {
+                    view.setHour(cal.get(java.util.Calendar.HOUR_OF_DAY));
+                    view.setMinute(cal.get(java.util.Calendar.MINUTE));
+                }
+            });
+
+            if (datePicker != null) {
+                datePicker.init(
+                        datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
+                        (dp, year, month, day) -> {
+                            cal.set(year, month, day);
+                            if (clampTime(cal, minCal, maxCal, dp)) {
+                                timePicker.setHour(cal.get(java.util.Calendar.HOUR_OF_DAY));
+                                timePicker.setMinute(cal.get(java.util.Calendar.MINUTE));
+                            }
+                        });
+            }
         } else {
             findViewById(R.id.time_picker).setVisibility(View.GONE);
             timePicker = null;
@@ -161,6 +188,57 @@ public class DateTimePromptWidget extends PromptWidget {
             mWidgetPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_datetime_width);
             mWidgetManager.updateWidget(this);
         }
+    }
+
+    private static java.util.Calendar toCalendar(SimpleDateFormat formatter, Date date) {
+        java.util.Calendar c = (java.util.Calendar) formatter.getCalendar().clone();
+        c.setTime(date);
+        return c;
+    }
+
+    // Returns true if the time was clamped.
+    private static boolean clampTime(java.util.Calendar cal,
+                                     java.util.Calendar minCal,
+                                     java.util.Calendar maxCal,
+                                     DatePicker datePicker) {
+        int hour = cal.get(java.util.Calendar.HOUR_OF_DAY);
+        int minute = cal.get(java.util.Calendar.MINUTE);
+        int newHour = hour;
+        int newMinute = minute;
+
+        if (minCal != null && isOnBoundaryDay(minCal, datePicker)) {
+            int minH = minCal.get(java.util.Calendar.HOUR_OF_DAY);
+            int minM = minCal.get(java.util.Calendar.MINUTE);
+            if (hour < minH || (hour == minH && minute < minM)) {
+                newHour = minH;
+                newMinute = minM;
+            }
+        }
+        if (maxCal != null && isOnBoundaryDay(maxCal, datePicker)) {
+            int maxH = maxCal.get(java.util.Calendar.HOUR_OF_DAY);
+            int maxM = maxCal.get(java.util.Calendar.MINUTE);
+            if (newHour > maxH || (newHour == maxH && newMinute > maxM)) {
+                newHour = maxH;
+                newMinute = maxM;
+            }
+        }
+
+        if (newHour != hour || newMinute != minute) {
+            cal.set(java.util.Calendar.HOUR_OF_DAY, newHour);
+            cal.set(java.util.Calendar.MINUTE, newMinute);
+            return true;
+        }
+        return false;
+    }
+
+    // For TIME, always true. For DATETIME_LOCAL, true only when the picker is on the boundary date.
+    private static boolean isOnBoundaryDay(java.util.Calendar boundaryCal, DatePicker datePicker) {
+        if (datePicker == null) {
+            return true;
+        }
+        return datePicker.getYear() == boundaryCal.get(java.util.Calendar.YEAR)
+                && datePicker.getMonth() == boundaryCal.get(java.util.Calendar.MONTH)
+                && datePicker.getDayOfMonth() == boundaryCal.get(java.util.Calendar.DAY_OF_MONTH);
     }
 
     public interface DateTimePromptDelegate extends PromptDelegate {
