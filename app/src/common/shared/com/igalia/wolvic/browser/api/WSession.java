@@ -1246,6 +1246,16 @@ public interface WSession {
             @Nullable String maxValue();
 
             /**
+             * A String representing the step attribute value, or null if not specified.
+             */
+            @Nullable String stepValue();
+
+            /**
+             * Suggested values from a datalist element (list attribute). May be null.
+             */
+            @Nullable String[] listValues();
+
+            /**
              * Confirms the prompt and passes the date and/or time value back to content.
              *
              * @param datetime A String representing the date and time to be returned to content.

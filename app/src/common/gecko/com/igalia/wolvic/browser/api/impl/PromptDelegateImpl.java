@@ -507,6 +507,20 @@ class PromptDelegateImpl implements GeckoSession.PromptDelegate {
                 return mGeckoPrompt.maxValue;
             }
 
+            @Nullable
+            @Override
+            public String stepValue() {
+                return mGeckoPrompt.stepValue;
+            }
+
+            @Nullable
+            @Override
+            public String[] listValues() {
+                // GeckoView does not expose datalist suggestions via DateTimePrompt;
+                // return null so the widget falls back gracefully.
+                return null;
+            }
+
             @NonNull
             @Override
             public WSession.PromptDelegate.PromptResponse confirm(@NonNull String datetime) {
