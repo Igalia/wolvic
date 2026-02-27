@@ -630,8 +630,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         public void showDialog(final int type, final double value,
                                double min, double max, double step,
                                DateTimeSuggestion[] suggestions) {
-            // Not implemented for |suggestions| and |step| yet.
-            mDatePrompt.setDateTime(type, value, min, max);
+            mDatePrompt.setDateTime(type, value, min, max, step, suggestions);
 
             try {
                 if (mDelegate != null) {
@@ -657,6 +656,8 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         String mDefaultValue;
         String mMinValue;
         String mMaxValue;
+        String mStepValue;
+        String[] mListValues;
 
         SimpleDateFormat mFormatter;
 
@@ -665,6 +666,11 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
 
         public void setDateTime(int type, double value, double min, double max) {
+            setDateTime(type, value, min, max, Double.NaN, null);
+        }
+
+        public void setDateTime(int type, double value, double min, double max,
+                                double step, DateTimeSuggestion[] suggestions) {
             String format;
             if (type == TextInputType.DATE) {
                 mType = Type.DATE;
@@ -699,6 +705,42 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             mDefaultValue = mFormatter.format(defaultDate);
             mMinValue = mFormatter.format(new Date((long) min));
             mMaxValue = mFormatter.format(new Date((long) max));
+
+            // Chromium gives us the step already multiplied by the type's scale
+            // factor (e.g. 86 400 000 per day for date, 1 000 per second for
+            // time).  Normalise it back to the raw HTML attribute unit so the
+            // widget receives the same value as the Gecko backend.
+            if (!Double.isNaN(step) && step > 0) {
+                if (mType == Type.DATE) {
+                    step = step / 86400000.0;
+                } else if (mType == Type.TIME || mType == Type.DATETIME_LOCAL) {
+                    step = step / 1000.0;
+                } else if (mType == Type.WEEK) {
+                    step = step / 604800000.0;
+                }
+                // MONTH scale factor is 1, no conversion needed
+            }
+            mStepValue = Double.isNaN(step) || step <= 0 ? null : String.valueOf(step);
+
+            // list: convert each suggestion's double value to the same formatted string
+            if (suggestions != null && suggestions.length > 0) {
+                List<String> listVals = new ArrayList<>();
+                for (DateTimeSuggestion s : suggestions) {
+                    try {
+                        double sv = s.value();
+                        if (mType == Type.MONTH) {
+                            sv = MonthPicker.createDateFromValue(sv).getTimeInMillis();
+                        } else if (mType == Type.WEEK) {
+                            sv = WeekPicker.createDateFromValue(sv).getTimeInMillis();
+                        }
+                        listVals.add(mFormatter.format(new Date((long) sv)));
+                    } catch (Exception ignored) {
+                    }
+                }
+                mListValues = listVals.isEmpty() ? null : listVals.toArray(new String[0]);
+            } else {
+                mListValues = null;
+            }
         }
 
         @Override
@@ -716,6 +758,14 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @Override
         @Nullable
         public String maxValue() { return mMaxValue; }
+
+        @Override
+        @Nullable
+        public String stepValue() { return mStepValue; }
+
+        @Override
+        @Nullable
+        public String[] listValues() { return mListValues; }
 
         @UiThread
         @NonNull
