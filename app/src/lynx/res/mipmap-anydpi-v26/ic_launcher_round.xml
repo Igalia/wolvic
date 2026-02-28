@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lynx R1 doesn't handle adaptive icons properly, falls back to a generic
+     icon. Use a plain bitmap here instead. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@mipmap/ic_launcher_round_lynx" />
