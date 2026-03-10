@@ -94,12 +94,20 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/add_on_status_warning_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text="@string/mozac_feature_addons_status_softblocked_1"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/add_on_status_error_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="@color/mozac_feature_addons_error_text_color"
-            tools:text="@string/mozac_feature_addons_status_blocklisted" />
+            tools:text="@string/mozac_feature_addons_status_blocklisted_1"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/add_on_description"

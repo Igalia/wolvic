@@ -209,7 +209,12 @@ android {
     // but that's also provided by geckoview-omni, so now we need to select which one to use.
     project.configurations.configureEach {
         resolutionStrategy.capabilitiesResolution.withCapability("org.mozilla.telemetry:glean-native") {
-            def toBeSelected = candidates.find { it.id instanceof ModuleComponentIdentifier && it.id.module.contains('geckoview') }
+            def abi = getName().toLowerCase().contains('x64') ? 'x86_64' : 'arm64'
+            def toBeSelected = candidates.find { it.id instanceof ModuleComponentIdentifier && it.id.module.contains('geckoview') && it.id.module.contains(abi) }
+            // Local GeckoView substitution uses 'geckoview-default-omni' without abi suffix
+            if (toBeSelected == null) {
+                toBeSelected = candidates.find { it.id instanceof ModuleComponentIdentifier && it.id.module.contains('geckoview-default') }
+            }
             if (toBeSelected != null) {
                 select(toBeSelected)
             }

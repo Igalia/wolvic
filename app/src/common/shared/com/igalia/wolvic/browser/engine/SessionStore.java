@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import kotlin.Unit;
 import mozilla.components.browser.state.state.BrowserState;
 import mozilla.components.feature.accounts.FxaCapability;
 import mozilla.components.feature.accounts.FxaWebChannelFeature;
@@ -149,7 +150,8 @@ public class SessionStore implements
                 ComponentsAdapter.get().getStore(),
                 mServices.getAccountManager(),
                 mServices.getServerConfig(),
-                Collections.singleton(FxaCapability.CHOOSE_WHAT_TO_SYNC));
+                Collections.singleton(FxaCapability.CHOOSE_WHAT_TO_SYNC),
+                command -> Unit.INSTANCE);
 
         mWebChannelsFeature.start();
 

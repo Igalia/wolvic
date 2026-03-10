@@ -166,8 +166,13 @@ class WolvicWebExtensionRuntime(
                     webExtensionDelegate.onInstallPermissionRequest(
                         extension,
                         it.requiredPermissions,
-                        ) { allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
-                        WAllowOrDeny.DENY)
+                        it.requiredOrigins
+                    ) { response ->
+                        if (response.isPermissionsGranted) {
+                            result.complete(WAllowOrDeny.ALLOW)
+                        } else {
+                            result.complete(WAllowOrDeny.DENY)
+                        }
                     }
                 }
                 return result

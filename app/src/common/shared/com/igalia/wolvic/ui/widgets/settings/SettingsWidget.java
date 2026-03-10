@@ -76,7 +76,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private boolean mAreMozillaAccountsDisabled;
     private final Pair<String, String> mVersionDetail = new Pair<>(
             "versionCode " + BuildConfig.VERSION_CODE,
-            BuildConfig.GIT_HASH + " (AC " + Build.version + ")");
+            BuildConfig.GIT_HASH + " (AC " + Build.VERSION + ")");
     private boolean mIsFirstVersionDetail;
 
 
