@@ -20,7 +20,7 @@ import com.igalia.wolvic.utils.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.appservices.Megazord
+import mozilla.appservices.RustComponentsInitializer
 import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.sync.*
 import mozilla.components.service.fxa.*
@@ -51,7 +51,7 @@ class Services(val context: Context, places: Places): WSession.NavigationDelegat
 
     // This makes bookmarks storage accessible to background sync workers.
     init {
-        Megazord.init()
+        RustComponentsInitializer.init()
         try {
             RustLog.enable()
         } catch (e: UnsatisfiedLinkError) {

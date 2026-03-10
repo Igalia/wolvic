@@ -106,6 +106,7 @@ class AddonsManagerAdapter(
         val userCountView = view.findViewById<TextView>(R.id.users_count)
         val addButton = view.findViewById<ImageView>(R.id.add_button)
         val allowedInPrivateBrowsingLabel = view.findViewById<ImageView>(R.id.allowed_in_private_browsing_label)
+        val statusWarningView = view.findViewById<TextView>(R.id.add_on_status_warning_message)
         val statusErrorView = view.findViewById<TextView>(R.id.add_on_status_error_message)
         return AddonViewHolder(
             view,
@@ -118,6 +119,7 @@ class AddonsManagerAdapter(
             userCountView,
             addButton,
             allowedInPrivateBrowsingLabel,
+            statusWarningView,
             statusErrorView
         )
     }

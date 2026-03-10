@@ -262,6 +262,7 @@ public class SettingsStore {
                     Request.Redirect.FOLLOW,
                     Request.CookiePolicy.INCLUDE,
                     false,
+                    false,
                     false
             );
 
