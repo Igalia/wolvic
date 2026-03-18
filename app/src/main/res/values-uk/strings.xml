@@ -825,4 +825,15 @@
     <string name="display_options_tabs_location_vertical">Вертикально</string>
     <string name="settings_window_size">Типовий розмір вікна</string>
     <string name="download_addon_install_blocked_permissions_body">Для продовження увімкніть дозволи на зберігання в Параметрах конфіденційності.</string>
+    <string name="settings_language_ukrainian">Українська</string>
+    <string name="display_options_open_tabs_in_background">Відкривати нові вкладки у фоновому режимі</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Нова вкладка</string>
+    <string name="developer_options_homepage_other">Інша</string>
+    <string name="url_new_tab_title">Нова вкладка</string>
+    <string name="controller_options_window_selection">Спосіб вибору вікна</string>
+    <string name="controller_options_click_to_select">Клік</string>
+    <string name="controller_options_hover_to_select">Наведення</string>
+    <string name="announcements_title">Оголошення</string>
+    <string name="disable_hand_tracking_dialog_body">Відстеження рук тимчасово вимкнено. Воно буде автоматично увімкнене при наступному запуску. Ця опція навмисно не зберігається, щоб уникнути проблем, коли контролери недоступні.</string>
 </resources>
