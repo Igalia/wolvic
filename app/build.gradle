@@ -121,10 +121,23 @@ android {
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
         buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
-        buildConfigField "Float", "DEFAULT_DENSITY", "1.25f"
-        buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
         buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "false"
         buildConfigField "Boolean", "USE_SOUNDPOOL", "true"
+
+        buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
+        buildConfigField "Float", "DEFAULT_DENSITY", "1.25f"
+        buildConfigField "Integer", "DEFAULT_LOGICAL_WIDTH", "1024"
+        buildConfigField "Integer", "WINDOW_PRESET_0_WIDTH", "800"
+        buildConfigField "Integer", "WINDOW_PRESET_0_HEIGHT", "450"
+        buildConfigField "Integer", "WINDOW_PRESET_1_WIDTH", "750"
+        buildConfigField "Integer", "WINDOW_PRESET_1_HEIGHT", "500"
+        buildConfigField "Integer", "WINDOW_PRESET_2_WIDTH", "825"
+        buildConfigField "Integer", "WINDOW_PRESET_2_HEIGHT", "550"
+        buildConfigField "Integer", "WINDOW_PRESET_3_WIDTH", "900"
+        buildConfigField "Integer", "WINDOW_PRESET_3_HEIGHT", "600"
+        buildConfigField "Integer", "WINDOW_MAX_WIDTH", "1200"
+        buildConfigField "Integer", "WINDOW_MAX_HEIGHT", "800"
+
         buildConfigField 'String', 'ANNOUNCEMENTS_ENDPOINT', '"https://igalia.github.io/wolvic/announcements.json"'
         buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://igalia.github.io/wolvic/experiences.json"'
         buildConfigField 'String', 'HEYVR_ENDPOINT', '"https://api.heyvr.io/v1/public/global/feed/featured?limit=50"'

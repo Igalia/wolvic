@@ -110,26 +110,31 @@ public class SettingsStore {
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
 
-    // The default density is defined at build time.
+    // Websites recognize density as the device pixel ratio. The default is defined at build time.
     public final static float DISPLAY_DENSITY_DEFAULT = BuildConfig.DEFAULT_DENSITY;
-    // The DPI is calculated so the default window has a logical width of 1024 CSS pixels.
-    // For a density of 1.0, the DPI is 128 and the texture matches the logical size of the webpage.
-    // For a density of 1.5, the DPI of 192 and the resolution of the texture is twice the world size of the window.
-    public final static int DISPLAY_DPI_BASE = 128;
-    public final static int DISPLAY_DPI_DEFAULT = (int) (DISPLAY_DENSITY_DEFAULT * DISPLAY_DPI_BASE);
+    // DPI is calculated so the default window has a physical width of DEFAULT_PHYSICAL_WIDTH pixels
+    // which corresponds to a logical width of DEFAULT_LOGICAL_WIDTH CSS pixels.
+    // For example, with a window 800px wide:
+    //  - density 1.00 and DPI 100 produce a logical width of  800 CSS px on a  800 px texture
+    //  - density 1.00 and DPI 128 produce a logical width of 1024 CSS px on a 1024 px texture
+    //  - density 1.25 and DPI 160 produce a logical width of 1024 CSS px on a 1280 px texture
+    public final static int DISPLAY_DPI_DEFAULT = (int) (DISPLAY_DENSITY_DEFAULT * 100 * BuildConfig.DEFAULT_LOGICAL_WIDTH / BuildConfig.WINDOW_PRESET_0_WIDTH);
     public final static int DISPLAY_DPI_MIN = 70;
     public final static int DISPLAY_DPI_MAX = 300;
-    // World size: multiply by density to get the available resolution for the Web engine.
+    // This constant size is used to convert between UI and world dimensions.
+    // The size of the default window is defined by WINDOW_SIZE_PRESET_DEFAULT.
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
     // The maximum size is computed so the resulting texture fits within 2560x2560.
-    public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 800;
+    public final static int MAX_WINDOW_WIDTH_DEFAULT = BuildConfig.WINDOW_MAX_WIDTH;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = BuildConfig.WINDOW_MAX_HEIGHT;
+
     public enum WindowSizePreset {
-        PRESET_0(WINDOW_WIDTH_DEFAULT, WINDOW_HEIGHT_DEFAULT),
-        PRESET_1(750, 500),
-        PRESET_2(825, 550),
-        PRESET_3(900, 600);
+        PRESET_0(BuildConfig.WINDOW_PRESET_0_WIDTH, BuildConfig.WINDOW_PRESET_0_HEIGHT),
+        PRESET_1(BuildConfig.WINDOW_PRESET_1_WIDTH, BuildConfig.WINDOW_PRESET_1_HEIGHT),
+        PRESET_2(BuildConfig.WINDOW_PRESET_2_WIDTH, BuildConfig.WINDOW_PRESET_2_HEIGHT),
+        PRESET_3(BuildConfig.WINDOW_PRESET_3_WIDTH, BuildConfig.WINDOW_PRESET_3_HEIGHT),
+        PRESET_4(BuildConfig.WINDOW_PRESET_3_WIDTH, BuildConfig.WINDOW_PRESET_3_HEIGHT);
 
         public final int width;
         public final int height;
