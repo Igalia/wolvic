@@ -130,7 +130,6 @@ public class SessionState {
                             out.name("mUri").value(session.mUri);
                             out.name("mPreviousUri").value(session.mPreviousUri);
                             out.name("mTitle").value(session.mTitle);
-                            out.name("mSettings").jsonValue(gson.toJson(session.mSettings));
                             out.name("mLastUse").value(session.mLastUse);
                             out.name("mRegion").value(session.mRegion);
                             out.name("mId").value(session.mId);
@@ -147,8 +146,6 @@ public class SessionState {
                                         out.name("mSessionState").jsonValue(null);
                                     }
                                 }
-                            }
-                            if (session.mSettings != null) {
                                 out.name("mSettings").jsonValue(gson.toJson(session.mSettings));
                             }
                             out.endObject();
