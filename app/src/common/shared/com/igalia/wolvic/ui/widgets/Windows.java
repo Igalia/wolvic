@@ -315,6 +315,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             Log.d(LOGTAG, "Windows state restored");
 
         } catch (Exception e) {
+            Log.e(LOGTAG, "Error restoring windows state, tabs will not be restored: " + e.getLocalizedMessage());
             file.delete();
         }
 
