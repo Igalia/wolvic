@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application>
+    <application
+        android:resizeableActivity="true">
+        <!-- Quest device support for 2D panel mode -->
+        <meta-data android:name="com.oculus.supportedDevices" android:value="quest|quest2|questpro"/>
         <activity android:name=".VRBrowserActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:resizeableActivity="true"
+            android:excludeFromRecents="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
