@@ -3,13 +3,14 @@ package com.igalia.wolvic.ui.widgets.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
+import androidx.preference.PreferenceManager;
 import androidx.databinding.DataBindingUtil;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.databinding.OptionsSearchEngineBinding;
+import com.igalia.wolvic.search.CustomSearchEngine;
 import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.ui.views.settings.RadioGroupSetting;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -54,10 +55,26 @@ public class SearchEngineView extends SettingsView implements SharedPreferences.
             mDelegate.showView(SettingViewType.PRIVACY);
         });
 
+        // Add custom search engine button
+        mBinding.addEngineButton.setOnClickListener(view -> {
+            mDelegate.showView(SettingViewType.CUSTOM_SEARCH_ENGINES);
+        });
+
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        mSearchEngines = new ArrayList<>(SearchEngineWrapper.get(getContext()).getAvailableSearchEngines());
+        List<SearchEngine> allEngines = new ArrayList<>(SearchEngineWrapper.get(getContext()).getAvailableSearchEngines());
+
+        // Put custom search engines at the top of the list
+        mSearchEngines = new ArrayList<>();
+        for (SearchEngine engine : allEngines) {
+            if (engine.getId() != null && engine.getId().startsWith(CustomSearchEngine.ID_PREFIX)) {
+                mSearchEngines.add(0, engine);
+            } else {
+                mSearchEngines.add(engine);
+            }
+        }
+
         mBinding.searchEngineRadio.setOptions(mSearchEngines.stream().map(SearchEngine::getName).toArray(String[]::new));
 
         mBinding.searchEngineRadio.setOnCheckedChangeListener(mSearchEngineListener);

@@ -36,6 +36,7 @@ import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.databinding.SettingsBinding;
 import com.igalia.wolvic.db.SitePermission;
+import com.igalia.wolvic.search.CustomSearchEngine;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
 import com.igalia.wolvic.ui.widgets.UIWidget;
@@ -43,6 +44,7 @@ import com.igalia.wolvic.ui.widgets.WidgetPlacement;
 import com.igalia.wolvic.ui.widgets.WindowWidget;
 import com.igalia.wolvic.ui.widgets.Windows;
 import com.igalia.wolvic.ui.widgets.dialogs.ClearUserDataDialogWidget;
+import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.RestartDialogWidget;
 import com.igalia.wolvic.ui.widgets.dialogs.UIDialog;
 import com.igalia.wolvic.utils.DeviceType;
@@ -69,6 +71,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private int mViewMarginV;
     private RestartDialogWidget mRestartDialog;
     private ClearUserDataDialogWidget mClearUserDataDialog;
+    private PromptDialogWidget mDeleteSearchEngineDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
     private SettingsView.SettingViewType mOpenDialog;
@@ -505,6 +508,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             case SEARCH_ENGINE:
                 showView(new SearchEngineView(getContext(), mWidgetManager));
                 break;
+            case SEARCH_ENGINE_EDIT:
+                showView(new EditSearchEngineOptionsView(getContext(), mWidgetManager, (CustomSearchEngine) extras));
+                break;
+            case CUSTOM_SEARCH_ENGINES:
+                showView(new CustomSearchEnginesOptionsView(getContext(), mWidgetManager));
+                break;
             case TERMS_OF_SERVICE:
                 showView(new LegalDocumentView(getContext(), mWidgetManager, LegalDocumentView.LegalDocument.TERMS_OF_SERVICE));
                 break;
@@ -577,6 +586,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 } else if (isSavedLoginsSubview(mCurrentView)) {
                     showView(SettingsView.SettingViewType.SAVED_LOGINS);
 
+                } else if (mCurrentView instanceof EditSearchEngineOptionsView) {
+                    showView(SettingsView.SettingViewType.CUSTOM_SEARCH_ENGINES);
+
+                } else if (mCurrentView instanceof CustomSearchEnginesOptionsView) {
+                    showView(SettingsView.SettingViewType.SEARCH_ENGINE);
+
                 } else {
                     showView(SettingsView.SettingViewType.MAIN);
                 }
@@ -610,6 +625,29 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         }
 
         mClearUserDataDialog.show(REQUEST_FOCUS);
+    }
+
+    @Override
+    public void showConfirmDeleteSearchEngineDialog(String engineName, Runnable onConfirm) {
+        if (mDeleteSearchEngineDialog == null) {
+            mDeleteSearchEngineDialog = new PromptDialogWidget(getContext());
+            mDeleteSearchEngineDialog.setIcon(R.drawable.ic_icon_trash);
+            mDeleteSearchEngineDialog.setButtons(new int[] {
+                    R.string.cancel_button,
+                    R.string.delete_button
+            });
+            mDeleteSearchEngineDialog.setCheckboxVisible(false);
+            mDeleteSearchEngineDialog.setDescriptionVisible(false);
+        }
+        mDeleteSearchEngineDialog.setTitle(getContext().getString(R.string.delete_search_engine_dialog_title));
+        mDeleteSearchEngineDialog.setBody(getContext().getString(R.string.delete_search_engine_dialog_text, engineName));
+        mDeleteSearchEngineDialog.setButtonsDelegate((index, isChecked) -> {
+            if (index == PromptDialogWidget.POSITIVE) {
+                onConfirm.run();
+            }
+            mDeleteSearchEngineDialog.hide(UIWidget.REMOVE_WIDGET);
+        });
+        mDeleteSearchEngineDialog.show(REQUEST_FOCUS);
     }
 
     @Override
