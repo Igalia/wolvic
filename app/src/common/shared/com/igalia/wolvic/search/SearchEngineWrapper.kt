@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.net.Uri
+import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.preference.PreferenceManager
@@ -30,6 +30,8 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 
+private const val OPENSEARCH_SEARCH_TERMS_PLACEHOLDER = "{searchTerms}"
+
 class SearchEngineWrapper private constructor(aContext: Context) :
     OnSharedPreferenceChangeListener {
     private val mContextRef: WeakReference<Context?>
@@ -45,6 +47,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
             SearchMiddleware(aContext,
                 ioDispatcher = mIoDispatcher)
         ))
+    private val mEmptyIcon: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     fun registerForUpdates() {
         if (hasContext()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -81,16 +84,16 @@ class SearchEngineWrapper private constructor(aContext: Context) :
         return currentSearchEngine!!.buildSearchUrl(aQuery!!)
     }
 
-    fun getSuggestions(aQuery: String?): CompletableFuture<List<String>?> {
+    fun getSuggestions(aQuery: String?): CompletableFuture<List<String>> {
+        val engine = currentSearchEngine
+        if (engine?.type == SearchEngine.Type.CUSTOM) {
+            if (engine.suggestUrl != null && mAutocompleteEnabled && mSuggestionsClient != null) {
+                return getSuggestionsAsync(mSuggestionsClient!!, aQuery ?: "")
+            }
+            return CompletableFuture.completedFuture(emptyList())
+        }
         return getSuggestionsAsync(mSuggestionsClient!!, aQuery ?: "")
     }
-
-    val resourceURL: String
-        get() {
-            if (currentSearchEngine == null) setupPreferredSearchEngine()
-            val uri = Uri.parse(currentSearchEngine!!.buildSearchUrl(""))
-            return uri.scheme + "://" + uri.host
-        }
 
     // Receiver for locale updates
     private val mLocaleChangedReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -111,8 +114,52 @@ class SearchEngineWrapper private constructor(aContext: Context) :
     val availableSearchEngines: Collection<SearchEngine>
         get() {
             updateSearchEngine()
-            return mSearchEnginesMap!!.values
+            val allEngines = mutableListOf<SearchEngine>()
+            mSearchEnginesMap?.values?.let { allEngines.addAll(it) }
+            val customEngines = getCustomSearchEngines()
+            for (custom in customEngines) {
+                allEngines.add(
+                    SearchEngine(
+                        id = custom.id,
+                        name = custom.name,
+                        icon = mEmptyIcon,
+                        type = SearchEngine.Type.CUSTOM,
+                        resultUrls = listOf(custom.searchUrl.replace("%s", OPENSEARCH_SEARCH_TERMS_PLACEHOLDER)),
+                        suggestUrl = custom.suggestUrl?.replace("%s", OPENSEARCH_SEARCH_TERMS_PLACEHOLDER)
+                    )
+                )
+            }
+            return allEngines
         }
+
+    private fun getCustomSearchEngines(): List<CustomSearchEngine> {
+        return if (hasContext()) {
+            SettingsStore.getInstance(context!!).customSearchEngines
+        } else {
+            emptyList()
+        }
+    }
+
+    fun addCustomSearchEngine(engine: CustomSearchEngine) {
+        if (hasContext()) {
+            SettingsStore.getInstance(context!!).addCustomSearchEngine(engine)
+        }
+    }
+
+    fun removeCustomSearchEngine(engineId: String) {
+        if (hasContext()) {
+            SettingsStore.getInstance(context!!).removeCustomSearchEngine(engineId)
+            if (currentSearchEngine?.id == engineId) {
+                setupPreferredSearchEngine()
+            }
+        }
+    }
+
+    fun updateCustomSearchEngine(engine: CustomSearchEngine) {
+        if (hasContext()) {
+            SettingsStore.getInstance(context!!).updateCustomSearchEngine(engine)
+        }
+    }
 
     fun setDefaultSearchEngine() {
         if (hasContext()) setupSearchEngine(context!!, null)
@@ -174,25 +221,48 @@ class SearchEngineWrapper private constructor(aContext: Context) :
             mSearchEnginesMap!![searchEngine.id] = searchEngine
         }
 
-        val newSearchEngine = if (mSearchEnginesMap!!.containsKey(userPref)) {
-            mSearchEnginesMap!![userPref]
-        } else {
-            mSearchEnginesMap!![mBrowserStore.state.search.regionDefaultSearchEngineId]
+        var newSearchEngine: SearchEngine? = null
+
+        if (mSearchEnginesMap!!.containsKey(userPref)) {
+            newSearchEngine = mSearchEnginesMap!![userPref]
+        } else if (userPref != null && userPref.startsWith(CustomSearchEngine.ID_PREFIX)) {
+            val customEngine = SettingsStore.getInstance(thisContext).customSearchEngines.find { it.id == userPref }
+            if (customEngine != null) {
+                newSearchEngine = SearchEngine(
+                    id = customEngine.id,
+                    name = customEngine.name,
+                    icon = mEmptyIcon,
+                    type = SearchEngine.Type.CUSTOM,
+                    resultUrls = listOf(customEngine.searchUrl.replace("%s", OPENSEARCH_SEARCH_TERMS_PLACEHOLDER)),
+                    suggestUrl = customEngine.suggestUrl?.replace("%s", OPENSEARCH_SEARCH_TERMS_PLACEHOLDER)
+                )
+            }
+        }
+        
+        if (newSearchEngine == null) {
+            newSearchEngine = mSearchEnginesMap!![mBrowserStore.state.search.regionDefaultSearchEngineId]
         }
 
         if (newSearchEngine == null || currentSearchEngine == newSearchEngine) return
 
-        mSuggestionsClient = SearchSuggestionClient(
-            newSearchEngine
-        ) label@
-        { searchUrl: String? ->
-            if (mAutocompleteEnabled && vRBrowserActivity != null) {
-                if (!vRBrowserActivity!!.windows.isInPrivateMode) {
-                    return@label fetchSearchSuggestions(thisContext, searchUrl!!)
+        val shouldCreateClient = newSearchEngine.type != SearchEngine.Type.CUSTOM ||
+                newSearchEngine.suggestUrl != null
+        val suggestionClient = if (shouldCreateClient) {
+            SearchSuggestionClient(
+                newSearchEngine
+            ) label@
+            { searchUrl: String? ->
+                if (mAutocompleteEnabled && vRBrowserActivity != null) {
+                    if (!vRBrowserActivity!!.windows.isInPrivateMode) {
+                        return@label fetchSearchSuggestions(thisContext, searchUrl!!)
+                    }
                 }
+                null
             }
+        } else {
             null
         }
+        mSuggestionsClient = suggestionClient
         currentSearchEngine = newSearchEngine
     }
 

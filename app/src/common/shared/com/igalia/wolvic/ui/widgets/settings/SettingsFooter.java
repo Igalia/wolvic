@@ -82,4 +82,8 @@ public class SettingsFooter extends FrameLayout {
     public void setFooterButtonVisibility(int visibility) {
         mBinding.resetButton.setFooterButtonVisibility(visibility);
     }
+
+    public void setFooterButtonEnabled(boolean enabled) {
+        mBinding.resetButton.setEnabled(enabled);
+    }
 }

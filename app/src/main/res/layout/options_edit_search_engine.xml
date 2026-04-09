@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_display" />
+
+        <com.igalia.wolvic.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/name_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="text|textNoSuggestions"
+                    app:description="@string/add_search_engine_name_title"
+                    app:hintTextColor="@color/iron_blur"
+                    app:highlightedTextColor="@color/fog" />
+
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/search_url_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="textUri"
+                    app:description="@string/add_search_engine_search_url_title"
+                    app:hintTextColor="@color/iron_blur"
+                    app:highlightedTextColor="@color/fog" />
+
+                <com.igalia.wolvic.ui.views.settings.SingleEditSetting
+                    android:id="@+id/suggest_url_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="textUri"
+                    app:description="@string/add_search_engine_suggest_url_title"
+                    app:hintTextColor="@color/iron_blur"
+                    app:highlightedTextColor="@color/fog" />
+
+                <TextView
+                    android:id="@+id/error_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/dessert"
+                    android:textSize="@dimen/text_smaller_size"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+        </com.igalia.wolvic.ui.views.CustomScrollView>
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/privacy_options_saved_login_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -121,6 +121,11 @@ public class SingleEditSetting extends RelativeLayout {
         // If the edit field was visible when the click happened, this is a "save" action.
         boolean isCurrentlyEditing = mEdit1.getVisibility() == View.VISIBLE;
 
+        // Update text1 with the current edit text before hiding the edit field
+        if (isCurrentlyEditing) {
+            mText1.setText(mEdit1.getText().toString());
+        }
+
         mText1.setVisibility(mEdit1.getVisibility());
         mEdit1.setVisibility(mEdit1.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         @StringRes int buttonText = mEdit1.getVisibility() == View.VISIBLE ?
@@ -186,5 +191,4 @@ public class SingleEditSetting extends RelativeLayout {
     public void setPasswordToggleVisibility(int visibility) {
         mPasswordToggle.setVisibility(visibility);
     }
-
 }

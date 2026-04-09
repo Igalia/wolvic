@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="isEmpty"
+            type="boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/settings_dialog_width"
+        android:layout_height="@dimen/settings_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/custom_search_engines_title" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginStart="110dp"
+                android:layout_marginEnd="110dp"
+                visibleGone="@{isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:id="@+id/empty_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:paddingBottom="15dp"
+                    android:textColor="@color/rhino"
+                    android:layout_gravity="center"
+                    android:text="@string/custom_search_engines_empty"
+                    tools:text="@string/custom_search_engines_empty" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                visibleGone="@{!isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:id="@+id/content_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:text="@string/custom_search_engines_list_header"
+                    tools:text="@string/custom_search_engines_list_header" />
+
+                <com.igalia.wolvic.ui.views.CustomRecyclerView
+                    android:id="@+id/enginesList"
+                    style="@style/customRecyclerViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/asphalt"
+                    android:contentDescription="Search Engines List"
+                    android:paddingEnd="15dp"
+                    app:layoutManager="LinearLayoutManager" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/add_search_engine_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

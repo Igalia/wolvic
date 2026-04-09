@@ -132,6 +132,70 @@
     <!-- This string labels the Reset button that restores the default search engine settings values. -->
     <string name="settings_privacy_choose_search_engine_reset">Reset Search Engine Settings</string>
 
+    <!-- This string is used as the title of the add custom search engine dialog. -->
+    <string name="add_search_engine_title">Add Search Engine</string>
+
+    <!-- This string is used as the title for the name input field in the add search engine dialog. -->
+    <string name="add_search_engine_name_title">Name</string>
+
+    <!-- This string is used as the hint for the name input field in the add search engine dialog. -->
+    <string name="add_search_engine_name_hint">Enter search engine name</string>
+
+    <!-- This string is used as the title for the search URL input field in the add search engine dialog. -->
+    <string name="add_search_engine_search_url_title">Search URL</string>
+
+    <!-- This string is used as the hint for the search URL input field in the add search engine dialog. -->
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+
+    <!-- This string is used as the title for the suggest URL input field in the add search engine dialog. -->
+    <string name="add_search_engine_suggest_url_title">Suggestion URL (optional)</string>
+
+    <!-- This string is used as the hint for the suggest URL input field in the add search engine dialog. -->
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+
+    <!-- This string is used for the save button in the add search engine dialog. -->
+    <string name="add_search_engine_save">Save</string>
+
+    <!-- This string is used for the cancel button in the add search engine dialog. -->
+    <string name="add_search_engine_cancel">Cancel</string>
+
+    <!-- This string is used as the title of the edit custom search engine dialog. -->
+    <string name="edit_search_engine_title">Edit Search Engine</string>
+
+    <!-- This string is used for the save button in the edit search engine dialog. -->
+    <string name="edit_search_engine_save">Update</string>
+
+    <!-- This string is shown when a custom search engine is deleted -->
+    <string name="search_engine_deleted">Search engine deleted</string>
+
+    <!-- This string is used as the title of the delete search engine confirmation dialog -->
+    <string name="delete_search_engine_dialog_title">Delete Search Engine</string>
+
+    <!-- This string is used as the text of the delete search engine confirmation dialog -->
+    <string name="delete_search_engine_dialog_text">Are you sure you want to delete the %1$s search engine?</string>
+
+    <!-- This string is used as the title of the custom search engines management view -->
+    <string name="custom_search_engines_title">Custom Search Engines</string>
+
+    <!-- This string is shown when there are no custom search engines -->
+    <string name="custom_search_engines_empty">No custom search engines. Use the Add Search Engine button to add one.</string>
+
+    <!-- This string is used for the button to manage custom search engines -->
+    <string name="custom_search_engines_manage">Custom Search Engines</string>
+
+    <!-- This string is the header for the list of custom search engines -->
+    <string name="custom_search_engines_list_header">Custom Search Engines</string>
+
+    <!-- Validation error messages for custom search engines -->
+    <string name="search_engine_error_url_required">URL is required</string>
+    <string name="search_engine_error_url_placeholder">URL must contain %s or {searchTerms} placeholder</string>
+    <string name="search_engine_error_url_scheme">URL must have a scheme (http:// or https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Only http and https URLs are allowed</string>
+    <string name="search_engine_error_url_host">URL must have a valid host</string>
+    <string name="search_engine_error_url_private">Private/localhost URLs are not allowed for security reasons</string>
+    <string name="search_engine_error_name_required">Name is required</string>
+    <string name="search_engine_error_name_too_long">Name must be 50 characters or less</string>
+
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_title_v1">Exceptions for Pop-Ups</string>
@@ -1019,9 +1083,15 @@
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="cancel_button">Cancel</string>
 
+    <!-- This string labels a button that is used to close a dialog or view. -->
+    <string name="close_button">Close</string>
+
     <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="ok_button">OK</string>
+
+    <!-- This string labels a button that is used to delete an item. -->
+    <string name="delete_button">Delete</string>
 
     <!-- This string labels a button that is used to upload a file.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
