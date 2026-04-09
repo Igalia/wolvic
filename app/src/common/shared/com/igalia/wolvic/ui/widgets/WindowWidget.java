@@ -119,6 +119,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private final float MAX_SCALE = 3.0f;
     private final long FOCUS_ON_HOVER_DELAY_MS = 500;
 
+    public static final String BROWSER_FALLBACK_URL = "browser_fallback_url";
+    public static final String GOOGLE_PLAY_STORE = "play.google.com";
+    public static final String GOOGLE_PLAY_STORE_APP_DETAILS_PATH = "/store/apps/details";
+
     private Surface mSurface;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
@@ -2398,6 +2402,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     // ExternalRequestDelegate
 
+    private void showExternalRequestErrorDialog(@NonNull String url) {
+        mWidgetManager.getFocusedWindow().showAlert(
+                getResources().getString(R.string.external_open_uri_error_title),
+                getResources().getString(R.string.external_open_uri_error_bad_uri_body, url),
+                null);
+    }
+
     @Override
     public boolean onHandleExternalRequest(@NonNull String url) {
         URI uri;
@@ -2415,10 +2426,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             try {
                 intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
             } catch (Exception ex) {
-                mWidgetManager.getFocusedWindow().showAlert(
-                        getResources().getString(R.string.external_open_uri_error_title),
-                        getResources().getString(R.string.external_open_uri_error_bad_uri_body, url),
-                        null);
+                showExternalRequestErrorDialog(url);
                 return false;
             }
 
@@ -2430,19 +2438,31 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 selector.setComponent(null);
             }
 
+            String fallbackUrl = intent.getStringExtra(BROWSER_FALLBACK_URL);
+            try {
+                Uri fallbackUri = Uri.parse(fallbackUrl);
+                // Intent fallback URL usually points to the Play Store when the intent is for an app that is not installed. In that case, we can try to extract the
+                // actual URL of the app from the fallback URL, so if the Play Store is not available, we can still try to open the URL in the browser.
+                if (fallbackUri.getHost().equals(GOOGLE_PLAY_STORE) && fallbackUri.getPath() != null && fallbackUri.getPath().startsWith(GOOGLE_PLAY_STORE_APP_DETAILS_PATH)) {
+                    fallbackUrl = fallbackUri.getQueryParameter("url");
+                }
+            } catch (Exception e) {
+                showExternalRequestErrorDialog(url);
+                return false;
+            }
+
             try {
                 getContext().startActivity(intent);
             } catch (ActivityNotFoundException ex) {
-                mWidgetManager.getFocusedWindow().showAlert(
-                        getResources().getString(R.string.external_open_uri_error_title),
-                        getResources().getString(R.string.external_open_uri_error_no_activity_body, url),
-                        null);
-                return false;
+                if (fallbackUrl != null && !fallbackUrl.isEmpty()) {
+                    mSession.loadUri(fallbackUrl, WSession.LOAD_FLAGS_EXTERNAL);
+                    return true;
+                } else {
+                    showExternalRequestErrorDialog(url);
+                    return false;
+                }
             } catch (SecurityException ex) {
-                mWidgetManager.getFocusedWindow().showAlert(
-                        getResources().getString(R.string.external_open_uri_error_title),
-                        getResources().getString(R.string.external_open_uri_error_security_exception_body, url),
-                        null);
+                showExternalRequestErrorDialog(url);
                 return false;
             }
 
