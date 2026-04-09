@@ -1,4 +1,4 @@
-package com.igalia.wolvic;
+package com.igalia.wolvic.browser.engine;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.igalia.wolvic.browser.engine.SessionSettings;
-import com.igalia.wolvic.browser.engine.SessionState;
 
 import org.junit.Test;
 

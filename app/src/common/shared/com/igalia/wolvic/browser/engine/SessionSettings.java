@@ -18,6 +18,9 @@ class SessionSettings {
     private int viewportMode;
     private String userAgentOverride;
 
+    /* package */ SessionSettings() {
+    }
+
     /* package */ SessionSettings(@NonNull Builder builder) {
         this.isPrivateBrowsingEnabled = builder.isPrivateBrowsingEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
