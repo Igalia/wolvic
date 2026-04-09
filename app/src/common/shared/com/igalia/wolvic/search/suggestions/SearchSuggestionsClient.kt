@@ -9,9 +9,9 @@ import mozilla.components.concept.fetch.Request
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
 
-fun getSuggestionsAsync(client: SearchSuggestionClient, query: String): CompletableFuture<List<String>?> =
+fun getSuggestionsAsync(client: SearchSuggestionClient, query: String): CompletableFuture<List<String>> =
         GlobalScope.future {
-            client.getSuggestions(query)
+            (client.getSuggestions(query) ?: emptyList()).orEmpty().filterNotNull()
         }
 
 fun fetchSearchSuggestions(context: Context, searchUrl: String): String? {

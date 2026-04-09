@@ -24,6 +24,7 @@ import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.engine.EngineProvider;
+import com.igalia.wolvic.search.CustomSearchEngine;
 import com.igalia.wolvic.speech.SpeechServices;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.viewmodel.SettingsViewModel;
@@ -1092,6 +1093,50 @@ public class SettingsStore {
             editor.remove(mContext.getString(R.string.settings_key_search_engine_id));
         }
         editor.apply();
+    }
+
+    public List<CustomSearchEngine> getCustomSearchEngines() {
+        String json = mPrefs.getString(mContext.getString(R.string.settings_key_custom_search_engines), "[]");
+        try {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<CustomSearchEngine>>(){}.getType();
+            List<CustomSearchEngine> engines = gson.fromJson(json, listType);
+            return engines != null ? engines : new ArrayList<>();
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Error reading custom search engines", e);
+            return new ArrayList<>();
+        }
+    }
+
+    public void setCustomSearchEngines(List<CustomSearchEngine> engines) {
+        Gson gson = new Gson();
+        String json = gson.toJson(engines);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_custom_search_engines), json);
+        editor.apply();
+    }
+
+    public void addCustomSearchEngine(CustomSearchEngine engine) {
+        List<CustomSearchEngine> engines = getCustomSearchEngines();
+        engines.add(engine);
+        setCustomSearchEngines(engines);
+    }
+
+    public void removeCustomSearchEngine(String engineId) {
+        List<CustomSearchEngine> engines = getCustomSearchEngines();
+        engines.removeIf(e -> e.getId().equals(engineId));
+        setCustomSearchEngines(engines);
+    }
+
+    public void updateCustomSearchEngine(CustomSearchEngine engine) {
+        List<CustomSearchEngine> engines = getCustomSearchEngines();
+        for (int i = 0; i < engines.size(); i++) {
+            if (engines.get(i).getId().equals(engine.getId())) {
+                engines.set(i, engine);
+                break;
+            }
+        }
+        setCustomSearchEngines(engines);
     }
 
     public void setWebGLOutOfProcess(boolean isEnabled) {

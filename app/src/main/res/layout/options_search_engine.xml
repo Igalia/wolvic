@@ -34,11 +34,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_layout">
 
-            <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
-                android:id="@+id/searchEngineRadio"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout="@layout/setting_radio_group_v" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/addEngineButton"
+                    style="@style/settingsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textAlignment="center"
+                    android:text="@string/custom_search_engines_manage" />
+
+                <com.igalia.wolvic.ui.views.settings.RadioGroupVSetting
+                    android:id="@+id/searchEngineRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout="@layout/setting_radio_group_v" />
+
+            </LinearLayout>
         </com.igalia.wolvic.ui.views.CustomScrollView>
 
         <com.igalia.wolvic.ui.widgets.settings.SettingsFooter
@@ -49,8 +68,7 @@
             app:description="@string/settings_privacy_choose_search_engine_reset"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollbar" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
