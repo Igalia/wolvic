@@ -38,6 +38,8 @@ public abstract class SettingsView extends FrameLayout {
         LOGIN_EXCEPTIONS,
         LOGIN_EDIT,
         SEARCH_ENGINE,
+        SEARCH_ENGINE_EDIT,
+        CUSTOM_SEARCH_ENGINES,
         TERMS_OF_SERVICE,
         PRIVACY_POLICY
     }
@@ -51,6 +53,7 @@ public abstract class SettingsView extends FrameLayout {
         void exitWholeSettings();
         void showRestartDialog(RestartDialogWidget.CancelCallback cancelCallback);
         void showClearUserDataDialog();
+        void showConfirmDeleteSearchEngineDialog(String engineName, Runnable onConfirm);
         void showAlert(String aTitle, String aMessage);
         void showView(SettingsView.SettingViewType type);
         void showView(SettingsView.SettingViewType type, @Nullable Object extras);
@@ -86,6 +89,12 @@ public abstract class SettingsView extends FrameLayout {
     protected void showClearUserDataDialog() {
         if (mDelegate != null) {
             mDelegate.showClearUserDataDialog();
+        }
+    }
+
+    protected void showConfirmDeleteSearchEngineDialog(String engineName, Runnable onConfirm) {
+        if (mDelegate != null) {
+            mDelegate.showConfirmDeleteSearchEngineDialog(engineName, onConfirm);
         }
     }
 
