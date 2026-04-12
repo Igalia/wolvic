@@ -261,9 +261,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         File tmpFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_TMP);
         File bakFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_BAK);
 
-        // --- Step 1: Build state and write to a temporary file ---
-        // Writing to a temp file first means that if the app is killed mid-write,
-        // the main session file is never corrupted (atomic write pattern).
         final int[] tabCount = {0}; // captured for the success log after the try block
         try (Writer writer = new FileWriter(tmpFile)) {
             WindowsState state = new WindowsState();
@@ -300,9 +297,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             return;
         }
 
-        // --- Step 2: Promote current valid file to backup ---
-        // Before replacing the main file, move it to .bak so we always have
-        // the last-known-good state as a fallback.
         if (file.exists()) {
             bakFile.delete(); // remove old backup first
             if (!file.renameTo(bakFile)) {
@@ -310,7 +304,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
         }
 
-        // --- Step 3: Atomically replace main file with the newly written temp ---
         if (!tmpFile.renameTo(file)) {
             Log.e(LOGTAG, "Atomic rename of session file failed; attempting to restore backup");
             if (bakFile.exists() && !bakFile.renameTo(file)) {
@@ -335,13 +328,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         File file    = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
         File bakFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_BAK);
 
-        // --- Attempt 1: restore from the primary session file ---
         WindowsState restored = tryRestoreFromFile(file);
         if (restored != null) {
             return restored;
         }
 
-        // --- Attempt 2: primary failed (corrupt / schema mismatch); try backup ---
         if (bakFile.exists()) {
             Log.w(LOGTAG, "Primary session file unreadable; attempting restore from backup");
             restored = tryRestoreFromFile(bakFile);
@@ -351,17 +342,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
         }
 
-        // --- Both files unreadable: start fresh but deliberately do NOT delete ---
-        // Preserving the files allows for forensic analysis or recovery via future
-        // app versions, rather than permanently destroying the user's session.
         Log.e(LOGTAG, "All session restore attempts failed; starting with no tabs");
         return null;
     }
 
-    /**
-     * Reads and deserializes a {@link WindowsState} from the given file.
-     * Returns {@code null} (with a log message) on any error — never throws.
-     */
     private WindowsState tryRestoreFromFile(File file) {
         if (!file.exists()) {
             return null;
