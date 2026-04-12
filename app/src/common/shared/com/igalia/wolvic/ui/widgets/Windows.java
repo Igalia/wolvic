@@ -81,6 +81,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
 
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
+    private static final String WINDOWS_SAVE_FILENAME_TMP = "windows_state.json.tmp";
+    private static final String WINDOWS_SAVE_FILENAME_BAK = "windows_state.json.bak";
 
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
@@ -255,8 +257,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void saveStateOnDiskIO() {
-        File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
-        try (Writer writer = new FileWriter(file)) {
+        File file    = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
+        File tmpFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_TMP);
+        File bakFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_BAK);
+
+        // --- Step 1: Build state and write to a temporary file ---
+        // Writing to a temp file first means that if the app is killed mid-write,
+        // the main session file is never corrupted (atomic write pattern).
+        final int[] tabCount = {0}; // captured for the success log after the try block
+        try (Writer writer = new FileWriter(tmpFile)) {
             WindowsState state = new WindowsState();
             state.privateMode = mPrivateMode;
             state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
@@ -284,12 +293,31 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(state, writer);
             writer.flush();
-
-            Log.d(LOGTAG, "Windows state saved");
-
+            tabCount[0] = state.tabs.size();
         } catch (IOException e) {
-            Log.e(LOGTAG, "Error saving windows state: " + e.getLocalizedMessage());
-            file.delete();
+            Log.e(LOGTAG, "Error writing temporary session file; original session is intact: " + e.getLocalizedMessage());
+            tmpFile.delete(); // clean up the incomplete temp file only
+            return;
+        }
+
+        // --- Step 2: Promote current valid file to backup ---
+        // Before replacing the main file, move it to .bak so we always have
+        // the last-known-good state as a fallback.
+        if (file.exists()) {
+            bakFile.delete(); // remove old backup first
+            if (!file.renameTo(bakFile)) {
+                Log.w(LOGTAG, "Could not create session backup; continuing with atomic replace");
+            }
+        }
+
+        // --- Step 3: Atomically replace main file with the newly written temp ---
+        if (!tmpFile.renameTo(file)) {
+            Log.e(LOGTAG, "Atomic rename of session file failed; attempting to restore backup");
+            if (bakFile.exists() && !bakFile.renameTo(file)) {
+                Log.e(LOGTAG, "Could not restore session backup after failed rename");
+            }
+        } else {
+            Log.d(LOGTAG, "Windows state saved (" + tabCount[0] + " tabs)");
         }
     }
 
@@ -304,22 +332,52 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private WindowsState restoreState() {
-        WindowsState restored = null;
+        File file    = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
+        File bakFile = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME_BAK);
 
-        File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
+        // --- Attempt 1: restore from the primary session file ---
+        WindowsState restored = tryRestoreFromFile(file);
+        if (restored != null) {
+            return restored;
+        }
+
+        // --- Attempt 2: primary failed (corrupt / schema mismatch); try backup ---
+        if (bakFile.exists()) {
+            Log.w(LOGTAG, "Primary session file unreadable; attempting restore from backup");
+            restored = tryRestoreFromFile(bakFile);
+            if (restored != null) {
+                Log.d(LOGTAG, "Windows state restored from backup");
+                return restored;
+            }
+        }
+
+        // --- Both files unreadable: start fresh but deliberately do NOT delete ---
+        // Preserving the files allows for forensic analysis or recovery via future
+        // app versions, rather than permanently destroying the user's session.
+        Log.e(LOGTAG, "All session restore attempts failed; starting with no tabs");
+        return null;
+    }
+
+    /**
+     * Reads and deserializes a {@link WindowsState} from the given file.
+     * Returns {@code null} (with a log message) on any error — never throws.
+     */
+    private WindowsState tryRestoreFromFile(File file) {
+        if (!file.exists()) {
+            return null;
+        }
         try (Reader reader = new FileReader(file)) {
             Gson gson = new GsonBuilder().create();
             Type type = new TypeToken<WindowsState>() {}.getType();
-            restored = gson.fromJson(reader, type);
-
-            Log.d(LOGTAG, "Windows state restored");
-
+            WindowsState state = gson.fromJson(reader, type);
+            if (state != null) {
+                Log.d(LOGTAG, "Windows state restored from " + file.getName());
+            }
+            return state;
         } catch (Exception e) {
-            Log.e(LOGTAG, "Error restoring windows state, tabs will not be restored: " + e.getLocalizedMessage());
-            file.delete();
+            Log.e(LOGTAG, "Error reading session file '" + file.getName() + "': " + e.getLocalizedMessage());
+            return null;
         }
-
-        return restored;
     }
 
     public void setDelegate(Delegate aDelegate) {
