@@ -151,7 +151,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
                 newCode = result.words.get(0).code.replace("\\", "\\\\");
                 aComposingText = aComposingText.replace("\\", "\\\\");
             }
-            String codeWithoutSpaces = StringUtils.removeSpaces(newCode);
+            String codeWithoutSpaces = newCode != null ? StringUtils.removeSpaces(newCode) : "";
             result.composing = aComposingText.replaceFirst(Pattern.quote(codeWithoutSpaces), newCode);
         }
 

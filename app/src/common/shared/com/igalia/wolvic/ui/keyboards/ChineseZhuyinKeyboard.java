@@ -104,7 +104,8 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         result.action = CandidatesResult.Action.SHOW_CANDIDATES;
         result.composing = aComposingText;
         if (result.words.size() > 0) {
-            String codeWithoutSpaces = StringUtils.removeSpaces(result.words.get(0).code);
+            String code = result.words.get(0).code;
+            String codeWithoutSpaces = code != null ? StringUtils.removeSpaces(code) : "";
             result.composing = aComposingText.replaceFirst(Pattern.quote(codeWithoutSpaces), result.words.get(0).code);
         }
 
