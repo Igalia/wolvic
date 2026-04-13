@@ -41,8 +41,7 @@ public class RuntimeImpl implements WRuntime {
     public RuntimeImpl(Context ctx, WRuntimeSettings settings) {
         mContext = ctx;
         GeckoRuntimeSettings.Builder builder = new GeckoRuntimeSettings.Builder();
-        builder.crashHandler(settings.getCrashHandler())
-                .aboutConfigEnabled(settings.isAboutConfigEnabled())
+        builder.aboutConfigEnabled(settings.isAboutConfigEnabled())
                 .allowInsecureConnections((int)settings.getAllowInsecureConenctions())
                 .contentBlocking(new ContentBlocking.Settings.Builder()
                         .antiTracking(ContentBlockingDelegateImpl.toGeckoAntitracking(settings.getContentBlocking().getAntiTracking()))
