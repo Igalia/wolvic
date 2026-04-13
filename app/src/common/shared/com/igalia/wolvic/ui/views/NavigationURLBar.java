@@ -560,7 +560,8 @@ public class NavigationURLBar extends FrameLayout {
                     if (action.equals(WSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
-                        mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                        String text = mBinding.urlEditText.getText().toString();
+                        mBinding.urlEditText.setText(text != null ? StringUtils.removeRange(text, startSelection, endSelection) : "");
                         mBinding.urlEditText.setSelection(startSelection);
 
                     } else if (action.equals(WSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
@@ -570,7 +571,8 @@ public class NavigationURLBar extends FrameLayout {
                     } else if (action.equals(WSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
-                            mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                            String text = mBinding.urlEditText.getText().toString();
+                            mBinding.urlEditText.setText(text != null ? StringUtils.removeRange(text, startSelection, endSelection) : "");
                             mBinding.urlEditText.setSelection(startSelection);
                         }
                         if (item != null && item.getText() != null) {
