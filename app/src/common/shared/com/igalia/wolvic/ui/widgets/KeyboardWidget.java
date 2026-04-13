@@ -1464,7 +1464,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
         if (mCurrentKeyboard.usesComposingText()) {
-            String code = StringUtils.removeSpaces(aItem.code);
+            String code = aItem.code != null ? StringUtils.removeSpaces(aItem.code) : "";
             mComposingText = mCurrentKeyboard.getComposingText(mComposingText, code).trim();
 
             postInputCommand(() -> {
