@@ -16,7 +16,6 @@ import com.igalia.wolvic.browser.components.WolvicEngineSession
 import com.igalia.wolvic.browser.engine.EngineProvider
 import com.igalia.wolvic.browser.engine.Session
 import com.igalia.wolvic.browser.engine.SessionStore
-import com.igalia.wolvic.crashreporting.GlobalExceptionHandler
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -90,10 +89,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
         try {
             GlobalAddonDependencyProvider.initialize(
                     addonManager,
-                    addonUpdater,
-                    onCrash = { exception ->
-                        GlobalExceptionHandler.mInstance.mCrashHandler.uncaughtException(Thread.currentThread(), exception)
-                    }
+                    addonUpdater
             )
             WebExtensionSupport.initialize(
                     sessionStore.webExtensionRuntime,
