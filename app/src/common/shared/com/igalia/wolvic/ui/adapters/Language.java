@@ -11,14 +11,15 @@ public class Language {
         this.isPreferred = false;
 
         String languageId = locale.toLanguageTag();
-        String displayName = StringUtils.capitalize(locale.getDisplayName());
+        String displayNameFromLocale = locale.getDisplayName();
+        String displayName = displayNameFromLocale != null ? StringUtils.capitalize(displayNameFromLocale) : "";
         this.displayName = displayName + " [" + languageId + "]";
     }
 
     public Language(Locale locale, String displayName) {
         this.locale = locale;
         this.isPreferred = false;
-        this.displayName = StringUtils.capitalize(displayName);
+        this.displayName = displayName != null ? StringUtils.capitalize(displayName) : "";
     }
 
     private Locale locale;

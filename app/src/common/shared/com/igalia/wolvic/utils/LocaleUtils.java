@@ -207,7 +207,8 @@ public class LocaleUtils {
             return aContext.getString(R.string.settings_language_follow_device);
         } else {
             Locale locale = Locale.forLanguageTag(language);
-            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
+            String displayLanguage = locale.getDisplayLanguage(locale);
+            return displayLanguage != null ? StringUtils.capitalize(displayLanguage) : "";
         }
     }
 
