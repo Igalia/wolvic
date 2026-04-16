@@ -2236,7 +2236,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_saved_notification">新增了網頁應用程式！</string>
     <string name="download_addon_install">安裝插件</string>
     <string name="privacy_dialog_disagree">關閉Wolvic</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk（離線）</string>
     <string name="web_apps_dialog_title_parameter">安裝 %1$s</string>
     <string name="deprecated_version_dialog_info_button">了解更多…</string>
     <string name="deprecated_version_dialog_store_button">安裝…</string>
@@ -2382,9 +2382,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t• Google: https://policies.google.com/privacy
 \n\t• Facebook: https://www.facebook.com/about/privacy/update
-\n\t• MeetKai: https://meetkai.com/privacy
+\n\t• Vosk: https://alphacephei.com/vosk
 \n
-\n同樣，IGALIA 通知您，在使用瀏覽器的語音辨識選項時，Meetkai 將保留您語音的完全匿名語音轉錄，以改善他們提供的服務。您的聲音不會被保留，也不會以任何方式將轉錄內容與您的身分連結起來。有關 MeetKai 隱私權政策的更多信息，請訪問以下連結：https://meetkai.com/es/privacy。 Igalia 既沒有興趣將轉錄內容與任何使用者連結起來，也沒有興趣影響他們的隱私；因此，Igalia 要求其聲音地址中不得包含任何類型的個人或機密資訊。
+\n同樣，IGALIA 通知您，在使用瀏覽器的語音辨識選項時，Vosk 會在您的裝置上完全離線處理您的語音資料。不會有任何語音資料或轉錄內容傳輸到外部伺服器。所有處理都在本機執行，確保您的隱私受到完全保護。
 \n在任何情況下，IGALIA 保證利害關係人對其個人資料行使存取、更正、刪除、反對、限制處理和可攜性的權利。
 \n為此，IGALIA 制定了內部協議/程序來執行它們。
 \n有興趣的各方可以透過以下方式行使自己的權利：透過向 IGALIA 的實際地址發送請求：Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña，參考編號：「資料保護」；或發送至以下電子郵件地址：info@igalia.com。

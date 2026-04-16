@@ -44,6 +44,7 @@ openxrLoader = "1.1.48"
 openxrLoader10 = "1.0.34"
 robolectric = "4.11.1"
 zip4j = "2.11.5"
+vosk = "0.3.75"
 
 [libraries]
 # AGP
@@ -158,6 +159,8 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "a
 work-testing = { module = "androidx.work:work-testing", version.ref = "androidxWork" }
 # ZIP4J
 zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
+# Vosk
+vosk = { module = "com.alphacephei:vosk-android", version.ref = "vosk" }
 
 [plugins]
 jetbrains-python-envs = { id = "com.jetbrains.python.envs", version.ref = "jetbrainsPython" }

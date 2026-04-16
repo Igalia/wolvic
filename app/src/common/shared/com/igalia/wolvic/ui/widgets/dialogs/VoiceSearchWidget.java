@@ -21,6 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -44,7 +47,8 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
         ERROR_SERVER(R.string.voice_search_server_error),
         ERROR_TOO_MANY_REQUESTS(R.string.voice_search_server_error),
         ERROR_LANGUAGE_NOT_SUPPORTED(R.string.voice_search_unsupported),
-        ERROR_PERMISSIONS(R.string.voice_search_permission_after_decline);
+        ERROR_PERMISSIONS(R.string.voice_search_permission_after_decline),
+        DOWNLOADING_MODEL(R.string.voice_download_model);
 
         private final int mStringResId;
 
@@ -71,6 +75,8 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
     private SpeechRecognizer mCurrentSpeechRecognizer;
+    private boolean mIsDownloadingModel = false;
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -146,6 +152,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
             mCurrentSpeechRecognizer = null;
         }
 
+        mExecutor.shutdown();
         super.releaseWidget();
     }
 
@@ -186,12 +193,6 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
             // Captures the activity from the microphone
             Log.d(LOGTAG, "===> MIC_ACTIVITY");
             mVoiceInputClipDrawable.setLevel(level);
-        }
-
-        @Override
-        public void onDecoding() {
-            // Handle when the speech object changes to decoding state
-            Log.d(LOGTAG, "===> DECODING");
         }
 
         @Override
@@ -273,20 +274,97 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     private void startVoiceSearch() {
         // Ensure that the recognizer is in the correct state.
         if (mCurrentSpeechRecognizer != null && mCurrentSpeechRecognizer.isActive()) {
-            Log.w(LOGTAG, "Voice recognition was already active.");
-            stopVoiceSearch();
+            Log.w(LOGTAG, "Voice recognition was already active, ignoring.");
+            return;
         }
 
         setState(mInitialState);
 
         String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
+        SpeechRecognizer recognizer = mApplication.getSpeechRecognizer();
+        if (recognizer != null) {
+            final String resolvedLocale = resolveLocale(locale, recognizer);
+            mExecutor.execute(() -> {
+                boolean downloaded = recognizer.isModelDownloaded(resolvedLocale);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (downloaded) {
+                        startRecognition(resolvedLocale);
+                    } else {
+                        downloadModelAndStartRecognition(resolvedLocale, recognizer);
+                    }
+                });
+            });
+            return;
+        }
+
+        startRecognition(locale);
+    }
+
+    private String resolveLocale(String locale, SpeechRecognizer recognizer) {
+        if (!LocaleUtils.DEFAULT_LANGUAGE_ID.equals(locale)) {
+            return locale;
+        }
+        java.util.List<String> supported = recognizer.getSupportedLanguages();
+        String deviceLang = java.util.Locale.getDefault().getLanguage();
+        return supported.contains(deviceLang) ? deviceLang : (supported.isEmpty() ? "en" : supported.get(0));
+    }
+
+    private void downloadModelAndStartRecognition(String locale, SpeechRecognizer recognizer) {
+        if (mIsDownloadingModel) {
+            return;
+        }
+
+        mIsDownloadingModel = true;
+        setState(State.DOWNLOADING_MODEL);
+
+        recognizer.downloadModel(locale, new SpeechRecognizer.DownloadCallback() {
+            @Override
+            public void onProgress(int progress) {
+                Log.d(LOGTAG, "Model download progress: " + progress + "%");
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (mBinding != null && mBinding.voiceSearchStart != null) {
+                        String langName = LocaleUtils.getVoiceLanguageName(getContext(), locale);
+                        mBinding.voiceSearchStart.setText(
+                                getContext().getString(R.string.voice_download_progress, langName));
+                        mBinding.downloadProgress.setProgress(progress);
+                    }
+                });
+            }
+
+            @Override
+            public void onSuccess() {
+                Log.d(LOGTAG, "Model downloaded successfully");
+                mIsDownloadingModel = false;
+                new Handler(Looper.getMainLooper()).post(() -> startRecognition(locale));
+            }
+
+            @Override
+            public void onError(@NonNull String error) {
+                Log.e(LOGTAG, "Model download failed: " + error);
+                mIsDownloadingModel = false;
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (mBinding != null && mBinding.voiceSearchStart != null) {
+                        mBinding.voiceSearchStart.setText(
+                                getContext().getString(R.string.voice_download_failed, error));
+                    }
+                });
+            }
+        });
+    }
+
+    private void startRecognition(String locale) {
         boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
         if (SessionStore.get().getActiveSession().isPrivateMode()) {
             storeData = false;
         }
 
-        mIsSpeechRecognitionRunning = true;
         mCurrentSpeechRecognizer = mApplication.getSpeechRecognizer();
+        if (mCurrentSpeechRecognizer == null) {
+            Log.e(LOGTAG, "Speech recognizer is null");
+            return;
+        }
+
+        mIsSpeechRecognitionRunning = true;
 
         SpeechRecognizer.Settings settings = new SpeechRecognizer.Settings();
         settings.locale = locale;
@@ -297,6 +375,14 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     }
 
     public void stopVoiceSearch() {
+        if (mIsDownloadingModel) {
+            // Do not use mCurrentSpeechRecognizer as there might be none if we haven't started a recognition yet.
+            SpeechRecognizer recognizer = mApplication.getSpeechRecognizer();
+            if (recognizer != null) {
+                recognizer.cancelDownload();
+            }
+        }
+
         if (mCurrentSpeechRecognizer != null) {
             try {
                 mCurrentSpeechRecognizer.stop();
@@ -307,6 +393,7 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
         mIsSpeechRecognitionRunning = false;
         mCurrentSpeechRecognizer = null;
+        mIsDownloadingModel = false;
     }
 
     @Override
@@ -373,6 +460,16 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
                 break;
             case SpeechRecognizer.Callback.ERROR_LANGUAGE_NOT_SUPPORTED:
                 setState(State.ERROR_LANGUAGE_NOT_SUPPORTED);
+                break;
+            case SpeechRecognizer.Callback.ERROR_AUDIO_PERMISSION:
+                setState(State.ERROR_PERMISSIONS);
+                break;
+            case SpeechRecognizer.Callback.ERROR_MODEL_NOT_DOWNLOADED:
+                SpeechRecognizer recognizer = mApplication.getSpeechRecognizer();
+                if (recognizer != null) {
+                    String locale = LocaleUtils.getVoiceSearchLanguageId(getContext());
+                    downloadModelAndStartRecognition(locale, recognizer);
+                }
                 break;
             default:
                 break;

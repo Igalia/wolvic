@@ -47,6 +47,17 @@
 }
 
 # --------------------------------------------------------------------
+# Keep speech recognizer classes (loaded via Class.forName() in SpeechServices)
+# --------------------------------------------------------------------
+-keep class com.igalia.wolvic.speech.VoskSpeechRecognizer { *; }
+-keep class com.igalia.wolvic.speech.VoskModelManager { *; }
+-keep class com.igalia.wolvic.speech.HVRSpeechRecognizer { *; }
+
+# Keep Vosk library classes — the native libvosk.so calls back into these via JNI,
+# and the AAR ships no consumer ProGuard rules of its own.
+-keep class org.vosk.** { *; }
+
+# --------------------------------------------------------------------
 # Keep classes from FxR
 # --------------------------------------------------------------------
 -keep class com.igalia.wolvic.ui.widgets.WidgetPlacement {*;} # Keep class used in JNI.

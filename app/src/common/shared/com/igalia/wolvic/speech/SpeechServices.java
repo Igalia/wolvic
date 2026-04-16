@@ -14,10 +14,10 @@ public abstract class SpeechServices {
     // Full names of the classes that implement the connection to each speech recognition service.
     // These classes must implement the SpeechRecognizer interface and provide a constructor
     // that takes a Context as its only parameter.
-    public static final String MEETKAI = "com.igalia.wolvic.speech.MKSpeechRecognizer";
+    public static final String VOSK = "com.igalia.wolvic.speech.VoskSpeechRecognizer";
     public static final String HUAWEI_ASR = "com.igalia.wolvic.speech.HVRSpeechRecognizer";
 
-    @StringDef(value = {MEETKAI, HUAWEI_ASR})
+    @StringDef(value = {VOSK, HUAWEI_ASR})
     @interface Service {
     }
 
@@ -43,8 +43,8 @@ public abstract class SpeechServices {
      */
     public static int getNameResource(@NonNull @Service String service) {
         switch (service) {
-            case MEETKAI:
-                return R.string.voice_service_metkai;
+            case VOSK:
+                return R.string.voice_service_vosk;
             case HUAWEI_ASR:
                 return R.string.voice_service_huawei_asr;
             default:

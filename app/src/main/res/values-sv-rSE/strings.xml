@@ -1616,7 +1616,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_language_choose_language_voice_search_service_title">Röstsöktjänst</string>
     <string name="privacy_dialog_message">Din integritet är viktig för oss. För att kunna köra webbläsaren, vänligen acceptera våra användarvillkor och sekretesspolicy. Tack för att du använder Wolvic!</string>
     <string name="privacy_policy_title">Allmän integritetspolicy</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (Offline)</string>
     <string name="voice_service_huawei_asr">Huawei automatisk taligenkänning</string>
     <string name="language_options_voice_search_service_title">Röstsökningstjänst</string>
     <string name="terms_service_subtitle_2">Wolvic webbaserade informationstjänster</string>
@@ -1727,9 +1727,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n• Google: https://policies.google.com/privacy
 \n• Facebook: https://www.facebook.com/about/privacy/update
-\n• MeetKai: https://meetkai.com/privacy
+\n• Vosk: https://alphacephei.com/vosk
 \n
-\nPå samma sätt informerar IGALIA dig att när du använder webbläsarens röstigenkänningsalternativ kommer Meetkai att behålla helt anonymiserade rösttranskriptioner av din röst i syfte att förbättra tjänsten som tillhandahålls av dem. Din röst kommer inte att behållas eller kommer att vara något sätt att koppla transkriptionerna med din identitet. Mer information om MeetKais sekretesspolicy i följande länk: https://meetkai.com/es/privacy. Igalia har varken något intresse av att länka transkriptioner med någon användare eller att påverka deras integritet; följaktligen begär Igalia att ingen personlig eller konfidentiell information av något slag inkluderas i deras ljudtalsadresser.
+\nPå samma sätt informerar IGALIA dig om att när du använder webbläsarens röstigenkänningsalternativ behandlar Vosk dina röstdata helt offline på din enhet. Inga röstdata eller transkriptioner överförs till externa servrar. All bearbetning sker lokalt, vilket säkerställer att din integritet är helt skyddad.
 \nI vilket fall som helst garanterar IGALIA de berörda parterna utövandet av rätten till åtkomst, rättelse, radering, opposition, begränsning av behandling och portabilitet avseende deras personuppgifter.
 \nFör sådana ändamål har IGALIA upprättat ett internt protokoll/procedur för att genomföra dem.
 \nIntresserade parter kan utöva sina rättigheter enligt följande: genom att skicka en begäran till IGALIA:s fysiska adress: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referens: \"Dataskydd\"; eller till följande e-postadress: info@igalia.com.

@@ -1700,9 +1700,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t• Google: https://policies.google.com/privacy
 \n\t• Facebook: https://www.facebook.com/about/privacy/update
-\n\t• MeetKai: https://meetkai.com/privacy
+\n\t• Vosk: https://alphacephei.com/vosk
 \n
-\n마찬가지로 IGALIA는 브라우저의 음성 인식 옵션을 사용하는 동안 MeetKai가 제공하는 서비스를 개선하기 위해 완전히 익명화된 음성 녹음을 유지함을 알려드립니다. 귀하의 목소리는 유지되지 않으며 귀하를 녹음 데이터들과 연결하는 방법으로만 사용될 것입니다. MeetKai의 개인 정보 정책은 이 링크 [https://meetkai.com/es/privacy](https://meetkai.com/es/privacy) 에 있습니다. IGALIA는 녹음을 특정 사용자와 연결하거나 개인 정보에 영향을 미치는데 어떠한 관심도 없습니다. 결과적으로 IGALIA는 어떤 종류의 개인 정보나 기밀 정보도 사운드 음성 주소에 포함되지 않도록 합니다.
+\n마찬가지로 IGALIA는 브라우저의 음성 인식 옵션을 사용하는 동안 Vosk가 기기에서 음성 데이터를 완전히 오프라인으로 처리합니다. 음성 데이터나 전사는 외부 서버로 전송되지 않습니다. 모든 처리가 로컬에서 수행되어 개인 정보가 완전히 보호됩니다.
 \n어떤 경우에도 IGALIA는 이해 당사자에게 개인 데이터에 관한 접근, 수정, 삭제, 변환, 처리 제한 및 이동 권리의 행사를 보장합니다.
 \nIGALIA는 이러한 목적을 수행하기 위한 내부 프로토콜/절차를 수립하고 있습니다.
 \n이해 당사자는 IGALIA의 실제 주소인 Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: \"Data Protection\" 또는 이메일 주소: [info@igalia.com](mailto:info@igalia.com) 로 요청을 전송하여 권리를 행사할 수 있습니다.
@@ -1722,7 +1722,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="language_options_voice_search_service_title">음성 검색 서비스</string>
     <string name="settings_language_choose_language_voice_search_service_title">음성 검색 서비스</string>
     <string name="language_service_options_reset">음성 검색 서비스 설정 초기화</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (오프라인)</string>
     <string name="voice_service_huawei_asr">화웨이 자동 음성 인식</string>
     <string name="permissions_dialog_remember_choice">이 결정을 기억함</string>
     <string name="settings_language_galician">갈리시아어</string>

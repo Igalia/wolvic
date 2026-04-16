@@ -1730,8 +1730,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     \n\n我们再次提醒您，您通过此应用程序访问或使用的第三方平台可能会收集有关您的此或其他识别数据，无论是自愿或非自愿和/或有意或无意地填写，这可能超出欧洲数据保护立法的范围。因此，我们建议您自行了解并特别注意所述第三方的法律条款，例如以下内容：
     \n\n\t\u2022 Google: https://policies.google.com/privacy
     \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
-    \n\t\u2022 MeetKai: https://meetkai.com/privacy
-    \n\n同样，IGALIA 通知您，在使用浏览器的语音识别选项时，Meetkai 将保留您语音的完全匿名语音转录，以改善他们提供的服务。您的声音不会被保留，也不会以任何方式将转录内容与您的身份联系起来。有关 MeetKai 隐私政策的更多信息，请访问以下链接：https://meetkai.com/es/privacy。 Igalia 既没有兴趣将转录内容与任何用户联系起来，也没有兴趣影响他们的隐私；因此，Igalia 要求其声音地址中不得包含任何类型的个人或机密信息。
+    \n\t\u2022 Vosk: https://alphacephei.com/vosk
+    \n\n同样，IGALIA 通知您，在使用浏览器的语音识别选项时，Vosk 会在您的设备上完全离线处理您的语音数据。语音数据或转录内容不会传输到外部服务器。所有处理都在本地进行，确保您的隐私得到充分保护。
     \n在任何情况下，IGALIA 保证利益相关方对其个人数据行使访问、更正、删除、反对、限制处理和可移植性的权利。
     \n为此，IGALIA 制定了内部协议/程序来执行它们。
     \n感兴趣的各方可以通过以下方式行使自己的权利：通过向 IGALIA 的实际地址发送请求：Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña，参考号：“数据保护”；或者发送至以下电子邮件地址：info@igalia.com。
@@ -1761,7 +1761,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="external_open_uri_error_bad_uri_body">非法uri %1$s</string>
     <string name="external_open_uri_error_no_activity_body">无法找到处理%1$s的应用程序</string>
     <string name="language_options_voice_search_service_title">语音搜索服务</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk（离线）</string>
     <string name="voice_service_huawei_asr">华为自动语音识别</string>
     <string name="language_service_options_reset">重新设置语音搜索服务</string>
     <string name="settings_language_choose_language_voice_search_service_title">语音搜索服务</string>

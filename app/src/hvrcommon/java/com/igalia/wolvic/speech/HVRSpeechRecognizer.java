@@ -102,12 +102,6 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
         return false;
     }
 
-
-    @Override
-    public boolean isSpeechError(int code) {
-        return true;
-    }
-
     @Override
     public List<String> getSupportedLanguages() {
         return mSupportedLanguages;

@@ -1630,7 +1630,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_addon_install_confirm_install">インストール</string>
     <string name="download_addon_install_blocked">ローカルアドオンのインストールはブロックされています</string>
     <string name="download_addon_install_blocked_body">開発者オプションにローカルアドオンのインストールを許可する。</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (オフライン)</string>
     <string name="upload_button">アップロード</string>
     <string name="upload_list_empty">アップロードできるファイルがありません</string>
     <string name="addons_experimental_section_title">実験的</string>
@@ -1787,9 +1787,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t• Google: https://policies.google.com/privacy
 \n\t• Facebook: https://www.facebook.com/about/privacy/update
-\n\t• MeetKai: https://meetkai.com/privacy
+\n\t• Vosk: https://alphacephei.com/vosk
 \n
-\nまたIGALIAはブラウザーの音声認識を利用する際Meetkaiは完全に匿名化した音声採録をサービスの向上の為に保持することをお知らせします。音声自体は保管されませんそして素性に連結することもありません。MeetKai のプライバシーポリシーについては以下のリンクを参照してください：https://meetkai.com/es/privacy。IGALIAは採録をユーザーの素性に連結またはプライバシーに関与することを望まないので個人的または機密的な情報を音声アドレスに含まないことを要請します。
+\nまたIGALIAはブラウザーの音声認識オプションを使用する場合、Voskはデバイス上で完全にオフラインで音声データを処理することを通知します。音声データや文字起こしが外部サーバーに送信されることはありません。すべての処理はローカルで行われ、プライバシーが完全に保護されます。
 \nIGALIAは当事者の個人データのアクセス、更正、削除、反対、取り扱いの制限、とポータビリティの権利の行使を保証する。
 \nそのためIGALIAは該当する権利の行使の内部プロトコル・手続を設置した。
 \n以下が当事者の権利の行使をするための手順です：IGALIAの物理住所Calle Bugallal Marchesi, 22, 1o, 15008, A Coruñaへ要請を送る(Reference: “Data Protection”と記入）または以下のメールアドレに送る： info@igalia.com。

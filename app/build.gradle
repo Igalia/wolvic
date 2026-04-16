@@ -72,18 +72,11 @@ def getHVRApiKey = { ->
 
 def getHVRMLSpeechServices = { ->
     if (getHVRApiKey().isEmpty()) {
-        return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        return "{ com.igalia.wolvic.speech.SpeechServices.VOSK }"
     } else {
-        return "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI, " +
+        return "{ com.igalia.wolvic.speech.SpeechServices.VOSK, " +
                 " com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }";
     }
-}
-
-def getMKApiKey = { ->
-    if (gradle.hasProperty("userProperties.MK_API_KEY")) {
-        return gradle."userProperties.MK_API_KEY"
-    }
-    return ""
 }
 
 def isChromiumAvailable = {
@@ -119,7 +112,7 @@ android {
         buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "false"
         buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "false"
-        buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+        buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.VOSK }"
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         buildConfigField "Float", "DEFAULT_DENSITY", "1.25f"
         buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
@@ -189,12 +182,10 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
-            buildConfigField "String", "MK_API_KEY", "\"${getMKApiKey()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
-            buildConfigField "String", "MK_API_KEY", "\"\""
         }
     }
 
@@ -687,8 +678,8 @@ dependencies {
     testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation libs.work.testing
 
-    // MeetKai
-    implementation fileTree(dir: "${project.rootDir}/libs/meetkai/", include: ['*.aar'])
+    // Vosk
+    implementation libs.vosk
     implementation libs.okhttp
     implementation libs.zip4j
     implementation libs.apache.commonsmath3
@@ -799,10 +790,10 @@ android.applicationVariants.configureEach { variant ->
             variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.HUAWEI_ASR }"
         } else if (platform.toLowerCase().startsWith('picoxr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pico.html"'
-            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.VOSK }"
         }  else if (platform.toLowerCase().startsWith('pfdmxr')) {
             variant.resValue 'string', 'HOMEPAGE_URL', '"https://wolvic.com/zh/start/pfdm.html"'
-            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.MEETKAI }"
+            variant.buildConfigField "String[]", "SPEECH_SERVICES", "{ com.igalia.wolvic.speech.SpeechServices.VOSK }"
         }
     }
 

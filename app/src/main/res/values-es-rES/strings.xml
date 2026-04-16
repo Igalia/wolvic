@@ -1673,7 +1673,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n Asimismo, usted observará que la aplicación le solicitará una serie de permisos especiales respecto a su dispositivo que, a continuación, aclaramos en cuanto a su función y finalidad:
 \n
-\n\t• Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Meetkai cuya política de provacidad se puede consultar aquí: https://meetkai.com/privacy
+\n\t• Permiso para grabación de audio: Si usted autoriza esto, se utilizará para la citada función de traducción de voz a texto además de la funcionalidad de búsqueda por voz (“voice search”) para la que se utiliza el servicio que proporciona Vosk cuya política de privacidad se puede consultar aquí: https://alphacephei.com/vosk
 \n
 \n\t• Permiso para la captación de fotos y vídeos: Es posible que se solicite debido a que el dispositivo del usuario utilice cámaras para ver el entorno y situar al usuario en el espacio físico mediante sistemas de trazado o “tracking”. IGALIA no accede ni trata dicha información.
 \n
@@ -1685,9 +1685,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t• Google: https://policies.google.com/privacy
 \n\t• Facebook: https://www.facebook.com/about/privacy/update
-\n\t• MeetKai: https://meetkai.com/privacy
+\n\t• Vosk: https://alphacephei.com/vosk
 \n
-\n Asimismo, IGALIA le informa de que si usted utiliza la opción de reconocimiento de voz del navegador, las transmisiones sonoras de su voz no serán conservadas ni vinculadas de modo alguno con usted, aunque sí se conservará el texto generado de manera totalmente anonimizada a efectos de mejora del servicio por parte de la empresa Meetkai (más información en el siguiente link: https://meetkai.com/es/privacy). Como es interés de IGALIA la no vinculación a ningún usuario y la no afectación de su privacidad, se ruega al usuario que no incluya ninguna información personal ni confidencial, de ningún tipo, en sus alocuciones sonoras de voz.
+\n Asimismo, IGALIA le informa de que si usted utiliza la opción de reconocimiento de voz del navegador, Vosk procesa sus datos de voz completamente sin conexión en su dispositivo. No se transmiten datos de voz ni transcripciones a servidores externos. Todo el procesamiento se realiza localmente, lo que garantiza la máxima protección de su privacidad.
 \n En cualquier caso, IGALIA garantiza el adecuado ejercicio por los interesados de los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, respecto de sus datos personales. A tal efecto, IGALIA ha establecido un protocolo/procedimiento interno para llevarlos a efecto.
 \n La forma en que los interesados pueden ejercer sus derechos son: mediante solicitud a IGALIA en la dirección física: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referencia: “Protección de Datos” o en la dirección de correo electrónico: info@igalia.com
 \n En ambos casos, el interesado deberá adjuntar copia de su DNI o documento identificativo para acreditar su identidad.
@@ -1721,7 +1721,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="voice_service_huawei_asr">Reconocimiento automático de voz de Huawei</string>
     <string name="settings_language_choose_language_voice_search_service_title">Servicio de búsqueda por voz</string>
     <string name="language_service_options_reset">Restablecer la configuración del servicio de búsqueda por voz</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (sin conexión)</string>
     <string name="permissions_dialog_remember_choice">Recordar esta decisión</string>
     <string name="settings_language_galician">Gallego</string>
     <string name="settings_language_portuguese_br">Portugués (Brasil)</string>

@@ -1615,7 +1615,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hvr_connect_glass_message">Tilslut din HUAWEI VR Glass for at bruge denne app</string>
     <string name="privacy_dialog_title">Privatliv</string>
     <string name="privacy_policy_subtitle_3">Lovvalg og original sprog</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (Offline)</string>
     <string name="privacy_dialog_message">Dit privatliv er vigtigt for os. For at kunne bruge browseren skal du acceptere vores servicevilkår og privatlivspolitik. Tak fordi du bruger Wolvic!</string>
     <string name="privacy_policy_title">Generel privatlivspolitik</string>
     <string name="voice_service_huawei_asr">Automatisk talegenkendelse fra Huawei (ASR)</string>
