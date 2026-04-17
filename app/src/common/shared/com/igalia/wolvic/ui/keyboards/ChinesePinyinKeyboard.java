@@ -145,10 +145,8 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
             // When using backslashes ({@code \}) in the replacement string
             // will cause crash at `replaceFirst()`, so we need to replace it first.
-            if (result.words.get(0).code.length() > 0 &&
-                result.words.get(0).code.charAt(result.words.get(0).code.length() - 1)
-                        == kBackslashCode) {
-                newCode = result.words.get(0).code.replace("\\", "\\\\");
+            if (newCode != null && !newCode.isEmpty() && newCode.charAt(newCode.length() - 1) == kBackslashCode) {
+                newCode = newCode.replace("\\", "\\\\");
                 aComposingText = aComposingText.replace("\\", "\\\\");
             }
             String codeWithoutSpaces = newCode != null ? StringUtils.removeSpaces(newCode) : "";
