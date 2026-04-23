@@ -260,6 +260,7 @@ android {
 
         picoxr {
             dimension "platform"
+            minSdkVersion 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DPICOXR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
