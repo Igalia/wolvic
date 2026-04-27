@@ -665,8 +665,14 @@ dependencies {
     implementation libs.work.runtime
     implementation libs.work.runtime.ktx
 
-    // OpenXR standard loader
-    implementation libs.openxrloader
+    // OpenXR loader — 1.1.x for Meta (16KB-aligned), 1.0.x for all other platforms
+    oculusvrImplementation libs.openxrloader
+    picoxrImplementation libs.openxrloader10
+    pfdmxrImplementation libs.openxrloader10
+    lynxImplementation libs.openxrloader10
+    spacesImplementation libs.openxrloader10
+    aospImplementation libs.openxrloader10
+    hvrImplementation libs.openxrloader10
 
     // Testing
     androidTestImplementation libs.atsl.runner
