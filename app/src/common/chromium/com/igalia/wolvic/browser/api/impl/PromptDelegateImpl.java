@@ -630,8 +630,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         public void showDialog(final int type, final double value,
                                double min, double max, double step,
                                DateTimeSuggestion[] suggestions) {
-            // Not implemented for |suggestions| and |step| yet.
-            mDatePrompt.setDateTime(type, value, min, max);
+            mDatePrompt.setDateTime(type, value, min, max, step, suggestions);
 
             try {
                 if (mDelegate != null) {
@@ -652,11 +651,17 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
     }
 
     public static class DateTimePrompt extends BasePromptImpl implements WSession.PromptDelegate.DateTimePrompt {
+        private static final double MS_PER_SECOND = 1000.0;
+        private static final double MS_PER_DAY = 86400000.0;
+        private static final double MS_PER_WEEK = 604800000.0;
+
         private final InputDialogContainer.InputActionDelegate mDelegate;
         @DatetimeType int mType;
         String mDefaultValue;
         String mMinValue;
         String mMaxValue;
+        String mStepValue;
+        String[] mListValues;
 
         SimpleDateFormat mFormatter;
 
@@ -665,6 +670,11 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         }
 
         public void setDateTime(int type, double value, double min, double max) {
+            setDateTime(type, value, min, max, Double.NaN, null);
+        }
+
+        public void setDateTime(int type, double value, double min, double max,
+                                double step, DateTimeSuggestion[] suggestions) {
             String format;
             if (type == TextInputType.DATE) {
                 mType = Type.DATE;
@@ -699,6 +709,44 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             mDefaultValue = mFormatter.format(defaultDate);
             mMinValue = mFormatter.format(new Date((long) min));
             mMaxValue = mFormatter.format(new Date((long) max));
+
+            // Chromium gives us the step already multiplied by the type's scale
+            // factor (e.g. 86 400 000 per day for date, 1 000 per second for
+            // time).  Normalise it back to the raw HTML attribute unit so the
+            // widget receives the same value as the Gecko backend.
+            if (!Double.isNaN(step) && step > 0) {
+                if (mType == Type.DATE) {
+                    step = step / MS_PER_DAY;
+                } else if (mType == Type.TIME || mType == Type.DATETIME_LOCAL) {
+                    step = step / MS_PER_SECOND;
+                } else if (mType == Type.WEEK) {
+                    step = step / MS_PER_WEEK;
+                }
+                // MONTH scale factor is 1, no conversion needed
+            }
+            mStepValue = Double.isNaN(step) || step <= 0 ? null : String.valueOf(step);
+
+            // Convert suggestion values to formatted strings. MONTH and WEEK
+            // use a special Chromium encoding (MonthPicker/WeekPicker), the
+            // rest are plain ms-since-epoch.
+            if (suggestions != null && suggestions.length > 0) {
+                List<String> listVals = new ArrayList<>();
+                for (DateTimeSuggestion s : suggestions) {
+                    try {
+                        double sv = s.value();
+                        if (mType == Type.MONTH) {
+                            sv = MonthPicker.createDateFromValue(sv).getTimeInMillis();
+                        } else if (mType == Type.WEEK) {
+                            sv = WeekPicker.createDateFromValue(sv).getTimeInMillis();
+                        }
+                        listVals.add(mFormatter.format(new Date((long) sv)));
+                    } catch (Exception ignored) {
+                    }
+                }
+                mListValues = listVals.isEmpty() ? null : listVals.toArray(new String[0]);
+            } else {
+                mListValues = null;
+            }
         }
 
         @Override
@@ -716,6 +764,14 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         @Override
         @Nullable
         public String maxValue() { return mMaxValue; }
+
+        @Override
+        @Nullable
+        public String stepValue() { return mStepValue; }
+
+        @Override
+        @Nullable
+        public String[] listValues() { return mListValues; }
 
         @UiThread
         @NonNull
