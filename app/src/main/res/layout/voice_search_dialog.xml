@@ -69,6 +69,16 @@
 
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/downloadProgress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/buttonsContainer"
+            android:layout_marginBottom="15dp"
+            android:max="100"
+            visibleGone="@{state == State.DOWNLOADING_MODEL}" />
+
         <FrameLayout
             android:id="@+id/descriptionContainer"
             android:layout_width="match_parent"
@@ -107,7 +117,7 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
                 tools:text="@string/voice_search_close"
-                android:text="@string/voice_search_close"
+                android:text="@{state == State.DOWNLOADING_MODEL ? @string/cancel_button : @string/voice_search_close}"
                 android:textColor="@drawable/dialog_button_text_color"
                 android:textStyle="bold" />
         </FrameLayout>

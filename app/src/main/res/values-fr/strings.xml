@@ -1701,9 +1701,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t- Google : https://policies.google.com/privacy
 \n\t- Facebook : https://www.facebook.com/about/privacy/update
-\n\t- MeetKai : https://meetkai.com/privacy
+\n\t- Vosk : https://alphacephei.com/vosk
 \n
-\nDe même, IGALIA vous informe que lors de l\'utilisation de l\'option de reconnaissance vocale du navigateur, Meetkai conservera des transcriptions vocales totalement anonymes de votre voix dans le but d\'améliorer le service qu\'elle fournit. Votre voix ne sera pas conservée et il n\'y aura aucun moyen de relier les transcriptions à votre identité. Plus d\'informations sur la politique de confidentialité de MeetKai sur le lien suivant : https://meetkai.com/es/privacy. Igalia n\'a aucun intérêt à relier les transcriptions à un utilisateur ni à porter atteinte à sa vie privée ; par conséquent, Igalia demande qu\'aucune information personnelle ou confidentielle d\'aucune sorte ne soit incluse dans les adresses de voix sonores.
+\nDe même, IGALIA vous informe que lors de l\'utilisation de l\'option de reconnaissance vocale du navigateur, Vosk traite vos données vocales entièrement hors ligne sur votre appareil. Aucune donnée vocale ou transcription n\'est transmise à des serveurs externes. Tout le traitement se fait localement, garantissant une protection complète de votre vie privée.
 \nDans tous les cas, IGALIA garantit aux intéressés l\'exercice des droits d\'accès, de rectification, d\'effacement, d\'opposition, de limitation de traitement et de portabilité, concernant leurs données personnelles.
 \nÀ ces fins, IGALIA a établi un protocole/une procédure interne pour les réaliser.
 \nLes parties intéressées peuvent exercer leurs droits de la manière suivante : en envoyant une demande à l\'adresse physique d\'IGALIA : Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Référence : « Protection des données » ; ou, à l\'adresse électronique suivante : info@igalia.com.
@@ -1720,7 +1720,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \nLes documents justificatifs (réception de la demande/réponse, communications, etc.) seront archivés dans le but de prouver leur bonne gestion.
 \nDe même, nous vous rappelons que vous avez le droit d\'introduire une réclamation auprès de l\'Agence espagnole de protection des données.</string>
     <string name="settings_language_choose_language_voice_search_service_description">Choisissez votre service en ligne préféré pour la recherche vocale.</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (hors ligne)</string>
     <string name="voice_service_huawei_asr">Reconnaissance automatique de la parole de Huawei</string>
     <string name="settings_language_choose_language_voice_search_service_title">Service de recherche vocale</string>
     <string name="language_service_options_reset">Réinitialiser les préférences de service de recherche vocale</string>

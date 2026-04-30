@@ -225,9 +225,9 @@
 \n
 \n• Google: https://policies.google.com/privacy
 \n• Facebook: https://www.facebook.com/about/privacy/update
-\n• MeetKai: https://meetkai.com/privacy
+\n• Vosk: https://alphacephei.com/vosk
 \n
-\nDa mesma forma, a IGALIA informa que, ao usar a opção de reconhecimento de voz do navegador, Meetkai manterá transcrições de voz totalmente anônimas da sua voz com o objetivo de melhorar o serviço prestado por eles. A sua voz não será mantida ou será de alguma forma para conectar as transcrições com a sua identidade. Mais informações sobre a política de privacidade do MeetKai na seguinte ligigação: https://meetkai.com/es/privacy. A Igalia não tem interesse em vincular transcrições a nenhum utilizador nem em afetar a sua privacidade; consequentemente, a Igalia solicita que nenhuma informação pessoal ou confidencial de qualquer tipo seja incluída nos seus endereços de voz sonora.
+\nDa mesma forma, a IGALIA informa que, ao usar a opção de reconhecimento de voz do navegador, o Vosk processa os seus dados de voz completamente offline no seu dispositivo. Nenhum dado de voz ou transcrição é transmitido para servidores externos. Todo o processamento acontece localmente, garantindo que a sua privacidade está totalmente protegida.
 \nEm qualquer caso, a IGALIA garante aos interessados o exercício dos direitos de acesso, retificação, eliminação, oposição, limitação de tratamento e portabilidade, relativamente aos seus dados pessoais.
 \nPara tal, a IGALIA estabeleceu um protocolo/procedimento interno para a sua realização.
 \nOs interessados podem exercer os seus direitos da seguinte forma: enviando um pedido para o endereço físico da IGALIA: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Referência: “Proteção de Dados”; ou, para o seguinte endereço de e-mail: info@igalia.com.
@@ -616,7 +616,7 @@
     <string name="popup_dialog_button_on">Ligado</string>
     <string name="webxr_permission_dialog_message"><![CDATA[WebXR é %1$s para este site. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="privacy_policy_section_3">Esta Política de Privacidade está sujeita à lei espanhola. O idioma da Política de Privacidade desta aplicação é o espanhol. Por esse motivo, qualquer possível divergência entre a versão original em espanhol e a tradução dela para outro idioma será considerada predominante na versão em espanhol que encontra-se aqui: https://wolvic.com/es/legal/privacy/ .</string>
-    <string name="voice_service_metkai">MeetKai</string>
+    <string name="voice_service_vosk">Vosk (Offline)</string>
     <string name="permissions_dialog_remember_choice">Lembrar esta decisão</string>
     <string name="history_description">Pode acessar o seu histórico de buscas aqui</string>
     <string name="downloads_delete">Apagar Todos</string>

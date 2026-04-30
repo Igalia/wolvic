@@ -1075,6 +1075,11 @@
     <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
     <string name="voice_search_close">Close</string>
 
+    <!-- Strings for Vosk offline voice recognition -->
+    <string name="voice_download_model">Downloading voice model…</string>
+    <string name="voice_download_progress">Downloading %1$s model</string>
+    <string name="voice_download_failed">Download failed: %1$s</string>
+
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
     <string name="search_placeholder">Search the Web or enter address</string>
@@ -2611,8 +2616,8 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
         \n\nWe remind you again that the Third Party platforms that you access or use with this application could collect this or other identifying data about you, either filling them in voluntarily or involuntarily and/or consciously or unconsciously, possibly outside the scope of European data protection legislation. Therefore, we recommend that you inform yourself and pay special attention to the legal terms of said Third Parties, such as, for example, the following:
         \n\n\t\u2022 Google: https://policies.google.com/privacy
         \n\t\u2022 Facebook: https://www.facebook.com/about/privacy/update
-        \n\t\u2022 MeetKai: https://meetkai.com/privacy
-        \n\nLikewise, IGALIA informs you that while using the voice recognition option of the browser, Meetkai will keep totally anonymized voice transcriptions of your voice with the purposes of improving the service provided by them. Your voice will not be kept or will be any way to connect the transcriptions with your identity. More information about MeetKai privacy policy in the following link: https://meetkai.com/es/privacy. Igalia neither has any interest in linking transcriptions with any user nor in affecting their privacy; consequently, Igalia requests that no personal or confidential information of any kind is included in their sound voice addresses.
+        \n\t\u2022 Vosk: https://alphacephei.com/vosk
+        \n\nLikewise, IGALIA informs you that while using the voice recognition option of the browser, Vosk processes your voice data completely offline on your device. No voice data or transcriptions are transmitted to external servers. All processing happens locally, ensuring your privacy is fully protected.
         \nIn any case, IGALIA guarantees to the interested parties the exercise of the rights of access, rectification, deletion, opposition, limitation of treatment, and portability, regarding their personal data.
         \nFor such purposes, IGALIA has established an internal protocol/procedure to carry them out.
         \nInterested parties can exercise their rights are as follows: by sending a request to IGALIA’s physical address: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: “Data Protection”; or, to the following email address: info@igalia.com.
@@ -2633,8 +2638,8 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     </string>
 
     <!-- Display names for the supported voice recognition services -->
-    <string name="voice_service_metkai">MeetKai</string>
-    <string name="voice_service_huawei_asr">Huawei Automatic Speech Recognition</string>
+    <string name="voice_service_vosk">Vosk (Offline)</string>
+    <string name="voice_service_huawei_asr">Huawei</string>
 
     <!-- This string labels a checkbox in the permissions dialog. When checked, the user will no longer
      be prompted for that specific permission in that same web page. -->

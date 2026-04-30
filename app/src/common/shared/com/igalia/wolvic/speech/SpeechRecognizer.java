@@ -17,19 +17,20 @@ public interface SpeechRecognizer {
 
     interface Callback {
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef(value = {SPEECH_ERROR, ERROR_NETWORK, ERROR_SERVER, ERROR_TOO_MANY_REQUESTS, ERROR_LANGUAGE_NOT_SUPPORTED})
+        @IntDef(value = {SPEECH_ERROR, ERROR_NETWORK, ERROR_SERVER, ERROR_TOO_MANY_REQUESTS, ERROR_LANGUAGE_NOT_SUPPORTED, ERROR_AUDIO_PERMISSION, ERROR_MODEL_NOT_DOWNLOADED})
         @interface ErrorType {}
         int SPEECH_ERROR = 0;
         int ERROR_NETWORK = 1;
         int ERROR_SERVER = 2;
         int ERROR_TOO_MANY_REQUESTS = 3;
         int ERROR_LANGUAGE_NOT_SUPPORTED = 4;
+        int ERROR_AUDIO_PERMISSION = 5;
+        int ERROR_MODEL_NOT_DOWNLOADED = 6;
 
 
 
         void onStartListening();
         void onMicActivity(int level);
-        void onDecoding();
         default void onPartialResult(String transcription) {};
         void onResult(String transcription, float confidence);
         void onNoVoice();
@@ -41,7 +42,18 @@ public interface SpeechRecognizer {
     void stop();
     boolean isActive();
     boolean shouldDisplayStoreDataPrompt();
-    default boolean supportsASR(@NonNull Settings settings) {return true;}
-    boolean isSpeechError(int code);
     List<String> getSupportedLanguages();
+    default boolean isModelDownloaded(@Nullable String lang) {return true;}
+
+    interface DownloadCallback {
+        void onProgress(int progress);
+        void onSuccess();
+        void onError(@NonNull String error);
+    }
+
+    default void downloadModel(@Nullable String lang, @NonNull DownloadCallback callback) {
+        callback.onSuccess();
+    }
+
+    default void cancelDownload() {}
 }
