@@ -673,7 +673,7 @@
     <string name="crash_dialog_heading">Vi hade problem och kraschade</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[Snälla hjälp Mozilla att förbättra %1$s genom att skicka dina kraschdata.]]></string>
+    <string name="crash_dialog_message"><![CDATA[Snälla hjälp Mozilla att förbättra %1$s genom att skicka dina kraschdata <a href="more">Läs mer</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Skicka alltid in data utan att fråga</string>
@@ -1850,4 +1850,32 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_hover_to_select">Sväva</string>
     <string name="announcements_title">Annonseringar</string>
     <string name="disable_hand_tracking_dialog_body">Handspårning är tillfälligt inaktiverat. Det kommer att återaktiveras automatiskt vid nästa uppstart. Det här alternativet är inte permanent för att undvika problem när handkontroller inte är tillgängliga.</string>
+    <string name="add_search_engine_title">Lägg till sökmotor</string>
+    <string name="add_search_engine_name_title">Namn</string>
+    <string name="add_search_engine_name_hint">Ange sökmotorns namn</string>
+    <string name="add_search_engine_search_url_title">Sök URL</string>
+    <string name="add_search_engine_search_url_hint">https://exempel.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">Förslags-URL (valfritt)</string>
+    <string name="add_search_engine_suggest_url_hint">https://exempel.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">Spara</string>
+    <string name="add_search_engine_cancel">Avbryt</string>
+    <string name="edit_search_engine_title">Redigera sökmotor</string>
+    <string name="edit_search_engine_save">Uppdatera</string>
+    <string name="search_engine_deleted">Sökmotor raderad</string>
+    <string name="delete_search_engine_dialog_title">Radera sökmotor</string>
+    <string name="delete_search_engine_dialog_text">Är du säker på att du vill radera %1$s sökmotorn?</string>
+    <string name="custom_search_engines_title">Anpassade sökmotorer</string>
+    <string name="custom_search_engines_empty">Inga anpassade sökmotorer. Använd knappen Lägg till sökmotor för att lägga till en.</string>
+    <string name="custom_search_engines_manage">Anpassade sökmotorer</string>
+    <string name="custom_search_engines_list_header">Anpassad sökmotorer</string>
+    <string name="search_engine_error_url_required">URL krävs</string>
+    <string name="search_engine_error_url_placeholder">URL måste innehålla %s eller {searchTerms} platshållare</string>
+    <string name="search_engine_error_url_scheme">URL måste ha ett schema (http:// eller https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Endast http och https-adresser är tillåtna</string>
+    <string name="search_engine_error_url_host">URL måste ha en giltig värd</string>
+    <string name="search_engine_error_url_private">Privata/lokala webbadresser är inte tillåtna av säkerhetsskäl</string>
+    <string name="search_engine_error_name_required">Namn krävs</string>
+    <string name="search_engine_error_name_too_long">Namnet måste vara högst 50 tecken långt eller mindre</string>
+    <string name="close_button">Stäng</string>
+    <string name="delete_button">Radera</string>
 </resources>
