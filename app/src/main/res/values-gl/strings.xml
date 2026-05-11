@@ -826,4 +826,32 @@
     <string name="controller_options_hover_to_select">Punteiro</string>
     <string name="announcements_title">Anuncios</string>
     <string name="disable_hand_tracking_dialog_body">O seguimento de mans está desactivado temporalmente. Reactivarase automaticamente no próximo inicio. Esta opción non é persistente para evitar problemas cando os controladores non estean dispoñibles.</string>
+    <string name="add_search_engine_title">Engadir motor de busca</string>
+    <string name="add_search_engine_name_title">Nome</string>
+    <string name="add_search_engine_name_hint">Introduza o nome do motor de busca</string>
+    <string name="add_search_engine_search_url_title">URL de busca</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/busca?q={TermosDeBusca}</string>
+    <string name="add_search_engine_suggest_url_title">URL de suxestións (opcional)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suxestión?q={termosDeBusca}</string>
+    <string name="add_search_engine_save">Gardar</string>
+    <string name="add_search_engine_cancel">Cancelar</string>
+    <string name="edit_search_engine_title">Editar motor de busca</string>
+    <string name="edit_search_engine_save">Actualizar</string>
+    <string name="search_engine_deleted">Motor de busca borrado</string>
+    <string name="delete_search_engine_dialog_title">Borrar motor de busca</string>
+    <string name="delete_search_engine_dialog_text">Está seguro de querer borrar o motor de busca %1$s?</string>
+    <string name="custom_search_engines_title">Motores de busca personalizados</string>
+    <string name="custom_search_engines_empty">Non hai motores de busca personalizados. Use o botón Engadir motor de busca para engadir un.</string>
+    <string name="custom_search_engines_manage">Motores de busca personalizados</string>
+    <string name="custom_search_engines_list_header">Motores de busca personalizados</string>
+    <string name="search_engine_error_url_required">Requírese unha URL</string>
+    <string name="search_engine_error_url_placeholder">A URL debe conter %s ou {termosDeBusca}</string>
+    <string name="search_engine_error_url_scheme">A URL debe ter un esquema (http:// ou https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Só se permiten URL http ou https</string>
+    <string name="search_engine_error_url_host">A URL debe ter un host válido</string>
+    <string name="search_engine_error_url_private">Non se admiten URLs de hosts privados/localhost por motivos de seguridade</string>
+    <string name="search_engine_error_name_required">Requírese nome</string>
+    <string name="search_engine_error_name_too_long">O nome debe ter 50 caracteres ou menos</string>
+    <string name="close_button">Pechar</string>
+    <string name="delete_button">Eliminar</string>
 </resources>
