@@ -509,7 +509,7 @@
     <string name="fxa_account_options_syncing">Synkroniserer...</string>
     <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
          history, bookmarks, passwords, etc. -->
-    <string name="fxa_account_options_sync_description">Vælg hvad du vil synkronisere på dine enheder med Firefox Sync</string>
+    <string name="fxa_account_options_sync_description">Vælg hvad du vil synkronisere på dine enheder med Firefox</string>
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Bogmærker</string>
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
