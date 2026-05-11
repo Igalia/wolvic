@@ -8,7 +8,7 @@
          The action key performs a "go" operation to take the user to the target of the text they typed.
          Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
     -->
-    <string name="keyboard_go_label">OUVRIR</string>
+    <string name="keyboard_go_label">ALLER</string>
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
          The action key performs a "search" operation, taking the user to the results of searching for the text
          they have typed. (stylized in uppercase letters as 'SEARCH')
@@ -44,32 +44,32 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">Autorisez-vous %1$s à utiliser votre caméra ?</string>
+    <string name="permission_camera">Autorisez-vous %1$s à utiliser votre caméra ?</string>
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">Autorisez-vous %1$s à utiliser votre microphone ?</string>
+    <string name="permission_microphone">Autorisez-vous %1$s à utiliser votre microphone ?</string>
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">Autorisez-vous %1$s à utiliser votre caméra et votre microphone ?</string>
+    <string name="permission_camera_and_microphone">Autorisez-vous %1$s à utiliser votre caméra et votre microphone ?</string>
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">Autorisez-vous %1$s à accéder à votre localisation ?</string>
+    <string name="permission_location">Autorisez-vous %1$s à accéder à votre position ?</string>
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_notification">Autorisez-vous %1$s à envoyer des notifications ?</string>
+    <string name="permission_notification">Autorisez-vous %1$s à envoyer des notifications ?</string>
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">Autorisez-vous %1$s à lire votre dispositif de stockage externe ?</string>
+    <string name="permission_read_external_storage">Autorisez-vous %1$s à lire votre dispositif de stockage externe ?</string>
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_persistent_storage">Autorisez-vous %1$s à conserver des données dans le stockage persistant ?</string>
+    <string name="permission_persistent_storage">Autorisez-vous %1$s à conserver des données dans le stockage permanent ?</string>
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
@@ -321,7 +321,7 @@
     <string name="restart_dialog_restart">Redémarrage nécessaire</string>
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="restart_dialog_text">Le redémarrage de %1$s est nécessaire pour appliquer les changements. Souhaitez-vous le faire maintenant ?</string>
+    <string name="restart_dialog_text">Le redémarrage de %1$s est nécessaire pour appliquer les changements. Souhaitez-vous le faire maintenant ?</string>
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
     <string name="restart_now_dialog_button">Redémarrer maintenant</string>
@@ -375,7 +375,7 @@
     <string name="developer_options_clear_cache">Effacer les données</string>
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
-    <string name="developer_options_display_density">Densité de l’écran :</string>
+    <string name="developer_options_display_density">Densité d\'affichage :</string>
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -534,7 +534,7 @@
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          when that the content was just synced some time ago.
          '%1$s' Will be replaced at runtime with the minutes since the last sync. -->
-    <string name="fxa_account_last_synced">Dernière synchronisation : il y a %1$d minutes</string>
+    <string name="fxa_account_last_synced">Dernière synchronisation : il y a %1$d minutes</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
@@ -642,7 +642,7 @@
     <string name="do_not_sync">Ne pas synchroniser</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_start">Que souhaitez-vous rechercher sur le Web ?</string>
+    <string name="voice_search_start">Que souhaitez-vous rechercher sur le Web ?</string>
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_example">Exemple :  Dites « vidéos 360, météo, infos… »</string>
@@ -651,7 +651,7 @@
     <string name="voice_search_decoding">Recherche en cours…</string>
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-    <string name="voice_search_error">Désolé ! Je n’ai pas compris.</string>
+    <string name="voice_search_error">Désolé ! Je n’ai pas compris.</string>
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
     <string name="voice_search_try_again">Veuillez réessayer.</string>
@@ -727,13 +727,13 @@
     <string name="video_controls_projection">Projection vidéo</string>
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
-    <string name="video_controls_seek_forward">Rechercher +%1$s secondes</string>
+    <string name="video_controls_seek_forward">Rechercher +%1$s secondes</string>
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
-    <string name="video_controls_seek_backward">Rechercher -%1$s secondes</string>
+    <string name="video_controls_seek_backward">Rechercher -%1$s secondes</string>
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
-    <string name="video_controls_live">EN DIRECT</string>
+    <string name="video_controls_live">EN DIRECT</string>
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Marque-pages</string>
     <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
@@ -758,12 +758,12 @@
     <string name="bookmarks_remove">Supprimer le marque-page</string>
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
          bookmarks tray button then a new item is bookmarked. -->
-    <string name="bookmarks_saved_notification">Enregistré dans les marque-pages !</string>
+    <string name="bookmarks_saved_notification">Enregistré dans les marque-pages !</string>
     <!-- This string is displayed in a notification that appears in the tray bar on top of the
          downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
     <string name="download_completed_notification">%1$s téléchargé</string>
     <!-- This string is displayed in an error alert dialog when the user tries to download non http/https files. -->
-    <string name="download_error_protocol">Seuls les téléchargements http / https sont pris en charge</string>
+    <string name="download_error_protocol">Seuls les téléchargements http / https sont pris en charge</string>
     <!-- This string is displayed in an error alert dialog when the downloaded output file cannot be created. -->
     <string name="download_error_output">Impossible de créer le fichier de sortie du téléchargement</string>
     <!-- This string is displayed in an error alert dialog when the user is trying to download to the
@@ -878,7 +878,7 @@
     <string name="addons_details_remove">Supprimer le module</string>
     <!-- This string is displayed in the Addon install dialog title text. This dialog is displayed when an addon is installed.
      %1$s will be replaced by the add-on name -->
-    <string name="addons_install_dialog_title">Ajouter %1$s ?</string>
+    <string name="addons_install_dialog_title">Ajouter %1$s ?</string>
     <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
      %1$s will be replaced by the permissions list-->
     <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Demande votre permission pour :<ul>%1$s</ul></p>]]></string>
@@ -940,7 +940,7 @@
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_title">Vous déconnecter de votre compte Mozilla ?</string>
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_body">SI vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
+    <string name="fxa_signout_confirmation_body">Si vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
     <string name="fxa_signout_confirmation_checkbox_v1">Effacer l’historique, les marque-pages et les identifiants de cet appareil</string>
@@ -1269,7 +1269,7 @@
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s n’a pas la permission de s’exécuter sur ce périphérique et va maintenant se fermer.</string>
     <!-- This string is displayed in the title of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
-    <string name="before_unload_prompt_title">Quitter la page ?</string>
+    <string name="before_unload_prompt_title">Quitter la page ?</string>
     <!-- This string is displayed in the message of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
     <string name="before_unload_prompt_message">Cette page demande de confirmer sa fermeture. Des données saisies pourraient ne pas être enregistrées.</string>
     <!-- This string is displayed in a button of the Before Unload prompt. Clicking it cancels the navigation and stays on the same page. -->
@@ -1291,7 +1291,7 @@
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search.
          '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">Autoriser %1$s à collecter des échantillons de voix pour la recherche ?</string>
+    <string name="voice_samples_collect_data_dialog_title">Autoriser %1$s à collecter des échantillons de voix pour la recherche ?</string>
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
     <string name="voice_samples_collect_dialog_description2"><![CDATA[Afin d’améliorer notre reconnaissance vocale et d’autres services, nous devons collecter des échantillons de voix pour la recherche. Nous stockons vos données en toute sécurité et sans information d’identification. Vous pourrez toujours utiliser la recherche vocale, même si vous n’autorisez pas la collecte. <a href="privacy">En savoir plus</a>]]></string>
@@ -1323,7 +1323,7 @@
         '%1$s' will be replaced at runtime with the app's name. -->
     <string name="popup_block_title_v1">%1$s a empêché ce site d’ouvrir des fenêtres popup</string>
     <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
-    <string name="popup_block_description_v1">Voulez-vous les afficher tout de même ?</string>
+    <string name="popup_block_description_v1">Voulez-vous les afficher tout de même ?</string>
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Wolvic will never ask again to block pop-ups for this site -->
     <string name="popup_block_checkbox">Ne plus demander pour ce site</string>
@@ -1353,30 +1353,30 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tabs_unselect">Tout désélectionner</string>
     <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there is one tab
         available -->
-    <string name="tabs_counter_singular">1 onglet</string>
+    <string name="tabs_counter_singular">1 onglet</string>
     <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there are n tabs available.
         %1$s expands to a integer which indicates the number of tabs. This number is always larger than 1, ortherwise
         tabs_counter_singular key is used-->
-    <string name="tabs_counter_plural">%1$s onglets</string>
+    <string name="tabs_counter_plural">%1$s onglets</string>
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
         It indicates that there is one tab selected -->
-    <string name="tabs_selected_counter_singular">1 onglet sélectionné</string>
+    <string name="tabs_selected_counter_singular">1 onglet sélectionné</string>
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
         It indicates that there are n tabs selected. %1$s expands to a integer which indicates the number of tabs.
         This number is always larger than 1, ortherwise tabs_selected_counter_singular key is used-->
-    <string name="tabs_selected_counter_plural">%1$s onglets sélectionnés</string>
+    <string name="tabs_selected_counter_plural">%1$s onglets sélectionnés</string>
     <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
      It indicates that there are no tabs selected -->
-    <string name="tabs_selected_counter_none">0 onglet sélectionné</string>
+    <string name="tabs_selected_counter_none">0 onglet sélectionné</string>
     <!-- This string is for the tooltip that appears when the users hovers in the tabs icon in the browser's
         tray menu. When clicked it opens the tray dialog in the current active window -->
     <string name="tabs_tray_tooltip">Afficher les onglets</string>
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been added on the background. -->
-    <string name="tab_added_notification">Nouvel onglet ajouté !</string>
+    <string name="tab_added_notification">Nouvel onglet ajouté !</string>
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been sent. -->
-    <string name="tab_sent_notification">Onglet envoyé !</string>
+    <string name="tab_sent_notification">Onglet envoyé !</string>
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the send tab dialog -->
     <string name="hamburger_menu_send_tab">Envoyer l’onglet à un appareil</string>
@@ -1425,7 +1425,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_title">Script lent</string>
     <!-- This string is displayed as a description below the title of slow script dialog.
         '%1$s' will be replaced the script filename that is causing the slow down. -->
-    <string name="slow_script_dialog_description">Une page web ralentit votre navigateur (%1$s). Que voulez-vous faire ?</string>
+    <string name="slow_script_dialog_description">Une page web ralentit votre navigateur (%1$s). Que voulez-vous faire ?</string>
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
         it stops the slow script that is causing the web page slow down. -->
     <string name="slow_script_dialog_action_stop">L’arrêter</string>
@@ -1480,7 +1480,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tracking_dialog_button_disable">Désactiver</string>
     <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.
          '%1$s' will be replaced at runtime with the app name. -->
-    <string name="exit_confirm_dialog_body">Voulez-vous vraiment quitter %1$s ?</string>
+    <string name="exit_confirm_dialog_body">Voulez-vous vraiment quitter %1$s ?</string>
     <!-- This string is displayed in the Cancel button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
     <string name="exit_confirm_dialog_button_cancel">Annuler</string>
     <!-- This string is displayed in the Quit button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
@@ -1490,7 +1490,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_open_file_unsupported_title">Type de fichier non pris en charge</string>
     <!-- This string is displayed in the body of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. -->
-    <string name="download_open_file_unsupported_body">Impossible d’ouvrir le fichier. Voulez-vous l’ouvrir avec une application externe ?</string>
+    <string name="download_open_file_unsupported_body">Impossible d’ouvrir le fichier. Voulez-vous l’ouvrir avec une application externe ?</string>
     <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. When clicked the dialog is closed.-->
     <string name="download_open_file_unsupported_cancel">Annuler</string>
@@ -1508,7 +1508,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_open_file_error_body">Aucune application n’a été trouvée pour gérer ce type de fichier.</string>
     <!-- This string is displayed in the title of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. -->
-    <string name="download_confirm_title">Voulez-vous télécharger ce fichier ?</string>
+    <string name="download_confirm_title">Voulez-vous télécharger ce fichier ?</string>
     <!-- This string is displayed in the "Cancel" button of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. If clicked the download is not started. -->
     <string name="download_confirm_cancel">Annuler</string>
@@ -1518,13 +1518,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
     <string name="download_delete_file_confirm_title">Supprimer le fichier</string>
     <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
-    <string name="download_delete_file_confirm_body">Voulez-vous vraiment supprimer ce fichier ?</string>
+    <string name="download_delete_file_confirm_body">Voulez-vous vraiment supprimer ce fichier ?</string>
     <!-- This string is displayed in the confirmation dialog checkbox to also delete the file from disk. -->
     <string name="download_delete_file_confirm_checkbox">Supprimer également le fichier du disque</string>
     <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
     <string name="download_delete_all_confirm_title">Supprimer tous les fichiers téléchargés</string>
     <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
-    <string name="download_delete_all_confirm_body">Voulez-vous vraiment supprimer tous les fichiers téléchargés ?</string>
+    <string name="download_delete_all_confirm_body">Voulez-vous vraiment supprimer tous les fichiers téléchargés ?</string>
     <!-- This string is displayed in the delete download confirmation dialog checkbox to also delete the file from disk. -->
     <string name="download_delete_all_confirm_checkbox">Supprimer également les fichiers du disque</string>
     <!-- This string is displayed in the delete download confirmation dialog cancel button. -->
@@ -1557,7 +1557,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="environment_error_title">Erreur d’environnement</string>
     <!-- This string is shown in the title of the auto-fill save dialog. This dialog is displayed when the user send a login form and the system
     prompts the user to save that login to auto-fill the future. -->
-    <string name="autofill_dialog_save_title">Enregistrer cet identifiant ?</string>
+    <string name="autofill_dialog_save_title">Enregistrer cet identifiant ?</string>
     <!-- This string is shown in the "Save" button of the auto-fill login save dialog. When pressed this will save the login information into the storage. -->
     <string name="autofill_dialog_save_button_text">Enregistrer</string>
     <!-- This string is shown in the "Never Save" button of the auto-fill llgin save dialog. When pressed this won't save the login information into the storage and also
@@ -1618,7 +1618,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n\t- Numéro de téléphone +34 981 913991 ;
 \n\t- Courriel : info@igalia.com
 \n
-\nLe contenu et les éléments qui composent l’application ont été implémentés ou conçus et développés par IGALIA sous des licences à code source ouvert, étant protégés, sans limitations, par les lois de propriété intellectuelle et industrielle du royaume d\'Espagne et par les traités et accords internationaux qui peuvent résulter de l\'application.</string>
+\nLe contenu et les éléments qui composent l’application ont été implémentés ou/et développés par IGALIA sous des licences à code source ouvert, étant protégés, sans limitations, par les lois de propriété intellectuelle et industrielle du royaume d\'Espagne et par les traités et accords internationaux qui peuvent résulter de l\'application.</string>
     <string name="privacy_policy_section_3">Cette politique de confidentialité est soumise à la loi espagnole. La langue de la politique de confidentialité de cette application est l’espagnol. Pour cette raison, toute divergence éventuelle entre la version originale en espagnol et sa traduction dans une autre langue sera considérée comme prédominante dans la version espagnole qui peut être trouvée ici : https://wolvic.com/es/legal/privacy/ .</string>
     <string name="terms_service_section_2">Wolvic utilise des services d\'information basés sur le Web (« Services ») pour fournir certaines des fonctionnalités prévues pour votre utilisation avec cette version binaire de Wolvic, selon les conditions décrites ci-dessous.
 \n
@@ -1658,7 +1658,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 \n
 \n\t\t\t⁃ Tapez geo.enabled
 \n
-\n\t\t\t⁃ Double clic sur la préférence geo.enabled
+\n\t\t\t⁃ Double-cliquez sur la préférence geo.enabled
 \n
 \n\t\t\t⁃ La navigation en fonction de l\'emplacement est maintenant désactivée.
 \n
@@ -1749,15 +1749,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="web_apps_dialog_cancel">Annuler</string>
     <string name="hamburger_menu_save_web_app">Enregistrer l\'application Web…</string>
     <string name="download_addon_install_blocked_body">Pour continuer, autorisez l\'installation de l\'extension locale dans les Options pour les développeurs.</string>
-    <string name="web_apps_dialog_body">Souhaitez-vous installer l\'application Web suivante \? Elle sera disponible dans la librairie.</string>
+    <string name="web_apps_dialog_body">Souhaitez-vous installer l\'application Web suivante ? Elle sera disponible dans la bibliothèque.</string>
     <string name="settings_language_portuguese">Portugais</string>
     <string name="deprecated_version_dialog_title">Fin de maintenance proche</string>
     <string name="deprecated_version_dialog_info_button">En savoir plus…</string>
     <string name="deprecated_version_dialog_store_button">Installer…</string>
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
-    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic ne sera bientôt plus maintenue.
+    <string name="deprecated_version_dialog_body">Cette version de développement de Wolvic ne sera bientôt plus maintenue à partir de fin octobre 2023.
 \n
-\nVeuillez installer la nouvelle version de Wolvic à partir de la Meta Quest Store.
+\nVeuillez installer la dernière version de Wolvic à partir de la Meta Quest Store.
 \n
 \nIMPORTANT : hormis si vous utilisez Firefox Sync, la nouvelle application Wolvic n’aura ni vos marque-pages ni vos onglets.</string>
     <string name="rCN_first_launch_body">Bienvenue dans « Wolvic » !
@@ -1811,14 +1811,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="phone_ui_alert_dialog_title">Erreur</string>
     <string name="permission_microphone_rationale">Effectuer des recherches et saisies vocales nécessite la permission d’utiliser votre microphone.</string>
     <string name="permission_read_external_storage_rationale">Ouvrir des fichiers sur votre appareil nécessite la permission de lire votre périphérique de stockage.</string>
-    <string name="tray_status_phone">Téléphone: %1$s</string>
+    <string name="tray_status_phone">Téléphone : %1$s</string>
     <string name="vision_glass_touchpad_instructions">Appuyer sur l’écran pour cliquer. Balayer l’écran pour faire défiler</string>
     <string name="phone_ui_set3dmode_alert_dialog_description">Échec du passage en mode 3D. Essayez de déconnecter et reconnecter vos lunettes puis redémarrer Wolvic.</string>
     <string name="phone_ui_usb_alert_dialog_description">Impossible d’obtenir les permissions USB. Essayez de déconnecter et reconnecter vos lunettes puis redémarrer Wolvic.</string>
     <string name="vision_glass_disconnected_message">Veuillez connecter vos lunettes Vision Glass</string>
     <string name="vision_glass_error_message">Une erreur est survenue.
 \nVeuillez ressayer.</string>
-    <string name="display_options_tabs_location_tray">Panneau</string>
+    <string name="display_options_tabs_location_tray">Grille</string>
     <string name="display_options_tabs_location_horizontal">Horizontal</string>
     <string name="window_size_preset">%1$d×%2$d</string>
     <string name="settings_window_size">Taille par défaut de la fenêtre</string>
@@ -1832,7 +1832,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_tabs_location_vertical">Vertical</string>
     <string name="controller_options_handtracking">Suivi des mains</string>
     <string name="eye_tracking_permission_message">Activer le suivi oculaire pour naviguer sur le web présente des risques significatifs pour la vie privée. Cette technologie capture où et combien de temps un utilisateur regarde des parties spécifiques d\'une page web, révélant des détails intimes sur ses intérêts et réactions émotionnelles. Les annonceurs et tiers peuvent exploiter ces données pour du marketing intrusif et la création de profils. De plus, les mouvements oculaires peuvent révéler des informations sensibles comme des conditions médicales, des états cognitifs ou des habitudes personnelles. Il est donc crucial de considérer les implications pour la vie privée avant d\'accorder l\'accès aux informations de suivi oculaire aux pages web.</string>
-    <string name="developer_options_pointer_mode_tracked_eye">Avec le regard</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Avec le suivi oculaire</string>
     <string name="new_tab">Nouvel onglet</string>
     <string name="new_private_tab">Nouvel onglet privé</string>
     <string name="close_tab">Fermer l’onglet</string>
@@ -1847,4 +1847,32 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_hover_to_select">Survol</string>
     <string name="announcements_title">Annonces</string>
     <string name="disable_hand_tracking_dialog_body">Le suivi des mains est temporairement désactivé. Il sera automatiquement réactivé au prochain lancement. Cette option n\'est pas persistante pour éviter les problèmes lorsque les contrôleurs ne sont pas disponibles.</string>
+    <string name="add_search_engine_title">Ajouter le moteur de recherche</string>
+    <string name="add_search_engine_name_title">Nom</string>
+    <string name="add_search_engine_name_hint">Entrez le nom du moteur de recherche</string>
+    <string name="add_search_engine_search_url_title">Adresse URL</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/recherche?q={motsRecherchés}</string>
+    <string name="add_search_engine_suggest_url_title">URL de suggestion (facultatif)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggestion?q={motsRecherchés}</string>
+    <string name="add_search_engine_save">Enregistrer</string>
+    <string name="add_search_engine_cancel">Annuler</string>
+    <string name="edit_search_engine_title">Éditer le moteur de recherche</string>
+    <string name="edit_search_engine_save">Mettre à jour</string>
+    <string name="search_engine_deleted">Moteur de recherche supprimé</string>
+    <string name="delete_search_engine_dialog_title">Supprimer le moteur de recherche</string>
+    <string name="delete_search_engine_dialog_text">Voulez vous vraiment supprimer le moteur de recherche %1$s ?</string>
+    <string name="custom_search_engines_title">Personnaliser les moteurs de recherche</string>
+    <string name="custom_search_engines_empty">Aucun moteur de recherche personnalisé. Utilisez le bouton « Ajouter un moteur de recherche » pour en ajouter.</string>
+    <string name="custom_search_engines_manage">Personnaliser les moteurs de recherche</string>
+    <string name="custom_search_engines_list_header">Personnaliser les moteur de recherche</string>
+    <string name="search_engine_error_url_required">L\'URL est requise</string>
+    <string name="search_engine_error_url_placeholder">L\'URL doit contenir %s or ou l\'élément de substitution {motsRecherchés}</string>
+    <string name="search_engine_error_url_scheme">L\'URL doit avoir un schéma (http:// ou https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Seuls les URLs http et https sont autorisées</string>
+    <string name="search_engine_error_url_host">L\'URL doit avoir un hôte valide</string>
+    <string name="search_engine_error_url_private">Les URLs privées ou localhost ne sont pas autorisés pour des raisons de sécurités</string>
+    <string name="search_engine_error_name_required">Le nom est requis</string>
+    <string name="search_engine_error_name_too_long">Le nom ne doit pas contenir plus de 50 caractères</string>
+    <string name="close_button">Fermer</string>
+    <string name="delete_button">Supprimer</string>
 </resources>
