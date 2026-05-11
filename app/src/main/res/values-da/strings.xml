@@ -541,7 +541,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
          and is used to enable or disable playback of DRM controlled content.
          '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
-    <string name="security_options_drm_content_v1"><![CDATA[Tillad automatisk websteder at identificere din enhed for at afspille DRM-kontrolleret indhold (<a href="%1$s">Læs mere </a>)]]></string>
+    <string name="security_options_drm_content_v1"><![CDATA[Tillad automatisk, at websteder identificerer din enhed for at afspille DRM-kontrolleret indhold. (<a href="%1$s">Læs mere</a>)]]></string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Gendan faneblade og vinduer efter genstart</string>
@@ -625,7 +625,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">Giv %1$s lov til at sende tekniske data og data for brug til Mozilla</string>
+    <string name="security_options_telemetry_send_data">Tillad %1$s at sende tekniske data og interaktionsdata til Huawei</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -675,7 +675,7 @@
     <string name="crash_dialog_heading">Vi løb ind i et problem, der førte til nedbrud</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message"><![CDATA[Hjælp Mozilla med at gøre %1$s bedre ved at indsende dine nedbruds-data. <a href="more">Læs mere</a>]]></string>
+    <string name="crash_dialog_message"><![CDATA[Hjælp Mozilla med at forbedre %1$s ved at sende dine nedbrudsdata. <a href="more">Læs mere</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Send altid data uden at spørge</string>
@@ -881,7 +881,7 @@
     <string name="addons_install_dialog_title">Tilføj %1$s?</string>
     <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
      %1$s will be replaced by the permissions list-->
-    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Tilføjelsen kræver din tilladelse for at:<ul>%1$s</ul></p>]]></string>
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>Tilføjelsen kræver din tilladelse til:<ul>%1$s</ul></p>]]></string>
     <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
     This dialog is displayed when an addon is installed. -->
     <string name="addons_install_dialog_cancel">Annuller</string>
@@ -1232,17 +1232,7 @@
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[
-<p>Når du browser i private vinduer, gemmer %1$s <strong>ikke</strong>:</p>
-<ul class="two-column">
-  <li>besøgte sider</li>
-  <li>søgninger</li>
-  <li>cookies</li>
-  <li>midlertidige filer</li>
-</ul>
-<p>Privat browsing <strong>sikrer ikke din anonymitet</strong> på internettet. Din arbejdsgiver eller internetudbyder kan stadig finde ud af, hvilke sider du besøger.</p>
-<p class="about-info">Læs mere om <a id="learnMore">Privat browsing</a>.</p>
-     ]]></string>
+    <string name="private_browsing_body"><![CDATA[\n<p>Når du browser i private vinduer, gemmer %1$s <strong>ikke</strong>:</p>\n<ul class="two-column">\n \u0020<li>besøgte sider</li>\n \u0020<li>søgninger</li>\n \u0020<li>cookies</li>\n \u0020<li>midlertidige filer</li>\n</ul>\n<p>Privat browsing <strong>sikrer ikke din anonymitet</strong> på internettet. Din arbejdsgiver eller internetudbyder kan stadig finde ud af, hvilke sider du besøger.</p>\n<p class="about-info">Læs mere om <a id="learnMore">Privat browsing</a>.</p>\n \u0020 \u0020 ]]></string>
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="homepage_hint">%1$s Startside (standard)</string>
@@ -1296,7 +1286,7 @@
     <string name="voice_samples_collect_data_dialog_title">Tillad %1$s at indsamle stemme-prøver til forskningsformål?</string>
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[For at forbedre vores stemmegenkendelse og andre tjenester indsamler vi stemme-optagelser til forskningsbrug. Vi opbevarer dine data sikkert og uden information, der kan spores tilbage til dig. Du kan bruge stemme-søgning uden at tillade indsamling af dine data. <a href="privacy">Læs mere</a>]]></string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[For at forbedre vores stemmegenkendelse og andre tjenester skal vi indsamle stemmeprøver til forskning. Vi opbevarer dine data sikkert og uden identificerende oplysninger. Du kan altid bruge stemmesøgning, selv hvis du ikke tillader indsamling. <a href="">Læs mere</a>]]></string>
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">Tillad</string>
@@ -1444,7 +1434,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the status of the setting.
      '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="webxr_permission_dialog_message"><![CDATA[WebXR er slået %1$s for dette websted. <a href="%2$s">Læs mere</a>]]></string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR er %1$s for dette websted. <a href="%2$s">Læs mere</a>]]></string>
     <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_on">til</string>
     <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
@@ -1452,7 +1442,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="tracking_dialog_message"><![CDATA[Udvidet beskyttelse mod sporing er %1$s for dette websted.  (<a href="%2$s">Læs mere</a>)]]></string>
+    <string name="tracking_dialog_message"><![CDATA[Udvidet beskyttelse mod sporing er %1$s for dette websted. <a href="%2$s">Læs mere</a>]]></string>
     <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_on">Til</string>
     <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
@@ -1460,7 +1450,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_dialog_message"><![CDATA[Noget lyd- eller videoindhold på dette websted bruger DRM-software, hvilken kan begrænse hvad %1$s kan lade dig gøre med det. <a href="%2$s">Læs mere</a>]]></string>
+    <string name="drm_dialog_message"><![CDATA[Noget lyd- eller videoindhold på dette websted bruger DRM-software, hvilket kan begrænse, hvad %1$s kan lade dig gøre med det. <a href="%2$s">Læs mere</a>]]></string>
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
     <string name="drm_dialog_button_on">Til</string>
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
@@ -1471,7 +1461,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_first_use_body_v2"><![CDATA[Hvis du tillader DRM, kan websteder identificere denne enhed ved hvert besøg. <a href="%1$s">Læs mere </a>]]></string>
+    <string name="drm_first_use_body_v2"><![CDATA[Hvis du tillader DRM, kan websteder identificere denne enhed, hver gang du besøger dem. <a href="%1$s">Læs mere</a>]]></string>
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_allow">Tillad</string>
@@ -1657,9 +1647,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="rCN_first_launch_clickable_privacy_text">Privatlivspolitik</string>
     <string name="rCN_first_launch_agree">Enig</string>
     <string name="rCN_first_launch_disagree">Uenig</string>
-    <string name="rCN_first_launch_confirmation_body">Hvis du vælger \"Uenig\", vil vi desværre ikke længere være i stand til at levere tjenester til dig.
-\n
-\nDu kan læse den komplette brugeraftale og privatlivspolitik.</string>
+    <string name="rCN_first_launch_confirmation_body">Hvis du vælger \"Afvis\", kan vi desværre ikke længere levere tjenester til dig. \n \nDu kan læse hele brugeraftalen og privatlivspolitikken.</string>
     <string name="keyboardview_keycode_cancel">Annuller</string>
     <string name="keyboardview_keycode_delete">Slet</string>
     <string name="keyboardview_keycode_enter">Indtast</string>
@@ -1667,11 +1655,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="user_feedback_tooltip">Del ideer og feedback</string>
     <string name="upload_list_empty">Ingen filer tilgængelige til upload</string>
     <string name="deprecated_version_dialog_info_button">Læs mere…</string>
-    <string name="deprecated_version_dialog_body">Denne \"App Lab\"-version af Wolvic vil blive fjernet ved udgangen af oktober 2023.
-\n
-\nInstaller venligst den nyeste version af Wolvic fra Meta Quest Store.
-\n
-\nVIGTIGT: Medmindre du bruger Sync, vil den nye Wolvic-app ikke have dine bogmærker og faner.</string>
+    <string name="deprecated_version_dialog_body">Denne \"App Lab\"-version af Wolvic vil blive fjernet ved udgangen af oktober 2023. \n \nInstaller venligst den nyeste version af Wolvic fra Meta Quest Store. \n \nVIGTIGT: Medmindre du bruger Sync, vil den nye Wolvic-app ikke have dine bogmærker og faner.</string>
     <string name="developer_options_center_windows">Centrer vinduer vertikalt</string>
     <string name="controller_options_haptic_feedback">Haptisk feedback</string>
     <string name="security_options_permission_fine_location_warning">Wolvic kan kun få din omtrentlige placering. Dette kan ændres i systemindstillingerne.</string>
@@ -1681,23 +1665,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="hamburger_menu_toggle_passthrough">Passthrough</string>
     <string name="rCN_first_launch_confirmation_agree">Enig og fortsæt</string>
     <string name="rCN_first_launch_confirmation_disagree">Uenig og afslut</string>
-    <string name="terms_service_section_1">Wolvic er gratis og open source-software, bygget af et fællesskab af tusinder fra hele verden. Der er et par ting, du bør vide:
-\n
-\n\t- Wolvic stilles til rådighed for dig under betingelserne i Mozilla Public License. Det betyder, at du må bruge, kopiere og distribuere Wolvic til andre. Du er også velkommen til at ændre kildekoden til Wolvic, som du vil, for at opfylde dine behov. Mozilla Public License giver dig også ret til at distribuere dine modificerede versioner.
-\n
-\n\t- Du får ikke tildelt nogen varemærkerettigheder eller licenser til varemærker tilhørende Igalia eller nogen anden part, herunder uden begrænsning Wolvic-navnet eller -logoet.
-\n
-\n\t- Nogle funktioner i Wolvic, såsom Crash Reporter, giver dig mulighed for at give feedback til Igalia. Ved at vælge at indsende feedback giver du Igalia tilladelse til at bruge feedbacken til at forbedre sine produkter, til at offentliggøre anonymiseret feedback på sine hjemmesider og til at distribuere den anonymiserede feedback.
-\n
-\n\t- Hvordan vi bruger dine personlige oplysninger og feedback indsendt til Igalia gennem Wolvic, er beskrevet i Wolvics privatlivspolitik.
-\n
-\n\t- Nogle Wolvic-funktioner gør brug af webbaserede informationstjenester; vi kan dog ikke garantere, at de er 100 % nøjagtige eller fejlfri. Flere detaljer, herunder oplysninger om, hvordan du deaktiverer de funktioner, der bruger disse tjenester, kan findes i servicevilkårene (nedenfor).</string>
-    <string name="privacy_policy_section_1">Denne applikation er udviklet af Igalia, SL (herefter IGALIA), med hjemsted på Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia (Spanien), hvis kontaktoplysninger er:
-\n
-\n\t- Telefonnummer +34 981 913991;
-\n\t- E-mail: info@igalia.com
-\n
-\nIndholdet og elementerne, der udgør applikationen, er implementeret og/eller udviklet af IGALIA under open source-licenser og er beskyttet uden begrænsninger af lovgivningen om intellektuel og industriel ejendomsret i Kongeriget Spanien og af de internationale traktater og aftaler, der kan være resultatet af anvendelsen.</string>
+    <string name="terms_service_section_1">Wolvic er gratis og open source-software, bygget af et fællesskab af tusinder fra hele verden. Der er et par ting, du bør vide: \n \n\t- Wolvic stilles til rådighed for dig under betingelserne i Mozilla Public License. Det betyder, at du må bruge, kopiere og distribuere Wolvic til andre. Du er også velkommen til at ændre kildekoden til Wolvic, som du vil, for at opfylde dine behov. Mozilla Public License giver dig også ret til at distribuere dine modificerede versioner. \n \n\t- Du får ikke tildelt nogen varemærkerettigheder eller licenser til varemærker tilhørende Igalia eller nogen anden part, herunder uden begrænsning Wolvic-navnet eller -logoet. \n \n\t- Nogle funktioner i Wolvic, såsom Crash Reporter, giver dig mulighed for at give feedback til Igalia. Ved at vælge at indsende feedback giver du Igalia tilladelse til at bruge feedbacken til at forbedre sine produkter, til at offentliggøre anonymiseret feedback på sine hjemmesider og til at distribuere den anonymiserede feedback. \n \n\t- Hvordan vi bruger dine personlige oplysninger og feedback indsendt til Igalia gennem Wolvic, er beskrevet i Wolvics privatlivspolitik. \n \n\t- Nogle Wolvic-funktioner gør brug af webbaserede informationstjenester; vi kan dog ikke garantere, at de er 100 % nøjagtige eller fejlfri. Flere detaljer, herunder oplysninger om, hvordan du deaktiverer de funktioner, der bruger disse tjenester, kan findes i servicevilkårene (nedenfor).</string>
+    <string name="privacy_policy_section_1">Denne applikation er udviklet af Igalia, SL (herefter IGALIA), med hjemsted på Bugallal Marchesi, 22 - 1º, 15008, A Coruña, Galicia (Spanien), hvis kontaktoplysninger er: \n \n\t- Telefonnummer +34 981 913991; \n\t- E-mail: info@igalia.com \n \nIndholdet og elementerne, der udgør applikationen, er implementeret og/eller udviklet af IGALIA under open source-licenser og er uden begrænsning beskyttet af Kongeriget Spaniens lovgivning om intellektuel og industriel ejendomsret og af de internationale traktater og aftaler, der måtte finde anvendelse.</string>
     <string name="keyboardview_keycode_done">Færdig</string>
     <string name="privacy_policy_section_3">Denne fortrolighedspolitik er underlagt spansk lov. Privatlivspolitikkens sprog i denne applikation er spansk. Af denne grund vil enhver mulig afvigelse mellem den originale version på spansk og dens oversættelse til et andet sprog blive betragtet som fremherskende i den spanske version, der kan findes her: https://wolvic.com/es/legal/privacy/ .</string>
     <string name="keyboardview_keycode_alt">Alt</string>
@@ -1707,11 +1676,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="clear_user_data_dialog_text">%1$s vil blive nulstillet. Alle data, inklusive gemte logins, historik og bogmærker, vil blive slettet permanent, hvis de ikke er blevet synkroniseret. %1$s lukker automatisk, når nulstillingen er fuldført. Ønsker du at fortsætte?</string>
     <string name="developer_options_clear_user_data_description">Alle brugerdata</string>
     <string name="security_options_use_system_root_ca">Brug rodcertifikater, som systemet har tillid til</string>
-    <string name="rCN_first_launch_body">Velkommen til \"Wolvic\"!
-\n
-\nRegistrering og brug af \"Wolvic\" kræver, at du accepterer brugeraftalen og privatlivspolitikken, ellers kan vi ikke levere tjenester til dig. Læs venligst dokumenterne omhyggeligt og klik på \"Enig\" for at fortsætte. Hvis du klikker på \"Uenig\", vil du ikke kunne fortsætte med at bruge \"Wolvic\".
-\n
-\nDu kan læse den komplette brugeraftale og privatlivspolitik.</string>
+    <string name="rCN_first_launch_body">Velkommen til \"Wolvic\"! \n \nRegistrering og brug af \"Wolvic\" kræver, at du accepterer brugeraftalen og privatlivspolitikken, da vi ellers ikke kan levere tjenester til dig. Læs dokumenterne omhyggeligt, og klik på \"Accepter\" for at fortsætte. Hvis du klikker på \"Afvis\", kan du ikke fortsætte med at bruge \"Wolvic\". \n \nDu kan læse hele brugeraftalen og privatlivspolitikken.</string>
     <string name="rCN_first_launch_clickable_terms_text">Brugeraftale</string>
     <string name="deprecated_version_dialog_title">Support slutter snart</string>
     <string name="display_options_sound_effect">Brug lydeffekter</string>
@@ -1723,4 +1688,76 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Nyt faneblad</string>
     <string name="new_private_tab">Nyt privat faneblad</string>
     <string name="close_tab">Luk faneblad</string>
+    <string name="permission_rationale_title">Yderligere tilladelser</string>
+    <string name="permission_camera_rationale">Hvis du vil tage billeder af omgivelserne, skal du have tilladelse til at bruge dit kamera.</string>
+    <string name="permission_microphone_rationale">For at kunne foretage stemmesøgninger og indtaste tekst skal der gives tilladelse til at bruge din mikrofon.</string>
+    <string name="permission_camera_and_microphone_rationale">For at kunne levere tjenester som videokonferencer kræves der tilladelse til at bruge dit kamera og din mikrofon.</string>
+    <string name="permission_location_rationale">For at kunne vise lokale nyheder og indhold skal vi have tilladelse til at få adgang til din placering.</string>
+    <string name="permission_notification_rationale">For at kunne give dig besked om nyheder og opdateringer skal der gives tilladelse til at sende meddelelser.</string>
+    <string name="permission_read_external_storage_rationale">For at åbne filer på din enhed kræves der tilladelse til at læse dit eksterne lager.</string>
+    <string name="permission_persistent_storage_rationale">For at gemme og åbne filer på din enhed kræves der tilladelse til at gemme data i det permanente lager.</string>
+    <string name="add_search_engine_title">Tilføj søgemaskine</string>
+    <string name="add_search_engine_name_title">Navn</string>
+    <string name="add_search_engine_name_hint">Indtast søgemaskinens navn</string>
+    <string name="add_search_engine_search_url_title">Søge-URL</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">Forslags-URL (valgfri)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">Gem</string>
+    <string name="add_search_engine_cancel">Annuller</string>
+    <string name="hamburger_menu_zoom">Zoom</string>
+    <string name="search_engine_error_url_scheme_unsupported">Kun http- og https-URL’er er tilladt</string>
+    <string name="controller_options_window_selection">Metode til valg af vindue</string>
+    <string name="disable_hand_tracking_dialog_body">Håndsporing er midlertidigt deaktiveret. Den aktiveres automatisk igen ved næste start. Denne indstilling er med vilje ikke permanent for at undgå problemer, når controllere ikke er tilgængelige.</string>
+    <string name="search_engine_error_url_private">Private URL’er og localhost-URL’er er ikke tilladt af sikkerhedsmæssige årsager</string>
+    <string name="download_addon_install_blocked_permissions_body">Tillad lagringstilladelser i Privatlivsindstillinger for at fortsætte.</string>
+    <string name="display_options_tabs_location_horizontal">Vandret</string>
+    <string name="settings_language_ukrainian">Ukrainsk</string>
+    <string name="display_options_tabs_location_tray">Bakke</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="display_options_tabs_location_vertical">Lodret</string>
+    <string name="settings_window_size">Standardvinduesstørrelse</string>
+    <string name="delete_search_engine_dialog_title">Slet søgemaskine</string>
+    <string name="search_engine_error_name_required">Navn er påkrævet</string>
+    <string name="developer_options_homepage_other">Andet</string>
+    <string name="vision_glass_disconnected_message">Tilslut Vision Glass</string>
+    <string name="edit_search_engine_save">Gem ændringer</string>
+    <string name="controller_options_click_to_select">Klik</string>
+    <string name="close_button">Luk</string>
+    <string name="vision_glass_error_message">Der opstod en fejl.\nPrøv igen.</string>
+    <string name="search_engine_error_url_required">URL er påkrævet</string>
+    <string name="search_engine_error_url_placeholder">URL skal indeholde pladsholderen %s eller {searchTerms}</string>
+    <string name="custom_search_engines_empty">Ingen brugerdefinerede søgemaskiner. Brug knappen Tilføj søgemaskine for at tilføje en.</string>
+    <string name="custom_search_engines_title">Brugerdefinerede søgemaskiner</string>
+    <string name="tray_status_phone">Telefon: %1$s</string>
+    <string name="phone_ui_alert_dialog_title">Fejl</string>
+    <string name="delete_search_engine_dialog_text">Er du sikker på, at du vil slette søgemaskinen %1$s?</string>
+    <string name="tabs_bookmark_selected">Bogmærk faner</string>
+    <string name="custom_search_engines_list_header">Brugerdefinerede søgemaskiner</string>
+    <string name="edit_search_engine_title">Rediger søgemaskine</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Kunne ikke skifte til 3D-tilstand. Prøv at frakoble brillerne, tilslutte dem igen og genstarte Wolvic.</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Med øjensporing</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Med controller eller hånd</string>
+    <string name="vision_glass_touchpad_instructions">Tryk for at klikke. Stryg for at rulle</string>
+    <string name="phone_ui_usb_alert_dialog_description">Kunne ikke hente USB-tilladelser. Prøv at frakoble brillerne, tilslutte dem igen og genstarte Wolvic.</string>
+    <string name="search_engine_deleted">Søgemaskine slettet</string>
+    <string name="controller_options_pointer_mode">Markørstyringstilstand</string>
+    <string name="vision_glass_realign_dialog_explanation">For at konfigurere controlleren skal du pege telefonen lige frem og trykke på knappen.</string>
+    <string name="controller_options_handtracking">Håndsporing</string>
+    <string name="search_engine_error_name_too_long">Navnet må højst være 50 tegn</string>
+    <string name="display_options_open_tabs_in_background">Åbn nye faner i baggrunden</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Ny fane</string>
+    <string name="url_new_tab_title">Ny fane</string>
+    <string name="custom_search_engines_manage">Brugerdefinerede søgemaskiner</string>
+    <string name="announcements_title">Annonceringer</string>
+    <string name="controller_options_hover_to_select">Hold markøren over</string>
+    <string name="delete_button">Slet</string>
+    <string name="display_options_tabs_location">Fanernes placering</string>
+    <string name="search_engine_error_url_host">URL skal have en gyldig vært</string>
+    <string name="eye_tracking_permission_message">Aktivering af øjensporing til webbrowsing medfører betydelige privatlivsrisici. Denne teknologi registrerer, hvor og hvor længe en bruger ser på bestemte dele af en webside, hvilket kan afsløre intime oplysninger om brugerens interesser og følelsesmæssige reaktioner. Annoncører og tredjeparter kan udnytte disse data til påtrængende markedsføring og profilering. Desuden kan øjenbevægelsesmønstre bruges til at udlede følsomme oplysninger såsom medicinske tilstande, kognitive tilstande eller personlige vaner. Derfor er det vigtigt at overveje konsekvenserne for privatlivet, før websider får adgang til oplysninger om øjensporing.</string>
+    <string name="search_engine_error_url_scheme">URL skal have et skema (http:// eller https://)</string>
+    <string name="eye_tracking_permission_title">Tilladelser til øjensporing</string>
+    <string name="terms_service_section_2">Wolvic bruger webbaserede informationstjenester (“Tjenester”) til at levere nogle af de funktioner, der stilles til rådighed for dig med denne binære version af Wolvic, på de vilkår der er beskrevet nedenfor. \n\n\t• Igalia og dets bidragydere, licensgivere og partnere arbejder for at levere de mest nøjagtige og ajourførte Tjenester. Vi kan dog ikke garantere, at oplysningerne er fuldstændige og fejlfri. For eksempel identificerer Safe Browsing-tjenesten muligvis ikke alle risikable websteder og kan fejlagtigt identificere sikre websteder som usikre, og i Location Aware-tjenesten er alle placeringer, der returneres af vores tjenesteudbydere, kun estimater, og hverken vi eller vores tjenesteudbydere garanterer nøjagtigheden af de angivne placeringer. \n\n\t• Igalia kan efter eget skøn afbryde eller ændre Tjenesterne. \n\n\t• Du er velkommen til at bruge disse Tjenester med den medfølgende version af Wolvic, og Igalia giver dig sine rettigheder til at gøre det. Igalia og dets licensgivere forbeholder sig alle andre rettigheder til Tjenesterne. Disse vilkår har ikke til formål at begrænse rettigheder, der er givet i henhold til open source-licenser, som gælder for Wolvic og tilsvarende kildekodeversioner af Wolvic. \n\n\t• Tjenesterne leveres “som de er”. Igalia, dets bidragydere, licensgivere og distributører fraskriver sig alle garantier, udtrykkelige såvel som underforståede, herunder uden begrænsning garantier for, at Tjenesterne er salgbare og egnede til dine særlige formål. Du bærer hele risikoen ved valget af Tjenesterne til dine formål samt for Tjenesternes kvalitet og ydeevne. \n\n\t• Medmindre loven kræver andet, er Igalia, dets bidragydere, licensgivere og distributører ikke ansvarlige for indirekte, særlige, hændelige, følgeskader, pønale eller eksemplariske skader, der opstår som følge af eller på nogen måde er relateret til brugen af Wolvic og Tjenesterne. Det samlede ansvar i henhold til disse vilkår overstiger ikke $500 (fem hundrede dollars). Nogle jurisdiktioner tillader ikke udelukkelse eller begrænsning af visse skader, så denne udelukkelse og begrænsning gælder muligvis ikke for dig. \n\n\t• Igalia kan efter behov opdatere disse vilkår fra tid til anden. Disse vilkår kan ikke ændres eller annulleres uden Igalias skriftlige samtykke. \n\n\t• Disse vilkår er underlagt Spaniens love, med undtagelse af dets lovvalgsregler. Hvis nogen del af disse vilkår anses for ugyldig eller uden retskraft, forbliver de resterende dele i fuld kraft og virkning. I tilfælde af konflikt mellem en oversat version af disse vilkår og den spanske version har den spanske version forrang. \n\n\t• Hvis du ikke ønsker at bruge en eller flere af Tjenesterne, eller hvis vilkårene ovenfor er uacceptable, kan du deaktivere funktionen eller Tjenesten/Tjenesterne. Instruktioner til, hvordan en bestemt funktion eller Tjeneste deaktiveres, findes nedenfor. Andre funktioner og Tjenester kan deaktiveres i programmets indstillinger. \n\n\t\t◦ Sikker browsing er aktiveret som standard. Det anbefales ikke at deaktivere Sikker browsing, da det kan medføre, at du besøger usikre websteder. Hvis du vil deaktivere funktionen helt, skal du følge disse trin: \n\n\t\t\t⁃ Skriv about:config i URL-linjen \n\n\t\t\t⁃ Skriv browser.safebrowsing.malware.enabled \n\n\t\t\t⁃ Dobbeltklik på indstillingen browser.safebrowsing.malware.enabled \n\n\t\t\t⁃ Skriv browser.safebrowsing.phishing.enabled \n\n\t\t\t⁃ Dobbeltklik på indstillingen browser.safebrowsing.phishing.enabled \n\n\t\t\t⁃ Sikker browsing er nu deaktiveret \n\n\t\t◦ Placeringsbevidst browsing: er altid tilvalg. Der sendes aldrig placeringsoplysninger uden din tilladelse. Hvis du vil deaktivere funktionen helt, skal du følge disse trin: \n\n\t\t\t⁃ Skriv about:config i URL-linjen \n\n\t\t\t⁃ Skriv geo.enabled \n\n\t\t\t⁃ Dobbeltklik på indstillingen geo.enabled \n\n\t\t\t⁃ Placeringsbevidst browsing er nu deaktiveret \n\n\t\t◦ Udvidet sporingsbeskyttelse i Wolvic beskytter automatisk dit privatliv, mens du browser. Den blokerer trackere, der følger dig rundt online for at indsamle oplysninger om dine browsingvaner og interesser, uden at ødelægge websteders funktionalitet. Den omfatter også beskyttelse mod skadelige scripts, såsom malware der dræner dit batteri. Der er tre tilstande for sporingsbeskyttelse: Standard, Streng og Fra. Hvis du vil slå den fra, skal du følge disse trin: \n\n\t\t\t⁃ Gå til indstillingerne “Privatliv og sikkerhed”. \n\n\t\t\t⁃ Vælg radioknappen “Fra”. \n\n\t\t\t⁃ Udvidet sporingsbeskyttelse er nu deaktiveret.</string>
+    <string name="privacy_policy_section_2">IGALIA er forpligtet til at overholde lovbestemmelserne om beskyttelse af personoplysninger: Europa-Parlamentets og Rådets forordning (EU) 2016/679 af 27. april 2016 om beskyttelse af fysiske personer i forbindelse med behandling af personoplysninger og om fri udveksling af sådanne oplysninger samt om ophævelse af direktiv 95/46/EF (generel forordning om databeskyttelse), og den organiske lov 3/2018 af 5. december om databeskyttelse og garanti for digitale rettigheder (LOPDGDD). \nIGALIA indsamler ikke personoplysninger på en måde, så brugeren kan identificeres. Du kan derfor bruge programmet, konsultere og browse i virtual reality-miljøet uden at afsløre din identitet eller give personoplysninger til IGALIA, hverken direkte eller indirekte; IGALIA er derfor ikke ansvarlig for nogen data, der indtastes i WOLVIC. \nDe eneste data og oplysninger, som IGALIA får ved brugen af dette program, og som på intet tidspunkt knyttes individuelt til brugeren, er følgende: \n\n\t• Analytiske, rent statistiske og ikke-identificerende data. \n\t• For at optage og oversætte tale til tekst sendes brugerens lyddata til servere ejet af den tredjepartsvirksomhed, der er ansvarlig for hver platform, via en API til dette formål: for eksempel i Oculus, fra Facebook, en tjeneste der sender dem til Oculus Voice SDK. De nævnte data behandles, tilgås eller indarbejdes på intet tidspunkt på servere ejet af IGALIA. De overførte data er udelukkende ansvar for de tredjepartsvirksomheder, der ejer hver platform (herefter Tredjeparterne), som kan være placeret uden for Den Europæiske Union og være underlagt et retssystem, der yder mindre beskyttelse af brugerens privatliv. Vi anbefaler, at du omhyggeligt læser privatlivspolitikken og brugsbetingelserne for hver af disse eksterne platforme, før du accepterer og bruger deres tjenester. IGALIA er ikke direkte eller indirekte ansvarlig for de nævnte Tredjeparters behandling af personoplysninger. \n\t• Geografiske placeringsoplysninger kan hentes fra browseren i stedet for dem, der bruges af systemet. For at gøre dette skal du dog angive placeringstilladelserne for din enhed via en særlig meddelelse herom, og IGALIA vil på ingen måde knytte de nævnte oplysninger til dig som en identificeret eller identificerbar person, selv om de Tredjeparter, der er nævnt i det foregående punkt, i givet fald kan gøre det. Vi anbefaler, at du er opmærksom på deres juridiske vilkår. \n\t• IGALIA vil på ingen måde tilgå eller gemme de adresser eller URL’er, du besøger. \n\t• Integration med cloudtjenester (såsom Mozilla Accounts eller Google Accounts) for at synkronisere data som din browserhistorik eller dine brugerbogmærker kan være mulig. I så fald vil IGALIA ikke tilgå eller behandle nogen oplysninger på nogen måde, og de vil heller ikke passere gennem Igalias servere. \n\nVi minder dig igen om, at de tredjepartsplatforme, du tilgår eller bruger med dette program, kan indsamle disse eller andre identificerende data om dig, enten ved at du udfylder dem frivilligt eller ufrivilligt og/eller bevidst eller ubevidst, muligvis uden for rammerne af europæisk databeskyttelseslovgivning. Derfor anbefaler vi, at du informerer dig selv og er særligt opmærksom på de nævnte Tredjeparters juridiske vilkår, såsom for eksempel følgende: \n\n\t• Google: https://policies.google.com/privacy \n\t• Facebook: https://www.facebook.com/about/privacy/update \n\t• MeetKai: https://meetkai.com/privacy \n\nIGALIA informerer dig ligeledes om, at Meetkai under brugen af browserens stemmegenkendelsesfunktion gemmer fuldstændigt anonymiserede transskriptioner af din stemme med henblik på at forbedre den tjeneste, de leverer. Din stemme gemmes ikke, og der vil ikke være nogen måde at forbinde transskriptionerne med din identitet. Flere oplysninger om MeetKais privatlivspolitik findes på følgende link: https://meetkai.com/es/privacy. Igalia har hverken interesse i at forbinde transskriptioner med nogen bruger eller i at påvirke deres privatliv; derfor anmoder Igalia om, at ingen personlige eller fortrolige oplysninger af nogen art inkluderes i deres lyd- eller stemmeadresser. \nUnder alle omstændigheder garanterer IGALIA de registrerede udøvelsen af rettighederne til indsigt, berigtigelse, sletning, indsigelse, begrænsning af behandling og dataportabilitet vedrørende deres personoplysninger. \nTil disse formål har IGALIA etableret en intern protokol/procedure for at gennemføre dem. \nRegistrerede kan udøve deres rettigheder på følgende måde: ved at sende en anmodning til Igalias fysiske adresse: Calle Bugallal Marchesi, 22, 1o, 15008, A Coruña, Reference: “Data Protection”; eller til følgende e-mailadresse: info@igalia.com. \nI begge tilfælde skal den registrerede vedlægge en kopi af sit nationale ID, pas eller identifikationsdokument for at bevise sin identitet. \nDatabeskyttelsesrådgiveren eller den afdeling, der er betroet håndteringen af rettighederne, registrerer udøvelsen af rettigheder i formularen, der er tilgængelig til dette formål, hvor følgende data registreres: \n\n\t• Ansøgningsnummer: der tildeles et nummer til hver modtaget ansøgning. \n\t• Hovedkontor: hvis den ansvarlige har flere hovedkontorer, angives det hovedkontor, hvor anmodningen blev modtaget. \n\t• Kanal til indgivelse af krav: den kanal, hvorigennem anmodningen blev modtaget, angives: fysisk postadresse, e-mail osv. \n\t• Indgivelsesdato: datoen for indgivelsen af anmodningen angives. \n\t• Udøvede rettigheder: den type rettighed, personen udøvede. \n\t• Svartidspunkt: den dag, hvor svaret blev sendt til den registrerede. \n\nDen understøttende dokumentation (modtagelse af anmodning/svar, kommunikation osv.) arkiveres med henblik på at bevise korrekt håndtering. \nLigeledes mindes du om, at du har ret til at indgive en klage til det spanske databeskyttelsesagentur.</string>
 </resources>
