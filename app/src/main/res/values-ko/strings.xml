@@ -1018,7 +1018,7 @@
     <string name="privacy_options_saved_login_delete">삭제</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking">향상된 추적 방지 기능. (&lt;a href=%1$s&gt;더 알아보기&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[향상된 추적 방지 기능. (<a href="%1$s">더 알아보기</a>)]]></string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">고급</string>
@@ -1820,4 +1820,58 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">새 탭</string>
     <string name="new_private_tab">새 사생활 보호 탭</string>
     <string name="close_tab">탭 닫기</string>
+    <string name="add_search_engine_title">검색 엔진 추가</string>
+    <string name="add_search_engine_name_title">이름</string>
+    <string name="add_search_engine_name_hint">검색 엔진 이름 입력</string>
+    <string name="add_search_engine_search_url_title">검색 URL</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">추천 URL (선택 사항)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">저장</string>
+    <string name="add_search_engine_cancel">취소</string>
+    <string name="edit_search_engine_title">검색 엔진 수정</string>
+    <string name="edit_search_engine_save">업데이트</string>
+    <string name="search_engine_deleted">검색 엔진이 삭제됨</string>
+    <string name="delete_search_engine_dialog_title">검색 엔진 삭제</string>
+    <string name="delete_search_engine_dialog_text">%1$s 검색 엔진을 삭제하시겠습니까?</string>
+    <string name="custom_search_engines_title">사용자 정의 검색 엔진</string>
+    <string name="custom_search_engines_empty">사용자 정의 검색 엔진이 없습니다. 검색 엔진 추가 버튼을 이용해 추가해주십시오.</string>
+    <string name="custom_search_engines_manage">사용자 정의 검색 엔진</string>
+    <string name="custom_search_engines_list_header">사용자 정의 검색 엔진</string>
+    <string name="search_engine_error_url_required">URL이 필요합니다</string>
+    <string name="search_engine_error_url_placeholder">URL에는 %s 또는 {searchTerms}가 포함되어야 합니다</string>
+    <string name="search_engine_error_url_scheme">URL에는 http:// 혹은 https://가 포함되어야 합니다</string>
+    <string name="search_engine_error_url_scheme_unsupported">http와 https URL만 허용됩니다</string>
+    <string name="search_engine_error_url_host">URL에는 유효한 호스트가 포함되어야 합니다</string>
+    <string name="search_engine_error_url_private">보안상의 이유로 private/localhost URL은 허용되지 않습니다</string>
+    <string name="search_engine_error_name_required">이름이 필요합니다</string>
+    <string name="search_engine_error_name_too_long">이름은 50자 이하여야 합니다</string>
+    <string name="settings_language_ukrainian">우크라이나어</string>
+    <string name="display_options_tabs_location">탭 위치</string>
+    <string name="display_options_tabs_location_tray">트레이</string>
+    <string name="display_options_tabs_location_horizontal">수평</string>
+    <string name="display_options_tabs_location_vertical">수직</string>
+    <string name="display_options_open_tabs_in_background">새 탭을 백그라운드에서 열기</string>
+    <string name="settings_window_size">기본 윈도우 크기</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">새 탭</string>
+    <string name="developer_options_homepage_other">기타</string>
+    <string name="controller_options_handtracking">손 추적</string>
+    <string name="close_button">닫기</string>
+    <string name="delete_button">삭제</string>
+    <string name="url_new_tab_title">새 탭</string>
+    <string name="tabs_bookmark_selected">북마크 탭</string>
+    <string name="download_addon_install_blocked_permissions_body">계속 진행하려면 개인 정보 옵션에서 저장공간 권한을 허용해야 합니다.</string>
+    <string name="vision_glass_realign_dialog_explanation">컨트롤러 설정을 위해 휴대폰을 정면으로 향한 뒤 버튼을 누르세요.</string>
+    <string name="controller_options_pointer_mode">포인터 설정 모드</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">컨트롤러 또는 손으로 조작</string>
+    <string name="developer_options_pointer_mode_tracked_eye">시선 추적으로 조작</string>
+    <string name="eye_tracking_permission_title">시선 추적 권한</string>
+    <string name="eye_tracking_permission_message">웹 브라우징 중 시선 추적을 활성화하면 개인정보 보호에 심각한 위험이 발생할 수 있습니다. 이 기술은 사용자가 웹페이지의 특정 부분을 어디를 얼마나 오래 바라보는지 수집하여, 관심사나 감정 반응과 같은 민감한 정보를 드러낼 수 있습니다. 광고주 및 제3자는 이 데이터를 활용해 과도한 맞춤형 광고나 사용자 프로파일링을 수행할 수 있습니다. 또한 시선 움직임 패턴을 통해 건강 상태, 인지 상태, 생활 습관과 같은 민감한 정보가 추론될 수 있습니다. 따라서 웹페이지에 시선 추적 정보를 제공하기 전에 개인정보 보호 영향을 신중히 고려해야 합니다.</string>
+    <string name="controller_options_window_selection">윈도우 선택 방법</string>
+    <string name="controller_options_click_to_select">선택</string>
+    <string name="controller_options_hover_to_select">호버</string>
+    <string name="announcements_title">공지사항</string>
+    <string name="disable_hand_tracking_dialog_body">손 추적이 일시적으로 비활성화되었습니다. 이는 다음 실행 시 자동으로 다시 활성화 됩니다. 이 설정은 컨트롤러를 사용할 수 없는 상황에서 문제가 발생하지 않도록 유지되지 않습니다.</string>
 </resources>
