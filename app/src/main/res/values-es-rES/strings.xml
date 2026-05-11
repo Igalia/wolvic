@@ -1846,4 +1846,32 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_click_to_select">Clic</string>
     <string name="controller_options_hover_to_select">Puntero</string>
     <string name="announcements_title">Anuncios</string>
+    <string name="add_search_engine_title">Añadir motor de búsqueda</string>
+    <string name="add_search_engine_name_title">Nombre</string>
+    <string name="add_search_engine_name_hint">Introduzca nombre del motor de búsqueda</string>
+    <string name="add_search_engine_search_url_title">URL de búsqueda</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/busca?q={términosDeBúsqueda}</string>
+    <string name="add_search_engine_suggest_url_title">URL de sugerencias (opcional)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/sugiere?q={términosDeBúsqueda}</string>
+    <string name="add_search_engine_save">Guardar</string>
+    <string name="add_search_engine_cancel">Cancelar</string>
+    <string name="edit_search_engine_title">Editar motor de búsqueda</string>
+    <string name="edit_search_engine_save">Actualizar</string>
+    <string name="search_engine_deleted">Motor de búsqueda borrado</string>
+    <string name="delete_search_engine_dialog_title">Eliminar motor de búsqueda</string>
+    <string name="delete_search_engine_dialog_text">¿Está seguro de querer eliminar el motor de búsqueda %1$s?</string>
+    <string name="custom_search_engines_title">Motores de búsqueda personalizados</string>
+    <string name="custom_search_engines_empty">No hay motores de búsqueda personalizados. Use el botón Añadir motor de búsqueda para añadir uno.</string>
+    <string name="custom_search_engines_manage">Motores de búsqueda personalizados</string>
+    <string name="custom_search_engines_list_header">Motores de búsqueda personalizados</string>
+    <string name="search_engine_error_url_required">Se requiere URL</string>
+    <string name="search_engine_error_url_placeholder">La URL debe contener %s o {términosDeBúsqueda}</string>
+    <string name="search_engine_error_url_scheme">La URL debe tener un esquema (http:// o https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Solo se permiten URLs http o https</string>
+    <string name="search_engine_error_url_host">La URL debe tener un host válido</string>
+    <string name="search_engine_error_url_private">No se permiten URLs privadas/localhost por motivos de seguridad</string>
+    <string name="search_engine_error_name_required">Se requiere nombre</string>
+    <string name="search_engine_error_name_too_long">El nombre debe tener 50 caracteres o menos</string>
+    <string name="close_button">Cerrar</string>
+    <string name="delete_button">Borrar</string>
 </resources>
