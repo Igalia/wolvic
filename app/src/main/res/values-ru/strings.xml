@@ -1229,16 +1229,7 @@
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[<p>Когда вы находитесь в приватном окне, %1$s <strong>не сохраняет</strong>:</p>
-<ul class="two-column">
-  <li>адреса посещённых страниц</li>
-  <li>историю поиска</li>
-  <li>куки</li>
-  <li>временные файлы</li>
-</ul>
-<p>Приватный просмотр <strong>не делает вас анонимными</strong> в Интернете. Ваш работодатель или Интернет-провайдер всё ещё могут знать, какие страницы вы посещаете.</p>
-<p class="about-info">Узнать больше о <a id="learnMore">Приватном просмотре</a>.</p>
-     ]]></string>
+    <string name="private_browsing_body"><![CDATA[\n<p>Когда вы находитесь в приватном окне, %1$s <strong>не сохраняет</strong>:</p>\n<ul class="two-column">\n \u0020<li>адреса посещённых страниц</li>\n \u0020<li>историю поиска</li>\n \u0020<li>куки</li>\n \u0020<li>временные файлы</li>\n</ul>\n<p>Приватный просмотр <strong>не делает вас анонимными</strong> в Интернете. Ваш работодатель или Интернет-провайдер всё ещё могут знать, какие страницы вы посещаете.</p>\n<p class="about-info">Узнать больше о <a id="learnMore">Приватном просмотре</a>.</p>\n \u0020 \u0020 ]]></string>
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="homepage_hint">Домашняя страница %1$s (По умолчанию)</string>
@@ -1292,7 +1283,7 @@
     <string name="voice_samples_collect_data_dialog_title">Разрешить %1$s собирать образцы голоса для исследования?</string>
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Для улучшения распознавания голоса и других сервисов, нам необходимо собирать примеры речи для изучения. Мы храним ваши данные в безопасности, сохраняя анонимность информации. Вы по-прежнему сможете пользоваться голосовым поиском, даже запретив сбор информации. <a href="privacy">Узнать больше</a>]]></string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[Для улучшения распознавания голоса и других сервисов нам необходимо собирать примеры речи для изучения. Мы храним ваши данные в безопасности, сохраняя анонимность информации. Вы по-прежнему сможете пользоваться голосовым поиском, даже запретив сбор информации. <a href="privacy">Узнать больше</a>]]></string>
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">Разрешить</string>
@@ -1726,7 +1717,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">Новая вкладка</string>
     <string name="new_private_tab">Новая приватная вкладка</string>
     <string name="close_tab">Закрыть вкладку</string>
-    <string name="phone_ui_set3dmode_alert_dialog_description">Не удалось перейти на 3D-режим. Попробуйте отключить очки и подключить их обратно и перезапустить Wolvic.</string>
+    <string name="phone_ui_set3dmode_alert_dialog_description">Не удалось перейти в 3D-режим. Попробуйте отключить очки и подключить их обратно и перезапустить Wolvic.</string>
     <string name="tray_status_phone">Телефон: %1$s</string>
     <string name="vision_glass_touchpad_instructions">Нажмите чтобы кликнуть. Проведите пальцем, чтобы прокрутить</string>
     <string name="phone_ui_alert_dialog_title">Ошибка</string>
@@ -1739,14 +1730,45 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_disconnected_message">Пожалуйста подключите Vision Glass</string>
     <string name="vision_glass_error_message">Произошла ошибка.\nПопробуйте ещё раз.</string>
     <string name="developer_options_pointer_mode_tracked_pointer">С помощью контролера или вручную</string>
-    <string name="developer_options_pointer_mode_tracked_eye">С помощью отслеживание глаз</string>
+    <string name="developer_options_pointer_mode_tracked_eye">С помощью отслеживания глаз</string>
     <string name="eye_tracking_permission_title">Разрешения на отслеживание глаз</string>
     <string name="settings_window_size">Размер окна по умолчанию</string>
     <string name="display_options_tabs_location">Расположение вкладок</string>
     <string name="controller_options_handtracking">Отслеживание рук</string>
     <string name="phone_ui_usb_alert_dialog_description">Не удалось получить разрешения USB. Попробуйте отключить очки и подключить их обратно и перезапустить Wolvic.</string>
-    <string name="vision_glass_realign_dialog_explanation">Чтобы настроить контроллер, наведите телефон прямо перед и нажмите кнопку.</string>
+    <string name="vision_glass_realign_dialog_explanation">Чтобы настроить контроллер, наведите телефон прямо перед собой и нажмите кнопку.</string>
     <string name="controller_options_pointer_mode">Режим контроля указателя</string>
-    <string name="eye_tracking_permission_message">Включение отслеживания глаз для просмотра веба имеет значительные риски для приватности. Эта технология фиксирует, куда и как долго пользователь смотрит на конкретные части веб-страницы, раскрывая интимные детали об его интересах и эмоциональных реакциях. Рекламодатели и третьи лица могут использовать эти данные для навязчивого маркетинга и профилирования. Более того, шаблоны движения глаз могут указывать на чувствительную информацию, такую как медицинские состояния, когнитивные состояния или личные привычки. Поэтому важно учитывать последствия конфиденциальности перед предоставлением доступа к информации об отслеживании глаз для веб-страниц.</string>
+    <string name="eye_tracking_permission_message">Включение отслеживания глаз для просмотра веба имеет значительные риски для приватности. Эта технология фиксирует, куда и как долго пользователь смотрит на конкретные части веб-страницы, раскрывая чувствительные детали о его интересах и эмоциональных реакциях. Рекламодатели и третьи лица могут использовать эти данные для навязчивого маркетинга и профилирования. Более того, шаблоны движения глаз могут указывать на чувствительную информацию, такую как медицинские состояния, когнитивные состояния или личные привычки. Поэтому важно учитывать последствия конфиденциальности перед предоставлением доступа к информации об отслеживании глаз для веб-страниц.</string>
     <string name="privacy_policy_section_1">Это приложение было разработано компанией Igalia, SL (далее IGALIA), зарегистрированной по адресу Bugallal Marchesi, 22 – 1º, 15008, A Coruña, Galicia (Испания), контактные данные которой:\n\n• Номер телефона +34 981 913991;\n• Электронная почта: info@igalia.com\n\nСодержимое и элементы, составляющие приложение, были реализованы и/или разработаны компанией IGALIA по лицензиям с открытым исходным кодом, защищены без ограничений законами об интеллектуальной и промышленной собственности Королевства Испания и международными договорами и соглашениями, которые могут возникнуть в результате применения.</string>
+    <string name="add_search_engine_title">Добавить поисковую систему</string>
+    <string name="add_search_engine_name_title">Название</string>
+    <string name="add_search_engine_name_hint">Введите название поисковой системы</string>
+    <string name="add_search_engine_search_url_title">URL поискового запроса</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">Сохранить</string>
+    <string name="add_search_engine_cancel">Отмена</string>
+    <string name="edit_search_engine_title">Изменить поисковую систему</string>
+    <string name="edit_search_engine_save">Обновить</string>
+    <string name="search_engine_deleted">Поисковая система удалена</string>
+    <string name="delete_search_engine_dialog_title">Удалить поисковую систему</string>
+    <string name="delete_search_engine_dialog_text">Вы уверены, что хотите удалить поисковую систему %1$s?</string>
+    <string name="custom_search_engines_title">Пользовательские поисковые системы</string>
+    <string name="custom_search_engines_empty">Нет пользовательских поисковых систем. Нажмите «Добавить поисковую систему».</string>
+    <string name="custom_search_engines_manage">Пользовательские поисковые системы</string>
+    <string name="custom_search_engines_list_header">Пользовательские поисковые системы</string>
+    <string name="search_engine_error_url_required">Необходимо ввести URL</string>
+    <string name="search_engine_error_url_scheme_unsupported">Поддерживаются только схемы http и https</string>
+    <string name="search_engine_error_url_host">URL должен иметь корректное имя сервера</string>
+    <string name="settings_language_ukrainian">Украинский</string>
+    <string name="display_options_open_tabs_in_background">Открывать новые вкладки на заднем плане</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Новая вкладка</string>
+    <string name="developer_options_homepage_other">Другое</string>
+    <string name="close_button">Закрыть</string>
+    <string name="delete_button">Удалить</string>
+    <string name="url_new_tab_title">Новая вкладка</string>
+    <string name="controller_options_window_selection">Способ выбора окна</string>
+    <string name="controller_options_click_to_select">Нажатие</string>
+    <string name="controller_options_hover_to_select">Наведение указателя</string>
 </resources>
