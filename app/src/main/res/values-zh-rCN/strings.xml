@@ -710,7 +710,7 @@
     <string name="crash_dialog_heading">我们遇到了问题并且崩溃了</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">希望您发送瘫痪数据，以帮助 Mozilla 改进 %1$s。&lt;a href=more&gt;了解更多&lt;/a&gt;</string>
+    <string name="crash_dialog_message"><![CDATA[请通过发送崩溃数据来帮助 Mozilla 改进 %1$s。<a href="more">了解更多</a>]]></string>
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">不再询问，始终发送数据</string>
@@ -918,7 +918,7 @@
     <string name="addons_install_dialog_title">要添加 %1$s 吗？</string>
     <!-- This string is displayed in the Addon install dialog body text and it will list the permissions that the addon requires. This dialog is displayed when an addon is installed.
      %1$s will be replaced by the permissions list-->
-    <string name="addons_install_dialog_body">&lt;p ALIGN=LEFT&gt;需要您的允许到网址：&lt;ul&gt;%1$s&lt;/ul&gt;&lt;/p&gt;</string>
+    <string name="addons_install_dialog_body"><![CDATA[<p ALIGN=LEFT>需要您的允许到网址：<ul>%1$s</ul></p>]]></string>
     <!-- This string is displayed in the Addon install dialog "Cancel"" button, when pressed the dialog will be dismissed and the Addon install will be canceled.
     This dialog is displayed when an addon is installed. -->
     <string name="addons_install_dialog_cancel">取消</string>
@@ -1056,7 +1056,7 @@
     <string name="privacy_options_saved_login_delete">删除</string>
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
-    <string name="privacy_options_tracking">增强型跟踪保护。（&lt;a href=%1$s&gt;详细了解&lt;/a&gt;</string>
+    <string name="privacy_options_tracking"><![CDATA[增强型追踪保护。（<a href="%1$s">了解更多</a>）]]></string>
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">高级</string>
@@ -1273,7 +1273,7 @@
 <ul class="two-column">
   <li>访问过的页面记录</li>
   <li>搜索记录</li>
-  <li>Cookie</li>
+  <li>信息记录程序</li>
   <li>临时文件</li>
 </ul>
 <p>隐私浏览<strong>无法让您</strong>在互联网上匿名。您的雇主和电信运营商仍然可以知道您访问了什么页面。</p>
@@ -1335,7 +1335,7 @@
     <string name="voice_samples_collect_data_dialog_title">允许 %1$s 为研究收集语音样本吗？</string>
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2">为了改善语音识别和其他服务，我们需要收集语音样本进行研究。我们将会安全地存储您的数据，无需识别性信息。即使您拒绝我们收集您的语音作样本，您仍可正常使用语音搜索。&lt;a href=privacy&gt;详细了解&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[为了改进我们的语音识别和其他服务，我们需要收集语音样本用于研究。我们会安全地存储您的数据，且不包含任何可识别您身份的信息。即使您不允许我们收集数据，您仍然可以随时使用语音搜索功能。<a href="">了解更多</a>]]></string>
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">允许</string>
@@ -1485,7 +1485,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the status of the setting.
      '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="webxr_permission_dialog_message"><![CDATA[此网站的 WebXR 功能已%1$s。<a href="%2$s">详细了解</a>]]></string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR 是本网站的 %1$s。<a href="%2$s">了解更多</a>]]></string>
     <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_on">开启</string>
     <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
@@ -1648,7 +1648,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
         \n
         \n 注册使用 Wolvic 需要您同意用户协议和隐私政策，否则我们无法为 您提供服务。请您仔细阅读下方政策中的条款后再点击“同意”前往下一 步。如果您选择“不同意”，您将无法使用 Wolvic 。
         \n
-        \n您可以阅读完整版用户协议和隐私政策
+        \n您可以阅读完整版用户协议和隐私政策。
     </string>
     <string name="rCN_first_launch_clickable_terms_text">用户协议</string>
     <string name="rCN_first_launch_clickable_privacy_text">隐私政策</string>
@@ -1657,7 +1657,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="rCN_first_launch_confirmation_body">
         如果您不同意本用户协议和隐私政策，很遗憾我们将无法继续为您提供服务。
         \n
-        \n您可以阅读完整版用户协议和隐私政策
+        \n您可以阅读完整版用户协议和隐私政策。
     </string>
     <string name="rCN_first_launch_confirmation_agree">同意并继续</string>
     <string name="rCN_first_launch_confirmation_disagree">不同意并退出</string>
@@ -1822,7 +1822,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="phone_ui_alert_dialog_title">错误</string>
     <string name="phone_ui_usb_alert_dialog_description">获取 USB 权限失败。尝试拔下眼镜并插回，然后重启 Wolvic。</string>
     <string name="vision_glass_disconnected_message">请连接Vision Glass</string>
-    <string name="vision_glass_error_message">发生错误。请重试。</string>
+    <string name="vision_glass_error_message">发生错误。\n请重试。</string>
     <string name="phone_ui_set3dmode_alert_dialog_description">切换到 3D 模式失败。尝试拔下眼镜并插回，然后重新启动 Wolvic。</string>
     <string name="hamburger_menu_zoom">放大</string>
     <string name="tray_status_phone">电话: %1$s</string>
@@ -1830,4 +1830,58 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_tab">新建标签页</string>
     <string name="new_private_tab">新建隐私标签页</string>
     <string name="close_tab">关闭标签页</string>
+    <string name="add_search_engine_title">添加搜索引擎</string>
+    <string name="add_search_engine_name_title">名称</string>
+    <string name="add_search_engine_name_hint">输入搜索引擎名称</string>
+    <string name="add_search_engine_search_url_title">搜索网址</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">建议网址（可选）</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">保存</string>
+    <string name="add_search_engine_cancel">取消</string>
+    <string name="edit_search_engine_title">编辑搜索引擎</string>
+    <string name="edit_search_engine_save">更新</string>
+    <string name="search_engine_deleted">搜索引擎已删除</string>
+    <string name="delete_search_engine_dialog_title">删除搜索引擎</string>
+    <string name="delete_search_engine_dialog_text">您确定要删除 %1$s 搜索引擎吗？</string>
+    <string name="custom_search_engines_title">自定义搜索引擎</string>
+    <string name="custom_search_engines_empty">没有自定义搜索引擎。请使用“添加搜索引擎”按钮添加搜索引擎。</string>
+    <string name="custom_search_engines_manage">自定义搜索引擎</string>
+    <string name="custom_search_engines_list_header">自定义搜索引擎</string>
+    <string name="search_engine_error_url_required">网址为必填项</string>
+    <string name="search_engine_error_url_placeholder">URL 必须包含 %s 或 {searchTerms} 占位符</string>
+    <string name="search_engine_error_url_scheme">URL必须包含协议（http://或https://）</string>
+    <string name="search_engine_error_url_scheme_unsupported">仅允许使用 http 和 https 网址</string>
+    <string name="search_engine_error_url_host">网址必须具有有效的主机名</string>
+    <string name="search_engine_error_url_private">出于安全考虑，不允许使用私有/本地主机网址</string>
+    <string name="search_engine_error_name_required">名称为必填项</string>
+    <string name="search_engine_error_name_too_long">名称长度必须不超过 50 个字符</string>
+    <string name="settings_language_ukrainian">乌克兰</string>
+    <string name="display_options_tabs_location">标签位置</string>
+    <string name="display_options_tabs_location_tray">托盘</string>
+    <string name="display_options_tabs_location_horizontal">水平的</string>
+    <string name="display_options_tabs_location_vertical">垂直的</string>
+    <string name="display_options_open_tabs_in_background">在后台打开新标签页</string>
+    <string name="settings_window_size">默认窗口大小</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">新标签</string>
+    <string name="developer_options_homepage_other">其他</string>
+    <string name="controller_options_handtracking">手势追踪</string>
+    <string name="close_button">关闭</string>
+    <string name="delete_button">删除</string>
+    <string name="url_new_tab_title">新标签页</string>
+    <string name="tabs_bookmark_selected">书签标签页</string>
+    <string name="download_addon_install_blocked_permissions_body">请在隐私选项中允许存储权限以继续。</string>
+    <string name="vision_glass_realign_dialog_explanation">要设置控制器，请将手机对准前方并点击按钮。</string>
+    <string name="controller_options_pointer_mode">指点控制模式</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">用控制器或手</string>
+    <string name="developer_options_pointer_mode_tracked_eye">用眼动追踪</string>
+    <string name="eye_tracking_permission_title">眼动追踪权限</string>
+    <string name="eye_tracking_permission_message">启用眼动追踪功能浏览网页会带来严重的隐私风险。这项技术会记录用户在网页特定区域的注视位置和时长，从而揭示用户的兴趣和情绪反应等私密信息。广告商和第三方可以利用这些数据进行侵入式营销和用户画像分析。此外，眼动模式还可以推断出敏感信息，例如健康状况、认知状态或个人习惯。因此，在允许网页访问眼动追踪信息之前，务必考虑其隐私影响。</string>
+    <string name="controller_options_window_selection">窗口选择法</string>
+    <string name="controller_options_click_to_select">点击</string>
+    <string name="controller_options_hover_to_select">悬停</string>
+    <string name="announcements_title">公告</string>
+    <string name="disable_hand_tracking_dialog_body">手部追踪功能已暂时禁用。下次启动游戏时将自动重新启用。此选项并非永久启用，以避免在控制器不可用时出现问题。</string>
 </resources>
