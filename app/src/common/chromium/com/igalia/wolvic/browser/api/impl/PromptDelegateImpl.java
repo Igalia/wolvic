@@ -726,27 +726,9 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
             }
             mStepValue = Double.isNaN(step) || step <= 0 ? null : String.valueOf(step);
 
-            // Convert suggestion values to formatted strings. MONTH and WEEK
-            // use a special Chromium encoding (MonthPicker/WeekPicker), the
-            // rest are plain ms-since-epoch.
-            if (suggestions != null && suggestions.length > 0) {
-                List<String> listVals = new ArrayList<>();
-                for (DateTimeSuggestion s : suggestions) {
-                    try {
-                        double sv = s.value();
-                        if (mType == Type.MONTH) {
-                            sv = MonthPicker.createDateFromValue(sv).getTimeInMillis();
-                        } else if (mType == Type.WEEK) {
-                            sv = WeekPicker.createDateFromValue(sv).getTimeInMillis();
-                        }
-                        listVals.add(mFormatter.format(new Date((long) sv)));
-                    } catch (Exception ignored) {
-                    }
-                }
-                mListValues = listVals.isEmpty() ? null : listVals.toArray(new String[0]);
-            } else {
-                mListValues = null;
-            }
+            // Chromium DateTimeSuggestion does not expose a public value getter.
+            // Disable datalist suggestions for datetime inputs in Chromium builds.
+            mListValues = null;
         }
 
         @Override
