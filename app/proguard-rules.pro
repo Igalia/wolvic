@@ -58,6 +58,19 @@
 -keep class org.vosk.** { *; }
 
 # --------------------------------------------------------------------
+# Keep everything under org.mozilla.gecko.**. GeckoView ships a consumer rule
+# that keeps org.mozilla.geckoview.** but only @WrapForJNI-annotated members of
+# org.mozilla.gecko.**. R8 then strips public/protected members of internals
+# like GeckoProcessManager, GeckoAppShell, and XPCOMEventTarget's helpers that
+# Gecko native code reaches via JNI/reflection at startup. The first observable
+# symptom is a MOZ_CRASH on the launcher thread inside
+# mozilla::jni::Accessor::EndAccess after dispatching XPCOMEventTarget.JNIRunnable
+# — see commit 0aa9413e8 (where the MeetKai AAR's implicit global keep rule was
+# removed).
+# --------------------------------------------------------------------
+-keep class org.mozilla.gecko.** { *; }
+
+# --------------------------------------------------------------------
 # Keep classes from FxR
 # --------------------------------------------------------------------
 -keep class com.igalia.wolvic.ui.widgets.WidgetPlacement {*;} # Keep class used in JNI.
