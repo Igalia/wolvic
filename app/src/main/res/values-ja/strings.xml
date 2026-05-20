@@ -1843,4 +1843,42 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="new_private_tab">新しいプライベートタブ</string>
     <string name="close_tab">タブを閉じる</string>
     <string name="settings_language_ukrainian">ウクライナ語</string>
+    <string name="add_search_engine_title">検索エンジンを追加</string>
+    <string name="add_search_engine_name_title">名前</string>
+    <string name="add_search_engine_name_hint">検索エンジン名を入力</string>
+    <string name="add_search_engine_search_url_title">検索 URL</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">候補 URL (任意)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">保存</string>
+    <string name="add_search_engine_cancel">キャンセル</string>
+    <string name="edit_search_engine_title">検索エンジンを編集</string>
+    <string name="edit_search_engine_save">更新</string>
+    <string name="search_engine_deleted">検索エンジンを削除しました</string>
+    <string name="delete_search_engine_dialog_title">検索エンジンを削除</string>
+    <string name="delete_search_engine_dialog_text">本当に検索エンジン「%1$s」を削除してもよろしいですか？</string>
+    <string name="custom_search_engines_title">カスタム検索エンジン</string>
+    <string name="custom_search_engines_empty">カスタム検索エンジンはありません。「検索エンジンを追加」ボタンで追加できます。</string>
+    <string name="custom_search_engines_manage">カスタム検索エンジン</string>
+    <string name="custom_search_engines_list_header">カスタム検索エンジン</string>
+    <string name="search_engine_error_url_required">URL は必須です</string>
+    <string name="search_engine_error_url_placeholder">URL には %s または {searchTerms} プレースホルダーを含める必要があります</string>
+    <string name="search_engine_error_url_scheme">URL にはスキーム (http:// または https://) が必要です</string>
+    <string name="search_engine_error_url_scheme_unsupported">http / https の URL のみ使用できます</string>
+    <string name="search_engine_error_url_host">URL には有効なホストが必要です</string>
+    <string name="search_engine_error_url_private">セキュリティ上の理由により、プライベートネットワークまたは localhost の URL は使用できません</string>
+    <string name="search_engine_error_name_required">名前は必須です</string>
+    <string name="search_engine_error_name_too_long">名前は 50 文字以内にしてください</string>
+    <string name="display_options_open_tabs_in_background">新しいタブをバックグラウンドで開く</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">新しいタブ</string>
+    <string name="developer_options_homepage_other">その他</string>
+    <string name="close_button">閉じる</string>
+    <string name="delete_button">削除</string>
+    <string name="url_new_tab_title">新しいタブ</string>
+    <string name="controller_options_window_selection">ウィンドウの選択方法</string>
+    <string name="controller_options_click_to_select">クリック</string>
+    <string name="controller_options_hover_to_select">ホバー</string>
+    <string name="announcements_title">お知らせ</string>
+    <string name="disable_hand_tracking_dialog_body">ハンドトラッキングは一時的に無効になっています。次回起動時に自動的に再び有効になります。コントローラーが使用できない場合に問題が発生するのを避けるため、この設定は意図的に保存されません。</string>
 </resources>
