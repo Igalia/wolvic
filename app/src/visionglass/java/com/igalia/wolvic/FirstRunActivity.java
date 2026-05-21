@@ -1,5 +1,6 @@
 package com.igalia.wolvic;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,11 +23,26 @@ public class FirstRunActivity extends FragmentActivity implements SharedPreferen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.visionglass_first_run);
+        SettingsStore settings = SettingsStore.getInstance(this);
+        if (settings.isTermsServiceAccepted() && settings.isPrivacyPolicyAccepted()) {
+            // Normal launch — skip inflating any UI and jump straight to the browser,
+            // preserving the original intent so VIEW/SEND payloads aren't dropped.
+            startActivity(forwardingIntent());
+            finish();
+            return;
+        }
+
         setTheme(R.style.Theme_MaterialComponents_Light);
+        setContentView(R.layout.visionglass_first_run);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private Intent forwardingIntent() {
+        Intent forward = new Intent(getIntent());
+        forward.setComponent(new ComponentName(this, VRBrowserActivity.class));
+        return forward;
     }
 
     @Override
@@ -48,9 +64,8 @@ public class FirstRunActivity extends FragmentActivity implements SharedPreferen
                     .replace(R.id.fragment_placeholder, new PrivacyPolicyFragment())
                     .commit();
         } else {
-            // finish and go to the main activity
-            Intent intent = new Intent(this, VRBrowserActivity.class);
-            startActivity(intent);
+            // finish and go to the main activity, preserving the original intent
+            startActivity(forwardingIntent());
             finish();
         }
     }
@@ -66,6 +81,8 @@ public class FirstRunActivity extends FragmentActivity implements SharedPreferen
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        if (mPrefs != null) {
+            mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
     }
 }

@@ -559,6 +559,18 @@ android {
                    : "src/oculusvrArmRelease/AndroidManifest.xml"
            }
         }
+
+        // visionglass debug builds need to override src/debug/AndroidManifest.xml, which adds
+        // MAIN/LAUNCHER on VRBrowserActivity. On visionglass the launcher activity is
+        // FirstRunActivity, so the debug-added filter would let users skip the legal gate.
+        // Release builds with useDebugSigningOnRelease=true also pull in src/debug/AndroidManifest.xml
+        // (see the `release` source set above), so the same overlay is needed there.
+        if (name.startsWith('visionglass')) {
+            if (name.toLowerCase().contains('debug')
+                || (name.toLowerCase().contains('release') && getUseDebugSigningOnRelease())) {
+                manifest.srcFile "src/visionglassDebug/AndroidManifest.xml"
+            }
+        }
     }
 
     testOptions {
