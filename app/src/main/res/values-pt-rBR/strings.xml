@@ -176,7 +176,7 @@
     <string name="privacy_options_popups_clear_all">Limpar tudo</string>
     <string name="privacy_options_popups_list_empty_second">Uma lista de sites com permissões aparecerá aqui.</string>
     <string name="privacy_options_saved_logins_reset">Redefinir configurações de logins salvos</string>
-    <string name="privacy_options_tracking">Proteção de rastreamento aprimorada. (&lt;a href=%1$s&gt;Saiba mais&lt;/a&gt;)</string>
+    <string name="privacy_options_tracking"><![CDATA[Proteção de rastreamento aprimorada. (<a href="%1$s">Saiba mais</a>)]]></string>
     <string name="environment_options_reset">Redefinir configurações do ambiente</string>
     <string name="back_tooltip">Voltar</string>
     <string name="language_options_reset">Redefinir as configurações de idioma da pesquisa por voz</string>
@@ -241,7 +241,7 @@
     <string name="search_placeholder">Pesquise na Web ou digite endereço</string>
     <string name="video_mode_180_top_bottom">Estéreo 180 de cima para baixo</string>
     <string name="video_controls_live">AO VIVO</string>
-    <string name="crash_dialog_message">Ajude a melhorar o %1$s enviando seus dados de falha. &lt;a href=more&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="crash_dialog_message"><![CDATA[Ajude a melhorar o %1$s enviando seus dados de falha. <a href="more">Saiba mais</a>]]></string>
     <string name="video_mode_360">360</string>
     <string name="do_not_sent_button">Não envie</string>
     <string name="brightness_mode_normal">Normal</string>
@@ -332,9 +332,9 @@
     <string name="remove_bookmark_tooltip">Remover dos favoritos</string>
     <string name="close_bookmarks_tooltip">Fechar favoritos</string>
     <string name="settings_tooltip">Configurações</string>
-    <string name="voice_samples_collect_dialog_description2">Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem informações de identificação. Você sempre poderá usar a pesquisa por voz, mesmo que não permita a coleta. &lt;a href=&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem identificar informações. Você sempre será capaz de usar a pesquisa de voz, mesmo que você não permita a coleta. ]]></string>
     <string name="new_window_tooltip">Abra uma nova janela</string>
-    <string name="private_browsing_body">&lt;p&gt;Quando você navega em uma janela privada, %1$s &lt;strong&gt;não salva&lt;/strong&gt;:&lt;/p&gt; &lt;ul class=two-column&gt; &lt;li&gt;páginas visitadas&lt;/li&gt; &lt;li&gt;pesquisa &lt;/li&gt; &lt;li&gt;cookies&lt;/li&gt; &lt;li&gt;arquivos temporários&lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Navegação privada &lt;strong&gt;não o torna anônimo&lt;/strong&gt; na Internet. Seu empregador ou provedor de serviços de Internet ainda pode saber qual página você visita.&lt;/p&gt; &lt;p class=about-info&gt;Saiba mais sobre &lt;a id=learnMore&gt;Navegação privada&lt;/a&gt;.&lt;/p&gt;</string>
+    <string name="private_browsing_body"><![CDATA[\n<p>Quando você navega em uma janela privada, %1$s <strong>não salva</strong>:</p> <ul class="two-column"> <li>páginas visitadas</li> <li>pesquisa </li> <li>cookies</li> <li>arquivos temporários</li> </ul> <p>Navegação privada <strong>não o torna anônimo</strong> na Internet. Seu empregador ou provedor de serviços de Internet ainda pode saber qual página você visita.</p> <p class="about-info">Saiba mais sobre <a id="learnMore">Navegação privada</a>.</p>\n \u0020 \u0020 ]]></string>
     <string name="url_downloads_title">Downloads</string>
     <string name="hamburger_menu_addons">Addons</string>
     <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s colete amostras de voz para pesquisa\?</string>
@@ -386,7 +386,7 @@
     <string name="fxa_account_options_reset">Redefinir</string>
     <string name="fxa_account_last_synced_now">Última sincronização agora</string>
     <string name="fxa_account_last_synced">Última sincronização %1$d minutos atrás</string>
-    <string name="security_options_drm_content_v1">Permitir automaticamente que os sites identifiquem o seu dispositivo para reproduzir conteúdo controlado por DRM. (&lt;a href=%1$s&gt;Saiba Mais&lt;/a&gt;)</string>
+    <string name="security_options_drm_content_v1"><![CDATA[Permitir automaticamente que os sites identifiquem o seu dispositivo para reproduzir conteúdo controlado por DRM. (<a href="%1$s">Saiba Mais</a>)]]></string>
     <string name="security_options_restore_tabs">Restaurar guias e janelas após reiniciar</string>
     <string name="security_options_autocomplete">Preenchimento Automático da Barra de Endereços</string>
     <string name="security_options_permission_camera">Câmera</string>
@@ -601,7 +601,7 @@
     <string name="voice_service_huawei_asr">Reconhecimento Automático de Fala da Huawei</string>
     <string name="download_status_pending">Pendente</string>
     <string name="login_edit_dialog_password_description">Senha</string>
-    <string name="tracking_dialog_message">A proteção aprimorada contra rastreamento é %1$s para este site. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="tracking_dialog_message"><![CDATA[A proteção aprimorada contra rastreamento é %1$s para este site. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="autofill_item_autogenerated">Gerado automaticamente</string>
     <string name="environment_error_title">Erro de ambiente</string>
     <string name="slow_script_dialog_title">Script lento</string>
@@ -634,9 +634,9 @@
     <string name="deprecated_version_dialog_info_button">Saber mais…</string>
     <string name="deprecated_version_dialog_store_button">Instalar…</string>
     <string name="popup_dialog_button_on">Ligado</string>
-    <string name="webxr_permission_dialog_message">WebXR é %1$s para este site. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR é %1$s para este site. <a href="%2$s">Saiba mais</a>]]></string>
     <string name="webxr_dialog_button_on">Ligado</string>
-    <string name="drm_dialog_message">Alguns áudios ou vídeos neste site usam software DRM, o que pode limitar o que o %1$s pode permitir que você faça com ele. &lt;a href=%2$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="drm_dialog_message"><![CDATA[Alguns áudio ou vídeo neste site usa software DRM, que pode limitar o que %1$s pode deixá-lo fazer com ele. <a href="%2$s"> Saiba mais </a>]]></string>
     <string name="exit_confirm_dialog_button_cancel">Cancelar</string>
     <string name="exit_confirm_dialog_button_quit">Sair</string>
     <string name="download_open_file_unsupported_title">Tipo de arquivo não suportado</string>
@@ -685,7 +685,7 @@
     <string name="drm_first_use_title_v1">Este site contém conteúdo DRM.</string>
     <string name="tracking_dialog_button_off">Desligado</string>
     <string name="drm_dialog_button_on">Ligado</string>
-    <string name="drm_first_use_body_v2">Permitir o DRM permite que os sites identifiquem esse dispositivo toda vez que você o visita. &lt;a href=%1$s&gt;Saiba mais&lt;/a&gt;</string>
+    <string name="drm_first_use_body_v2"><![CDATA[Permitir o DRM permite que os sites identifiquem esse dispositivo toda vez que você o visita. <a href="%1$s">Saiba mais</a>]]></string>
     <string name="download_open_file_unsupported_open">Abrir</string>
     <string name="exit_confirm_dialog_body">Tem certeza de que deseja sair do %1$s\?</string>
     <string name="download_open_file_unsupported_cancel">Cancelar</string>
@@ -797,4 +797,55 @@
     <string name="new_tab">Nova aba</string>
     <string name="new_private_tab">Nova aba privativa</string>
     <string name="close_tab">Fechar aba</string>
+    <string name="add_search_engine_title">Adicionar Motor de Busca</string>
+    <string name="add_search_engine_name_title">Nome</string>
+    <string name="add_search_engine_name_hint">Digite o nome do motor de busca</string>
+    <string name="add_search_engine_search_url_title">URL de pesquisa</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">URL de Sugestão (opcional)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">Salvar</string>
+    <string name="add_search_engine_cancel">Cancelar</string>
+    <string name="edit_search_engine_title">Editar Motor de Busca</string>
+    <string name="edit_search_engine_save">Atualizar</string>
+    <string name="search_engine_deleted">Motor de busca excluído</string>
+    <string name="delete_search_engine_dialog_title">Excluir Motor de Busca</string>
+    <string name="delete_search_engine_dialog_text">Tem certeza de que deseja excluir o motor de busca %1$s?</string>
+    <string name="custom_search_engines_title">Motores de Busca personalizados</string>
+    <string name="custom_search_engines_empty">Nenhum motor de busca personalizado. Use o botão Adicionar Motor de Busca para adicionar um.</string>
+    <string name="custom_search_engines_manage">Motores de Busca personalizados</string>
+    <string name="custom_search_engines_list_header">Motores de Busca personalizados</string>
+    <string name="search_engine_error_url_required">URL é necessária</string>
+    <string name="search_engine_error_url_placeholder">URL deve conter %s ou {searchTerms} placeholder</string>
+    <string name="search_engine_error_url_scheme">URL deve ter um scheme (http:// ou https://)</string>
+    <string name="search_engine_error_url_scheme_unsupported">Apenas https e https URLs são permitidos</string>
+    <string name="search_engine_error_url_host">URL deve ter um host válido</string>
+    <string name="search_engine_error_url_private">URLs privado/localhost não são permitidas por razões de segurança</string>
+    <string name="search_engine_error_name_required">O nome é necessário</string>
+    <string name="search_engine_error_name_too_long">Nome deve ter 50 caracteres ou menos</string>
+    <string name="settings_language_ukrainian">Ucraniano</string>
+    <string name="display_options_tabs_location">Localização de guias</string>
+    <string name="display_options_tabs_location_tray">Bandeja</string>
+    <string name="display_options_tabs_location_horizontal">Horizontal</string>
+    <string name="display_options_tabs_location_vertical">Vertical</string>
+    <string name="display_options_open_tabs_in_background">Abra novas abas em background</string>
+    <string name="settings_window_size">Tamanho padrão da janela</string>
+    <string name="window_size_preset">%1$d×%2$d</string>
+    <string name="developer_options_homepage_wolvic">wolvic.com</string>
+    <string name="developer_options_homepage_new_tab">Nova guia</string>
+    <string name="developer_options_homepage_other">Outros</string>
+    <string name="close_button">Fechar</string>
+    <string name="delete_button">Remover</string>
+    <string name="url_new_tab_title">Nova guia</string>
+    <string name="download_addon_install_blocked_permissions_body">Permitir permissões de armazenamento em Opções de privacidade para prosseguir.</string>
+    <string name="controller_options_pointer_mode">Modo de controle de ponteiro</string>
+    <string name="developer_options_pointer_mode_tracked_pointer">Com controlador ou mão</string>
+    <string name="developer_options_pointer_mode_tracked_eye">Com rastreamento de olho</string>
+    <string name="eye_tracking_permission_title">Permissões de rastreamento de olho</string>
+    <string name="eye_tracking_permission_message">Permitir rastreamento de olho para navegar na web coloca riscos de privacidade significativos. Esta tecnologia capta onde e quanto tempo um usuário olha para partes específicas de uma página web, revelando detalhes íntimos sobre seus interesses e reações emocionais. Os anunciantes e terceiros podem explorar esses dados para marketing intrusivo e profiling. Além disso, os padrões de movimento ocular podem inferir informações sensíveis como condições médicas, estados cognitivos ou hábitos pessoais. Portanto, é crucial considerar as implicações de privacidade antes de conceder acesso a informações de rastreamento de olho para páginas da web.</string>
+    <string name="controller_options_window_selection">Seleção de janela Método</string>
+    <string name="controller_options_click_to_select">Clicar</string>
+    <string name="controller_options_hover_to_select">Hover</string>
+    <string name="announcements_title">Anúncios</string>
+    <string name="disable_hand_tracking_dialog_body">O rastreamento manual está desativado temporariamente. Será automaticamente reativado no próximo lançamento. Esta opção não é persistente para evitar problemas quando os controladores não estão disponíveis.</string>
 </resources>
