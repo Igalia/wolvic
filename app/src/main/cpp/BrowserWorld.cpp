@@ -1137,6 +1137,10 @@ BrowserWorld::ProcessOVRPlatformEvents() {
           ovrPlatformInitializeResult result = ovr_PlatformInitialize_GetResult(handle);
           if (result == ovrPlatformInitialize_Success) {
             VRB_DEBUG("OVR Platform initialized");
+            // The platform is now fully initialized, so it is safe to run the entitlement
+            // check (Meta's entitlement best practices recommend issuing it from the init
+            // completion callback rather than eagerly right after requesting async init).
+            ovr_Entitlement_GetIsViewerEntitled();
           } else {
             VRB_ERROR("OVR Platform initialization failed: %s", ovrPlatformInitializeResult_ToString(result));
             VRBrowser::HaltActivity(0);

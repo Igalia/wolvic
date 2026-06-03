@@ -170,7 +170,6 @@ android_main(android_app *aAppState) {
           VRBrowser::HaltActivity(0);
       } else {
           VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous succeeded");
-          ovr_Entitlement_GetIsViewerEntitled();
       }
   } else {
       ovr_Entitlement_GetIsViewerEntitled();
