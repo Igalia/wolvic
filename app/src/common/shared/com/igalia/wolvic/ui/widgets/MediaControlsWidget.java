@@ -259,6 +259,9 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
     }
 
     private void seekForward() {
+        if (mMedia == null) {
+            return;
+        }
         double t = mMedia.getCurrentTime() + 30;
         if (mMedia.getDuration() > 0) {
             t = Math.min(mMedia.getDuration(), t);
@@ -268,12 +271,19 @@ public class MediaControlsWidget extends UIWidget implements WMediaSession.Deleg
     }
 
     private void seekBackward() {
+        if (mMedia == null) {
+            return;
+        }
         mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
         mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
     }
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
+        if (mMedia == null) {
+            return;
+        }
+
         if (aEvent.getAction() == MotionEvent.ACTION_SCROLL) {
             setVisible(true);
 
