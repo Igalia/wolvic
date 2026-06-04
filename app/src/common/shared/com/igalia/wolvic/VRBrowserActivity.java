@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -200,6 +201,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int UPDATE_NATIVE_WIDGETS_DELAY = 50; // milliseconds
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
+
+    // Auto Backup restricted-mode recovery (see onCreate). When the system runs the app in restricted
+    // backup mode the base android.app.Application is bound instead of VRBrowserApplication; we detect that
+    // and restart into a fresh process. These guard against a restart storm if a backup is still active.
+    private static final String KEY_RESTRICTED_MODE_RESTART = "restricted_mode_restart_uptime";
+    private static final long RESTRICTED_RESTART_WINDOW_MS = 10_000L;
+
     ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
     AudioEngine mAudioEngine;
@@ -275,6 +283,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (!(getApplication() instanceof VRBrowserApplication)) {
+            recoverFromRestrictedBackupMode();
+            return;
+        }
+
         mFragmentController = FragmentController.createController(new FragmentControllerCallbacks(this, new Handler(Looper.getMainLooper()), 0));
         mFragmentController.attachHost(null);
         mFragmentController.dispatchActivityCreated();
@@ -371,6 +384,29 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         getLifecycleRegistry().setCurrentState(Lifecycle.State.CREATED);
+    }
+
+    // Called from onCreate when getApplication() is not a VRBrowserApplication. That happens when Android
+    // runs us in Auto Backup restricted mode, where the base android.app.Application is bound to this
+    // (reused) process instead of our subclass (see https://developer.android.com/identity/data/autobackup).
+    // Our service locator is then unavailable and every cast in onCreate would crash, so we recover by
+    // restarting into a fresh, normally-bound process. We loop-protect to avoid a restart storm if a backup
+    // is still active (the new process could be restricted again, e.g. if the OS relaunches us to retry the
+    // backup it considers interrupted). This method never returns: both branches terminate the process.
+    private void recoverFromRestrictedBackupMode() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        long now = SystemClock.elapsedRealtime();
+        long last = prefs.getLong(KEY_RESTRICTED_MODE_RESTART, 0);
+        Log.e(LOGTAG, "Application is " + getApplication().getClass().getName() + " (Auto Backup restricted mode); recovering");
+        if (last == 0 || now < last || now - last > RESTRICTED_RESTART_WINDOW_MS) {
+            // commit() (NOT apply()): SystemUtils.restart() calls Runtime.exit(0), which bypasses
+            // QueuedWork.waitToFinish(); an async apply() could be lost -> lost timestamp -> restart storm.
+            prefs.edit().putLong(KEY_RESTRICTED_MODE_RESTART, now).commit();
+            SystemUtils.restart(getApplicationContext());
+        } else {
+            // backup still active: close cleanly instead of storming
+            Runtime.getRuntime().exit(0);
+        }
     }
 
     protected void initializeWidgets() {
