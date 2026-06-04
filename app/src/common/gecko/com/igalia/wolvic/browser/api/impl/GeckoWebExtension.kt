@@ -115,7 +115,10 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: run {
+            logger.warn("Unable to register content message handler for $id: no active GeckoSession")
+            return
+        }
         geckoSession.webExtensionController.setMessageDelegate(nativeExtension, messageDelegate, name)
     }
 
@@ -123,7 +126,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasContentMessageHandler].
      */
     override fun hasContentMessageHandler(session: EngineSession, name: String): Boolean {
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: return false
         return geckoSession.webExtensionController.getMessageDelegate(nativeExtension, name) != null
     }
 
@@ -186,7 +189,13 @@ class GeckoWebExtension(
                     action: GeckoNativeWebExtensionAction
             ): GeckoResult<GeckoSession>? {
                 val session = actionHandler.onToggleActionPopup(this@GeckoWebExtension, action.convert())
-                return session?.let { GeckoResult.fromValue(getGeckoSession(session)) }
+                return session?.let {
+                    val geckoSession = getGeckoSession(it) ?: run {
+                        logger.warn("onTogglePopup for $id: popup session has no active GeckoSession")
+                        return@let null
+                    }
+                    GeckoResult.fromValue(geckoSession)
+                }
             }
         }
 
@@ -227,7 +236,10 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: run {
+            logger.warn("Unable to register action handler for $id: no active GeckoSession")
+            return
+        }
         geckoSession.webExtensionController.setActionDelegate(nativeExtension, actionDelegate)
     }
 
@@ -235,7 +247,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasActionHandler].
      */
     override fun hasActionHandler(session: EngineSession): Boolean {
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: return false
         return geckoSession.webExtensionController.getActionDelegate(nativeExtension) != null
     }
 
@@ -260,7 +272,11 @@ class GeckoWebExtension(
                         tabDetails.active == true,
                         tabDetails.url ?: ""
                 )
-                return GeckoResult.fromValue(getGeckoSession(geckoEngineSession))
+                val geckoSession = getGeckoSession(geckoEngineSession) ?: run {
+                    logger.warn("onNewTab for $id: newly created session has no active GeckoSession")
+                    return null
+                }
+                return GeckoResult.fromValue(geckoSession)
             }
 
             override fun onOpenOptionsPage(ext: GeckoNativeWebExtension) {
@@ -325,7 +341,10 @@ class GeckoWebExtension(
             }
         }
 
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: run {
+            logger.warn("Unable to register tab handler for $id: no active GeckoSession")
+            return
+        }
         geckoSession.webExtensionController.setTabDelegate(nativeExtension, tabDelegate)
     }
 
@@ -333,7 +352,7 @@ class GeckoWebExtension(
      * See [WebExtension.hasTabHandler].
      */
     override fun hasTabHandler(session: EngineSession): Boolean {
-        val geckoSession = getGeckoSession(session)
+        val geckoSession = getGeckoSession(session) ?: return false
         return geckoSession.webExtensionController.getTabDelegate(nativeExtension) != null
     }
 
@@ -390,8 +409,12 @@ class GeckoWebExtension(
         return isBuiltIn() || nativeExtension.metaData.allowedInPrivateBrowsing
     }
 
-    private fun getGeckoSession(engineSession: EngineSession): GeckoSession {
-        return ((engineSession as WolvicEngineSession).session.wSession as SessionImpl).geckoSession
+    // The underlying WSession may be null while the EngineSession is still linked in the
+    // BrowserStore (e.g. a suspended session, or a tab added but not yet opened). In that
+    // case there is no GeckoSession to operate on yet; callers must handle null. Registration
+    // is re-triggered when the session is opened and re-linked with a fresh EngineSession.
+    private fun getGeckoSession(engineSession: EngineSession): GeckoSession? {
+        return ((engineSession as WolvicEngineSession).session.wSession as? SessionImpl)?.geckoSession
     }
 }
 
