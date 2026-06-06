@@ -34,6 +34,7 @@ import com.igalia.wolvic.utils.UrlUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -386,6 +387,32 @@ public class SessionStore implements
             return o2.getLastUse() == o1.getLastUse() ? 0 : 1;
         });
         return result;
+    }
+
+    public ArrayList<Session> getDuplicateSessions(boolean aPrivateMode) {
+        ArrayList<Session> duplicates = new ArrayList<>();
+        HashSet<String> uris = new HashSet<>();
+        ArrayList<Session> sessions = getSortedSessions(aPrivateMode);
+
+        for (Session session : sessions) {
+            if (session.isActive() && !session.getCurrentUri().isEmpty()) {
+                uris.add(session.getCurrentUri());
+            }
+        }
+
+        for (Session session : sessions) {
+            String uri = session.getCurrentUri();
+
+            if (session.isActive() || session.isWebExtensionSession() || uri.isEmpty()) {
+                continue;
+            }
+
+            if (!uris.add(uri)) {
+                duplicates.add(session);
+            }
+        }
+
+        return duplicates;
     }
 
     public void setPermissionDelegate(PermissionDelegate delegate) {
