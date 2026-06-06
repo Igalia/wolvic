@@ -185,9 +185,9 @@
                 app:tooltipLayout="@layout/tooltip_tray"
                 android:src="@{viewmodel.isPrivateSession ? @drawable/ic_icon_tray_private_browsing_on_v2 : @drawable/ic_icon_tray_private_browsing_v2}"
                 app:privateMode="@{viewmodel.isPrivateSession}"
-                app:regularModeBackground="@{traymodel.isMaxWindows &amp;&amp; viewmodel.isTabsBarVisible ? @drawable/tray_background_unchecked_start : @drawable/tray_background_unchecked_middle}"
-                app:privateModeBackground="@{traymodel.isMaxWindows &amp;&amp; viewmodel.isTabsBarVisible ? @drawable/tray_background_start_private : @drawable/tray_background_middle_private}"
-                app:activeModeBackground="@{traymodel.isMaxWindows &amp;&amp; viewmodel.isTabsBarVisible ? @drawable/tray_background_checked_start : @drawable/tray_background_checked_middle}"/>
+                app:regularModeBackground="@{traymodel.isMaxWindows &amp;&amp; !traymodel.tabsButtonInTray ? @drawable/tray_background_unchecked_start : @drawable/tray_background_unchecked_middle}"
+                app:privateModeBackground="@{traymodel.isMaxWindows &amp;&amp; !traymodel.tabsButtonInTray ? @drawable/tray_background_start_private : @drawable/tray_background_middle_private}"
+                app:activeModeBackground="@{traymodel.isMaxWindows &amp;&amp; !traymodel.tabsButtonInTray ? @drawable/tray_background_checked_start : @drawable/tray_background_checked_middle}"/>
 
             <com.igalia.wolvic.ui.views.UIButton
                 android:id="@+id/bookmarksButton"
