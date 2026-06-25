@@ -20,6 +20,7 @@ import com.igalia.wolvic.browser.api.WSessionSettings;
 import com.igalia.wolvic.browser.api.WSessionState;
 import com.igalia.wolvic.browser.api.WTextInput;
 import com.igalia.wolvic.browser.api.WWebResponse;
+import org.chromium.content_public.browser.Visibility;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.DownloadManagerBridge;
 import org.chromium.wolvic.PasswordForm;
@@ -130,9 +131,9 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
         assert mTab.getActiveWebContents() != null;
         WebContents webContents = mTab.getActiveWebContents();
         if (active) {
-            webContents.onShow();
+            webContents.updateWebContentsVisibility(Visibility.VISIBLE);
         } else {
-            webContents.onHide();
+            webContents.updateWebContentsVisibility(Visibility.HIDDEN);
             webContents.suspendAllMediaPlayers();
         }
         webContents.setAudioMuted(!active);
