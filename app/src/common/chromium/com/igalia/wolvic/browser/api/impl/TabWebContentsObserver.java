@@ -130,7 +130,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
             return;
         }
 
-        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        Context context = getWebContents().getTopLevelNativeWindow().getContext().get();
         PaymentRequestUI paymentHandler = new PaymentRequestUI(context, newWebContents, null);
         final TabCompositorView compositorView = paymentHandler.getCompositorView();
         assert newWebContents.getViewAndroidDelegate() != null
@@ -154,16 +154,16 @@ public class TabWebContentsObserver extends WebContentsObserver {
         // Show Compositor View after attaching to the parent view.
         compositorView.setCurrentWebContents(newWebContents);
 
-        mPaymentWebContentsObserver = new WebContentsObserver(newWebContents) {
+        mPaymentWebContentsObserver = new WebContentsObserver() {
             @Override
-            public void destroy() {
+            public void webContentsDestroyed() {
                 mSession.releaseOverlayDisplay(compositorView);
                 mTab.setPaymentWebContents(null, null, null);
 
                 contentDelegate.onHidePaymentHandler(mSession);
-                newWebContents.removeObserver(this);
             }
         };
+        mPaymentWebContentsObserver.observe(newWebContents);
     }
 
     @Override
@@ -201,7 +201,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
     private void dispatchCanGoBackOrForward() {
         @Nullable WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate != null) {
-            WebContents webContents = mWebContents.get();
+            WebContents webContents = getWebContents();
             if (webContents == null)
                 return;
 
