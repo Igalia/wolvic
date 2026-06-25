@@ -195,7 +195,7 @@ public class RuntimeImpl implements WRuntime {
         CommandLine.getInstance().appendSwitchWithValue("enable-features", "WebXRHandInput");
 
         setupWebGLMSAA();
-        DeviceUtils.addDeviceSpecificUserAgentSwitch();
+        DeviceUtils.updateDeviceSpecificUserAgentSwitch(context);
         LibraryLoader.getInstance().ensureInitialized();
 
         BrowserStartupController.getInstance().startBrowserProcessesAsync(
