@@ -200,6 +200,7 @@ public class RuntimeImpl implements WRuntime {
 
         BrowserStartupController.getInstance().startBrowserProcessesAsync(
                 LibraryProcessType.PROCESS_BROWSER, true /* startGpuProcess */, false /* startMinimalBrowser */,
+                false /* singleProcess */, false /* scheduleFlushStartupTasks */,
                 new BrowserStartupController.StartupCallback() {
                     @Override
                     public void onSuccess() {
