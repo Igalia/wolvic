@@ -55,7 +55,7 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
    }
 
     @Override
-    public void enterFullscreenModeForTab(boolean prefersNavigationBar, boolean prefersStatusBar) {
+    public void enterFullscreenModeForTab(long requestingFrame, boolean prefersNavigationBar, boolean prefersStatusBar) {
         @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
         if (delegate == null) return;
 
