@@ -33,9 +33,6 @@ import org.chromium.base.ContextUtils;
 import org.chromium.base.PathUtils;
 import org.chromium.base.library_loader.LibraryLoader;
 import org.chromium.base.library_loader.LibraryProcessType;
-import org.chromium.components.signin.AccountManagerFacadeImpl;
-import org.chromium.components.signin.AccountManagerFacadeProvider;
-import org.chromium.components.signin.SystemAccountManagerDelegate;
 import org.chromium.content_public.browser.BrowserStartupController;
 import org.chromium.content_public.browser.DeviceUtils;
 import org.chromium.ui.base.ResourceBundle;
@@ -200,11 +197,6 @@ public class RuntimeImpl implements WRuntime {
         setupWebGLMSAA();
         DeviceUtils.addDeviceSpecificUserAgentSwitch();
         LibraryLoader.getInstance().ensureInitialized();
-
-        // Initialize the AccountManagerFacade with the correct AccountManagerDelegate. Must be done
-        // only once and before AccountManagerFacadeProvider.getInstance() is invoked.
-        AccountManagerFacadeProvider.setInstance(
-                new AccountManagerFacadeImpl(new SystemAccountManagerDelegate()));
 
         BrowserStartupController.getInstance().startBrowserProcessesAsync(
                 LibraryProcessType.PROCESS_BROWSER, true /* startGpuProcess */, false /* startMinimalBrowser */,
