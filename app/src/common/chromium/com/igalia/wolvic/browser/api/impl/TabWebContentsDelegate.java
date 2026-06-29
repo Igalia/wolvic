@@ -17,10 +17,8 @@ import org.chromium.blink.mojom.DisplayMode;
 import org.chromium.components.find_in_page.FindMatchRectsDetails;
 import org.chromium.components.find_in_page.FindNotificationDetails;
 import org.chromium.content_public.browser.InvalidateTypes;
-import org.chromium.content_public.browser.LoadUrlParams;
+import org.chromium.content_public.browser.RenderFrameHost;
 import org.chromium.content_public.browser.WebContents;
-import org.chromium.url.GURL;
-import org.chromium.wolvic.Tab;
 import org.chromium.wolvic.WolvicWebContentsDelegate;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +53,7 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
    }
 
     @Override
-    public void enterFullscreenModeForTab(long requestingFrame, boolean prefersNavigationBar, boolean prefersStatusBar) {
+    public void enterFullscreenModeForTab(RenderFrameHost renderFrameHost, boolean prefersNavigationBar, boolean prefersStatusBar, long displayId) {
         @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
         if (delegate == null) return;
 
@@ -146,26 +144,6 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
             delegate.onCloseRequest(mSession);
         }, 0);
-    }
-
-    @Override
-    public void onUpdateUrl(GURL url) {
-        String newUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
-        // If mobile Youtube URL is detected, redirect to the desktop version.
-        if (!url.getSpec().equals(newUrl)) {
-            LoadUrlParams params = new LoadUrlParams(newUrl);
-            mWebContents.getNavigationController().setEntryExtraData(
-                    mWebContents.getNavigationController().getLastCommittedEntryIndex(),
-                    Tab.NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY,
-                    Tab.NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE);
-            mWebContents.getNavigationController().loadUrl(params);
-            return;
-        }
-
-        WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
-        if (delegate != null) {
-            delegate.onLocationChange(mSession, mWebContents.getVisibleUrl().getSpec());
-        }
     }
 
     @Override
