@@ -10,6 +10,8 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WWebRequestError;
 
 import org.chromium.base.ContextUtils;
+import org.chromium.base.task.PostTask;
+import org.chromium.base.task.TaskTraits;
 import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.content_public.browser.LifecycleState;
 import org.chromium.content_public.browser.LoadUrlParams;
@@ -62,6 +64,25 @@ public class TabWebContentsObserver extends WebContentsObserver {
     @Override
     public void didStartNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
         super.didStartNavigationInPrimaryMainFrame(navigationHandle);
+
+        // Rewrite mobile YouTube watch URLs to their desktop variant before the request
+        // is initiated. The load is deferred because starting a navigation synchronously
+        // from a navigation callback can corrupt the native navigation objects (same
+        // reason onCreateNewWindow/closeContents post their work).
+        GURL url = navigationHandle.getUrl();
+        String rewrittenUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        if (!url.getSpec().equals(rewrittenUrl)) {
+            WebContents webContents = getWebContents();
+            if (webContents != null) {
+                PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
+                    if (!webContents.isDestroyed()) {
+                        webContents.getNavigationController().loadUrl(
+                                new LoadUrlParams(rewrittenUrl));
+                    }
+                }, 0);
+            }
+            return;
+        }
 
         WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate == null)

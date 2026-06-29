@@ -26,7 +26,14 @@ public class YoutubeUrlHelper {
             return url.getSpec();
         }
 
-        return ensureAppIsSetToDesktop(Uri.parse(url.getSpec())).toString();
+        // Already in desktop mode: return the spec verbatim so callers can rely on
+        // this being idempotent and never re-trigger a navigation.
+        Uri uri = Uri.parse(url.getSpec());
+        if ("desktop".equals(uri.getQueryParameter("app"))) {
+            return url.getSpec();
+        }
+
+        return ensureAppIsSetToDesktop(uri).toString();
     }
 
     private static Uri ensureAppIsSetToDesktop(Uri uri) {
