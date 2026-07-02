@@ -15,6 +15,7 @@ import androidx.preference.PreferenceManager;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Surface;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -89,6 +90,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     private transient CopyOnWriteArrayList<DrmStateChangedListener> mDrmStateStateListeners;
 
     private SessionState mState;
+    // Monotonic start time of the in-flight page load, or 0 if none. Used to
+    // report page-load duration telemetry; per-Session so concurrent loads in
+    // different windows are measured independently.
+    private transient long mPageLoadStartMs;
     private transient CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
     private transient WSession.PermissionDelegate mPermissionDelegate;
     private transient WSession.PromptDelegate mPromptDelegate;
@@ -1256,7 +1261,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
         Log.d(LOGTAG, "Session onPageStart");
         mState.mIsLoading = true;
-        TelemetryService.startPageLoadTime(aUri);
+        mPageLoadStartMs = SystemClock.uptimeMillis();
 
         setWebXRState(SessionState.WEBXR_UNUSED);
         for (WSession.ProgressDelegate listener : mProgressListeners) {
@@ -1271,9 +1276,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         }
         Log.d(LOGTAG, "Session onPageStop");
         mState.mIsLoading = false;
-        if (!SessionUtils.isLocalizedContent(mState.mUri)) {
-            TelemetryService.stopPageLoadTimeWithURI(mState.mUri);
+        if (mPageLoadStartMs > 0 && !SessionUtils.isLocalizedContent(mState.mUri)) {
+            TelemetryService.pageLoadTime(SystemClock.uptimeMillis() - mPageLoadStartMs);
         }
+        mPageLoadStartMs = 0;
 
         for (WSession.ProgressDelegate listener : mProgressListeners) {
             listener.onPageStop(aSession, b);

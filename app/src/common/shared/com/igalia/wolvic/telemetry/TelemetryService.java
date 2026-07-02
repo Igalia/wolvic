@@ -8,7 +8,6 @@ import androidx.annotation.UiThread;
 
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
-import com.igalia.wolvic.search.SearchEngineWrapper;
 import com.igalia.wolvic.utils.SystemUtils;
 
 import mozilla.components.concept.sync.FxAEntryPoint;
@@ -61,18 +60,13 @@ public class TelemetryService {
         }
     }
 
-    public static void startPageLoadTime(String aUrl) {
+    // Records how long a page took to load. The caller (Session) owns the start timestamp so that
+    // concurrent loads across windows are measured independently. URLs are **not** recorded for privacy.
+    public static void pageLoadTime(long durationMillis) {
         if (service == null) {
             return;
         }
-        service.customEvent("startPageLoadTime");
-    }
-
-    public static void stopPageLoadTimeWithURI(String uri) {
-        if (service == null) {
-            return;
-        }
-        service.customEvent("stopPageLoadTime");
+        service.timedEvent("pageLoad", durationMillis, null);
     }
 
     public static void windowsResizeEvent() {
@@ -145,18 +139,12 @@ public class TelemetryService {
         service.customEvent("voiceInputEvent");
     }
 
-    public static void startImmersive() {
+    // Records how long an immersive session lasted. The caller (VRBrowserActivity) owns the start timestamp.
+    public static void immersiveTime(long durationMillis) {
         if (service == null) {
             return;
         }
-        service.customEvent("startImmersive");
-    }
-
-    public static void stopImmersive() {
-        if (service == null) {
-            return;
-        }
-        service.customEvent("stopImmersive");
+        service.timedEvent("immersiveSession", durationMillis, null);
     }
 
     public static void openWindowEvent(int windowId) {
@@ -175,10 +163,6 @@ public class TelemetryService {
         Bundle bundle = new Bundle();
         bundle.putInt("windowId", windowId);
         service.customEvent("closeWindowEvent", bundle);
-    }
-
-    private static String getDefaultSearchEngineIdentifierForTelemetry() {
-        return SearchEngineWrapper.get(context).resolveCurrentSearchEngine().getId();
     }
 
     public static void newWindowOpenEvent() {
