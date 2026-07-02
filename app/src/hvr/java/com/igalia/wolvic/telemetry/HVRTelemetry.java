@@ -56,6 +56,16 @@ public class HVRTelemetry implements ITelemetry {
         }
     }
 
+    @Override
+    public void timedEvent(String name, long durationMillis, Bundle bundle) {
+        // HiAnalytics has no notion of a timed span, so report the duration as an attribute on a regular event.
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putLong("durationMillis", durationMillis);
+        customEvent(name, bundle);
+    }
+
     private Context mContext;
     private HiAnalyticsInstance mService;
 }

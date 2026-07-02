@@ -233,6 +233,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<WebXRListener> mWebXRListeners;
     LinkedList<Runnable> mBackHandlers;
     private final MutableLiveData<Boolean> mIsPresentingImmersive = new MutableLiveData<>(false);
+    private long mImmersiveStartMs; // For telemetry, the time when immersive mode was entered.
     private Thread mUiThread;
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
@@ -1289,7 +1290,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 listener.onEnterWebXR();
             }
         });
-        TelemetryService.startImmersive();
+        mImmersiveStartMs = SystemClock.elapsedRealtime();
 
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
@@ -1312,7 +1313,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive.postValue(false);
-        TelemetryService.stopImmersive();
+        if (mImmersiveStartMs > 0) {
+            TelemetryService.immersiveTime(SystemClock.elapsedRealtime() - mImmersiveStartMs);
+            mImmersiveStartMs = 0;
+        }
 
         if (mLaunchImmersive) {
             Log.d(LOGTAG, "Launched in immersive mode: exiting WebXR will finish the app");
