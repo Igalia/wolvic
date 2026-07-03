@@ -66,6 +66,17 @@ public class HVRTelemetry implements ITelemetry {
         customEvent(name, bundle);
     }
 
+    @Override
+    public void count(String name, Bundle bundle) {
+        // HiAnalytics has no separate metric/event channels, so both map to onEvent.
+        customEvent(name, bundle != null ? bundle : new Bundle());
+    }
+
+    @Override
+    public void event(String name, Bundle bundle) {
+        customEvent(name, bundle != null ? bundle : new Bundle());
+    }
+
     private Context mContext;
     private HiAnalyticsInstance mService;
 }
