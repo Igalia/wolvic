@@ -60,6 +60,9 @@ public class TelemetryService {
         }
     }
 
+    // Signal model: durations -> timed spans; discrete counts -> counter metrics;
+    // funnel/journey-shaped actions -> events (which retain session context).
+
     // Records how long a page took to load. The caller (Session) owns the start timestamp so that
     // concurrent loads across windows are measured independently. URLs are **not** recorded for privacy.
     public static void pageLoadTime(long durationMillis) {
@@ -73,14 +76,14 @@ public class TelemetryService {
         if (service == null) {
             return;
         }
-        service.customEvent("windowsResizeEvent");
+        service.count("windows_resize", null);
     }
 
     public static void windowsMoveEvent() {
         if (service == null) {
             return;
         }
-        service.customEvent("windowsMoveEvent");
+        service.count("windows_move", null);
     }
 
     public static void activePlacementEvent(int from, boolean active) {
@@ -90,7 +93,7 @@ public class TelemetryService {
         Bundle bundle = new Bundle();
         bundle.putInt("from", from);
         bundle.putBoolean("active", active);
-        service.customEvent("activePlacementEvent", bundle);
+        service.count("active_placement", bundle);
     }
 
     public static void openWindowsEvent(int from, int to, boolean isPrivate) {
@@ -101,24 +104,25 @@ public class TelemetryService {
         bundle.putInt("from", from);
         bundle.putInt("to", to);
         bundle.putBoolean("isPrivate", isPrivate);
-        service.customEvent("openWindowsEvent", bundle);
+        service.count("windows_open", bundle);
     }
 
     public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
         if (service == null) {
             return;
         }
+        // A snapshot of the current window count -> event (a counter can't carry a value).
         Bundle bundle = new Bundle();
         bundle.putInt("number", number);
         bundle.putBoolean("isPrivate", isPrivate);
-        service.customEvent("resetOpenedWindowsCount", bundle);
+        service.event("windows_reset", bundle);
     }
 
     public static void sessionStop() {
         if (service == null) {
             return;
         }
-        service.customEvent("sessionStop");
+        service.count("session_stop", null);
     }
 
     @UiThread
@@ -128,7 +132,7 @@ public class TelemetryService {
         }
         Bundle bundle = new Bundle();
         bundle.putBoolean("isUrl", aIsUrl);
-        service.customEvent("urlBarEvent", bundle);
+        service.count("urlbar", bundle);
     }
 
     @UiThread
@@ -136,7 +140,7 @@ public class TelemetryService {
         if (service == null) {
             return;
         }
-        service.customEvent("voiceInputEvent");
+        service.count("voice_input", null);
     }
 
     // Records how long an immersive session lasted. The caller (VRBrowserActivity) owns the start timestamp.
@@ -147,29 +151,26 @@ public class TelemetryService {
         service.timedEvent("immersiveSession", durationMillis, null);
     }
 
+    // windowId is intentionally not recorded: it is high-cardinality and would explode a metric's time-series count. We keep only the aggregate count.
     public static void openWindowEvent(int windowId) {
         if (service == null) {
             return;
         }
-        Bundle bundle = new Bundle();
-        bundle.putInt("windowId", windowId);
-        service.customEvent("openWindowEvent", bundle);
+        service.count("window_open", null);
     }
 
     public static void closeWindowEvent(int windowId) {
         if (service == null) {
             return;
         }
-        Bundle bundle = new Bundle();
-        bundle.putInt("windowId", windowId);
-        service.customEvent("closeWindowEvent", bundle);
+        service.count("window_close", null);
     }
 
     public static void newWindowOpenEvent() {
         if (service == null) {
             return;
         }
-        service.customEvent("newWindowOpenEvent");
+        service.count("new_window_open", null);
     }
 
     public static class FxA implements FxAEntryPoint {
@@ -178,7 +179,7 @@ public class TelemetryService {
             if (service == null) {
                 return;
             }
-            service.customEvent("FxA_signIn");
+            service.event("fxa_sign_in", null);
         }
 
         public static void signInResult(boolean status) {
@@ -187,14 +188,14 @@ public class TelemetryService {
             }
             Bundle bundle = new Bundle();
             bundle.putBoolean("status", status);
-            service.customEvent("FxA_signInResult", bundle);
+            service.event("fxa_sign_in_result", bundle);
         }
 
         public static void signOut() {
             if (service == null) {
                 return;
             }
-            service.customEvent("FxA_signOut");
+            service.event("fxa_sign_out", null);
         }
 
         public static void bookmarksSyncStatus(boolean status) {
@@ -203,7 +204,7 @@ public class TelemetryService {
             }
             Bundle bundle = new Bundle();
             bundle.putBoolean("status", status);
-            service.customEvent("FxA_bookmarksSyncStatus");
+            service.count("fxa_bookmarks_sync", bundle);
         }
 
         public static void historySyncStatus(boolean status) {
@@ -212,14 +213,14 @@ public class TelemetryService {
             }
             Bundle bundle = new Bundle();
             bundle.putBoolean("status", status);
-            service.customEvent("FxA_historySyncStatus", bundle);
+            service.count("fxa_history_sync", bundle);
         }
 
         public static void sentTab() {
             if (service == null) {
                 return;
             }
-            service.customEvent("FxA_sentTab");
+            service.count("fxa_sent_tab", null);
         }
 
         public static void receivedTab(@NonNull mozilla.components.concept.sync.DeviceType source) {
@@ -228,7 +229,7 @@ public class TelemetryService {
             }
             Bundle bundle = new Bundle();
             bundle.putInt("source", source.ordinal());
-            service.customEvent("FxA_receivedTab", bundle);
+            service.count("fxa_received_tab", bundle);
         }
 
         @NonNull
@@ -258,14 +259,14 @@ public class TelemetryService {
             }
             Bundle bundle = new Bundle();
             bundle.putInt("source", source.ordinal());
-            service.customEvent("tab_opened", bundle);
+            service.count("tab_opened", bundle);
         }
 
         public static void activatedEvent() {
             if (service == null) {
                 return;
             }
-            service.customEvent("tab_activated");
+            service.count("tab_activated", null);
         }
     }
 }

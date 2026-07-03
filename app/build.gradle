@@ -70,6 +70,15 @@ def getHVRApiKey = { ->
     return ""
 }
 
+// OpenTelemetry OTLP export target for release builds. Kept in the gitignored
+// user.properties so only the maintainer's release builds point at the server.
+def getOtelEndpoint = { ->
+    if (gradle.hasProperty("userProperties.otelEndpoint")) {
+        return gradle."userProperties.otelEndpoint"
+    }
+    return ""
+}
+
 def getHVRMLSpeechServices = { ->
     if (getHVRApiKey().isEmpty()) {
         return "{ com.igalia.wolvic.speech.SpeechServices.VOSK }"
@@ -99,7 +108,7 @@ def CHROMIUM_RELEASE_VERSION_NAME = '1.4'
 
 android {
     namespace 'com.igalia.wolvic'
-    compileSdkVersion 35
+    compileSdkVersion 36
     defaultConfig {
         applicationId "com.igalia.wolvic"
         minSdkVersion 24
@@ -121,6 +130,7 @@ android {
         buildConfigField 'String', 'ANNOUNCEMENTS_ENDPOINT', '"https://igalia.github.io/wolvic/announcements.json"'
         buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://igalia.github.io/wolvic/experiences.json"'
         buildConfigField 'String', 'HEYVR_ENDPOINT', '"https://api.heyvr.io/v1/public/global/feed/featured?limit=50"'
+        buildConfigField 'String', 'OTEL_ENDPOINT', '""'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'app_name', 'Wolvic'
@@ -170,6 +180,11 @@ android {
             useLegacyPackaging = true
             pickFirsts += ['**/libxul.so']
         }
+        resources {
+            // OTel 1.62 pulls jspecify, which collides with opentelemetry-exporter-common
+            // on this OSGi metadata file (unused on Android).
+            excludes += ['META-INF/versions/9/OSGI-INF/MANIFEST.MF']
+        }
     }
 
     kotlinOptions {
@@ -182,6 +197,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
+            buildConfigField 'String', 'OTEL_ENDPOINT', "\"${getOtelEndpoint()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
@@ -745,12 +761,17 @@ dependencies {
     implementation fileTree(dir: "${project.rootDir}/libs/openwnn/", include: ['*.aar'])
 
     // OpenTelemetry
+    implementation platform(libs.opentelemetry.android.bom)
+    implementation platform(libs.opentelemetry.bom)
+    implementation libs.opentelemetry.android.agent.api
     implementation libs.opentelemetry.android.core
+    implementation libs.opentelemetry.android.instrumentation.api
     implementation libs.opentelemetry.android.instrumentation.activity
     implementation libs.opentelemetry.android.instrumentation.anr
     implementation libs.opentelemetry.android.instrumentation.crash
     implementation libs.opentelemetry.android.instrumentation.sessions
     implementation libs.opentelemetry.exporter.logging
+    implementation libs.opentelemetry.exporter.otlp
     coreLibraryDesugaring libs.desugar.jdk.libs
 }
 
