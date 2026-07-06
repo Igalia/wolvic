@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import org.chromium.components.embedder_support.view.ContentView;
-import org.chromium.content_public.browser.MediaSessionObserver;
+import org.chromium.content_public.browser.MediaSession;
 import org.chromium.content_public.browser.SelectionPopupController;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.Tab;
@@ -15,6 +15,7 @@ import org.chromium.wolvic.TabCompositorView;
  * Controls a single tab content in a browser for chromium backend.
  */
 public class TabImpl extends Tab {
+    private SessionImpl mSession;
     private TabMediaSessionObserver mTabMediaSessionObserver;
     private TabWebContentsDelegate mTabWebContentsDelegate;
     private TabWebContentsObserver mWebContentsObserver;
@@ -30,11 +31,20 @@ public class TabImpl extends Tab {
     }
 
     private void registerCallbacks(@NonNull SessionImpl session) {
-        mTabMediaSessionObserver = new TabMediaSessionObserver(mWebContents, session);
+        mSession = session;
+
         mTabWebContentsDelegate = new TabWebContentsDelegate(session, mWebContents);
         setWebContentsDelegate(mWebContents, mTabWebContentsDelegate);
 
         mWebContentsObserver = new TabWebContentsObserver(this, session);
+
+        // The native MediaSession is created lazily (on first media use), so it usually does not
+        // exist yet and MediaSession.fromWebContents() returns null. If it already exists, observe
+        // it now; otherwise TabWebContentsObserver.mediaSessionCreated() does it when the session
+        // appears. The session is created at most once per WebContents.
+        MediaSession mediaSession = MediaSession.fromWebContents(mWebContents);
+        if (mediaSession != null)
+            createMediaSessionObserver(mediaSession);
 
         SelectionPopupController controller =
                 SelectionPopupController.fromWebContents(mWebContents);
@@ -43,12 +53,17 @@ public class TabImpl extends Tab {
                         controller.getDelegateEventHandler(), session));
     }
 
+    /* package */ void createMediaSessionObserver(@NonNull MediaSession mediaSession) {
+        mTabMediaSessionObserver = new TabMediaSessionObserver(mediaSession, mWebContents, mSession);
+    }
+
     public void exitFullScreen() {
         mWebContents.exitFullscreen();
     }
 
     public void onMediaFullscreen(boolean isFullscreen) {
-        mTabMediaSessionObserver.onMediaFullscreen(isFullscreen);
+        if (mTabMediaSessionObserver != null)
+            mTabMediaSessionObserver.onMediaFullscreen(isFullscreen);
     }
 
     public void purgeHistory() {
