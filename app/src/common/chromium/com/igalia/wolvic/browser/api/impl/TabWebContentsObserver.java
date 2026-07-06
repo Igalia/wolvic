@@ -15,6 +15,7 @@ import org.chromium.base.task.TaskTraits;
 import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.content_public.browser.LifecycleState;
 import org.chromium.content_public.browser.LoadUrlParams;
+import org.chromium.content_public.browser.MediaSession;
 import org.chromium.content_public.browser.NavigationHandle;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
@@ -250,5 +251,10 @@ public class TabWebContentsObserver extends WebContentsObserver {
     @Override
     public void hasEffectivelyFullscreenVideoChange(boolean isFullscreen) {
         mSession.getTab().onMediaFullscreen(isFullscreen);
+    }
+
+    @Override
+    public void mediaSessionCreated(MediaSession mediaSession) {
+        mTab.createMediaSessionObserver(mediaSession);
     }
 }
