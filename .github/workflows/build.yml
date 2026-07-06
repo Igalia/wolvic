@@ -18,7 +18,7 @@ on:
         description: 'JDK version'
         required: false
         type: string
-        default: "17"
+        default: "21"
       jdk_distribution:
         description: 'JDK distribution'
         required: false
