@@ -43,8 +43,9 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
     private boolean mIsSuspended = false;
     private boolean mRunUpdatingPositionTask = false;
 
-    public TabMediaSessionObserver(@NonNull WebContents webContents, @NonNull SessionImpl session) {
-        super(MediaSession.fromWebContents(webContents));
+    public TabMediaSessionObserver(@NonNull MediaSession mediaSession,
+                                   @NonNull WebContents webContents, @NonNull SessionImpl session) {
+        super(mediaSession);
 
         mSession = session;
         mMediaImageManager =
