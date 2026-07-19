@@ -1,6 +1,6 @@
 [versions]
 agp = "8.11.1"
-androidComponents = "140.0"
+androidComponents = "153.0"
 androidxAnnotation = "1.6.0"
 androidxAppcompat = "1.6.1"
 androidxCardview = "1.0.0"
@@ -21,9 +21,9 @@ desugarJdkLibs = "2.1.4"
 diskLruCache = "2.0.2"
 espresso= "3.5.1"
 gamesActivity = "4.0.0"
-geckoviewBeta = "140.0.20250707120347"
-geckoviewNightly = "140.0.20250526095203"
-geckoviewRelease = "140.0.20250707120347"
+geckoviewBeta = "153.0.20260715125817"
+geckoviewNightly = "153.0.20260615093007"
+geckoviewRelease = "153.0.20260715202819"
 googleMaterial = "1.9.0"
 gson = "2.10.1"
 huaweiAGConnectCore = "1.9.1.301"
@@ -68,8 +68,7 @@ androidcomponents-concept-fetch = { module = "org.mozilla.components:concept-fet
 androidcomponents-lib-fetch = { module = "org.mozilla.components:lib-fetch-httpurlconnection", version.ref = "androidComponents" }
 androidcomponents-lib-dataprotect = { module = "org.mozilla.components:lib-dataprotect", version.ref = "androidComponents" }
 androidcomponents-support-images = { module = "org.mozilla.components:support-images", version.ref = "androidComponents" }
-androidcomponents-support-rustlog = { module = "org.mozilla.components:support-rustlog", version.ref = "androidComponents" }
-androidcomponents-support-rusthttp = { module = "org.mozilla.components:support-rusthttp", version.ref = "androidComponents" }
+androidcomponents-support-appservices = { module = "org.mozilla.components:support-appservices", version.ref = "androidComponents" }
 androidcomponents-support-webextensions = { module = "org.mozilla.components:support-webextensions", version.ref = "androidComponents" }
 androidcomponents-support-ktx = { module = "org.mozilla.components:support-ktx", version.ref = "androidComponents" }
 androidcomponents-feature-accounts = { module = "org.mozilla.components:feature-accounts", version.ref = "androidComponents" }
@@ -97,8 +96,8 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 # Games Activity
 games-activity = { module = "androidx.games:games-activity", version.ref = "gamesActivity" }
 # GeckoView
-geckoview-beta-arm64 = { module = "org.mozilla.geckoview:geckoview-omni-beta-arm64-v8", version.ref = "geckoviewBeta" }
-geckoview-beta-x64 = { module = "org.mozilla.geckoview:geckoview-omni-beta-x86_64", version.ref = "geckoviewBeta" }
+geckoview-beta-arm64 = { module = "org.mozilla.geckoview:geckoview-beta-omni-arm64-v8a", version.ref = "geckoviewBeta" }
+geckoview-beta-x64 = { module = "org.mozilla.geckoview:geckoview-beta-omni-x86_64", version.ref = "geckoviewBeta" }
 geckoview-nightly-arm64 = { module = "org.mozilla.geckoview:geckoview-nightly-omni-arm64-v8a", version.ref = "geckoviewNightly" }
 geckoview-nightly-x64 = { module = "org.mozilla.geckoview:geckoview-nightly-omni-x86_64", version.ref = "geckoviewNightly" }
 geckoview-release-arm64 = { module = "org.mozilla.geckoview:geckoview-omni-arm64-v8a", version.ref = "geckoviewRelease" }

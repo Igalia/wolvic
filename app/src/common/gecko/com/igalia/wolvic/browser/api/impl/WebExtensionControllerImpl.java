@@ -47,22 +47,22 @@ class WebExtensionControllerImpl implements WWebExtensionController {
         mController.setPromptDelegate(new org.mozilla.geckoview.WebExtensionController.PromptDelegate() {
             @Nullable
             @Override
-            public GeckoResult<org.mozilla.geckoview.WebExtension.PermissionPromptResponse> onInstallPromptRequest(@NonNull org.mozilla.geckoview.WebExtension extension, @NonNull String[] permissions, @NonNull String[] origins) {
+            public GeckoResult<org.mozilla.geckoview.WebExtension.PermissionPromptResponse> onInstallPromptRequest(@NonNull org.mozilla.geckoview.WebExtension extension, @NonNull String[] permissions, @NonNull String[] origins, @NonNull String[] dataCollectionPermissions) {
                 WResult<WAllowOrDeny> result = mPromptDelegate.onInstallPrompt(new GeckoWebExtension(extension, mRuntime));
                 if (result == null) {
                     return null;
                 }
                 return ResultImpl.from(result).map(value -> {
                     boolean granted = value == WAllowOrDeny.ALLOW;
-                    return new org.mozilla.geckoview.WebExtension.PermissionPromptResponse(granted, false);
+
+                    return new org.mozilla.geckoview.WebExtension.PermissionPromptResponse(granted, false, false);
                 });
             }
 
             @Nullable
             @Override
-            public GeckoResult<AllowOrDeny> onUpdatePrompt(@NonNull org.mozilla.geckoview.WebExtension currentlyInstalled, @NonNull org.mozilla.geckoview.WebExtension updatedExtension, @NonNull String[] newPermissions, @NonNull String[] newOrigins) {
-                return Utils.map(ResultImpl.from(mPromptDelegate.onUpdatePrompt(new GeckoWebExtension(currentlyInstalled, mRuntime),
-                        new GeckoWebExtension(updatedExtension, mRuntime), newPermissions, newOrigins)));
+            public GeckoResult<AllowOrDeny> onUpdatePrompt(@NonNull org.mozilla.geckoview.WebExtension extension, @NonNull String[] newPermissions, @NonNull String[] newOrigins, @NonNull String[] newDataCollectionPermissions) {
+                return Utils.map(ResultImpl.from(mPromptDelegate.onUpdatePrompt(new GeckoWebExtension(extension, mRuntime), newPermissions, newOrigins, newDataCollectionPermissions)));
             }
         });
     }

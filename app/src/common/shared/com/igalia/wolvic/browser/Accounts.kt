@@ -357,7 +357,9 @@ class Accounts constructor(val context: Context) {
             else -> {}
         }
 
-        syncStorage.setStatus(engine, value)
+        CoroutineScope(Dispatchers.Main).launch {
+            services.accountManager.setEngineEnabled(engine, value)
+        }
     }
 
     fun accountProfile(): Profile? {
@@ -392,7 +394,7 @@ class Accounts constructor(val context: Context) {
         return otherDevices.filter { it.capabilities.containsAll(capabilities) }
     }
 
-    fun sendTabs(targetDevices: List<Device>, url: String, title: String) {
+    fun sendTabs(targetDevices: List<Device>, url: String, title: String, isPrivate: Boolean) {
         CoroutineScope(Dispatchers.Main).launch {
             services.accountManager.authenticatedAccount()?.deviceConstellation()?.let { constellation ->
                 // Ignore devices that can't receive tabs or are not in the received list
@@ -403,7 +405,7 @@ class Accounts constructor(val context: Context) {
 
                 targets?.forEach { it ->
                     constellation.sendCommandToDevice(
-                            it.id, DeviceCommandOutgoing.SendTab(title, url)
+                            it.id, DeviceCommandOutgoing.SendTab(title, url, if (isPrivate) TabPrivacy.Private else TabPrivacy.Normal)
                     ).also { if (it) TelemetryService.FxA.sentTab() }
                 }
             }

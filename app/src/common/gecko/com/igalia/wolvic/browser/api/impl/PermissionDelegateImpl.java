@@ -86,6 +86,10 @@ class PermissionDelegateImpl implements GeckoSession.PermissionDelegate {
                 return WSession.PermissionDelegate.PERMISSION_TRACKING;
             case PERMISSION_STORAGE_ACCESS:
                 return WSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS;
+            case PERMISSION_LOCAL_DEVICE_ACCESS:
+                return WSession.PermissionDelegate.PERMISSION_LOCAL_DEVICE_ACCESS;
+            case PERMISSION_LOCAL_NETWORK_ACCESS:
+                return WSession.PermissionDelegate.PERMISSION_LOCAL_NETWORK_ACCESS;
         }
 
         throw new RuntimeException("Unhandled permission type");

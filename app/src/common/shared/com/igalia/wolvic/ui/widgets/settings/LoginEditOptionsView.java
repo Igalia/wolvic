@@ -150,7 +150,9 @@ class LoginEditOptionsView extends SettingsView {
                 mLogin.getTimesUsed(),
                 mLogin.getTimeCreated(),
                 mLogin.getTimeLastUsed(),
-                mLogin.getTimePasswordChanged()
+                mLogin.getTimePasswordChanged(),
+                mLogin.getTimeLastBreachAlertDismissed(),
+                mLogin.getHint()
         );
         mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
                 .thenAcceptAsync(unit -> mBinding.usernameEdit.setFirstText(username), mUIThreadExecutor)
@@ -182,7 +184,9 @@ class LoginEditOptionsView extends SettingsView {
                     mLogin.getTimesUsed(),
                     mLogin.getTimeCreated(),
                     mLogin.getTimeLastUsed(),
-                    mLogin.getTimePasswordChanged()
+                    mLogin.getTimePasswordChanged(),
+                    mLogin.getTimeLastBreachAlertDismissed(),
+                    mLogin.getHint()
             );
             mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
                     .thenAcceptAsync(unit -> mBinding.passwordEdit.setFirstText(password), mUIThreadExecutor)

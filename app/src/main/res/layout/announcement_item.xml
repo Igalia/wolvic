@@ -63,7 +63,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="12dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/mozac_ic_open_in" />
+                android:src="@drawable/mozac_ic_external_link_24" />
 
             <TextView
                 android:id="@+id/announcement_title"

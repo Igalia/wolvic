@@ -1921,6 +1921,12 @@ public interface WSession {
          */
         int PERMISSION_STORAGE_ACCESS = 8;
 
+        /** Permission for accessing local device. */
+        int PERMISSION_LOCAL_DEVICE_ACCESS = 9;
+
+        /** Permission for accessing local network. */
+        int PERMISSION_LOCAL_NETWORK_ACCESS = 10;
+
         /**
          * Represents a content permission -- including the type of permission, the present value of the
          * permission, the URL the permission pertains to, and other information.
@@ -2175,7 +2181,9 @@ public interface WSession {
             WSession.PermissionDelegate.PERMISSION_AUTOPLAY_AUDIBLE,
             WSession.PermissionDelegate.PERMISSION_MEDIA_KEY_SYSTEM_ACCESS,
             WSession.PermissionDelegate.PERMISSION_TRACKING,
-            WSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS
+            WSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS,
+            WSession.PermissionDelegate.PERMISSION_LOCAL_DEVICE_ACCESS,
+            WSession.PermissionDelegate.PERMISSION_LOCAL_NETWORK_ACCESS
     })
             /* package */ @interface Permission {}
 

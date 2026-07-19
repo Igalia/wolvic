@@ -26,11 +26,12 @@ class TopSitesHelper(context: Context, private val scope: CoroutineScope) {
 
     init {
         val app = context.applicationContext as VRBrowserApplication
+
         storage = DefaultTopSitesStorage(
             pinnedSitesStorage = app.places.pinned,
-            historyStorage = app.places.history,
-            defaultTopSites = listOf()
+            historyStorage = app.places.history
         )
+
         useCases = TopSitesUseCases(storage)
         config = TopSitesConfig(
             totalSites = TOTAL_SITES,
