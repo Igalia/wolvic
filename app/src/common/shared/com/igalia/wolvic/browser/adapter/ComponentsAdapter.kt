@@ -9,9 +9,8 @@ package com.igalia.wolvic.browser.adapter
 
 import com.igalia.wolvic.browser.components.WolvicEngineSession
 import com.igalia.wolvic.browser.engine.Session
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
@@ -89,7 +88,7 @@ class ComponentsAdapter private constructor(
 
     init {
         // This flow calls listeners when an Add-On request a Session selection
-        store.flowScoped { flow ->
+        store.flowScoped(dispatcher = Dispatchers.Main) { flow ->
             flow.distinctUntilChangedBy { it.selectedTab }
                     .collect { state ->
                         storeUpdatesListeners.forEach { listener ->

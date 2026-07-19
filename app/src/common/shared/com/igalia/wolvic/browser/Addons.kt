@@ -96,7 +96,7 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
                     ComponentsAdapter.get().store,
                     false,
                     onNewTabOverride = {
-                        _, engineSession, url ->
+                        _, engineSession, url, _ ->
                         val session = (engineSession as WolvicEngineSession).session
                         session.loadUri(url, WSession.LOAD_FLAGS_REPLACE_HISTORY)
                         session.id

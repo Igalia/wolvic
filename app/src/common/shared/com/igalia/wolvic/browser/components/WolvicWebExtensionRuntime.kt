@@ -166,7 +166,8 @@ class WolvicWebExtensionRuntime(
                     webExtensionDelegate.onInstallPermissionRequest(
                         extension,
                         it.requiredPermissions,
-                        it.requiredOrigins
+                        it.requiredOrigins,
+                        it.requiredDataCollectionPermissions
                     ) { response ->
                         if (response.isPermissionsGranted) {
                             result.complete(WAllowOrDeny.ALLOW)
@@ -179,21 +180,23 @@ class WolvicWebExtensionRuntime(
             }
 
             override fun onUpdatePrompt(
-                    current: WebExtension,
-                    updated: WebExtension,
-                    newPermissions: Array<out String>,
-                    newOrigins: Array<out String>
-            ): WResult<WAllowOrDeny>? {
-                // NB: We don't have a user flow for handling updated origins so we ignore them for now.
+                extension: WebExtension,
+                newPermissions: Array<out String>,
+                newOrigins: Array<out String>,
+                newDataCollectionPermissions: Array<out String>
+            ): WResult<WAllowOrDeny> {
                 val result = WResult.create<WAllowOrDeny>()
+
                 webExtensionDelegate.onUpdatePermissionRequest(
-                        current,
-                        updated,
-                        newPermissions.toList()
-                ) {
-                    allow -> if (allow) result.complete(WAllowOrDeny.ALLOW) else result.complete(
-                    WAllowOrDeny.DENY)
+                    extension,
+                    newPermissions.toList(),
+                    newOrigins.toList(),
+                    newDataCollectionPermissions.toList()
+                ) { allow ->
+                    if (allow) result.complete(WAllowOrDeny.ALLOW)
+                    else result.complete(WAllowOrDeny.DENY)
                 }
+
                 return result
             }
         }

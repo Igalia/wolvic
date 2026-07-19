@@ -201,7 +201,7 @@ public class SessionImpl implements WSession {
         }
         if (mGeckoLocationMethod != null) {
             try {
-                mGeckoLocationMethod.invoke(null, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed, time);
+                mGeckoLocationMethod.invoke(null, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -210,7 +210,8 @@ public class SessionImpl implements WSession {
 
     private void initGeckoLocationReflection() {
         try {
-            mGeckoLocationMethod = Class.forName("org.mozilla.gecko.GeckoAppShell").getDeclaredMethod("onLocationChanged", double.class, double.class, double.class, float.class, float.class, float.class, float.class, long.class);
+            mGeckoLocationMethod = Class.forName("org.mozilla.gecko.GeckoAppShell").getDeclaredMethod("onLocationChanged", double.class, double.class, double.class, float.class, float.class, float.class, float.class);
+
             mGeckoLocationMethod.setAccessible(true);
         } catch (Exception ex) {
             ex.printStackTrace();

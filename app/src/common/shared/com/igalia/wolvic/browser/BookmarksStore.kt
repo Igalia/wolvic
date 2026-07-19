@@ -129,11 +129,11 @@ class BookmarksStore constructor(val context: Context) {
                     )
                 )
                 // Append all of the bookmarks in the mobile root.
-                storage.getTree(BookmarkRoot.Mobile.id)?.children?.let { withDesktopFolder.addAll(it) }
+                storage.getTree(BookmarkRoot.Mobile.id).getOrThrow()?.children?.let { withDesktopFolder.addAll(it) }
                 withDesktopFolder
             }
             DESKTOP_ROOT -> {
-                val root = storage.getTree(BookmarkRoot.Root.id)
+                val root = storage.getTree(BookmarkRoot.Root.id).getOrThrow()
                 root?.children
                     ?.filter { it.guid != BookmarkRoot.Mobile.id }
                     ?.map {
@@ -141,7 +141,7 @@ class BookmarksStore constructor(val context: Context) {
                     }
                 }
             else -> {
-                storage.getTree(guid)?.children?.toList()
+                storage.getTree(guid).getOrThrow()?.children?.toList()
             }
         }
     }
@@ -171,17 +171,17 @@ class BookmarksStore constructor(val context: Context) {
 
     @OptIn(ExperimentalUnsignedTypes::class)
     fun getTree(guid: String, recursive: Boolean): CompletableFuture<List<BookmarkNode>?> = GlobalScope.future {
-        storage.getTree(guid, recursive)?.children
+        storage.getTree(guid, recursive).getOrThrow()?.children
                 ?.map { it.copy(title = titles[it.guid]) }
     }
 
     fun searchBookmarks(query: String, limit: Int): CompletableFuture<List<BookmarkNode>> = GlobalScope.future {
-        storage.searchBookmarks(query, limit)
+        storage.searchBookmarks(query, limit).getOrThrow()
     }
 
     private suspend fun getBookmarkByUrl(aURL: String): BookmarkNode? {
-        val bookmarks: List<BookmarkNode>? = storage.getBookmarksWithUrl(aURL)
-        if (bookmarks == null || bookmarks.isEmpty()) {
+        val bookmarks: List<BookmarkNode>? = storage.getBookmarksWithUrl(aURL).getOrThrow()
+        if (bookmarks.isNullOrEmpty()) {
             return null
         }
 

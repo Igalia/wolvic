@@ -52,6 +52,8 @@ class WolvicEngineSession(
 
     override fun restoreState(state: EngineSessionState) = true
 
+    override fun flushSessionState() = Unit
+
     override fun setNeverTranslateSiteSetting(
         setting: Boolean,
         onResult: () -> Unit,
@@ -62,6 +64,9 @@ class WolvicEngineSession(
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) = Unit
     override fun updateTrackingProtection(policy: TrackingProtectionPolicy) = Unit
     override fun purgeHistory() = Unit
+
+    override fun processBackPressed(onResult: (Boolean) -> Unit) = onResult(false)
+
     override fun getWebCompatInfo(onResult: (JSONObject) -> Unit, onException: (Throwable) -> Unit) = Unit
     override fun sendMoreWebCompatInfo(info: JSONObject, onResult: () -> Unit, onException: (Throwable) -> Unit) = Unit
 }
