@@ -21,6 +21,8 @@ prefs:
   media.webspeech.synth.enabled: false
   # GPU process in Android broke WebXR. https://bugzilla.mozilla.org/show_bug.cgi?id=1771854
   layers.gpu-process.enabled: false
+  # Starting with Gecko 151, WebGL requires the GPU process unless it is allowed to run in the parent process.
+  webgl.allow-in-parent: true
   # disable pinch gestures
   browser.gesture.pinch.out: ''
   browser.gesture.pinch.in: ''

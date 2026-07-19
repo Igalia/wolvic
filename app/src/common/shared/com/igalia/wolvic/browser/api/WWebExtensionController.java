@@ -40,20 +40,20 @@ public interface WWebExtensionController {
          * Called whenever an updated extension has new permissions. This is intended as an opportunity
          * for the app to prompt the user for the new permissions required by this extension.
          *
-         * @param currentlyInstalled The {@link WebExtension} that is currently installed.
-         * @param updatedExtension   The {@link WebExtension} that will replace the previous extension.
-         * @param newPermissions     The new permissions that are needed.
-         * @param newOrigins         The new origins that are needed.
+         * @param extension                    The {@link WebExtension} that is being updated.
+         * @param newPermissions               The new permissions that are needed.
+         * @param newOrigins                   The new origins that are needed.
+         * @param newDataCollectionPermissions The new data collection permissions that are needed.
          * @return A {@link WResult} that completes to either {@link WAllowOrDeny#ALLOW ALLOW} if
          * this extension should be update or {@link WAllowOrDeny#DENY DENY} if this extension should
          * not be update. A null value will be interpreted as {@link WAllowOrDeny#DENY DENY}.
          */
         @Nullable
         default WResult<WAllowOrDeny> onUpdatePrompt(
-                @NonNull final WebExtension currentlyInstalled,
-                @NonNull final WebExtension updatedExtension,
+                @NonNull final WebExtension extension,
                 @NonNull final String[] newPermissions,
-                @NonNull final String[] newOrigins) {
+                @NonNull final String[] newOrigins,
+                @NonNull final String[] newDataCollectionPermissions) {
             return null;
         }
     }

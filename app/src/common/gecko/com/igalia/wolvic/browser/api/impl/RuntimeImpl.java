@@ -68,6 +68,9 @@ public class RuntimeImpl implements WRuntime {
                 .preferredColorScheme(toGeckoColorScheme(settings.getPreferredColorScheme()));
 
         mRuntime = GeckoRuntime.create(ctx, builder.build());
+
+        mRuntime.warmUp();
+        
         mSettings = new RuntimeSettingsImpl(mRuntime, settings);
         mWebExtensionController = new WebExtensionControllerImpl(mRuntime);
         mExecutor = new GeckoWebExecutor(mRuntime);
