@@ -541,6 +541,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.getServicesProvider().getDownloadsManager().removeListener(this);
         mWidgetManager.getServicesProvider().getConnectivityReceiver().removeListener(this);
+        PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(this);
+        SessionStore.get().getBookmarkStore().removeListener(mBookmarksListener);
         mTrayListeners.clear();
 
         if (mTrayViewModel != null) {
@@ -581,7 +583,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             mSession = null;
         }
         if (mAttachedWindow != null) {
-            SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
+            SessionStore.get().getBookmarkStore().removeListener(mBookmarksListener);
         }
         mWidgetPlacement.parentHandle = -1;
 
