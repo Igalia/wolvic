@@ -137,7 +137,7 @@ android {
         resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
+                cppFlags "-fexceptions -frtti -Werror" +
                          " -I" + file("src/main/cpp").absolutePath +
                          " -I" + file("src/main/cpp/vrb/include").absolutePath +
                          // CMake 3.10+ needs "-DANDROID" flag, since ANDROID
