@@ -55,7 +55,11 @@ public class DisplayImpl implements WDisplay {
     @NonNull
     @Override
     public WResult<Bitmap> capturePixelsWithAspectPreservingSize(int width) {
-        // TODO: Implement
-        return new ResultImpl<>();
+        // TODO: Implement actual pixel capture against the Chromium compositor.
+        ResultImpl<Bitmap> result = new ResultImpl<>();
+        result.completeExceptionally(
+                new UnsupportedOperationException(
+                        "Chromium capturePixelsWithAspectPreservingSize is not yet implemented"));
+        return result;
     }
 }
