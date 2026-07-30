@@ -97,6 +97,11 @@ WidgetPlacement::GetTextureHeight() const {
   return (int32_t)ceilf(height * density * textureScale);
 }
 
+float
+WidgetPlacement::GetWorldWidth() const {
+  return worldWidth > 0.0f ? worldWidth : (float)width * kWorldDPIRatio;
+}
+
 vrb::Color
 WidgetPlacement::GetClearColor() const {
   return vrb::Color(clearColor);
