@@ -103,8 +103,8 @@ def isWebKitAvailable = {
 }
 
 // Version names for Gecko and Chromium releases.
-def GECKO_RELEASE_VERSION_NAME = '2.0'
-def CHROMIUM_RELEASE_VERSION_NAME = '1.4'
+def GECKO_VERSION_NAME = '2.0'
+def CHROMIUM_VERSION_NAME = '1.4'
 
 android {
     namespace 'com.igalia.wolvic'
@@ -114,7 +114,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 34
         versionCode generatedVersionCode
-        versionName "1.9"
+        versionName GECKO_VERSION_NAME
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
@@ -233,12 +233,8 @@ android {
         // Use different version names for release builds for each backend.
         def backend = variant.productFlavors.get(2).name
         variant.outputs.each { output ->
-            if (variant.buildType.name == "release") {
-                if (backend == "gecko") {
-                    output.versionNameOverride = GECKO_RELEASE_VERSION_NAME
-                } else if (backend == "chromium") {
-                    output.versionNameOverride = CHROMIUM_RELEASE_VERSION_NAME
-                }
+            if (backend == "chromium") {
+                output.versionNameOverride = CHROMIUM_VERSION_NAME
             }
             if (shouldUseStaticVersionCode()) {
                 // Overrides any build created with a generated version code from now to 2115
