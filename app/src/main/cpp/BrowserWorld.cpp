@@ -1483,10 +1483,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
   float worldWidth = 0.0f, worldHeight = 0.0f;
   widget->GetWorldSize(worldWidth, worldHeight);
 
-  float newWorldWidth = aPlacement->worldWidth;
-  if (newWorldWidth <= 0.0f) {
-    newWorldWidth = aPlacement->width * WidgetPlacement::kWorldDPIRatio;
-  }
+  float newWorldWidth = aPlacement->GetWorldWidth();
 
   if (newWorldWidth != worldWidth || oldWidth != aPlacement->width || oldHeight != aPlacement->height) {
     widget->SetWorldWidth(newWorldWidth);

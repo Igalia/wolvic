@@ -53,12 +53,16 @@ struct VRVideo::State {
     window = aWindow;
     projection = aProjection;
     root = vrb::Transform::Create(create);
+
+    window->SetTextureAspectMode(getAspectModeForProjection(aWindow, projection));
+
     VRLayerSurfacePtr windowLayer = aWindow->GetLayer();
     if (windowLayer) {
       layerTextureBackup[0] = windowLayer->GetTextureRect(device::Eye::Left);
       layerTextureBackup[1] = windowLayer->GetTextureRect(device::Eye::Right);
       mWorldWidthBackup = windowLayer->GetWorldWidth();
       mWorlHeightBackup = windowLayer->GetWorldHeight();
+
       updateProjectionLayer();
     } else {
       updateProjection();
@@ -67,6 +71,40 @@ struct VRVideo::State {
     if (rightEye) {
       root->AddNode(rightEye);
     }
+  }
+
+  // Minimum aspect ratio of a full side by side video. The value lies between
+  // the widest half side by side frame of 21:9 (2.33) and two full 4:3 frames (2.67).
+  static constexpr float kFullSideBySideMinAspect = 2.6f;
+
+  // Maximum aspect ratio of a full top-bottom video. The value lies between
+  // two stacked full 21:9 frames (1.17) and the narrowest half top-bottom frame of 4:3 (1.33).
+  static constexpr float kFullTopBottomMaxAspect = 1.2f;
+
+  static Widget::TextureAspectMode getAspectModeForProjection(const WidgetPtr& aWindow, const VRVideoProjection aProjection) {
+    if (aProjection != VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE && aProjection != VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM) {
+      return Widget::TextureAspectMode::None;
+    }
+
+    int32_t width, height;
+
+    aWindow->GetSurfaceTextureSize(width, height);
+
+    if (width <= 0 || height <= 0) {
+      return Widget::TextureAspectMode::None;
+    }
+
+    const float aspect = (float)width / (float)height;
+
+    if (aProjection == VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE && aspect >= kFullSideBySideMinAspect) {
+      return Widget::TextureAspectMode::HalfWidth;
+    }
+
+    if (aProjection == VRVideoProjection::VIDEO_PROJECTION_3D_TOP_BOTTOM && aspect <= kFullTopBottomMaxAspect) {
+      return Widget::TextureAspectMode::HalfHeight;
+    }
+
+    return Widget::TextureAspectMode::None;
   }
 
   void updateProjection() {
@@ -385,6 +423,8 @@ VRVideo::Exit() {
     DeviceDelegatePtr device = m.deviceWeak.lock();
     device->DeleteLayer(m.layer);
   }
+
+  m.window->SetTextureAspectMode(Widget::TextureAspectMode::None);
 }
 
 void

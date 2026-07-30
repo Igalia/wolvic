@@ -38,6 +38,12 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 class Widget {
 public:
+  enum class TextureAspectMode {
+    None,
+    HalfWidth,
+    HalfHeight,
+  };
+
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement,
                           const int32_t aTextureWidth, const int32_t aTextureHeight, const QuadPtr& aQuad);
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement, const float aWorldWidth, const float aWorldHeight,
@@ -51,6 +57,7 @@ public:
   void RecreateSurface();
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   void SetWorldWidth(float aWorldWidth) const;
+  void SetTextureAspectMode(TextureAspectMode aMode);
   void GetWorldSize(float& aWidth, float& aHeight) const;
   bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal,
                                   const bool aClamp, bool& aIsInWidget, float& aDistance) const;

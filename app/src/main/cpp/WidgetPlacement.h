@@ -53,6 +53,7 @@ struct WidgetPlacement {
 
   int32_t GetTextureWidth() const;
   int32_t GetTextureHeight() const;
+  float GetWorldWidth() const;
   vrb::Color GetTintColor() const;
   vrb::Color GetClearColor() const;
   WidgetPlacement::Scene GetScene() const;

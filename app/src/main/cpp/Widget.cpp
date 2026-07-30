@@ -47,6 +47,7 @@ struct Widget::State {
   vrb::Vector max;
   QuadPtr quad;
   CylinderPtr cylinder;
+  TextureAspectMode aspectMode;
   float cylinderDensity;
   vrb::TogglePtr root;
   vrb::TransformPtr transform;
@@ -64,6 +65,7 @@ struct Widget::State {
       : handle(0)
       , resizing(false)
       , toggleState(false)
+      , aspectMode(TextureAspectMode::None)
       , cylinderDensity(4680.0f)
   {}
 
@@ -309,7 +311,14 @@ void
 Widget::SetWorldWidth(float aWorldWidth) const {
   int32_t width, height;
   this->GetSurfaceTextureSize(width, height);
-  const float aspect = (float)width / (float) height;
+  float aspect = (float)width / (float) height;
+
+  if (m.aspectMode == TextureAspectMode::HalfWidth) {
+    aspect *= 0.5f;
+  } else if (m.aspectMode == TextureAspectMode::HalfHeight) {
+    aspect *= 2.0f;
+  }
+
   const float worldHeight = aWorldWidth / aspect;
 
   const float oldWidth = m.max.x() - m.min.x();
@@ -331,6 +340,23 @@ Widget::SetWorldWidth(float aWorldWidth) const {
   if ((oldWidth != aWorldWidth) || (oldHeight != worldHeight)) {
     m.RemoveBorder();
   }
+}
+
+void
+Widget::SetTextureAspectMode(TextureAspectMode aMode) {
+  if (m.aspectMode == aMode) {
+    return;
+  }
+
+  m.aspectMode = aMode;
+
+  const float worldWidth = m.placement ? m.placement->GetWorldWidth() : 0.0f;
+
+  if (worldWidth <= 0.0f) {
+    return;
+  }
+
+  SetWorldWidth(worldWidth);
 }
 
 void
