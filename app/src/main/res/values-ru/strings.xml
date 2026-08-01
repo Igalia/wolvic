@@ -1771,4 +1771,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_window_selection">Способ выбора окна</string>
     <string name="controller_options_click_to_select">Нажатие</string>
     <string name="controller_options_hover_to_select">Наведение указателя</string>
+    <string name="add_search_engine_suggest_url_title">URL поисковика (необязательно)</string>
+    <string name="search_engine_error_url_placeholder">Адрес должен содержать %s или {searchTerms}</string>
+    <string name="search_engine_error_url_scheme">URL-адрес должен иметь схему (http:// или https://)</string>
+    <string name="search_engine_error_url_private">Использование частных/локальных URL-адресов запрещено по соображениям безопасности</string>
+    <string name="search_engine_error_name_required">Название обязательно</string>
+    <string name="search_engine_error_name_too_long">Название не длиннее 50 символов</string>
+    <string name="announcements_title">Объявления</string>
+    <string name="disable_hand_tracking_dialog_body">Отслеживание движений рук временно отключено. Оно будет автоматически включено при следующем запуске. Эта опция намеренно не сохраняется, чтобы избежать проблем в случае недоступности контроллеров.</string>
 </resources>
