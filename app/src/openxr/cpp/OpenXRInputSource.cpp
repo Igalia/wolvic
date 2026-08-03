@@ -460,6 +460,10 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
 
         // Suggest binding for axis actions.
         for (auto& axis: mapping.axes) {
+            if ((axis.hand & mHandeness) == 0) {
+                continue;
+            }
+
             auto it = mAxisActions.find(axis.type);
             if (it == mAxisActions.end()) {
                 continue;
@@ -470,6 +474,10 @@ XrResult OpenXRInputSource::SuggestBindings(SuggestedBindings& bindings) const
         }
 
         for (auto& haptic: mapping.haptics) {
+            if ((haptic.hand & mHandeness) == 0) {
+                continue;
+            }
+
             RETURN_IF_XR_FAILED(CreateBinding(mapping.path, mHapticAction,
                                               mSubactionPathName + "/" + haptic.path, bindings));
         }
