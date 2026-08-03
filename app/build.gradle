@@ -284,6 +284,7 @@ android {
 
         lynx {
             dimension "platform"
+            applicationIdSuffix ".vanilla"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DLYNX -DOPENXR -I" + file("src/openxr/cpp").absolutePath
