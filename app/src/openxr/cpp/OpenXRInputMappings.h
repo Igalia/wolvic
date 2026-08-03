@@ -157,7 +157,7 @@ namespace crow {
             { OpenXRAxisType::Thumbstick, kPathThumbstick,  OpenXRHandFlags::Both },
         },
         std::vector<OpenXRHaptic> {
-            { kPathHaptic, OpenXRHandFlags::Right },
+            { kPathHaptic, OpenXRHandFlags::Both },
         },
     };
 
