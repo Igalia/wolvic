@@ -196,7 +196,7 @@ public class RuntimeImpl implements WRuntime {
         // window.outerWidth/Height -- so the panel value shrinks the video. The view (surface)
         // bounds are the correct "window" bounds for us (the pre-M14x behaviour).
         String disableFeatures = "AndroidUseCorrectWindowBounds";
-        if (BuildConfig.FLAVOR_abi == "x64")
+        if (BuildConfig.FLAVOR_abi.equals("x64"))
             disableFeatures += ",Vulkan";
         CommandLine.getInstance().appendSwitchWithValue("disable-features", disableFeatures);
 
