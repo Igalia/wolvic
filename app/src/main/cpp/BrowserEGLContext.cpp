@@ -139,6 +139,7 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   if (eglMakeCurrent(mDisplay, mSurface, mSurface, mContext) == EGL_FALSE) {
     VRB_ERROR("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
     eglDestroySurface(mDisplay, mSurface);
+    mSurface = EGL_NO_SURFACE;
     eglDestroyContext(mDisplay, mContext);
     mContext = EGL_NO_CONTEXT;
     return false;
