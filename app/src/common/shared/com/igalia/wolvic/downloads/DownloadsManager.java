@@ -208,14 +208,12 @@ public class DownloadsManager {
         long readBytes = 0L;
         byte[] buf = new byte[8192];
         int n;
-        try {
-            InputStream in = job.getInputStream();
-            OutputStream out = new FileOutputStream(file, false);
+        try (InputStream in = job.getInputStream();
+            OutputStream out = new FileOutputStream(file, false)) {
             while ((n = in.read(buf)) > 0) {
                 out.write(buf, 0, n);
                 readBytes += n;
             }
-            out.close();
         } catch (IOException e) {
             Log.e(LOGTAG, "Error when saving " + job.getUri() + " : " + e.getMessage());
             return;
