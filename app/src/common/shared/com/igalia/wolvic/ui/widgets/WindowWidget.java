@@ -76,6 +76,8 @@ import com.igalia.wolvic.utils.ViewUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
@@ -1821,6 +1823,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    // The body of the external responses MUST be consumed, otherwise the web engine could keep the underlying request alive,
+    // stalling any further requests to the same URI. In those cases in which we don't read the body till EOF we must explicitly
+    // close the stream to release the underlying resources.
+    private void closeWebResponseBodyInputStream(@Nullable InputStream stream) {
+        if (stream == null) {
+            return;
+        }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            Log.w(LOGTAG, "Error closing the response body: " + e.getMessage());
+        }
+    }
+
     public void startDownload(@NonNull DownloadJob downloadJob, boolean showConfirmDialog) {
         if (showConfirmDialog) {
             // As of O, the prefixes are used in their standard meanings in the SI system, so kB = 1000 bytes, MB = 1,000,000 bytes, etc.
@@ -1838,6 +1854,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                     .withCallback((index, isChecked) -> {
                             if (index == PromptDialogWidget.POSITIVE) {
                                 mDownloadsManager.startDownload(downloadJob);
+                            } else {
+                                // Nobody will read the response body, release it.
+                                closeWebResponseBodyInputStream(downloadJob.getInputStream());
                             }
                         })
                     .build()
@@ -1938,6 +1957,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 }
                 job = DownloadJob.fromUri(uri, webResponseInfo.headers(), webResponseInfo.body());
             } else {
+                // The system download manager requests the URI again, so we won't read the body of this response.
+                closeWebResponseBodyInputStream(webResponseInfo.body());
                 job = DownloadJob.fromUri(webResponseInfo.uri(), webResponseInfo.headers());
             }
             // Don't show the confirmation dialog when we are in WebXR, because it will not be visible.
@@ -1945,6 +1966,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             startDownload(job, showConfirmDialog);
 
         } else {
+            // The file is opened by an external app, we won't read the body of this response.
+            closeWebResponseBodyInputStream(webResponseInfo.body());
+
             File file = new File(webResponseInfo.uri().substring("file://".length()));
             Uri contentUri = FileProvider.getUriForFile(
                     getContext(),
