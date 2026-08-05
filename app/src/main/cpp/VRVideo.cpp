@@ -124,6 +124,10 @@ struct VRVideo::State {
         leftEye = createSphereProjection(false, device::EyeRect(0.0f, 0.5f, 1.0f, 0.5f));
         rightEye = createSphereProjection(false, device::EyeRect(0.0f, 0.0f, 1.0f, 0.5f));
         break;
+      case VRVideoProjection::VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT:
+        leftEye = createSphereProjection(false, device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f));
+        rightEye = createSphereProjection(false, device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+        break;
       case VRVideoProjection::VIDEO_PROJECTION_180:
         leftEye = createSphereProjection(true, device::EyeRect(0.0f, 0.0f, 1.0f, 1.0f));
         break;
@@ -151,6 +155,9 @@ struct VRVideo::State {
         break;
       case VRVideoProjection::VIDEO_PROJECTION_360_STEREO:
         create360StereoProjectionLayer();
+        break;
+      case VRVideoProjection::VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT:
+        create360LRProjectionLayer();
         break;
       case VRVideoProjection::VIDEO_PROJECTION_180:
         create180ProjectionLayer();
@@ -265,6 +272,28 @@ struct VRVideo::State {
 
     vrb::Matrix rightTransform =  vrb::Matrix::Position(vrb::Vector(0.0f, 0.5f, 0.0f));
     rightTransform.ScaleInPlace(vrb::Vector(1.0f, 0.5f, 1.0f));
+    equirect->SetUVTransform(device::Eye::Right, rightTransform);
+
+    equirect->SetUseSameLayerForBothEyes(false);
+
+    leftEye = vrb::Toggle::Create(create);
+    leftEye->AddNode(VRLayerNode::Create(create, equirect));
+    rightEye = vrb::Toggle::Create(create);
+    rightEye->AddNode(VRLayerNode::Create(create, equirect));
+  }
+
+  void create360LRProjectionLayer() {
+    vrb::CreationContextPtr create = context.lock();
+    DeviceDelegatePtr device = deviceWeak.lock();
+    VRLayerEquirectPtr equirect = device->CreateLayerEquirect(window->GetLayer());
+    layer = equirect;
+
+    vrb::Matrix leftTransform = vrb::Matrix::Identity();
+    leftTransform.ScaleInPlace(vrb::Vector(0.5f, 1.0f, 1.0f));
+    equirect->SetUVTransform(device::Eye::Left, leftTransform);
+
+    vrb::Matrix rightTransform = vrb::Matrix::Position(vrb::Vector(0.5f, 0.0f, 0.0f));
+    rightTransform.ScaleInPlace(vrb::Vector(0.5f, 1.0f, 1.0f));
     equirect->SetUVTransform(device::Eye::Right, rightTransform);
 
     equirect->SetUseSameLayerForBothEyes(false);
