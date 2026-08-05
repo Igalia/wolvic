@@ -917,7 +917,10 @@
     <string name="video_mode_360">360</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">360 Stereo</string>
+    <string name="video_mode_360_stereo">Stereo 360, oben nach unten</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360_stereo_leftright">Stereo 360, links nach rechts</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
