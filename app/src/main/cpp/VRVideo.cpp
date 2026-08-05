@@ -292,6 +292,7 @@ struct VRVideo::State {
 
     vrb::Matrix uvTransform = vrb::Matrix::Identity();
     uvTransform.ScaleInPlace(vrb::Vector(2.0f, 1.0f, 1.0f));
+    uvTransform.TranslateInPlace(vrb::Vector(-0.5f, 0.0f, 0.0f));
 
     equirect->SetUVTransform(device::Eye::Left, uvTransform);
     equirect->SetUVTransform(device::Eye::Right, uvTransform);
@@ -342,6 +343,7 @@ struct VRVideo::State {
 
     vrb::Matrix uvTransform = vrb::Matrix::Identity();
     uvTransform.ScaleInPlace(vrb::Vector(2.0f, 0.5f, 1.0f));
+    uvTransform.TranslateInPlace(vrb::Vector(-0.5f, 0.0f, 0.0f));
     equirect->SetUVTransform(device::Eye::Left, uvTransform);
     uvTransform.TranslateInPlace(vrb::Vector(0.0f, 0.5f, 0.0f));
     equirect->SetUVTransform(device::Eye::Right, uvTransform);
