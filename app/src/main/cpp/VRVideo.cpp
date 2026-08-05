@@ -267,6 +267,8 @@ struct VRVideo::State {
     rightTransform.ScaleInPlace(vrb::Vector(1.0f, 0.5f, 1.0f));
     equirect->SetUVTransform(device::Eye::Right, rightTransform);
 
+    equirect->SetUseSameLayerForBothEyes(false);
+
     leftEye = vrb::Toggle::Create(create);
     leftEye->AddNode(VRLayerNode::Create(create, equirect));
     rightEye = vrb::Toggle::Create(create);
@@ -345,6 +347,8 @@ struct VRVideo::State {
     equirect->SetUVTransform(device::Eye::Left, uvTransform);
     uvTransform.TranslateInPlace(vrb::Vector(0.0f, 0.5f, 0.0f));
     equirect->SetUVTransform(device::Eye::Right, uvTransform);
+
+    equirect->SetUseSameLayerForBothEyes(false);
 
     leftEye = create180LayerToggle(equirect);
     rightEye = create180LayerToggle(equirect);
