@@ -22,7 +22,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     @IntDef(value = { VIDEO_PROJECTION_NONE, VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
                       VIDEO_PROJECTION_360_STEREO, VIDEO_PROJECTION_180,
                       VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM,
-                      VIDEO_PROJECTION_3D_TOP_BOTTOM })
+                      VIDEO_PROJECTION_3D_TOP_BOTTOM, VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT })
     public @interface VideoProjectionFlags {}
 
     public static final int VIDEO_PROJECTION_NONE = -1;
@@ -33,6 +33,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     public static final int VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT = 4;
     public static final int VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM = 5;
     public static final int VIDEO_PROJECTION_3D_TOP_BOTTOM = 6;
+    public static final int VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT = 7;
 
     public interface Delegate {
         void onVideoProjectionClick(@VideoProjectionFlags int aProjection);
@@ -105,6 +106,9 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360, getContext().getString(R.string.video_mode_360),
                 R.drawable.ic_icon_videoplayback_360));
 
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT, getContext().getString(R.string.video_mode_360_stereo_leftright),
+                R.drawable.ic_icon_videoplayback_360_stereo_leftright));
+
         mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360_STEREO, getContext().getString(R.string.video_mode_360_stereo),
                 R.drawable.ic_icon_videoplayback_360_stereo));
 
@@ -165,7 +169,9 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
         autoEnter.set(projection.endsWith("_auto"));
 
-        if (projection.startsWith("360s")) {
+        if (projection.startsWith("360lr")) {
+            return VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT;
+        } else if (projection.startsWith("360tb") || projection.startsWith("360s")) {
             return VIDEO_PROJECTION_360_STEREO;
         } else if (projection.startsWith("360")) {
             return VIDEO_PROJECTION_360;

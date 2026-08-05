@@ -932,7 +932,8 @@ public class NavigationBarWidget extends UIWidget implements WSession.Navigation
             mediaHeight = mAttachedWindow.getWindowHeight();
         }
         final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
-                aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+                aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO ||
+                aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT;
         mAttachedWindow.enableVRVideoMode(mediaWidth, mediaHeight, resetBorder);
         // Handle video resize while in VR video playback
         if (mFullScreenMedia != null) {
