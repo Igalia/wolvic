@@ -340,6 +340,31 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_description">Web pages are sometimes offered in more than one language. Choose the languages you want to display in order of preference to the left side.</string>
 
+    <!-- Accessibility content description for the icon shown next to a language in the available
+         languages list of the 'Preferred Website Languages' dialog. Activating it adds the
+         language to the preferred languages list. -->
+    <string name="language_item_add_content_description">Add to preferred languages</string>
+
+    <!-- Accessibility content description for the check icon shown next to a language in the
+         available languages list of the 'Preferred Website Languages' dialog when the language
+         is already in the preferred languages list. -->
+    <string name="language_item_added_content_description">Added to preferred languages</string>
+
+    <!-- Accessibility content description for the icon shown next to a language in the preferred
+         languages list of the 'Preferred Website Languages' dialog. Activating it removes the
+         language from the preferred languages list. -->
+    <string name="language_item_remove_content_description">Remove from preferred languages</string>
+
+    <!-- Accessibility content description for the icon shown next to a language in the preferred
+         languages list of the 'Preferred Website Languages' dialog. Activating it moves the
+         language up in the order of preference. -->
+    <string name="language_item_move_up_content_description">Move language up</string>
+
+    <!-- Accessibility content description for the icon shown next to a language in the preferred
+         languages list of the 'Preferred Website Languages' dialog. Activating it moves the
+         language down in the order of preference. -->
+    <string name="language_item_move_down_content_description">Move language down</string>
+
     <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
     changes the app and the language of the speech-recognition-based search to 'English (US)'.
     The string is also used in the keyboard space bar to show the current keyboard language and in
