@@ -30,6 +30,7 @@ struct VRLayer::State {
   std::function<void()> pendingEvent;
   std::string name;
   bool composited;
+  // Clear for layers drawing per-eye content, or both eyes get the left one.
   bool useSameLayerForBothEyes;
   State():
       initialized(false),

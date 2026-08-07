@@ -124,6 +124,10 @@ struct VRVideo::State {
         leftEye = createSphereProjection(false, device::EyeRect(0.0f, 0.5f, 1.0f, 0.5f));
         rightEye = createSphereProjection(false, device::EyeRect(0.0f, 0.0f, 1.0f, 0.5f));
         break;
+      case VRVideoProjection::VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT:
+        leftEye = createSphereProjection(false, device::EyeRect(0.0f, 0.0f, 0.5f, 1.0f));
+        rightEye = createSphereProjection(false, device::EyeRect(0.5f, 0.0f, 0.5f, 1.0f));
+        break;
       case VRVideoProjection::VIDEO_PROJECTION_180:
         leftEye = createSphereProjection(true, device::EyeRect(0.0f, 0.0f, 1.0f, 1.0f));
         break;
@@ -151,6 +155,9 @@ struct VRVideo::State {
         break;
       case VRVideoProjection::VIDEO_PROJECTION_360_STEREO:
         create360StereoProjectionLayer();
+        break;
+      case VRVideoProjection::VIDEO_PROJECTION_360_STEREO_LEFT_RIGHT:
+        create360LRProjectionLayer();
         break;
       case VRVideoProjection::VIDEO_PROJECTION_180:
         create180ProjectionLayer();
@@ -267,6 +274,32 @@ struct VRVideo::State {
     rightTransform.ScaleInPlace(vrb::Vector(1.0f, 0.5f, 1.0f));
     equirect->SetUVTransform(device::Eye::Right, rightTransform);
 
+    // Per-eye UV transforms need one layer per eye, else mono.
+    equirect->SetUseSameLayerForBothEyes(false);
+
+    leftEye = vrb::Toggle::Create(create);
+    leftEye->AddNode(VRLayerNode::Create(create, equirect));
+    rightEye = vrb::Toggle::Create(create);
+    rightEye->AddNode(VRLayerNode::Create(create, equirect));
+  }
+
+  void create360LRProjectionLayer() {
+    vrb::CreationContextPtr create = context.lock();
+    DeviceDelegatePtr device = deviceWeak.lock();
+    VRLayerEquirectPtr equirect = device->CreateLayerEquirect(window->GetLayer());
+    layer = equirect;
+
+    vrb::Matrix leftTransform = vrb::Matrix::Identity();
+    leftTransform.ScaleInPlace(vrb::Vector(0.5f, 1.0f, 1.0f));
+    equirect->SetUVTransform(device::Eye::Left, leftTransform);
+
+    vrb::Matrix rightTransform = vrb::Matrix::Position(vrb::Vector(0.5f, 0.0f, 0.0f));
+    rightTransform.ScaleInPlace(vrb::Vector(0.5f, 1.0f, 1.0f));
+    equirect->SetUVTransform(device::Eye::Right, rightTransform);
+
+    // Per-eye UV transforms need one layer per eye, else mono.
+    equirect->SetUseSameLayerForBothEyes(false);
+
     leftEye = vrb::Toggle::Create(create);
     leftEye->AddNode(VRLayerNode::Create(create, equirect));
     rightEye = vrb::Toggle::Create(create);
@@ -292,6 +325,8 @@ struct VRVideo::State {
 
     vrb::Matrix uvTransform = vrb::Matrix::Identity();
     uvTransform.ScaleInPlace(vrb::Vector(2.0f, 1.0f, 1.0f));
+    // centers the hemisphere in front of the viewer.
+    uvTransform.TranslateInPlace(vrb::Vector(-0.5f, 0.0f, 0.0f));
 
     equirect->SetUVTransform(device::Eye::Left, uvTransform);
     equirect->SetUVTransform(device::Eye::Right, uvTransform);
@@ -342,9 +377,14 @@ struct VRVideo::State {
 
     vrb::Matrix uvTransform = vrb::Matrix::Identity();
     uvTransform.ScaleInPlace(vrb::Vector(2.0f, 0.5f, 1.0f));
+    // centers the hemisphere in front of the viewer.
+    uvTransform.TranslateInPlace(vrb::Vector(-0.5f, 0.0f, 0.0f));
     equirect->SetUVTransform(device::Eye::Left, uvTransform);
     uvTransform.TranslateInPlace(vrb::Vector(0.0f, 0.5f, 0.0f));
     equirect->SetUVTransform(device::Eye::Right, uvTransform);
+
+    // Per-eye UV transforms need one layer per eye, else mono.
+    equirect->SetUseSameLayerForBothEyes(false);
 
     leftEye = create180LayerToggle(equirect);
     rightEye = create180LayerToggle(equirect);
