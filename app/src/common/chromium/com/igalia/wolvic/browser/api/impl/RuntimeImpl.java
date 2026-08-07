@@ -197,6 +197,9 @@ public class RuntimeImpl implements WRuntime {
         // Enable WebXR Hand Input, which is disabled by default in blink (experimental)
         CommandLine.getInstance().appendSwitchWithValue("enable-features", "WebXRHandInput");
 
+        // Enable HTML-in-Canvas, chrome://flags/#canvas-draw-element (experimental).
+        CommandLine.getInstance().appendSwitchWithValue("enable-blink-features", "CanvasDrawElement");
+
         setupWebGLMSAA();
         DeviceUtils.addDeviceSpecificUserAgentSwitch();
         LibraryLoader.getInstance().ensureInitialized();
