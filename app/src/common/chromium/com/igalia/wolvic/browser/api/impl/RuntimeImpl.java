@@ -33,9 +33,6 @@ import org.chromium.base.ContextUtils;
 import org.chromium.base.PathUtils;
 import org.chromium.base.library_loader.LibraryLoader;
 import org.chromium.base.library_loader.LibraryProcessType;
-import org.chromium.components.signin.AccountManagerFacadeImpl;
-import org.chromium.components.signin.AccountManagerFacadeProvider;
-import org.chromium.components.signin.SystemAccountManagerDelegate;
 import org.chromium.content_public.browser.BrowserStartupController;
 import org.chromium.content_public.browser.DeviceUtils;
 import org.chromium.ui.base.ResourceBundle;
@@ -191,27 +188,32 @@ public class RuntimeImpl implements WRuntime {
         CommandLine.init(new String[] {});
         if (BuildConfig.DEBUG)
             CommandLine.getInstance().appendSwitchWithValue("enable-logging", "stderr");
+
+        // Disable AndroidUseCorrectWindowBounds (enabled by the field-trial testing config in
+        // M14x): it makes GetBoundsInRootWindow / window.outerWidth/Height report the physical
+        // Android panel instead of the content surface. Wolvic renders to an offscreen VR
+        // texture larger than the panel, and YouTube sizes its fullscreen <video> against
+        // window.outerWidth/Height -- so the panel value shrinks the video. The view (surface)
+        // bounds are the correct "window" bounds for us (the pre-M14x behaviour).
+        String disableFeatures = "AndroidUseCorrectWindowBounds";
         if (BuildConfig.FLAVOR_abi == "x64")
-            CommandLine.getInstance().appendSwitchWithValue("disable-features", "Vulkan");
+            disableFeatures += ",Vulkan";
+        CommandLine.getInstance().appendSwitchWithValue("disable-features", disableFeatures);
 
         // Enable WebXR Hand Input, which is disabled by default in blink (experimental)
         CommandLine.getInstance().appendSwitchWithValue("enable-features", "WebXRHandInput");
 
         setupWebGLMSAA();
-        DeviceUtils.addDeviceSpecificUserAgentSwitch();
+        DeviceUtils.updateDeviceSpecificUserAgentSwitch(context);
         LibraryLoader.getInstance().ensureInitialized();
-
-        // Initialize the AccountManagerFacade with the correct AccountManagerDelegate. Must be done
-        // only once and before AccountManagerFacadeProvider.getInstance() is invoked.
-        AccountManagerFacadeProvider.setInstance(
-                new AccountManagerFacadeImpl(new SystemAccountManagerDelegate()));
 
         BrowserStartupController.getInstance().startBrowserProcessesAsync(
                 LibraryProcessType.PROCESS_BROWSER, true /* startGpuProcess */, false /* startMinimalBrowser */,
+                false /* singleProcess */, false /* scheduleFlushStartupTasks */,
                 new BrowserStartupController.StartupCallback() {
                     @Override
-                    public void onSuccess() {
-                        Log.i(LOGTAG, "The browser process started!");
+                    public void onSuccess(BrowserStartupController.StartupMetrics metrics) {
+                        Log.i(LOGTAG, "The browser process started!" + metrics.getTotalDurationOfPostedTasksMs());
                         mIsReady = true;
                         mCallbacks.forEach(callback -> {
                             callback.onReady();

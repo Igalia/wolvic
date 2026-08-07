@@ -10,9 +10,12 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WWebRequestError;
 
 import org.chromium.base.ContextUtils;
+import org.chromium.base.task.PostTask;
+import org.chromium.base.task.TaskTraits;
 import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.content_public.browser.LifecycleState;
 import org.chromium.content_public.browser.LoadUrlParams;
+import org.chromium.content_public.browser.MediaSession;
 import org.chromium.content_public.browser.NavigationHandle;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
@@ -62,6 +65,25 @@ public class TabWebContentsObserver extends WebContentsObserver {
     @Override
     public void didStartNavigationInPrimaryMainFrame(NavigationHandle navigationHandle) {
         super.didStartNavigationInPrimaryMainFrame(navigationHandle);
+
+        // Rewrite mobile YouTube watch URLs to their desktop variant before the request
+        // is initiated. The load is deferred because starting a navigation synchronously
+        // from a navigation callback can corrupt the native navigation objects (same
+        // reason onCreateNewWindow/closeContents post their work).
+        GURL url = navigationHandle.getUrl();
+        String rewrittenUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        if (!url.getSpec().equals(rewrittenUrl)) {
+            WebContents webContents = getWebContents();
+            if (webContents != null) {
+                PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
+                    if (!webContents.isDestroyed()) {
+                        webContents.getNavigationController().loadUrl(
+                                new LoadUrlParams(rewrittenUrl));
+                    }
+                }, 0);
+            }
+            return;
+        }
 
         WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate == null)
@@ -130,7 +152,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
             return;
         }
 
-        Context context = mWebContents.get().getTopLevelNativeWindow().getContext().get();
+        Context context = getWebContents().getTopLevelNativeWindow().getContext().get();
         PaymentRequestUI paymentHandler = new PaymentRequestUI(context, newWebContents, null);
         final TabCompositorView compositorView = paymentHandler.getCompositorView();
         assert newWebContents.getViewAndroidDelegate() != null
@@ -154,16 +176,16 @@ public class TabWebContentsObserver extends WebContentsObserver {
         // Show Compositor View after attaching to the parent view.
         compositorView.setCurrentWebContents(newWebContents);
 
-        mPaymentWebContentsObserver = new WebContentsObserver(newWebContents) {
+        mPaymentWebContentsObserver = new WebContentsObserver() {
             @Override
-            public void destroy() {
+            public void webContentsDestroyed() {
                 mSession.releaseOverlayDisplay(compositorView);
                 mTab.setPaymentWebContents(null, null, null);
 
                 contentDelegate.onHidePaymentHandler(mSession);
-                newWebContents.removeObserver(this);
             }
         };
+        mPaymentWebContentsObserver.observe(newWebContents);
     }
 
     @Override
@@ -201,7 +223,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
     private void dispatchCanGoBackOrForward() {
         @Nullable WSession.NavigationDelegate delegate = mSession.getNavigationDelegate();
         if (delegate != null) {
-            WebContents webContents = mWebContents.get();
+            WebContents webContents = getWebContents();
             if (webContents == null)
                 return;
 
@@ -229,5 +251,10 @@ public class TabWebContentsObserver extends WebContentsObserver {
     @Override
     public void hasEffectivelyFullscreenVideoChange(boolean isFullscreen) {
         mSession.getTab().onMediaFullscreen(isFullscreen);
+    }
+
+    @Override
+    public void mediaSessionCreated(MediaSession mediaSession) {
+        mTab.createMediaSessionObserver(mediaSession);
     }
 }
