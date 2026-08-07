@@ -2139,6 +2139,11 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="tabs_bookmark_selected">Bookmark tabs</string>
 
     <!-- This string is displayed in a button on the header of the tabs dialog.
+     When clicked it closes the tabs that have the same URL as another tab,
+     keeping the most recently used one -->
+    <string name="tabs_close_duplicates">Close duplicates</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
      When clicked it closes all the available tabs -->
     <string name="tabs_close_all">Close all</string>
 

@@ -40,6 +40,7 @@ public class TabsWidget extends UIDialog {
     protected UITextButton mCloseTabsButton;
     protected UITextButton mBookmarkTabsButton;
     protected UITextButton mCloseTabsAllButton;
+    protected UITextButton mCloseDuplicateTabsButton;
     protected UITextButton mSelectAllButton;
     protected UITextButton mUnselectTabs;
     protected LinearLayout mTabsSelectModeView;
@@ -131,6 +132,16 @@ public class TabsWidget extends UIDialog {
                 mTabDelegate.onTabsClose(mAdapter.mTabs);
             }
             onDismiss();
+        });
+
+        mCloseDuplicateTabsButton = findViewById(R.id.tabsCloseDuplicatesButton);
+        mCloseDuplicateTabsButton.setOnClickListener(v -> {
+            if (mTabDelegate != null) {
+                mTabDelegate.onTabsClose(SessionStore.get().getDuplicateSessions(mPrivateMode));
+            }
+
+            refreshTabs();
+            updateSelectionMode();
         });
 
         mSelectAllButton = findViewById(R.id.tabsSelectAllButton);
@@ -356,12 +367,15 @@ public class TabsWidget extends UIDialog {
             mBookmarkTabsButton.setVisibility(View.VISIBLE);
             mUnselectTabs.setVisibility(View.VISIBLE);
             mCloseTabsAllButton.setVisibility(View.GONE);
+            mCloseDuplicateTabsButton.setVisibility(View.GONE);
             mSelectAllButton.setVisibility(View.GONE);
         } else {
             mCloseTabsButton.setVisibility(View.GONE);
             mBookmarkTabsButton.setVisibility(View.GONE);
             mUnselectTabs.setVisibility(View.GONE);
             mCloseTabsAllButton.setVisibility(View.VISIBLE);
+            mCloseDuplicateTabsButton.setVisibility(View.VISIBLE);
+            mCloseDuplicateTabsButton.setEnabled(!SessionStore.get().getDuplicateSessions(mPrivateMode).isEmpty());
             mSelectAllButton.setVisibility(View.VISIBLE);
         }
 
