@@ -362,6 +362,7 @@ VRBrowser::GetStorageAbsolutePath(const std::string& aRelativePath) {
   const char *cstr = sEnv->GetStringUTFChars(jStr, nullptr);
   std::string str = std::string(cstr);
   sEnv->ReleaseStringUTFChars(jStr, cstr);
+  sEnv->DeleteLocalRef(jStr);
 
   if (aRelativePath.empty()) {
     return str;
@@ -405,6 +406,7 @@ VRBrowser::GetActiveEnvironment() {
   const char *cstr = sEnv->GetStringUTFChars(jStr, nullptr);
   std::string str = std::string(cstr);
   sEnv->ReleaseStringUTFChars(jStr, cstr);
+  sEnv->DeleteLocalRef(jStr);
 
   return str;
 }
