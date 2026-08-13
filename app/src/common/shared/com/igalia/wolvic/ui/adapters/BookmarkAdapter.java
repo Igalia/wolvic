@@ -321,13 +321,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mDisplayList == null ? 0 : mDisplayList.size();
     }
 
-    @Override
-    // TODO: This method is broken because `bookmark.getPosition()` is broken.
-    public long getItemId(int position) {
-        Bookmark bookmark = mDisplayList.get(position);
-        return  bookmark.getPosition();
-    }
-
     static class BookmarkViewHolder extends RecyclerView.ViewHolder {
 
         final BookmarkItemBinding binding;
