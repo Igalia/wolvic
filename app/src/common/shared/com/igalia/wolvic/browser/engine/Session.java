@@ -669,7 +669,7 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         // FIXME: calling acquireDisplay() is not well supported in the Chromium backend because
         // that method incorrectly does some extra work handling widgets. Disable the bitmap
         // capture in the meantime (it was not working anyway yet).
-        if (mState.mSession == null || !mFirstContentfulPaint || BuildConfig.FLAVOR_backend == "chromium") {
+        if (mState.mSession == null || !mFirstContentfulPaint || BuildConfig.FLAVOR_backend.equals("chromium")) {
             return CompletableFuture.completedFuture(null);
         }
         Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);

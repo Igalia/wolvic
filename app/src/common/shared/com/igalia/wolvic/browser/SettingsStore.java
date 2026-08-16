@@ -161,7 +161,7 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static String ENV_DEFAULT = "cyberpunk";
     public final static int MSAA_DEFAULT_LEVEL = 1;
-    public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend == "chromium";
+    public final static boolean AUDIO_ENABLED = BuildConfig.FLAVOR_backend.equals("chromium");
     public final static boolean LATIN_AUTO_COMPLETE_ENABLED = false;
     public final static boolean WINDOW_MOVEMENT_DEFAULT = false;
     public final static @TabsLocation int TABS_LOCATION_DEFAULT = TABS_LOCATION_TRAY;
