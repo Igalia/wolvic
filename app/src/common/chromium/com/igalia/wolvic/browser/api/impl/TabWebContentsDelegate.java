@@ -90,7 +90,7 @@ public class TabWebContentsDelegate extends WolvicWebContentsDelegate {
         }
     }
 
-    @Override
+    //@Override
     public void onWebAppManifest(WebContents webContents, @NonNull String manifest) {
          @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
         if (delegate == null)
