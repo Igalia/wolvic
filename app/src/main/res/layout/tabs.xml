@@ -93,6 +93,11 @@
             android:text="@string/tabs_bookmark_selected" />
 
         <com.igalia.wolvic.ui.views.UITextButton
+            android:id="@+id/tabsCloseOthersButton"
+            style="@style/tabsButton"
+            android:text="@string/tabs_close_others" />
+
+        <com.igalia.wolvic.ui.views.UITextButton
             android:id="@+id/tabsCloseAllButton"
             style="@style/tabsButton"
             android:text="@string/tabs_close_all" />
