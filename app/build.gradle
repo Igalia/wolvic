@@ -15,12 +15,9 @@ if (getGradle().getStartParameter().getTaskRequests().toString() =~ /[Hh]vr/
 }
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    project.exec {
+    return providers.exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+    }.standardOutput.asText.get().trim()
 }
 
 def shouldUseStaticVersionCode = { ->
@@ -107,14 +104,14 @@ def GECKO_VERSION_NAME = '2.0'
 def CHROMIUM_VERSION_NAME = '1.4'
 
 android {
-    namespace 'com.igalia.wolvic'
-    compileSdkVersion 36
+    namespace = 'com.igalia.wolvic'
+    compileSdk = 36
     defaultConfig {
-        applicationId "com.igalia.wolvic"
-        minSdkVersion 26
-        targetSdkVersion 34
-        versionCode generatedVersionCode
-        versionName GECKO_VERSION_NAME
+        applicationId = "com.igalia.wolvic"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = generatedVersionCode
+        versionName = GECKO_VERSION_NAME
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
@@ -132,7 +129,7 @@ android {
         buildConfigField 'String', 'HEYVR_ENDPOINT', '"https://api.heyvr.io/v1/public/global/feed/featured?limit=50"'
         buildConfigField 'String', 'OTEL_ENDPOINT', '""'
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'app_name', 'Wolvic'
         resValue 'string', 'HOMEPAGE_URL', "https://wolvic.com/start"
         externalNativeBuild {
@@ -164,9 +161,9 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled = true
     }
 
     java {
@@ -193,21 +190,21 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
+            signingConfig = getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'OTEL_ENDPOINT', "\"${getOtelEndpoint()}\""
         }
         debug {
-            applicationIdSuffix getDevApplicationIdSuffix()
-            pseudoLocalesEnabled true
+            applicationIdSuffix = getDevApplicationIdSuffix()
+            pseudoLocalesEnabled = true
         }
     }
 
     externalNativeBuild {
         cmake {
-            path "CMakeLists.txt"
+            path = file("CMakeLists.txt")
         }
     }
 
@@ -249,8 +246,8 @@ android {
     productFlavors {
         // Supported platforms
         oculusvr {
-            dimension "platform"
-            targetSdkVersion 32
+            dimension = "platform"
+            targetSdk = 32
             buildConfigField "Boolean", "USE_SOUNDPOOL", "false"
             externalNativeBuild {
                 cmake {
@@ -262,8 +259,8 @@ android {
         }
 
         picoxr {
-            dimension "platform"
-            minSdkVersion 29
+            dimension = "platform"
+            minSdk = 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DPICOXR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -273,7 +270,7 @@ android {
         }
 
         pfdmxr {
-            dimension "platform"
+            dimension = "platform"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DPFDMXR -DOPENXR  -I" + file("src/openxr/cpp").absolutePath
@@ -283,8 +280,8 @@ android {
         }
 
         lynx {
-            dimension "platform"
-            applicationIdSuffix ".vanilla"
+            dimension = "platform"
+            applicationIdSuffix = ".vanilla"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DLYNX -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -294,8 +291,8 @@ android {
         }
 
         spaces {
-            dimension "platform"
-            targetSdkVersion 29
+            dimension = "platform"
+            targetSdk = 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DSPACES -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -305,8 +302,8 @@ android {
         }
 
         aosp {
-            dimension "platform"
-            targetSdkVersion 29
+            dimension = "platform"
+            targetSdk = 29
             externalNativeBuild {
                 cmake {
                     cppFlags " -DAOSP -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -317,7 +314,7 @@ android {
         }
 
         hvr {
-            dimension "platform"
+            dimension = "platform"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DHVR -DOPENXR -I" + file("src/openxr/cpp").absolutePath
@@ -334,8 +331,8 @@ android {
         }
 
         noapi {
-            dimension "platform"
-            applicationIdSuffix ".noapi"
+            dimension = "platform"
+            applicationIdSuffix = ".noapi"
             resValue "string", "app_name", "Wolvic NoAPI"
             externalNativeBuild {
                 cmake {
@@ -346,11 +343,11 @@ android {
         }
 
         visionglass {
-            dimension "platform"
-            applicationId "com.igalia.wolvic"
-            applicationIdSuffix ".visionglass"
+            dimension = "platform"
+            applicationId = "com.igalia.wolvic"
+            applicationIdSuffix = ".visionglass"
             resValue "string", "app_name", "Wolvic Vision"
-            targetSdkVersion 33
+            targetSdk = 33
             externalNativeBuild {
                 cmake {
                     cppFlags " -DVISIONGLASS"
@@ -364,14 +361,14 @@ android {
 
         // Supported ABIs
         arm64 {
-            dimension "abi"
+            dimension = "abi"
             ndk {
                 abiFilters "arm64-v8a"
             }
         }
 
         x64 {
-            dimension "abi"
+            dimension = "abi"
             ndk {
                 abiFilters "x86_64"
             }
@@ -379,7 +376,7 @@ android {
 
         // Supported Backends
         gecko {
-            dimension "backend"
+            dimension = "backend"
             externalNativeBuild {
                 cmake {
                     cppFlags " -DGECKO"
@@ -390,7 +387,7 @@ android {
         }
 
         chromium {
-            dimension "backend"
+            dimension = "backend"
             resValue "string", "app_name", "Wolvic Chromium"
             externalNativeBuild {
                 cmake {
@@ -403,17 +400,17 @@ android {
         }
 
         webkit {
-            dimension "backend"
+            dimension = "backend"
         }
 
         // Stores flavor
         generic {
-            dimension "store"
+            dimension = "store"
         }
 
         metaStore {
-            dimension "store"
-            applicationIdSuffix ".metastore"
+            dimension = "store"
+            applicationIdSuffix = ".metastore"
             externalNativeBuild {
                 cmake {
                     cppFlags "-DSTORE_BUILD", "-DMETA_APP_ID=5917120145021341"
@@ -422,15 +419,15 @@ android {
         }
 
         mainlandChina {
-            applicationId "com.cn.igalia.wolvic"
-            dimension "store"
+            applicationId = "com.cn.igalia.wolvic"
+            dimension = "store"
             buildConfigField "Boolean", "FXA_USE_CHINA_SERVER", "true"
             buildConfigField "Boolean", "WEBVIEW_IN_PHONE_UI", "true"
             buildConfigField "Boolean", "CN_FIRST_RUN_IN_PHONE_UI", "true"
         }
 
         magicleap {
-            dimension "store"
+            dimension = "store"
         }
     }
 
@@ -593,10 +590,10 @@ android {
 
     buildFeatures {
         flavorDimensions = [ "platform", "abi", "backend", "store" ]
-        viewBinding true
-        prefab true // enable prefab support for various SDK AAR
-        dataBinding true
-        buildConfig true
+        viewBinding = true
+        prefab = true // enable prefab support for various SDK AAR
+        dataBinding = true
+        buildConfig = true
     }
 
     lint {

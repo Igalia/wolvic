@@ -12,16 +12,16 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://developer.huawei.com/repo/' }
+        maven { url = 'https://developer.huawei.com/repo/' }
     }
 }
 
 allprojects {
     repositories {
         google()
-        maven { url 'https://maven.mozilla.org/maven2' }
-        maven { url 'https://developer.huawei.com/repo/' }
-        maven { url 'https://storage.googleapis.com/r8-releases/raw' }
+        maven { url = 'https://maven.mozilla.org/maven2' }
+        maven { url = 'https://developer.huawei.com/repo/' }
+        maven { url = 'https://storage.googleapis.com/r8-releases/raw' }
     }
 }
 
