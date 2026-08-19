@@ -390,6 +390,14 @@ public class SessionStore implements
         return result;
     }
 
+    public ArrayList<Session> getInactiveSessions(boolean aPrivateMode) {
+        ArrayList<Session> sessions = getSortedSessions(aPrivateMode);
+
+        sessions.removeIf(session -> session.isActive() || session.isWebExtensionSession());
+
+        return sessions;
+    }
+
     public void setPermissionDelegate(PermissionDelegate delegate) {
         mPermissionDelegate = delegate;
     }
