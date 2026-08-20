@@ -15,12 +15,9 @@ if (getGradle().getStartParameter().getTaskRequests().toString() =~ /[Hh]vr/
 }
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    project.exec {
+    return providers.exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+    }.standardOutput.asText.get().trim()
 }
 
 def shouldUseStaticVersionCode = { ->
@@ -107,7 +104,7 @@ def GECKO_VERSION_NAME = '2.0'
 def CHROMIUM_VERSION_NAME = '1.4'
 
 android {
-    namespace 'com.igalia.wolvic'
+    namespace = 'com.igalia.wolvic'
     compileSdkVersion 36
     defaultConfig {
         applicationId "com.igalia.wolvic"
@@ -166,7 +163,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
     }
 
     java {
@@ -194,14 +191,14 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
+            signingConfig = getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
             buildConfigField 'String', 'OTEL_ENDPOINT', "\"${getOtelEndpoint()}\""
         }
         debug {
             applicationIdSuffix getDevApplicationIdSuffix()
-            pseudoLocalesEnabled true
+            pseudoLocalesEnabled = true
         }
     }
 
@@ -593,10 +590,10 @@ android {
 
     buildFeatures {
         flavorDimensions = [ "platform", "abi", "backend", "store" ]
-        viewBinding true
-        prefab true // enable prefab support for various SDK AAR
-        dataBinding true
-        buildConfig true
+        viewBinding = true
+        prefab = true // enable prefab support for various SDK AAR
+        dataBinding = true
+        buildConfig = true
     }
 
     lint {
