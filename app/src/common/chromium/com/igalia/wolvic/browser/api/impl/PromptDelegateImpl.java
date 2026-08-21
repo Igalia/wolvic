@@ -996,6 +996,8 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         private LoginSavePrompt mLoginSavePrompt;
         private LoginSelectPrompt mLoginSelectPrompt;
 
+        private boolean showLoginSelectPrompt;
+
         public void setListener(PasswordManager.Listener listener) {
             mPasswordManagerListener = listener;
         }
@@ -1011,7 +1013,11 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
         @Override
         public boolean isAutoFillEnabled(Context context) {
-            return SettingsStore.getInstance(context).isAutoFillEnabled();
+            // Chromium doesn't provide an autofill option.
+            // Instead, it provides a login selection prompt that let users decide whether to autofill the saved password or not.
+            // We'll only show this prompt if users enable autofill.
+            showLoginSelectPrompt = SettingsStore.getInstance(context).isAutoFillEnabled();
+            return true;
         }
 
         @Override
@@ -1049,6 +1055,10 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
         @Override
         public boolean onLoginSelect(PasswordForm[] forms) {
+            if (!showLoginSelectPrompt) {
+                return false;
+            }
+
             dismiss();
             assert mPasswordManagerListener != null;
 
@@ -1076,6 +1086,10 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
 
         @Override
         public boolean onLoginSelect(String[] username) {
+            if (!showLoginSelectPrompt) {
+                return false;
+            }
+
             dismiss();
             assert mAutofillManagerListener != null;
 
