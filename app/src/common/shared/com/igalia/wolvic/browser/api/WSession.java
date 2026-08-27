@@ -540,6 +540,15 @@ public interface WSession {
                 @NonNull final WWebRequestError error) {
             return null;
         }
+
+        @UiThread
+        default @Nullable
+        byte[] onLoadErrorData(
+                @NonNull final WSession session,
+                @Nullable final String uri,
+                @NonNull final WWebRequestError error) {
+            return null;
+        }
     }
 
     @Retention(RetentionPolicy.SOURCE)
