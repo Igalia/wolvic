@@ -77,8 +77,9 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public WResult<Void> clearData(long flags) {
-        // TODO: Implement
-        return WResult.fromValue(null);
+        // TODO: Implement actual data clearing against the Chromium engine.
+        return WResult.fromException(new UnsupportedOperationException(
+                "clearData is not implemented in the Chromium backend"));
     }
 
     @NonNull
