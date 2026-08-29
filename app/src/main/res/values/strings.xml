@@ -1724,6 +1724,14 @@
     <!-- This string labels the description in the Content Language header for available languages list. -->
     <string name="language_options_available_languages">Available Languages</string>
 
+    <!-- Accessibility content description for the list of preferred website content languages
+         in the 'Preferred Website Languages' dialog. -->
+    <string name="language_options_preferred_languages_content_description">List of preferred languages</string>
+
+    <!-- Accessibility content description for the list of available website content languages
+         in the 'Preferred Website Languages' dialog. -->
+    <string name="language_options_available_languages_content_description">List of available languages</string>
+
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Name</string>
 
