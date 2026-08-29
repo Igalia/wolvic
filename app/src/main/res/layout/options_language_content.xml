@@ -52,7 +52,7 @@
                     android:paddingEnd="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/app_name"
+                    android:contentDescription="@string/language_options_preferred_languages_content_description"
                     app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
 
@@ -76,7 +76,7 @@
                     android:paddingEnd="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/app_name"
+                    android:contentDescription="@string/language_options_available_languages_content_description"
                     app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
         </LinearLayout>
