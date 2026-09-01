@@ -31,6 +31,30 @@
 }
 
 # --------------------------------------------------------------------
+# Keep speech recognizer classes (loaded via Class.forName() in SpeechServices)
+# --------------------------------------------------------------------
+-keep class com.igalia.wolvic.speech.VoskSpeechRecognizer { *; }
+-keep class com.igalia.wolvic.speech.VoskModelManager { *; }
+-keep class com.igalia.wolvic.speech.HVRSpeechRecognizer { *; }
+
+# Keep Vosk library classes — the native libvosk.so calls back into these via JNI,
+# and the AAR ships no consumer ProGuard rules of its own.
+-keep class org.vosk.** { *; }
+
+# ====================================================================
+# BACKEND-SPECIFIC RULES
+#
+# This file is shared by every backend: build.gradle applies it to the
+# release build type, not to a flavor, so these rules are also parsed in
+# builds that do not contain the classes they name. That is harmless -- a
+# -keep for an absent class is a no-op -- so the grouping below is about
+# readability, not scoping.
+# ====================================================================
+
+# --------------------------------------------------------------------
+# GeckoView backend
+# --------------------------------------------------------------------
+# --------------------------------------------------------------------
 # REMOVE android speech dependency from GV
 # --------------------------------------------------------------------
 -assumenosideeffects class org.mozilla.gecko.SpeechSynthesisService {
@@ -47,17 +71,6 @@
 }
 
 # --------------------------------------------------------------------
-# Keep speech recognizer classes (loaded via Class.forName() in SpeechServices)
-# --------------------------------------------------------------------
--keep class com.igalia.wolvic.speech.VoskSpeechRecognizer { *; }
--keep class com.igalia.wolvic.speech.VoskModelManager { *; }
--keep class com.igalia.wolvic.speech.HVRSpeechRecognizer { *; }
-
-# Keep Vosk library classes — the native libvosk.so calls back into these via JNI,
-# and the AAR ships no consumer ProGuard rules of its own.
--keep class org.vosk.** { *; }
-
-# --------------------------------------------------------------------
 # Keep everything under org.mozilla.gecko.**. GeckoView ships a consumer rule
 # that keeps org.mozilla.geckoview.** but only @WrapForJNI-annotated members of
 # org.mozilla.gecko.**. R8 then strips public/protected members of internals
@@ -69,6 +82,27 @@
 # removed).
 # --------------------------------------------------------------------
 -keep class org.mozilla.gecko.** { *; }
+
+# --------------------------------------------------------------------
+# Chromium backend
+# --------------------------------------------------------------------
+# --------------------------------------------------------------------
+# AndroidX Window extensions
+#
+# Chromium's WindowLayoutInfoListener passes a lambda implementing the
+# platform provided Consumer interface to the system. R8 could not see that
+# the desugared lambda's accept(Object) overrides anything and stripped it,
+# so startup crashes with AbstractMethodError. No -keep can fix that, since
+# R8 synthesises the lambda class after keep rules are matched. The fix
+# is the androidx.window.extensions.core:core dependency in build.gradle.
+# --------------------------------------------------------------------
+-keep interface androidx.window.extensions.core.util.function.Consumer {
+    <methods>;
+}
+
+# ====================================================================
+# End of backend-specific rules
+# ====================================================================
 
 # --------------------------------------------------------------------
 # Keep classes from FxR

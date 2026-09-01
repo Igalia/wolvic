@@ -746,6 +746,11 @@ dependencies {
     if (isChromiumAvailable()) {
         chromiumImplementation fileTree(dir: gradle."localProperties.chromium_aar", include: ['*.aar'])
         chromiumImplementation 'androidx.fragment:fragment:1.8.6'
+        // Needed so R8 can resolve androidx.window.extensions.core.util.function.Consumer,
+        // the platform-provided interface that Chromium's WindowLayoutInfoListener
+        // implements with a lambda. Without it R8 strips the lambda's accept(Object)
+        // and startup dies with AbstractMethodError. See app/proguard-rules.pro.
+        chromiumImplementation 'androidx.window.extensions.core:core:1.0.0'
     }
 
     // webkit
