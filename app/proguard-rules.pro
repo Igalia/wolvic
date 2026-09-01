@@ -118,6 +118,14 @@
 -keep class com.huawei.hvr.**{*;}
 -keep class com.huawei.hmf.**{*;}
 
+# ---------------------------------------------------------------------
+# UIWidget.createChild() instantiates widgets reflectively via
+# aChildClassName.getConstructor(new Class[]{ Context.class }).
+#----------------------------------------------------------------------
+-keepclassmembers class * extends com.igalia.wolvic.ui.widgets.UIWidget {
+    public <init>(android.content.Context);
+}
+
 -dontwarn **
 -target 1.7
 -dontusemixedcaseclassnames
