@@ -100,6 +100,23 @@
     <methods>;
 }
 
+# --------------------------------------------------------------------
+# Keep the fields of the chromium glue objects.
+#
+# Objects like TabWebContentsDelegate and TabWebContentsObserver are handed to
+# Chromium's native side, which keeps only a *weak* global ref to them. The Java
+# field that stores them (e.g. TabImpl.mTabWebContentsDelegate) is never read
+# back, so R8's optimizer removes it as write-only -- the object then has no
+# strong referrer, gets collected, and every native->Java callback on it turns
+# into a silent no-op. Observed symptom: video fullscreen never engages, because
+# WebContentsDelegateAndroid::EnterFullscreenModeForTab finds a dead weak ref and
+# returns without ever calling enterFullscreenModeForTab(). No exception, no log.
+# Pinning the fields keeps the referents alive.
+# --------------------------------------------------------------------
+-keepclassmembers class com.igalia.wolvic.browser.api.impl.** {
+    <fields>;
+}
+
 # ====================================================================
 # End of backend-specific rules
 # ====================================================================
