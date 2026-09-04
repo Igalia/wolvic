@@ -63,7 +63,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/header"
             android:layout_alignParentTop="true"
-            android:contentDescription="System notifications"
+            android:contentDescription="@string/notifications_list_content_description"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:visibleGone="@{!notificationsViewModel.isLoading &amp;&amp; !notificationsViewModel.isEmpty}"

@@ -168,7 +168,7 @@
                     android:id="@+id/insecureIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:contentDescription="SSL icon"
+                    android:contentDescription="@string/insecure_connection_content_description"
                     android:src="@drawable/ic_icon_security_state_insecure"
                     app:visibleGone="@{viewmodel.isInsecureVisible}" />
             </LinearLayout>
