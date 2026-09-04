@@ -186,6 +186,14 @@
     <!-- This string is the header for the list of custom search engines -->
     <string name="custom_search_engines_list_header">Custom Search Engines</string>
 
+    <!-- Accessibility content description for the list of user-defined search engines in the
+         'Custom Search Engines' settings panel. -->
+    <string name="custom_search_engines_list_content_description">List of custom search engines</string>
+
+    <!-- Accessibility content description for the icon at the end of each row of the custom
+         search engines list. Activating it deletes that custom search engine. -->
+    <string name="custom_search_engine_item_delete_content_description">Delete custom search engine</string>
+
     <!-- Validation error messages for custom search engines -->
     <string name="search_engine_error_url_required">URL is required</string>
     <string name="search_engine_error_url_placeholder">URL must contain %s or {searchTerms} placeholder</string>
@@ -1243,6 +1251,10 @@
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Loading Bookmarks</string>
 
+    <!-- Accessibility content description for the list of bookmarked websites shown in the
+         'Bookmarks' panel of the library. -->
+    <string name="bookmarks_list_content_description">List of bookmarks</string>
+
     <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
     <string name="bookmarks_mobile_folder_title">Mobile Bookmarks</string>
 
@@ -1316,6 +1328,10 @@
     <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
     <string name="history_loading">Loading History</string>
 
+    <!-- Accessibility content description for the list of previously visited websites shown in
+         the 'History' panel of the library. -->
+    <string name="history_list_content_description">List of visited websites</string>
+
     <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
     <string name="history_section_today">Today</string>
 
@@ -1343,6 +1359,10 @@
 
     <!-- This string is displayed in the middle of the downloads list while the downloads is being loaded. -->
     <string name="downloads_loading">Loading Downloads</string>
+
+    <!-- Accessibility content description for the list of downloaded files shown in the
+         'Downloads' panel of the library. -->
+    <string name="downloads_list_content_description">List of downloaded files</string>
 
     <!-- This string is displayed in the "Delete All" button in the downloads list.
          When pressed the all the downloads in the list are deleted both from the list and the disk. -->
@@ -1387,6 +1407,9 @@
 
     <!-- This string is displayed in the middle of the addons list while the addons is being loaded. -->
     <string name="addons_loading">Loading Add-ons</string>
+
+    <!-- Accessibility content description for the list of add-ons shown in the 'Add-ons' panel. -->
+    <string name="addons_list_content_description">List of add-ons</string>
 
     <!-- This string is displayed under the addons title in the addons list. -->
     <string name="addons_description">Add-ons Description</string>
@@ -1510,6 +1533,10 @@
     <!-- This string is displayed at the bottom of the addon permissions list view. When clicked it will open a new tab with the addons permissions SUMO page -->
     <string name="addons_permissions_learn_more">Learn more about permissions</string>
 
+    <!-- Accessibility content description for the list of permissions required by an add-on,
+         shown in the add-on permissions view. -->
+    <string name="addons_permissions_list_content_description">List of add-on permissions</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Mozilla account. -->
     <string name="fxa_sync">Sync</string>
@@ -1594,6 +1621,10 @@
     <!-- This string is displayed in the System Notifications List while it is being loaded. -->
     <string name="notifications_loading">Loading Notifications</string>
 
+    <!-- Accessibility content description for the list of system notifications shown in the
+         'Notifications' panel. -->
+    <string name="notifications_list_content_description">List of notifications</string>
+
     <!-- This string is displayed as the title of the Web Apps List, which contains
          the Web Apps saved by the user. -->
     <string name="web_apps_title">Web Apps</string>
@@ -1653,6 +1684,10 @@
 
     <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
     <string name="privacy_options_saved_logins_list_header">Saved logins:</string>
+
+    <!-- Accessibility content description for the list of saved logins in the 'Saved Logins'
+         settings panel. -->
+    <string name="privacy_options_saved_logins_list_content_description">List of saved logins</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
          when there are saved logins. -->
@@ -1838,6 +1873,11 @@
 
     <!-- This string appears in the WebXR interstitial. -->
     <string name="webxr_interstitial_how_to_continue_1">Press any other button to continue</string>
+
+    <!-- Accessibility content description for the warning icon shown in the browser's navigation
+         bar and title bar. The icon is only displayed when the connection to the current site is
+         not secure. -->
+    <string name="insecure_connection_content_description">Connection is not secure</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
@@ -2508,6 +2548,10 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <!-- This string is shown in the "settings" button of the select login dialog. When pressed the saved logins settings panel would be displayed.-->
     <string name="autofill_dialog_use_login_settings_button">Settings…</string>
 
+    <!-- Accessibility content description for the list of saved logins shown in the dialog that
+         lets the user pick a login to fill in. -->
+    <string name="autofill_dialog_use_login_list_content_description">List of saved logins to choose from</string>
+
     <!-- This string is shown in the saved logins list items for autogenerated logins.-->
     <string name="autofill_item_autogenerated">Autogenerated</string>
 
@@ -2729,6 +2773,14 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <string name="controller_options_click_to_select">Click</string>
     <string name="controller_options_hover_to_select">Hover</string>
     <string name="announcements_title">Announcements</string>
+
+    <!-- Accessibility content description for the list of the user's most visited websites,
+         shown in the new tab view. -->
+    <string name="new_tab_top_sites_list_content_description">List of most visited sites</string>
+
+    <!-- Accessibility content description for the list of featured immersive experiences,
+         shown in the new tab view. -->
+    <string name="new_tab_experiences_list_content_description">List of featured experiences</string>
 
     <!-- Shown in the controller options view when disabling the hand tracking switch -->
     <string name="disable_hand_tracking_dialog_body">Hand tracking is disabled temporarily. It will be automatically re-enabled on next launch. This option is not persistent on purpose to avoid issues when controllers are unavailable.</string>

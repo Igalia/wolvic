@@ -84,7 +84,7 @@
 
             <ImageView
                 android:id="@+id/trash"
-                android:contentDescription="Delete custom search engine"
+                android:contentDescription="@string/custom_search_engine_item_delete_content_description"
                 android:layout_width="@dimen/library_item_row_height"
                 android:layout_height="@dimen/library_item_row_height"
                 android:layout_gravity="center_vertical|end"

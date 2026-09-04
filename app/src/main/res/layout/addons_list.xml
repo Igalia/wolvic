@@ -31,7 +31,7 @@
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Addons List"
+            android:contentDescription="@string/addons_list_content_description"
             android:orientation="vertical"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"

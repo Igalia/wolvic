@@ -79,7 +79,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_above="@+id/header"
-            android:contentDescription="Downloads"
+            android:contentDescription="@string/downloads_list_content_description"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="LinearLayoutManager"

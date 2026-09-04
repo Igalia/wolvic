@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/asphalt"
-                    android:contentDescription="Logins List"
+                    android:contentDescription="@string/privacy_options_saved_logins_list_content_description"
                     android:paddingEnd="15dp"
                     app:layoutManager="LinearLayoutManager" />
             </LinearLayout>
