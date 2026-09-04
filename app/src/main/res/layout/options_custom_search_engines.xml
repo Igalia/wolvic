@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/asphalt"
-                    android:contentDescription="Search Engines List"
+                    android:contentDescription="@string/custom_search_engines_list_content_description"
                     android:paddingEnd="15dp"
                     app:layoutManager="LinearLayoutManager" />
             </LinearLayout>

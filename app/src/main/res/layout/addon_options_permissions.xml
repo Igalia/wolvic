@@ -34,7 +34,7 @@
                         style="@style/customRecyclerViewStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:contentDescription="Addons List"
+                        android:contentDescription="@string/addons_permissions_list_content_description"
                         android:paddingEnd="20dp"
                         android:fadingEdgeLength="60dp"
                         android:requiresFadingEdge="vertical"

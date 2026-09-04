@@ -52,7 +52,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="SSL icon"
+                android:contentDescription="@string/insecure_connection_content_description"
                 android:duplicateParentState="true"
                 android:padding="5dp"
                 android:src="@drawable/ic_icon_security_state_insecure"
