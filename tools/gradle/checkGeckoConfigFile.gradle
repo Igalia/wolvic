@@ -1,0 +1,42 @@
+// This Source Code Form is subject to the terms of the MPL, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can
+// obtain one at http://mozilla.org/MPL/2.0/.
+
+// SessionUtils.prepareConfigurationPath() copies res/raw/fxr_config.yaml to the
+// Gecko configuration file and, when launching directly into immersive mode,
+// appends two extra prefs to it verbatim. That append relies on the resource
+// ending with a newline, which is invisible when reading the file: without it the
+// appended prefs are concatenated onto the last line, producing something like
+//     some.pref: true  dom.vr.require-gesture: false
+// which is not valid YAML.
+
+def geckoConfigFile = file("${projectDir}/src/main/res/raw/fxr_config.yaml")
+
+tasks.register('checkGeckoConfigFile') {
+    description = 'Verifies that fxr_config.yaml can be safely appended to at runtime.'
+    group = 'verification'
+
+    inputs.file geckoConfigFile
+    // This marker only lets Gradle skip the task when the input has not changed.
+    outputs.upToDateWhen { true }
+
+    doLast {
+        if (!geckoConfigFile.getText('UTF-8').endsWith('\n')) {
+            throw new GradleException(
+                    "${geckoConfigFile.name} must end with a newline, because " +
+                    "SessionUtils.prepareConfigurationPath() appends prefs to it. " +
+                    "Without it the appended prefs are concatenated onto the last " +
+                    "line and GeckoView silently discards the whole file.")
+        }
+    }
+}
+
+// Only the Gecko backend reads this file, so leave the other backends alone.
+android.applicationVariants.configureEach { variant ->
+    def backend = variant.productFlavors.find { it.dimension == 'backend' }
+    if (backend?.name == 'gecko') {
+        variant.preBuildProvider.configure {
+            dependsOn 'checkGeckoConfigFile'
+        }
+    }
+}

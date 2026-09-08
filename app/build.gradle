@@ -6,6 +6,7 @@ plugins {
 
 apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
+apply from: "$project.rootDir/tools/gradle/checkGeckoConfigFile.gradle"
 apply plugin: 'kotlin-android'
 
 // Apply AGConnect plugin only for Huawei builds
