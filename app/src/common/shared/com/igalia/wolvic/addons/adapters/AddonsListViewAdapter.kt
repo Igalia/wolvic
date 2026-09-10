@@ -308,25 +308,25 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal data class Section(@StringRes val title: Int)
+    internal data class Section(@param:StringRes val title: Int)
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal data class NotYetSupportedSection(@StringRes val title: Int)
+    internal data class NotYetSupportedSection(@param:StringRes val title: Int)
 
     /**
      * Allows to customize how items should look like.
      */
     data class Style(
-        @ColorRes
+        @param:ColorRes
         val sectionsTextColor: Int? = null,
-        @ColorRes
+        @param:ColorRes
         val addonNameTextColor: Int? = null,
-        @ColorRes
+        @param:ColorRes
         val addonSummaryTextColor: Int? = null,
         val sectionsTypeFace: Typeface? = null,
-        @ColorRes
+        @param:ColorRes
         val addonBackgroundIconColor: Int? = null,
-        @DrawableRes
+        @param:DrawableRes
         val addonAllowPrivateBrowsingLabelDrawableRes: Int? = null
     ) {
         internal fun maybeSetSectionsTextColor(textView: TextView) {
