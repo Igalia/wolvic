@@ -1,3 +1,23 @@
 {
-  "announcements": []
+  "announcements": [
+    {
+      "id": "2026-09-10_001",
+      "date": "2026-09-10",
+      "title": {
+        "en": "Join the Open Beta for Wolvic!",
+        "es": "Únete al programa Beta de Wolvic!",
+        "gl": "Únete ao programa Beta de Wolvic!",
+        "fr": "Rejoignez la version bêta ouverte de Wolvic!",
+        "pt": "Junte-se ao programa Beta do Wolvic!"
+      },
+      "body": {
+        "en": "We'd love your feedback on our upcoming new release of Wolvic. Please open the link to request to join the beta release channel to get early access to pre-release builds of Wolvic. Your feedback will help us improve the browser before the official release.",
+        "es": "Nos encantaría recibir tus comentarios sobre nuestra próxima nueva versión de Wolvic. Por favor, abre el enlace para solicitar unirte al canal de lanzamiento beta y obtener acceso anticipado a las versiones preliminares de Wolvic. Tus comentarios nos ayudarán a mejorar el navegador antes del lanzamiento oficial.",
+        "gl": "Encantaríanos recibir os teus comentarios sobre a nosa próxima nova versión de Wolvic. Por favor, abre o enlace para solicitar unirte ao canal de lanzamento beta e obter acceso anticipado ás versións preliminares de Wolvic. Os teus comentarios axudarannos a mellorar o navegador antes do lanzamento oficial.",
+        "fr": "Nous aimerions avoir vos retours sur notre prochaine nouvelle version de Wolvic. Veuillez ouvrir le lien pour demander à rejoindre le canal de version bêta afin d'obtenir un accès anticipé aux versions préliminaires de Wolvic. Vos retours nous aideront à améliorer le navigateur avant la sortie officielle.",
+        "pt": "Adoraríamos receber o seu feedback sobre a nossa próxima nova versão do Wolvic. Por favor, abra o link para solicitar a adesão ao canal de lançamento beta e obter acesso antecipado às versões pré-lançamento do Wolvic. O seu feedback nos ajudará a melhorar o navegador antes do lançamento oficial."
+      },
+      "link": "https://www.meta.com/s/7bFqvvFVs"
+    }
+  ]
 }
