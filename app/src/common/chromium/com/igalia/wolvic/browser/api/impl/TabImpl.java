@@ -76,6 +76,10 @@ public class TabImpl extends Tab {
         mPaymentHandlerCompositorView = compositorView;
     }
 
+    public WebContents getWebContents() {
+        return mWebContents;
+    }
+
     public WebContents getActiveWebContents() {
         return mPaymentHandlerWebContents != null ? mPaymentHandlerWebContents : mWebContents;
     }
