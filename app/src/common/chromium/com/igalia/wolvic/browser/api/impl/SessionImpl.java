@@ -71,6 +71,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
             assert mTab == null;
             mTab = new TabImpl(
                     mRuntime.getContainerView().getContext(), SessionImpl.this, mWebContents);
+            mSettings.setWebContents(mTab.getWebContents());
             if (mGetSessionFinderCallback != null) {
                 createSessionFinderIfNeeded();
                 mGetSessionFinderCallback.onFinderAvailable(mSessionFinder);
@@ -161,6 +162,7 @@ public class SessionImpl implements WSession, DownloadManagerBridge.Delegate {
     @Override
     public void close() {
         mRuntime.unregisterCallback(mReadyCallback);
+        mSettings.setWebContents(null);
         mTab.destroy();
         mTab = null;
     }

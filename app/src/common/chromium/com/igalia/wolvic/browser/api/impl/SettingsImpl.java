@@ -2,9 +2,9 @@ package com.igalia.wolvic.browser.api.impl;
 
 import androidx.annotation.Nullable;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.browser.api.WSessionSettings;
 
+import org.chromium.content_public.browser.WebContents;
 import org.chromium.wolvic.SessionSettings;
 
 public class SettingsImpl implements WSessionSettings {
@@ -21,6 +21,11 @@ public class SettingsImpl implements WSessionSettings {
 
     public SettingsImpl(boolean aPrivateMode) {
         mPrivateMode = aPrivateMode;
+    }
+
+    /** Binds the settings to the WebContents of the session, or unbinds them. */
+    public void setWebContents(@Nullable WebContents webContents) {
+        mSessionSettings.setWebContents(webContents);
     }
 
     @Override
@@ -84,7 +89,10 @@ public class SettingsImpl implements WSessionSettings {
 
     @Override
     public void setViewportMode(int value) {
-        // TODO: implement
+        // Not applied: the web preferences that would carry it,
+        // viewport_meta_enabled and viewport_style, broke page layout when they
+        // were tried. Store the value so the getter answers what was set.
+        mViewportMode = value;
     }
 
     @Override
@@ -124,7 +132,8 @@ public class SettingsImpl implements WSessionSettings {
     }
 
     public String getDefaultUserAgent(int mode) {
-        return mSessionSettings.getDefaultUserAgent(toUserAgentMode(mode)) + " Wolvic/" + BuildConfig.VERSION_NAME;
+        // The product token is added natively, see RuntimeImpl.
+        return mSessionSettings.getDefaultUserAgent(toUserAgentMode(mode));
     }
 
     private SessionSettings.UserAgentMode toUserAgentMode(int mode) {

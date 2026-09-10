@@ -203,6 +203,11 @@ public class RuntimeImpl implements WRuntime {
         // Enable HTML-in-Canvas, chrome://flags/#canvas-draw-element (experimental).
         CommandLine.getInstance().appendSwitchWithValue("enable-blink-features", "CanvasDrawElement");
 
+        // Every user agent Wolvic builds carries this token, including the ones
+        // built natively for requests that do not belong to a session.
+        CommandLine.getInstance().appendSwitchWithValue(
+                "wolvic-product", "Wolvic/" + BuildConfig.VERSION_NAME);
+
         setupWebGLMSAA();
         DeviceUtils.updateDeviceSpecificUserAgentSwitch(context);
         LibraryLoader.getInstance().ensureInitialized();
