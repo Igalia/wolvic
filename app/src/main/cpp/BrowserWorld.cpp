@@ -532,7 +532,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     }
 
     if (controller.pointer) {
-      controller.pointer->SetVisible(hitWidget.get() != nullptr && controller.hasAim);
+      const bool isMovingWindow = lockMode == LockMode::CONTROLLER;
+      controller.pointer->SetVisible(!isMovingWindow && hitWidget.get() != nullptr && controller.hasAim);
       controller.pointer->SetHitWidget(hitWidget);
       if (hitWidget && controller.hasAim) {
         vrb::Matrix translation = vrb::Matrix::Translation(hitPoint);
