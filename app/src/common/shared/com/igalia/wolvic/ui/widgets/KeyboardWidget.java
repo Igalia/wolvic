@@ -1340,7 +1340,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         final InputConnection connection = mInputConnection;
         if (connection != null) {
             if (isAttachToWindowWidget()) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                if (event.isSystem()) {
                     return false;
                 }
                 // Only forward to Web engine and dismiss the VR keyboard for physical keyboard
