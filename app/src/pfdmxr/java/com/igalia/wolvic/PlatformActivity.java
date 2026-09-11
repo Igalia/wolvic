@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -32,10 +31,6 @@ public class PlatformActivity extends NativeActivity {
             return true;
         }
         return false;
-    }
-
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        return true;
     }
 
     public static boolean isPositionTrackingSupported() {

@@ -11,7 +11,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -35,10 +34,6 @@ public class PlatformActivity extends ComponentActivity {
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
         return false;
-    }
-
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        return true;
     }
 
     public static boolean isPositionTrackingSupported() {

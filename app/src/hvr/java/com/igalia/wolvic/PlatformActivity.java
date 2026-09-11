@@ -15,7 +15,6 @@ import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.os.Build;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -63,10 +62,6 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
     public static boolean filterPermission(final String aPermission) {
         return false;
-    }
-
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        return true;
     }
 
     public static boolean isPositionTrackingSupported() {

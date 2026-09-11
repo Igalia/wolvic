@@ -28,7 +28,6 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -92,10 +91,6 @@ public class PlatformActivity extends FragmentActivity implements SensorEventLis
     @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
         return false;
-    }
-
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        return true;
     }
 
     public static boolean isPositionTrackingSupported() {

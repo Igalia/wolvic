@@ -7,7 +7,6 @@ package com.igalia.wolvic;
 
 import android.app.NativeActivity;
 import android.content.Intent;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -19,11 +18,6 @@ public class PlatformActivity extends NativeActivity {
     public static boolean filterPermission(final String aPermission) {
         // Dummy implementation.
         return false;
-    }
-
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        // Dummy implementation.
-        return true;
     }
 
     public static boolean isPositionTrackingSupported() {
