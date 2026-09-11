@@ -1796,7 +1796,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_latin_auto_complete">Autocomplétion avec le clavier latin</string>
     <string name="display_options_head_lock">Activer le Head Lock</string>
     <string name="display_options_windows_distance">Distance des fenêtres</string>
-    <string name="experimental_features">Fonctionnalités expérimentales</string>
     <string name="controller_options_haptic_feedback">Retour haptique</string>
     <string name="developer_options_center_windows">Centrer les fenêtres verticalement</string>
     <string name="fxa_account_options_device_name">Nom de l\'appareil</string>

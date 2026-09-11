@@ -2163,7 +2163,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tray_status_headset">Cuffie: %1$s</string>
 
     <string name="new_tab">Nuova scheda</string>
-    <string name="private_tab">Nuova scheda anonima</string>
     <string name="close_tab">Chiudi scheda</string>
 
 </resources>
