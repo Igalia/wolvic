@@ -1572,7 +1572,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="bypass_cache_on_reload_switch">Ota välimuistin ohitus käyttöön uudelleenladatessa</string>
     <string name="developer_options_servo">Ota Servo käyttöön</string>
     <string name="developer_options_clear_user_data_description">Kaikki käyttäjätiedot</string>
-    <string name="experimental_features">Kokeelliset ominaisuudet</string>
     <string name="developer_options_display_dpi">Näytön DPI:</string>
     <string name="privacy_options_tracking_off_description">Salli jokaisen sivun seurata sinua verkossa kerätäkseen selaustottumuksiasi ja mielenkiinnonkohteitasi.</string>
     <string name="developer_options_foveated_app">Foveation-taso (sovellus)</string>

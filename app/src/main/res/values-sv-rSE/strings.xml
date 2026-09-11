@@ -1794,7 +1794,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="voice_input_start">Vad skulle du vilja mata in?</string>
     <string name="device_name">%1$s på %2$s</string>
     <string name="developer_options_center_windows">Centrera fönster vertikalt</string>
-    <string name="experimental_features">Experimentella funktioner</string>
     <string name="controller_options_haptic_feedback">Haptisk feedback</string>
     <string name="fxa_account_options_device_name">Enhetsnamn</string>
     <string name="move_tooltip">Flytta</string>
@@ -1823,8 +1822,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tabs_bookmark_selected">Bokmärk flikar</string>
     <string name="developer_options_pointer_mode_tracked_eye">Ögonspårning</string>
     <string name="eye_tracking_permission_title">Behörigheter för ögonspårning</string>
-    <string name="incompatible_os_version_title">Inkompatibel OS-version</string>
-    <string name="incompatible_os_version_message">Din OS-version stöds inte. Denna version av Wolvic kräver minst version %1$s</string>
     <string name="vision_glass_realign_dialog_explanation">För att ställa in handkontrollen, vänligen rikta telefonen rakt fram och tryck på knappen.</string>
     <string name="controller_options_pointer_mode">Blickläge</string>
     <string name="developer_options_pointer_mode_tracked_pointer">Pekare</string>

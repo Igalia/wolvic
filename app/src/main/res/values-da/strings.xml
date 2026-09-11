@@ -1683,7 +1683,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_latin_auto_complete">Automatisk udfyldning af latinsk tastaturinput</string>
     <string name="display_options_head_lock">Aktivér hovedlås</string>
     <string name="display_options_windows_distance">Windows Afstand</string>
-    <string name="experimental_features">Eksperimentelle funktioner</string>
     <string name="display_options_start_with_passthrough">Start med Passthrough-tilstand</string>
     <string name="new_tab">Nyt faneblad</string>
     <string name="new_private_tab">Nyt privat faneblad</string>

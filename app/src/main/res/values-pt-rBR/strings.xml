@@ -770,7 +770,6 @@
     <string name="display_options_latin_auto_complete">Teclado em Latim com Autocompletar</string>
     <string name="display_options_head_lock">Habilitar bloqueio de cabeça</string>
     <string name="display_options_windows_distance">Distância das Janelas</string>
-    <string name="experimental_features">Características Experimentais</string>
     <string name="controller_options_haptic_feedback">Feedback háptico</string>
     <string name="permission_camera_rationale">Usar imagens do ambiente ao seu redor de você requer permissão para usar sua câmera.</string>
     <string name="permission_read_external_storage_rationale">Abrir arquivos em seu dispositivo requer permissão para ler seu armazenamento externo.</string>
@@ -789,9 +788,7 @@
     <string name="phone_ui_usb_alert_dialog_description">Falha para obter permissões USB. Tente desconectar o óculos, conecte-o novamente e reinicie o Wolvic.</string>
     <string name="vision_glass_error_message">Aconteceu um erro.
 \nPor favor, tente novamente.</string>
-    <string name="incompatible_os_version_message">A versão atual do sistema não é suportada. O Wolvic requer pelo menos a versão %1$s</string>
     <string name="tabs_bookmark_selected">Adicionar aos favoritos</string>
-    <string name="incompatible_os_version_title">Versão não suportada</string>
     <string name="controller_options_handtracking">Rastreamento de mãos</string>
     <string name="vision_glass_realign_dialog_explanation">Para configurar o controlador, aponte o seu telefone para a frente e toque no botão.</string>
     <string name="new_tab">Nova aba</string>

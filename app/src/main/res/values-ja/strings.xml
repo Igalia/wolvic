@@ -1686,7 +1686,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="display_options_latin_auto_complete">ラテン文字キーボード入力の自動補完</string>
     <string name="display_options_head_lock">ヘッドロックを有効にする</string>
     <string name="display_options_windows_distance">ウィンドウ間の距離</string>
-    <string name="experimental_features">実験的機能</string>
     <string name="controller_options_haptic_feedback">感触フィードバック</string>
     <string name="fxa_account_options_device_name">デバイスの名前</string>
     <string name="voice_input_start">何を入力しますか？</string>
@@ -1824,8 +1823,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="vision_glass_error_message">エラーが発生しました。\nもう一度お試しください。</string>
     <string name="controller_options_handtracking">ハンドトラッキング</string>
     <string name="tabs_bookmark_selected">タブをブックマークに追加</string>
-    <string name="incompatible_os_version_title">サポートされていないバージョンです</string>
-    <string name="incompatible_os_version_message">現在のシステムバージョンはサポートされていません。Wolvicは少なくともバージョン%1$sが必要です。</string>
     <string name="vision_glass_realign_dialog_explanation">コントローラーを設定するには、電話をまっすぐ前に向けてボタンをタップしてください。</string>
     <string name="display_options_tabs_location">タブの位置</string>
     <string name="display_options_tabs_location_tray">ツールトレイ</string>

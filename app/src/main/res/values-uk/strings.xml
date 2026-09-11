@@ -784,7 +784,6 @@
     <string name="display_options_windows_distance">Відступи між вікнами</string>
     <string name="controller_options_haptic_feedback">Тактильний зворотний зв\'язок</string>
     <string name="fxa_account_options_device_name">Найменування пристрою</string>
-    <string name="experimental_features">Експериментальні можливості</string>
     <string name="move_tooltip">Перемістити</string>
     <string name="display_options_sound_effect">Використовувати звукові ефекти</string>
     <string name="device_name">%1$s на %2$s</string>
@@ -809,8 +808,6 @@
     <string name="tabs_bookmark_selected">Додати вкладки в закладки</string>
     <string name="controller_options_pointer_mode">Режим погляду</string>
     <string name="eye_tracking_permission_title">Дозволи на відстеження очей</string>
-    <string name="incompatible_os_version_title">Несумісна версія ОС</string>
-    <string name="incompatible_os_version_message">Ваша версія ОС не підтримується. Ця версія Wolvic вимагає щонайменше версію %1$s</string>
     <string name="vision_glass_realign_dialog_explanation">Щоб налаштувати контролер, наведіть телефон прямо вперед і натисніть кнопку.</string>
     <string name="developer_options_pointer_mode_tracked_pointer">Вказівник</string>
     <string name="developer_options_pointer_mode_tracked_eye">Відстеження очей</string>
