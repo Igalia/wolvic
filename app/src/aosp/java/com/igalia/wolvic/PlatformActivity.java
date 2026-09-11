@@ -18,11 +18,6 @@ public class PlatformActivity extends GameActivity {
         return false;
     }
 
-    public static boolean isNotSpecialKey(KeyEvent event) {
-        // Dummy implementation.
-        return true;
-    }
-
     public static boolean isPositionTrackingSupported() {
         // Dummy implementation.
         return true;
