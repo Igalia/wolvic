@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "readdirp": "^3.6.0",
-    "sharp": "^0.35.0",
+    "sharp": "^0.35.4",
     "tmp": "0.2.7"
   }
 }
