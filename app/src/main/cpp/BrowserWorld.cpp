@@ -220,8 +220,9 @@ struct BrowserWorld::State {
 #endif
   TrackedKeyboardRendererPtr trackedKeyboardRenderer;
   float selectThreshold;
-  std::optional<vrb::Quaternion> windowInitialOrientation;
-  std::optional<vrb::Quaternion> previousWindowRelativeRotation;
+  std::optional<vrb::Quaternion> windowMoveStartOrientation;
+  std::optional<vrb::Quaternion> windowMoveAnchorRotation;
+  std::optional<vrb::Quaternion> previousWindowRotation;
   std::chrono::steady_clock::time_point lastTimeWindowDistanceComputation;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
@@ -1269,21 +1270,36 @@ BrowserWorld::StartFrame() {
         // matrix, as the distance is derived from the controller's position.
         ThrottledWindowDistanceComputation(reorientTransform);
 
-        if (!m.windowInitialOrientation)
-          m.windowInitialOrientation = vrb::Quaternion(reorientTransform);
-        Quaternion reorientQuaternion(reorientTransform);
-        Quaternion relativeRotation = reorientQuaternion.Inverse() * *m.windowInitialOrientation;
-        // Use SLERP to interpolate the current relative rotation with the previous one to smooth out sudden jumps
-        if (m.previousWindowRelativeRotation)
-          relativeRotation = vrb::Quaternion::Slerp(*m.previousWindowRelativeRotation,relativeRotation, 0.25f);
+        Quaternion controllerOrientation(reorientTransform);
+        if (!m.windowMoveStartOrientation) {
+          m.windowMoveStartOrientation = controllerOrientation;
+          // Anchor the gesture on the rotation the window already has. Reorient() assigns the
+          // reorientation matrix rather than accumulating into it, so without an anchor a zero
+          // rotation would mean the neutral orientation rather than "leave the window alone".
+          // **VERY IMPORTANT**: we invert it on purpose beacuse vrb::Quaternion(Matrix) and
+          // vrb::Matrix::Rotation() disagree on handedness, so Rotation(Quaternion(m)) yields the
+          // transpose of m. The inverse is what survives the round trip back through Reorient().
+          m.windowMoveAnchorRotation = vrb::Quaternion(m.device->GetReorientTransform()).Inverse();
+        }
+        // Turn the window by however much the controller has turned since this grab started (on top
+        // of where the window already was). Measuring from the start of the grab rather than from a
+        // fixed orientation is what keeps re-grabbing with the hand in a different pose (the usual
+        // case) from moving the window.
+        Quaternion rotation = (controllerOrientation.Inverse() * *m.windowMoveStartOrientation)
+                              * *m.windowMoveAnchorRotation;
+        if (m.previousWindowRotation) {
+          rotation = vrb::Quaternion::Slerp(*m.previousWindowRotation, rotation, 0.25f).Normalize();
+        }
 
-        reorientTransform = vrb::Matrix::Rotation(relativeRotation);
-        m.previousWindowRelativeRotation = std::move(relativeRotation);
+        reorientTransform = vrb::Matrix::Rotation(rotation);
+        m.previousWindowRotation = std::move(rotation);
         m.reorientRequested = true;
       }
       m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     } else {
-        m.previousWindowRelativeRotation.reset();
+        m.previousWindowRotation.reset();
+        m.windowMoveStartOrientation.reset();
+        m.windowMoveAnchorRotation.reset();
         m.windowMoveLastExtension.reset();
     }
     if (m.reorientRequested)
