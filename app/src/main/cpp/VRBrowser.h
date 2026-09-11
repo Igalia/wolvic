@@ -53,7 +53,7 @@ void OnAppFocusChanged(const bool aIsFocused);
 void SetEyeTrackingSupported(bool aIsSupported);
 void SetHandTrackingSupported(bool aIsSupported);
 void OnControllersAvailable();
-void ChangeWindowDistance(jfloat aDelta);
+void MoveWindowDistance(jfloat aMeters);
 void OnMaxCompositionLayersAvailable(jint aNumLayers);
 } // namespace VRBrowser;
 

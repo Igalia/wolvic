@@ -207,6 +207,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     // and restart into a fresh process. These guard against a restart storm if a backup is still active.
     private static final String KEY_RESTRICTED_MODE_RESTART = "restricted_mode_restart_uptime";
     private static final long RESTRICTED_RESTART_WINDOW_MS = 10_000L;
+    // How far the window travels for a given amount of hand travel. The distance range
+    // spanned by window_world_z_min..max is wider than a comfortable reach, so the hand
+    // needs amplifying to cover it: at 2.0 half a reach covers the whole range.
+    private static final float WINDOW_MOVE_GAIN = 2.0f;
 
     ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -2239,10 +2243,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    private void changeWindowDistance(float aDelta) {
-        float increment = 0.05f;
-        float clamped = Math.max(0.0f, Math.min(mSettings.getWindowDistance() + (aDelta > 0 ? increment : -increment), 1.0f));
-        mSettings.setWindowDistance(clamped);
+    private void moveWindowDistance(float aMeters) {
+        // Accumulated rather than applied from the distance the grab started at, so
+        // that the clamping below cannot wind up: an absolute value keeps growing past
+        // the end of the range and then has to be unwound before the window moves
+        // again. Reversing is still exact, as the increments telescope.
+        float range = Math.abs(WidgetPlacement.floatDimension(this, R.dimen.window_world_z_max)
+                - WidgetPlacement.floatDimension(this, R.dimen.window_world_z_min));
+        if (range <= 0)
+            return;
+        float distance = mSettings.getWindowDistance() + (aMeters * WINDOW_MOVE_GAIN) / range;
+        mSettings.setWindowDistance(Math.max(0.0f, Math.min(distance, 1.0f)));
     }
 
     private boolean supportsCompositionLayers() {

@@ -212,7 +212,7 @@ struct BrowserWorld::State {
   double lastBatteryLevelUpdate = -1.0;
   bool reorientRequested = false;
   LockMode lockMode = LockMode::NO_LOCK;
-  std::optional<vrb::Vector> lockModeLastPosition;
+  std::optional<float> windowMoveLastExtension;
 #if HVR
   bool wasButtonAppPressed = false;
 #elif defined(OCULUSVR) && defined(STORE_BUILD)
@@ -1175,29 +1175,34 @@ BrowserWorld::GetActiveControllerOrientation() const {
 
 void
 BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& controllerTransform) {
-    const float kThrottleMs = 100;
-    const float kDirectionTolerance = 0.75f;
+    // Applying the distance relayouts every widget, so it is too expensive to do
+    // once per frame. 30Hz is frequent enough to look continuous.
+    const float kThrottleMs = 33;
     auto now = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - m.lastTimeWindowDistanceComputation).count();
     if (duration < kThrottleMs)
         return;
+    m.lastTimeWindowDistanceComputation = now;
 
-    auto currentPosition = controllerTransform.GetTranslation();
-    if (!m.lockModeLastPosition) {
-        m.lockModeLastPosition = currentPosition;
+    // Measure how far the controller is held out from the user: from the head, so that
+    // swinging the arm around to rotate the window hardly counts as pushing, and in the
+    // horizontal plane, so that raising or lowering the hand does not count at all. The
+    // controller's own axes are no use for this, as it reports the grip pose, which is
+    // tilted away from the direction the controller points.
+    auto toController = controllerTransform.GetTranslation() - m.device->GetHeadTransform().GetTranslation();
+    auto extension = vrb::Vector(toController.x(), 0.0f, toController.z()).Magnitude();
+
+    if (!m.windowMoveLastExtension) {
+        m.windowMoveLastExtension = extension;
         return;
     }
 
-    auto didMoveSignificantly = (currentPosition - *m.lockModeLastPosition).Magnitude() > 0.01f;
-    if (!didMoveSignificantly)
-        return;
-
-    auto forward = controllerTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
-    auto directionOfMovement = (currentPosition - *m.lockModeLastPosition).Normalize();
-    auto dotProduct = directionOfMovement.Dot(forward);
-    if (abs(dotProduct) > kDirectionTolerance)
-      VRBrowser::ChangeWindowDistance(dotProduct);
-    m.lockModeLastPosition = currentPosition;
+    // Report the change since the previous tick rather than since the grab started. An
+    // absolute measurement winds up past the ends of the range: once the distance
+    // clamps, every bit of further travel has to be unwound before the window moves
+    // again, which leaves the gesture looking dead once the arm has covered any ground.
+    VRBrowser::MoveWindowDistance(extension - *m.windowMoveLastExtension);
+    m.windowMoveLastExtension = extension;
 }
 
 void
@@ -1279,6 +1284,7 @@ BrowserWorld::StartFrame() {
       m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     } else {
         m.previousWindowRelativeRotation.reset();
+        m.windowMoveLastExtension.reset();
     }
     if (m.reorientRequested)
       relayoutWidgets = std::exchange(m.reorientRequested, false);
