@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.concurrent.CancellationException;
+import java.util.function.BiConsumer;
 
 public interface WResult<T> {
     /**
@@ -118,6 +119,27 @@ public interface WResult<T> {
     @NonNull <U> WResult<U> then(
             @Nullable final WResult.OnValueListener<T, U> valueListener,
             @Nullable final WResult.OnExceptionListener<U> exceptionListener);
+
+
+    /**
+     * Adds a consumer called when the {@link WResult} is completed either with a value or a
+     * {@link Throwable}, mirroring {@link java.util.concurrent.CompletableFuture#whenComplete}.
+     * On success the consumer receives the value and a null {@link Throwable}; on failure it
+     * receives a null value and the {@link Throwable}.
+     *
+     * @param consumer Called with (value, null) on success or (null, throwable) on failure.
+     * @return A new {@link WResult} that completes with the same value or {@link Throwable}
+     *     after the consumer runs.
+     */
+    default @NonNull WResult<T> whenComplete(@NonNull final BiConsumer<T, Throwable> consumer) {
+        return then(value -> {
+            consumer.accept(value, null);
+            return WResult.fromValue(value);
+        }, throwable -> {
+            consumer.accept(null, throwable);
+            return WResult.fromException(throwable);
+        });
+    }
 
 
     /**
