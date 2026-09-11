@@ -76,8 +76,8 @@ const char* const kSetHandTrackingSupported = "setHandTrackingSupported";
 const char* const kSetHandTrackingSupportedSignature = "(Z)V";
 const char* const kOnControllersAvailable = "onControllersAvailable";
 const char* const kOnControllersAvailableSignature = "()V";
-const char* const kChangeWindowDistance = "changeWindowDistance";
-const char* const kChangeWindowDistanceSignature = "(F)V";
+const char* const kMoveWindowDistance = "moveWindowDistance";
+const char* const kMoveWindowDistanceSignature = "(F)V";
 const char* const kOnMaxCompositionLayersAvailableName = "onMaxCompositionLayersAvailable";
 const char* const kOnMaxCompositionLayersAvailableSignature = "(I)V";
 
@@ -117,7 +117,7 @@ jmethodID sOnAppFocusChanged = nullptr;
 jmethodID sSetEyeTrackingSupported = nullptr;
 jmethodID sSetHandTrackingSupported = nullptr;
 jmethodID sOnControllersAvailable = nullptr;
-jmethodID sChangeWindowDistance = nullptr;
+jmethodID sMoveWindowDistance = nullptr;
 jmethodID sOnMaxCompositionLayersAvailable = nullptr;
 
 } // namespace
@@ -172,7 +172,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sSetEyeTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetEyeTrackingSupported, kSetEyeTrackingSupportedSignature);
   sSetHandTrackingSupported = FindJNIMethodID(sEnv, sBrowserClass, kSetHandTrackingSupported, kSetHandTrackingSupportedSignature);
   sOnControllersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnControllersAvailable, kOnControllersAvailableSignature);
-  sChangeWindowDistance = FindJNIMethodID(sEnv, sBrowserClass, kChangeWindowDistance, kChangeWindowDistanceSignature);
+  sMoveWindowDistance = FindJNIMethodID(sEnv, sBrowserClass, kMoveWindowDistance, kMoveWindowDistanceSignature);
   sOnMaxCompositionLayersAvailable = FindJNIMethodID(sEnv, sBrowserClass, kOnMaxCompositionLayersAvailableName, kOnMaxCompositionLayersAvailableSignature);
 }
 
@@ -222,7 +222,7 @@ VRBrowser::ShutdownJava() {
   sDisableLayers = nullptr;
   sEnv = nullptr;
   sAppendAppNotesToCrashReport = nullptr;
-  sChangeWindowDistance = nullptr;
+  sMoveWindowDistance = nullptr;
   sOnMaxCompositionLayersAvailable = nullptr;
 }
 
@@ -504,9 +504,9 @@ VRBrowser::OnControllersAvailable() {
 }
 
 void
-VRBrowser::ChangeWindowDistance(jfloat aDelta) {
-    if (!ValidateMethodID(sEnv, sActivity, sChangeWindowDistance, __FUNCTION__)) { return; }
-    sEnv->CallVoidMethod(sActivity, sChangeWindowDistance, aDelta);
+VRBrowser::MoveWindowDistance(jfloat aMeters) {
+    if (!ValidateMethodID(sEnv, sActivity, sMoveWindowDistance, __FUNCTION__)) { return; }
+    sEnv->CallVoidMethod(sActivity, sMoveWindowDistance, aMeters);
     CheckJNIException(sEnv, __FUNCTION__);
 }
 
