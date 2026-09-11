@@ -1174,7 +1174,7 @@ BrowserWorld::GetActiveControllerOrientation() const {
 }
 
 void
-BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform) {
+BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& controllerTransform) {
     const float kThrottleMs = 100;
     const float kDirectionTolerance = 0.75f;
     auto now = std::chrono::steady_clock::now();
@@ -1182,7 +1182,7 @@ BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTran
     if (duration < kThrottleMs)
         return;
 
-    auto currentPosition = reorientTransform.GetTranslation();
+    auto currentPosition = controllerTransform.GetTranslation();
     if (!m.lockModeLastPosition) {
         m.lockModeLastPosition = currentPosition;
         return;
@@ -1192,7 +1192,7 @@ BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTran
     if (!didMoveSignificantly)
         return;
 
-    auto forward = reorientTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
+    auto forward = controllerTransform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)).Normalize();
     auto directionOfMovement = (currentPosition - *m.lockModeLastPosition).Normalize();
     auto dotProduct = directionOfMovement.Dot(forward);
     if (abs(dotProduct) > kDirectionTolerance)
@@ -1260,6 +1260,10 @@ BrowserWorld::StartFrame() {
       OnReorient();
       auto reorientTransform = m.lockMode == LockMode::HEAD ? m.device->GetHeadTransform() : GetActiveControllerOrientation();
       if (m.lockMode == LockMode::CONTROLLER) {
+        // Must run before reorientTransform is replaced below by a rotation-only
+        // matrix, as the distance is derived from the controller's position.
+        ThrottledWindowDistanceComputation(reorientTransform);
+
         if (!m.windowInitialOrientation)
           m.windowInitialOrientation = vrb::Quaternion(reorientTransform);
         Quaternion reorientQuaternion(reorientTransform);
@@ -1271,8 +1275,6 @@ BrowserWorld::StartFrame() {
         reorientTransform = vrb::Matrix::Rotation(relativeRotation);
         m.previousWindowRelativeRotation = std::move(relativeRotation);
         m.reorientRequested = true;
-
-        ThrottledWindowDistanceComputation(reorientTransform);
       }
       m.device->Reorient(reorientTransform, m.lockMode == LockMode::HEAD ? DeviceDelegate::ReorientMode::SIX_DOF : DeviceDelegate::ReorientMode::NO_ROLL);
     } else {

@@ -104,7 +104,7 @@ private:
   void ProcessOVRPlatformEvents();
 #endif
   vrb::Matrix GetActiveControllerOrientation() const;
-  void ThrottledWindowDistanceComputation(const vrb::Matrix& reorientTransform);
+  void ThrottledWindowDistanceComputation(const vrb::Matrix& controllerTransform);
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
