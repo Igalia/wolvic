@@ -868,8 +868,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             mSurfaceWidth = aWidth;
             mSurfaceHeight = aHeight;
-            mWidth = (int) (aWidth / getPlacement().textureScale);
-            mHeight = (int) (aHeight / getPlacement().textureScale);
+            updateWidthAndHeightFromSurface(aWidth, aHeight);
             mTexture = aTexture;
             aTexture.setDefaultBufferSize(aWidth, aHeight);
             mSurface = new Surface(aTexture);
@@ -885,8 +884,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             mSurfaceWidth = aWidth;
             mSurfaceHeight = aHeight;
-            mWidth = (int) (aWidth / getPlacement().textureScale);
-            mHeight = (int) (aHeight / getPlacement().textureScale);
+            updateWidthAndHeightFromSurface(aWidth, aHeight);
             mSurface = aSurface;
             mFirstDrawCallback = aFirstDrawCallback;
             if (mSurface != null) {
@@ -895,6 +893,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mSession.surfaceDestroyed();
             }
         }
+    }
+
+    private void updateWidthAndHeightFromSurface(final int aSurfaceWidth, final int aSurfaceHeight) {
+        final float scale = getPlacement().density * getPlacement().textureScale;
+        if (scale <= 0) {
+            return;
+        }
+        mWidth = (int) (aSurfaceWidth / scale);
+        mHeight = (int) (aSurfaceHeight / scale);
     }
 
     private void callSurfaceChanged() {
@@ -912,8 +919,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mSurfaceWidth = aWidth;
         mSurfaceHeight = aHeight;
-        mWidth = (int) (aWidth / getPlacement().textureScale);
-        mHeight = (int) (aHeight / getPlacement().textureScale);
+        updateWidthAndHeightFromSurface(aWidth, aHeight);
         if (mTexture != null) {
             mTexture.setDefaultBufferSize(aWidth, aHeight);
         }
