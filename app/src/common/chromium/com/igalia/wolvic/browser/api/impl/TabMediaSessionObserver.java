@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
     private static final int UPDATE_POSITION_TIME_MS = 500;
 
     private @NonNull SessionImpl mSession;
+    private @NonNull final WebContents mWebContents;
     private WMediaSessionImpl mMediaSession = new WMediaSessionImpl();
     private MediaImageManager mMediaImageManager;
     private MediaMetadata mMetadata;
@@ -48,6 +50,7 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
         super(mediaSession);
 
         mSession = session;
+        mWebContents = webContents;
         mMediaImageManager =
                 new MediaImageManager(MediaNotificationImageUtils.MINIMAL_MEDIA_IMAGE_SIZE_PX,
                         MediaNotificationImageUtils.getIdealMediaImageSize());
@@ -123,9 +126,17 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
 
     public void onMediaFullscreen(boolean isFullscreen) {
         assert mMediaSession != null;
-        if (mSession.getMediaSessionDelegate() != null)
-            mSession.getMediaSessionDelegate().onFullscreen(
-                    mSession, mMediaSession, isFullscreen, null);
+        if (mSession.getMediaSessionDelegate() == null)
+            return;
+
+        WMediaSession.ElementMetadata metadata = null;
+        Rect videoSize = (isFullscreen && mWebContents && !mWebContents.isDestroyed()) ? mWebContents.getFullscreenVideoSize() : null;
+        if (videoSize != null && !videoSize.isEmpty()) {
+            double duration = mMediaPosition != null ? mMediaPosition.getDuration() / 1000.0 : 0;
+            metadata = new WMediaSession.ElementMetadata(null /* source */, duration,
+                    videoSize.width(), videoSize.height(), 1 /* audioTrackCount */, 1 /* videoTrackCount */);
+        }
+        mSession.getMediaSessionDelegate().onFullscreen(mSession, mMediaSession, isFullscreen, metadata);
     }
 
     /* package */ class WMediaSessionImpl implements WMediaSession {
