@@ -845,4 +845,12 @@
     <string name="controller_options_hover_to_select">Hover</string>
     <string name="announcements_title">Anúncios</string>
     <string name="disable_hand_tracking_dialog_body">O rastreamento manual está desativado temporariamente. Será automaticamente reativado no próximo lançamento. Esta opção não é persistente para evitar problemas quando os controladores não estão disponíveis.</string>
+    <string name="autofill_dialog_use_login_list_content_description">Lista de logins salvos</string>
+    <string name="downloads_list_content_description">Lista de arquivos baixados</string>
+    <string name="insecure_connection_content_description">A conexão não é segura</string>
+    <string name="privacy_options_saved_logins_list_content_description">Lista de logins salvos</string>
+    <string name="tabs_close_others">Fechar outras guias</string>
+    <string name="voice_download_failed">Falha no download: %1$s</string>
+    <string name="voice_download_model">Baixando o modelo de voz…</string>
+    <string name="voice_download_progress">Baixando o modelo %1$s</string>
 </resources>
