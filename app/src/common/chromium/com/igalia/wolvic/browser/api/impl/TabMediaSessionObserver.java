@@ -130,7 +130,7 @@ public class TabMediaSessionObserver extends MediaSessionObserver implements Med
             return;
 
         WMediaSession.ElementMetadata metadata = null;
-        Rect videoSize = (isFullscreen && mWebContents && !mWebContents.isDestroyed()) ? mWebContents.getFullscreenVideoSize() : null;
+        Rect videoSize = (isFullscreen && mWebContents != null && !mWebContents.isDestroyed()) ? mWebContents.getFullscreenVideoSize() : null;
         if (videoSize != null && !videoSize.isEmpty()) {
             double duration = mMediaPosition != null ? mMediaPosition.getDuration() / 1000.0 : 0;
             metadata = new WMediaSession.ElementMetadata(null /* source */, duration,
