@@ -140,8 +140,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
     private OverlayContentWidget mPaymentHandler;
-    private int mWidthBackup;
-    private int mHeightBackup;
+    private SurfaceSizing mSizingBeforeVRVideo;
     private int mBorderWidth;
     private Runnable mFirstDrawCallback;
     private boolean mIsInVRVideoMode;
@@ -674,14 +673,46 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         callSurfaceChanged();
     }
 
+    /**
+     * How the window was being sized before entering VR video mode. Stores the placement dimensions
+     * in dp, and the density/textureScale pair that turns those dp into texture pixels. VR video
+     * must be played at 1:1 scale (as video size is specified in actual pixels) so we should
+     * restore these values when exiting the video VR mode.
+     */
+    private static class SurfaceSizing {
+        private final int mWidth;
+        private final int mHeight;
+        private final float mDensity;
+        private final float mTextureScale;
+
+        SurfaceSizing(int aWidth, int aHeight, @NonNull WidgetPlacement aPlacement) {
+            mWidth = aWidth;
+            mHeight = aHeight;
+            mDensity = aPlacement.density;
+            mTextureScale = aPlacement.textureScale;
+        }
+
+        void restore(@NonNull WidgetPlacement aPlacement) {
+            aPlacement.density = mDensity;
+            aPlacement.textureScale = mTextureScale;
+            aPlacement.width = mWidth;
+            aPlacement.height = mHeight;
+        }
+    }
+
     public void enableVRVideoMode(int aVideoWidth, int aVideoHeight, boolean aResetBorder) {
-        if (!mIsInVRVideoMode) {
-            mWidthBackup = mWidth;
-            mHeightBackup = mHeight;
+        final boolean enteringVRMode = !mIsInVRVideoMode;
+        if (enteringVRMode) {
+            mSizingBeforeVRVideo = new SurfaceSizing(mWidth, mHeight, mWidgetPlacement);
+            // From here on the placement holds video pixels, not dp, so the dp -> texture pixel
+            // conversion must not be applied to them.
+            mWidgetPlacement.density = 1.0f;
+            mWidgetPlacement.textureScale = 1.0f;
             mIsInVRVideoMode = true;
         }
         boolean borderChanged = aResetBorder && mBorderWidth > 0;
-        if (aVideoWidth == mWidth && aVideoHeight == mHeight && !borderChanged) {
+        // Never skip the first update: it is the one that propagates the scale change above.
+        if (!enteringVRMode && aVideoWidth == mWidth && aVideoHeight == mHeight && !borderChanged) {
             return;
         }
         if (aResetBorder) {
@@ -696,19 +727,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void disableVRVideoMode() {
-        if (!mIsInVRVideoMode || mWidthBackup == 0 || mHeightBackup == 0) {
+        if (!mIsInVRVideoMode) {
             return;
         }
         mIsInVRVideoMode = false;
 
+        final SurfaceSizing sizing = mSizingBeforeVRVideo;
+        mSizingBeforeVRVideo = null;
+        sizing.restore(mWidgetPlacement);
+
         // TODO: Fix the compositor to support correct border offset
-        int border = 0; // SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
-        if (mWidthBackup == mWidth && mHeightBackup == mHeight && border == mBorderWidth) {
-            return;
-        }
-        mBorderWidth = border;
-        mWidgetPlacement.width = mWidthBackup;
-        mWidgetPlacement.height = mHeightBackup;
+        mBorderWidth = 0; // SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
         mWidgetManager.updateWidget(this);
 
         mViewModel.setWidth(mWidgetPlacement.width);
