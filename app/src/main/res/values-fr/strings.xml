@@ -702,7 +702,7 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">360 Stéréo</string>
+    <string name="video_mode_360_stereo">Stéréo 360 (de haut en bas)</string>
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
     <!-- This string is displayed when selecting a video playback mode. -->
@@ -1874,4 +1874,29 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="search_engine_error_name_too_long">Le nom ne doit pas contenir plus de 50 caractères</string>
     <string name="close_button">Fermer</string>
     <string name="delete_button">Supprimer</string>
+    <string name="custom_search_engines_list_content_description">Liste des moteurs de recherche personnalisés</string>
+    <string name="custom_search_engine_item_delete_content_description">Supprimer le moteur de recherche personnalisé</string>
+    <string name="language_item_add_content_description">Ajouter aux langues préférées</string>
+    <string name="language_item_added_content_description">Ajoutée aux langues préférées</string>
+    <string name="language_item_remove_content_description">Supprimer des langues préférées</string>
+    <string name="language_item_move_up_content_description">Déplacer la langue vers le haut</string>
+    <string name="language_item_move_down_content_description">Déplacer la langue vers le bas</string>
+    <string name="voice_download_model">Téléchargement du modèle de reconnaissance vocale…</string>
+    <string name="voice_download_progress">Téléchargement du modèle de reconnaissance vocale (%1$s)</string>
+    <string name="voice_download_failed">Échec du téléchargement: %1$s</string>
+    <string name="video_mode_360_stereo_leftright">Stéréo 360 (de gauche à droite)</string>
+    <string name="bookmarks_list_content_description">Liste des marque-pages</string>
+    <string name="history_list_content_description">Liste des sites web visités</string>
+    <string name="downloads_list_content_description">Liste des fichiers téléchargés</string>
+    <string name="addons_list_content_description">Liste des modules complémentaires</string>
+    <string name="addons_permissions_list_content_description">Liste des permissions du module complémentaire</string>
+    <string name="notifications_list_content_description">Liste des notifications</string>
+    <string name="privacy_options_saved_logins_list_content_description">Liste des identifiants enregistrés</string>
+    <string name="language_options_preferred_languages_content_description">Liste des langues préférées</string>
+    <string name="language_options_available_languages_content_description">Liste des langues disponibles</string>
+    <string name="insecure_connection_content_description">La connexion n’est pas sécurisée</string>
+    <string name="tabs_close_others">Fermer les autres onglets</string>
+    <string name="autofill_dialog_use_login_list_content_description">Liste des identifiants enregistrés</string>
+    <string name="new_tab_top_sites_list_content_description">Liste des sites les plus visités</string>
+    <string name="new_tab_experiences_list_content_description">Liste des expériences à la une</string>
 </resources>
