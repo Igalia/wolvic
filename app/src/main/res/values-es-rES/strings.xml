@@ -703,7 +703,7 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">Estéreo 360</string>
+    <string name="video_mode_360_stereo">Estéreo 360 de arriba a abajo</string>
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
     <!-- This string is displayed when selecting a video playback mode. -->
@@ -1871,4 +1871,29 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="search_engine_error_name_too_long">El nombre debe tener 50 caracteres o menos</string>
     <string name="close_button">Cerrar</string>
     <string name="delete_button">Borrar</string>
+    <string name="custom_search_engines_list_content_description">Lista de motores de búsqueda personalizados</string>
+    <string name="custom_search_engine_item_delete_content_description">Eliminar motor de búsqueda personalizado</string>
+    <string name="language_item_add_content_description">Añadir a los idiomas preferidos</string>
+    <string name="language_item_added_content_description">Añadido a los idiomas preferidos</string>
+    <string name="language_item_remove_content_description">Eliminar de los idiomas preferidos</string>
+    <string name="language_item_move_up_content_description">Mover idioma hacia arriba</string>
+    <string name="language_item_move_down_content_description">Mover idioma hacia abajo</string>
+    <string name="voice_download_model">Descargando el modelo de voz…</string>
+    <string name="voice_download_progress">Descargando el modelo de %1$s</string>
+    <string name="voice_download_failed">Error de descarga: %1$s</string>
+    <string name="video_mode_360_stereo_leftright">Estéreo 360 de izquierda a derecha</string>
+    <string name="bookmarks_list_content_description">Lista de marcadores</string>
+    <string name="history_list_content_description">Lista de sitios web visitados</string>
+    <string name="downloads_list_content_description">Lista de archivos descargados</string>
+    <string name="addons_list_content_description">Lista de complementos</string>
+    <string name="addons_permissions_list_content_description">Lista de permisos del complemento</string>
+    <string name="notifications_list_content_description">Lista de notificaciones</string>
+    <string name="privacy_options_saved_logins_list_content_description">Lista de inicios de sesión guardados</string>
+    <string name="language_options_preferred_languages_content_description">Lista de idiomas preferidos</string>
+    <string name="language_options_available_languages_content_description">Lista de idiomas disponibles</string>
+    <string name="insecure_connection_content_description">La conexión no es segura</string>
+    <string name="tabs_close_others">Cerrar otras pestañas</string>
+    <string name="autofill_dialog_use_login_list_content_description">Lista de inicios de sesión guardados</string>
+    <string name="new_tab_top_sites_list_content_description">Lista de sitios más visitados</string>
+    <string name="new_tab_experiences_list_content_description">Lista de experiencias destacadas</string>
 </resources>
