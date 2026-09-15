@@ -101,7 +101,7 @@ def isWebKitAvailable = {
 }
 
 // Version names for Gecko and Chromium releases.
-def GECKO_VERSION_NAME = '2.0'
+def GECKO_VERSION_NAME = '1.10'
 def CHROMIUM_VERSION_NAME = '1.4'
 
 android {
