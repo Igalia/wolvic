@@ -699,7 +699,7 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">360 ステレオ</string>
+    <string name="video_mode_360_stereo">ステレオ 360 上から下</string>
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
     <!-- This string is displayed when selecting a video playback mode. -->
@@ -1878,4 +1878,29 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="controller_options_hover_to_select">ホバー</string>
     <string name="announcements_title">お知らせ</string>
     <string name="disable_hand_tracking_dialog_body">ハンドトラッキングは一時的に無効になっています。次回起動時に自動的に再び有効になります。コントローラーが使用できない場合に問題が発生するのを避けるため、この設定は意図的に保存されません。</string>
+    <string name="addons_list_content_description">アドオンのリスト</string>
+    <string name="addons_permissions_list_content_description">アドオンの許可設定のリスト</string>
+    <string name="autofill_dialog_use_login_list_content_description">保存されたログイン情報の選択リスト</string>
+    <string name="bookmarks_list_content_description">ブックマークのリスト</string>
+    <string name="custom_search_engine_item_delete_content_description">カスタム検索エンジンを削除</string>
+    <string name="custom_search_engines_list_content_description">カスタム検索エンジンのリスト</string>
+    <string name="downloads_list_content_description">ダウンロードしたファイルのリスト</string>
+    <string name="history_list_content_description">閲覧したウェブサイトのリスト</string>
+    <string name="insecure_connection_content_description">接続は安全ではありません</string>
+    <string name="language_item_add_content_description">優先言語に追加</string>
+    <string name="language_item_added_content_description">優先言語に追加済み</string>
+    <string name="language_item_move_down_content_description">言語を下に移動</string>
+    <string name="language_item_move_up_content_description">言語を上に移動</string>
+    <string name="language_item_remove_content_description">優先言語から削除</string>
+    <string name="language_options_available_languages_content_description">利用可能な言語のリスト</string>
+    <string name="language_options_preferred_languages_content_description">優先言語のリスト</string>
+    <string name="new_tab_experiences_list_content_description">おすすめの体験のリスト</string>
+    <string name="new_tab_top_sites_list_content_description">よく閲覧するサイトのリスト</string>
+    <string name="notifications_list_content_description">通知のリスト</string>
+    <string name="privacy_options_saved_logins_list_content_description">保存されたログイン情報のリスト</string>
+    <string name="tabs_close_others">他のタブを閉じる</string>
+    <string name="voice_download_failed">ダウンロードに失敗しました: %1$s</string>
+    <string name="voice_download_model">音声モデルをダウンロードしています…</string>
+    <string name="voice_download_progress">%1$s のモデルをダウンロードしています</string>
+    <string name="video_mode_360_stereo_leftright">ステレオ 360 左から右</string>
 </resources>
