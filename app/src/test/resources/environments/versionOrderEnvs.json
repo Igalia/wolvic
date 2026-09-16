@@ -1,0 +1,41 @@
+{
+  "1.9": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.9",
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      }
+    ]
+  },
+  "1.10": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.10",
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      },
+      {
+        "value": "animesky",
+        "title": "Anime Sky by Paul (CC BY)",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/animesky/animesky.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/animesky/animesky.zip"
+      }
+    ]
+  },
+  "1.8.3": {
+    "whatsNewUrl": "https://wolvic.com/blog/release_1.8.3",
+    "environments": [
+      {
+        "value": "spring",
+        "title": "Spring",
+        "thumbnail": "https://igalia.github.io/wolvic-3D-environments/spring/spring.png",
+        "payload": "https://igalia.github.io/wolvic-3D-environments/spring/spring.zip"
+      }
+    ]
+  }
+}

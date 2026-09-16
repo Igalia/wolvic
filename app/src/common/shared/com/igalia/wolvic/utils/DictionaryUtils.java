@@ -10,7 +10,6 @@ import com.igalia.wolvic.browser.SettingsStore;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,7 +131,7 @@ public class DictionaryUtils {
         }
 
         Set<String> keys = properties.keySet();
-        List<String> keysList = keys.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        List<String> keysList = keys.stream().sorted(StringUtils::compareVersionNamesNewestFirst).collect(Collectors.toList());
         for (String key : keysList) {
             RemoteProperties props = properties.get(key);
             if (props != null && props.getDictionaries() != null) {
@@ -184,7 +183,7 @@ public class DictionaryUtils {
         }
 
         Set<String> keys = properties.keySet();
-        List<String> keysList = keys.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        List<String> keysList = keys.stream().sorted(StringUtils::compareVersionNamesNewestFirst).collect(Collectors.toList());
         for (String key : keysList) {
             RemoteProperties props = properties.get(key);
             if (props != null && props.getDictionaries() != null) {

@@ -3,6 +3,7 @@ package com.igalia.wolvic.utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.icu.util.VersionInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -38,6 +39,27 @@ public class StringUtils {
         return aSequence == null || aSequence.length() == 0;
     }
 
+    // Compares numeric version names using Android's VersionInfo in descending order.
+    // Unsupported values are sorted after valid ones.
+    public static int compareVersionNamesNewestFirst(@NonNull String version1, @NonNull String version2) {
+        VersionInfo v1 = null;
+        try {
+            v1 = VersionInfo.getInstance(version1);
+        } catch (IllegalArgumentException ignored) { }
+
+        VersionInfo v2 = null;
+        try {
+            v2 = VersionInfo.getInstance(version2);
+        } catch (IllegalArgumentException ignored) { }
+
+        if (v1 == null) {
+            return v2 == null ? version2.compareTo(version1) : 1;
+        }
+        if (v2 == null) {
+            return -1;
+        }
+        return v2.compareTo(v1);
+    }
 
     public static String getLastCharacter(String aText) {
         if (!isEmpty(aText)) {
