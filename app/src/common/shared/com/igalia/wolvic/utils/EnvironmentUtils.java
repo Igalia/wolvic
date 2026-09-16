@@ -175,7 +175,7 @@ public class EnvironmentUtils {
 
             Set<String> keys = properties.keySet();
             List<String> keysList = keys.stream()
-                    .sorted((o1, o2) -> o2.compareTo(o1))
+                    .sorted(StringUtils::compareVersionNamesNewestFirst)
                     .collect(Collectors.toList());
             for (String key : keysList) {
                 RemoteProperties props = properties.get(key);
@@ -246,7 +246,7 @@ public class EnvironmentUtils {
 
             Set<String> keys = properties.keySet();
             List<String> keysList = keys.stream()
-                    .sorted((o1, o2) -> o2.compareTo(o1))
+                    .sorted(StringUtils::compareVersionNamesNewestFirst)
                     .collect(Collectors.toList());
             for (String key : keysList) {
                 RemoteProperties props = properties.get(key);
@@ -302,7 +302,7 @@ public class EnvironmentUtils {
 
             Set<String> keys = properties.keySet();
             List<String> keysList = keys.stream()
-                    .sorted((o1, o2) -> o2.compareTo(o1))
+                    .sorted(StringUtils::compareVersionNamesNewestFirst)
                     .collect(Collectors.toList());
             for (String key : keysList) {
                 RemoteProperties props = properties.get(key);

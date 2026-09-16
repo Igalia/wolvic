@@ -2,6 +2,7 @@ package com.igalia.wolvic
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.google.gson.JsonParser
 import com.igalia.wolvic.browser.SettingsStore
 import com.igalia.wolvic.utils.EnvironmentUtils
 import com.igalia.wolvic.utils.TestFileUtils
@@ -88,7 +89,9 @@ class EnvironmentsTest {
     @Test
     fun `Environment by payload url`() {
         settingStore.setRemoteProperties(TestFileUtils.readTextFile(javaClass.classLoader!!,"environments/targetVersionEnvs.json"))
-        val env = EnvironmentUtils.getExternalEnvironmentByPayload(context, "https://mixedreality.mozilla.org/FirefoxReality/envs/wolvic/space.zip", "11")
+        val expected = settingStore.remoteProperties!!["1"]!!.environments!![0]
+        val payload = requireNotNull(EnvironmentUtils.getEnvironmentPayload(expected))
+        val env = EnvironmentUtils.getExternalEnvironmentByPayload(context, payload, "11")
         assertNotNull(env)
         assertEquals(env?.value, "wolvic")
         assertEquals(env?.title, "Wolvic")
@@ -154,6 +157,21 @@ class EnvironmentsTest {
 
         val isReady = EnvironmentUtils.isExternalEnvReady(context, "wolvic")
         assertTrue(isReady)
+    }
+
+    @Test
+    fun `Fallback selects 1_10 over 1_9 and unsupported version names`() {
+        val json = TestFileUtils.readTextFile(javaClass.classLoader!!, "environments/versionOrderEnvs.json")
+        val properties = JsonParser.parseString(json).asJsonObject
+        properties.add("broken", properties["1.9"])
+        settingStore.setRemoteProperties(properties.toString())
+
+        val expected = settingStore.remoteProperties!!["1.10"]!!.environments!!
+        val env = expected[1]
+        val payload = requireNotNull(EnvironmentUtils.getEnvironmentPayload(env))
+        assertArrayEquals(expected, EnvironmentUtils.getExternalEnvironments(context, "1.10.1"))
+        assertEquals(env, EnvironmentUtils.getExternalEnvironmentById(context, env.value, "1.10.1"))
+        assertEquals(env, EnvironmentUtils.getExternalEnvironmentByPayload(context, payload, "1.10.1"))
     }
 
 }
