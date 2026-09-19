@@ -271,13 +271,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
     }
 
     private fun updateSearchEngine() {
-        val newSearchEngineName = if (currentSearchEngine != null) {
-            currentSearchEngine!!.id
-        } else {
-            null
-        }
-
-        setupSearchEngine(null, newSearchEngineName)
+        setupPreferredSearchEngine()
     }
 
     private val context: Context?
