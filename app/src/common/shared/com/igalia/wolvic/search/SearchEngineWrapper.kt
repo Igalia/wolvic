@@ -113,7 +113,7 @@ class SearchEngineWrapper private constructor(aContext: Context) :
 
     val availableSearchEngines: Collection<SearchEngine>
         get() {
-            updateSearchEngine()
+            setupPreferredSearchEngine()
             val allEngines = mutableListOf<SearchEngine>()
             mSearchEnginesMap?.values?.let { allEngines.addAll(it) }
             val customEngines = getCustomSearchEngines()
@@ -268,10 +268,6 @@ class SearchEngineWrapper private constructor(aContext: Context) :
 
     private fun hasContext(): Boolean {
         return mContextRef.get() != null
-    }
-
-    private fun updateSearchEngine() {
-        setupPreferredSearchEngine()
     }
 
     private val context: Context?
