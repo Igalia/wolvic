@@ -129,6 +129,7 @@
 -keep class com.igalia.wolvic.browser.engine.** {*;} # Keep state clases used by gson.
 -keep class com.igalia.wolvic.utils.RemoteProperties {*;} # Keep state clases used by gson.
 -keep class com.igalia.wolvic.utils.Environment {*;} # Keep state clases used by gson.
+-keep class com.igalia.wolvic.utils.Dictionary {*;} # Keep state clases used by gson.
 -keep class com.igalia.wolvic.utils.RemoteExperiences {*;} # Keep remote experience classes used by gson.
 -keep class com.igalia.wolvic.utils.Category {*;} # Keep remote experience classes used by gson.
 -keep class com.igalia.wolvic.utils.Experience {*;} # Keep remote experience classes used by gson.
