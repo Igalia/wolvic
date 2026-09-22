@@ -1,6 +1,6 @@
 {
   "1.10": {
-    "whatsNewUrl": "https://wolvic.com/blog/release_1.10",
+    "whatsNewUrl": "https://wolvic.com/blog/gecko_release_1.10",
     "environments": [
       {
         "value": "spring",
