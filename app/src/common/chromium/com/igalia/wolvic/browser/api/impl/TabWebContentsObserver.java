@@ -79,8 +79,17 @@ public class TabWebContentsObserver extends WebContentsObserver {
         // is initiated. The load is deferred because starting a navigation synchronously
         // from a navigation callback can corrupt the native navigation objects (same
         // reason onCreateNewWindow/closeContents post their work).
+        // History navigations are left alone: rewriting them would cancel the navigation
+        // and load the desktop URL as a new entry, so going back would never get past it.
+        // Same document navigations are only rewritten when they need it, see
+        // YoutubeUrlHelper.needsRewriteInSameDocument(): the rewrite turns them into a full
+        // load.
         GURL url = navigationHandle.getUrl();
-        String rewrittenUrl = navigationHandle.isHistory() ? url.getSpec() : YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        boolean mayRewrite = !navigationHandle.isHistory()
+                && (!navigationHandle.isSameDocument()
+                        || YoutubeUrlHelper.needsRewriteInSameDocument(url));
+        String rewrittenUrl = mayRewrite
+                ? YoutubeUrlHelper.maybeRewriteYoutubeURL(url) : url.getSpec();
         if (!url.getSpec().equals(rewrittenUrl)) {
             WebContents webContents = getWebContents();
             if (webContents != null) {
