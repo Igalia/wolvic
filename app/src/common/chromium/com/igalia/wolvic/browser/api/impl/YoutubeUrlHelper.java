@@ -22,7 +22,8 @@ public class YoutubeUrlHelper {
             return url.getSpec();
         }
 
-        if (!url.getPath().equals("/watch")) {
+        // The consent page breaks with the parameter.
+        if (url.getHost().startsWith("consent.")) {
             return url.getSpec();
         }
 
@@ -34,6 +35,16 @@ public class YoutubeUrlHelper {
         }
 
         return ensureAppIsSetToDesktop(uri).toString();
+    }
+
+    /**
+     * Whether a same document navigation to the URL needs the rewrite too. Watch pages do, as
+     * the player picks the video formats, so the projection of 360 videos, when it is loaded;
+     * and so does anything in the mobile site. The rest of the desktop site keeps being the
+     * desktop site without it.
+     */
+    public static boolean needsRewriteInSameDocument(GURL url) {
+        return url.getPath().equals("/watch") || url.getHost().equals("m.youtube.com");
     }
 
     private static Uri ensureAppIsSetToDesktop(Uri uri) {
