@@ -124,12 +124,19 @@ public class TabWebContentsObserver extends WebContentsObserver {
         if (navigationDelegate == null)
             return;
 
+        // A navigation that did not commit (a download, a 204, one that was replaced...) leaves the
+        // document, and so the location, untouched.
+        if (!navigationHandle.hasCommitted())
+            return;
+
+        // Error pages (including chrome://newtab) are still location changes.
+        navigationDelegate.onLocationChange(mSession, navigationHandle.getUrl().getSpec());
+
         if (navigationHandle.isErrorPage()) {
             didFailLoad(true, navigationHandle.errorCode(), navigationHandle.getUrl(), 0);
             return;
         }
 
-        navigationDelegate.onLocationChange(mSession, navigationHandle.getUrl().getSpec());
         WSession.HistoryDelegate historyDelegate = mSession.getHistoryDelegate();
         if (historyDelegate != null) {
             historyDelegate.onVisited(mSession, navigationHandle.getUrl().getSpec(), navigationHandle.getReferrerUrl().getSpec(), toWSessionOnVisitedFlags(navigationHandle));
