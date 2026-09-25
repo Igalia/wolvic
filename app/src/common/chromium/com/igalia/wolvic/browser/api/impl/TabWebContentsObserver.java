@@ -104,8 +104,8 @@ public class TabWebContentsObserver extends WebContentsObserver {
         if (navigationHandle.isRedirect()) {
             int statusCode = navigationHandle.httpStatusCode();
             flags |= (statusCode == 301 || statusCode == 308) ?
-                    WSession.HistoryDelegate.VISIT_REDIRECT_SOURCE_PERMANENT :
-                    WSession.HistoryDelegate.VISIT_REDIRECT_SOURCE;
+                    WSession.HistoryDelegate.VISIT_REDIRECT_PERMANENT :
+                    WSession.HistoryDelegate.VISIT_REDIRECT_TEMPORARY;
         }
         if (navigationHandle.isErrorPage())
             flags |= WSession.HistoryDelegate.VISIT_UNRECOVERABLE_ERROR;

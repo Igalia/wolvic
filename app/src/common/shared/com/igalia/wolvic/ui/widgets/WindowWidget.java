@@ -2276,10 +2276,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             // The latter two indicate if the visited page is the *source*
             // of a redirect: it's redirecting to another page, because the
             // server returned an HTTP 3xy status code.
-            if ((flags & VISIT_REDIRECT_PERMANENT) != 0) {
+            if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
                 visitType = VisitType.REDIRECT_PERMANENT;
 
-            } else if ((flags & VISIT_REDIRECT_TEMPORARY) != 0) {
+            } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
                 visitType = VisitType.REDIRECT_TEMPORARY;
 
             } else {
