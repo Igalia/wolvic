@@ -426,17 +426,7 @@
     <string name="addons_details_private_mode">Працює в режимі приватного перегляду</string>
     <string name="private_browsing_exit_tooltip">Вийти з режиму приватного перегляду</string>
     <string name="private_browsing_enter_tooltip">Увійти до приватного перегляду</string>
-    <string name="private_browsing_body"><![CDATA[
-<р>При перегляді в режимі Приватного перегляду, %1$s <strong>не зберігає</strong>:</р>
-<ul class="two-column">
-  <li>відвідані сторінки</li>
-  <li>пошукові запити</li>
-  <li>cookies</li>
-  <li>тимчасові файли</li> 
-</ul>
-<р>Приватний перегляд <strong>не робить вас анонімними</strong> в Інтернеті. Ваш роботодавець чи Інтернет-провайдер все ще може знати, яку сторінку ви відвідуєте.</р>
-<р class="about-info">Докладніше про <а id="learnMore">Приватний перегляд</a>.</р>
-     ]]></string>
+    <string name="private_browsing_body"><![CDATA[\n&lt;р&gt;При перегляді в режимі Приватного перегляду, %1$s <strong>не зберігає</strong>:\n<ul class="two-column">\n \u0020<li>відвідані сторінки</li>\n \u0020<li>пошукові запити</li>\n \u0020<li>файли cookie</li>\n \u0020<li>тимчасові файли</li> \n</ul>\n&lt;р&gt;Приватний перегляд <strong>не робить вас анонімними</strong> в Інтернеті. Ваш роботодавець чи Інтернет-провайдер все ще може знати, яку сторінку ви відвідуєте.\n&lt;р class=\"about-info\"&gt;Докладніше про &lt;а id=\"learnMore\"&gt;Приватний перегляд.\n \u0020 \u0020 ]]></string>
     <string name="drm_dialog_message"><![CDATA[Деякі аудіо та відео на цьому сайті використовують захист DRM, що може обмежувати можливості %1$s. <a href="%2$s">Докладніше</a>]]></string>
     <string name="drm_dialog_button_off">Вимкнено</string>
     <string name="upload_button">Вивантажити</string>
@@ -452,7 +442,7 @@
     <string name="video_mode_3d_side">3D біч-о-біч</string>
     <string name="video_mode_360">360°</string>
     <string name="video_mode_3d_top_bottom">3D зверху вниз</string>
-    <string name="video_mode_360_stereo">360° стерео</string>
+    <string name="video_mode_360_stereo">360° стерео, зверху вниз</string>
     <string name="video_mode_180">180°</string>
     <string name="video_mode_180_left_right">Стерео 180° зліва направо</string>
     <string name="video_mode_180_top_bottom">Стерео 180° зверху вниз</string>
@@ -718,7 +708,7 @@
 \nТакож нагадуємо, що ви маєте право подати скаргу до Іспанського агентства із захисту даних.</string>
     <string name="privacy_policy_subtitle_3">Право, що застосовується, та мова оригіналу</string>
     <string name="voice_service_vosk">Vosk (офлайн)</string>
-    <string name="voice_service_huawei_asr">Автоматичне розпізнавання голосу Huawei</string>
+    <string name="voice_service_huawei_asr">Huawei</string>
     <string name="permissions_dialog_remember_choice">Запам\'ятате це рішення</string>
     <string name="keyboardview_keycode_alt">Alt</string>
     <string name="keyboardview_keycode_cancel">Скасувати</string>
@@ -833,4 +823,57 @@
     <string name="controller_options_hover_to_select">Наведення</string>
     <string name="announcements_title">Оголошення</string>
     <string name="disable_hand_tracking_dialog_body">Відстеження рук тимчасово вимкнено. Воно буде автоматично увімкнене при наступному запуску. Ця опція навмисно не зберігається, щоб уникнути проблем, коли контролери недоступні.</string>
+    <string name="add_search_engine_title">Додати пошукову систему</string>
+    <string name="add_search_engine_name_title">Назва</string>
+    <string name="add_search_engine_name_hint">Введіть назву пошукової системи</string>
+    <string name="add_search_engine_search_url_title">URL-адреса пошуку</string>
+    <string name="add_search_engine_search_url_hint">https://example.com/search?q={searchTerms}</string>
+    <string name="add_search_engine_suggest_url_title">URL-адреса підказок (необов\'язково)</string>
+    <string name="add_search_engine_suggest_url_hint">https://example.com/suggest?q={searchTerms}</string>
+    <string name="add_search_engine_save">Зберегти</string>
+    <string name="add_search_engine_cancel">Скасувати</string>
+    <string name="edit_search_engine_title">Редагувати пошукову систему</string>
+    <string name="edit_search_engine_save">Оновити</string>
+    <string name="search_engine_deleted">Пошукову систему видалено</string>
+    <string name="delete_search_engine_dialog_title">Видалити пошукову систему</string>
+    <string name="delete_search_engine_dialog_text">Ви впевнені, що хочете видалити пошукову систему «%1$s»?</string>
+    <string name="custom_search_engines_title">Власні пошукові системи</string>
+    <string name="custom_search_engines_empty">Немає власних пошукових систем. Натисніть кнопку «Додати пошукову систему», щоб додати її.</string>
+    <string name="custom_search_engines_manage">Власні пошукові системи</string>
+    <string name="custom_search_engines_list_header">Власні пошукові системи</string>
+    <string name="custom_search_engines_list_content_description">Список власних пошукових систем</string>
+    <string name="custom_search_engine_item_delete_content_description">Видалити власну пошукову систему</string>
+    <string name="search_engine_error_url_required">Потрібно вказати URL-адресу</string>
+    <string name="search_engine_error_url_placeholder">У URL-адресі має бути заповнювач %s або {searchTerms}</string>
+    <string name="search_engine_error_url_scheme">URL-адреса має містити протокол http:// або https://</string>
+    <string name="search_engine_error_url_scheme_unsupported">Дозволено використовувати лише URL-адреси з протоколами http:// та https://</string>
+    <string name="search_engine_error_url_host">URL-адреса має містити дійсний хост</string>
+    <string name="search_engine_error_url_private">URL-адреси локальних або приватних ресурсів не дозволені з міркувань безпеки</string>
+    <string name="search_engine_error_name_required">Потрібно вказати назву</string>
+    <string name="search_engine_error_name_too_long">Назва має містити не більше 50 символів</string>
+    <string name="language_item_add_content_description">Додати до вибраних мов</string>
+    <string name="language_item_added_content_description">Додано до вибраних мов</string>
+    <string name="language_item_remove_content_description">Видалити з бажаних мов</string>
+    <string name="language_item_move_up_content_description">Перемістити мову вгору</string>
+    <string name="language_item_move_down_content_description">Перемістити мову вниз</string>
+    <string name="voice_download_model">Завантаження голосової моделі…</string>
+    <string name="voice_download_progress">Завантаження моделі %1$s</string>
+    <string name="voice_download_failed">Не вдалося завантажити: %1$s</string>
+    <string name="close_button">Закрити</string>
+    <string name="delete_button">Видалити</string>
+    <string name="video_mode_360_stereo_leftright">Стерео 360°, зліва направо</string>
+    <string name="bookmarks_list_content_description">Список закладок</string>
+    <string name="history_list_content_description">Список відвіданих вебсайтів</string>
+    <string name="downloads_list_content_description">Список завантажений файлів</string>
+    <string name="addons_list_content_description">Список додатків</string>
+    <string name="addons_permissions_list_content_description">Список дозволів додатка</string>
+    <string name="notifications_list_content_description">Список сповіщень</string>
+    <string name="privacy_options_saved_logins_list_content_description">Список збережених облікових даних</string>
+    <string name="language_options_preferred_languages_content_description">Список бажаних мов</string>
+    <string name="language_options_available_languages_content_description">Список доступних мов</string>
+    <string name="insecure_connection_content_description">З\'єднання не захищене</string>
+    <string name="tabs_close_others">Закрити інші вкладки</string>
+    <string name="autofill_dialog_use_login_list_content_description">Список збережених облікових даних для вибору</string>
+    <string name="new_tab_top_sites_list_content_description">Список найчастіше відвідуваних сайтів</string>
+    <string name="new_tab_experiences_list_content_description">Список рекомендованих можливостей</string>
 </resources>
