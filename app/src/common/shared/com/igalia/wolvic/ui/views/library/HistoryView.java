@@ -99,8 +99,6 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(HistoryViewModel.class);
 
-        SessionStore.get().getHistoryStore().addListener(this);
-
         updateUI();
     }
 
@@ -143,7 +141,9 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         mBinding.setIsAccountsUIEnabled(ACCOUNTS_UI_ENABLED);
         mBinding.executePendingBindings();
 
-        updateHistory();
+        if (isAttachedToWindow()) {
+            updateHistory();
+        }
 
         setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
@@ -164,6 +164,22 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         } else {
             showHistory(mCachedHistoryItems);
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        SessionStore.get().getHistoryStore().addListener(this);
+
+        updateHistory();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        SessionStore.get().getHistoryStore().removeListener(this);
+
+        super.onDetachedFromWindow();
     }
 
     @Override
