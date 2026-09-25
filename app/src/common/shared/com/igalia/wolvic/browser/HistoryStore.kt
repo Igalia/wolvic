@@ -17,6 +17,8 @@ import mozilla.components.concept.storage.*
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.support.base.log.logger.Logger
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -24,8 +26,18 @@ class HistoryStore constructor(val context: Context) {
 
     private val LOGTAG = SystemUtils.createLogtag(HistoryStore::class.java)
 
-    private var listeners = ArrayList<HistoryListener>()
     private var storage = (context.applicationContext as VRBrowserApplication).places.history
+
+    private val listeners = CopyOnWriteArrayList<HistoryListener>()
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val notificationPending = AtomicBoolean(false)
+
+    private val notifyListenersRunnable = Runnable {
+        notificationPending.set(false)
+        listeners.forEach { it.onHistoryUpdated() }
+    }
 
     companion object {
         @JvmStatic
@@ -34,6 +46,8 @@ class HistoryStore constructor(val context: Context) {
                 "https://accounts.firefox.com/oauth",
                 "moz-extension://"
         ).collect(Collectors.toList())
+
+        private const val NOTIFICATION_DELAY_MS = 500L
     }
 
     // Bookmarks might have changed during sync, so notify our listeners.
@@ -59,9 +73,7 @@ class HistoryStore constructor(val context: Context) {
     }
 
     fun addListener(aListener: HistoryListener) {
-        if (!listeners.contains(aListener)) {
-            listeners.add(aListener)
-        }
+        listeners.addIfAbsent(aListener)
     }
 
     fun removeListener(aListener: HistoryListener) {
@@ -158,13 +170,8 @@ class HistoryStore constructor(val context: Context) {
     }
 
     private fun notifyListeners() {
-        if (listeners.size > 0) {
-            val listenersCopy = ArrayList(listeners)
-            Handler(Looper.getMainLooper()).post {
-                for (listener in listenersCopy) {
-                    listener.onHistoryUpdated()
-                }
-            }
+        if (listeners.isNotEmpty() && notificationPending.compareAndSet(false, true)) {
+            mainHandler.postDelayed(notifyListenersRunnable, NOTIFICATION_DELAY_MS)
         }
     }
 }
