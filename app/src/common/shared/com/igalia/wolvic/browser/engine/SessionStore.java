@@ -506,11 +506,13 @@ public class SessionStore implements
                 activeSession.add(session);
             }
         }
-        mRuntime.clearData(clearFlags).then(aVoid -> {
-            for (Session session: activeSession) {
+        mRuntime.clearData(clearFlags).whenComplete((aVoid, throwable) -> {
+            if (throwable != null) {
+                Log.e(LOGTAG, "Failed to clear browsing data", throwable);
+            }
+            for (Session session : activeSession) {
                 session.recreateSession();
             }
-            return null;
         });
     }
 
