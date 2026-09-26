@@ -91,7 +91,7 @@ public class SessionState {
         @Override
         public WSessionState read(JsonReader in) {
             try {
-                String session = JsonParser.parseReader(in).getAsString();
+                String session = JsonParser.parseReader(in).toString();
                 return WSessionState.fromJson(session);
 
             } catch (Exception e) {
