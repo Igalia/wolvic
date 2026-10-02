@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "pageZoom",
+    "functions": [
+      {
+        "name": "setZoom",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          { "name": "tabId", "type": "integer", "minimum": 0 },
+          { "name": "zoom", "type": "number" }
+        ]
+      }
+    ]
+  }
+]

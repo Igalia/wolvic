@@ -2013,11 +2013,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public boolean isPageZoomEnabled() {
-        return BuildConfig.ENABLE_PAGE_ZOOM;
-    }
-
-    @Override
     public void setLockMode(@LockMode int lockMode) {
         queueRunnable(() -> setLockEnabledNative(lockMode));
     }

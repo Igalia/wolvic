@@ -37,6 +37,7 @@ public class RuntimeImpl implements WRuntime {
     private RuntimeSettingsImpl mSettings;
     private WebExtensionControllerImpl mWebExtensionController;
     private GeckoWebExecutor mExecutor;
+    private PageZoomController mPageZoomController;
 
     public RuntimeImpl(Context ctx, WRuntimeSettings settings) {
         mContext = ctx;
@@ -74,10 +75,15 @@ public class RuntimeImpl implements WRuntime {
         mSettings = new RuntimeSettingsImpl(mRuntime, settings);
         mWebExtensionController = new WebExtensionControllerImpl(mRuntime);
         mExecutor = new GeckoWebExecutor(mRuntime);
+        mPageZoomController = new PageZoomController(ctx, mRuntime);
     }
 
     GeckoRuntime getGeckoRuntime() {
         return  mRuntime;
+    }
+
+    PageZoomController getPageZoomController() {
+        return mPageZoomController;
     }
 
 

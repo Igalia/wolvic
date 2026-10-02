@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.BuildConfig;
+import com.igalia.wolvic.browser.PageZoomLevels;
 import com.igalia.wolvic.browser.api.WContentBlocking;
 import com.igalia.wolvic.browser.api.WDisplay;
 import com.igalia.wolvic.browser.api.WMediaSession;
@@ -37,6 +38,7 @@ public class SessionImpl implements WSession {
     private WMediaSession.Delegate mMediaSessionDelegate;
     private TextInputImpl mTextInput;
     private PanZoomControllerImpl mPanZoomController;
+    private PageZoomController mPageZoomController;
     private Method mGeckoLocationMethod;
     private UrlUtilsVisitor mUrlUtilsVisitor;
 
@@ -96,6 +98,8 @@ public class SessionImpl implements WSession {
     @Override
     public void open(@NonNull WRuntime runtime) {
         mSession.open(((RuntimeImpl)runtime).getGeckoRuntime());
+        mPageZoomController = ((RuntimeImpl)runtime).getPageZoomController();
+        mPageZoomController.attach(this);
     }
 
     @Override
@@ -105,6 +109,10 @@ public class SessionImpl implements WSession {
 
     @Override
     public void close() {
+        if (mPageZoomController != null) {
+            mPageZoomController.detach(this);
+            mPageZoomController = null;
+        }
         mSession.close();
     }
 
@@ -225,13 +233,23 @@ public class SessionImpl implements WSession {
     }
 
     @Override
-    public void pageZoomIn() {}
+    public void pageZoomIn() {
+        if (mPageZoomController != null) {
+            mPageZoomController.zoomIn(this);
+        }
+    }
 
     @Override
-    public void pageZoomOut() {}
+    public void pageZoomOut() {
+        if (mPageZoomController != null) {
+            mPageZoomController.zoomOut(this);
+        }
+    }
 
     @Override
-    public int getCurrentZoomLevel() { return 0; }
+    public int getCurrentZoomLevel() {
+        return mPageZoomController != null ? mPageZoomController.getZoomLevel(this) : PageZoomLevels.DEFAULT_LEVEL;
+    }
 
     @NonNull
     @Override
