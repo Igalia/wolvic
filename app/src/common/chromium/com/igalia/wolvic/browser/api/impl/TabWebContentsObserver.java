@@ -71,14 +71,16 @@ public class TabWebContentsObserver extends WebContentsObserver {
         // from a navigation callback can corrupt the native navigation objects (same
         // reason onCreateNewWindow/closeContents post their work).
         GURL url = navigationHandle.getUrl();
-        String rewrittenUrl = YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
+        String rewrittenUrl = navigationHandle.isHistory() ? url.getSpec() : YoutubeUrlHelper.maybeRewriteYoutubeURL(url);
         if (!url.getSpec().equals(rewrittenUrl)) {
             WebContents webContents = getWebContents();
             if (webContents != null) {
+                boolean replaceCurrentEntry = navigationHandle.isSameDocument();
                 PostTask.postDelayedTask(TaskTraits.UI_DEFAULT, () -> {
                     if (!webContents.isDestroyed()) {
-                        webContents.getNavigationController().loadUrl(
-                                new LoadUrlParams(rewrittenUrl));
+                        LoadUrlParams params = new LoadUrlParams(rewrittenUrl);
+                        params.setShouldReplaceCurrentEntry(replaceCurrentEntry);
+                        webContents.getNavigationController().loadUrl(params);
                     }
                 }, 0);
             }
