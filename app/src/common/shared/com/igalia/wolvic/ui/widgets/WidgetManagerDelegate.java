@@ -114,7 +114,6 @@ public interface WidgetManagerDelegate {
     void togglePassthrough();
     boolean isPassthroughEnabled();
     boolean isPassthroughSupported();
-    boolean isPageZoomEnabled();
     void setLockMode(@LockMode int lockMode);
     void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);

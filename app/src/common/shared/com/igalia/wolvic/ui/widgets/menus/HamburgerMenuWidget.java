@@ -338,7 +338,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                     .build());
         }
 
-        if (mWidgetManager != null && mWidgetManager.isPageZoomEnabled() && mDelegate != null) {
+        if (mDelegate != null) {
             mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                     HamburgerMenuAdapter.MenuItem.TYPE_ZOOM, null)
                     .withZoom(Integer.toString(mDelegate.getCurrentZoomLevel()) + "%",

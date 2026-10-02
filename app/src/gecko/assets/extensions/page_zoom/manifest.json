@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "Wolvic Page Zoom",
+  "version": "1.1",
+  "description": "Applies the per-site page zoom level chosen in Wolvic",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "page-zoom@igalia.com"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": [
+    "geckoViewAddons",
+    "nativeMessaging",
+    "nativeMessagingFromContent"
+  ],
+  "experiment_apis": {
+    "pageZoom": {
+      "schema": "schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "script": "parent.js",
+        "paths": [["pageZoom"]]
+      }
+    }
+  }
+}

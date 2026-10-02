@@ -123,7 +123,6 @@ android {
         buildConfigField "Boolean", "SUPPORTS_SYSTEM_NOTIFICATIONS", "false"
         buildConfigField "Float", "DEFAULT_DENSITY", "1.25f"
         buildConfigField "Float", "DEFAULT_WINDOW_DISTANCE", "0.0f"
-        buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "false"
         buildConfigField "Boolean", "USE_SOUNDPOOL", "true"
         buildConfigField 'String', 'ANNOUNCEMENTS_ENDPOINT', '"https://igalia.github.io/wolvic/announcements.json"'
         buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://igalia.github.io/wolvic/experiences.json"'
@@ -396,7 +395,6 @@ android {
                     arguments "-DCHROMIUM=ON"
                 }
             }
-            buildConfigField "Boolean", "ENABLE_PAGE_ZOOM", "true"
             buildConfigField 'String', 'PROPS_ENDPOINT', '"https://igalia.github.io/wolvic/props-chromium.json"'
         }
 
