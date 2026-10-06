@@ -25,6 +25,15 @@ public class SessionStateImpl implements WSessionState {
         return mState.toString();
     }
 
+    @Override
+    public String getCurrentUri() {
+        int index = mState.getCurrentIndex();
+        if (index < 0 || index >= mState.size()) {
+            return null;
+        }
+        return mState.get(index).getUri();
+    }
+
     public static SessionStateImpl fromJson(String json) {
         return new SessionStateImpl(Objects.requireNonNull(GeckoSession.SessionState.fromString(json)));
     }
