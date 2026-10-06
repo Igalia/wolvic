@@ -1,6 +1,7 @@
 package com.igalia.wolvic.browser.engine;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -61,6 +62,11 @@ public class SessionStateTest {
             public String toJson() {
                 return stateJson;
             }
+
+            @Override
+            public String getCurrentUri() {
+                return "https://wolvic.com";
+            }
         };
 
         String json = new GsonBuilder().create().toJson(state);
@@ -69,5 +75,62 @@ public class SessionStateTest {
 
         assertNotNull("the session state should be read back", read);
         assertEquals(JsonParser.parseString(stateJson), JsonParser.parseString(read));
+    }
+
+    private static WSessionState stateAt(String currentUri) {
+        return new WSessionState() {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public String toJson() {
+                return "{}";
+            }
+
+            @Override
+            public String getCurrentUri() {
+                return currentUri;
+            }
+        };
+    }
+
+    @Test
+    public void testSessionStateIsOutdatedWhenOlderThanUri() {
+        SessionState state = new SessionState();
+        state.mUri = "https://wolvic.com/c";
+        state.mSessionState = stateAt("https://wolvic.com/b");
+
+        assertTrue(state.isSessionStateOutdated());
+    }
+
+    @Test
+    public void testSessionStateIsNotOutdatedWhenCurrent() {
+        SessionState state = new SessionState();
+        state.mUri = "https://wolvic.com/b";
+        state.mSessionState = stateAt("https://wolvic.com/b");
+
+        assertFalse(state.isSessionStateOutdated());
+    }
+
+    @Test
+    public void testSessionStateIsOutdatedWhenCurrentUriUnknown() {
+        SessionState state = new SessionState();
+        state.mUri = "https://wolvic.com";
+        state.mSessionState = stateAt(null);
+
+        assertTrue(state.isSessionStateOutdated());
+    }
+
+    @Test
+    public void testSessionStateIsNotOutdatedWithoutStateOrUri() {
+        SessionState state = new SessionState();
+        state.mUri = "https://wolvic.com";
+        assertFalse(state.isSessionStateOutdated());
+
+        state.mUri = null;
+        state.mSessionState = stateAt("https://wolvic.com");
+        assertFalse(state.isSessionStateOutdated());
     }
 }

@@ -16,6 +16,12 @@ public class SessionStateImpl implements WSessionState {
         return "{}";
     }
 
+    @Override
+    public String getCurrentUri() {
+        // TODO: this is required to implement session persistence.
+        return null;
+    }
+
     public static SessionStateImpl fromJson(String json) {
         // TODO
         return new SessionStateImpl();
