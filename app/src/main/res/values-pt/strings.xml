@@ -512,7 +512,7 @@
     <string name="developer_options_env_offworld">Fora do mundo</string>
     <string name="addons_download_success_dialog_body">Abrir no menu</string>
     <string name="security_options_permission_notifications">Notificações</string>
-    <string name="security_options_speech_data_collection_title">Coleta e Uso de Dados de %1$s</string>
+    <string name="security_options_data_collection_title">Coleta e Uso de Dados de %1$s</string>
     <string name="col_date_added">Adicionado</string>
     <string name="settings_privacy_policy_login_exceptions_description">Logins que não estão salvos, aparecerão aqui</string>
     <string name="settings_language_choose_language_webpage_content">Escolha o seu idioma favorito para mostrar as páginas</string>
