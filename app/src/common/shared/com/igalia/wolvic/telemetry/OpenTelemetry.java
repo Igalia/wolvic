@@ -2,6 +2,12 @@ package com.igalia.wolvic.telemetry;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.VRBrowserApplication;
@@ -12,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 
 import io.opentelemetry.android.OpenTelemetryRum;
 import io.opentelemetry.android.OpenTelemetryRumBuilder;
+import io.opentelemetry.android.agent.session.SessionConfig;
+import io.opentelemetry.android.agent.session.SessionIdTimeoutHandler;
+import io.opentelemetry.android.agent.session.SessionManager;
 import io.opentelemetry.android.config.OtelRumConfig;
 import io.opentelemetry.android.features.diskbuffering.DiskBufferingConfig;
 import io.opentelemetry.android.instrumentation.activity.ActivityLifecycleInstrumentation;
@@ -30,6 +39,7 @@ import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter;
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporterBuilder;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporterBuilder;
+import io.opentelemetry.sdk.common.Clock;
 import io.opentelemetry.sdk.common.CompletableResultCode;
 import io.opentelemetry.sdk.logs.export.LogRecordExporter;
 import io.opentelemetry.sdk.metrics.InstrumentType;
@@ -45,6 +55,8 @@ public class OpenTelemetry implements ITelemetry {
     private final String INSTRUMENTATION_SCOPE_NAME = BuildConfig.APPLICATION_ID;
     private final String INSTRUMENTATION_SCOPE_VERSION = BuildConfig.VERSION_NAME;
     private final Executor mDiskIOExecutor;
+    // Created once: the timeout handler stays registered with the app lifecycle for the process lifetime.
+    private SessionManager mSessionManager;
 
     private static final String OTLP_TRACES_PATH = "/v1/traces";
     private static final String OTLP_METRICS_PATH = "/v1/metrics";
@@ -63,6 +75,7 @@ public class OpenTelemetry implements ITelemetry {
         OtelRumConfig config = new OtelRumConfig()
                 .setDiskBufferingConfig(diskBufferingConfig);
         mRUMBuilder = new OpenTelemetryRumBuilder(mApplication, config)
+                .setSessionProvider(getSessionManager())
                 .addSpanExporterCustomizer(exporter -> createSpanExporter())
                 .addMetricExporterCustomizer(exporter -> createMetricExporter())
                 .addLogRecordExporterCustomizer(exporter -> createLogRecordExporter())
@@ -73,6 +86,29 @@ public class OpenTelemetry implements ITelemetry {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private SessionManager getSessionManager() {
+        if (mSessionManager == null) {
+            SessionConfig sessionConfig = SessionConfig.withDefaults();
+            Clock clock = Clock.getDefault();
+            SessionIdTimeoutHandler timeoutHandler = new SessionIdTimeoutHandler(sessionConfig, clock);
+            DefaultLifecycleObserver observer = new DefaultLifecycleObserver() {
+                @Override
+                public void onStart(@NonNull LifecycleOwner owner) {
+                    timeoutHandler.onApplicationForegrounded();
+                }
+
+                @Override
+                public void onStop(@NonNull LifecycleOwner owner) {
+                    timeoutHandler.onApplicationBackgrounded();
+                }
+            };
+            new android.os.Handler(Looper.getMainLooper()).post(
+                    () -> ProcessLifecycleOwner.get().getLifecycle().addObserver(observer));
+            mSessionManager = SessionManager.create(timeoutHandler, sessionConfig, clock);
+        }
+        return mSessionManager;
     }
 
     private SpanExporter createSpanExporter() {
