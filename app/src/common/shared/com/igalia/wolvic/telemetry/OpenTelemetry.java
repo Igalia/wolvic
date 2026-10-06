@@ -193,8 +193,12 @@ public class OpenTelemetry implements ITelemetry {
 
     @Override
     public void stop() {
+        final OpenTelemetryRum rum = mRUM;
         mRUM = null;
         mRUMBuilder = null;
+        if (rum != null) {
+            rum.shutdown();
+        }
     }
 
     @Override
