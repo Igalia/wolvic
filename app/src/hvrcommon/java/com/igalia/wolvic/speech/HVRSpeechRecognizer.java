@@ -98,11 +98,6 @@ public class HVRSpeechRecognizer implements SpeechRecognizer, MLAsrListener {
     }
 
     @Override
-    public boolean shouldDisplayStoreDataPrompt() {
-        return false;
-    }
-
-    @Override
     public List<String> getSupportedLanguages() {
         return mSupportedLanguages;
     }

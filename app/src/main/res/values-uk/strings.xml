@@ -52,7 +52,6 @@
     <string name="privacy_options_saved_logins_list_empty_first">Якщо можна зберегти логін, ви побачите діалогове вікно, де зможете зробити це.</string>
     <string name="security_options_block_pup_up_settings">Розширені налаштування</string>
     <string name="security_options_speech_data_collection_title">Збір та використання даних %1$s</string>
-    <string name="security_options_speech_data_collect">Дозволити %1$s збирати голосові дані</string>
     <string name="security_options_crash_reports_send_data">Дозволити %1$s надсилати від вашого імені накопичені повідомлення про падіння</string>
     <string name="popup_dialog_button_on">Увімкнено</string>
     <string name="drm_dialog_button_on">Увімкнено</string>
@@ -89,7 +88,6 @@
     <string name="settings_language_norwegian_nynorsk">Норвезька (нюношк)</string>
     <string name="settings_language_portuguese">Португальська</string>
     <string name="settings_display">Дисплей</string>
-    <string name="settings_report_speech_data">Надіслати голосові дані</string>
     <string name="settings_version_developer">Збірка для розробників</string>
     <string name="settings_accounts_sign_in">Увійти</string>
     <string name="settings_accounts_reconnect">Перепідключитися</string>
@@ -333,16 +331,13 @@
     <string name="before_unload_prompt_stay">Залишатися на сторінці</string>
     <string name="repost_confirm_message">Сторінка, яку ви шукаєте, містить уже введену вами інформацію. Повернення на цю сторінку може призвести до повторення будь-якої дії, яку ви виконали. Ви хочете продовжити?</string>
     <string name="performance_unblock_page">Розблокувати сторінку</string>
-    <string name="voice_samples_collect_data_dialog_title">Дозволити %1$s збирати зразки голосу для досліджень?</string>
     <string name="addons_install_dialog_title">Додати %1$s?</string>
     <string name="addons_download_success_dialog_title">%1$s було додано до %2$s</string>
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Для покращення розпізнавання мови та інших сервісів нам необхідно збирати зразки голосу для досліджень. Ми зберігаємо ваші дані надійно і без персональної інформації. Ви завжди зможете використовувати голосовий пошук, навіть якщо ви не дозволяєте збір інформації. <a href="">Докладніше</a>]]></string>
     <string name="addons_download_success_dialog_ok">Гаразд, зрозуміло</string>
     <string name="addons_remove_error_dialog_title">Під час видалення %1$s сталась помилка</string>
     <string name="addons_download_error_dialog_title">Під час завантаження сталася помилка. Будь ласка, спробуйте ще раз.</string>
     <string name="addons_remove_success_dialog_title">Успішно видалено %1$s</string>
     <string name="addons_download_error_dialog_ok">Гаразд</string>
-    <string name="voice_samples_collect_dialog_do_not_allow">Не дозволяти</string>
     <string name="download_error_body">Під час завантаження %1$s виникла помилка. Будь ласка, спробуйте ще раз.</string>
     <string name="url_library_title">Бібліотека</string>
     <string name="privacy_options_saved_logins_reset">Скинути параметри збережених логінів</string>
@@ -574,7 +569,6 @@
     <string name="repost_confirm_continue">Продовжити</string>
     <string name="performance_title">Низька продуктивність сайту</string>
     <string name="performance_message">Спробуйте зменшити розмір вікна, щоб покращити продуктивність. Розблокування цієї сторінки може призвести до аварійного завершення роботи програми.</string>
-    <string name="voice_samples_collect_dialog_allow">Дозволити</string>
     <string name="language_default">Типова</string>
     <string name="url_home_title">%1$s Домівка</string>
     <string name="url_bookmarks_title">Закладки</string>

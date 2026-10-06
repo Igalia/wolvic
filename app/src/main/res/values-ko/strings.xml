@@ -291,9 +291,6 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">컨트롤러 옵션</string>
-    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
-         On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">음성 데이터 보고</string>
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
@@ -616,10 +613,6 @@
          relate to Wolvic data collection and use.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">%1$s 데이터 수집과 사용</string>
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data.
-     '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_speech_data_collect">%1$s이(가) 음성 데이터를 수집하도록 허용</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1287,19 +1280,6 @@
     <string name="performance_title">낮은 사이트 성능</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">창 크기를 줄여 성능을 향상시키세요. 이 페이지를 차단 해제하면 앱이 작동 중단 될 수 있습니다.</string>
-    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search.
-         '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">연구를 위하여 %1$s가 음성 샘플을 수집하도록 허용하시겠습니까?</string>
-    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[음성 인식 및 기타 서비스를 개선하려면 연구 할 음성 샘플을 수집해야 합니다. 정보를 식별하지 않고 사용자 데이터를 안전하게 저장합니다. 수집을 허용하지 않더라도 항상 음성 검색을 사용할 수 있습니다. <a href="privacy">더 알아보기</a>]]></string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">허용</string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">허용 안 함</string>
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">기본</string>
     <!-- This string is displayed in the URL bar when the user is in the home page.

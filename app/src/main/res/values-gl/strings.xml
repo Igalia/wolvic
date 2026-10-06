@@ -101,7 +101,6 @@
     <string name="privacy_options_saved_logins_list_empty_first">Cando un inicio de sesión pode ser gardado, aparecerá un diálogo que permite gardalo.</string>
     <string name="close_bookmarks_tooltip">Pechar marcadores</string>
     <string name="private_browsing_body"><![CDATA[<p>Cando navegas nunha xanela privada, %1$s <strong>non garda</strong>:</p><ul class="two-column"><li>Páxinas visitadas</li><li>Buscas</li><li>Cookies</li><li>Arquivos temporais</li></ul><p>A navegación privada <strong>non garante o anonimato</strong> en Internet. O empregador ou o servizo que proporciona conexión a Internet pode saber que páxinas foron visitadas.</p><p class="about-info">Saber máis sobre <a id="learnMore">navegación privada</a>.</p>]]></string>
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para mellorar o recoñecemento de voz e outros servizos, precisamos recoller fragmentos de voz para investigación. Almacenamos os datos de xeito seguro e sen identificar información. Sempre será posible usar a busca por voz, mesmo se non se permite a recolección. <a href="">Saber máis</a>]]></string>
     <string name="hamburger_menu_tooltip">Menú</string>
     <string name="move_tooltip">Mover</string>
     <string name="hamburger_menu_switch_to_desktop">Modo escritorio</string>
@@ -419,8 +418,6 @@
     <string name="performance_unblock_page">Desbloquear a páxina</string>
     <string name="performance_title">Rendemento baixo da páxina</string>
     <string name="performance_message">Probe a reducir o tamaño da xanela para mellorar o rendemento. Desbloquear esta páxina pode facer que a aplicación se peche por un erro.</string>
-    <string name="voice_samples_collect_data_dialog_title">Permitir a %1$s recoller fragmentos de voz para a busca\?</string>
-    <string name="voice_samples_collect_dialog_allow">Permitir</string>
     <string name="language_default">Por defecto</string>
     <string name="url_home_title">Páxina de inicio de %1$s</string>
     <string name="url_addons_title">Complementos</string>
@@ -601,7 +598,6 @@
     <string name="settings_language_norwegian_bokmaal">Noruegués (Bokmaal)</string>
     <string name="settings_language_norwegian_nynorsk">Noruegués (Nyorsk)</string>
     <string name="settings_controller_options">Opcións de controlador</string>
-    <string name="settings_report_speech_data">Reportar datos de voz</string>
     <string name="restart_dialog_restart">Reinicio necesario</string>
     <string name="restart_dialog_text">Debe reiniciar %1$s para completar as modificacións. Quere facelo agora\?</string>
     <string name="restart_now_dialog_button">Reiniciar agora</string>
@@ -631,7 +627,6 @@
     <string name="security_options_login_saved">Inicios de sesión gardados…</string>
     <string name="security_options_autoplay">Reprodución automática de multimedia</string>
     <string name="security_options_speech_data_collection_title">Recolección e uso de datos de %1$s</string>
-    <string name="security_options_speech_data_collect">Permitir a %1$s recoller datos de voz</string>
     <string name="voice_search_example">Exemplo: Por favor diga \"Videos 360, tempo, novas do día...\"</string>
     <string name="voice_search_permission_after_decline">Dea acceso ao micrófono para usar busca por voz.</string>
     <string name="search_placeholder">Busque na web ou introduza un enderezo</string>
@@ -680,7 +675,6 @@
     <string name="bookmarks_tooltip">Marcadores</string>
     <string name="open_bookmarks_tooltip">Abrir marcadores</string>
     <string name="private_browsing_title">Navegación privada</string>
-    <string name="voice_samples_collect_dialog_do_not_allow">Non permitir</string>
     <string name="tabs_select">Seleccionar</string>
     <string name="tabs_selected_counter_plural">%1$s pestanas seleccionadas</string>
     <string name="tabs_selected_counter_none">0 pestanas seleccionadas</string>

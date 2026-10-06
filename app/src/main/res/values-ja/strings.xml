@@ -290,9 +290,6 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">コントローラーオプション</string>
-    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
-         On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">スピーチデータの報告</string>
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
@@ -615,10 +612,6 @@
          relate to Wolvic data collection and use.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">%1$s のデータの収集と使用</string>
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data.
-     '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_speech_data_collect">発話データの収集を %1$s に許可する</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1287,19 +1280,6 @@
     <string name="performance_title">パフォーマンスが低下しています</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">このウェブページはパフォーマンスに影響を及ぼすため、読み込みが中断されています。ウィンドウのサイズを小さくすると、ウェブページのパフォーマンスを改善できる場合があります。</string>
-    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search.
-         '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">%1$s に音声サンプルの収集を許可しますか？</string>
-    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[音声認識や他のサービスを改善するには、研究のために音声サンプルを収集する必要があります。私たちは個人識別が可能な情報を含めずに、安全にデータを保存します。音声検索は、収集を許可しなくても、いつでも使用できます。<a href="privacy">詳細情報</a>]]></string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">許可する</string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">許可しない</string>
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">既定</string>
     <!-- This string is displayed in the URL bar when the user is in the home page.

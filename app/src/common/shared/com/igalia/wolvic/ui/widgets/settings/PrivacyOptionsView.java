@@ -123,9 +123,6 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener(mNotificationsListener);
         setNotifications(SettingsStore.getInstance(getContext()).isNotificationsEnabled(), false);
 
-        mBinding.speechDataSwitch.setOnCheckedChangeListener(mSpeechDataListener);
-        setSpeechData(SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled(), false);
-
         mBinding.telemetryDataSwitch.setOnCheckedChangeListener(mTelemetryListener);
         setTelemetry(SettingsStore.getInstance(getContext()).isTelemetryEnabled(), false);
 
@@ -214,10 +211,6 @@ class PrivacyOptionsView extends SettingsView {
         setNotifications(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mSpeechDataListener = (compoundButton, value, doApply) -> {
-        setSpeechData(value, doApply);
-    };
-
     private SwitchSetting.OnCheckedChangeListener mTelemetryListener = (compoundButton, value, doApply) -> {
         setTelemetry(value, doApply);
     };
@@ -258,11 +251,6 @@ class PrivacyOptionsView extends SettingsView {
         if (mBinding.notificationsPermissionSwitch.isChecked() != SettingsStore.NOTIFICATIONS_DEFAULT) {
             setNotifications(SettingsStore.NOTIFICATIONS_DEFAULT, true);
         }
-
-        if (mBinding.speechDataSwitch.isChecked() != SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT) {
-            setSpeechData(SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT, true);
-        }
-        SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(false);
 
         if (mBinding.telemetryDataSwitch.isChecked() != SettingsStore.TELEMETRY_DEFAULT) {
             setTelemetry(SettingsStore.TELEMETRY_DEFAULT, true);
@@ -320,16 +308,6 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setNotificationsEnabled(value);
-        }
-    }
-
-    private void setSpeechData(boolean value, boolean doApply) {
-        mBinding.speechDataSwitch.setOnCheckedChangeListener(null);
-        mBinding.speechDataSwitch.setValue(value, false);
-        mBinding.speechDataSwitch.setOnCheckedChangeListener(mSpeechDataListener);
-
-        if (doApply) {
-            SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(value);
         }
     }
 

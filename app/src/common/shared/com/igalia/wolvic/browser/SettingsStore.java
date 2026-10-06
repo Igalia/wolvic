@@ -105,8 +105,6 @@ public class SettingsStore {
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static int TRACKING_DEFAULT = WContentBlocking.EtpLevel.DEFAULT;
     public final static boolean NOTIFICATIONS_DEFAULT = true;
-    public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
-    public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
     public final static float WINDOW_DISTANCE_DEFAULT = BuildConfig.DEFAULT_WINDOW_DISTANCE;
     public final static int UA_MODE_DEFAULT = WSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
@@ -892,17 +890,6 @@ public class SettingsStore {
         editor.apply();
     }
 
-    public boolean isSpeechDataCollectionEnabled() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_speech_data_collection), SPEECH_DATA_COLLECTION_DEFAULT);
-    }
-
-    public void setSpeechDataCollectionEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection), isEnabled);
-        editor.apply();
-    }
-
     public boolean isNotificationsEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_notifications), NOTIFICATIONS_DEFAULT);
@@ -911,17 +898,6 @@ public class SettingsStore {
     public void setNotificationsEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_notifications), isEnabled);
-        editor.apply();
-    }
-
-    public boolean isSpeechDataCollectionReviewed() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_speech_data_collection_reviewed), SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT);
-    }
-
-    public void setSpeechDataCollectionReviewed(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection_reviewed), isEnabled);
         editor.apply();
     }
 
