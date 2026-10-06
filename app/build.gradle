@@ -762,7 +762,16 @@ dependencies {
     // OpenTelemetry
     implementation platform(libs.opentelemetry.android.bom)
     implementation platform(libs.opentelemetry.bom)
+    // android-agent provides the SessionManager that fills in session.id. Its other transitive
+    // instrumentations are excluded so they are not auto-discovered (they add signals we don't want).
+    implementation(libs.opentelemetry.android.agent) {
+        ['fragment', 'network', 'slowrendering', 'startup', 'screen-orientation'].each {
+            exclude group: 'io.opentelemetry.android.instrumentation', module: it
+        }
+    }
     implementation libs.opentelemetry.android.agent.api
+    implementation libs.opentelemetry.android.session
+    compileOnly libs.opentelemetry.android.services
     implementation libs.opentelemetry.android.core
     implementation libs.opentelemetry.android.instrumentation.api
     implementation libs.opentelemetry.android.instrumentation.activity
