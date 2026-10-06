@@ -208,7 +208,9 @@ public class OpenTelemetry implements ITelemetry {
             return;
         }
         runOnDiskIO(() -> rum.getOpenTelemetry()
-                .getMeter(INSTRUMENTATION_SCOPE_NAME)
+                .meterBuilder(INSTRUMENTATION_SCOPE_NAME)
+                .setInstrumentationVersion(INSTRUMENTATION_SCOPE_VERSION)
+                .build()
                 .counterBuilder(name)
                 .build()
                 .add(1, toAttributes(bundle)));
