@@ -360,11 +360,6 @@ public class VoskSpeechRecognizer implements SpeechRecognizer {
     }
 
     @Override
-    public boolean shouldDisplayStoreDataPrompt() {
-        return false;
-    }
-
-    @Override
     public List<String> getSupportedLanguages() {
         return mModelManager.getAvailableLanguages();
     }

@@ -1252,14 +1252,6 @@
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
     <string name="performance_title">Huono sivuston suorituskyky</string>
 
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">Salli</string>
-
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">Älä salli</string>
-
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Oletus</string>
 
@@ -1548,7 +1540,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="settings_privacy_saved_logins">Tallennetut kirjautumistiedot</string>
     <string name="settings_privacy_search_engine_title">Hakukone</string>
     <string name="settings_display">Näyttö</string>
-    <string name="settings_report_speech_data">Raportoi puhetiedot</string>
     <string name="settings_privacy_logins">Kirjautumistiedot ja salasanat</string>
     <string name="developer_options_remote_debugging">Ota etävirheenkorjaus käyttöön</string>
     <string name="security_options_login_saved">Tallennetut kirjautumiset…</string>

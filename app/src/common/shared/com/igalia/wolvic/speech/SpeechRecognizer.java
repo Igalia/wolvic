@@ -11,8 +11,6 @@ import java.util.List;
 public interface SpeechRecognizer {
     class Settings {
         public String locale;
-        public boolean storeData;
-        public String productTag;
     }
 
     interface Callback {
@@ -41,7 +39,6 @@ public interface SpeechRecognizer {
     void start(@NonNull Settings settings, @NonNull Callback callback);
     void stop();
     boolean isActive();
-    boolean shouldDisplayStoreDataPrompt();
     List<String> getSupportedLanguages();
     default boolean isModelDownloaded(@Nullable String lang) {return true;}
 
