@@ -133,7 +133,10 @@ opentelemetry-android-bom = { module = "io.opentelemetry.android:opentelemetry-a
 opentelemetry-bom = { module = "io.opentelemetry:opentelemetry-bom", version.ref = "opentelemetryApi" }
 opentelemetry-exporter-logging = { module = "io.opentelemetry:opentelemetry-exporter-logging" }
 opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp" }
+opentelemetry-android-agent = { module = "io.opentelemetry.android:android-agent" }
 opentelemetry-android-agent-api = { module = "io.opentelemetry.android:agent-api" }
+opentelemetry-android-services = { module = "io.opentelemetry.android:services" }
+opentelemetry-android-session = { module = "io.opentelemetry.android:session" }
 opentelemetry-android-core = { module = "io.opentelemetry.android:core" }
 opentelemetry-android-instrumentation-api = { module = "io.opentelemetry.android.instrumentation:android-instrumentation" }
 opentelemetry-android-instrumentation-activity = { module = "io.opentelemetry.android.instrumentation:activity" }
