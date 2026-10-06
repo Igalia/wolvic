@@ -10,11 +10,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
+import android.util.Log;
 import android.view.Surface;
 
 import androidx.annotation.Nullable;
 
+import com.igalia.wolvic.utils.SystemUtils;
+
 public class UISurfaceTextureRenderer {
+    private static final String LOGTAG = SystemUtils.createLogtag(UISurfaceTextureRenderer.class);
     private int mTextureWidth;
     private int mTextureHeight;
     private SurfaceTexture mSurfaceTexture;
@@ -97,7 +101,11 @@ public class UISurfaceTextureRenderer {
 
     void drawEnd() {
         if(mSurfaceCanvas != null) {
-            mSurface.unlockCanvasAndPost(mSurfaceCanvas);
+            try {
+                mSurface.unlockCanvasAndPost(mSurfaceCanvas);
+            } catch (IllegalArgumentException e) {
+                Log.w(LOGTAG, "Failed to post canvas, surface was abandoned: " + e);
+            }
         }
         mSurfaceCanvas = null;
     }
