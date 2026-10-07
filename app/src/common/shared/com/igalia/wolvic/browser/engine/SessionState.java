@@ -82,17 +82,26 @@ public class SessionState {
         return result;
     }
 
+    // GeckoView reports the state periodically, so the saved state can be older than mUri.
+    public boolean isSessionStateOutdated() {
+        return mSessionState != null && mUri != null && !mUri.equals(mSessionState.getCurrentUri());
+    }
+
     public static class ISessionStateAdapter extends TypeAdapter<WSessionState> {
         @Override
         public void write(JsonWriter out, WSessionState state) throws IOException {
             out.jsonValue(state.toJson());
         }
 
+        // Needed for testing. See SessionStateTest
+        public static String readJson(JsonReader in) {
+            return JsonParser.parseReader(in).toString();
+        }
+
         @Override
         public WSessionState read(JsonReader in) {
             try {
-                String session = JsonParser.parseReader(in).getAsString();
-                return WSessionState.fromJson(session);
+                return WSessionState.fromJson(readJson(in));
 
             } catch (Exception e) {
                 return null;

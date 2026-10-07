@@ -544,6 +544,9 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
             mState.mSession.restoreState(mState.mSessionState);
             if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
                 mState.mSession.loadUri(mState.mUri, WSession.LOAD_FLAGS_REPLACE_HISTORY);
+            } else if (mState.isSessionStateOutdated()) {
+                // Go to the last visited page on top of the restored history.
+                mState.mSession.loadUri(mState.mUri);
             }
         } else if (mState.mUri != null) {
             mState.mSession.loadUri(mState.mUri);
