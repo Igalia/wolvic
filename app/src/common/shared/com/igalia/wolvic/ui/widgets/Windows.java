@@ -13,9 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
@@ -29,8 +26,10 @@ import com.igalia.wolvic.browser.api.WMediaSession;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.components.WolvicEngineSession;
 import com.igalia.wolvic.browser.engine.Session;
-import com.igalia.wolvic.browser.engine.SessionState;
 import com.igalia.wolvic.browser.engine.SessionStore;
+import com.igalia.wolvic.browser.persistence.WindowState;
+import com.igalia.wolvic.browser.persistence.WindowsState;
+import com.igalia.wolvic.browser.persistence.WindowsStateStore;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
 import com.igalia.wolvic.ui.widgets.dialogs.PromptDialogWidget;
@@ -44,13 +43,6 @@ import com.igalia.wolvic.utils.UrlUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,8 +72,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public static final int OPEN_IN_NEW_WINDOW = 2;
 
 
-    private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
-
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
@@ -92,50 +82,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final String TARGET_ELEMENT_XPATH_PARAMETER = "wolvic-launchimmersive-targetElementXPath";
     private static final String IMMERSIVE_EXTENSION_ID = "wolvic-launchimmersive@igalia.com";
     private static final String IMMERSIVE_EXTENSION_URL = "resource://android/assets/extensions/wolvic_launchimmersive/";
-
-    class WindowState {
-        WindowPlacement placement;
-        int textureWidth;
-        int textureHeight;
-        float worldWidth;
-        int tabIndex = -1;
-
-        // NOTE: Enum values may be null when deserialized by GSON.
-        ContentType contentType = ContentType.WEB_CONTENT;
-
-        public void load(@NonNull WindowWidget aWindow, WindowsState aState, int aTabIndex) {
-            WidgetPlacement widgetPlacement;
-            if (aWindow.isFullScreen()) {
-                widgetPlacement = aWindow.getBeforeFullscreenPlacement();
-                placement = aWindow.getWindowPlacementBeforeFullscreen();
-            } else if (aWindow.isResizing()) {
-                widgetPlacement = aWindow.getBeforeResizePlacement();
-                placement = aWindow.getWindowPlacement();
-            } else {
-                widgetPlacement = aWindow.getPlacement();
-                placement = aWindow.getWindowPlacement();
-            }
-
-            textureWidth = widgetPlacement.width;
-            textureHeight = widgetPlacement.height;
-            worldWidth = widgetPlacement.worldWidth;
-            tabIndex = aTabIndex;
-            if (aWindow.isNativeContentVisible()) {
-                contentType = aWindow.getSelectedPanel();
-            } else if (aWindow.getCurrentContentType() == ContentType.NEW_TAB) {
-                contentType = ContentType.NEW_TAB;
-            } else {
-                contentType = ContentType.WEB_CONTENT;
-            }
-        }
-    }
-
-    class WindowsState {
-        WindowPlacement focusedWindowPlacement = WindowPlacement.FRONT;
-        ArrayList<WindowState> regularWindowsState = new ArrayList<>();
-        ArrayList<SessionState> tabs = new ArrayList<>();
-        boolean privateMode = false;
-    }
 
     private Context mContext;
     private SharedPreferences mPrefs;
@@ -159,6 +105,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private Services mServices;
     private PromptDialogWidget mNoInternetDialog;
     private boolean mCompositorPaused = false;
+    private WindowsStateStore mStateStore;
     private WindowsState mWindowsState;
     private boolean mIsRestoreEnabled;
     private boolean mAfterRestore;
@@ -250,76 +197,76 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mPrefs.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
         mIsRestoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
-        mWindowsState = restoreState();
+        mStateStore = new WindowsStateStore(mContext);
+        mWindowsState = mStateStore.read();
         restoreWindows();
     }
 
-    private void saveStateOnDiskIO() {
-        File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
-        try (Writer writer = new FileWriter(file)) {
-            WindowsState state = new WindowsState();
-            state.privateMode = mPrivateMode;
-            state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
-            List<Session> sessions;
-            if (SettingsStore.getInstance(mContext).getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY) {
-                // Tabs in the tray are sorted by recently used, so we preserve their current order.
-                sessions = SessionStore.get().getSortedSessions(false);
-            } else {
-                // Tabs in the visible bars keep a fixed order.
-                sessions = SessionStore.get().getSessions(false);
-            }
-            state.tabs = sessions.stream()
-                    .map(Session::getSessionState)
-                    .filter(sessionState -> HistoryStore.getBLOCK_LIST().stream().noneMatch(uri ->
-                        sessionState.mUri != null && sessionState.mUri.startsWith(uri)
-                    ))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            for (WindowWidget window : mRegularWindows) {
-                if (window.getSession() != null) {
-                    WindowState windowState = new WindowState();
-                    windowState.load(window, state, state.tabs.indexOf(window.getSession().getSessionState()));
-                    state.regularWindowsState.add(windowState);
-                }
-            }
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(state, writer);
-            writer.flush();
+    private WindowsState createWindowsState() {
+        WindowsState state = new WindowsState();
+        state.privateMode = mPrivateMode;
+        state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
 
-            Log.d(LOGTAG, "Windows state saved");
+        List<Session> sessions;
 
-        } catch (IOException e) {
-            Log.e(LOGTAG, "Error saving windows state: " + e.getLocalizedMessage());
-            file.delete();
+        if (SettingsStore.getInstance(mContext).getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY) {
+            // Tabs in the tray are sorted by recently used, so we preserve their current order.
+            sessions = SessionStore.get().getSortedSessions(false);
+        } else {
+            // Tabs in the visible bars keep a fixed order.
+            sessions = SessionStore.get().getSessions(false);
         }
+
+        state.tabs = sessions.stream()
+                .map(Session::getSessionState)
+                .filter(sessionState -> HistoryStore.getBLOCK_LIST().stream().noneMatch(uri ->
+                    sessionState.mUri != null && sessionState.mUri.startsWith(uri)
+                ))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for (WindowWidget window : mRegularWindows) {
+            if (window.getSession() != null) {
+                state.regularWindowsState.add(createWindowState(window, state.tabs.indexOf(window.getSession().getSessionState())));
+            }
+        }
+
+        return state;
+    }
+
+    private WindowState createWindowState(@NonNull WindowWidget aWindow, int aTabIndex) {
+        WindowState state = new WindowState();
+        WidgetPlacement widgetPlacement;
+
+        if (aWindow.isFullScreen()) {
+            widgetPlacement = aWindow.getBeforeFullscreenPlacement();
+            state.placement = aWindow.getWindowPlacementBeforeFullscreen();
+        } else if (aWindow.isResizing()) {
+            widgetPlacement = aWindow.getBeforeResizePlacement();
+            state.placement = aWindow.getWindowPlacement();
+        } else {
+            widgetPlacement = aWindow.getPlacement();
+            state.placement = aWindow.getWindowPlacement();
+        }
+
+        state.textureWidth = widgetPlacement.width;
+        state.textureHeight = widgetPlacement.height;
+        state.worldWidth = widgetPlacement.worldWidth;
+        state.tabIndex = aTabIndex;
+
+        if (aWindow.isNativeContentVisible()) {
+            state.contentType = aWindow.getSelectedPanel();
+        } else if (aWindow.getCurrentContentType() == ContentType.NEW_TAB) {
+            state.contentType = ContentType.NEW_TAB;
+        } else {
+            state.contentType = ContentType.WEB_CONTENT;
+        }
+
+        return state;
     }
 
     public void saveState() {
         Executor diskIOExecutor = ((VRBrowserApplication)mContext.getApplicationContext()).getExecutors().diskIO();
-        diskIOExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                saveStateOnDiskIO();
-            }
-        });
-    }
-
-    private WindowsState restoreState() {
-        WindowsState restored = null;
-
-        File file = new File(mContext.getFilesDir(), WINDOWS_SAVE_FILENAME);
-        try (Reader reader = new FileReader(file)) {
-            Gson gson = new GsonBuilder().create();
-            Type type = new TypeToken<WindowsState>() {}.getType();
-            restored = gson.fromJson(reader, type);
-
-            Log.d(LOGTAG, "Windows state restored");
-
-        } catch (Exception e) {
-            Log.e(LOGTAG, "Error restoring windows state, tabs will not be restored: " + e.getLocalizedMessage());
-            file.delete();
-        }
-
-        return restored;
+        diskIOExecutor.execute(() -> mStateStore.write(createWindowsState()));
     }
 
     public void setDelegate(Delegate aDelegate) {
