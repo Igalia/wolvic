@@ -1,0 +1,82 @@
+{
+  "focusedWindowPlacement": "FRONT",
+  "privateMode": false,
+  "regularWindowsState": [
+    {
+      "contentType": "WEB_CONTENT",
+      "placement": "FRONT",
+      "tabIndex": 1,
+      "textureHeight": 450,
+      "textureWidth": 800,
+      "worldWidth": 4.0
+    },
+    {
+      "contentType": "WEB_CONTENT",
+      "placement": "LEFT",
+      "tabIndex": 0,
+      "textureHeight": 450,
+      "textureWidth": 800,
+      "worldWidth": 4.0
+    }
+  ],
+  "tabs": [
+    {
+      "mCanGoBack": false,
+      "mCanGoForward": false,
+      "mIsLoading": false,
+      "mIsInputActive": false,
+      "mUri": "https://example.com/",
+      "mPreviousUri": "about:blank",
+      "mTitle": "Example Domain",
+      "mLastUse": 1791372252782,
+      "mId": "dad305b1-330a-439f-a283-b011a425bca5",
+      "mParentId": "42fd6e8a-79b5-4a77-93b3-333b4c9e2c73",
+      "mSettings": {
+        "isPrivateBrowsingEnabled": false,
+        "isSuspendMediaWhenInactiveEnabled": true,
+        "isTrackingProtectionEnabled": false,
+        "userAgentMode": 2,
+        "userAgentOverride": "Mozilla/5.0 (Android 16; Mobile VR; rv:153.0) Gecko/153.0 Firefox/153.0 Wolvic/2.0",
+        "viewportMode": 0
+      }
+    },
+    {
+      "mCanGoBack": false,
+      "mCanGoForward": false,
+      "mIsLoading": false,
+      "mIsInputActive": false,
+      "mUri": "https://www.mozilla.org/",
+      "mPreviousUri": "about:blank",
+      "mTitle": "Mozilla",
+      "mLastUse": 1791372251953,
+      "mId": "2af87e97-7866-47f5-b518-9d44e6492517",
+      "mSettings": {
+        "isPrivateBrowsingEnabled": false,
+        "isSuspendMediaWhenInactiveEnabled": true,
+        "isTrackingProtectionEnabled": false,
+        "userAgentMode": 2,
+        "userAgentOverride": "Mozilla/5.0 (Android 16; Mobile VR; rv:153.0) Gecko/153.0 Firefox/153.0 Wolvic/2.0",
+        "viewportMode": 0
+      }
+    },
+    {
+      "mCanGoBack": false,
+      "mCanGoForward": false,
+      "mIsLoading": false,
+      "mIsInputActive": false,
+      "mUri": "https://wolvic.com/en/start/",
+      "mPreviousUri": "about:blank",
+      "mTitle": "Wolvic - start",
+      "mLastUse": 1791372243432,
+      "mId": "42fd6e8a-79b5-4a77-93b3-333b4c9e2c73",
+      "mSettings": {
+        "isPrivateBrowsingEnabled": false,
+        "isSuspendMediaWhenInactiveEnabled": true,
+        "isTrackingProtectionEnabled": false,
+        "userAgentMode": 2,
+        "userAgentOverride": "Mozilla/5.0 (Android 16; Mobile VR; rv:153.0) Gecko/153.0 Firefox/153.0 Wolvic/2.0",
+        "viewportMode": 0
+      }
+    }
+  ]
+}
