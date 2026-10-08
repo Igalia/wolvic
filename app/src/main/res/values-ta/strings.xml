@@ -113,7 +113,7 @@
     <string name="security_options_block_pup_up_settings">மேம்பட்ட</string>
     <string name="security_options_permission_webxr">மெய்நிகர் ரியாலிட்டி சாதனங்கள் (வெப்எக்ச்ஆர்)</string>
     <string name="security_options_webxr_settings">மேம்பட்ட</string>
-    <string name="security_options_speech_data_collection_title">%1$s தரவு சேகரிப்பு மற்றும் பயன்பாடு</string>
+    <string name="security_options_data_collection_title">%1$s தரவு சேகரிப்பு மற்றும் பயன்பாடு</string>
     <string name="security_options_speech_data_collect">பேச்சு தரவுகளை சேகரிக்க %1$s ஐ அனுமதிக்கவும்</string>
     <string name="security_options_telemetry_send_data">தொழில்நுட்ப மற்றும் தொடர்பு தரவை அவாய் அனுப்ப %1$s ஐ அனுமதிக்கவும்</string>
     <string name="security_options_crash_reports_send_data">உங்கள் சார்பாக பின்னடைவு செய்யப்பட்ட செயலிழப்பு அறிக்கைகளை அனுப்ப %1$s ஐ அனுமதிக்கவும்</string>

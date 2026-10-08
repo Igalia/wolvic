@@ -51,7 +51,7 @@
     <string name="fxa_signout_confirmation_body">Після виходу з облікового запису, ви більше не зможете відправляти або отримувати вкладки з пристроїв. Ваші закладки та історія також припинять синхронізуватися.</string>
     <string name="privacy_options_saved_logins_list_empty_first">Якщо можна зберегти логін, ви побачите діалогове вікно, де зможете зробити це.</string>
     <string name="security_options_block_pup_up_settings">Розширені налаштування</string>
-    <string name="security_options_speech_data_collection_title">Збір та використання даних %1$s</string>
+    <string name="security_options_data_collection_title">Збір та використання даних %1$s</string>
     <string name="security_options_speech_data_collect">Дозволити %1$s збирати голосові дані</string>
     <string name="security_options_crash_reports_send_data">Дозволити %1$s надсилати від вашого імені накопичені повідомлення про падіння</string>
     <string name="popup_dialog_button_on">Увімкнено</string>

@@ -630,7 +630,7 @@
     <string name="fxa_account_last_sync_error">Erro de sincronización</string>
     <string name="security_options_login_saved">Inicios de sesión gardados…</string>
     <string name="security_options_autoplay">Reprodución automática de multimedia</string>
-    <string name="security_options_speech_data_collection_title">Recolección e uso de datos de %1$s</string>
+    <string name="security_options_data_collection_title">Recolección e uso de datos de %1$s</string>
     <string name="security_options_speech_data_collect">Permitir a %1$s recoller datos de voz</string>
     <string name="voice_search_example">Exemplo: Por favor diga \"Videos 360, tempo, novas do día...\"</string>
     <string name="voice_search_permission_after_decline">Dea acceso ao micrófono para usar busca por voz.</string>
