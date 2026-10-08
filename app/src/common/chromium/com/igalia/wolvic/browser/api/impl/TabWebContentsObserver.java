@@ -52,6 +52,15 @@ public class TabWebContentsObserver extends WebContentsObserver {
     }
 
     @Override
+    public void renderProcessGone() {
+        @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
+
+        if (delegate != null) {
+            PostTask.postTask(TaskTraits.UI_DEFAULT, () -> delegate.onKill(mSession));
+        }
+    }
+
+    @Override
     public void didRedirectNavigation(NavigationHandle navigationHandle) {
         dispatchCanGoBackOrForward();
     }
