@@ -1353,14 +1353,24 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
 
     @Override
     public void onCrash(@NonNull WSession session) {
-        Log.e(LOGTAG,"Child crashed. Recreating session");
-        recreateSession();
+        Log.e(LOGTAG, "Child crashed");
+
+        onContentProcessGone();
     }
 
     @Override
     public void onKill(@NonNull WSession session) {
-        Log.e(LOGTAG,"Child killed. Recreating session");
-        recreateSession();
+        Log.e(LOGTAG, "Child killed");
+
+        onContentProcessGone();
+    }
+
+    private void onContentProcessGone() {
+        if (isActive()) {
+            recreateSession();
+        } else {
+            suspend();
+        }
     }
 
     @Override
