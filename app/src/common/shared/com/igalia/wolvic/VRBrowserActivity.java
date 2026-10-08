@@ -220,7 +220,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     int mLastGesture;
     SwipeRunnable mLastRunnable;
     Handler mHandler = new Handler(Looper.getMainLooper());
-    Runnable mAudioUpdateRunnable;
     Windows mWindows;
     RootWidget mRootWidget;
     KeyboardWidget mKeyboard;
@@ -344,7 +343,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Log.i(LOGTAG, "AudioEngine sounds preloaded!");
             // mAudioEngine.playSound(AudioEngine.Sound.AMBIENT, true);
         });
-        mAudioUpdateRunnable = () -> mAudioEngine.update();
 
         mSettings = SettingsStore.getInstance(this);
         mSettings.initModel(this);
@@ -1230,16 +1228,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(() -> {
             showAppExitDialog();
         });
-    }
-
-    @Keep
-    @SuppressWarnings({"UnusedDeclaration"})
-    void handleAudioPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
-        mAudioEngine.setPose(qx, qy, qz, qw, px, py, pz);
-
-        // https://developers.google.com/vr/reference/android/com/google/vr/sdk/audio/GvrAudioEngine.html#resume()
-        // The initialize method must be called from the main thread at a regular rate.
-        runOnUiThread(mAudioUpdateRunnable);
     }
 
     @Keep

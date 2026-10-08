@@ -67,16 +67,6 @@ public class AndroidMediaPlayer implements AudioEngine.AudioEngineImpl {
     }
 
     @Override
-    public void setPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
-        // NOTE: Nothing related to Audio Pose in Android Media Player
-    }
-
-    @Override
-    public void update() {
-        // NOTE: Nothing related to updating Audio Pose in Android Media Player
-    }
-
-    @Override
     public void release() {
         for (MediaPlayer mediaPlayer: mMediaPlayerList.values()) {
             mediaPlayer.release();

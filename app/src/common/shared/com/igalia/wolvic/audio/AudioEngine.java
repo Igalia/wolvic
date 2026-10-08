@@ -56,8 +56,6 @@ public class AudioEngine {
         void preloadAsync(final Runnable aCallback);
         void pause();
         void resume();
-        void setPose(float qx, float qy, float qz, float qw, float px, float py, float pz);
-        void update();
         void release();
         void playSound(Sound aSound, float aVolume, boolean aLoop);
         void stopSound(Sound aSound);
@@ -106,18 +104,6 @@ public class AudioEngine {
     public void resumeEngine() {
         if (mEngine != null) {
             mEngine.resume();
-        }
-    }
-
-    public void setPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
-        if (mEngine != null) {
-            mEngine.setPose(qx, qy, qz, qw, px, py, pz);
-        }
-    }
-
-    public void update() {
-        if (mEngine != null) {
-            mEngine.update();
         }
     }
 
