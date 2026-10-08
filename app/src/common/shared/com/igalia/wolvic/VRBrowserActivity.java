@@ -973,26 +973,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
 
-        // Determine which lifecycle or system event was raised.
-        switch (level) {
-
-            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
-            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
-            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
-                // Curently ignore these levels. They are handled somewhere else.
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-                // It looks like these come in all at the same time so just always suspend inactive Sessions.
-                Log.d(LOGTAG, "Memory pressure, suspending inactive sessions.");
-                SessionStore.get().suspendAllInactiveSessions();
-                break;
-            default:
-                Log.e(LOGTAG, "onTrimMemory unknown level: " + level);
-                break;
-        }
+        SessionStore.get().onTrimMemory(level);
     }
 
     private void showAppExitDialog() {

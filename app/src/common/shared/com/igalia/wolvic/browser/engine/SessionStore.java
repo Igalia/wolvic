@@ -56,7 +56,6 @@ public class SessionStore implements
         ComponentsAdapter.StoreUpdatesListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(SessionStore.class);
-    private static final int MAX_SESSIONS = 5;
 
     private static final List<Pair<String, String>> BUILTIN_WEB_EXTENSIONS = Arrays.asList(
             new Pair<>("fxr-webcompat_youtube@mozilla.org", "resource://android/assets/extensions/fxr_youtube/"),
@@ -77,13 +76,13 @@ public class SessionStore implements
     private Context mContext;
     private WRuntime mRuntime;
     private ArrayList<Session> mSessions;
+    private final SessionSuspender mSessionSuspender;
     private Session mActiveSession;
     private PermissionDelegate mPermissionDelegate;
     private BookmarksStore mBookmarksStore;
     private HistoryStore mHistoryStore;
     private WebAppsStore mWebAppStore;
     private Services mServices;
-    private boolean mSuspendPending;
     private TrackingProtectionStore mTrackingProtectionStore;
     private WolvicWebExtensionRuntime mWebExtensionRuntime;
     private FxaWebChannelFeature mWebChannelsFeature;
@@ -94,6 +93,7 @@ public class SessionStore implements
 
     private SessionStore() {
         mSessions = new ArrayList<>();
+        mSessionSuspender = new SessionSuspender(mSessions);
         mSessionChangeListeners = new LinkedHashSet<>();
     }
 
@@ -293,15 +293,12 @@ public class SessionStore implements
         });
     }
 
-    public void suspendAllInactiveSessions() {
-        for (Session session: mSessions) {
-            if (!session.isActive()) {
-                session.suspend();
-            }
-        }
-        if (BuildConfig.DEBUG) {
-            mStoreSubscription.resume();
-        }
+    public void onTrimMemory(int level) {
+        mSessionSuspender.onTrimMemory(level);
+    }
+
+    void sessionActiveStateChanged() {
+        mMainExecutor.execute(mSessionSuspender::onActiveStateChanged);
     }
 
     public @Nullable Session getSession(String aId) {
@@ -334,39 +331,6 @@ public class SessionStore implements
         Session session = getSession(sessionId);
         if (session != null) {
             setActiveSession(session);
-        }
-    }
-
-    private void limitInactiveSessions() {
-        Log.d(LOGTAG, "Limiting Inactive Sessions");
-        suspendAllInactiveSessions();
-        mSuspendPending = false;
-    }
-
-    void sessionActiveStateChanged() {
-        if (mSuspendPending) {
-            return;
-        }
-        int count = 0;
-        int activeCount = 0;
-        int inactiveCount = 0;
-        int suspendedCount = 0;
-        for(Session session: mSessions) {
-            if (session.getWSession() != null) {
-                count++;
-                if (session.isActive()) {
-                    activeCount++;
-                } else {
-                    inactiveCount++;
-                }
-            } else {
-                suspendedCount++;
-            }
-        }
-        if (count > MAX_SESSIONS) {
-            Log.d(LOGTAG, "Too many sessions. Active: " + activeCount + " Inactive: " + inactiveCount + " Suspended: " + suspendedCount);
-            mSuspendPending = true;
-            mMainExecutor.execute(this::limitInactiveSessions);
         }
     }
 
