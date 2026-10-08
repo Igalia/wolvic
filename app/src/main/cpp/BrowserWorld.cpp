@@ -1325,12 +1325,6 @@ BrowserWorld::EndFrame() {
     m.device->EndFrame();
   }
   m.drawHandler = nullptr;
-
-  // Update the 3d audio engine with the most recent head rotation.
-  const vrb::Matrix &head = m.device->GetHeadTransform();
-  const vrb::Vector p = head.GetTranslation();
-  const vrb::Quaternion q(head);
-  VRBrowser::HandleAudioPose(q.x(), q.y(), q.z(), q.w(), p.x(), p.y(), p.z());
 }
 
 void

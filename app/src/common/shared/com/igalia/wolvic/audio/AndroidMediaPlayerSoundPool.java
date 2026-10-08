@@ -59,12 +59,6 @@ public class AndroidMediaPlayerSoundPool implements AudioEngine.AudioEngineImpl 
     public void resume() {}
 
     @Override
-    public void setPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {}
-
-    @Override
-    public void update() {}
-
-    @Override
     public void release() {
         mSoundPool.release();
         mSoundMap.clear();
