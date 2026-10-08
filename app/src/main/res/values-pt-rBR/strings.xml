@@ -134,7 +134,6 @@
     <string name="settings_language_norwegian_nynorsk">Norueguês</string>
     <string name="settings_language_portuguese">Português</string>
     <string name="settings_display">Monitor</string>
-    <string name="settings_report_speech_data">Relatório de Dados de Fala</string>
     <string name="settings_send_your_feedback">Envie Seu Feedback</string>
     <string name="settings_accounts_reconnect">Reconectar</string>
     <string name="restart_dialog_restart">É necessário reiniciar</string>
@@ -332,16 +331,12 @@
     <string name="remove_bookmark_tooltip">Remover dos favoritos</string>
     <string name="close_bookmarks_tooltip">Fechar favoritos</string>
     <string name="settings_tooltip">Configurações</string>
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem identificar informações. Você sempre será capaz de usar a pesquisa de voz, mesmo que você não permita a coleta. ]]></string>
     <string name="new_window_tooltip">Abra uma nova janela</string>
     <string name="private_browsing_body"><![CDATA[\n<p>Quando você navega em uma janela privada, %1$s <strong>não salva</strong>:</p> <ul class="two-column"> <li>páginas visitadas</li> <li>pesquisa </li> <li>cookies</li> <li>arquivos temporários</li> </ul> <p>Navegação privada <strong>não o torna anônimo</strong> na Internet. Seu empregador ou provedor de serviços de Internet ainda pode saber qual página você visita.</p> <p class="about-info">Saiba mais sobre <a id="learnMore">Navegação privada</a>.</p>\n \u0020 \u0020 ]]></string>
     <string name="url_downloads_title">Downloads</string>
     <string name="hamburger_menu_addons">Addons</string>
-    <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s colete amostras de voz para pesquisa\?</string>
-    <string name="voice_samples_collect_dialog_do_not_allow">Não permitir</string>
     <string name="send_tab_dialog_description">Escolha um dispositivo para enviar a guia.</string>
     <string name="send_tab_dialog_button">Enviar</string>
-    <string name="voice_samples_collect_dialog_allow">Permitir</string>
     <string name="url_home_title">%1$s Início</string>
     <string name="url_history_title">Histórico</string>
     <string name="url_bookmarks_title">Favoritos</string>
@@ -397,7 +392,6 @@
     <string name="security_options_block_pup_up_settings">Avançado</string>
     <string name="security_options_webxr_settings">Avançado</string>
     <string name="security_options_speech_data_collection_title">%1$s Coleta e Uso de Dados</string>
-    <string name="security_options_speech_data_collect">Permitir que %1$s colete dados de fala</string>
     <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para a Mozilla</string>
     <string name="on">Ligado</string>
     <string name="off">Desligado</string>

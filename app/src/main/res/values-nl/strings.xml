@@ -372,10 +372,6 @@
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">Controlleropties</string>
 
-    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
-         On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">Spraakgegevens rapporteren</string>
-
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
@@ -803,11 +799,6 @@
          relate to Wolvic data collection and use.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">Verzamelen en gebruik van gegevens door %1$s</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data.
-     '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_speech_data_collect">%1$s toestaan spraakgegevens te verzamelen</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
@@ -1732,23 +1723,6 @@
     <string name="performance_title">Slechte prestaties gedetecteerd</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">De huidige webpagina is van invloed op de prestaties en is opgeschort. Door de venstergrootte te verkleinen, kunt u een webpagina met slechte prestaties verbeteren.</string>
-
-    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search.
-         '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">%1$s toestaan om spraakgegevens te verzamelen voor onderzoek?</string>
-
-    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Om onze spraakherkenning en andere diensten te verbeteren, moeten we stemfragmenten verzamelen voor onderzoek. We slaan uw gegevens veilig en zonder identificerende informatie op. U kunt altijd gesproken zoekopdrachten gebruiken, zelfs als u verzameling niet toestaat. <a href="privacy">Meer info</a>]]></string>
-
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">Toestaan</string>
-
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">Niet toestaan</string>
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Standaard</string>

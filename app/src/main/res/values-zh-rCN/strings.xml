@@ -290,9 +290,6 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">控制器选项</string>
-    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
-         On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">报告语音数据</string>
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
@@ -650,10 +647,6 @@
          relate to Wolvic data collection and use.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">%1$s 数据收集与使用</string>
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data.
-     '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_speech_data_collect">允许 %1$s 收集语音数据</string>
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
@@ -1329,19 +1322,6 @@
     <string name="performance_title">检测到性能欠佳</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">当前网页影响性能，已暂时挂起。缩小窗口有助于改善性能较差的网页。</string>
-    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search.
-         '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">允许 %1$s 为研究收集语音样本吗？</string>
-    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[为了改进我们的语音识别和其他服务，我们需要收集语音样本用于研究。我们会安全地存储您的数据，且不包含任何可识别您身份的信息。即使您不允许我们收集数据，您仍然可以随时使用语音搜索功能。<a href="">了解更多</a>]]></string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">允许</string>
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">不允许</string>
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">默认</string>
     <!-- This string is displayed in the URL bar when the user is in the home page.

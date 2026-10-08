@@ -371,10 +371,6 @@
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">Opzioni controller</string>
 
-    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
-         On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">Segnala dati del riconoscimento vocale</string>
-
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
@@ -800,11 +796,6 @@
          relate to Wolvic data collection and use.
          '%1$s' Will be replaced at runtime with the app name. -->
     <string name="security_options_speech_data_collection_title">Raccolta e utilizzo dati di %1$s</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data.
-     '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_speech_data_collect">Consenti a %1$s di raccogliere dati vocali</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
@@ -1728,23 +1719,6 @@
     <string name="performance_title">Rilevate prestazioni non ottimali</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">La pagina web corrente è stata sospesa a causa del suo impatto negativo sulle prestazioni. Per migliorare le prestazioni della pagina web prova a ridurre le dimensioni della finestra.</string>
-
-    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search.
-         '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="voice_samples_collect_data_dialog_title">Consenti a %1$s di raccogliere campioni vocali per scopi di ricerca?</string>
-
-    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
-         a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Per migliorare il riconoscimento vocale e altri servizi, raccogliamo campioni vocali a fini di ricerca. Conserviamo i tuoi dati con sistemi sicuri e non registriamo informazioni che possano identificarti. Sarai sempre in grado di utilizzare la ricerca vocale, anche se non dai il tuo consenso alla raccolta.<a href="privacy">Ulteriori informazioni</a>                     ]]></string>
-
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in to the voice data collection. -->
-    <string name="voice_samples_collect_dialog_allow">Consenti</string>
-
-    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">Non consentire</string>
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Predefinito</string>

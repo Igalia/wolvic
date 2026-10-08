@@ -114,7 +114,6 @@
     <string name="security_options_permission_webxr">மெய்நிகர் ரியாலிட்டி சாதனங்கள் (வெப்எக்ச்ஆர்)</string>
     <string name="security_options_webxr_settings">மேம்பட்ட</string>
     <string name="security_options_speech_data_collection_title">%1$s தரவு சேகரிப்பு மற்றும் பயன்பாடு</string>
-    <string name="security_options_speech_data_collect">பேச்சு தரவுகளை சேகரிக்க %1$s ஐ அனுமதிக்கவும்</string>
     <string name="security_options_telemetry_send_data">தொழில்நுட்ப மற்றும் தொடர்பு தரவை அவாய் அனுப்ப %1$s ஐ அனுமதிக்கவும்</string>
     <string name="security_options_crash_reports_send_data">உங்கள் சார்பாக பின்னடைவு செய்யப்பட்ட செயலிழப்பு அறிக்கைகளை அனுப்ப %1$s ஐ அனுமதிக்கவும்</string>
     <string name="on">ஆன்</string>
@@ -300,7 +299,6 @@
     <string name="settings_language_portuguese_br">போர்த்துகீசியம் (பிரேசில்)</string>
     <string name="settings_display">காட்சி</string>
     <string name="settings_controller_options">கட்டுப்பாட்டு விருப்பங்கள்</string>
-    <string name="settings_report_speech_data">பேச்சு தரவைப் புகாரளிக்கவும்</string>
     <string name="settings_report_issue">ஒரு சிக்கலைப் புகாரளிக்கவும்</string>
     <string name="settings_version_developer">உருவாக்குபவர் உருவாக்க</string>
     <string name="settings_help">உதவி</string>
@@ -463,10 +461,6 @@
     <string name="performance_unblock_page">பக்கத்தைத் தடைசெய்க</string>
     <string name="performance_title">மோசமான தள செயல்திறன்</string>
     <string name="performance_message">செயல்திறனை மேம்படுத்த சாளர அளவைக் குறைக்க முயற்சிக்கவும். இந்தப் பக்கத்தைத் தடுப்பது உங்கள் பயன்பாட்டை செயலிழக்கச் செய்யலாம்.</string>
-    <string name="voice_samples_collect_data_dialog_title">ஆராய்ச்சிக்கு குரல் மாதிரிகளை சேகரிக்க %1$s ஐ அனுமதிக்கவா?</string>
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[எங்கள் குரல் ஏற்பு மற்றும் பிற சேவைகளை மேம்படுத்துவதற்காக, ஆராய்ச்சிக்கு குரல் மாதிரிகளை சேகரிக்க வேண்டும். உங்கள் தரவை நாங்கள் பாதுகாப்பாகவும், தகவல்களை அடையாளம் காணாமல் சேமித்து வைக்கிறோம். நீங்கள் சேகரிப்பை அனுமதிக்காவிட்டாலும், நீங்கள் எப்போதும் குரல் தேடலைப் பயன்படுத்த முடியும். <a href="">மேலும் அறிக</a>]]></string>
-    <string name="voice_samples_collect_dialog_allow">இசைவு</string>
-    <string name="voice_samples_collect_dialog_do_not_allow">அனுமதிக்க வேண்டாம்</string>
     <string name="language_default">இயல்புநிலை</string>
     <string name="url_home_title">%1$s வீடு</string>
     <string name="url_bookmarks_title">புக்மார்க்குகள்</string>

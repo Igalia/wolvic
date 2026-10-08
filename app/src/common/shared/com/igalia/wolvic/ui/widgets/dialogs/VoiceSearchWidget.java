@@ -27,7 +27,6 @@ import java.util.concurrent.Executors;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
-import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.VoiceSearchDialogBinding;
@@ -353,11 +352,6 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
     }
 
     private void startRecognition(String locale) {
-        boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
-        if (SessionStore.get().getActiveSession().isPrivateMode()) {
-            storeData = false;
-        }
-
         mCurrentSpeechRecognizer = mApplication.getSpeechRecognizer();
         if (mCurrentSpeechRecognizer == null) {
             Log.e(LOGTAG, "Speech recognizer is null");
@@ -368,8 +362,6 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
 
         SpeechRecognizer.Settings settings = new SpeechRecognizer.Settings();
         settings.locale = locale;
-        settings.storeData = storeData;
-        settings.productTag = getContext().getString(R.string.voice_app_id);
 
         mCurrentSpeechRecognizer.start(settings, mResultCallback);
     }
@@ -403,30 +395,10 @@ public class VoiceSearchWidget extends UIDialog implements Application.ActivityL
             return;
         }
 
-        if (!mApplication.getSpeechRecognizer().shouldDisplayStoreDataPrompt() ||
-                SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
-                SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
-            mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-            super.show(aShowFlags);
+        mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+        super.show(aShowFlags);
 
-            ensurePermissionsAndStartVoiceSearch();
-
-        } else {
-            mWidgetManager.getFocusedWindow().showDialog(
-                    getResources().getString(R.string.voice_samples_collect_data_dialog_title, getResources().getString(R.string.app_name)),
-                    R.string.voice_samples_collect_dialog_description2,
-                    new int[]{
-                            R.string.voice_samples_collect_dialog_do_not_allow,
-                            R.string.voice_samples_collect_dialog_allow},
-                    (index, isChecked) -> {
-                        SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
-                        }
-                        new Handler(Looper.getMainLooper()).post(() -> show(aShowFlags));
-                    },
-                    () -> mWidgetManager.openNewTabForeground(getResources().getString(R.string.private_policy_url)));
-        }
+        ensurePermissionsAndStartVoiceSearch();
     }
 
     @Override

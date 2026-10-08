@@ -43,7 +43,6 @@
     <string name="security_options_login_saved">Logins salvos…</string>
     <string name="security_options_permission_location">Localização</string>
     <string name="security_options_block_pup_up_windows">Bloquear janelas Pop-Up</string>
-    <string name="security_options_speech_data_collect">Permitir que %1$s colete dados de fala</string>
     <string name="voice_search_example">Exemplo: Diga \"vídeos 360, previsão do tempo, notícias...\"</string>
     <string name="crash_dialog_message"><![CDATA[Ajude a Mozilla a melhorar o %1$s enviando os seus dados de falha. <a href="more">Saiba mais</a>]]></string>
     <string name="do_not_sent_button">Não envie</string>
@@ -125,9 +124,6 @@
     <string name="performance_unblock_page">Desbloquear página</string>
     <string name="performance_title">Desempenho ruim do site</string>
     <string name="performance_message">Tente reduzir o tamanho da janela para melhorar o desempenho. Desbloquear esta página pode travar a sua app.</string>
-    <string name="voice_samples_collect_data_dialog_title">Permitir que %1$s recolha amostras de voz para pesquisa?</string>
-    <string name="voice_samples_collect_dialog_description2"><![CDATA[Para melhorar nosso reconhecimento de voz e outros serviços, precisamos coletar amostras de voz para pesquisa. Armazenamos seus dados de forma segura e sem informações de identificação. Sempre poderá usar a pesquisa por voz, mesmo que não permita a coleta. <a href="">Saiba mais</a>]]></string>
-    <string name="voice_samples_collect_dialog_do_not_allow">Não permitir</string>
     <string name="url_home_title">%1$s Início</string>
     <string name="url_library_title">Biblioteca</string>
     <string name="private_clear_button">Limpar</string>
@@ -333,7 +329,6 @@
     <string name="new_window_tooltip">Abrir uma nova janela</string>
     <string name="url_downloads_title">Descargas</string>
     <string name="hamburger_menu_addons">Addons</string>
-    <string name="voice_samples_collect_dialog_allow">Permitir</string>
     <string name="url_bookmarks_title">Favoritos</string>
     <string name="popup_block_title_v1">%1$s impediu pop-ups deste site</string>
     <string name="popup_block_checkbox">Não pergunte novamente por este site</string>
@@ -518,7 +513,6 @@
     <string name="settings_language_choose_language_webpage_content">Escolha o seu idioma favorito para mostrar as páginas</string>
     <string name="history_section_older">Mais antigo</string>
     <string name="settings_privacy_security">Privacidade &amp; Segurança</string>
-    <string name="settings_report_speech_data">Relatório de Dados de Fala</string>
     <string name="settings_language_danish">Dinamarquês</string>
     <string name="permission_persistent_storage">Permite %1$s gravar no seu aparelho de armazenamento persistente?</string>
     <string name="fxa_account_last_sync_error">Erro de sincronização</string>
