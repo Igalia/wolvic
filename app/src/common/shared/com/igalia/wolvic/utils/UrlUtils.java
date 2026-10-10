@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.search.SearchEngineWrapper;
@@ -26,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // This class refers from mozilla-mobile/focus-android
@@ -314,16 +316,36 @@ public class UrlUtils {
         return !isUnderTest ? SearchEngineWrapper.get(context).getSearchURL(text) : TEST_SEARCH_URL + text;
     }
 
+    private static final Pattern hostPrefixPattern = Pattern.compile("([a-zA-Z][a-zA-Z0-9+.-]*://[^/?#\\s]*|[^:/?#\\s]+(:[0-9]+)?)(?=[/?#])");
+
+    private static String encodeSpacesAfterHost(@NonNull String url) {
+        Matcher matcher = hostPrefixPattern.matcher(url);
+        if (!matcher.lookingAt())
+            return url;
+
+        return url.substring(0, matcher.end()) + url.substring(matcher.end()).replace(" ", "%20");
+    }
+
+    private static boolean hasKnownPublicSuffix(@NonNull Context context, @NonNull String host) {
+        return ((VRBrowserApplication) context.getApplicationContext()).getPublicSuffixes().hasKnownPublicSuffix(host);
+    }
+
     public static String urlForText(@NonNull Context context, @NonNull String text, @NonNull WSession.UrlUtilsVisitor visitor) {
         String url = text.trim();
+        String encodedUrl = encodeSpacesAfterHost(url);
+
         URI uri;
         try {
-            uri = parseUri(url);
+            uri = parseUri(encodedUrl);
             if (!uri.isAbsolute()) {
-                if (!isDomain(url) && !isIPUri(url))
+                if (!isDomain(encodedUrl) && !isIPUri(encodedUrl))
                     return searchURLForText(context, url);
-                uri = parseUri("http://" + url);
+
+                uri = parseUri("http://" + encodedUrl);
+                if (url.contains(" ") && !isIPUri(encodedUrl) && !hasKnownPublicSuffix(context, uri.getHost()))
+                    return searchURLForText(context, url);
             }
+
             // This catches the special case of passing an URL with an invalid IP address
             if (uri.getHost() == null && uri.getAuthority() != null)
                 return searchURLForText(context, url);
