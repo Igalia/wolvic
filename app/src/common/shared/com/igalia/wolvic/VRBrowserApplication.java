@@ -33,6 +33,7 @@ import com.igalia.wolvic.utils.ConnectivityReceiver;
 import com.igalia.wolvic.utils.EnvironmentsManager;
 import com.igalia.wolvic.utils.DictionariesManager;
 import com.igalia.wolvic.utils.LocaleUtils;
+import com.igalia.wolvic.utils.PublicSuffixes;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
@@ -49,6 +50,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private DictionariesManager mDictionariesManager;
     private Addons mAddons;
     private ConnectivityReceiver mConnectivityManager;
+    private PublicSuffixes mPublicSuffixes;
     private Activity mCurrentActivity;
 
     protected void onActivityCreate(@NonNull Context activityContext) {
@@ -107,6 +109,9 @@ public class VRBrowserApplication extends Application implements AppServicesProv
                     .penaltyLog()
                     .build());
         }
+
+        mPublicSuffixes = new PublicSuffixes(this);
+        mPublicSuffixes.prefetch();
     }
 
     public Services getServices() {
@@ -177,6 +182,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public ConnectivityReceiver getConnectivityReceiver() {
         return mConnectivityManager;
+    }
+
+    public PublicSuffixes getPublicSuffixes() {
+        return mPublicSuffixes;
     }
 
     public Activity getCurrentActivity() { return mCurrentActivity; }

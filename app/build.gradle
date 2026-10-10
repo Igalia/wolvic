@@ -653,6 +653,7 @@ dependencies {
     implementation libs.androidcomponents.concept.fetch
     implementation libs.androidcomponents.lib.fetch
     implementation libs.androidcomponents.lib.dataprotect
+    implementation libs.androidcomponents.lib.publicsuffixlist
     implementation libs.androidcomponents.support.images
     implementation libs.androidcomponents.support.appservices
     implementation libs.androidcomponents.support.webextensions
