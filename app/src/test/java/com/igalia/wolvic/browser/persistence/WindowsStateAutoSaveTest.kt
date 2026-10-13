@@ -38,6 +38,31 @@ class WindowsStateAutoSaveTest {
     }
 
     @Test
+    fun mergesRequestsWithinTheMinimumInterval() = runTest {
+        val autoSave = createAutoSave()
+
+        val first = state
+        autoSave.requestSave()
+        runCurrent()
+
+        state = WindowsState()
+        autoSave.requestSave()
+
+        state = WindowsState()
+        autoSave.requestSave()
+
+        advanceTimeBy(MINIMUM_INTERVAL - 1.milliseconds)
+        runCurrent()
+
+        assertEquals(listOf(first), store.writes)
+
+        advanceTimeBy(1.milliseconds)
+        runCurrent()
+
+        assertEquals(listOf(first, state), store.writes)
+    }
+
+    @Test
     fun savesPeriodicallyOnlyWhileStarted() = runTest {
         val autoSave = createAutoSave()
         autoSave.start()
@@ -56,12 +81,45 @@ class WindowsStateAutoSaveTest {
     }
 
     @Test
+    fun savesRequestsWhileStopped() = runTest {
+        val autoSave = createAutoSave()
+        autoSave.start()
+        autoSave.stop()
+
+        autoSave.requestSave()
+        runCurrent()
+
+        assertEquals(listOf(state), store.writes)
+    }
+
+    @Test
+    fun savesNowWithoutWaitingForTheMinimumInterval() = runTest {
+        val autoSave = createAutoSave()
+
+        val first = state
+        autoSave.requestSave()
+        runCurrent()
+
+        autoSave.requestSave()
+
+        state = WindowsState()
+        autoSave.saveNow()
+
+        advanceTimeBy(MINIMUM_INTERVAL)
+        runCurrent()
+
+        assertEquals(listOf(first, state), store.writes)
+    }
+
+    @Test
     fun ignoresRequestsAfterShutdown() = runTest {
         val autoSave = createAutoSave()
         autoSave.start()
+        autoSave.requestSave()
 
         autoSave.shutdown()
 
+        autoSave.requestSave()
         autoSave.saveNow()
 
         advanceTimeBy(PERIODIC_INTERVAL * 2)
@@ -95,9 +153,11 @@ class WindowsStateAutoSaveTest {
             store = store,
             currentState = { state },
             scope = backgroundScope,
+            minimumInterval = MINIMUM_INTERVAL,
             periodicInterval = PERIODIC_INTERVAL,
             mainDispatcher = StandardTestDispatcher(testScheduler),
             ioDispatcher = UnconfinedTestDispatcher(testScheduler),
+            timeSource = testScheduler.timeSource,
         )
     }
 
@@ -120,6 +180,7 @@ class WindowsStateAutoSaveTest {
     }
 
     private companion object {
+        val MINIMUM_INTERVAL = 2.seconds
         val PERIODIC_INTERVAL = 30.seconds
         val WRITE_DURATION = 200.milliseconds
         val SHUTDOWN_TIMEOUT = 10.seconds

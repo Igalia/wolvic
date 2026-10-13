@@ -12,15 +12,19 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 class WindowsStateAutoSave @JvmOverloads constructor(
     private val store: WindowsStateStore,
     private val currentState: () -> WindowsState,
     private val scope: CoroutineScope,
+    private val minimumInterval: Duration = MINIMUM_INTERVAL,
     private val periodicInterval: Duration = PERIODIC_INTERVAL,
     private val shutdownTimeout: Duration = SHUTDOWN_TIMEOUT,
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
 
     private val snapshots = Channel<WindowsState>(Channel.CONFLATED)
@@ -31,9 +35,11 @@ class WindowsStateAutoSave @JvmOverloads constructor(
         }
     }
 
+    private var lastSnapshot: TimeMark? = null
     private var isShutDown = false
 
     private var periodicSaves: Job? = null
+    private var pendingSave: Job? = null
 
     @MainThread
     fun start() {
@@ -44,7 +50,7 @@ class WindowsStateAutoSave @JvmOverloads constructor(
         periodicSaves = scope.launch(mainDispatcher) {
             while (true) {
                 delay(periodicInterval)
-                saveNow()
+                requestSave()
             }
         }
     }
@@ -56,12 +62,28 @@ class WindowsStateAutoSave @JvmOverloads constructor(
     }
 
     @MainThread
+    fun requestSave() {
+        if (isShutDown || pendingSave?.isActive == true) {
+            return
+        }
+
+        val remainingInterval = lastSnapshot?.let { minimumInterval - it.elapsedNow() } ?: Duration.ZERO
+
+        pendingSave = scope.launch(mainDispatcher) {
+            delay(remainingInterval)
+            takeSnapshot()
+        }
+    }
+
+    @MainThread
     fun saveNow() {
         if (isShutDown) {
             return
         }
 
-        snapshots.trySend(currentState())
+        cancelPendingSave()
+
+        takeSnapshot()
     }
 
     @MainThread
@@ -69,6 +91,7 @@ class WindowsStateAutoSave @JvmOverloads constructor(
         isShutDown = true
 
         stop()
+        cancelPendingSave()
 
         snapshots.close()
 
@@ -77,7 +100,19 @@ class WindowsStateAutoSave @JvmOverloads constructor(
         }
     }
 
+    private fun cancelPendingSave() {
+        pendingSave?.cancel()
+        pendingSave = null
+    }
+
+    private fun takeSnapshot() {
+        lastSnapshot = timeSource.markNow()
+
+        snapshots.trySend(currentState())
+    }
+
     private companion object {
+        val MINIMUM_INTERVAL = 2.seconds
         val PERIODIC_INTERVAL = 30.seconds
         val SHUTDOWN_TIMEOUT = 1.seconds
     }

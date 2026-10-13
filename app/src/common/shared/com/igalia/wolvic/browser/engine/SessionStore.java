@@ -595,6 +595,13 @@ public class SessionStore implements
     }
 
     @Override
+    public void onSessionLoadFinished(Session aSession) {
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionLoadFinished(aSession);
+        }
+    }
+
+    @Override
     public void onCurrentSessionChange(WSession aOldSession, WSession aSession) {
         Session oldSession = getSession(aOldSession);
         Session newSession = getSession(aSession);

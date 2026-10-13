@@ -27,6 +27,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.components.WolvicEngineSession;
 import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
+import com.igalia.wolvic.browser.persistence.SessionsChangeAutoSaveTrigger;
 import com.igalia.wolvic.browser.persistence.WindowState;
 import com.igalia.wolvic.browser.persistence.WindowsState;
 import com.igalia.wolvic.browser.persistence.WindowsStateAutoSave;
@@ -108,6 +109,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mCompositorPaused = false;
     private WindowsStateStore mStateStore;
     private final WindowsStateAutoSave mStateAutoSave;
+    private final SessionsChangeAutoSaveTrigger mStateAutoSaveTrigger;
     private WindowsState mWindowsState;
     private boolean mIsRestoreEnabled;
     private boolean mAfterRestore;
@@ -203,6 +205,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mWindowsState = mStateStore.read();
 
         mStateAutoSave = new WindowsStateAutoSave(mStateStore, this::createWindowsState, ((VRBrowserActivity) mContext).getCoroutineScope());
+        mStateAutoSaveTrigger = new SessionsChangeAutoSaveTrigger(mStateAutoSave);
 
         restoreWindows();
     }
@@ -501,6 +504,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void onDestroy() {
+        SessionStore.get().removeSessionChangeListener(mStateAutoSaveTrigger);
         mStateAutoSave.shutdown();
 
         if (mTabsWidget != null && !mTabsWidget.isReleased()) {
@@ -815,6 +819,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 SettingsStore.getInstance(mContext).setTabAfterRestore(null);
             }
         }
+
+        SessionStore.get().addSessionChangeListener(mStateAutoSaveTrigger);
 
         mAfterRestore = true;
     }
@@ -1441,7 +1447,6 @@ public void selectTab(@NonNull Session aTab) {
     public void openNewTabAfterRestore(@NonNull String aUri, @NewTabLocation int aLocation) {
         if (mAfterRestore) {
             openNewTab(aUri, aLocation);
-            saveState();
         } else {
             mAddedTabUri = aUri;
             mAddedTabLocation = aLocation;

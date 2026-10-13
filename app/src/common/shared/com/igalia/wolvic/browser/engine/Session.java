@@ -1287,6 +1287,10 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
         for (WSession.ProgressDelegate listener : mProgressListeners) {
             listener.onPageStop(aSession, b);
         }
+
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionLoadFinished(this);
+        }
     }
 
     @Override
