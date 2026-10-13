@@ -13,6 +13,8 @@ class SessionsChangeAutoSaveTrigger(private val autoSave: WindowsStateAutoSave) 
 
     override fun onSessionLoadFinished(aSession: Session) = requestSaveFor(aSession)
 
+    override fun onEngineSessionStateUpdated(aSession: Session) = requestSaveFor(aSession)
+
     private fun requestSaveFor(session: Session) {
         if (!session.isPrivateMode) {
             autoSave.requestSave()

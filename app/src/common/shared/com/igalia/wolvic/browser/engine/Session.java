@@ -1309,8 +1309,14 @@ public class Session implements WContentBlocking.Delegate, WSession.NavigationDe
     @Override
     public void onSessionStateChange(@NonNull WSession aSession,
                                      @NonNull WSessionState aSessionState) {
-        if (mState.mSession == aSession) {
-            mState.mSessionState = aSessionState;
+        if (mState.mSession != aSession) {
+            return;
+        }
+
+        mState.mSessionState = aSessionState;
+
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onEngineSessionStateUpdated(this);
         }
     }
 
