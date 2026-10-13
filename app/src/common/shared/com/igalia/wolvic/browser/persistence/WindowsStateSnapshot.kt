@@ -20,7 +20,7 @@ fun createWindowsState(
         state.privateMode = privateMode
         state.focusedWindowPlacement = focusedWindow.restorablePlacement
 
-        state.tabs = ArrayList(tabs)
+        state.tabs = tabs.mapTo(ArrayList()) { it.copy() }
 
         state.regularWindowsState = regularWindows.mapNotNullTo(ArrayList()) { window ->
             window.session?.let { window.toWindowState(tabs.indexOf(it.sessionState)) }

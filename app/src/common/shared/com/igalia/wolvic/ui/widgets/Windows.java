@@ -216,8 +216,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void saveState() {
+        WindowsState state = createWindowsState();
+
         Executor diskIOExecutor = ((VRBrowserApplication)mContext.getApplicationContext()).getExecutors().diskIO();
-        diskIOExecutor.execute(() -> mStateStore.write(createWindowsState()));
+        diskIOExecutor.execute(() -> mStateStore.write(state));
     }
 
     public void setDelegate(Delegate aDelegate) {
