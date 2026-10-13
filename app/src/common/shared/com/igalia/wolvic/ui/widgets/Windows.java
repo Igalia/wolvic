@@ -17,7 +17,6 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.BookmarksStore;
-import com.igalia.wolvic.browser.HistoryStore;
 import com.igalia.wolvic.browser.Media;
 import com.igalia.wolvic.browser.Services;
 import com.igalia.wolvic.browser.SettingsStore;
@@ -29,6 +28,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.browser.persistence.WindowState;
 import com.igalia.wolvic.browser.persistence.WindowsState;
+import com.igalia.wolvic.browser.persistence.WindowsStateSnapshot;
 import com.igalia.wolvic.browser.persistence.WindowsStateStore;
 import com.igalia.wolvic.downloads.DownloadsManager;
 import com.igalia.wolvic.telemetry.TelemetryService;
@@ -48,7 +48,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthFlowError;
@@ -203,10 +202,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private WindowsState createWindowsState() {
-        WindowsState state = new WindowsState();
-        state.privateMode = mPrivateMode;
-        state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
-
         List<Session> sessions;
 
         if (SettingsStore.getInstance(mContext).getTabsLocation() == SettingsStore.TABS_LOCATION_TRAY) {
@@ -217,51 +212,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             sessions = SessionStore.get().getSessions(false);
         }
 
-        state.tabs = sessions.stream()
-                .map(Session::getSessionState)
-                .filter(sessionState -> HistoryStore.getBLOCK_LIST().stream().noneMatch(uri ->
-                    sessionState.mUri != null && sessionState.mUri.startsWith(uri)
-                ))
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        for (WindowWidget window : mRegularWindows) {
-            if (window.getSession() != null) {
-                state.regularWindowsState.add(createWindowState(window, state.tabs.indexOf(window.getSession().getSessionState())));
-            }
-        }
-
-        return state;
-    }
-
-    private WindowState createWindowState(@NonNull WindowWidget aWindow, int aTabIndex) {
-        WindowState state = new WindowState();
-        WidgetPlacement widgetPlacement;
-
-        if (aWindow.isFullScreen()) {
-            widgetPlacement = aWindow.getBeforeFullscreenPlacement();
-            state.placement = aWindow.getWindowPlacementBeforeFullscreen();
-        } else if (aWindow.isResizing()) {
-            widgetPlacement = aWindow.getBeforeResizePlacement();
-            state.placement = aWindow.getWindowPlacement();
-        } else {
-            widgetPlacement = aWindow.getPlacement();
-            state.placement = aWindow.getWindowPlacement();
-        }
-
-        state.textureWidth = widgetPlacement.width;
-        state.textureHeight = widgetPlacement.height;
-        state.worldWidth = widgetPlacement.worldWidth;
-        state.tabIndex = aTabIndex;
-
-        if (aWindow.isNativeContentVisible()) {
-            state.contentType = aWindow.getSelectedPanel();
-        } else if (aWindow.getCurrentContentType() == ContentType.NEW_TAB) {
-            state.contentType = ContentType.NEW_TAB;
-        } else {
-            state.contentType = ContentType.WEB_CONTENT;
-        }
-
-        return state;
+        return WindowsStateSnapshot.createWindowsState(mPrivateMode, mFocusedWindow, mRegularWindows, sessions);
     }
 
     public void saveState() {
