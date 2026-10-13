@@ -14,6 +14,7 @@ import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
 import com.igalia.wolvic.R;
+import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.browser.Accounts;
 import com.igalia.wolvic.browser.BookmarksStore;
@@ -28,6 +29,7 @@ import com.igalia.wolvic.browser.engine.Session;
 import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.browser.persistence.WindowState;
 import com.igalia.wolvic.browser.persistence.WindowsState;
+import com.igalia.wolvic.browser.persistence.WindowsStateAutoSave;
 import com.igalia.wolvic.browser.persistence.WindowsStateSnapshot;
 import com.igalia.wolvic.browser.persistence.WindowsStateStore;
 import com.igalia.wolvic.downloads.DownloadsManager;
@@ -105,6 +107,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private PromptDialogWidget mNoInternetDialog;
     private boolean mCompositorPaused = false;
     private WindowsStateStore mStateStore;
+    private final WindowsStateAutoSave mStateAutoSave;
     private WindowsState mWindowsState;
     private boolean mIsRestoreEnabled;
     private boolean mAfterRestore;
@@ -198,6 +201,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mIsRestoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
         mStateStore = new WindowsStateStore(mContext);
         mWindowsState = mStateStore.read();
+
+        mStateAutoSave = new WindowsStateAutoSave(mStateStore, this::createWindowsState, ((VRBrowserActivity) mContext).getCoroutineScope());
+
         restoreWindows();
     }
 
@@ -216,10 +222,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void saveState() {
-        WindowsState state = createWindowsState();
-
-        Executor diskIOExecutor = ((VRBrowserApplication)mContext.getApplicationContext()).getExecutors().diskIO();
-        diskIOExecutor.execute(() -> mStateStore.write(state));
+        mStateAutoSave.saveNow();
     }
 
     public void setDelegate(Delegate aDelegate) {
@@ -477,7 +480,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onPause() {
         mIsPaused = true;
 
-        saveState();
+        mStateAutoSave.stop();
+        mStateAutoSave.saveNow();
     }
 
     public void onResume() {
@@ -485,6 +489,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mCompositorPaused) {
             resumeCompositor();
         }
+
+        mStateAutoSave.start();
 
         TelemetryService.resetOpenedWindowsCount(mRegularWindows.size(), false);
         TelemetryService.resetOpenedWindowsCount(mPrivateWindows.size(), true);
@@ -495,6 +501,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void onDestroy() {
+        mStateAutoSave.shutdown();
+
         if (mTabsWidget != null && !mTabsWidget.isReleased()) {
             mTabsWidget.releaseWidget();
             mTabsWidget = null;
