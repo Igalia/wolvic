@@ -695,6 +695,7 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.atsl.core
     testImplementation libs.robolectric
+    testImplementation libs.kotlin.coroutines.test
     testImplementation libs.androidcomponents.support.test
     testImplementation libs.androidcomponents.support.test.appservices
     jnaForTest libs.jna
