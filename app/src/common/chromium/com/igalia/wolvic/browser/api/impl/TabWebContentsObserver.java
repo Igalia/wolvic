@@ -10,6 +10,7 @@ import com.igalia.wolvic.browser.api.WSession;
 import com.igalia.wolvic.browser.api.WWebRequestError;
 
 import org.chromium.base.ContextUtils;
+import org.chromium.base.TerminationStatus;
 import org.chromium.base.task.PostTask;
 import org.chromium.base.task.TaskTraits;
 import org.chromium.components.embedder_support.view.ContentView;
@@ -52,7 +53,7 @@ public class TabWebContentsObserver extends WebContentsObserver {
     }
 
     @Override
-    public void renderProcessGone() {
+    public void primaryMainFrameRenderProcessGone(@TerminationStatus int terminationStatus) {
         @Nullable WSession.ContentDelegate delegate = mSession.getContentDelegate();
 
         if (delegate != null) {
