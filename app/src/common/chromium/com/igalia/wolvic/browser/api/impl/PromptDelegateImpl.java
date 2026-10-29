@@ -994,7 +994,7 @@ class PromptDelegateImpl implements UserDialogManagerBridge.Delegate {
         private AutofillManager.Listener mAutofillManagerListener;
 
         private LoginSavePrompt mLoginSavePrompt;
-        private LoginSelectPrompt mLoginSelectPrompt;
+        private LoginSelectPrompt<?> mLoginSelectPrompt;
 
         public void setListener(PasswordManager.Listener listener) {
             mPasswordManagerListener = listener;
