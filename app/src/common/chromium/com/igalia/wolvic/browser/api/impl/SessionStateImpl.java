@@ -23,7 +23,8 @@ public class SessionStateImpl implements WSessionState {
     }
 
     public static SessionStateImpl fromJson(String json) {
-        // TODO
-        return new SessionStateImpl();
+        // TODO: returning null drops the saved state instead of keeping a placeholder that would
+        // be written back as "{}" and break the Gecko backend when restoring.
+        return null;
     }
 }
