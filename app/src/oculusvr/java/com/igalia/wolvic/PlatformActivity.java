@@ -5,7 +5,6 @@
 
 package com.igalia.wolvic;
 
-import android.Manifest;
 import android.app.NativeActivity;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,9 +26,6 @@ public class PlatformActivity extends NativeActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static boolean filterPermission(final String aPermission) {
-        if (aPermission.equals(Manifest.permission.CAMERA)) {
-            return true;
-        }
         return false;
     }
 

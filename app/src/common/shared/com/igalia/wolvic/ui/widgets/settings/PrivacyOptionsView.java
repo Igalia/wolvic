@@ -91,11 +91,7 @@ class PrivacyOptionsView extends SettingsView {
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(mBinding.microphonePermissionSwitch, Manifest.permission.RECORD_AUDIO));
 
-        if (DeviceType.isOculusBuild()) {
-            mBinding.cameraPermissionSwitch.setVisibility(View.GONE);
-        } else {
-            mPermissionButtons.add(Pair.create(mBinding.cameraPermissionSwitch, Manifest.permission.CAMERA));
-        }
+        mPermissionButtons.add(Pair.create(mBinding.cameraPermissionSwitch, Manifest.permission.CAMERA));
 
         if (DeviceType.isOculusBuild()) {
             mBinding.storagePermissionSwitch.setVisibility(View.GONE);
