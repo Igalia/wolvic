@@ -7,6 +7,7 @@ package com.igalia.wolvic;
 
 import static com.igalia.wolvic.ui.widgets.UIWidget.REMOVE_WIDGET;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
@@ -740,7 +741,23 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mViewModelStore.clear();
         // Always exit to work around https://github.com/MozillaReality/FirefoxReality/issues/3363
         finish();
+        killAuxiliaryProcesses();
         System.exit(0);
+    }
+
+    // Gecko's crash helper process outlives the main process after System.exit() until the OS reaps
+    // it, which makes the package look alive.
+    private void killAuxiliaryProcesses() {
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (am == null || am.getRunningAppProcesses() == null) {
+            return;
+        }
+        int myPid = Process.myPid();
+        for (ActivityManager.RunningAppProcessInfo info : am.getRunningAppProcesses()) {
+            if (info.pid != myPid) {
+                Process.killProcess(info.pid);
+            }
+        }
     }
 
     @Override
