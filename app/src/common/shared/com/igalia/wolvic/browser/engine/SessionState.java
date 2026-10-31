@@ -87,6 +87,17 @@ public class SessionState {
         return mSessionState != null && mUri != null && !mUri.equals(mSessionState.getCurrentUri());
     }
 
+    public SessionState copy() {
+        SessionState result = recreate();
+
+        result.mCanGoBack = mCanGoBack;
+        result.mCanGoForward = mCanGoForward;
+        result.mIsLoading = mIsLoading;
+        result.mIsInputActive = mIsInputActive;
+
+        return result;
+    }
+
     public static class ISessionStateAdapter extends TypeAdapter<WSessionState> {
         @Override
         public void write(JsonWriter out, WSessionState state) throws IOException {
