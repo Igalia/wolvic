@@ -823,6 +823,10 @@ void OpenXRInputSource::Update(const XrFrameState& frameState, XrSpace localSpac
         } else if (isControllerUnavailable) {
             delegate.SetEnabled(mIndex, false);
             return;
+        } else if (mUsingHandInteractionProfile && mHandTracker != XR_NULL_HANDLE) {
+            // Runtimes often report valid aim poses even after losing track of hands.
+            delegate.SetEnabled(mIndex, false);
+            return;
         }
     }
 
