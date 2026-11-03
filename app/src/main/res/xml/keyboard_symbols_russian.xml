@@ -9,7 +9,7 @@
         <Key app:codes="163" app:keyLabel="£"/>
         <Key app:codes="165" app:keyLabel="¥"/>
         <Key app:codes="36" app:keyLabel="$"/>
-        <Key app:codes="199" app:keyLabel="ç"/>
+        <Key app:codes="231" app:keyLabel="ç"/>
         <Key app:codes="37" app:keyLabel="%"/>
         <Key app:codes="38" app:keyLabel="&amp;"/>
         <Key app:codes="40" app:keyLabel="("/>
