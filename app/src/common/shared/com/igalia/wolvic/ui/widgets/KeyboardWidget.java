@@ -61,6 +61,7 @@ import com.igalia.wolvic.ui.keyboards.PolishKeyboard;
 import com.igalia.wolvic.ui.keyboards.RussianKeyboard;
 import com.igalia.wolvic.ui.keyboards.SpanishKeyboard;
 import com.igalia.wolvic.ui.keyboards.SwedishKeyboard;
+import com.igalia.wolvic.ui.keyboards.UkrainianKeyboard;
 import com.igalia.wolvic.ui.keyboards.ThaiKeyboard;
 import com.igalia.wolvic.ui.views.AutoCompletionView;
 import com.igalia.wolvic.ui.views.CustomKeyboardView;
@@ -304,6 +305,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new GermanKeyboard(aContext));
         mKeyboards.add(new SpanishKeyboard(aContext));
         mKeyboards.add(new RussianKeyboard(aContext));
+        mKeyboards.add(new UkrainianKeyboard(aContext));
         mKeyboards.add(new KoreanKeyboard(aContext));
         mKeyboards.add(new ItalianKeyboard(aContext));
         mKeyboards.add(new DanishKeyboard(aContext));
