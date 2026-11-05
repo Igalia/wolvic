@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:horizontalGap="@dimen/keyboard_horizontal_gap"
+    app:verticalGap="@dimen/keyboard_vertical_gap"
+    app:keyWidth="@dimen/keyboard_key_width"
+    app:keyHeight="@dimen/keyboard_key_height">
+    <Row>
+        <Key app:keyLabel="й" app:keyEdgeFlags="left" />
+        <Key app:keyLabel="ц" />
+        <Key app:keyLabel="у" />
+        <Key app:keyLabel="к" />
+        <Key app:keyLabel="е" />
+        <Key app:keyLabel="н" />
+        <Key app:keyLabel="г" app:popupCharacters="гґ" app:popupKeyboard="@xml/keyboard_popup" />
+        <Key app:keyLabel="ш" />
+        <Key app:keyLabel="щ" />
+        <Key app:keyLabel="з" />
+        <Key app:keyLabel="х" />
+        <Key app:keyLabel="ї" />
+        <Key app:codes="-5" app:keyIcon="@drawable/ic_icon_keyboard_backspace" app:isRepeatable="true" app:keyWidth="@dimen/keyboard_key_backspace_width" />
+    </Row>
+
+    <Row>
+        <Key app:keyLabel="ф" app:keyEdgeFlags="left" app:horizontalGap="@dimen/keyboard_left_margin" />
+        <Key app:keyLabel="і" />
+        <Key app:keyLabel="в" />
+        <Key app:keyLabel="а" />
+        <Key app:keyLabel="п" />
+        <Key app:keyLabel="р" />
+        <Key app:keyLabel="о" />
+        <Key app:keyLabel="л" />
+        <Key app:keyLabel="д" />
+        <Key app:keyLabel="ж" />
+        <Key app:keyLabel="є" />
+        <Key app:codes="-4" app:keyLabel="@string/keyboard_enter_label" app:keyWidth="@dimen/keyboard_key_enter_width"  />
+    </Row>
+
+    <Row>
+        <Key app:codes="-1" app:keyIcon="@drawable/ic_icon_keyboard_shift_off" app:keyEdgeFlags="left"/>
+        <Key app:keyLabel="я" />
+        <Key app:keyLabel="ч" />
+        <Key app:keyLabel="с" />
+        <Key app:keyLabel="м" />
+        <Key app:keyLabel="и" />
+        <Key app:keyLabel="т" />
+        <Key app:keyLabel="ь" />
+        <Key app:keyLabel="б" />
+        <Key app:keyLabel="ю" />
+        <Key app:codes="39" app:keyLabel="'" />
+        <Key app:keyLabel="/" />
+        <Key app:codes="-1" app:keyIcon="@drawable/ic_icon_keyboard_shift_off" />
+    </Row>
+
+    <Row>
+        <Key app:codes="-2" app:keyLabel="@string/keyboard_symbol" app:keyEdgeFlags="left"/>
+        <Key app:codes="-12" app:keyIcon="@drawable/ic_icon_keyboard_globe" />
+        <Key app:codes="32" app:keyLabel="" app:keyWidth="@dimen/keyboard_key_space_width" app:isRepeatable="true"/>
+        <Key app:codes="58" app:keyLabel=":"/>
+        <Key app:codes="44" app:keyLabel=","/>
+        <Key app:codes="46" app:keyLabel="."/>
+        <Key app:codes="33" app:keyLabel="!" app:popupCharacters="!¡" app:popupKeyboard="@xml/keyboard_popup" />
+        <Key app:codes="63" app:keyLabel="\?" app:popupCharacters="\?¿" app:popupKeyboard="@xml/keyboard_popup" />
+        <Key app:codes="-14" app:keyLabel="\.com" />
+        <Key app:codes="64" app:keyLabel="\@"/>
+    </Row>
+</Keyboard>
