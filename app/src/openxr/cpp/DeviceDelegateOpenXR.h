@@ -44,7 +44,6 @@ public:
   bool IsPositionTrackingSupported() const override;
   void OnControllersCreated(std::function<void()> callback) override;
   void OnControllersReady(const ControllersReadyCallback& callback) override;
-  void SetCPULevel(const device::CPULevel aLevel) override;
   void ProcessEvents() override;
   bool SupportsFramePrediction(FramePrediction aPrediction) const override;
   void StartFrame(const FramePrediction aPrediction) override;
