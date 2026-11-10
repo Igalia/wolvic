@@ -77,7 +77,6 @@ public:
   enum class WebXRInterstialState { FORCED, ALLOW_DISMISS, HIDDEN };
   void SetWebXRInterstitalState(const WebXRInterstialState aState);
   void SetIsServo(const bool aIsServo);
-  void SetCPULevel(const device::CPULevel aLevel);
   void SetPointerMode(crow::DeviceDelegate::PointerMode);
   void SetHandTrackingEnabled(bool);
   JNIEnv* GetJNIEnv() const;

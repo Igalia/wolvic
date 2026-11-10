@@ -27,7 +27,6 @@ const CapabilityFlags ImmersiveARSession = 1u << 12u;
 const CapabilityFlags GripSpacePosition = 1u << 13u;
 enum class Eye { Left, Right };
 enum class RenderMode { StandAlone, Immersive };
-enum class CPULevel { Normal = 0, High };
 enum class BlendMode { Opaque, AlphaBlend, Additive };
 const int32_t EyeCount = 2;
 inline int32_t EyeIndex(const Eye aEye) { return aEye == Eye::Left ? 0 : 1; }

@@ -1813,11 +1813,6 @@ BrowserWorld::SetCylinderDensity(const float aDensity) {
 }
 
 void
-BrowserWorld::SetCPULevel(const device::CPULevel aLevel) {
-  m.device->SetCPULevel(aLevel);
-}
-
-void
 BrowserWorld::SetWebXRInterstitalState(const WebXRInterstialState aState) {
   m.webXRInterstialState = aState;
 }
@@ -2306,11 +2301,6 @@ JNI_METHOD(void, deleteCallbackNative)
     auto func = reinterpret_cast<std::function<void()> *>((uintptr_t)aCallback);
     delete func;
   }
-}
-
-JNI_METHOD(void, setCPULevelNative)
-(JNIEnv*, jobject, jint aCPULevel) {
-  crow::BrowserWorld::Instance().SetCPULevel(static_cast<crow::device::CPULevel>(aCPULevel));
 }
 
 JNI_METHOD(void, setWebXRIntersitialStateNative)

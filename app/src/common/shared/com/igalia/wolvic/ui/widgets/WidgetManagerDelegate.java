@@ -53,11 +53,6 @@ public interface WidgetManagerDelegate {
     public static final int WIDGET_MOVE_BEHAVIOUR_KEYBOARD = 1;
     public static final int WIDGET_MOVE_BEHAVIOUR_WINDOW = 2;
 
-    @IntDef(value = { CPU_LEVEL_NORMAL, CPU_LEVEL_HIGH})
-    @interface CPULevelFlags {}
-    int CPU_LEVEL_NORMAL = 0;
-    int CPU_LEVEL_HIGH = 1;
-
     @IntDef(value = { WEBXR_INTERSTITIAL_FORCED, WEBXR_INTERSTITIAL_ALLOW_DISMISS, WEBXR_INTERSTITIAL_HIDDEN})
     @interface WebXRInterstitialState {}
     int WEBXR_INTERSTITIAL_FORCED = 0;

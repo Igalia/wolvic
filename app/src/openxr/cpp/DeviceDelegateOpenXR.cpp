@@ -102,7 +102,6 @@ struct DeviceDelegateOpenXR::State {
   ImmersiveDisplayPtr immersiveDisplay;
   int reorientCount = -1;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
-  device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
   std::vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
   std::function<void()> controllersCreatedCallback;
@@ -727,7 +726,7 @@ struct DeviceDelegateOpenXR::State {
       if (!OpenXRExtensions::IsExtensionSupported(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME))
           return;
 
-      if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal) {
+      if (renderMode == device::RenderMode::StandAlone) {
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_CPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
           CHECK_XRCMD(OpenXRExtensions::sXrPerfSettingsSetPerformanceLevelEXT(session, XR_PERF_SETTINGS_DOMAIN_GPU_EXT, XR_PERF_SETTINGS_LEVEL_SUSTAINED_LOW_EXT));
       } else {
@@ -1002,12 +1001,6 @@ DeviceDelegateOpenXR::OnControllersReady(const ControllersReadyCallback& callbac
   }
   m.controllersReadyCallback = callback;
 }
-
-void
-DeviceDelegateOpenXR::SetCPULevel(const device::CPULevel aLevel) {
-  m.minCPULevel = aLevel;
-  m.UpdateClockLevels();
-};
 
 void
 DeviceDelegateOpenXR::ProcessEvents() {

@@ -462,11 +462,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
             @Override
             public void onWindowVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
-                @CPULevelFlags int cpuLevel = mWindows.isVideoAvailable() ? WidgetManagerDelegate.CPU_LEVEL_HIGH :
-                        WidgetManagerDelegate.CPU_LEVEL_NORMAL;
-
-                queueRunnable(() -> setCPULevelNative(cpuLevel));
-
                 if (mPlatformPlugin != null) {
                     mPlatformPlugin.onVideoAvailabilityChange();
                 }
@@ -2291,7 +2286,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void runCallbackNative(long aCallback);
     private native void deleteCallbackNative(long aCallback);
     private native void setCylinderDensityNative(float aDensity);
-    private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
     private native void setIsServo(boolean aIsServo);
     private native void setPointerModeNative(@PointerMode int aMode);
