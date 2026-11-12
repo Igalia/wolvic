@@ -68,6 +68,13 @@ public class RuntimeImpl implements WRuntime {
                 .pauseForDebugger(settings.isPauseForDebuggerEnabled())
                 .preferredColorScheme(toGeckoColorScheme(settings.getPreferredColorScheme()));
 
+        // GeckoRuntime.create() starts the Gecko thread, which calls putenv() many times. The first
+        // System.getenv() in the process builds its snapshot with an unlocked count-then-fill walk
+        // of environ, so if it runs concurrently with those putenv() calls it can overflow the
+        // array and abort the app. The snapshot is cached after the first call, so build it now,
+        // before any other thread can modify the environment.
+        System.getenv();
+
         mRuntime = GeckoRuntime.create(ctx, builder.build());
 
         mRuntime.warmUp();
