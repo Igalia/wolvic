@@ -1,0 +1,5 @@
+<resources>
+    <string name="privacy_policy_section_usage_data_recipient">
+        This information is sent to and processed by Huawei (Huawei Analytics Kit), under Huawei\'s own terms and privacy policy, and not by IGALIA. As in any communication over the Internet, the receiving server necessarily sees the IP address of your device.
+    </string>
+</resources>

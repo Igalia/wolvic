@@ -31,8 +31,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.os.SystemClock;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.BulletSpan;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.View;
@@ -579,6 +584,56 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return false;
         }
 
+        if (SettingsStore.getInstance(this).isPrivacyPolicyUpdated()) {
+            showPrivacyPolicyUpdatedDialog(this::showPrivacyPolicyDialog);
+        } else {
+            showPrivacyPolicyDialog();
+        }
+        return true;
+    }
+
+    // Tells the users that accepted an older Privacy Policy why they are asked again.
+    private void showPrivacyPolicyUpdatedDialog(Runnable onContinue) {
+        PromptDialogWidget dialog = new PromptDialogWidget(this);
+        dialog.setTitle(R.string.privacy_policy_updated_title);
+        dialog.setBody(getPrivacyPolicyUpdatedBody());
+        dialog.setBodyGravity(Gravity.START);
+        dialog.setButtons(new int[] {R.string.ok_button});
+        dialog.setCheckboxVisible(false);
+        dialog.setIconVisible(false);
+        dialog.setButtonsDelegate((index, isChecked) -> {
+            dialog.hide(UIWidget.REMOVE_WIDGET);
+            dialog.releaseWidget();
+            onContinue.run();
+        });
+        // Clicking outside also dismisses the dialog.
+        dialog.setDelegate(onContinue::run);
+        dialog.show(UIWidget.REQUEST_FOCUS);
+    }
+
+    // An introduction followed by the main changes as a bulleted list.
+    private CharSequence getPrivacyPolicyUpdatedBody() {
+        final SpannableStringBuilder body = new SpannableStringBuilder(
+                getString(R.string.privacy_policy_updated_message, getString(R.string.app_name)));
+
+        final int bulletGap = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+        final int[] changes = {
+                R.string.privacy_policy_updated_change_usage_data,
+                R.string.privacy_policy_updated_change_opt_in,
+                R.string.privacy_policy_updated_change_privacy,
+                R.string.privacy_policy_updated_change_stop,
+        };
+        for (int change : changes) {
+            body.append("\n\n");
+            final int start = body.length();
+            body.append(getString(change));
+            body.setSpan(new BulletSpan(bulletGap), start, body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return body;
+    }
+
+    private void showPrivacyPolicyDialog() {
         LegalDocumentDialogWidget privacyPolicyDialog
                 = new LegalDocumentDialogWidget(this, LegalDocumentDialogWidget.LegalDocument.PRIVACY_POLICY);
         privacyPolicyDialog.setDelegate(response -> {
@@ -593,7 +648,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
         privacyPolicyDialog.attachToWindow(mWindows.getFocusedWindow());
         privacyPolicyDialog.show(UIWidget.REQUEST_FOCUS);
-        return true;
     }
 
     private void showWhatsNewDialogIfNeeded() {

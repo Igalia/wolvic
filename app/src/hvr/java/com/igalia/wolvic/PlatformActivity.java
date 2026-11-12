@@ -76,7 +76,7 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
-                if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
+                if (key.equals(getString(R.string.settings_key_privacy_policy_accepted_version))) {
                     if (SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
                         Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
                         enablePrivacySensitiveServices();
