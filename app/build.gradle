@@ -42,6 +42,14 @@ def getDevApplicationIdSuffix = { ->
     return ""
 }
 
+// Builds that are going to be published must have a telemetry endpoint, see the check on the build variants.
+def getIsOfficialBuild = { ->
+    if (gradle.hasProperty("userProperties.isOfficialBuild")) {
+        return gradle."userProperties.isOfficialBuild" == "true"
+    }
+    return false
+}
+
 def getUseDebugSigningOnRelease = { ->
     if (gradle.hasProperty("userProperties.useDebugSigningOnRelease")) {
         return gradle."userProperties.useDebugSigningOnRelease" == "true"
@@ -68,8 +76,8 @@ def getHVRApiKey = { ->
     return ""
 }
 
-// OpenTelemetry OTLP export target for release builds. Kept in the gitignored
-// user.properties so only the maintainer's release builds point at the server.
+// OpenTelemetry OTLP export target. Kept in user.properties so only builds that opt in point at the
+// server. If absent no signal ever leaves the device.
 def getOtelEndpoint = { ->
     if (gradle.hasProperty("userProperties.otelEndpoint")) {
         return gradle."userProperties.otelEndpoint"
@@ -127,7 +135,7 @@ android {
         buildConfigField 'String', 'ANNOUNCEMENTS_ENDPOINT', '"https://igalia.github.io/wolvic/announcements.json"'
         buildConfigField 'String', 'EXPERIENCES_ENDPOINT', '"https://igalia.github.io/wolvic/experiences.json"'
         buildConfigField 'String', 'HEYVR_ENDPOINT', '"https://api.heyvr.io/v1/public/global/feed/featured?limit=50"'
-        buildConfigField 'String', 'OTEL_ENDPOINT', '""'
+        buildConfigField 'String', 'OTEL_ENDPOINT', "\"${getOtelEndpoint()}\""
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resValue 'string', 'app_name', 'Wolvic'
@@ -194,7 +202,6 @@ android {
             shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig = getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
-            buildConfigField 'String', 'OTEL_ENDPOINT', "\"${getOtelEndpoint()}\""
         }
         debug {
             applicationIdSuffix = getDevApplicationIdSuffix()
@@ -227,6 +234,36 @@ android {
     }
 
     applicationVariants.configureEach { variant ->
+        // Any endpoint must be a valid https URL: the app trusts BuildConfig.OTEL_ENDPOINT, so this is the
+        // only place where it is validated. Official builds must have one, other release builds only get a
+        // warning. HVR builds use Huawei analytics instead of OpenTelemetry, so they do not need an endpoint.
+        def otelEndpoint = getOtelEndpoint()
+        def isRelease = variant.buildType.name == 'release'
+        def usesOtel = !variant.productFlavors.get(0).name.startsWith('hvr')
+        def isOfficial = getIsOfficialBuild()
+        variant.preBuildProvider.configure {
+            doFirst {
+                if (otelEndpoint.isEmpty()) {
+                    if (isRelease && usesOtel) {
+                        def message = "No telemetry endpoint: set otelEndpoint=https://... in user.properties"
+                        if (isOfficial) {
+                            throw new GradleException("Official builds need a telemetry endpoint. " + message)
+                        }
+                        logger.warn("WARNING: " + message + ". This build will not send any telemetry.")
+                    }
+                    return
+                }
+                def uri = null
+                try {
+                    uri = new URI(otelEndpoint)
+                } catch (URISyntaxException ignored) {
+                }
+                if (uri == null || uri.scheme != 'https' || uri.host == null) {
+                    throw new GradleException("The OTLP endpoint must be a valid https URL: " +
+                            "set otelEndpoint=https://... in user.properties (got '${otelEndpoint}')")
+                }
+            }
+        }
         // Use different version names for release builds for each backend.
         def backend = variant.productFlavors.get(2).name
         variant.outputs.each { output ->
