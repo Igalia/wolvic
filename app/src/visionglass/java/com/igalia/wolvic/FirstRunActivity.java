@@ -73,7 +73,7 @@ public class FirstRunActivity extends FragmentActivity implements SharedPreferen
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (Objects.equals(key, this.getString(R.string.settings_key_terms_service_accepted))
-                || Objects.equals(key, this.getString(R.string.settings_key_privacy_policy_accepted))) {
+                || Objects.equals(key, this.getString(R.string.settings_key_privacy_policy_accepted_version))) {
             updateUI();
         }
     }

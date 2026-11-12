@@ -197,6 +197,10 @@ public class SettingsStore {
     // Telemetry is strictly opt-in: nothing is started or sent until the user enables it.
     public final static boolean CRASH_REPORTING_DEFAULT = false;
     public final static boolean TELEMETRY_DEFAULT = false;
+    // Increase it when the Privacy Policy changes in a way that users have to accept again.
+    public final static int PRIVACY_POLICY_VERSION = 2;
+    // Where the acceptance of the Privacy Policy was stored, as a boolean, before it had a version.
+    private final static String LEGACY_PRIVACY_POLICY_ACCEPTED_KEY = "settings_key_privacy_policy_accepted";
 
     private @ScrollDirection int mCachedScrollDirection = SCROLL_DIRECTION_INVALID;
 
@@ -1235,12 +1239,23 @@ public class SettingsStore {
 
     public void setPrivacyPolicyAccepted(boolean isAccepted) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), isAccepted);
+        editor.putInt(mContext.getString(R.string.settings_key_privacy_policy_accepted_version),
+                isAccepted ? PRIVACY_POLICY_VERSION : 0);
         editor.apply();
     }
 
     public boolean isPrivacyPolicyAccepted() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_privacy_policy_accepted), false);
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_privacy_policy_accepted_version), 0)
+                >= PRIVACY_POLICY_VERSION;
+    }
+
+    // True if the user accepted an older Privacy Policy, but not the current one.
+    public boolean isPrivacyPolicyUpdated() {
+        if (isPrivacyPolicyAccepted()) {
+            return false;
+        }
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_privacy_policy_accepted_version), 0) > 0
+                || mPrefs.getBoolean(LEGACY_PRIVACY_POLICY_ACCEPTED_KEY, false);
     }
 
     public void setWebAppsData(String aWebAppsData) {

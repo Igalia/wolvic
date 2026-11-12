@@ -86,7 +86,7 @@
     <string name="settings_key_login_sync_enabled" translatable="false">settings_key_login_sync_enabled</string>
     <string name="settings_key_tab_after_restore" translatable="false">settings_key_tab_after_restore</string>
     <string name="settings_key_terms_service_accepted" translatable="false">settings_key_terms_service_accepted</string>
-    <string name="settings_key_privacy_policy_accepted" translatable="false">settings_key_privacy_policy_accepted</string>
+    <string name="settings_key_privacy_policy_accepted_version" translatable="false">settings_privacy_policy_accepted_version</string>
     <string name="settings_key_search_engine_id" translatable="false">settings_key_search_engine_id</string>
     <string name="settings_key_custom_search_engines" translatable="false">settings_key_custom_search_engines</string>
     <string name="settings_key_eye_tracking_supported" translatable="false">settings_key_eye_tracking_supported</string>
