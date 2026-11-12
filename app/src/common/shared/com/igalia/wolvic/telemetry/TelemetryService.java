@@ -10,6 +10,8 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.browser.SettingsStore;
 import com.igalia.wolvic.utils.SystemUtils;
 
+import java.util.function.Supplier;
+
 import mozilla.components.concept.sync.FxAEntryPoint;
 
 public class TelemetryService {
@@ -19,6 +21,7 @@ public class TelemetryService {
     private static boolean initialized = false;
     private static Context context = null;
     private static ITelemetry service;
+    private static Supplier<ITelemetry> telemetryFactory;
     private static boolean started;
 
     // We should call this at the application initial stage.
@@ -35,17 +38,34 @@ public class TelemetryService {
         }
     }
 
-    public static void setService(ITelemetry impl) {
-        service = impl;
-        if (started && service != null) {
-            service.start();
+    // Registers how to create the service, which is built when telemetry is (or becomes) enabled.
+    // An already created service is kept.
+    public static void setTelemetryFactory(Supplier<ITelemetry> factory) {
+        telemetryFactory = factory;
+        if (started && service == null) {
+            createAndStartService();
         }
     }
 
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void start() {
+        if (started) {
+            return;
+        }
         started = true;
+        if (service != null) {
+            service.start();
+        } else {
+            createAndStartService();
+        }
+    }
+
+    private static void createAndStartService() {
+        if (telemetryFactory == null) {
+            return;
+        }
+        service = telemetryFactory.get();
         if (service != null) {
             service.start();
         }
@@ -54,6 +74,9 @@ public class TelemetryService {
     // It would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
     public static void stop() {
+        if (!started) {
+            return;
+        }
         started = false;
         if (service != null) {
             service.stop();

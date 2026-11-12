@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="com.igalia.wolvic.utils.DeviceType"/>
         <import type="com.igalia.wolvic.BuildConfig"/>
     </data>
 
@@ -262,7 +261,6 @@
                     android:layout_marginStart="40dp"
                     app:on_text="@string/permission_allow"
                     app:off_text="@string/permission_reject"
-                    app:visibleGone="@{DeviceType.isHVRBuild()}"
                     app:description="@{String.format(@string/security_options_telemetry_send_data, @string/app_name)}" />
 
                 <com.igalia.wolvic.ui.views.settings.SwitchSetting

@@ -194,9 +194,9 @@ public class SettingsStore {
     public final static String SEARCH_ENGINE_DEFAULT = "";
     public final static @WidgetManagerDelegate.PointerMode int POINTER_MODE_DEFAULT = WidgetManagerDelegate.TRACKED_POINTER;
 
-    // Enable telemetry by default (opt-out).
+    // Telemetry is strictly opt-in: nothing is started or sent until the user enables it.
     public final static boolean CRASH_REPORTING_DEFAULT = false;
-    public final static boolean TELEMETRY_DEFAULT = true;
+    public final static boolean TELEMETRY_DEFAULT = false;
 
     private @ScrollDirection int mCachedScrollDirection = SCROLL_DIRECTION_INVALID;
 
@@ -329,6 +329,8 @@ public class SettingsStore {
         try {
             return mPrefs.getBoolean(
                     mContext.getString(R.string.settings_key_telemetry), TELEMETRY_DEFAULT);
+        } catch (ClassCastException e) {
+            return TELEMETRY_DEFAULT;
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }

@@ -545,7 +545,6 @@
     <string name="security_options_login_save">Gravar logins e palavras-passe</string>
     <string name="security_options_login_autofill">Preenchimento automático</string>
     <string name="security_options_autoplay">Reprodução automática de mídia</string>
-    <string name="security_options_telemetry_send_data">Permitir que %1$s envie dados técnicos e de interação para Huawei</string>
     <string name="sync">Sincronizar</string>
     <string name="do_not_sync">Não sincronizar</string>
     <string name="voice_search_decoding">Procurando…</string>

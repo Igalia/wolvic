@@ -1039,8 +1039,7 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data.
      '%1$s' Will be replaced at runtime with the app name. -->
-    <string name="security_options_telemetry_send_data">Allow %1$s to send technical and interaction data to Huawei
- </string>
+    <string name="security_options_telemetry_send_data">Help improve %1$s by sharing anonymous usage data</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports.

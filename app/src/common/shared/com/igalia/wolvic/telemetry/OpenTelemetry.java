@@ -12,10 +12,16 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.VRBrowserApplication;
 
+import java.io.File;
 import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import kotlin.io.FilesKt;
+
+import io.opentelemetry.android.AndroidResource;
 import io.opentelemetry.android.OpenTelemetryRum;
 import io.opentelemetry.android.OpenTelemetryRumBuilder;
 import io.opentelemetry.android.agent.session.SessionConfig;
@@ -23,8 +29,6 @@ import io.opentelemetry.android.agent.session.SessionIdTimeoutHandler;
 import io.opentelemetry.android.agent.session.SessionManager;
 import io.opentelemetry.android.config.OtelRumConfig;
 import io.opentelemetry.android.features.diskbuffering.DiskBufferingConfig;
-import io.opentelemetry.android.instrumentation.activity.ActivityLifecycleInstrumentation;
-import io.opentelemetry.android.instrumentation.sessions.SessionInstrumentation;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
@@ -55,8 +59,12 @@ public class OpenTelemetry implements ITelemetry {
     private final String INSTRUMENTATION_SCOPE_NAME = BuildConfig.APPLICATION_ID;
     private final String INSTRUMENTATION_SCOPE_VERSION = BuildConfig.VERSION_NAME;
     private final Executor mDiskIOExecutor;
+    private CompletableFuture<Void> mPendingCleanup;
     // Created once: the timeout handler stays registered with the app lifecycle for the process lifetime.
     private SessionManager mSessionManager;
+
+    private static final Set<String> DROPPED_RESOURCE_KEYS = Set.of("app.installation.id", "os.description");
+    private static final String OTEL_DISK_BUFFER_DIR = "opentelemetry";
 
     private static final String OTLP_TRACES_PATH = "/v1/traces";
     private static final String OTLP_METRICS_PATH = "/v1/metrics";
@@ -73,14 +81,18 @@ public class OpenTelemetry implements ITelemetry {
         DiskBufferingConfig diskBufferingConfig = DiskBufferingConfig.create(
                 true, 10 * 1024 * 1024, 1000L * 5);
         OtelRumConfig config = new OtelRumConfig()
-                .setDiskBufferingConfig(diskBufferingConfig);
+                .setDiskBufferingConfig(diskBufferingConfig)
+                .disableNetworkAttributes();
         mRUMBuilder = new OpenTelemetryRumBuilder(mApplication, config)
                 .setSessionProvider(getSessionManager())
                 .addSpanExporterCustomizer(exporter -> createSpanExporter())
                 .addMetricExporterCustomizer(exporter -> createMetricExporter())
                 .addLogRecordExporterCustomizer(exporter -> createLogRecordExporter())
-                .addInstrumentation(new SessionInstrumentation())
-                .addInstrumentation(new ActivityLifecycleInstrumentation());
+                .addLoggerProviderCustomizer((builder, context) ->
+                        builder.addLogRecordProcessorFirst(new URLRemoverLogRecordProcessor()));
+        mRUMBuilder.setResource(AndroidResource.createDefault(mApplication).toBuilder()
+                .removeIf(key -> DROPPED_RESOURCE_KEYS.contains(key.getKey()))
+                .build());
         try {
             mRUM = mRUMBuilder.build();
         } catch (Exception e) {
@@ -188,6 +200,11 @@ public class OpenTelemetry implements ITelemetry {
     @Override
     public void start() {
         assert mRUM == null;
+        // The buffer must be deleted before it is used again.
+        if (mPendingCleanup != null) {
+            mPendingCleanup.join();
+            mPendingCleanup = null;
+        }
         initializeOpenTelemetryAndroid();
     }
 
@@ -199,6 +216,13 @@ public class OpenTelemetry implements ITelemetry {
         if (rum != null) {
             rum.shutdown();
         }
+        // Withdrawing consent also discards what was not sent yet, so it can't be sent after a
+        // later opt-in.
+        final File bufferDir = new File(mApplication.getCacheDir(), OTEL_DISK_BUFFER_DIR);
+        mPendingCleanup = CompletableFuture.runAsync(() -> {
+            assert Looper.myLooper() != Looper.getMainLooper();
+            FilesKt.deleteRecursively(bufferDir);
+        }, mDiskIOExecutor);
     }
 
     @Override

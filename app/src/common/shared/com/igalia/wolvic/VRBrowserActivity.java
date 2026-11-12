@@ -7,6 +7,7 @@ package com.igalia.wolvic;
 
 import static com.igalia.wolvic.ui.widgets.UIWidget.REMOVE_WIDGET;
 
+import android.app.Application;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
@@ -300,8 +301,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         ((VRBrowserApplication)getApplication()).onActivityCreate(this);
 
-        if (!DeviceType.isHVRBuild() && SettingsStore.getInstance(getBaseContext()).isTelemetryEnabled()) {
-            TelemetryService.setService(new OpenTelemetry(getApplication()));
+        // Telemetry is opt-in: the service is only instantiated once the user has enabled it,
+        // either now (previous opt-in) or later from the privacy settings.
+        if (!DeviceType.isHVRBuild()) {
+            final Application app = getApplication();
+            TelemetryService.setTelemetryFactory(() -> new OpenTelemetry(app));
         }
 
         if (DeviceType.isOculusBuild()) {
