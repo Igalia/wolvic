@@ -162,7 +162,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         public void onClick(@NonNull View view, @NonNull Download item) {
             mBinding.downloadsList.requestFocusFromTouch();
 
-            if (item.getMediaType().equals(UrlUtils.EXTENSION_MIME_TYPE)) {
+            if (UrlUtils.EXTENSION_MIME_TYPE.equals(item.getMediaType())) {
                 if (SettingsStore.getInstance(getContext()).isLocalAddonAllowed()) {
                     // Meta Horizon OS does not require any special permission. See
                     // https://developers.meta.com/horizon/resources/permissions-review-required/
