@@ -34,7 +34,6 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 import io.opentelemetry.exporter.logging.SystemOutLogRecordExporter;
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter;
@@ -79,7 +78,7 @@ public class OpenTelemetry implements ITelemetry {
         // DiskBufferingConfig replaced the builder with static factories in 1.x.
         // Args: enabled, maxCacheSize (bytes), maxFileAgeForWriteMillis.
         DiskBufferingConfig diskBufferingConfig = DiskBufferingConfig.create(
-                true, 10 * 1024 * 1024, 1000L * 5);
+                otlpBaseUrl() != null, 10 * 1024 * 1024, 1000L * 5);
         OtelRumConfig config = new OtelRumConfig()
                 .setDiskBufferingConfig(diskBufferingConfig)
                 .disableNetworkAttributes();
@@ -124,21 +123,16 @@ public class OpenTelemetry implements ITelemetry {
     }
 
     private SpanExporter createSpanExporter() {
-        if (BuildConfig.DEBUG) {
-            return LoggingSpanExporter.create();
-        }
         String url = otlpUrl(OTLP_TRACES_PATH);
         if (url == null) {
-            return SpanExporter.composite();
+            // Nowhere to send: dump to logcat while developing, drop it otherwise.
+            return BuildConfig.DEBUG ? LoggingSpanExporter.create() : SpanExporter.composite();
         }
         OtlpHttpSpanExporterBuilder builder = OtlpHttpSpanExporter.builder().setEndpoint(url);
         return builder.build();
     }
 
     private MetricExporter createMetricExporter() {
-        if (BuildConfig.DEBUG) {
-            return LoggingMetricExporter.create();
-        }
         String url = otlpUrl(OTLP_METRICS_PATH);
         if (url == null) {
             return noopMetricExporter();
@@ -148,26 +142,27 @@ public class OpenTelemetry implements ITelemetry {
     }
 
     private LogRecordExporter createLogRecordExporter() {
-        if (BuildConfig.DEBUG) {
-            return SystemOutLogRecordExporter.create();
-        }
         String url = otlpUrl(OTLP_LOGS_PATH);
         if (url == null) {
-            return LogRecordExporter.composite();
+            return BuildConfig.DEBUG
+                    ? SystemOutLogRecordExporter.create() : LogRecordExporter.composite();
         }
         OtlpHttpLogRecordExporterBuilder builder = OtlpHttpLogRecordExporter.builder().setEndpoint(url);
         return builder.build();
     }
 
-    private String otlpUrl(String signalPath) {
+    // The endpoint to send to, or null when there is none. The build only accepts valid https URLs.
+    private static String otlpBaseUrl() {
         String base = BuildConfig.OTEL_ENDPOINT;
         if (base == null || base.isEmpty()) {
             return null;
         }
-        if (base.endsWith("/")) {
-            base = base.substring(0, base.length() - 1);
-        }
-        return base + signalPath;
+        return base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+    }
+
+    private String otlpUrl(String signalPath) {
+        String base = otlpBaseUrl();
+        return base == null ? null : base + signalPath;
     }
 
     // No public no-op MetricExporter exists (unlike Span/LogRecordExporter.composite()).
