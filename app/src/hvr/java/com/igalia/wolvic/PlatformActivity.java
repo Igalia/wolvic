@@ -25,7 +25,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import com.huawei.hms.analytics.HiAnalytics;
-import com.huawei.hms.analytics.HiAnalyticsInstance;
 import com.huawei.hms.analytics.HiAnalyticsTools;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hms.push.RemoteMessage;
@@ -77,7 +76,7 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             (sharedPreferences, key) -> {
-                if (key.equals(getString(R.string.settings_key_privacy_policy_accepted))) {
+                if (key.equals(getString(R.string.settings_key_privacy_policy_accepted_version))) {
                     if (SettingsStore.getInstance(PlatformActivity.this).isPrivacyPolicyAccepted()) {
                         Log.d(TAG, "PushKit: privacy policy is accepted, calling getHmsMessageServiceToken");
                         enablePrivacySensitiveServices();
@@ -243,7 +242,7 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
                 return;
             }
             MLApplication.getInstance().setApiKey(BuildConfig.HVR_API_KEY);
-            TelemetryService.setService(new HVRTelemetry(this));
+            TelemetryService.setTelemetryFactory(() -> new HVRTelemetry(this));
             try {
                 SpeechRecognizer speechRecognizer = SpeechServices.getInstance(this, speechService);
                 ((VRBrowserApplication) getApplicationContext()).setSpeechRecognizer(speechRecognizer);
@@ -258,8 +257,9 @@ public abstract class PlatformActivity extends FragmentActivity implements Surfa
 
     private void enablePrivacySensitiveServices() {
         Log.d(TAG, "Privacy policy is accepted, initializing services");
-        HiAnalyticsInstance instance = HiAnalytics.getInstance(getApplicationContext());
-        instance.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
+        if (!SettingsStore.getInstance(this).isTelemetryEnabled()) {
+            HiAnalytics.getInstance(getApplicationContext()).setAnalyticsEnabled(false);
+        }
         if (BuildConfig.BUILD_TYPE.equals("debug")) {
             HiAnalyticsTools.enableLog();
         }

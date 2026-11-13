@@ -67,6 +67,11 @@ jobs:
         with:
           gradle-version: ${{ inputs.gradle_version }}
 
+      # Release builds need a telemetry endpoint. These builds are only uploaded as workflow
+      # artifacts, so a placeholder that never receives anything is enough.
+      - name: Configure the telemetry endpoint
+        run: echo "otelEndpoint=https://telemetry.invalid" >> user.properties
+
       - name: Build ${{ inputs.flavour }} Flavour
         run: ./gradlew ${{ inputs.flavour }}
 
