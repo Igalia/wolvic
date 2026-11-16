@@ -50,6 +50,21 @@
             android:text="@string/privacy_policy_section_2" />
 
         <TextView
+            android:id="@+id/privacyPolicySubtitleUsageData"
+            style="@style/policySubtitle"
+            android:text="@string/privacy_policy_subtitle_usage_data" />
+
+        <TextView
+            android:id="@+id/privacyPolicySectionUsageData"
+            style="@style/policyBody"
+            android:text="@string/privacy_policy_section_usage_data" />
+
+        <TextView
+            android:id="@+id/privacyPolicySectionUsageDataRecipient"
+            style="@style/policyBody"
+            android:text="@string/privacy_policy_section_usage_data_recipient" />
+
+        <TextView
             android:id="@+id/privacyPolicySubtitle3"
             style="@style/policySubtitle"
             android:text="@string/privacy_policy_subtitle_3" />

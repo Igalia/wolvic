@@ -12,10 +12,16 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.VRBrowserApplication;
 
+import java.io.File;
 import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import kotlin.io.FilesKt;
+
+import io.opentelemetry.android.AndroidResource;
 import io.opentelemetry.android.OpenTelemetryRum;
 import io.opentelemetry.android.OpenTelemetryRumBuilder;
 import io.opentelemetry.android.agent.session.SessionConfig;
@@ -23,14 +29,11 @@ import io.opentelemetry.android.agent.session.SessionIdTimeoutHandler;
 import io.opentelemetry.android.agent.session.SessionManager;
 import io.opentelemetry.android.config.OtelRumConfig;
 import io.opentelemetry.android.features.diskbuffering.DiskBufferingConfig;
-import io.opentelemetry.android.instrumentation.activity.ActivityLifecycleInstrumentation;
-import io.opentelemetry.android.instrumentation.sessions.SessionInstrumentation;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 import io.opentelemetry.exporter.logging.SystemOutLogRecordExporter;
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter;
@@ -55,8 +58,12 @@ public class OpenTelemetry implements ITelemetry {
     private final String INSTRUMENTATION_SCOPE_NAME = BuildConfig.APPLICATION_ID;
     private final String INSTRUMENTATION_SCOPE_VERSION = BuildConfig.VERSION_NAME;
     private final Executor mDiskIOExecutor;
+    private CompletableFuture<Void> mPendingCleanup;
     // Created once: the timeout handler stays registered with the app lifecycle for the process lifetime.
     private SessionManager mSessionManager;
+
+    private static final Set<String> DROPPED_RESOURCE_KEYS = Set.of("app.installation.id", "os.description");
+    private static final String OTEL_DISK_BUFFER_DIR = "opentelemetry";
 
     private static final String OTLP_TRACES_PATH = "/v1/traces";
     private static final String OTLP_METRICS_PATH = "/v1/metrics";
@@ -71,16 +78,20 @@ public class OpenTelemetry implements ITelemetry {
         // DiskBufferingConfig replaced the builder with static factories in 1.x.
         // Args: enabled, maxCacheSize (bytes), maxFileAgeForWriteMillis.
         DiskBufferingConfig diskBufferingConfig = DiskBufferingConfig.create(
-                true, 10 * 1024 * 1024, 1000L * 5);
+                otlpBaseUrl() != null, 10 * 1024 * 1024, 1000L * 5);
         OtelRumConfig config = new OtelRumConfig()
-                .setDiskBufferingConfig(diskBufferingConfig);
+                .setDiskBufferingConfig(diskBufferingConfig)
+                .disableNetworkAttributes();
         mRUMBuilder = new OpenTelemetryRumBuilder(mApplication, config)
                 .setSessionProvider(getSessionManager())
                 .addSpanExporterCustomizer(exporter -> createSpanExporter())
                 .addMetricExporterCustomizer(exporter -> createMetricExporter())
                 .addLogRecordExporterCustomizer(exporter -> createLogRecordExporter())
-                .addInstrumentation(new SessionInstrumentation())
-                .addInstrumentation(new ActivityLifecycleInstrumentation());
+                .addLoggerProviderCustomizer((builder, context) ->
+                        builder.addLogRecordProcessorFirst(new URLRemoverLogRecordProcessor()));
+        mRUMBuilder.setResource(AndroidResource.createDefault(mApplication).toBuilder()
+                .removeIf(key -> DROPPED_RESOURCE_KEYS.contains(key.getKey()))
+                .build());
         try {
             mRUM = mRUMBuilder.build();
         } catch (Exception e) {
@@ -112,21 +123,16 @@ public class OpenTelemetry implements ITelemetry {
     }
 
     private SpanExporter createSpanExporter() {
-        if (BuildConfig.DEBUG) {
-            return LoggingSpanExporter.create();
-        }
         String url = otlpUrl(OTLP_TRACES_PATH);
         if (url == null) {
-            return SpanExporter.composite();
+            // Nowhere to send: dump to logcat while developing, drop it otherwise.
+            return BuildConfig.DEBUG ? LoggingSpanExporter.create() : SpanExporter.composite();
         }
         OtlpHttpSpanExporterBuilder builder = OtlpHttpSpanExporter.builder().setEndpoint(url);
         return builder.build();
     }
 
     private MetricExporter createMetricExporter() {
-        if (BuildConfig.DEBUG) {
-            return LoggingMetricExporter.create();
-        }
         String url = otlpUrl(OTLP_METRICS_PATH);
         if (url == null) {
             return noopMetricExporter();
@@ -136,26 +142,27 @@ public class OpenTelemetry implements ITelemetry {
     }
 
     private LogRecordExporter createLogRecordExporter() {
-        if (BuildConfig.DEBUG) {
-            return SystemOutLogRecordExporter.create();
-        }
         String url = otlpUrl(OTLP_LOGS_PATH);
         if (url == null) {
-            return LogRecordExporter.composite();
+            return BuildConfig.DEBUG
+                    ? SystemOutLogRecordExporter.create() : LogRecordExporter.composite();
         }
         OtlpHttpLogRecordExporterBuilder builder = OtlpHttpLogRecordExporter.builder().setEndpoint(url);
         return builder.build();
     }
 
-    private String otlpUrl(String signalPath) {
+    // The endpoint to send to, or null when there is none. The build only accepts valid https URLs.
+    private static String otlpBaseUrl() {
         String base = BuildConfig.OTEL_ENDPOINT;
         if (base == null || base.isEmpty()) {
             return null;
         }
-        if (base.endsWith("/")) {
-            base = base.substring(0, base.length() - 1);
-        }
-        return base + signalPath;
+        return base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+    }
+
+    private String otlpUrl(String signalPath) {
+        String base = otlpBaseUrl();
+        return base == null ? null : base + signalPath;
     }
 
     // No public no-op MetricExporter exists (unlike Span/LogRecordExporter.composite()).
@@ -188,6 +195,11 @@ public class OpenTelemetry implements ITelemetry {
     @Override
     public void start() {
         assert mRUM == null;
+        // The buffer must be deleted before it is used again.
+        if (mPendingCleanup != null) {
+            mPendingCleanup.join();
+            mPendingCleanup = null;
+        }
         initializeOpenTelemetryAndroid();
     }
 
@@ -199,6 +211,13 @@ public class OpenTelemetry implements ITelemetry {
         if (rum != null) {
             rum.shutdown();
         }
+        // Withdrawing consent also discards what was not sent yet, so it can't be sent after a
+        // later opt-in.
+        final File bufferDir = new File(mApplication.getCacheDir(), OTEL_DISK_BUFFER_DIR);
+        mPendingCleanup = CompletableFuture.runAsync(() -> {
+            assert Looper.myLooper() != Looper.getMainLooper();
+            FilesKt.deleteRecursively(bufferDir);
+        }, mDiskIOExecutor);
     }
 
     @Override

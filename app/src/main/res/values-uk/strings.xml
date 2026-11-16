@@ -146,7 +146,6 @@
     <string name="security_options_use_system_root_ca">Використовувати довірені кореневі сертифікати системи</string>
     <string name="security_options_permission_webxr">Пристрої віртуальної реальності (WebXR)</string>
     <string name="security_options_webxr_settings">Розширені налаштування</string>
-    <string name="security_options_telemetry_send_data">Дозволити %1$s надсилати технічні дані та дані взаємодії до Huawei</string>
     <string name="on">Увімкнено</string>
     <string name="sync">Синхронізувати</string>
     <string name="voice_input_start">Що б ви хотіли ввести?</string>

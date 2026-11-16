@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
 import com.huawei.hms.analytics.type.ReportPolicy;
+import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.telemetry.ITelemetry;
 
 import java.util.HashSet;
@@ -19,6 +20,8 @@ public class HVRTelemetry implements ITelemetry {
 
     private void initialize() {
         mService = HiAnalytics.getInstance(mContext);
+        mService.setAnalyticsEnabled(true);
+        mService.setUserProfile("userKey", BuildConfig.HVR_API_KEY);
         ReportPolicy moveBackgroundPolicy = ReportPolicy.ON_MOVE_BACKGROUND_POLICY;
         // Create a policy that is used to report an event at the specified interval.
         ReportPolicy scheduledTimePolicy = ReportPolicy.ON_SCHEDULED_TIME_POLICY;
@@ -41,6 +44,10 @@ public class HVRTelemetry implements ITelemetry {
 
     @Override
     public void stop() {
+        if (mService != null) {
+            mService.setAnalyticsEnabled(false);
+            mService.clearCachedData();
+        }
         mService = null;
     }
 

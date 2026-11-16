@@ -503,7 +503,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.BOOKMARKS);
+            TelemetryService.Tabs.openedCounter(TelemetryService.Tabs.TabSource.HISTORY);
             hideContextMenu();
         }
 
