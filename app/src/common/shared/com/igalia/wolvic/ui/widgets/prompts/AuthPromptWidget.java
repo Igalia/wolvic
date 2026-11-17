@@ -90,7 +90,7 @@ public class AuthPromptWidget extends PromptWidget {
         CheckBox showPassword = findViewById(R.id.showPasswordCheckbox);
         showPassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                mPasswordText.setInputType(InputType.TYPE_CLASS_TEXT);
+                mPasswordText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
                 mPasswordText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }

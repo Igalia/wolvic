@@ -191,7 +191,7 @@
                 android:gravity="center_vertical"
                 android:hint="@{viewmodel.hint}"
                 android:imeOptions="actionGo"
-                android:inputType="textUri"
+                android:inputType="text"
                 android:requiresFadingEdge="horizontal"
                 android:selectAllOnFocus="true"
                 android:textColor="@color/fog"
