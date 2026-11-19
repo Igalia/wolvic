@@ -54,6 +54,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:paddingEnd="20dp"
+        android:scrollbarStyle="outsideOverlay"
         android:divider="@android:color/transparent"
         android:smoothScrollbar="true"
         android:dividerHeight="4dp" />
