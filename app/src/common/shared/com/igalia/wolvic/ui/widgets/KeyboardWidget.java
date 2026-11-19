@@ -44,6 +44,7 @@ import com.igalia.wolvic.input.CustomKeyboard;
 import com.igalia.wolvic.input.Keyboard;
 import com.igalia.wolvic.speech.SpeechRecognizer;
 import com.igalia.wolvic.telemetry.TelemetryService;
+import com.igalia.wolvic.ui.keyboards.BaseLatinKeyboard;
 import com.igalia.wolvic.ui.keyboards.ChinesePinyinKeyboard;
 import com.igalia.wolvic.ui.keyboards.ChineseZhuyinKeyboard;
 import com.igalia.wolvic.ui.keyboards.DanishKeyboard;
@@ -98,6 +99,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private InputConnection mInputConnection;
     private CompletableFuture<Void> mPostInputCmd;
     private EditorInfo mEditorInfo = new EditorInfo();
+    private boolean mFieldWantsNoSuggestions = false;
     private VoiceSearchWidget mVoiceSearchWidget;
     private AutoCompletionView mAutoCompletionView;
     private KeyboardSelectorView mLanguageSelectorView;
@@ -467,6 +469,36 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         return (int) height;
     }
 
+    // A field wants no suggestions if it says so explicitly (textNoSuggestions) or if its content
+    // is not prose, i.e. URLs, email addresses and passwords.
+    private static boolean wantsNoSuggestions(int aInputType) {
+        if ((aInputType & EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS) != 0) {
+            return true;
+        }
+        if ((aInputType & EditorInfo.TYPE_MASK_CLASS) != EditorInfo.TYPE_CLASS_TEXT) {
+            return false;
+        }
+        switch (aInputType & EditorInfo.TYPE_MASK_VARIATION) {
+            case EditorInfo.TYPE_TEXT_VARIATION_URI:
+            case EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS:
+            case EditorInfo.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS:
+            case EditorInfo.TYPE_TEXT_VARIATION_PASSWORD:
+            case EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD:
+            case EditorInfo.TYPE_TEXT_VARIATION_WEB_PASSWORD:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean suppressLatinSuggestions() {
+        return mFieldWantsNoSuggestions && mCurrentKeyboard instanceof BaseLatinKeyboard;
+    }
+
+    private boolean usesComposingText() {
+        return mCurrentKeyboard.usesComposingText() && !suppressLatinSuggestions();
+    }
+
     private void resetKeyboardLayout() {
         if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
             mKeyboardView.setKeyboard(getSymbolsKeyboard());
@@ -489,6 +521,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mFocusedView = aFocusedView;
         if (aFocusedView != null && aFocusedView.onCheckIsTextEditor()) {
             mInputConnection = aFocusedView.onCreateInputConnection(mEditorInfo);
+            mFieldWantsNoSuggestions = wantsNoSuggestions(mEditorInfo.inputType);
             resetKeyboardLayout();
             if (mFocusedView != null && mFocusedView instanceof TextView) {
                 ((TextView)mFocusedView).addTextChangedListener(this);
@@ -1004,7 +1037,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleSpace() {
-        if (mCurrentKeyboard.usesComposingText() && mComposingText.length() == 0) {
+        if (usesComposingText() && mComposingText.length() == 0) {
             // Do not compose text when space is clicked on an empty composed text
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> postDisplayCommand(() -> connection.commitText(" ", 1)));
@@ -1107,7 +1140,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         final String text = aText;
         final InputConnection connection = mInputConnection;
-        if (mCurrentKeyboard.usesComposingText() && !mIsInVoiceInput) {
+        if (usesComposingText() && !mIsInVoiceInput) {
             postInputCommand(() -> {
                 CharSequence seq = connection.getSelectedText(0);
                 String selected = seq != null ? seq.toString() : "";
@@ -1221,13 +1254,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     };
 
     private void updateCandidates(ResetComposingText resetComposingText) {
-        if (mInputConnection == null || !mCurrentKeyboard.supportsAutoCompletion()) {
+        if (mInputConnection == null || !mCurrentKeyboard.supportsAutoCompletion() || suppressLatinSuggestions()) {
             setAutoCompletionVisible(false);
             updateSpecialKeyLabels();
             return;
         }
 
-        if (mCurrentKeyboard.usesComposingText()) {
+        if (usesComposingText()) {
             postInputCommand(() -> {
                 final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(mComposingText);
                 postUICommand(() -> {
@@ -1473,7 +1506,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mFocusedView == null || mInputConnection == null) {
             return;
         }
-        if (mCurrentKeyboard.usesComposingText()) {
+        if (usesComposingText()) {
             String code = aItem.code != null ? StringUtils.removeSpaces(aItem.code) : "";
             mComposingText = mCurrentKeyboard.getComposingText(mComposingText, code).trim();
 
@@ -1510,7 +1543,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
 
-        if (!mInternalDeleteHint && mCurrentKeyboard.usesComposingText() && mComposingText.length() > 0 && mTextBefore.length() > 0 && aEditable.toString().length() == 0) {
+        if (!mInternalDeleteHint && usesComposingText() && mComposingText.length() > 0 && mTextBefore.length() > 0 && aEditable.toString().length() == 0) {
             // Text has been cleared externally (e.g. URLBar text clear button)
             mComposingText = "";
             mCurrentKeyboard.clear();
