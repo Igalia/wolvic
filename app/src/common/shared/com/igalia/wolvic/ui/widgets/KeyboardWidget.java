@@ -486,8 +486,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mFocusedView != null && mFocusedView instanceof TextView) {
             ((TextView)mFocusedView).removeTextChangedListener(this);
         }
+        final View previousView = mFocusedView;
         mFocusedView = aFocusedView;
         if (aFocusedView != null && aFocusedView.onCheckIsTextEditor()) {
+            if (previousView != null && previousView != aFocusedView) {
+                finishComposingInPreviousField();
+            }
             mInputConnection = aFocusedView.onCreateInputConnection(mEditorInfo);
             resetKeyboardLayout();
             if (mFocusedView != null && mFocusedView instanceof TextView) {
@@ -769,6 +773,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboard getSymbolsKeyboard() {
         CustomKeyboard custom = mCurrentKeyboard.getSymbolsKeyboard();
         return  custom != null ? custom : mDefaultKeyboardSymbols;
+    }
+
+    // The word being composed belongs to the field that is losing the focus: it is committed
+    // there. Otherwise cleanComposingText() would apply to the newly focused field and replace
+    // its selected text.
+    private void finishComposingInPreviousField() {
+        final InputConnection previous = mInputConnection;
+        if (mComposingText.length() > 0 && previous != null) {
+            mComposingText = "";
+            postInputCommand(() -> postDisplayCommand(previous::finishComposingText));
+        }
     }
 
     private void cleanComposingText() {
