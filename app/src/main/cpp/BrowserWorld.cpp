@@ -1177,9 +1177,8 @@ BrowserWorld::GetActiveControllerOrientation() const {
 
 void
 BrowserWorld::ThrottledWindowDistanceComputation(const vrb::Matrix& controllerTransform) {
-    // Applying the distance relayouts every widget, so it is too expensive to do
-    // once per frame. 30Hz is frequent enough to look continuous.
-    const float kThrottleMs = 33;
+    // Minimum time between distance updates (ms). 0 means every frame.
+    const float kThrottleMs = 16.0f;
     auto now = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - m.lastTimeWindowDistanceComputation).count();
     if (duration < kThrottleMs)
