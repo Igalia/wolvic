@@ -12,7 +12,7 @@
 
     <!-- Minimum and maximum values for the window's Z translation -->
     <item name="window_world_z_min" format="float" type="dimen">-4.2</item>
-    <item name="window_world_z_max" format="float" type="dimen">-5.2</item>
+    <item name="window_world_z_max" format="float" type="dimen">-7.2</item>
 
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">800dp</dimen>

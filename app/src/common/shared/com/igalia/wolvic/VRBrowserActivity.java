@@ -210,8 +210,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private static final long RESTRICTED_RESTART_WINDOW_MS = 10_000L;
     // How far the window travels for a given amount of hand travel. The distance range
     // spanned by window_world_z_min..max is wider than a comfortable reach, so the hand
-    // needs amplifying to cover it: at 2.0 half a reach covers the whole range.
-    private static final float WINDOW_MOVE_GAIN = 2.0f;
+    // needs amplifying to cover it.
+    private static final float WINDOW_MOVE_GAIN = 5.0f;
 
     ConcurrentHashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -253,6 +253,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private LinkedHashMap<Integer, WidgetPlacement> mPendingNativeWidgetUpdates = new LinkedHashMap<>();
     private ScheduledThreadPoolExecutor mPendingNativeWidgetUpdatesExecutor = new ScheduledThreadPoolExecutor(1);
     private ScheduledFuture<?> mNativeWidgetUpdatesTask = null;
+    private volatile boolean mWindowMoveActive = false;
     private Media mPrevActiveMedia = null;
     private boolean mIsPassthroughEnabled = false;
     private boolean mIsHandTrackingEnabled = true;
@@ -1660,7 +1661,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     queueRunnable(() -> updateWidgetNative(entry.getKey(), entry.getValue()));
                 }
                 mPendingNativeWidgetUpdates.clear();
-            }, UPDATE_NATIVE_WIDGETS_DELAY, TimeUnit.MILLISECONDS);
+            }, mWindowMoveActive ? 0 : UPDATE_NATIVE_WIDGETS_DELAY, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -1779,11 +1780,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void startWindowMove() {
         SettingsStore.getInstance(this).setHeadLockEnabled(false);
+        mWindowMoveActive = true;
         setLockMode(WidgetManagerDelegate.CONTROLLER_LOCK);
     }
 
     @Override
     public void finishWindowMove() {
+        mWindowMoveActive = false;
         setLockMode(WidgetManagerDelegate.NO_LOCK);
     }
 
