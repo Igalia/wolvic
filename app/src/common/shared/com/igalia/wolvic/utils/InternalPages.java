@@ -1,6 +1,7 @@
 package com.igalia.wolvic.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
@@ -117,6 +118,16 @@ public class InternalPages {
     public static String createErrorPageDataURI(Context context,
                                                 @Nullable String uri,
                                                 int sessionError) {
+
+        // About pages are provided by a native UI, so we just show a plain color while that UI loads.
+        if (UrlUtils.isAboutPage(uri)) {
+            String html = readRawResourceString(context, R.raw.about_page_placeholder);
+            int bgColor = context.getColor(R.color.void_color);
+            String bgColorHtml = "rgb(" + Color.red(bgColor) + "," + Color.green(bgColor) + "," + Color.blue(bgColor) + ")";
+            html = html.replace("%backgroundColor%", bgColorHtml);
+            return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
+        }
+
         String html = readRawResourceString(context, R.raw.error_pages);
         String css = readRawResourceString(context, R.raw.error_style);
 
