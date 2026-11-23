@@ -37,6 +37,7 @@ import org.chromium.content_public.browser.BrowserStartupController;
 import org.chromium.content_public.browser.DeviceUtils;
 import org.chromium.ui.base.ResourceBundle;
 import org.chromium.wolvic.VRManager;
+import org.chromium.wolvic.WolvicBrowserContext;
 
 public class RuntimeImpl implements WRuntime {
     static String LOGTAG = SystemUtils.createLogtag(RuntimeImpl.class);
@@ -77,8 +78,47 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public WResult<Void> clearData(long flags) {
-        // TODO: Implement
-        return WResult.fromValue(null);
+        WResult<Void> result = WResult.create();
+        int dataTypes = toChromiumDataTypes(flags);
+        if (dataTypes == 0) {
+            result.complete(null);
+            return result;
+        }
+
+        // The browser process starts asynchronously; this runs right away if it is already up.
+        registerCallback(new Callback() {
+            @Override
+            public void onReady() {
+                // Clear the regular context, then the off-the-record one used by private windows.
+                WolvicBrowserContext.clearBrowsingData(dataTypes, false,
+                        () -> WolvicBrowserContext.clearBrowsingData(dataTypes, true,
+                                () -> result.complete(null)));
+            }
+        });
+        return result;
+    }
+
+    private static int toChromiumDataTypes(@WRuntime.StorageControllerClearFlags long flags) {
+        if ((flags & ClearFlags.ALL) != 0) {
+            return WolvicBrowserContext.DATA_TYPE_COOKIES
+                    | WolvicBrowserContext.DATA_TYPE_CACHE
+                    | WolvicBrowserContext.DATA_TYPE_DOM_STORAGE;
+        }
+        // PERMISSIONS and SITE_SETTINGS have no Chromium data type, Wolvic stores site permissions
+        // itself. Chromium clears the HTTP auth cache only together with cookies, so AUTH_SESSIONS
+        // alone clears nothing.
+        int dataTypes = 0;
+        if ((flags & ClearFlags.COOKIES) != 0) {
+            dataTypes |= WolvicBrowserContext.DATA_TYPE_COOKIES;
+        }
+        // Chromium has a single cache, there is no separate image cache.
+        if ((flags & ClearFlags.ALL_CACHES) != 0) {
+            dataTypes |= WolvicBrowserContext.DATA_TYPE_CACHE;
+        }
+        if ((flags & ClearFlags.DOM_STORAGES) != 0) {
+            dataTypes |= WolvicBrowserContext.DATA_TYPE_DOM_STORAGE;
+        }
+        return dataTypes;
     }
 
     @NonNull
