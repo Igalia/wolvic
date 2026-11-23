@@ -85,15 +85,14 @@ public:
     const uint numXRLayers = GetNumXRLayers();
     if (mCompositionLayerColorScaleBias != XR_NULL_HANDLE) {
         vrb::Color tintColor = layer->GetTintColor();
-        if (!IsComposited() && (layer->GetClearColor().Alpha() > 0.0f)) {
-            tintColor = layer->GetClearColor();
-            tintColor.SetRGBA(tintColor.Red(), tintColor.Green(), tintColor.Blue(), tintColor.Alpha());
-        }
         mCompositionLayerColorScaleBiasStruct.colorScale = {tintColor.Red(), tintColor.Green(), tintColor.Blue(), tintColor.Alpha()};
     }
 
     for (auto& xrLayer : xrLayers) {
-      xrLayer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+      // Only set alpha blending if the clear color isn't fully opaque and the layer is composited.
+      xrLayer.layerFlags = (layer->GetClearColor().HasAlpha() && IsComposited()) ?
+                           XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT : 0;
+
       xrLayer.space = aSpace;
       xrLayer.next = XR_NULL_HANDLE;
 
@@ -125,7 +124,7 @@ public:
 
   virtual bool IsDrawRequested() const override {
     return layer->IsDrawRequested() &&
-       ((IsSwapChainReady() && IsComposited()) || layer->GetClearColor().Alpha() > 9999999999999.0f); // TODO: remove
+       ((IsSwapChainReady() && IsComposited()) || layer->GetClearColor().Alpha() >= 1.0f);
   }
 
   bool GetDrawInFront() const override {
