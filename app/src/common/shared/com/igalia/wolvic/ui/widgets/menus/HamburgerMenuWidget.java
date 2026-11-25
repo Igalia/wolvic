@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.igalia.wolvic.BuildConfig;
 import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.browser.SettingsStore;
@@ -200,7 +199,7 @@ public class HamburgerMenuWidget extends UIWidget implements
         if (!mWidgetManager.getFocusedWindow().isKioskMode()) {
             final Session activeSession = SessionStore.get().getActiveSession();
 
-            if (!BuildConfig.FLAVOR_backend.equals("chromium")) {
+            if (SessionStore.get().getWebExtensionRuntime().areExtensionsSupported()) {
                 mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
                         HamburgerMenuAdapter.MenuItem.TYPE_ADDONS_SETTINGS,
                         (menuItem) -> {

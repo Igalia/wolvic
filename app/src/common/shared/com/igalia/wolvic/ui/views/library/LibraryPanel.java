@@ -18,6 +18,7 @@ import com.igalia.wolvic.R;
 import com.igalia.wolvic.VRBrowserActivity;
 import com.igalia.wolvic.VRBrowserApplication;
 import com.igalia.wolvic.addons.views.AddonsView;
+import com.igalia.wolvic.browser.engine.SessionStore;
 import com.igalia.wolvic.databinding.LibraryBinding;
 import com.igalia.wolvic.ui.delegates.LibraryNavigationDelegate;
 import com.igalia.wolvic.ui.widgets.WidgetManagerDelegate;
@@ -222,7 +223,7 @@ public class LibraryPanel extends FrameLayout {
 
         mBinding.tabcontent.removeAllViews();
 
-        if (BuildConfig.FLAVOR_backend.equals("chromium")) {
+        if (!SessionStore.get().getWebExtensionRuntime().areExtensionsSupported()) {
             mBinding.addons.setVisibility(View.GONE);
         }
 

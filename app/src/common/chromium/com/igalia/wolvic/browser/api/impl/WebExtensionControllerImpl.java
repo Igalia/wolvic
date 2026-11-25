@@ -16,6 +16,11 @@ import mozilla.components.concept.engine.webextension.WebExtension;
 public class WebExtensionControllerImpl implements WWebExtensionController {
     private PromptDelegate mPromptDelegate;
 
+    @Override
+    public boolean areExtensionsSupported() {
+        return false;
+    }
+
     @Nullable
     @Override
     public PromptDelegate getPromptDelegate() {
@@ -36,8 +41,7 @@ public class WebExtensionControllerImpl implements WWebExtensionController {
     @NonNull
     @Override
     public WResult<WebExtension> install(@NonNull String uri) {
-        // TODO: Implement
-        return WResult.fromValue(new WebExtensionImpl(uri, uri, false));
+        return WResult.fromException(new UnsupportedOperationException("Installing web extensions is not supported"));
     }
 
     @NonNull

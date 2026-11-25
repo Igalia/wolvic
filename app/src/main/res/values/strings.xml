@@ -2489,6 +2489,18 @@ the Select` button. When clicked it bookmarks all the previously selected tabs -
     <!-- This string is displayed in the body of the error dialog shown when downloaded addon installation is blocked. -->
     <string name="download_addon_install_blocked_permissions_body">Allow storage permissions in Privacy Options to proceed.</string>
 
+    <!-- This string is displayed in the title of the dialog shown when a local addon was successfully installed. -->
+    <string name="download_addon_install_success">Addon installed</string>
+
+    <!-- This string is displayed in the body of the dialog shown when a local addon was successfully installed. The placeholder is the addon file name. -->
+    <string name="download_addon_install_success_body">%1$s was installed successfully.</string>
+
+    <!-- This string is displayed in the title of the error dialog shown when a local addon could not be installed. -->
+    <string name="download_addon_install_failed">Addon installation failed</string>
+
+    <!-- This string is displayed in the body of the error dialog shown when a local addon could not be installed. The placeholder is the addon file name. -->
+    <string name="download_addon_install_failed_body">%1$s could not be installed. The file may be invalid or corrupted.</string>
+
     <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
     but hasn't granted the permission. -->
     <string name="environment_download_permission_error_body">Permission to write the external storage is required to download the environment.</string>

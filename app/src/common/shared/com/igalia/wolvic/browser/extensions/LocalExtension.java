@@ -8,6 +8,7 @@ package com.igalia.wolvic.browser.extensions;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.igalia.wolvic.browser.Addons;
 import com.igalia.wolvic.utils.SystemUtils;
@@ -25,13 +26,16 @@ public class LocalExtension {
     /**
      * Installs the web extension through the WebExtensionRuntime install method
      */
-    public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl, Addons addons) {
+    public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl, Addons addons,
+                               @Nullable Runnable onSuccess, @Nullable Runnable onError) {
         runtime.installWebExtension(extensionUrl, InstallationMethod.FROM_FILE, webExtension -> {
             Log.i(LOGTAG, extensionId + " from " + extensionUrl + " Web Extension successfully installed");
             addons.notifyListeners();
+            if (onSuccess != null) onSuccess.run();
             return null;
         }, (throwable) -> {
             Log.e(LOGTAG, "Error installing the " + extensionId + " from " + extensionUrl + " Web Extension: " + throwable.getLocalizedMessage());
+            if (onError != null) onError.run();
             return null;
         });
     }
