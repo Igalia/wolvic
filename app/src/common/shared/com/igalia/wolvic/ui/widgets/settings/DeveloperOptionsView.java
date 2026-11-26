@@ -75,8 +75,12 @@ class DeveloperOptionsView extends SettingsView {
             mBinding.webglOutOfProcessSwitch.setVisibility(View.GONE);
         }
 
-        mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
-        setLocalAddon(SettingsStore.getInstance(getContext()).isLocalAddonAllowed(), false);
+        if (SessionStore.get().getWebExtensionRuntime().areExtensionsSupported()) {
+            mBinding.localAddonSwitch.setOnCheckedChangeListener(mLocalAddonListener);
+            setLocalAddon(SettingsStore.getInstance(getContext()).isLocalAddonAllowed(), false);
+        } else {
+            mBinding.localAddonSwitch.setVisibility(View.GONE);
+        }
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {

@@ -51,6 +51,11 @@ class WolvicWebExtensionRuntime(
     }
 
     /**
+     * Whether the current backend supports installing web extensions.
+     */
+    fun areExtensionsSupported(): Boolean = runtime.webExtensionController.areExtensionsSupported()
+
+    /**
      * See [Engine.installWebExtension].
      */
     override fun installWebExtension(

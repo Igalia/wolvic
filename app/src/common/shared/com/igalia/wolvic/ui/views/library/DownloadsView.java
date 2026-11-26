@@ -182,7 +182,15 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                                                 SessionStore.get().getWebExtensionRuntime(),
                                                 UUID.randomUUID().toString(),
                                                 item.getOutputFileUriAsString(),
-                                                ((VRBrowserActivity) getContext()).getServicesProvider().getAddons()
+                                                ((VRBrowserActivity) getContext()).getServicesProvider().getAddons(),
+                                                () -> mWidgetManager.getFocusedWindow().showAlert(
+                                                        getContext().getString(R.string.download_addon_install_success),
+                                                        getContext().getString(R.string.download_addon_install_success_body, item.getFilename()),
+                                                        null),
+                                                () -> mWidgetManager.getFocusedWindow().showAlert(
+                                                        getContext().getString(R.string.download_addon_install_failed),
+                                                        getContext().getString(R.string.download_addon_install_failed_body, item.getFilename()),
+                                                        null)
                                         );
                                     }
                                 }

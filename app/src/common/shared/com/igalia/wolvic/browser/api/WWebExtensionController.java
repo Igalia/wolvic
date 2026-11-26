@@ -139,6 +139,12 @@ public interface WWebExtensionController {
     WResult<WebExtension> install(final @NonNull String uri);
 
     /**
+     * @return whether this backend supports installing web extensions.
+     */
+    @AnyThread
+    boolean areExtensionsSupported();
+
+    /**
      * Set whether an extension should be allowed to run in private browsing or not.
      *
      * @param extension the {@link WebExtension} instance to modify.

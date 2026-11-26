@@ -30,6 +30,11 @@ class WebExtensionControllerImpl implements WWebExtensionController {
         mController = mRuntime.getWebExtensionController();
     }
 
+    @Override
+    public boolean areExtensionsSupported() {
+        return true;
+    }
+
     @Nullable
     @Override
     public PromptDelegate getPromptDelegate() {
