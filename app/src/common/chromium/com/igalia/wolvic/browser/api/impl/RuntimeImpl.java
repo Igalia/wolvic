@@ -36,6 +36,7 @@ import org.chromium.base.library_loader.LibraryProcessType;
 import org.chromium.content_public.browser.BrowserStartupController;
 import org.chromium.content_public.browser.DeviceUtils;
 import org.chromium.ui.base.ResourceBundle;
+import org.chromium.wolvic.BrowsingDataBridge;
 import org.chromium.wolvic.VRManager;
 
 public class RuntimeImpl implements WRuntime {
@@ -77,8 +78,30 @@ public class RuntimeImpl implements WRuntime {
     @NonNull
     @Override
     public WResult<Void> clearData(long flags) {
-        // TODO: Implement
-        return WResult.fromValue(null);
+        int types = 0;
+        if ((flags & (ClearFlags.COOKIES | ClearFlags.SITE_DATA | ClearFlags.ALL)) != 0) {
+            types |= BrowsingDataBridge.COOKIES;
+        }
+        if ((flags & (ClearFlags.NETWORK_CACHE | ClearFlags.IMAGE_CACHE | ClearFlags.SITE_DATA
+                | ClearFlags.ALL)) != 0) {
+            types |= BrowsingDataBridge.CACHE;
+        }
+        if ((flags & (ClearFlags.DOM_STORAGES | ClearFlags.SITE_DATA | ClearFlags.ALL)) != 0) {
+            types |= BrowsingDataBridge.DOM_STORAGE;
+        }
+        if (types == 0) {
+            return WResult.fromValue(null);
+        }
+
+        WResult<Void> result = WResult.create();
+        BrowsingDataBridge.clearData(types, (org.chromium.base.Callback<Boolean>) success -> {
+            if (success) {
+                result.complete(null);
+            } else {
+                result.completeExceptionally(new RuntimeException("Failed to clear browsing data"));
+            }
+        });
+        return result;
     }
 
     @NonNull
